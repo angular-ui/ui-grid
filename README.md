@@ -1,4 +1,4 @@
-#KoGrid : A Knockout DataGrid#
+#ngGrid : An Angular DataGrid#
 
 __Contributors:__
 
@@ -22,19 +22,19 @@ __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
 ##Disclaimer##
 
-ng-grid is in beta release currently. We are going to be adding more features here in the very near future...
+ng-grid is in pre-alpha release currently. We are going to be adding more features here in the very near future...
 
 ***
 _The sizzle_:
 
 ```html
-<div ng-controller="ng-grid""></div>
+<div ng-grid="options"></div>
 ```
 ```javascript
-function ng-grid($scope) {
+function MyCtrl($scope) {
+	$scope.options = [];
 };
 
-ko.applyBindings(vm);
 ```
 
 ##Want More?##
