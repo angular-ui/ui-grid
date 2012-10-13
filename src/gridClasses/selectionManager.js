@@ -85,7 +85,7 @@ ng.selectionManager = function (options, rowManager) {
             newItems = [];
         }
 
-        ng.utils.forEach(data, function (item, i) {
+        angular.forEach(data, function (item, i) {
 
             if (!item[KEY]) {
                 item[KEY] = false;
@@ -115,7 +115,7 @@ ng.selectionManager = function (options, rowManager) {
         set: function (val) {
             var checkAll = val,
             dataSourceCopy = [];
-            ng.utils.forEach(dataSource, function (item) {
+            angular.forEach(dataSource, function (item) {
                 dataSourceCopy.push(item);
             });
             if (checkAll) {
@@ -140,7 +140,7 @@ ng.selectionManager = function (options, rowManager) {
         selectedItems = self.selectedItems;
         itemsToRemove = [];
 
-        ng.utils.arrayForEach(selectedItems, function (item) {
+        angular.forEach(selectedItems, function (item) {
             if (ng.utils.arrayIndexOf(items, item) < 0) {
                 itemsToRemove.push(item);
             }
