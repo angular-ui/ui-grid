@@ -1,4 +1,4 @@
-module.factory('SelectionService', ['$scope', function($scope) {
+servicesModule.factory('SelectionService', ['$scope', function($scope) {
     var SelectionService = {};	
 		
 	SelectionService.initialize = function(options, rowManager){
