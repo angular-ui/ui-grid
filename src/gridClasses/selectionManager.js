@@ -106,7 +106,7 @@ ng.selectionManager = function (options, rowManager) {
     // @val - boolean indicating whether to select all/de-select all
     this.toggleSelectAll = {
         get: function () {
-            var cnt = self.selectedItemCount();
+            var cnt = self.selectedItemCount;
             if (maxRows() === 0) {
                 return false;
             }

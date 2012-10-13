@@ -2,35 +2,35 @@
 * KoGrid JavaScript Library 
 * Authors:  https://github.com/ericmbarnard/KoGrid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php) 
-* Compiled At: 17:20:59.65 Fri 10/12/2012 
+* Compiled At: 21:49:32.13 Fri 10/12/2012 
 ***********************************************/ 
 (function(window, undefined){ 
  
  
 /*********************************************** 
-* FILE: ..\Src\Namespace.js 
+* FILE: ..\src\namespace.js 
 ***********************************************/ 
 ﻿
-var kg = window['kg'] = {};
-kg.templates = {}; 
+var ng = window['ng'] = {};
+ng.templates = {}; 
  
  
 /*********************************************** 
-* FILE: ..\Src\Constants.js 
+* FILE: ..\src\constants.js 
 ***********************************************/ 
 ﻿
-var SELECTED_PROP = '__kg_selected__';
-var GRID_TEMPLATE = 'koGridTmpl'; 
+var SELECTED_PROP = '__ng_selected__';
+var GRID_TEMPLATE = 'ng-gridTmpl'; 
  
  
 /*********************************************** 
-* FILE: ..\src\Navigation.js 
+* FILE: ..\src\navigation.js 
 ***********************************************/ 
 /// <reference path="../lib/jquery-1.7.js" />
 /// <reference path="../lib/knockout-2.0.0.debug.js" />
 
 //set event binding on the grid so we can select using the up/down keys
-kg.moveSelectionHandler = function (grid, evt) {
+ng.moveSelectionHandler = function (grid, evt) {
     // null checks 
     if (grid === null || grid === undefined)
         return true;
@@ -56,9 +56,9 @@ kg.moveSelectionHandler = function (grid, evt) {
             return true;
     }
 
-    var items = grid.finalData(),
+    var items = grid.finalData,
         n = items.length,
-        index = ko.utils.arrayIndexOf(items, grid.config.lastClickedRow().entity()) + offset,
+        index = ng.utils.arrayIndexOf(items, grid.config.lastClickedRow.entity) + offset,
         rowCache = grid.rowManager.rowCache,
         rowHeight = grid.config.rowHeight,
         currScroll = grid.$viewport.scrollTop(),
@@ -75,7 +75,7 @@ kg.moveSelectionHandler = function (grid, evt) {
         // fire the selection
         row.toggleSelected(null, evt);
 
-        itemtoView = kg.utils.getElementsByClassName("kgSelected");
+        itemtoView = ng.utils.getElementsByClassName("kgSelected");
 
         // finally scroll it into view as we arrow through
         if (!Element.prototype.scrollIntoViewIfNeeded) {
@@ -94,26 +94,31 @@ kg.moveSelectionHandler = function (grid, evt) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Labels.js 
+* FILE: ..\src\utils.js 
 ***********************************************/ 
-﻿kg.labels = {
+﻿ng.utils = {
 
-}; 
- 
- 
-/*********************************************** 
-* FILE: ..\Src\Utils.js 
-***********************************************/ 
-﻿kg.utils = {
+    arrayForEach: function (array, action) {
+        for (var i = 0, j = array.length; i < j; i++)
+        action(array[i]);
+    },
 
-    forEach: function (arr, action) {
-        var len = arr.length,
-            i = 0;
-        for (; i < len; i++) {
-            if (arr[i] !== undefined) {
-                action(arr[i], i);
-            }
-        }
+    arrayIndexOf: function (array, item) {
+        if (typeof Array.prototype.indexOf == "function")
+            return Array.prototype.indexOf.call(array, item);
+        for (var i = 0, j = array.length; i < j; i++)
+            if (array[i] === item)
+                return i;
+        return -1;
+    },
+    
+    arrayFilter: function (array, predicate) {
+        array = array || [];
+        var result = [];
+        for (var i = 0, j = array.length; i < j; i++)
+        if (predicate(array[i]))
+        result.push(array[i]);
+        return result;
     },
 
     forIn: function (obj, action) {
@@ -129,7 +134,10 @@ kg.moveSelectionHandler = function (grid, evt) {
     endsWith: function (str, suffix) {
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
-    
+    isNullOrUndefined: function (obj){
+        if (obj == null || obj == undefined) return true;
+        return false;
+    }
     StringBuilder: function () {
         var strArr = [];
         
@@ -176,12 +184,12 @@ kg.moveSelectionHandler = function (grid, evt) {
         return retnode;
     },
     
-    unwrapPropertyPath: function(path, entity){
+    getPropertyPath: function(path, entity){
         var propPath = path.split('.');
         var tempProp = entity[propPath[0]];
 
         for (var j = 1; j < propPath.length; j++){
-            tempProp = ko.utils.unwrapObservable(tempProp)[propPath[j]];
+            tempProp = tempProp[propPath[j]];
         }
         return tempProp;
     },
@@ -208,21 +216,21 @@ kg.moveSelectionHandler = function (grid, evt) {
     })(),
 };
 
-$.extend(kg.utils, {
+$.extend(ng.utils, {
     isIe6: (function(){ 
-        return kg.utils.ieVersion === 6}
+        return ng.utils.ieVersion === 6}
     )(),
     isIe7: (function(){ 
-        return kg.utils.ieVersion === 7}
+        return ng.utils.ieVersion === 7}
     )(),
     isIe: (function () { 
-        return kg.utils.ieVersion !== undefined; 
+        return ng.utils.ieVersion !== undefined; 
     })()
 });  
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\GridTemplate.js 
+* FILE: ..\src\templates\gridTemplate.js 
 ***********************************************/ 
 kg.templates.defaultGridInnerTemplate = function (options) {
     var b = new kg.utils.StringBuilder();
@@ -243,7 +251,7 @@ kg.templates.defaultGridInnerTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\HeaderTemplate.js 
+* FILE: ..\src\templates\headerTemplate.js 
 ***********************************************/ 
 ﻿﻿kg.templates.generateHeaderTemplate = function (options) {
     var b = new kg.utils.StringBuilder(),
@@ -273,7 +281,7 @@ kg.templates.defaultGridInnerTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\HeaderCellTemplate.js 
+* FILE: ..\src\templates\headerCellTemplate.js 
 ***********************************************/ 
 kg.templates.defaultHeaderCellTemplate = function (options) {
     var b = new kg.utils.StringBuilder();
@@ -295,7 +303,7 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\RowTemplate.js 
+* FILE: ..\src\templates\rowTemplate.js 
 ***********************************************/ 
 ﻿kg.templates.generateRowTemplate = function (options) {
     var b = new kg.utils.StringBuilder(),
@@ -343,7 +351,7 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\FooterTemplate.js 
+* FILE: ..\src\templates\footerTemplate.js 
 ***********************************************/ 
 ﻿﻿kg.templates.defaultFooterTemplate = function (options) {
     var b = new kg.utils.StringBuilder();
@@ -377,7 +385,7 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Templates\TemplateManager.js 
+* FILE: ..\src\templates\templateManager.js 
 ***********************************************/ 
 ﻿kg.templateManager = (new function () {
     var self = this;
@@ -469,9 +477,9 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\Dimension.js 
+* FILE: ..\src\gridClasses\dimension.js 
 ***********************************************/ 
-﻿kg.Dimension = function (options) {
+﻿ng.dimension = function (options) {
     this.innerHeight = null;
     this.innerWidth = null;
     this.outerHeight = null;
@@ -487,9 +495,9 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\Cell.js 
+* FILE: ..\src\gridClasses\cell.js 
 ***********************************************/ 
-﻿kg.Cell = function (col) {
+﻿ng.cell = function (col) {
     this.data = '';
     this.column = col;
     this.row = null;
@@ -497,17 +505,15 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\Column.js 
+* FILE: ..\src\gridClasses\column.js 
 ***********************************************/ 
-﻿﻿kg.Column = function (colDef, index) {
-    var self = this,
-        minWIsOB = ko.isObservable(colDef.minWidth),
-        maxWIsOB = ko.isObservable(colDef.maxWidth);
+﻿ng.column = function (colDef, index) {
+    var self = this;
         
-    this.width = ko.observable(colDef.width);
+    this.width = colDef.width;
     this.widthIsConfigured = false;
-    this.minWidth = minWIsOB ? colDef.minWidth : ( !colDef.minWidth ? ko.observable(50) : ko.observable(colDef.minWidth));
-    this.maxWidth = maxWIsOB ? colDef.maxWidth : ( !colDef.maxWidth ? ko.observable(9000) : ko.observable(colDef.maxWidth));
+    this.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    this.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     
     this.field = colDef.field;
     if (colDef.displayName === undefined || colDef.displayName === null) {
@@ -516,7 +522,7 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
     }
     this.displayName = colDef.displayName;
     this.index = index;
-    this.isVisible = ko.observable(false);
+    this.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -536,11 +542,11 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
     this.allowResize = colDef.resizable;
     this.allowFilter = colDef.filterable;
     
-    this.sortDirection = ko.observable("");
+    this.sortDirection = "";
     this.sortingAlgorithm = colDef.sortFn;
 
     //filtering
-    this.filter = ko.observable();
+    this.filter;
 
     //cell Template
     this.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
@@ -555,53 +561,37 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\ColumnCollection.js 
-***********************************************/ 
-﻿kg.ColumnCollection = function () {
-
-    var obs = ko.observableArray([]);
-    ko.utils.extend(obs, kg.ColumnCollection.fn);
-
-    return obs;
-};
-
-kg.ColumnCollection.fn = {
-
-}; 
- 
- 
-/*********************************************** 
-* FILE: ..\Src\GridClasses\Row.js 
+* FILE: ..\src\gridClasses\row.js 
 ***********************************************/ 
 /// <reference path="../utils.js" />
 /// <reference path="../namespace.js" />
 /// <reference path="../Grid.js" />
 
-kg.Row = function (entity, config, selectionManager) {
+ng.row = function (entity, config, selectionManager) {
     var self = this,
-        KEY = '__kg_selected__', // constant for the selection property that we add to each data item
+        KEY = '__ng_selected__', // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
     this.selectedItems = config.selectedItems;
-    this.entity = ko.isObservable(entity) ? entity : ko.observable(entity);
+    this.entity = entity;
     this.selectionManager = selectionManager;
     //selectify the entity
-    if (this.entity()['__kg_selected__'] === undefined) {
-        this.entity()['__kg_selected__'] = ko.observable(false);
+    if (this.entity['__ng_selected__'] === undefined) {
+        this.entity['__ng_selected__'] = false;
     }
-    this.selected = ko.dependentObservable({
-        read: function () {
+    this.selected = {
+        get: function () {
             if (!canSelectRows) {
                 return false;
             }
-            var val = self.entity()['__kg_selected__']();
+            var val = self.entity['__ng_selected__'];
             return val;
         },
-        write: function (val, evt) {
+        set: function (val, evt) {
             if (!canSelectRows) {
                 return true;
             }
             self.beforeSelectionChange();
-            self.entity()['__kg_selected__'](val);
+            self.entity['__ng_selected__'] = val;
             self.selectionManager.changeSelection(self, evt);
             self.afterSelectionChange();
             self.onSelectionChanged();
@@ -615,34 +605,34 @@ kg.Row = function (entity, config, selectionManager) {
         var element = event.target;
 
         //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className.indexOf("kgSelectionCell" !== -1)) {
+        if (element.type == "checkbox" && element.parentElement.className.indexOf("ngSelectionCell" !== -1)) {
             return true;
         } 
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            self.selected() ? self.selected(false, event) : self.selected(true, event);
+            self.selected ? self.selected.set(false, event) : self.selected.set(true, event);
         }
     };
 
     this.toggle = function(item) {
-        if (item.selected()) {
-            item.selected(false);
-            self.selectedItems.remove(item.entity());
+        if (item.selected.get()) {
+            item.selected.set(false);
+            self.selectedItems.remove(item.entity);
         } else {
-            item.selected(true);
-            if (self.selectedItems.indexOf(item.entity()) === -1) {
-                self.selectedItems.push(item.entity());
+            item.selected.set(true);
+            if (self.selectedItems.indexOf(item.entity) === -1) {
+                self.selectedItems.push(item.entity);
             }
         }
 
     };
 
-    this.cells = ko.observableArray([]);
+    this.cells = [];
     this.cellMap = {};
     this.rowIndex = 0;
     this.offsetTop = 0;
-    this.rowKey = kg.utils.newId();
+    this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
 
     this.onSelectionChanged = function () { }; //replaced in rowManager
@@ -650,26 +640,26 @@ kg.Row = function (entity, config, selectionManager) {
     this.afterSelectionChange = function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
-        kg.utils.forIn(entity, function (prop, propName) {
+        ng.utils.forIn(entity, function (prop, propName) {
             self[propName] = prop;
         });
-    } ());
+    }());
 };  
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\Range.js 
+* FILE: ..\src\gridClasses\range.js 
 ***********************************************/ 
-﻿kg.Range = function (bottom, top) {
+﻿ng.range = function (bottom, top) {
     this.topRow = top;
     this.bottomRow = bottom;
 }; 
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\CellFactory.js 
+* FILE: ..\src\gridClasses\cellFactory.js 
 ***********************************************/ 
-﻿kg.CellFactory = function (cols) {
+﻿ng.cellFactory = function (cols) {
     var colCache = cols,
         len = colCache.length;
 
@@ -682,10 +672,10 @@ kg.Row = function (entity, config, selectionManager) {
         for (; i < len; i++) {
             col = colCache[i];
 
-            cell = new kg.Cell(col);
+            cell = new ng.cell(col);
             cell.row = row;
             //enabling nested property values in a viewmodel
-            cell.data = kg.utils.unwrapPropertyPath(col.field, row.entity()); 
+            cell.data = ng.utils.getPropertyPath(col.field, row.entity); 
             cells.push(cell);
             row.cellMap[col.field] = cell;
         }
@@ -697,9 +687,9 @@ kg.Row = function (entity, config, selectionManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\HeaderCell.js 
+* FILE: ..\src\gridClasses\headerCell.js 
 ***********************************************/ 
-﻿kg.HeaderCell = function (col) {
+﻿ng.headerCell = function (col) {
     var self = this;
 
     this.colIndex = col.colIndex;
@@ -711,56 +701,55 @@ kg.Row = function (entity, config, selectionManager) {
     this.headerTemplate = col.headerTemplate;
     this.hasHeaderTemplate = col.hasHeaderTemplate;
     
-    this.allowSort = ko.observable(col.allowSort);
+    this.allowSort = col.allowSort;
     this.allowFilter = col.allowFilter;
-    this.allowResize = ko.observable(col.allowResize);
+    this.allowResize = col.allowResize;
     
     this.width = col.width;
     this.minWidth = col.minWidth;
     this.maxWidth = col.maxWidth;
 
-    this.filter = ko.computed({
-        read: function () {
-            return self.column.filter();
+    this.filter = {
+        get: function () {
+            return self.column.filter;
         },
-        write: function (val) {
-            self.column.filter(val);
+        set: function (val) {
+            self.column. = val;
         }
-    });
+    };
 
-    this.filterVisible = ko.observable(false);
-    this._filterVisible = ko.computed({
-        read: function () {
+    this.filterVisible = false;
+    this._filterVisible = {
+        get: function () {
             return self.allowFilter;
         },
-        write: function (val) {
-            self.filterVisible(val);
+        set: function (val) {
+            self.filterVisible = val;
         }
-    });
+    };
     
-    this.sortAscVisible = ko.computed(function () {
-        return self.column.sortDirection() === "asc";
-    });
+    this.sortAscVisible = (function () {
+        return self.column.sortDirection === "asc";
+    })();
 
-    this.sortDescVisible = ko.computed(function () {
-        return self.column.sortDirection() === "desc";
-    });
+    this.sortDescVisible = (function () {
+        return self.column.sortDirection === "desc";
+    })();
 
-    this.noSortVisible = ko.computed(function () {
-        var sortDir = self.column.sortDirection();
-
+    this.noSortVisible = (function () {
+        var sortDir = self.column.sortDirection;
         return sortDir !== "asc" && sortDir !== "desc";
-    });
+    })();
 
     this.sort = function () {
         if (!self.allowSort()) {
             return; // column sorting is disabled, do nothing
         }
-        var dir = self.column.sortDirection() === "asc" ? "desc" : "asc";
-        self.column.sortDirection(dir);
+        var dir = self.column.sortDirection === "asc" ? "desc" : "asc";
+        self.column.sortDirection = dir;
     };
 
-    this.filterHasFocus = ko.observable(false);
+    this.filterHasFocus = false;
 
 ﻿    this.startMousePosition = 0;
     
@@ -777,7 +766,7 @@ kg.Row = function (entity, config, selectionManager) {
     this.onMouseMove = function (event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
-        self.width(newWidth < self.minWidth() ? self.minWidth() : ( newWidth > self.maxWidth() ? self.maxWidth() : newWidth) );
+        self.width(newWidth < self.minWidth ? self.minWidth : ( newWidth > self.maxWidth ? self.maxWidth : newWidth) );
         return false;
 ﻿    };
 ﻿    
@@ -794,29 +783,29 @@ kg.Row = function (entity, config, selectionManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\HeaderRow.js 
+* FILE: ..\src\gridClasses\headerRow.js 
 ***********************************************/ 
-﻿kg.HeaderRow = function () {
+﻿ng.headerRow = function () {
     this.headerCells = [];
     this.height;
     this.headerCellMap = {};
-    this.filterVisible = ko.observable(false);
+    this.filterVisible = false;
 }; 
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\RowManager.js 
+* FILE: ..\src\gridClasses\rowManager.js 
 ***********************************************/ 
-﻿kg.RowManager = function (grid) {
+﻿ng.rowManager = function (grid) {
     var self = this,
         prevMaxRows = 0, // for comparison purposes when scrolling
         prevMinRows = 0, // for comparison purposes when scrolling
         currentPage = grid.config.currentPage,
         pageSize = grid.config.pageSize,
-        ROW_KEY = '__kg_rowIndex__', // constant for the entity's rowCache rowIndex
-        prevRenderedRange = new kg.Range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
-        prevViewableRange = new kg.Range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
-        internalRenderedRange = ko.observable(prevRenderedRange); // for comparison purposes to help throttle re-calcs when scrolling
+        ROW_KEY = '__ng_rowIndex__', // constant for the entity's rowCache rowIndex
+        prevRenderedRange = new ng.range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
+        prevViewableRange = new ng.range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
+        internalRenderedRange = prevRenderedRange; // for comparison purposes to help throttle re-calcs when scrolling
         
     this.dataChanged = true;
      // we cache rows when they are built, and then blow the cache away when sorting/filtering
@@ -825,7 +814,7 @@ kg.Row = function (entity, config, selectionManager) {
     this.dataSource = grid.finalData; //observableArray
 
     // change subscription to clear out our cache
-    this.dataSource.subscribe(function () {
+    this.dataSource.$watch(function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
     });
@@ -840,16 +829,16 @@ kg.Row = function (entity, config, selectionManager) {
     this.rowHeight = grid.config.rowHeight;
 
     // the logic that builds cell objects
-    this.cellFactory = new kg.CellFactory(grid.columns());
+    this.cellFactory = new ng.cellFactory(grid.columns);
 
     // the actual range the user can see in the viewport
-    this.viewableRange = ko.observable(prevViewableRange);
+    this.viewableRange = prevViewableRange;
 
     // the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
-    this.renderedRange = ko.observable(prevRenderedRange);
+    this.renderedRange = prevRenderedRange;
 
     // the array of rows that we've rendered
-    this.rows = ko.observableArray([]);
+    this.rows = [];
 
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
     this.rowSubscriptions = {};
@@ -864,7 +853,7 @@ kg.Row = function (entity, config, selectionManager) {
         if (!row) {
 
             // build the row
-            row = new kg.Row(entity, grid.config, grid.selectionManager);
+            row = new ng.row(entity, grid.config, grid.selectionManager);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
             row.rowDisplayIndex = row.rowIndex + pagingOffset;
             row.offsetTop = self.rowHeight * rowIndex;
@@ -883,13 +872,13 @@ kg.Row = function (entity, config, selectionManager) {
     };
 
     // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
-    this.renderedRange.subscribe(function (rg) {
+    this.renderedRange.$watch(function (rg) {
         var rowArr = [],
             row,
             pagingOffset = (pageSize() * (currentPage() - 1)),
             dataArr = self.dataSource().slice(rg.bottomRow, rg.topRow);
 
-        kg.utils.forEach(dataArr, function (item, i) {
+        ng.utils.forEach(dataArr, function (item, i) {
             row = self.buildRowFromEntity(item, rg.bottomRow + i, pagingOffset);
 
             //add the row to our return array
@@ -904,9 +893,9 @@ kg.Row = function (entity, config, selectionManager) {
 
     // core logic that intelligently figures out the rendered range given all the contraints that we have
     this.calcRenderedRange = function () {
-        var rg = self.viewableRange(),
-            minRows = self.minViewportRows(),
-            maxRows = self.dataSource().length,
+        var rg = self.viewableRange,
+            minRows = self.minViewportRows,
+            maxRows = self.dataSource.length,
             isDif = false, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
             newRg; // variable to hold our newly-calc'd rendered range 
 
@@ -915,12 +904,12 @@ kg.Row = function (entity, config, selectionManager) {
             isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || self.dataChanged)
             if (!isDif && prevMaxRows !== maxRows) {
                 isDif = true;
-                rg = new kg.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
+                rg = new ng.range(prevViewableRange.bottomRow, prevViewableRange.topRow);
             }
 
             if (!isDif && prevMinRows !== minRows) {
                 isDif = true;
-                rg = new kg.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
+                rg = new ng.range(prevViewableRange.bottomRow, prevViewableRange.topRow);
             }
 
             if (isDif) {
@@ -931,7 +920,7 @@ kg.Row = function (entity, config, selectionManager) {
                 prevViewableRange = rg;
 
                 // now build the new rendered range
-                newRg = new kg.Range(rg.bottomRow, rg.topRow);
+                newRg = new ng.range(rg.bottomRow, rg.topRow);
 
                 // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
                 newRg.bottomRow = Math.max(0, rg.bottomRow - self.excessRows);
@@ -946,104 +935,103 @@ kg.Row = function (entity, config, selectionManager) {
                     self.dataChanged = false;
                     prevRenderedRange = newRg;
 
-                    // now kickoff row building
-                    self.renderedRange(newRg);
+                    // now kicngff row building
+                    self.renderedRange = newRg;
                 }
             }
         } else {
-            self.renderedRange(new kg.Range(0, 0));
+            self.renderedRange = new ng.range(0, 0);
         }
     };
 
     // make sure that if any of these change, we re-fire the calc logic
-    self.viewableRange.subscribe(self.calcRenderedRange);
-    self.minViewportRows.subscribe(self.calcRenderedRange);
-    self.dataSource.subscribe(self.calcRenderedRange);
+    self.viewableRange.$watch(self.calcRenderedRange);
+    self.minViewportRows.$watch(self.calcRenderedRange);
+    self.dataSource.$watch(self.calcRenderedRange);
 }; 
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\Footer.js 
+* FILE: ..\src\gridClasses\footer.js 
 ***********************************************/ 
-﻿kg.Footer = function (grid) {
+﻿ng.footer = function (grid) {
     var self = this;
 
     this.maxRows;
 
-    if (grid.config.totalServerItems() !== null && grid.config.totalServerItems() !== undefined) {
-        this.maxRows = grid.config.totalServerItems; //observable
+    if (!ng.utils.isNullOrUndefined(grid.config.totalServerItems)) {
+        this.maxRows = grid.config.totalServerItems;
     } else {
-        this.maxRows = grid.maxRows; //observable
+        this.maxRows = grid.maxRows;
     }
-    this.isMultiSelect = ko.observable(grid.config.canSelectRows && grid.config.isMultiSelect);
-    this.selectedItemCount = grid.selectedItemCount; //observable
+    this.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
+    this.selectedItemCount = grid.selectedItemCount;
 
     this.footerVisible = grid.config.footerVisible;
-    this.pagerVisible = ko.observable(grid.config.enablePaging);
-    this.selectedPageSize = grid.config.pageSize; //observable
-    this.pageSizes = ko.observableArray(grid.config.pageSizes);
-    this.currentPage = grid.config.currentPage; //observable
-    this.maxPages = ko.computed(function () {
-        var maxCnt = self.maxRows() || 1,
-            pageSize = self.selectedPageSize();
+    this.pagerVisible = grid.config.enablePaging;
+    this.selectedPageSize = grid.config.pageSize;
+    this.pageSizes = grid.config.pageSizes;
+    this.currentPage = grid.config.currentPage;
+    this.maxPages = (function () {
+        var maxCnt = self.maxRows || 1,
+            pageSize = self.selectedPageSize;
         return Math.ceil(maxCnt / pageSize);
     });
 
-    this.protectedCurrentPage = ko.computed({
-        read: function () {
+    this.protectedCurrentPage = {
+        get: function () {
             return self.currentPage();
         },
-        write: function (page) {
+        set: function (page) {
             var pageInt = parseInt(page);
-            if (!isNaN(pageInt) || (pageInt && pageInt <= self.maxPages() && pageInt > 0)) {
-                self.currentPage(pageInt); //KO does an equality check on primitives before notifying subscriptions here
+            if (!isNaN(pageInt) || (pageInt && pageInt <= self.maxPages && pageInt > 0)) {
+                self.currentPage = pageInt;
             }
-        },
-        owner: self
-    });
+        }
+    };
 
     this.pageForward = function () {
-        var page = self.currentPage();
-        self.currentPage(Math.min(page + 1, self.maxPages()));
+        var page = self.currentPage;
+        self.currentPage(Math.min(page + 1, self.maxPages));
     }
 
     this.pageBackward = function () {
-        var page = self.currentPage();
-        self.currentPage(Math.max(page - 1, 1));
+        var page = self.currentPage;
+        self.currentPage = Math.max(page - 1, 1);
     };
 
     this.pageToFirst = function () {
-        self.currentPage(1);
+        self.currentPage = 1;
     };
 
     this.pageToLast = function () {
-        var maxPages = self.maxPages();
-        self.currentPage(maxPages);
+        var maxPages = self.maxPages;
+        self.currentPage = maxPages;
     };
 
     this.canPageForward = ko.computed(function () {
-        var curPage = self.currentPage();
-        var maxPages = self.maxPages();
+        var curPage = self.currentPage;
+        var maxPages = self.maxPages;
         return curPage < maxPages;
     });
 
     this.canPageBackward = ko.computed(function () {
-        var curPage = self.currentPage();
+        var curPage = self.currentPage;
         return curPage > 1;
     });
 }; 
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\FilterManager.js 
+* FILE: ..\src\gridClasses\filterManager.js 
 ***********************************************/ 
-﻿kg.FilterManager = function (options) {
+﻿ng.filterManager = function (options) {
     var self = this,
         wildcard = options.filterWildcard || "*", // the wildcard character used by the user
         includeDestroyed = options.includeDestroyed || false, // flag to indicate whether to include _destroy=true items in filtered data
         regExCache = {}, // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
         initPhase = 0, // flag for allowing us to do initialization only once and prevent dependencies from getting improperly registered
-        internalFilteredData = ko.observableArray([]); // obs array that we use to manage the filtering before it updates the final data
+        internalFilteredData = []; // obs array that we use to manage the filtering before it updates the final data
 
     // first check the wildcard as we only support * and % currently
     if (wildcard === '*' || wildcard === '%') {
@@ -1054,7 +1042,7 @@ kg.Row = function (entity, config, selectionManager) {
 
     // filters off _destroy = true items
     var filterDestroyed = function (arr) {
-        return ko.utils.arrayFilter(arr, function (item) {
+        return ng.utils.arrayFilter(arr, function (item) {
             return (item['_destroy'] === true ? false : true);
         });
     };
@@ -1066,14 +1054,14 @@ kg.Row = function (entity, config, selectionManager) {
     this.data = options.data;
 
     // the obs array of filtered data we return to the grid
-    this.filteredData = ko.computed(function () {
-        var data = internalFilteredData();
+    this.filteredData = (function () {
+        var data = internalFilteredData;
 
         //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
         if (initPhase > 0) {
             return data;
         } else {
-            return filterDestroyed(self.data());
+            return filterDestroyed(self.data);
         }
     });
 
@@ -1128,8 +1116,8 @@ kg.Row = function (entity, config, selectionManager) {
 
     // the core logic for filtering data
     var filterData = function () {
-        var filterInfo = self.filterInfo(),
-            data = self.data(),
+        var filterInfo = self.filterInfo,
+            data = self.data,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
             newArr = [], // the filtered array
@@ -1143,7 +1131,7 @@ kg.Row = function (entity, config, selectionManager) {
 
         // make sure we even have work to do before we get started
         if (!filterInfo || $.isEmptyObject(filterInfo) || options.useExternalFiltering) {
-            internalFilteredData(data);
+            internalFilteredData = data;
             return;
         }
 
@@ -1151,7 +1139,7 @@ kg.Row = function (entity, config, selectionManager) {
         regExCache = {};
 
         // filter the data array
-        newArr = ko.utils.arrayFilter(data, function (item) {
+        newArr = ng.utils.arrayFilter(data, function (item) {
             var propPath,
                 i;
 
@@ -1159,13 +1147,8 @@ kg.Row = function (entity, config, selectionManager) {
             for (field in filterInfo) {
 
                 if (filterInfo.hasOwnProperty(field)) {
-
                     // pull the data out of the item
-                    propPath = field.split(".");
-                    itemData = item;
-                    for (i = 0; i < propPath.length && itemData !== undefined && itemData !== null; i++) {
-                        itemData = ko.utils.unwrapObservable(itemData[propPath[i]]);
-                    }
+                    itemData = ng.utils.getPropertyPath(field, item);
 
                     // grab the user-entered filter criteria
                     filterStr = filterInfo[field];
@@ -1206,20 +1189,20 @@ kg.Row = function (entity, config, selectionManager) {
         });
 
         // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
-        internalFilteredData(newArr);
+        internalFilteredData = newArr;
 
     };
 
     //create subscriptions
-    this.data.subscribe(filterData);
-    this.filterInfo.subscribe(filterData);
+    this.data.$watch(filterData);
+    this.filterInfo.$watch(filterData);
 
     // the grid uses this to asign the change handlers to the filter boxes during initialization
     this.createFilterChangeCallback = function (col) {
 
         // the callback
         return function (newFilterVal) {
-            var info = self.filterInfo();
+            var info = self.filterInfo;
 
             if (!info && !newFilterVal) {
                 return;
@@ -1241,10 +1224,10 @@ kg.Row = function (entity, config, selectionManager) {
                 info[col.field] = newFilterVal;
 
             }
-            self.filterInfo(info);
+            self.filterInfo = info;
 
             if (options && options.currentPage) {
-                options.currentPage(1);
+                options.currentPage = 1;
             }
         };
     };
@@ -1255,37 +1238,36 @@ kg.Row = function (entity, config, selectionManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\SortManager.js 
+* FILE: ..\src\gridClasses\sortManager.js 
 ***********************************************/ 
-﻿﻿kg.SortManager = function (options) {
+﻿ng.sortManager = function (options) {
     var self = this,
         colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
         dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
         ASC = "asc", // constant for sorting direction
         DESC = "desc", // constant for sorting direction
         prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
-        dataSource = options.data, //observableArray
         initPhase = 0, // flag for preventing improper dependency registrations with KO
-        internalSortedData = ko.observableArray([]);
-
+        internalSortedData = [];
+    this.dataSource = options.data;
     // utility function for null checking
     this.isEmpty = function (val) {
         return (val === null || val === undefined || val === '');
     };
 
     // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-    this.sortInfo = options.sortInfo || ko.observable();
+    this.sortInfo = options.sortInfo || undefined;
 
-    this.sortedData = ko.computed(function () {
-        var sortData = internalSortedData();
+    this.sortedData = (function () {
+        var sortData = internalSortedData;
         //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
         // dependency during the binding handler's dependency detection :(
         if (initPhase > 0) {
             return sortData;
         } else {
-            return dataSource();
+            return self.dataSource;
         }
-    });
+    })();
 
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
@@ -1466,7 +1448,7 @@ kg.Row = function (entity, config, selectionManager) {
             return;
         }
 
-        //if its not equal, set the observable and kickoff the event chain
+        //if its not equal, set the observable and kicngff the event chain
         self.sortInfo({
             column: col,
             direction: direction
@@ -1475,7 +1457,7 @@ kg.Row = function (entity, config, selectionManager) {
 
     // the core sorting logic trigger
     this.sortData = function () {
-        var data = dataSource(),
+        var data = self.dataSource,
             sortInfo = self.sortInfo(),
             col,
             direction,
@@ -1487,7 +1469,7 @@ kg.Row = function (entity, config, selectionManager) {
 
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            internalSortedData(data);
+            internalSortedData = data;
             return;
         }
 
@@ -1502,14 +1484,10 @@ kg.Row = function (entity, config, selectionManager) {
             sortFn = col.sortingAlgorithm;
             colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = dataSource()[0];
+            item = self.dataSource[0];
 
             if (item) {
-                propPath = col.field.split(".");
-                prop = item;
-                for (i = 0; i < propPath.length && prop !== undefined && prop !== null; i++) {
-                    prop = ko.utils.unwrapObservable(prop[propPath[i]]);
-                }
+                prop = ng.utils.getPropertyPath(col.field, item);
             }
 
             sortFn = self.guessSortFn(prop);
@@ -1536,8 +1514,8 @@ kg.Row = function (entity, config, selectionManager) {
 
             propPath = col.field.split(".");
             for (i = 0; i < propPath.length; i++) {
-                if (propA !== undefined && propA !== null) { propA = ko.utils.unwrapObservable(propA[propPath[i]]); }
-                if (propB !== undefined && propB !== null) { propB = ko.utils.unwrapObservable(propB[propPath[i]]); }
+                if (propA !== undefined && propA !== null) { propA = propA[propPath[i]]; }
+                if (propB !== undefined && propB !== null) { propB = propB[propPath[i]]; }
             }
 
             propAEmpty = self.isEmpty(propA);
@@ -1560,12 +1538,12 @@ kg.Row = function (entity, config, selectionManager) {
             }
         });
 
-        internalSortedData(data);
+        internalSortedData = data;
     };
 
     //subscribe to the changes in these objects
-    dataSource.subscribe(self.sortData);
-    this.sortInfo.subscribe(self.sortData);
+    this.dataSource.$watch(self.sortData);
+    this.sortInfo.$watch(self.sortData);
 
     //change the initPhase so computed bindings now work!
     initPhase = 1;
@@ -1573,7 +1551,7 @@ kg.Row = function (entity, config, selectionManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridClasses\SelectionManager.js 
+* FILE: ..\src\gridClasses\selectionManager.js 
 ***********************************************/ 
 ﻿// Class that manages all row selection logic
 // @options - {
@@ -1582,43 +1560,40 @@ kg.Row = function (entity, config, selectionManager) {
 //      data - (required) the observable array data source of data items
 //  }
 //
-kg.SelectionManager = function (options, rowManager) {
+ng.selectionManager = function (options, rowManager) {
     var self = this,
         isMulti = options.isMulti || options.isMultiSelect,
         ignoreSelectedItemChanges = false, // flag to prevent circular event loops keeping single-select observable in sync
         dataSource = options.data, // the observable array datasource
-        KEY = '__kg_selected__', // constant for the selection property that we add to each data item,
-        ROW_KEY = '__kg_rowIndex__', // constant for the entity's rowCache rowIndex
-        maxRows = ko.computed(function () {
-            return dataSource().length;
-        });
+        KEY = '__ng_selected__', // constant for the selection property that we add to each data item,
+        ROW_KEY = '__ng_rowIndex__', // constant for the entity's rowCache rowIndex
+        maxRows = (function () {
+            return dataSource.length;
+        })();
         
-    this.selectedItem = options.selectedItem || ko.observable(); // observable
-    this.selectedItems = options.selectedItems || ko.observableArray([]); //observableArray
-    this.selectedIndex = options.selectedIndex; //observable
-    this.lastClickedRow = options.lastClickedRow;
-
+    this.selectedItem = options.selectedItem || undefined; 
+    this.selectedItems = options.selectedItems || []; 
+    this.selectedIndex = options.selectedIndex; 
+    this.lastClickedRow = options.lastClickedRow; 
+    
     // some subscriptions to keep the selectedItem in sync
-    this.selectedItem.subscribe(function (val) {
+    this.selectedItem.$watch(function (val) {
         if (ignoreSelectedItemChanges)
             return;
-
-        self.selectedItems([val]);
+        self.selectedItems = [val];
     });
-    this.selectedItems.subscribe(function (vals) {
+    this.selectedItems.$watch(function (vals) {
         ignoreSelectedItemChanges = true;
-
         self.selectedItem(vals ? vals[0] : null);
-
         ignoreSelectedItemChanges = false;
     });
     
     // function to manage the selection action of a data item (entity)
     this.changeSelection = function (rowItem, evt) {
         if (isMulti && evt && evt.shiftKey) {
-            if(self.lastClickedRow()) {
+            if(self.lastClickedRow) {
                 var thisIndx = rowManager.rowCache.indexOf(rowItem);
-                var prevIndx = rowManager.rowCache.indexOf(self.lastClickedRow());
+                var prevIndx = rowManager.rowCache.indexOf(self.lastClickedRow);
                 if (thisIndx == prevIndx) return;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -1627,14 +1602,14 @@ kg.SelectionManager = function (options, rowManager) {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    rowManager.rowCache[prevIndx].selected(self.lastClickedRow().selected());
+                    rowManager.rowCache[prevIndx].selected = self.lastClickedRow.selected;
                     self.addOrRemove(rowItem);
                 }
                 self.lastClickedRow(rowItem);
                 return true;
             }
         } else if (!isMulti) {
-            rowItem.selected() ? self.selectedItems([rowItem.entity()]) :self.selectedItems([]);
+            rowItem.selected ? self.selectedItems = [rowItem.entity] : self.selectedItems = [];
         }      
         self.addOrRemove(rowItem);
         self.lastClickedRow(rowItem);
@@ -1643,75 +1618,73 @@ kg.SelectionManager = function (options, rowManager) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     this.addOrRemove = function(rowItem) {
-        if (!rowItem.selected()) {
-            self.selectedItems.remove(rowItem.entity());
+        if (!rowItem.selected) {
+            self.selectedItems.remove(rowItem.entity);
         } else {
-            if (self.selectedItems.indexOf(rowItem.entity()) === -1) {
-                self.selectedItems.push(rowItem.entity());
+            if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+                self.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
-    this.selectedItemCount = ko.computed(function () {
-        return self.selectedItems().length;
-    });
+    this.selectedItemCount = (function () {
+        return self.selectedItems.length;
+    })();
 
     // ensures our selection flag on each item stays in sync
-    this.selectedItems.subscribe(function (newItems) {
-        var data = dataSource();
+    this.selectedItems.$watch(function (newItems) {
+        var data = dataSource;
 
         if (!newItems) {
             newItems = [];
         }
 
-        kg.utils.forEach(data, function (item, i) {
+        ng.utils.forEach(data, function (item, i) {
 
             if (!item[KEY]) {
-                item[KEY] = ko.observable(false);
+                item[KEY] = false;
             }
 
-            if (ko.utils.arrayIndexOf(newItems, item) > -1) {
+            if (ng.utils.arrayIndexOf(newItems, item) > -1) {
                 //newItems contains the item
-                item[KEY](true);
+                item[KEY] = true;
             } else {
-                item[KEY](false);
+                item[KEY] = false;
             }
 
         });
     });
 
-    this.lastSelectedItem = options.lastClickedRow;
-
     // writable-computed observable
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    this.toggleSelectAll = ko.computed({
-        read: function () {
+    this.toggleSelectAll = {
+        get: function () {
             var cnt = self.selectedItemCount();
             if (maxRows() === 0) {
                 return false;
             }
             return cnt === maxRows();
         },
-        write: function (val) {
+        set: function (val) {
             var checkAll = val,
             dataSourceCopy = [];
-            kg.utils.forEach(dataSource(), function (item) {
+            ng.utils.forEach(dataSource, function (item) {
                 dataSourceCopy.push(item);
             });
             if (checkAll) {
-                self.selectedItems(dataSourceCopy);
+                self.selectedItems = dataSourceCopy;
             } else {
 
-                self.selectedItems([]);
+                self.selectedItems = [];
 
             }
         }
-    });
+    };
 
     //make sure as the data changes, we keep the selectedItem(s) correct
-    dataSource.subscribe(function (items) {
+    dataSource.$watch(function (items) {
         var selectedItems,
             itemsToRemove;
         if (!items) {
@@ -1719,11 +1692,11 @@ kg.SelectionManager = function (options, rowManager) {
         }
         
         //make sure the selectedItem(s) exist in the new data
-        selectedItems = self.selectedItems();
+        selectedItems = self.selectedItems;
         itemsToRemove = [];
 
-        ko.utils.arrayForEach(selectedItems, function (item) {
-            if (ko.utils.arrayIndexOf(items, item) < 0) {
+        ng.utils.arrayForEach(selectedItems, function (item) {
+            if (ng.utils.arrayIndexOf(items, item) < 0) {
                 itemsToRemove.push(item);
             }
         });
@@ -1737,9 +1710,9 @@ kg.SelectionManager = function (options, rowManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\GridManager.js 
+* FILE: ..\src\gridClasses\gridManager.js 
 ***********************************************/ 
-﻿kg.gridManager = (new function () {
+﻿ng.gridManager = (new function () {
     var self = this,
         elementGridKey = '__koGrid__';
 
@@ -1792,7 +1765,7 @@ kg.SelectionManager = function (options, rowManager) {
 
         grid.$viewport.off('keydown');
         grid.$viewport.on('keydown', function (e) {
-            return kg.moveSelectionHandler(grid, e);
+            return ng.moveSelectionHandler(grid, e);
         });
         
         //Chrome and firefox both need a tab index so the grid can recieve focus.
@@ -1832,7 +1805,7 @@ kg.SelectionManager = function (options, rowManager) {
             //catch this so we can return the viewer to their original scroll after the resize!
             scrollTop = grid.$viewport.scrollTop();
 
-            kg.domUtility.measureGrid(grid.$root, grid);
+            ng.domUtility.measureGrid(grid.$root, grid);
 
             //check to see if anything has changed
             if (prevSizes.rootMaxH !== grid.elementDims.rootMaxH && grid.elementDims.rootMaxH !== 0) { // if display: none is set, then these come back as zeros
@@ -1860,55 +1833,54 @@ kg.SelectionManager = function (options, rowManager) {
  
  
 /*********************************************** 
-* FILE: ..\Src\Grid.js 
+* FILE: ..\src\gridClasses\grid.js 
 ***********************************************/ 
 ﻿/// <reference path="../lib/jquery-1.7.js" />
 /// <reference path="../lib/knockout-2.0.0.debug.js" />
 
-kg.KoGrid = function (options, gridWidth) {
+ng.grid = function (options, gridWidth) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
         headerRowHeight: 30,
         footerRowHeight: 55,
         filterRowHeight: 30,
-        rowTemplate: 'kgRowTemplate',
-        headerTemplate: 'kgHeaderRowTemplate',
-        headerCellTemplate: 'kgHeaderCellTemplate',
-        footerTemplate: 'kgFooterTemplate',
-        footerVisible: ko.observable(true),
+        rowTemplate: 'ngRowTemplate',
+        headerTemplate: 'ngHeaderRowTemplate',
+        headerCellTemplate: 'ngHeaderCellTemplate',
+        footerTemplate: 'ngFooterTemplate',
+        footerVisible: true,
         canSelectRows: true,
         autogenerateColumns: true,
-        data: null, //ko.observableArray
-        columnDefs: ko.observableArray([]),
+        data: [],
+        columnDefs: [],
         pageSizes: [250, 500, 1000], //page Sizes
         enablePaging: false,
-        pageSize: ko.observable(250), //Size of Paging data
-        totalServerItems: ko.observable(), //ko.observable of how many items are on the server (for paging)
-        currentPage: ko.observable(1), //ko.observable of what page they are currently on
-        selectedItems: ko.observableArray([]), //ko.observableArray
-        selectedIndex: ko.observable(0), //observable of the index of the selectedItem in the data array
+        pageSize: 250, //Paging: Size of Paging data
+        totalServerItems: undefined, //Paging: how many items are on the server
+        currentPage: 1, //Paging: initial displayed page.
+        selectedItems: [], 
+        selectedIndex: 0, //index of the selectedItem in the data array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
         useExternalSorting: false,
-        filterInfo: ko.observable(), //observable that holds filter information (fields, and filtering strings)
-        sortInfo: ko.observable(), //observable similar to filterInfo
+        filterInfo: undefined, // holds filter information (fields, and filtering strings)
+        sortInfo: undefined, // similar to filterInfo
         filterWildcard: "*",
         includeDestroyed: false, // flag to show _destroy=true items in grid
         selectWithCheckboxOnly: false,
         keepLastSelectedAround: false,
         isMultiSelect: true,
-        lastClickedRow: ko.observable(),
+        lastClickedRow: undefined,
         tabIndex: -1,
         disableTextSelection: false,
         enableColumnResize: true
     },
 
     self = this,
-    filterIsOpen = ko.observable(false), //observable so that the header can subscribe and change height when opened
-    filterManager, //kg.FilterManager
-    sortManager, //kg.SortManager
+    filterManager, //ng.filterManager
+    sortManager, //ng.sortManager
     isSorting = false,
     prevScrollTop,
     prevScrollLeft,
@@ -1924,17 +1896,12 @@ kg.KoGrid = function (options, gridWidth) {
     this.$viewport;
     this.$canvas;
     this.$footerPanel;
-    this.width = ko.observable(gridWidth);
+    this.width = gridWidth;
     this.selectionManager;
     this.selectedItemCount;
     
-    //If column Defs are not observable, make them so. Will not update dynamically this way.
-    if (options.columnDefs && !ko.isObservable(options.columnDefs)){
-        var observableColumnDefs = ko.observableArray(options.columnDefs);
-        options.columnDefs = observableColumnDefs;
-    }
     this.config = $.extend(defaults, options);
-    this.gridId = "kg" + kg.utils.newId();
+    this.gridId = "ng" + ng.utils.newId();
     this.initPhase = 0;
 
 
@@ -1949,8 +1916,8 @@ kg.KoGrid = function (options, gridWidth) {
     // computed observables register correctly;
     this.data = self.config.data;
 
-    filterManager = new kg.FilterManager(self.config);
-    sortManager = new kg.SortManager({
+    filterManager = new ng.filterManager(self.config);
+    sortManager = new ng.sortManager({
         data: filterManager.filteredData,
         sortInfo: self.config.sortInfo,
         useExternalSorting: self.config.useExternalSorting
@@ -1958,21 +1925,22 @@ kg.KoGrid = function (options, gridWidth) {
 
     this.sortInfo = sortManager.sortInfo; //observable
     this.filterInfo = filterManager.filterInfo; //observable
+    this.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
     this.finalData = sortManager.sortedData; //observable Array
-    this.canvasHeight = ko.observable(maxCanvasHt.toString() + 'px');
+    this.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    this.maxRows = ko.computed(function () {
-        var rows = self.finalData();
+    this.maxRows = (function () {
+        var rows = self.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         self.canvasHeight(maxCanvasHt.toString() + 'px');
         return rows.length || 0;
-    });
+    })();
 
     this.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
 
-    this.columns = new kg.ColumnCollection();
+    this.columns = [];
 
     //initialized in the init method
     this.rowManager;
@@ -1996,14 +1964,13 @@ kg.KoGrid = function (options, gridWidth) {
     };
     this.elementsNeedMeasuring = true;
 
-    //#region Container Dimensions
+    //#region Container dimensions
 
-    this.rootDim = ko.observable(new kg.Dimension({ outerHeight: 20000, outerWidth: 20000 }));
+    this.rootDim = new ng.dimension({ outerHeight: 20000, outerWidth: 20000 });
 
-    this.headerDim = ko.computed(function () {
+    this.headerDim = (function () {
         var rootDim = self.rootDim(),
-            filterOpen = filterIsOpen(),
-            newDim = new kg.Dimension();
+            newDim = new ng.dimension();
 
         newDim.outerHeight = self.config.headerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -2013,12 +1980,12 @@ kg.KoGrid = function (options, gridWidth) {
         }
 
         return newDim;
-    });
+    })();
 
-    this.footerDim = ko.computed(function () {
+    this.footerDim = (function () {
         var rootDim = self.rootDim(),
-            showFooter = self.config.footerVisible(),
-            newDim = new kg.Dimension();
+            showFooter = self.config.footerVisible,
+            newDim = new ng.dimension();
 
         newDim.outerHeight = self.config.footerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -2028,13 +1995,13 @@ kg.KoGrid = function (options, gridWidth) {
         }
 
         return newDim;
-    });
+    })();
 
-    this.viewportDim = ko.computed(function () {
-        var rootDim = self.rootDim(),
-            headerDim = self.headerDim(),
-            footerDim = self.footerDim(),
-            newDim = new kg.Dimension();
+    this.viewportDim = (function () {
+        var rootDim = self.rootDim,
+            headerDim = self.headerDim,
+            footerDim = self.footerDim,
+            newDim = new ng.dimension();
 
         newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -2042,35 +2009,35 @@ kg.KoGrid = function (options, gridWidth) {
         newDim.innerWidth = newDim.outerWidth;
 
         return newDim;
-    });
+    })();
 
-    this.totalRowWidth = ko.computed(function () {
+    this.totalRowWidth = (function () {
         var totalWidth = 0,
-            cols = self.columns(),
-            numOfCols = self.columns().length,
+            cols = self.columns,
+            numOfCols = self.columns.length,
             asterisksArray = [],
             percentArray = [],
             asteriskNum = 0;
             
-        kg.utils.forEach(cols, function (col, i) {
+        ng.utils.forEach(cols, function (col, i) {
             // get column width out of the observable
-            var t = col.width();
+            var t = col.width;
             // check if it is a number
             if (isNaN(t)){
                 // figure out if the width is defined or if we need to calculate it
                 if (t == undefined) {
                     // set the width to the length of the header title +30 for sorting icons and padding
-                    col.width((col.displayName.length * kg.domUtility.letterW) + 30); 
+                    col.width = (col.displayName.length * ng.domUtility.letterW) + 30; 
                 } else if (t.indexOf("*") != -1){
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0){
-                        col.width(self.width() - totalWidth);
+                        col.width = self.width - totalWidth;
                     } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
                         asteriskNum += t.length;
                         asterisksArray.push(col);
                         return;
                     }
-                } else if (kg.utils.endsWith(t, "%")){ // If the width is a percentage, save it until the very last.
+                } else if (ng.utils.endsWith(t, "%")){ // If the width is a percentage, save it until the very last.
                     percentArray.push(col);
                     return;
                 } else { // we can't parse the width so lets throw an error.
@@ -2078,65 +2045,65 @@ kg.KoGrid = function (options, gridWidth) {
                 }
             }
             // add the caluclated or pre-defined width the total width
-            totalWidth += col.width();
+            totalWidth += col.width;
             // set the flag as the width is configured so the subscribers can be added
             col.widthIsConfigured = true;
         });
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0){
             // get the remaining width
-            var remainigWidth = self.width() - totalWidth;
+            var remainigWidth = self.width - totalWidth;
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainigWidth / asteriskNum);
             // set the width of each column based on the number of stars
-            kg.utils.forEach(asterisksArray, function (col, i) {
-                var t = col.width().length;
-                col.width(asteriskVal * t);
-                totalWidth += col.width();
+            ng.utils.forEach(asterisksArray, function (col, i) {
+                var t = col.width.length;
+                col.width = asteriskVal * t;
+                totalWidth += col.width;
             });
         }
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0){
             // do the math
-            kg.utils.forEach(percentArray, function (col, i) {
-                var t = col.width();
-                col.width(Math.floor(self.width() * (parseInt(t.slice(0, - 1)) / 100)));
-                totalWidth += col.width();
+            ng.utils.forEach(percentArray, function (col, i) {
+                var t = col.width;
+                col.width = Math.floor(self.width * (parseInt(t.slice(0, - 1)) / 100));
+                totalWidth += col.width;
             });
         }
         return totalWidth;
-    });
+    })();
 
-    this.minRowsToRender = ko.computed(function () {
-        var viewportH = self.viewportDim().outerHeight || 1;
+    this.minRowsToRender = (function () {
+        var viewportH = self.viewportDim.outerHeight || 1;
 
-        if (filterIsOpen()) {
+        if (filterIsOpen) {
             return prevMinRowsToRender;
         };
 
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
 
         return prevMinRowsToRender;
-    });
+    })();
 
 
-    this.headerScrollerDim = ko.computed(function () {
-        var viewportH = self.viewportDim().outerHeight,
-            filterOpen = filterIsOpen(), //register this observable
-            maxHeight = self.maxCanvasHeight(),
+    this.headerScrollerDim = (function () {
+        var viewportH = self.viewportDim.outerHeight,
+            filterOpen = filterIsOpen, //register this observable
+            maxHeight = self.maxCanvasHeight,
             vScrollBarIsOpen = (maxHeight > viewportH),
-            hScrollBarIsOpen = (self.viewportDim().outerWidth < self.totalRowWidth()),
-            newDim = new kg.Dimension();
+            hScrollBarIsOpen = (self.viewportDim.outerWidth < self.totalRowWidth),
+            newDim = new ng.dimension();
 
         newDim.autoFitHeight = true;
-        newDim.outerWidth = self.totalRowWidth();
+        newDim.outerWidth = self.totalRowWidth;
 
         if (vScrollBarIsOpen) { newDim.outerWidth += self.elementDims.scrollW; }
         else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { //if the horizontal scroll is open it forces the viewport to be smaller
             newDim.outerWidth += self.elementDims.scrollW;
         }
         return newDim;
-    });
+    })();
 
     //#endregion
 
@@ -2146,9 +2113,9 @@ kg.KoGrid = function (options, gridWidth) {
     this.sortData = function (col, dir) {
         isSorting = true;
 
-        kg.utils.forEach(self.columns(), function (column) {
+        ng.utils.forEach(self.columns, function (column) {
             if (column.field !== col.field) {
-                if (column.sortDirection() !== "") { column.sortDirection(""); }
+                if (column.sortDirection !== "") { column.sortDirection = ""; }
             }
         });
 
@@ -2160,24 +2127,24 @@ kg.KoGrid = function (options, gridWidth) {
     //#endregion
 
     //keep selected item scrolled into view
-    this.finalData.subscribe(function () {
+    this.finalData.$watch(function () {
          if (self.config.selectedItems()) {
-            var lastItemIndex = self.config.selectedItems().length - 1;
+            var lastItemIndex = self.config.selectedItems.length - 1;
             if (lastItemIndex <= 0) {
-                var item = self.config.selectedItems()[lastItemIndex];
+                var item = self.config.selectedItems[lastItemIndex];
                 if (item) {
-                   scrollIntoView(item);
+                   self.scrollIntoView(item);
                 }
             }
         }
     });
 
-    var scrollIntoView = function (entity) {
+    this.scrollIntoView = function (entity) {
         var itemIndex,
-            viewableRange = self.rowManager.viewableRange();
+            viewableRange = self.rowManager.viewableRange;
 
         if (entity) {
-            itemIndex = ko.utils.arrayIndexOf(self.finalData(), entity);
+            itemIndex = ng.utils.arrayIndexOf(self.finalData, entity);
         }
 
         if (itemIndex > -1) {
@@ -2185,7 +2152,7 @@ kg.KoGrid = function (options, gridWidth) {
             if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
                 //scroll it into view
-                self.rowManager.viewableRange(new kg.Range(itemIndex, itemIndex + self.minRowsToRender()));
+                self.rowManager.viewableRange = new ng.range(itemIndex, itemIndex + self.minRowsToRender);
 
                 if (self.$viewport) {
                     self.$viewport.scrollTop(itemIndex * self.config.rowHeight);
@@ -2195,8 +2162,8 @@ kg.KoGrid = function (options, gridWidth) {
     };
 
     this.refreshDomSizes = function () {
-        var dim = new kg.Dimension(),
-            oldDim = self.rootDim(),
+        var dim = new ng.dimension(),
+            oldDim = self.rootDim,
             rootH = 0,
             rootW = 0,
             canvasH = 0;
@@ -2204,7 +2171,7 @@ kg.KoGrid = function (options, gridWidth) {
         self.elementsNeedMeasuring = true;
 
         //calculate the POSSIBLE biggest viewport height
-        rootH = self.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = self.maxCanvasHeight + self.config.headerRowHeight + self.config.footerRowHeight;
 
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
@@ -2214,10 +2181,10 @@ kg.KoGrid = function (options, gridWidth) {
         canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
 
         //get the max row Width for rendering
-        rootW = self.totalRowWidth() + self.elementDims.rowWdiff;
+        rootW = self.totalRowWidth + self.elementDims.rowWdiff;
 
         //now see if we are going to have a vertical scroll bar present
-        if (self.maxCanvasHeight() > canvasH) {
+        if (self.maxCanvasHeight > canvasH) {
 
             //if we are, then add that width to the max width 
             rootW += self.elementDims.scrollW || 0;
@@ -2233,13 +2200,11 @@ kg.KoGrid = function (options, gridWidth) {
         if (dim.outerHeight !== oldDim.outerHeight || dim.outerWidth !== oldDim.outerWidth) {
 
             //if its not the same, then fire the subscriptions
-            self.rootDim(dim);
+            self.rootDim = dim;
         }
     };
 
-    this.refreshDomSizesTrigger = ko.computed(function () {
-        //register dependencies
-        var data = self.data();
+    this.refreshDomSizesTrigger = (function () {
 
         if (h_updateTimeout) {
             if (window.setImmediate) {
@@ -2252,11 +2217,11 @@ kg.KoGrid = function (options, gridWidth) {
         if (self.initPhase > 0) {
 
             //don't shrink the grid if we sorting or filtering
-            if (!filterIsOpen() && !isSorting) {
+            if (!filterIsOpen && !isSorting) {
 
                 self.refreshDomSizes();
 
-                kg.cssBuilder.buildStyles(self);
+                ng.cssBuilder.buildStyles(self);
 
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
@@ -2264,25 +2229,25 @@ kg.KoGrid = function (options, gridWidth) {
             }
         }
 
-    });
+    })();
 
     this.buildColumnDefsFromData = function () {
-        if (self.config.columnDefs().length > 0){
+        if (self.config.columnDefs.length > 0){
             return;
         }
-        if (!self.data() || !self.data()[0]) {
+        if (!self.data || !self.data[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
 
         var item;
-        item = self.data()[0];
+        item = self.data[0];
 
-        kg.utils.forIn(item, function (prop, propName) {
-            if (propName === '__kg_selected__') {
+        ng.utils.forIn(item, function (prop, propName) {
+            if (propName === '__ng_selected__') {
                 return;
             }
 
-            self.config.columnDefs().push({
+            self.config.columnDefs.push({
                 field: propName
             });
         });
@@ -2296,10 +2261,10 @@ kg.KoGrid = function (options, gridWidth) {
         if (self.config.autogenerateColumns) { self.buildColumnDefsFromData(); }
 
         if (self.config.displaySelectionCheckbox) {
-            columnDefs().splice(0, 0, { field: '__kg_selected__', width: self.elementDims.rowSelectedCellW });
+            columnDefs.splice(0, 0, { field: '__ng_selected__', width: self.elementDims.rowSelectedCellW });
         }
         if (self.config.displayRowIndex) {
-            columnDefs().splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
+            columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
         }
         
         var createColumnSortClosure = function (col) {
@@ -2310,16 +2275,16 @@ kg.KoGrid = function (options, gridWidth) {
             }
         }
 
-        if (columnDefs().length > 0) {
+        if (columnDefs.length > 0) {
 
-            kg.utils.forEach(columnDefs(), function (colDef, i) {
-                var column = new kg.Column(colDef, i);
-                column.sortDirection.subscribe(createColumnSortClosure(column));                
-                column.filter.subscribe(filterManager.createFilterChangeCallback(column));
+            ng.utils.forEach(columnDefs, function (colDef, i) {
+                var column = new ng.column(colDef, i);
+                column.sortDirection.$watch(createColumnSortClosure(column));                
+                column.filter.$watch(filterManager.createFilterChangeCallback(column));
                 cols.push(column);
             });
 
-            self.columns(cols);
+            self.columns = cols;
         }
     };
 
@@ -2328,16 +2293,16 @@ kg.KoGrid = function (options, gridWidth) {
         self.buildColumns();
 
         //now if we are using the default templates, then make the generated ones unique
-        if (self.config.rowTemplate === 'kgRowTemplate') {
+        if (self.config.rowTemplate === 'ngRowTemplate') {
             self.config.rowTemplate = self.gridId + self.config.rowTemplate;
         }
 
-        if (self.config.headerTemplate === 'kgHeaderRowTemplate') {
+        if (self.config.headerTemplate === 'ngHeaderRowTemplate') {
             self.config.headerTemplate = self.gridId + self.config.headerTemplate;
         }
 
-        self.rowManager = new kg.RowManager(self);
-        self.selectionManager = new kg.SelectionManager({
+        self.rowManager = new ng.rowManager(self);
+        self.selectionManager = new ng.selectionManager({
             isMultiSelect: self.config.isMultiSelect,
             data: self.finalData,
             selectedItem: self.config.selectedItem,
@@ -2347,9 +2312,9 @@ kg.KoGrid = function (options, gridWidth) {
             isMulti: self.config.isMultiSelect
         }, self.rowManager);
         
-        kg.utils.forEach(self.columns(), function(col) {
+        ng.utils.forEach(self.columns, function(col) {
             if (col.widthIsConfigured){
-                col.width.subscribe(function(){
+                col.width.$watch(function(){
                     self.rowManager.dataChanged = true;
                     self.rowManager.rowCache = []; //if data source changes, kill this!
                     self.rowManager.calcRenderedRange();
@@ -2361,7 +2326,7 @@ kg.KoGrid = function (options, gridWidth) {
         self.toggleSelectAll = self.selectionManager.toggleSelectAll;
         self.rows = self.rowManager.rows; // dependent observable
 
-        kg.cssBuilder.buildStyles(self);
+        ng.cssBuilder.buildStyles(self);
 
         self.initPhase = 1;
     };
@@ -2373,7 +2338,7 @@ kg.KoGrid = function (options, gridWidth) {
 
             self.refreshDomSizes();
 
-            kg.cssBuilder.buildStyles(self);
+            ng.cssBuilder.buildStyles(self);
 
             if (self.initPhase > 0 && self.$root) {
                 self.$root.show();
@@ -2388,29 +2353,21 @@ kg.KoGrid = function (options, gridWidth) {
     };
 
     this.showFilter_Click = function () {
-        var isOpen = (filterIsOpen() ? false : true);
-
-        self.headerRow.filterVisible(isOpen);
-
-        filterIsOpen(isOpen);
+        self.headerRow.filterVisible = !self.filterIsOpen;
+        self.filterIsOpen = !self.filterIsOpen;
     };
 
     this.clearFilter_Click = function () {
-        kg.utils.forEach(self.columns(), function (col, i) {
-            col.filter(null);
+        ng.utils.forEach(self.columns, function (col, i) {
+            col.filter = null;
         });
     };
 
     this.adjustScrollTop = function (scrollTop, force) {
-        var rowIndex;
-
         if (prevScrollTop === scrollTop && !force) { return; }
-
-        rowIndex = Math.floor(scrollTop / self.config.rowHeight);
-
+        var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-
-        self.rowManager.viewableRange(new kg.Range(rowIndex, rowIndex + self.minRowsToRender()));
+        self.rowManager.viewableRange = new ng.range(rowIndex, rowIndex + self.minRowsToRender);
     };
 
     this.adjustScrollLeft = function (scrollLeft) {
@@ -2418,14 +2375,15 @@ kg.KoGrid = function (options, gridWidth) {
             self.$headerContainer.scrollLeft(scrollLeft);
         }
     };
-
+    
+    self.data.$watch(self.refreshDomSizesTrigger)
     //call init
     self.init();
 }; 
  
  
 /*********************************************** 
-* FILE: ..\Src\DomManipulation\CssBuilder.js 
+* FILE: ..\src\domManipulation\cssBuilder.js 
 ***********************************************/ 
 ﻿/// <reference path="../../lib/jquery-1.7.js" />
 /// <reference path="../../lib/knockout-2.0.0.debug.js" />
@@ -2440,7 +2398,7 @@ kg.cssBuilder = {
             gridId = grid.gridId,
             rules,
             i = 0,
-            len = grid.columns().length,
+            len = grid.columns.length,
             css = new kg.utils.StringBuilder(),
             col,
             sumWidth = 0,
@@ -2451,7 +2409,7 @@ kg.cssBuilder = {
         }
         $style.empty();
         
-        css.append(".{0} .kgCanvas { width: {1}px; }", gridId, grid.totalRowWidth());
+        css.append(".{0} .kgCanvas { width: {1}px; }", gridId, grid.totalRowWidth);
         css.append(".{0} .kgCell { height: {1}px; }", gridId, rowHeight);
         css.append(".{0} .kgRow { position: absolute; left: 0; right: 0; height: {1}px; line-height: {1}px; display: inline; }", gridId, rowHeight);
         css.append(".{0} .kgHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
@@ -2460,7 +2418,7 @@ kg.cssBuilder = {
         for (; i < len; i++) {
             col = grid.columns()[i];
             colWidth = col.width() - grid.elementDims.cellWdiff;
-            css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth() - sumWidth - col.width()));
+            css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth - sumWidth - col.width));
             sumWidth += col.width();
         }
 
@@ -2479,7 +2437,7 @@ kg.cssBuilder = {
  
  
 /*********************************************** 
-* FILE: ..\Src\DomManipulation\DomUtility.js 
+* FILE: ..\src\domManipulation\domUtility.js 
 ***********************************************/ 
 ﻿kg.domUtility = (new function () {
     var $testContainer = $('<div></div>'),
@@ -2679,7 +2637,7 @@ kg.cssBuilder = {
  
  
 /*********************************************** 
-* FILE: ..\Src\BindingHandlers\kgWith.js 
+* FILE: ..\src\directives\ng-with.js 
 ***********************************************/ 
 ﻿
 // This binding only works if the object that you want
@@ -2707,7 +2665,7 @@ ko.bindingHandlers['kgWith'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\Src\BindingHandlers\koGrid.js 
+* FILE: ..\src\directives\ng-grid.js 
 ***********************************************/ 
 ﻿/// <reference path="../../lib/knockout-2.0.0.debug.js" />
 /// <reference path="../../lib/jquery-1.7.js" />
@@ -2807,7 +2765,7 @@ ko.bindingHandlers['koGrid'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\Src\BindingHandlers\kgRows.js 
+* FILE: ..\src\directives\ng-rows.js 
 ***********************************************/ 
 ﻿/// <reference path="../../lib/knockout-2.0.0.debug.js" />
 /// <reference path="../../lib/jquery-1.7.js" />
@@ -2929,7 +2887,7 @@ ko.bindingHandlers['kgRows'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\Src\BindingHandlers\kgRow.js 
+* FILE: ..\src\directives\ng-row.js 
 ***********************************************/ 
 ko.bindingHandlers['kgRow'] = (function () {
     return {
@@ -2964,7 +2922,7 @@ ko.bindingHandlers['kgRow'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\Src\BindingHandlers\kgCell.js 
+* FILE: ..\src\directives\ng-cell.js 
 ***********************************************/ 
 ﻿/// <reference path="../../lib/knockout-2.0.0.debug.js" />
 /// <reference path="../../lib/jquery-1.7.js" />
@@ -3004,7 +2962,7 @@ ko.bindingHandlers['kgCell'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\src\BindingHandlers\kgHeaderRow.js 
+* FILE: ..\src\directives\ng-headerRow.js 
 ***********************************************/ 
 ﻿ko.bindingHandlers['kgHeaderRow'] = (function () {
 
@@ -3049,7 +3007,7 @@ ko.bindingHandlers['kgCell'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\src\BindingHandlers\kgHeaderCell.js 
+* FILE: ..\src\directives\ng-headerCell.js 
 ***********************************************/ 
 ﻿ko.bindingHandlers['kgHeader'] = (function () {
     var makeNewValueAccessor = function (headerCell, grid) {
@@ -3111,7 +3069,7 @@ ko.bindingHandlers['kgCell'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\src\BindingHandlers\kgFooter.js 
+* FILE: ..\src\directives\ng-footer.js 
 ***********************************************/ 
 ﻿ko.bindingHandlers['kgFooter'] = (function () {
     var makeNewValueAccessor = function (grid) {
@@ -3142,7 +3100,7 @@ ko.bindingHandlers['kgCell'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\src\BindingHandlers\kgSize.js 
+* FILE: ..\src\directives\ng-size.js 
 ***********************************************/ 
 ﻿ko.bindingHandlers['kgSize'] = (function () {
 
@@ -3187,7 +3145,7 @@ ko.bindingHandlers['kgCell'] = (function () {
  
  
 /*********************************************** 
-* FILE: ..\src\BindingHandlers\kgMouseEvents.js 
+* FILE: ..\src\directives\ng-mouseEvents.js 
 ***********************************************/ 
 ko.bindingHandlers['mouseEvents'] = (function () {
     return {
