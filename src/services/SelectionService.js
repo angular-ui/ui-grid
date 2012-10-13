@@ -1,5 +1,14 @@
 servicesModule.factory('SelectionService', ['$scope', function($scope) {
-    var SelectionService = {};	
+    var SelectionService = {};		
+	
+	// the count of selected items (supports both multi and single-select logic
+    $scope.selectedItemCount = function () {
+        return $scope.selectedItems.length;
+    }
+	
+	$scope.maxRows = function () {
+	   return $scope.dataSource.length;
+	};
 		
 	SelectionService.initialize = function(options, rowManager){
 		$scope.isMulti = options.isMulti || options.isMultiSelect;
@@ -34,8 +43,8 @@ servicesModule.factory('SelectionService', ['$scope', function($scope) {
 				newItems = [];
 			}
 			angular.forEach(data, function (item, i) {
-				if (!item[KEY]) {
-					item[KEY] = false;
+				if (!item[$scope.KEY]) {
+					item[$scope.KEY] = false;
 				}
 				if (ng.utils.arrayIndexOf(newItems, item) > -1) {
 					//newItems contains the item
@@ -95,15 +104,6 @@ servicesModule.factory('SelectionService', ['$scope', function($scope) {
 			}
 		}
 	}	
-	
-	// the count of selected items (supports both multi and single-select logic
-    $scope.selectedItemCount = function () {
-        return $scope.selectedItems.length;
-    }
-	
-	$scope.maxRows = function () {
-	   return $scope.dataSource.length;
-	};
 		
 	// function to manage the selection action of a data item (entity)
     SelectionService.changeSelection = function (rowItem, evt) {
