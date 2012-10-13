@@ -1,5 +1,6 @@
 ﻿serviceModule.factory('FilterService', ['$scope', function($scope) {
     var FilterService = {};	
+    
     FilterService.initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             includeDestroyed = options.includeDestroyed || false, // flag to indicate whether to include _destroy=true items in filtered data
@@ -13,7 +14,6 @@
         } else {
             throw new Error("You can only declare a percent sign (%) or an asterisk (*) as a wildcard character");
         }
-        
         // filters off _destroy = true items
         $scope.filterDestroyed = function (arr) {
             return ng.utils.arrayFilter(arr, function (item) {
@@ -36,7 +36,7 @@
             }
         });
         // utility function for checking data validity
-        var isEmpty = function (data) {
+        $scope.isEmpty = function (data) {
             return (data === null || data === undefined || data === '');
         };
         // performs regex matching on data strings
@@ -76,20 +76,20 @@
             return itemStr.match(regex);
         };
         // the core logic for filtering data
-        var filterData = function () {
-            var filterInfo = self.filterInfo,
+        $scope.filterData = function () {
+            var fi = $scope.filterInfo,
             data = self.data,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
             newArr = [], // the filtered array
-            field, // the field of the column that we are filtering
+            f, // the field of the column that we are filtering
             itemData, // the data from the specific row's column
             itemDataStr, // the stringified version of itemData
             filterStr; // the user-entered filtering criteria
             // filter the destroyed items
-            data = filterDestroyed(data);
+            data = $scope.filterDestroyed(data);
             // make sure we even have work to do before we get started
-            if (!filterInfo || $.isEmptyObject(filterInfo) || options.useExternalFiltering) {
+            if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
                 internalFilteredData = data;
                 return;
             }
@@ -100,22 +100,22 @@
                 var propPath,
                 i;
                 //loop through each property and filter it
-                for (field in filterInfo) {
-                    if (filterInfo.hasOwnProperty(field)) {
+                for (f in fi) {
+                    if (fi.hasOwnProperty(f)) {
                         // pull the data out of the item
-                        itemData = ng.utils.getPropertyPath(field, item);
+                        itemData = ng.utils.getPropertyPath(f, item);
                         // grab the user-entered filter criteria
-                        filterStr = filterInfo[field];
+                        filterStr = fi[f];
                         // make sure they didn't just enter the wildcard character
-                        if (!isEmpty(filterStr) && filterStr !== wildcard) {
+                        if (!$scope.isEmpty(filterStr) && filterStr !== wildcard) {
                             // execute regex matching
-                            if (isEmpty(itemData)) {
+                            if ($scope.isEmpty(itemData)) {
                                 match = false;
                             } else if (typeof itemData === "string") {
-                                match = matchString(itemData, filterStr);
+                                match = $scope.matchString(itemData, filterStr);
                             } else {
                                 itemDataStr = itemData.toString();
-                                match = matchString(itemDataStr, filterStr);
+                                match = $scope.matchString(itemDataStr, filterStr);
                             }
                         }
                     }
@@ -138,53 +138,37 @@
             // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
             internalFilteredData = newArr;
         };
-        
-        
+        //create subscriptions
+        $scope.$watch($scope.data, $scope.filterData);
+        $scope.$watch($scope.filterInfo, $scope.filterData);
+        //increase this after initialization so that the computeds fire correctly
+        initPhase = 1;
     };
-    return FilterService;
-}]);
-ng.filterManager = function (options) {
-
-
-    //create subscriptions
-    this.data.$watch(filterData);
-    this.filterInfo.$watch(filterData);
-
+    
     // the grid uses this to asign the change handlers to the filter boxes during initialization
-    this.createFilterChangeCallback = function (col) {
-
+    FilterService.createFilterChangeCallback = function (col) {
         // the callback
         return function (newFilterVal) {
             var info = self.filterInfo;
-
             if (!info && !newFilterVal) {
                 return;
             }
-
             //if we're still here, we may need to new up the info
             if (!info) { info = {}; }
-
             if ((newFilterVal === null ||
-                newFilterVal === undefined ||
-                newFilterVal === "") &&
-                info[col.field]) { // we don't it to be null or undefined
-
+            newFilterVal === undefined ||
+            newFilterVal === "") &&
+            info[col.field]) { // we don't it to be null or undefined
                 //smoke it so we don't loop through it for filtering anymore!
                 delete info[col.field];
-
             } else if (newFilterVal !== null && newFilterVal !== undefined) {
-
                 info[col.field] = newFilterVal;
-
             }
             self.filterInfo = info;
-
             if (options && options.currentPage) {
                 options.currentPage = 1;
             }
         };
     };
-
-    //increase this after initialization so that the computeds fire correctly
-    initPhase = 1;
-};
+    return FilterService;
+}]);
