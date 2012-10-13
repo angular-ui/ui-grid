@@ -9,18 +9,16 @@
 
 var module = angular.module('ngGrid.services', []);
 
-module.factory('SelectionManager', ['$scope', function($scope) {
-    var SelectionManager = {};
-	
-	SelectionManager.initialize = function(options, rowManager){
+module.factory('SelectionManagerService', ['$scope', function($scope) {
+    var SelectionManagerService = {};	
+		
+	SelectionManagerService.initialize = function(options, rowManager){
 		$scope.isMulti = options.isMulti || options.isMultiSelect;
         $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
         $scope.KEY = '__ng_selected__', // constant for the selection property that we add to each data item,
         $scope.ROW_KEY = '__ng_rowIndex__', // constant for the entity's rowCache rowIndex
-        //maxRows = (function () {
-        //   return dataSource.length;
-        //})();
+        		
 		$scope.selectedItem = options.selectedItem || undefined; 
 		$scope.selectedItems = options.selectedItems || []; 
 		$scope.selectedIndex = options.selectedIndex; 
@@ -39,10 +37,87 @@ module.factory('SelectionManager', ['$scope', function($scope) {
 			$scope.selectedItem(vals ? vals[0] : null);
 			$scope.ignoreSelectedItemChanges = false;
 		});
-	}
+		
+		// ensures our selection flag on each item stays in sync
+		$scope.$watch($scope.selectedItems, function (newItems) {
+			var data = $scope.dataSource;
+			if (!newItems) {
+				newItems = [];
+			}
+			angular.forEach(data, function (item, i) {
+				if (!item[KEY]) {
+					item[KEY] = false;
+				}
+				if (ng.utils.arrayIndexOf(newItems, item) > -1) {
+					//newItems contains the item
+					item[$scope.KEY] = true;
+				} else {
+					item[$scope.KEY] = false;
+				}
+			});
+		});		
+		
+		//make sure as the data changes, we keep the selectedItem(s) correct
+		$scope.$watch($scope.dataSource, function (items) {
+			var selectedItems,
+				itemsToRemove;
+			if (!items) {
+				return;
+			}
+			
+			//make sure the selectedItem(s) exist in the new data
+			selectedItems = $scope.selectedItems;
+			itemsToRemove = [];
+
+			angular.forEach(selectedItems, function (item) {
+				if (ng.utils.arrayIndexOf(items, item) < 0) {
+					itemsToRemove.push(item);
+				}
+			});
+
+			//clean out any selectedItems that don't exist in the new array
+			if (itemsToRemove.length > 0) {
+				$scope.selectedItems.removeAll(itemsToRemove);
+			}
+		});
+		
+		// writable-computed observable
+		// @return - boolean indicating if all items are selected or not
+		// @val - boolean indicating whether to select all/de-select all
+		$scope.toggleSelectAll = {
+			get: function () {
+				var cnt = $scope.selectedItemCount;
+				if ($scope.maxRows() === 0) {
+					return false;
+				}
+				return cnt === $scope.maxRows();
+			},
+			set: function (val) {
+				var checkAll = val,
+				dataSourceCopy = [];
+				angular.forEach(dataSource, function (item) {
+					dataSourceCopy.push(item);
+				});
+				if (checkAll) {
+					$scope.selectedItems = dataSourceCopy;
+				} else {
+					$scope.selectedItems = [];
+				}
+			}
+		}
+	}	
+	
+	// the count of selected items (supports both multi and single-select logic
+    $scope.selectedItemCount = function () {
+        return $scope.selectedItems.length;
+    }
+	
+	$scope.maxRows = function () {
+	   return $scope.dataSource.length;
+	};
 		
 	// function to manage the selection action of a data item (entity)
-    SelectionManager.changeSelection = function (rowItem, evt) {
+    SelectionManagerService.changeSelection = function (rowItem, evt) {
         if ($scope.isMulti && evt && evt.shiftKey) {
             if($scope.lastClickedRow) {
                 var thisIndx = $scope.rowManager.rowCache.indexOf(rowItem);
@@ -70,7 +145,7 @@ module.factory('SelectionManager', ['$scope', function($scope) {
     }
 	
 	// just call this func and hand it the rowItem you want to select (or de-select)    
-    SelectionManager.addOrRemove = function(rowItem) {
+    SelectionManagerService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
             $scope.selectedItems.remove(rowItem.entity);
         } else {
@@ -80,14 +155,11 @@ module.factory('SelectionManager', ['$scope', function($scope) {
         }
     };
 	
-	// the count of selected items (supports both multi and single-select logic
-    $scope.selectedItemCount = (function () {
-        return $scope.selectedItems.length;
-    })();
-	
-	return SelectionManager;
+	return SelectionManagerService;
 }]);
    
+   
+//knockout starts   
 ng.selectionManager = function (options, rowManager) {
     var self = this,
         isMulti = options.isMulti || options.isMultiSelect,
