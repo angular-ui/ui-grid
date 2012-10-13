@@ -1,40 +1,46 @@
 ﻿serviceModule.factory('FilterService', ['$scope', function($scope) {
     var FilterService = {};	
     
+    // array that we use to manage the filtering before it updates the final data
+    $scope.internalFilteredData = [];
+    
+    // filters off _destroy = true items
+    $scope.filterDestroyed = function (arr) {
+        return ng.utils.arrayFilter(arr, function (item) {
+            return (item['_destroy'] === true ? false : true);
+        });
+    };
+    
+    // the array of filtered data we return to the grid
+    $scope.filteredData = function () {
+        var data = $scope.internalFilteredData;
+        //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
+        if (initPhase > 0) {
+            return data;
+        } else {
+            return $scope.filterDestroyed(self.data);
+        }
+    };
+    
     FilterService.initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             includeDestroyed = options.includeDestroyed || false, // flag to indicate whether to include _destroy=true items in filtered data
             regExCache = {}, // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
             initPhase = 0, // flag for allowing us to do initialization only once and prevent dependencies from getting improperly registered
-            internalFilteredData = []; // obs array that we use to manage the filtering before it updates the final data
-        
+             
+        $scope.options = options;
         // first check the wildcard as we only support * and % currently
         if (wildcard === '*' || wildcard === '%') {
             // do nothing
         } else {
             throw new Error("You can only declare a percent sign (%) or an asterisk (*) as a wildcard character");
         }
-        // filters off _destroy = true items
-        $scope.filterDestroyed = function (arr) {
-            return ng.utils.arrayFilter(arr, function (item) {
-                return (item['_destroy'] === true ? false : true);
-            });
-        };
+
         // map of column.field values to filterStrings
-        $scope.filterInfo = options.filterInfo || undefined;
-        // the obs array of data that the user defined
+        $scope.filterInfo = options.filterInfo;
+        // the array of data that the user defined
         $scope.data = options.data;
-        // the obs array of filtered data we return to the grid
-        $scope.filteredData = (function () {
-            var data = internalFilteredData;
-            
-            //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
-            if (initPhase > 0) {
-                return data;
-            } else {
-                return $scope.filterDestroyed(self.data);
-            }
-        });
+
         // utility function for checking data validity
         $scope.isEmpty = function (data) {
             return (data === null || data === undefined || data === '');
@@ -90,7 +96,7 @@
             data = $scope.filterDestroyed(data);
             // make sure we even have work to do before we get started
             if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
-                internalFilteredData = data;
+                $scope.internalFilteredData = data;
                 return;
             }
             //clear out the regex cache so that we don't get improper results
@@ -136,7 +142,7 @@
                 return keepRow;
             });
             // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
-            internalFilteredData = newArr;
+            $scope.internalFilteredData = newArr;
         };
         //create subscriptions
         $scope.$watch($scope.data, $scope.filterData);
@@ -145,8 +151,17 @@
         initPhase = 1;
     };
     
+    FilterService.FilterInfo = {
+        get: function()   { return $scope.filterInfo; },
+        set: function(val){ $scope.filterInfo = val;  }
+    };
+    
+    FilterService.FilteredData = (function(){
+        return $scope.filteredData();
+    })();
+    
     // the grid uses this to asign the change handlers to the filter boxes during initialization
-    FilterService.createFilterChangeCallback = function (col) {
+    FilterService.CreateFilterChangeCallback = function (col) {
         // the callback
         return function (newFilterVal) {
             var info = self.filterInfo;
