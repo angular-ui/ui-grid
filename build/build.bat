@@ -1,8 +1,8 @@
 @ECHO OFF
 
 SET CurrentDir=%CD%
-SET OutPutFile=%CurrentDir%\AnGrid.debug.js
-SET FinalFile=..\AnGrid-1.0.0.debug.js
+SET OutPutFile=%CurrentDir%\ng-grid.debug.js
+SET FinalFile=..\ng-grid-1.0.0.debug.js
 SET BuildOrder=%CurrentDir%\build-order.txt
 
 ECHO JSBuild Starting...
