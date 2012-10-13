@@ -34,7 +34,7 @@ module.factory('SelectionManagerService', ['$scope', function($scope) {
 		
 		$scope.$watch($scope.selectedItems, function (vals) {
 			$scope.ignoreSelectedItemChanges = true;
-			$scope.selectedItem(vals ? vals[0] : null);
+			$scope.selectedItem = vals ? vals[0] : null;
 			$scope.ignoreSelectedItemChanges = false;
 		});
 		
