@@ -5,6 +5,89 @@
 //      data - (required) the observable array data source of data items
 //  }
 //
+
+
+var module = angular.module('ngGrid.services', []);
+
+module.factory('SelectionManager', ['$scope', function($scope) {
+    var SelectionManager = {};
+	
+	SelectionManager.initialize = function(options, rowManager){
+		$scope.isMulti = options.isMulti || options.isMultiSelect;
+        $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+        $scope.dataSource = options.data, // the observable array datasource
+        $scope.KEY = '__ng_selected__', // constant for the selection property that we add to each data item,
+        $scope.ROW_KEY = '__ng_rowIndex__', // constant for the entity's rowCache rowIndex
+        //maxRows = (function () {
+        //   return dataSource.length;
+        //})();
+		$scope.selectedItem = options.selectedItem || undefined; 
+		$scope.selectedItems = options.selectedItems || []; 
+		$scope.selectedIndex = options.selectedIndex; 
+		$scope.lastClickedRow = options.lastClickedRow; 
+		$scope.rowManager = rowManager;
+		
+		// some subscriptions to keep the selectedItem in sync
+		$scope.$watch($scope.selectedItem, function (val) {
+			if ($scope.ignoreSelectedItemChanges)
+				return;
+			$scope.selectedItems = [val];
+		});
+		
+		$scope.$watch($scope.selectedItems, function (vals) {
+			$scope.ignoreSelectedItemChanges = true;
+			$scope.selectedItem(vals ? vals[0] : null);
+			$scope.ignoreSelectedItemChanges = false;
+		});
+	}
+		
+	// function to manage the selection action of a data item (entity)
+    SelectionManager.changeSelection = function (rowItem, evt) {
+        if ($scope.isMulti && evt && evt.shiftKey) {
+            if($scope.lastClickedRow) {
+                var thisIndx = $scope.rowManager.rowCache.indexOf(rowItem);
+                var prevIndx = $scope.rowManager.rowCache.indexOf($scope.lastClickedRow);
+                if (thisIndx == prevIndx) return;
+                prevIndx++;
+                if (thisIndx < prevIndx) {
+                    thisIndx = thisIndx ^ prevIndx;
+                    prevIndx = thisIndx ^ prevIndx;
+                    thisIndx = thisIndx ^ prevIndx;
+                }
+                for (; prevIndx <= thisIndx; prevIndx++) {
+                    $scope.rowManager.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
+                    $scope.addOrRemove(rowItem);
+                }
+                $scope.lastClickedRow(rowItem);
+                return true;
+            }
+        } else if (!isMulti) {
+            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+        }      
+        $scope.addOrRemove(rowItem);
+        $scope.lastClickedRow(rowItem);
+        return true;
+    }
+	
+	// just call this func and hand it the rowItem you want to select (or de-select)    
+    SelectionManager.addOrRemove = function(rowItem) {
+        if (!rowItem.selected) {
+            $scope.selectedItems.remove(rowItem.entity);
+        } else {
+            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
+                $scope.selectedItems.push(rowItem.entity);
+            }
+        }
+    };
+	
+	// the count of selected items (supports both multi and single-select logic
+    $scope.selectedItemCount = (function () {
+        return $scope.selectedItems.length;
+    })();
+	
+	return SelectionManager;
+}]);
+   
 ng.selectionManager = function (options, rowManager) {
     var self = this,
         isMulti = options.isMulti || options.isMultiSelect,
@@ -129,7 +212,7 @@ ng.selectionManager = function (options, rowManager) {
     };
 
     //make sure as the data changes, we keep the selectedItem(s) correct
-    dataSource.$watch(function (items) {
+    $watch(dataSource, function (items) {
         var selectedItems,
             itemsToRemove;
         if (!items) {
