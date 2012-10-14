@@ -1,5 +1,5 @@
-﻿serviceModule.factory('RowService', ['$scope', function($scope) {
-    var RowService = {};
+﻿serviceModule.factory('SortService', ['$scope', function($scope) {
+    var SortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
@@ -218,7 +218,7 @@
     
     
     
-    RowService.initialize = function (options){
+    SortService.initialize = function (options){
         var colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
             dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
             ASC = "asc", // constant for sorting direction

@@ -2,23 +2,20 @@
     var b = new kg.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
-
     kg.utils.forEach(cols, function (col, i) {
-        if (col.field === '__kg_selected__') {
-            b.append('<div class="kgSelectionCell" data-bind="kgHeader: { value: \'{0}\' }, css: { \'kgNoSort\': {1} }">', col.field, !col.allowSort);
-            b.append('  <input type="checkbox" data-bind="checked: $parent.toggleSelectAll"/>');
+        if (col.field === SELECTED_PROP) {
+            b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
+            b.append('  <input type="checkbox" ng-checked="toggleSelectAll()"/>');
             b.append('</div>');
         } else if (col.field === 'rowIndex' && showFilter) {
-            b.append('<div data-bind="kgHeader: { value: \'{0}\' }, css: { \'kgNoSort\': {1} }">', col.field, !col.allowSort);
-            b.append('      <div title="Filter Results" class="kgFilterBtn openBtn" data-bind="visible: !$data.filterVisible(), click: $parent.showFilter_Click"></div>');
-            b.append('      <div title="Close" class="kgFilterBtn closeBtn" data-bind="visible: $data.filterVisible, click: $parent.showFilter_Click"></div>');
-            b.append('      <div title="Clear Filters" class="kgFilterBtn clearBtn" data-bind="visible: $data.filterVisible, click: $parent.clearFilter_Click"></div>');
+            b.append('<div class="kgHeaderCell col{0} kgNoSort">', col.index);
+            b.append('      <div title="Filter Results" class="kgFilterBtn openBtn" ng-hide="filterVisible" ng-click="showFilter_Click()"></div>');
+            b.append('      <div title="Close" class="kgFilterBtn closeBtn" ng-show="filterVisible" ng-click="showFilter_Click()"></div>');
+            b.append('      <div title="Clear Filters" class="kgFilterBtn clearBtn" ng-show="filterVisible" ng-click="clearFilter_Click()"></div>');
             b.append('</div>');
         } else {
-            b.append('<div data-bind="kgHeader: { value: \'{0}\' }, style: { width: $parent.columns()[{1}].width }, css: { \'kgNoSort\': {2} }">', col.field, i, !col.allowSort);
-            b.append('</div>');
+            b.append('<div class="kgHeaderCell col{0}" ng-style="{ width: colWidth }" ng-class="{ \'kgNoSort\': {1} }">{{field}}</div>', col.index, !col.allowSort);
         }
     });
-
     return b.toString();
 };

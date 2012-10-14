@@ -1,0 +1,21 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ng-grid workbench</title>
+    <link rel="Stylesheet" type="text/css" href="../lib/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../ng-grid.css" /> 
+</head>
+<body>
+    <div ng-app="ng-grid" ng-controller="gridController">
+        <button ng-click="btn_click()">Baby Born</button>
+        <div grid-options="{data: myData}"></div>
+        <ul>
+            <li ng-repeat="item in myData">{{item.name}}</li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../lib/angular.js"></script>
+<script type="text/javascript" src="../lib/jquery-1.8.2.min.js"></script>
+<!--<script type="text/javascript" src="../src/ng-grid-1.0.0.debug.js"></script>-->
+<script type="text/javascript" src="main.js"></script>
+</html>
