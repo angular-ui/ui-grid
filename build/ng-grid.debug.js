@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 11:41:36
+* Compiled At: 10/15/2012 12:16:46
 ***********************************************/
 
 (function(window, undefined){
@@ -2622,7 +2622,7 @@ kg.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-footer.js
 ***********************************************/
-ko.bindingHandlers['kgFooter'] = (function () {
+/*ko.bindingHandlers['kgFooter'] = (function () {
     var makeNewValueAccessor = function (grid) {
         return function () {
             return { name: grid.config.footerTemplate, data: grid.footer };
@@ -2648,39 +2648,35 @@ ko.bindingHandlers['kgFooter'] = (function () {
         }
     }
 } ());
+*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-/// <reference path="../../lib/knockout-2.0.0.debug.js" />
-/// <reference path="../../lib/jquery-1.7.js" />
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
 
-ko.bindingHandlers['koGrid'] = (function () {
-    var makeNewValueAccessor = function (grid) {
-        return function () {
-            return {
-                name: GRID_TEMPLATE,
-                data: grid
-            };
-        };
-    };
-
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid,
-                options = valueAccessor(),
-                $element = $(element);
+ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateService) {
+    var ngGrid = {
+        scope: true,
+        compile: function compile(tElement, tAttrs, transclude) {
+            var options = tAttrs,
+                $element = $(tElement);
 
             //create the Grid
-            var grid = kg.gridManager.getGrid(element);
-            if (!grid){
-                grid = new kg.KoGrid(options, $(element).width());
-                kg.gridManager.storeGrid(element, grid);
+            var grid = GridService.getGrid($element);
+            if (!grid) {
+                grid = new ng.KoGrid(options, $(element).width());
+                GridService.storeGrid(element, grid);
             } else {
                 return false;
             }
-            
-            kg.templateManager.ensureGridTemplates({
+
+            TemplateService.ensureGridTemplates({
                 rowTemplate: grid.config.rowTemplate,
                 headerTemplate: grid.config.headerTemplate,
                 headerCellTemplate: grid.config.headerCellTemplate,
@@ -2692,20 +2688,10 @@ ko.bindingHandlers['koGrid'] = (function () {
                 enableColumnResize: grid.config.enableColumnResize
             });
 
-            //subscribe to the columns and recrate the grid if they change
-            grid.config.columnDefs.subscribe(function (){
-                var oldgrid = kg.gridManager.getGrid(element);
-                var oldgridId = oldgrid.gridId.toString();
-                $(element).empty(); 
-                $(element).removeClass("kgGrid")
-                          .removeClass("ui-widget")
-                          .removeClass(oldgridId);
-                kg.gridManager.removeGrid(oldgridId);
-                ko.applyBindings(bindingContext, element);
-            });
-            
+
+
             //get the container sizes
-            kg.domUtility.measureGrid($element, grid, true);
+            ng.domUtility.measureGrid($element, grid, true);
 
             $element.hide(); //first hide the grid so that its not freaking the screen out
 
@@ -2713,43 +2699,34 @@ ko.bindingHandlers['koGrid'] = (function () {
             $element.addClass("kgGrid")
                     .addClass("ui-widget")
                     .addClass(grid.gridId.toString());
-
-            //make sure the templates are generated for the Grid
-            return ko.bindingHandlers['template'].init(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-
         },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid,
-                returnVal;
-
-            grid = kg.gridManager.getGrid(element);
-
-            //kind a big problem if this isn't here...
-            if (!grid) {
-                return { 'controlsDescendantBindings': true };
-            }
-
-            //fire the with "update" bindingHandler
-            returnVal = ko.bindingHandlers['template'].update(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-
+        link: function postLink(scope, iElement, iAttrs) {
+            var $element = $(iElement),
+                grid = GridService.getGrid($element);
+            //subscribe to the columns and recrate the grid if they change
+            scope.$watch(grid.config.columnDefs, function () {
+                var oldgrid = GridService.getGrid(element);
+                var oldgridId = oldgrid.gridId.toString();
+                $(element).empty();
+                $(element).removeClass("ngGrid")
+                          .removeClass("ui-widget")
+                          .removeClass(oldgridId);
+                GridService.removeGrid(oldgridId);
+            });
             //walk the element's graph and the correct properties on the grid
-            kg.domUtility.assignGridContainers(element, grid);
-
+            ng.domUtility.assignGridContainers(element, grid);
             //now use the manager to assign the event handlers
-            kg.gridManager.assignGridEventHandlers(grid);
-
+            GridService.assignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             grid.update();
-
-            return returnVal;
         }
     };
-
-} ());
+});
 
 /***********************************************
 * FILE: ..\src\directives\ng-headerCell.js
 ***********************************************/
+/*
 ko.bindingHandlers['kgHeader'] = (function () {
     var makeNewValueAccessor = function (headerCell, grid) {
         return function () {
@@ -2807,11 +2784,12 @@ ko.bindingHandlers['kgHeader'] = (function () {
         }
     }
 } ());
+*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-headerRow.js
 ***********************************************/
-ko.bindingHandlers['kgHeaderRow'] = (function () {
+/*ko.bindingHandlers['kgHeaderRow'] = (function () {
 
     var buildHeaders = function (grid) {
         var cols = grid.columns(),
@@ -2851,26 +2829,12 @@ ko.bindingHandlers['kgHeaderRow'] = (function () {
         }
     }
 } ());
-
-/***********************************************
-* FILE: ..\src\directives\ng-mouseEvents.js
-***********************************************/
-ko.bindingHandlers['mouseEvents'] = (function () {
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var eFuncs = valueAccessor();
-            if (eFuncs.mouseDown) {
-                $(element).mousedown(eFuncs.mouseDown);
-            }
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
-}());
+*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-row.js
 ***********************************************/
+/*
 ko.bindingHandlers['kgRow'] = (function () {
     return {
         'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -2901,29 +2865,31 @@ ko.bindingHandlers['kgRow'] = (function () {
         }
     };
 } ());
+*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-rows.js
 ***********************************************/
-ngGridDirectives.directive('ngRows', function factory(){
-    var RowSubscription = function () {
-        this.rowKey;
-        this.rowIndex;
-        this.node;
-        this.subscription;
-    };
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/*
+ngGridDirectives.directive('ngRows', function factory() {
     // figures out what rows already exist in DOM and 
     // what rows need to be added as new DOM nodes
     //
     // the 'currentNodeCache' is dictionary of currently existing
     // DOM nodes indexed by rowIndex
     var compareRows = function (rows, rowSubscriptions) {
-        rowMap = {},
-        newRows = [],
-        rowSubscriptionsToRemove = [];
+        var rowMap = {},
+            newRows = [],
+            rowSubscriptionsToRemove = [];
         
         //figure out what rows need to be added
-        ko.utils.arrayForEach(rows, function (row) {
+        ng.utils.arrayForEach(rows, function (row) {
             rowMap[row.rowIndex] = row;
             
             // make sure that we create new rows when sorting/filtering happen.
@@ -2936,7 +2902,7 @@ ngGridDirectives.directive('ngRows', function factory(){
             }
         });
         //figure out what needs to be deleted
-        kg.utils.forIn(rowSubscriptions, function (rowSubscription, index) {
+        ng.utils.forIn(rowSubscriptions, function (rowSubscription, index) {
             
             //get the row we might be able to compare to
             var compareRow = rowMap[index];
@@ -2963,7 +2929,7 @@ ngGridDirectives.directive('ngRows', function factory(){
         //figure out what needs to change
         rowChanges = compareRows(rows, rowManager.rowSubscriptions || {});
         // FIRST!! We need to remove old ones in case we are sorting and simply replacing the data at the same rowIndex            
-        ko.utils.arrayForEach(rowChanges.remove, function (rowSubscription) {
+        ng.utils.arrayForEach(rowChanges.remove, function (rowSubscription) {
             if (rowSubscription.node) {
                 ko.removeNode(rowSubscription.node);
             }
@@ -2971,16 +2937,16 @@ ngGridDirectives.directive('ngRows', function factory(){
             delete rowManager.rowSubscriptions[rowSubscription.rowIndex];
         });
         // and then we add the new row after removing the old rows
-        ko.utils.arrayForEach(rowChanges.add, function (row) {
+        ng.utils.arrayForEach(rowChanges.add, function (row) {
             var newBindingCtx,
-            rowSubscription,
-            divNode = document.createElement('DIV');
+                rowSubscription,
+                divNode = document.createElement('DIV');
             //make sure the bindingContext of the template is the row and not the grid!
             newBindingCtx = bindingContext.createChildContext(row);
             //create a node in the DOM to replace, because KO doesn't give us a good hook to just do this...
             element.appendChild(divNode);
             //create a row subscription to add data to
-            rowSubscription = new RowSubscription();
+            rowSubscription = new rowSubscription();
             rowSubscription.rowKey = row.rowKey;
             rowSubscription.rowIndex = row.rowIndex;
             rowManager.rowSubscriptions[row.rowIndex] = rowSubscription;
@@ -2993,11 +2959,20 @@ ngGridDirectives.directive('ngRows', function factory(){
         }
     };
 });
+*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-size.js
 ***********************************************/
-ngGridDirectives.directive('ngSize', function factory(){
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+
+ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
         scope: false,
         compile: function compile(tElement, tAttrs, transclude) {
@@ -3038,33 +3013,6 @@ ngGridDirectives.directive('ngSize', function factory(){
     };
     return ngSize;
 });
-
-/***********************************************
-* FILE: ..\src\directives\ng-with.js
-***********************************************/
-
-// This binding only works if the object that you want
-// use as the context of child bindings DOESN't change.
-// It is useful for us here since many of the grids properties
-// don't actually change, and thus this really just helps create
-// more readable and manageable code
-ko.bindingHandlers['kgWith'] = (function () {
-
-    return {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var val = ko.utils.unwrapObservable(valueAccessor()),
-                newContext = bindingContext.createChildContext(val);
-
-            //we don't want bad binding contexts bc all the child bindings will blow up
-            if (!val) { throw Error("Cannot use a null or undefined value with the 'kgWith' binding"); }
-
-            //now cascade the new binding context throughout child elements...
-            ko.applyBindingsToDescendants(newContext, element);
-
-            return { 'controlsDescendantBindings': true };
-        }
-    };
-} ());
 
 /***********************************************
 * FILE: ..\src\init.js

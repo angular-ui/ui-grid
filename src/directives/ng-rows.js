@@ -1,22 +1,23 @@
-﻿ngGridDirectives.directive('ngRows', function factory(){
-    var RowSubscription = function () {
-        this.rowKey;
-        this.rowIndex;
-        this.node;
-        this.subscription;
-    };
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/*
+ngGridDirectives.directive('ngRows', function factory() {
     // figures out what rows already exist in DOM and 
     // what rows need to be added as new DOM nodes
     //
     // the 'currentNodeCache' is dictionary of currently existing
     // DOM nodes indexed by rowIndex
     var compareRows = function (rows, rowSubscriptions) {
-        rowMap = {},
-        newRows = [],
-        rowSubscriptionsToRemove = [];
+        var rowMap = {},
+            newRows = [],
+            rowSubscriptionsToRemove = [];
         
         //figure out what rows need to be added
-        ko.utils.arrayForEach(rows, function (row) {
+        ng.utils.arrayForEach(rows, function (row) {
             rowMap[row.rowIndex] = row;
             
             // make sure that we create new rows when sorting/filtering happen.
@@ -29,7 +30,7 @@
             }
         });
         //figure out what needs to be deleted
-        kg.utils.forIn(rowSubscriptions, function (rowSubscription, index) {
+        ng.utils.forIn(rowSubscriptions, function (rowSubscription, index) {
             
             //get the row we might be able to compare to
             var compareRow = rowMap[index];
@@ -56,7 +57,7 @@
         //figure out what needs to change
         rowChanges = compareRows(rows, rowManager.rowSubscriptions || {});
         // FIRST!! We need to remove old ones in case we are sorting and simply replacing the data at the same rowIndex            
-        ko.utils.arrayForEach(rowChanges.remove, function (rowSubscription) {
+        ng.utils.arrayForEach(rowChanges.remove, function (rowSubscription) {
             if (rowSubscription.node) {
                 ko.removeNode(rowSubscription.node);
             }
@@ -64,16 +65,16 @@
             delete rowManager.rowSubscriptions[rowSubscription.rowIndex];
         });
         // and then we add the new row after removing the old rows
-        ko.utils.arrayForEach(rowChanges.add, function (row) {
+        ng.utils.arrayForEach(rowChanges.add, function (row) {
             var newBindingCtx,
-            rowSubscription,
-            divNode = document.createElement('DIV');
+                rowSubscription,
+                divNode = document.createElement('DIV');
             //make sure the bindingContext of the template is the row and not the grid!
             newBindingCtx = bindingContext.createChildContext(row);
             //create a node in the DOM to replace, because KO doesn't give us a good hook to just do this...
             element.appendChild(divNode);
             //create a row subscription to add data to
-            rowSubscription = new RowSubscription();
+            rowSubscription = new rowSubscription();
             rowSubscription.rowKey = row.rowKey;
             rowSubscription.rowIndex = row.rowIndex;
             rowManager.rowSubscriptions[row.rowIndex] = rowSubscription;
@@ -86,3 +87,4 @@
         }
     };
 });
+*/

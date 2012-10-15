@@ -1,4 +1,5 @@
-﻿ko.bindingHandlers['kgHeader'] = (function () {
+﻿/*
+ko.bindingHandlers['kgHeader'] = (function () {
     var makeNewValueAccessor = function (headerCell, grid) {
         return function () {
             return {
@@ -55,3 +56,4 @@
         }
     }
 } ());
+*/

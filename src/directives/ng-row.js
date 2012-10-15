@@ -1,3 +1,4 @@
+/*
 ko.bindingHandlers['kgRow'] = (function () {
     return {
         'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -28,3 +29,4 @@ ko.bindingHandlers['kgRow'] = (function () {
         }
     };
 } ());
+*/

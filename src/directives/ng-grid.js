@@ -1,32 +1,27 @@
-﻿/// <reference path="../../lib/knockout-2.0.0.debug.js" />
-/// <reference path="../../lib/jquery-1.7.js" />
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
 
-ko.bindingHandlers['koGrid'] = (function () {
-    var makeNewValueAccessor = function (grid) {
-        return function () {
-            return {
-                name: GRID_TEMPLATE,
-                data: grid
-            };
-        };
-    };
-
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid,
-                options = valueAccessor(),
-                $element = $(element);
+ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateService) {
+    var ngGrid = {
+        scope: true,
+        compile: function compile(tElement, tAttrs, transclude) {
+            var options = tAttrs,
+                $element = $(tElement);
 
             //create the Grid
-            var grid = kg.gridManager.getGrid(element);
-            if (!grid){
-                grid = new kg.KoGrid(options, $(element).width());
-                kg.gridManager.storeGrid(element, grid);
+            var grid = GridService.getGrid($element);
+            if (!grid) {
+                grid = new ng.KoGrid(options, $(element).width());
+                GridService.storeGrid(element, grid);
             } else {
                 return false;
             }
-            
-            kg.templateManager.ensureGridTemplates({
+
+            TemplateService.ensureGridTemplates({
                 rowTemplate: grid.config.rowTemplate,
                 headerTemplate: grid.config.headerTemplate,
                 headerCellTemplate: grid.config.headerCellTemplate,
@@ -38,20 +33,10 @@ ko.bindingHandlers['koGrid'] = (function () {
                 enableColumnResize: grid.config.enableColumnResize
             });
 
-            //subscribe to the columns and recrate the grid if they change
-            grid.config.columnDefs.subscribe(function (){
-                var oldgrid = kg.gridManager.getGrid(element);
-                var oldgridId = oldgrid.gridId.toString();
-                $(element).empty(); 
-                $(element).removeClass("kgGrid")
-                          .removeClass("ui-widget")
-                          .removeClass(oldgridId);
-                kg.gridManager.removeGrid(oldgridId);
-                ko.applyBindings(bindingContext, element);
-            });
-            
+
+
             //get the container sizes
-            kg.domUtility.measureGrid($element, grid, true);
+            ng.domUtility.measureGrid($element, grid, true);
 
             $element.hide(); //first hide the grid so that its not freaking the screen out
 
@@ -59,36 +44,26 @@ ko.bindingHandlers['koGrid'] = (function () {
             $element.addClass("kgGrid")
                     .addClass("ui-widget")
                     .addClass(grid.gridId.toString());
-
-            //make sure the templates are generated for the Grid
-            return ko.bindingHandlers['template'].init(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-
         },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid,
-                returnVal;
-
-            grid = kg.gridManager.getGrid(element);
-
-            //kind a big problem if this isn't here...
-            if (!grid) {
-                return { 'controlsDescendantBindings': true };
-            }
-
-            //fire the with "update" bindingHandler
-            returnVal = ko.bindingHandlers['template'].update(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-
+        link: function postLink(scope, iElement, iAttrs) {
+            var $element = $(iElement),
+                grid = GridService.getGrid($element);
+            //subscribe to the columns and recrate the grid if they change
+            scope.$watch(grid.config.columnDefs, function () {
+                var oldgrid = GridService.getGrid(element);
+                var oldgridId = oldgrid.gridId.toString();
+                $(element).empty();
+                $(element).removeClass("ngGrid")
+                          .removeClass("ui-widget")
+                          .removeClass(oldgridId);
+                GridService.removeGrid(oldgridId);
+            });
             //walk the element's graph and the correct properties on the grid
-            kg.domUtility.assignGridContainers(element, grid);
-
+            ng.domUtility.assignGridContainers(element, grid);
             //now use the manager to assign the event handlers
-            kg.gridManager.assignGridEventHandlers(grid);
-
+            GridService.assignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             grid.update();
-
-            return returnVal;
         }
     };
-
-} ());
+});

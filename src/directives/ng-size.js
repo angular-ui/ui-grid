@@ -1,4 +1,12 @@
-﻿ngGridDirectives.directive('ngSize', function factory(){
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+
+ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
         scope: false,
         compile: function compile(tElement, tAttrs, transclude) {
