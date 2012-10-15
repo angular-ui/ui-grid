@@ -1,6 +1,10 @@
-﻿/// <reference path="../../lib/jquery-1.7.js" />
-/// <reference path="../../lib/knockout-2.0.0.debug.js" />
-/// <reference path="../KoGrid.js" />
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/// <reference path="../classes/range.js"/>
 
 kg.cssBuilder = {
 
@@ -9,13 +13,11 @@ kg.cssBuilder = {
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
-            rules,
             i = 0,
             len = grid.columns.length,
-            css = new kg.utils.StringBuilder(),
+            css = new ng.utils.StringBuilder(),
             col,
-            sumWidth = 0,
-            colWidth;
+            sumWidth = 0;
 
         if (!$style) {
             $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('head'));
@@ -29,15 +31,11 @@ kg.cssBuilder = {
         css.append(".{0} .kgHeaderScroller { line-height: {1}px; overflow: none; }", gridId, headerRowHeight);    
         
         for (; i < len; i++) {
-            col = grid.columns()[i];
-            colWidth = col.width() - grid.elementDims.cellWdiff;
+            col = grid.columns[i];
             css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth - sumWidth - col.width));
             sumWidth += col.width();
         }
-
-
-
-        if (kg.utils.isIe) { // IE
+        if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
         }
         else {

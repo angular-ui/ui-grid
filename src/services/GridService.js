@@ -1,8 +1,15 @@
-﻿serviceModule.factory('GridService', ['$scope', function($scope) {
-    var GridService = {};
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+serviceModule.factory('GridService', ['$scope', function ($scope) {
+    var gridService = {};
     $scope.gridCache = {};
     
-    $scope.getIndexOfCache = function(gridId) {
+    $scope.getIndexOfCache = function() {
         var indx = -1;   
         for (var grid in $scope.gridCache) {
             indx++;
@@ -12,31 +19,32 @@
         return indx;
     ﻿};
     
-    GridService.initialize = function (){
+    gridService.initialize = function (){
         
     };
-    GridService.StoreGrid = function (element, grid) {
+    gridService.StoreGrid = function (element, grid) {
         $scope.gridCache[grid.gridId] = grid;
         element[GRID_KEY] = grid.gridId;
     };
         
-    GridService.RemoveGrid = function(gridId) {
+    gridService.RemoveGrid = function(gridId) {
         delete $scope.gridCache[gridId];
     };
     
-    GridService.GetGrid = function (element) {
+    gridService.GetGrid = function (element) {
         var grid;
         if (element[GRID_KEY]) {
             grid = $scope.gridCache[element[GRID_KEY]];
+            return grid;
         }
-        return grid;
+        return false;
     };
     
-    GridService.ClearGridCache = function () {
+    gridService.ClearGridCache = function () {
         $scope.gridCache = {};
     };
     
-    GridService.AssignGridEventHandlers = function (grid) {
+    gridService.AssignGridEventHandlers = function (grid) {
         grid.$viewport.scroll(function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
@@ -57,11 +65,6 @@
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        //resize the grid on parent re-size events
-        var $parent = grid.$root.parent();
-        if ($parent.length == 0) {
-            $parent = grid.$root;
-        }
         $(window).resize(function () {
             var prevSizes = {
                 rootMaxH: grid.elementDims.rootMaxH,
@@ -69,8 +72,8 @@
                 rootMinH: grid.elementDims.rootMinH,
                 rootMinW: grid.elementDims.rootMinW
             },
-            scrollTop = 0,
-            isDifferent = false;
+            scrollTop,
+            isDifferent;
             // first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
             var $hiddens = grid.$root.parents(":hidden");
             if ($hiddens.length > 0) {
@@ -99,5 +102,5 @@
             }
         });
     };
-    return GridService;
+    return gridService;
 }]);

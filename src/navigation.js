@@ -1,5 +1,8 @@
-/// <reference path="../lib/jquery-1.7.js" />
-/// <reference path="../lib/knockout-2.0.0.debug.js" />
+/// <reference path="../lib/jquery-1.8.2.min" />
+/// <reference path="../lib/angular.js" />
+/// <reference path="../src/constants.js"/>
+/// <reference path="../src/namespace.js" />
+/// <reference path="../src/utils.jsjs"/>
 
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function (grid, evt) {
@@ -12,7 +15,7 @@ ng.moveSelectionHandler = function (grid, evt) {
         
     var offset,
         charCode = (evt.which) ? evt.which : event.keyCode,
-        ROW_KEY = '__kg_rowIndex__'; // constant for the entity's row's rowIndex
+        rowKey = '__kg_rowIndex__'; // constant for the entity's row's rowIndex
 
     // detect which direction for arrow keys to navigate the grid
     switch (charCode) {
@@ -32,34 +35,32 @@ ng.moveSelectionHandler = function (grid, evt) {
         n = items.length,
         index = ng.utils.arrayIndexOf(items, grid.config.lastClickedRow.entity) + offset,
         rowCache = grid.rowManager.rowCache,
-        rowHeight = grid.config.rowHeight,
-        currScroll = grid.$viewport.scrollTop(),
-        row = null,
-        selected = null,
-        itemToView = null;
+        selected,
+        itemToView;
 
     // now find the item we arrowed to, and select it
     if (index >= 0 && index < n) {
 
         selected = items[index];
-        row = rowCache[selected[ROW_KEY]];
+        var row = rowCache[selected[rowKey]];
 
         // fire the selection
         row.toggleSelected(null, evt);
 
-        itemtoView = ng.utils.getElementsByClassName("kgSelected");
+        itemToView = ng.utils.getElementsByClassName("kgSelected");
 
         // finally scroll it into view as we arrow through
         if (!Element.prototype.scrollIntoViewIfNeeded) {
-            itemtoView[0].scrollIntoView(false);
+            itemToView[0].scrollIntoView(false);
             grid.$viewport.focus();
            
         } else {
-            itemtoView[0].scrollIntoViewIfNeeded();
+            itemToView[0].scrollIntoViewIfNeeded();
         }
 
         //grid.$viewport.scrollTop(currScroll + (offset * rowHeight));
 
         return false;
     }
+    return false;
 }; 

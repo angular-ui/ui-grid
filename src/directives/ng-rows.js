@@ -48,7 +48,7 @@
             remove: rowSubscriptionsToRemove
         };
     };
-    var ngRows = function(scope, iElement, iAttrs){ //TODO: need to make this actually work.
+    return function(scope, iElement, iAttrs){ //TODO: need to make this actually work.
         var rowManager = scope.rowManager,
         rows = scope.rows,
         grid = bindingContext.$data,
@@ -85,5 +85,4 @@
             kg.domUtility.measureRow($(element), grid);
         }
     };
-    return ngRows
 });

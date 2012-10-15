@@ -1,8 +1,15 @@
-﻿﻿kg.templates.generateHeaderTemplate = function (options) {
-    var b = new kg.utils.StringBuilder(),
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+kg.templates.generateHeaderTemplate = function (options) {
+    var b = new ng.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
-    kg.utils.forEach(cols, function (col, i) {
+    ng.utils.forEach(cols, function (col, i) {
         if (col.field === SELECTED_PROP) {
             b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
             b.append('  <input type="checkbox" ng-checked="toggleSelectAll()"/>');

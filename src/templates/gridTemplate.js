@@ -1,5 +1,12 @@
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
 kg.templates.defaultGridInnerTemplate = function (options) {
-    var b = new kg.utils.StringBuilder();
+    var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
     b.append(    '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');
     b.append(        '<div class="kgHeaderScroller" ng-header-row="data" ng-size="{ dim: headerScrollerDim }">');

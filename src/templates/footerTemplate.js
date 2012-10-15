@@ -1,5 +1,12 @@
-﻿﻿kg.templates.defaultFooterTemplate = function (options) {
-    var b = new kg.utils.StringBuilder();
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+kg.templates.defaultFooterTemplate = function () {
+    var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTotalSelectContainer" ng-show="footerVisible">');
     b.append(    '<div class="kgFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');
     b.append(        '<span class="ngLabel">Total Items: {{maxRows}}</span>');

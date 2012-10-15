@@ -1,16 +1,23 @@
-﻿serviceModule.factory('SortService', ['$scope', function($scope) {
-    var SortService = {};
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/// <reference path="../classes/range.js"/>
+
+serviceModule.factory('SortService', ['$scope', function ($scope) {
+    var sortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
     $scope.guessSortFn = function (item) {
         var sortFn, // sorting function that is guessed
-        itemStr, // the stringified version of the item
-        itemType, // the typeof item
-        dateParts, // for date parsing
-        month, // for date parsing
-        day; // for date parsing
+            itemType, // the typeof item
+            dateParts, // for date parsing
+            month, // for date parsing
+            day; // for date parsing
         
         if (item === undefined || item === null || item === '') return null;
         
@@ -41,7 +48,7 @@
         // check for a date: dd/mm/yyyy or dd/mm/yy
         // can have / or . or - as separator
         // can be mm/dd as well
-        dateParts = item.match(dateRE)
+        dateParts = item.match(dateRE);
         if (dateParts) {
             // looks like a date
             month = parseInt(dateParts[1]);
@@ -93,17 +100,17 @@
     $scope.sortBool = function (a, b) {
         if (a && b) { return 0; }
         if (!a && !b) { return 0; }
-        else { return a ? 1 : -1 }
+        else { return a ? 1 : -1;}
     };
 
     $scope.sortDDMMStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match(dateRE);
+        mtch = a.match($scope.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
-        mtch = b.match(dateRE);
+        mtch = b.match($scope.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -115,7 +122,7 @@
 
     $scope.sortMMDDStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match(dateRE);
+        mtch = a.match($scope.dateRE);
         y = mtch[3]; d = mtch[2]; m = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -134,18 +141,15 @@
     // the core sorting logic trigger
     $scope.sortData = function () {
         var data = $scope.dataSource,
-        sortInfo = self.sortInfo,
-        col,
-        direction,
-        sortFn,
-        item,
-        propPath,
-        prop,
-        i;
+            sortInfo = self.sortInfo,
+            col,
+            direction,
+            sortFn,
+            item;
         
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            internalSortedData = data;
+            $scope.internalSortedData = data;
             return;
         }
         
@@ -161,11 +165,7 @@
             colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = $scope.dataSource[0];
-            
-            if (item) {
-                prop = ng.utils.getPropertyPath(col.field, item);
-            }
-            sortFn = self.guessSortFn(prop);
+            sortFn = self.guessSortFn(ng.utils.getPropertyPath(col.field, item));
             
             //cache it
             if (sortFn) {
@@ -182,8 +182,8 @@
         data.sort(function (itemA, itemB) {
             var propA = itemA,
             propB = itemB,
-            propAEmpty = false,
-            propBEmpty = false,
+            propAEmpty,
+            propBEmpty,
             propPath,
             i;
             
@@ -213,19 +213,17 @@
             }
         });
         
-        internalSortedData = data;
+        $scope.internalSortedData = data;
     };
     
-    
-    
-    SortService.initialize = function (options){
-        var colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
-            dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
-            ASC = "asc", // constant for sorting direction
-            DESC = "desc", // constant for sorting direction
-            prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
-            initPhase = 0, // flag for preventing improper dependency registrations with KO
-            internalSortedData = [];
+    sortService.initialize = function (options){
+        $scope.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+        $scope.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
+        $scope.ASC = "asc", // constant for sorting direction
+        $scope.DESC = "desc", // constant for sorting direction
+        $scope.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
+        $scope.initPhase = 0, // flag for preventing improper dependency registrations with KO
+        $scope.internalSortedData = [];
             
         $scope.dataSource = options.data;
         // utility function for null checking
@@ -240,19 +238,19 @@
             var sortData = internalSortedData;
             //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
             // dependency during the binding handler's dependency detection :(
-            if (initPhase > 0) {
+            if ($scope.initPhase > 0) {
                 return sortData;
             } else {
                 return $scope.dataSource;
             }
         };
-        initPhase = 1;
+        $scope.initPhase = 1;
     };
     
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
-    SortService.Sort = function (col, direction) {
+    sortService.Sort = function (col, direction) {
         //do an equality check first
         if (col === prevSortInfo.column && direction === prevSortInfo.direction) {
             return;
@@ -268,5 +266,5 @@
     $scope.$watch($scope.dataSource, $scope.sortData);
     $scope.$watch($scope.sortInfo, $scope.sortData);
     
-    return SortService;
+    return sortService;
 }]);

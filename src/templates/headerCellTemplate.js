@@ -1,5 +1,12 @@
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
 kg.templates.defaultHeaderCellTemplate = function (options) {
-    var b = new kg.utils.StringBuilder();
+    var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="sort" ng-class="{ \'kgSorted\': !noSortVisible }">');
     b.append('  <span>{{displayName}}</span>');
     b.append('  <div class="kgSortButtonDown" ng-show="(allowSort ? (noSortVisible || sortAscVisible) : allowSort)"></div>');

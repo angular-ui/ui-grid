@@ -1,20 +1,27 @@
-﻿serviceModule.factory('RowService', ['$scope', function($scope) {
-    var RowService = {};
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/// <reference path="../classes/range.js"/>
+
+serviceModule.factory('RowService', ['$scope', function ($scope) {
+    var rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     $scope.rowCache = [];
     $scope.dataChanged = true;
     
-    RowService.initialize = function (grid) {
+    rowService.initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
             prevMinRows = 0, // for comparison purposes when scrolling
             currentPage = grid.config.currentPage,
-            pageSize = grid.config.pageSize,
-            ROW_KEY = '__ng_rowIndex__', // constant for the entity's rowCache rowIndex
-            prevRenderedRange = new ng.range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
-            prevViewableRange = new ng.range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
-            internalRenderedRange = prevRenderedRange; // for comparison purposes to help throttle re-calcs when scrolling
-        
+            pageSize = grid.config.pageSize, // constant for the entity's rowCache rowIndex
+            prevRenderedRange = new ng.Range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
+            prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
+             // for comparison purposes to help throttle re-calcs when scrolling
+        $scope.internalRenderedRange = prevRenderedRange;
         // short cut to sorted and filtered data
         $scope.dataSource = grid.finalData; //observableArray
         
@@ -34,7 +41,7 @@
         $scope.rowHeight = grid.config.rowHeight;
         
         // the logic that builds cell objects
-        $scope.cellFactory = new ng.cellFactory(grid.columns);
+        $scope.cellFactory = new ng.CellFactory(grid.columns);
         
         // the actual range the user can see in the viewport
         $scope.viewableRange = prevViewableRange;
@@ -52,7 +59,7 @@
             var row = $scope.rowCache[rowIndex]; // first check to see if we've already built it
             if (!row) {
                 // build the row
-                row = new ng.row(entity, grid.config, grid.selectionManager);
+                row = new ng.Row(entity, grid.config, grid.selectionManager);
                 row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
                 row.rowDisplayIndex = row.rowIndex + pagingOffset;
                 row.offsetTop = $scope.rowHeight * rowIndex;
@@ -94,20 +101,20 @@
             var rg = $scope.viewableRange,
             minRows = $scope.eminViewportRows,
             maxRows = $scope.dataSource.length,
-            isDif = false, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
+            isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
             newRg; // variable to hold our newly-calc'd rendered range 
             
             if (rg) {
-                
-                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || self.dataChanged)
+
+                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || self.dataChanged);
                 if (!isDif && prevMaxRows !== maxRows) {
                     isDif = true;
-                    rg = new ng.range(prevViewableRange.bottomRow, prevViewableRange.topRow);
+                    rg = new ng.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
                 }
                 
                 if (!isDif && prevMinRows !== minRows) {
                     isDif = true;
-                    rg = new ng.range(prevViewableRange.bottomRow, prevViewableRange.topRow);
+                    rg = new ng.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
                 }
                 
                 if (isDif) {
@@ -118,7 +125,7 @@
                     prevViewableRange = rg;
                     
                     // now build the new rendered range
-                    newRg = new ng.range(rg.bottomRow, rg.topRow);
+                    newRg = new ng.Range(rg.bottomRow, rg.topRow);
                     
                     // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
                     newRg.bottomRow = Math.max(0, rg.bottomRow - $scope.excessRows);
@@ -138,7 +145,7 @@
                     }
                 }
             } else {
-                self.renderedRange = new ng.range(0, 0);
+                self.renderedRange = new ng.Range(0, 0);
             }
         };
         
@@ -148,21 +155,21 @@
         $scope.$watch($scope.dataSource, $scope.calcRenderedRange);
     };
     
-    RowService.DataChanged = {
+    rowService.DataChanged = {
         get: function()   { return $scope.dataChanged; },
         set: function(val){ $scope.dataChanged = val;  }
     };
     
-    RowService.ClearRowCache = function() {
+    rowService.ClearRowCache = function() {
         $scope.rowCache = [];
     };
     
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
-    RowService.RowSubscriptions = {};
+    rowService.RowSubscriptions = {};
     
-    RowService.CalcRenderedRange = function(){
+    rowService.CalcRenderedRange = function(){
         $scope.calcRenderedRange();
     };
     
-    return RowService;
+    return rowService;
 }]);

@@ -1,5 +1,12 @@
-﻿serviceModule.factory('FilterService', ['$scope', function($scope) {
-    var FilterService = {};	
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+
+serviceModule.factory('FilterService', ['$scope', function($scope) {
+    var filterService = {};	
     
     // array that we use to manage the filtering before it updates the final data
     $scope.internalFilteredData = [];
@@ -15,19 +22,18 @@
     $scope.filteredData = function () {
         var data = $scope.internalFilteredData;
         //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
-        if (initPhase > 0) {
+        if ($scope.initPhase > 0) {
             return data;
         } else {
             return $scope.filterDestroyed(self.data);
         }
     };
     
-    FilterService.initialize = function (options){
+    filterService.initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
-            includeDestroyed = options.includeDestroyed || false, // flag to indicate whether to include _destroy=true items in filtered data
-            regExCache = {}, // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
-            initPhase = 0, // flag for allowing us to do initialization only once and prevent dependencies from getting improperly registered
-             
+            regExCache = { }; // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
+        
+        $scope.initPhase = 0;     
         $scope.options = options;
         // first check the wildcard as we only support * and % currently
         if (wildcard === '*' || wildcard === '%') {
@@ -51,7 +57,7 @@
             var regex = regExCache[filterStr];
             //if nothing, build the regex
             if (!regex) {
-                var replacer = "";
+                var replacer;
                 //escape any wierd characters they might using
                 filterStr = filterStr.replace(/\\/g, "\\");
                 // build our replacer regex
@@ -87,7 +93,7 @@
             data = self.data,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
-            newArr = [], // the filtered array
+            newArr, // the filtered array
             f, // the field of the column that we are filtering
             itemData, // the data from the specific row's column
             itemDataStr, // the stringified version of itemData
@@ -103,8 +109,6 @@
             regExCache = {};
             // filter the data array
             newArr = ng.utils.arrayFilter(data, function (item) {
-                var propPath,
-                i;
                 //loop through each property and filter it
                 for (f in fi) {
                     if (fi.hasOwnProperty(f)) {
@@ -148,20 +152,20 @@
         $scope.$watch($scope.data, $scope.filterData);
         $scope.$watch($scope.filterInfo, $scope.filterData);
         //increase this after initialization so that the computeds fire correctly
-        initPhase = 1;
+        $scope.initPhase = 1;
     };
     
-    FilterService.FilterInfo = {
+    filterService.FilterInfo = {
         get: function()   { return $scope.filterInfo; },
         set: function(val){ $scope.filterInfo = val;  }
     };
     
-    FilterService.FilteredData = (function(){
+    filterService.FilteredData = (function(){
         return $scope.filteredData();
     })();
     
     // the grid uses this to asign the change handlers to the filter boxes during initialization
-    FilterService.CreateFilterChangeCallback = function (col) {
+    filterService.CreateFilterChangeCallback = function (col) {
         // the callback
         return function (newFilterVal) {
             var info = self.filterInfo;
@@ -185,5 +189,5 @@
             }
         };
     };
-    return FilterService;
+    return filterService;
 }]);

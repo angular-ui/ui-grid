@@ -1,4 +1,4 @@
-﻿ng.cellFactory = function (cols) {
+﻿ng.CellFactory = function (cols) {
     var colCache = cols,
         len = colCache.length;
 
@@ -11,7 +11,7 @@
         for (; i < len; i++) {
             col = colCache[i];
 
-            cell = new ng.cell(col);
+            cell = new ng.Cell(col);
             cell.row = row;
             //enabling nested property values in a viewmodel
             cell.data = ng.utils.getPropertyPath(col.field, row.entity); 

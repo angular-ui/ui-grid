@@ -1,5 +1,10 @@
-﻿ng.utils = {
+﻿/// <reference path="../lib/jquery-1.8.2.min" />
+/// <reference path="../lib/angular.js" />
+/// <reference path="../src/constants.js"/>
+/// <reference path="../src/namespace.js" />
+/// <reference path="../src/navigation.js"/>
 
+ng.utils = {
     arrayForEach: function (array, action) {
         for (var i = 0, j = array.length; i < j; i++)
         action(array[i]);
@@ -39,7 +44,7 @@
     isNullOrUndefined: function (obj){
         if (obj == null || obj == undefined) return true;
         return false;
-    }
+    },
     StringBuilder: function () {
         var strArr = [];
         
@@ -105,7 +110,7 @@
     })(),
     
     // we copy KO's ie detection here bc it isn't exported in the min versions of KO
-    // Detect IE versions for bug workarounds (uses IE conditionals, not UA string, for robustness) 
+    // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 
     ieVersion: (function () {
         var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
 
@@ -120,11 +125,11 @@
 
 $.extend(ng.utils, {
     isIe6: (function(){ 
-        return ng.utils.ieVersion === 6}
-    )(),
+        return ng.utils.ieVersion === 6;
+    })(),
     isIe7: (function(){ 
-        return ng.utils.ieVersion === 7}
-    )(),
+        return ng.utils.ieVersion === 7;
+    }    )(),
     isIe: (function () { 
         return ng.utils.ieVersion !== undefined; 
     })()

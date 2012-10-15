@@ -1,37 +1,40 @@
-/// <reference path="../utils.js" />
+/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
 /// <reference path="../namespace.js" />
-/// <reference path="../Grid.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
 
-ng.row = function (entity, config, selectionManager) {
-    var self = this,
-        KEY = '__ng_selected__', // constant for the selection property that we add to each data item
+ng.Row = function (entity, config, selectionManager) {
+    var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
     this.selectedItems = config.selectedItems;
     this.entity = entity;
     this.selectionManager = selectionManager;
     //selectify the entity
-    if (this.entity['__ng_selected__'] === undefined) {
-        this.entity['__ng_selected__'] = false;
+    if (this.entity[SELECTED_PROP] === undefined) {
+        this.entity[SELECTED_PROP] = false;
     }
     this.selected = {
-        get: function () {
+        get: function() {
             if (!canSelectRows) {
                 return false;
             }
             var val = self.entity['__ng_selected__'];
             return val;
         },
-        set: function (val, evt) {
+        set: function(val, evt) {
             if (!canSelectRows) {
                 return true;
             }
             self.beforeSelectionChange();
-            self.entity['__ng_selected__'] = val;
+            self.entity[SELECTED_PROP] = val;
             self.selectionManager.changeSelection(self, evt);
             self.afterSelectionChange();
             self.onSelectionChanged();
+            return val;
         }
-    });
+    };
 
     this.toggleSelected = function (data, event) {
         if (!canSelectRows) {
@@ -48,6 +51,7 @@ ng.row = function (entity, config, selectionManager) {
         } else {
             self.selected ? self.selected.set(false, event) : self.selected.set(true, event);
         }
+        return true;
     };
 
     this.toggle = function(item) {

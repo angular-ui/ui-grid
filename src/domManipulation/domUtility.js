@@ -1,4 +1,12 @@
-﻿kg.domUtility = (new function () {
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
+/// <reference path="../classes/range.js"/>
+
+kg.domUtility = (new function () {
     var $testContainer = $('<div></div>'),
         self = this;
 
@@ -43,15 +51,14 @@
 
         dims.maxWidth = $container.width();
         dims.maxHeight = $container.height();
-
-
+        var pixelStr;
         if (!dims.maxWidth) {
-            var pixelStr = $container.css("max-width");
+            pixelStr = $container.css("max-width");
             dims.maxWidth = parsePixelString(pixelStr);
         }
 
         if (!dims.maxHeight) {
-            var pixelStr = $container.css("max-height");
+            pixelStr = $container.css("max-height");
             dims.maxHeight = parsePixelString(pixelStr);
         }
 
@@ -69,8 +76,8 @@
     };
 
     this.measureElementMinDims = function ($container) {
-        var dims = {},
-            $testContainer = $container.clone();
+        var dims = { };
+        var testContainer = $container.clone();
 
         $testContainer.appendTo($container.parent().first());
 
@@ -78,23 +85,23 @@
         dims.minHeight = 0;
 
         //since its cloned... empty it out
-        $testContainer.empty();
+        testContainer.empty();
 
         var $test = $("<div style='height: 0x; width: 0px;'></div>");
-        $testContainer.append($test);
+        testContainer.append($test);
 
         //$testContainer.wrap("<div style='width: 1px; height: 1px;'></div>");
 
         dims.minWidth = $testContainer.width();
         dims.minHeight = $testContainer.height();
-
+        var pixelStr;
         if (!dims.minWidth) {
-            var pixelStr = $testContainer.css("min-width");            
+            pixelStr = $testContainer.css("min-width");
             dims.minWidth = parsePixelString(pixelStr);
         }
 
         if (!dims.minHeight) {
-            var pixelStr = $testContainer.css("min-height");
+            pixelStr = $testContainer.css("min-height");
             dims.minHeight = parsePixelString(pixelStr);
         }
 
@@ -103,7 +110,7 @@
         return dims;
     };
 
-    this.measureGrid = function ($container, grid, measureMins) {
+    this.measureGrid = function ($container, grid) {
 
         //find max sizes
         var dims = self.measureElementMaxDims($container);
@@ -112,8 +119,8 @@
         grid.elementDims.rootMaxH = dims.maxHeight;
 
         //set scroll measurements
-        grid.elementDims.scrollW = kg.domUtility.scrollW;
-        grid.elementDims.scrollH = kg.domUtility.scrollH;
+        grid.elementDims.scrollW = ng.domUtility.scrollW;
+        grid.elementDims.scrollH = ng.domUtility.scrollH;
 
         //find min sizes
         dims = self.measureElementMinDims($container);
