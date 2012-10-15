@@ -35,5 +35,3 @@
 ..\src\directives\ng-size.js
 ..\src\directives\ng-with.js
 ..\src\init.js
-
-

@@ -7,36 +7,23 @@ $BuildOrder = $CurrentDir + "\build-order.txt";
 
 Write-Host "JSBuild Starting...";
 $files = Get-Content $BuildOrder;
+$compileTime = Get-Date;
+
+Set-Content $TempFile "/***********************************************";
+Add-Content $TempFile "* ng-grid JavaScript Library";
+Add-Content $TempFile "* Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md";
+Add-Content $TempFile "* License: MIT (http://www.opensource.org/licenses/mit-license.php)";
+Add-Content $TempFile "* Compiled At: $compileTime";
+Add-Content $TempFile "***********************************************/`n"
+Add-Content $TempFile "(function(window, undefined){"
 Foreach ($file in $files){
 	# Wrap each file output in a new line
-	Write-Host "Building... " + $file + " >> " + $TempFile;
-	$file >> $TempFile;
+	Write-Host "Building... $file";
+	Add-Content $TempFile "`n/***********************************************`n* FILE: $file`n***********************************************/";
+	Get-Content $file | Add-Content $TempFile;
 }
-@ECHO. 
-ECHO Building... %%A
-@ECHO. 
-@ECHO /*********************************************** >> %OutPutFile%.temp
-@ECHO * FILE: %%A >> %OutPutFile%.temp
-@ECHO ***********************************************/ >> %OutPutFile%.temp
-@TYPE $CurrentDir\%%A >> %OutPutFile%.temp
-@ECHO. >>%OutPutFile%.temp
-)
-
-@REM Remove the OutputFile if it exists
-DEL %OutPutFile%
-
-@REM Wrap the final output in an IIFE
-@ECHO /*********************************************** >> %OutPutFile%
-@ECHO * ng-grid JavaScript Library >> %OutPutFile%
-@ECHO * Authors:  https://github.com/Crash8308/ng-grid/blob/master/README.md >> %OutPutFile%
-@ECHO * License: MIT (http://www.opensource.org/licenses/mit-license.php) >> %OutputFile%
-@ECHO * Compiled At: %Time% %Date% >> %OutPutFile%
-@ECHO ***********************************************/ >> %OutPutFile%
-@ECHO (function(window, undefined){ >> %OutPutFile%
-@TYPE %OutPutFile%.temp >> %OutPutFile%
-@ECHO }(window)); >> %OutPutFile%
-DEL %OutPutFile%.temp
-COPY %OutputFile% %FinalFile%
-ECHO JSBuild Succeeded
-ENDLOCAL
-GOTO :eof
+Add-Content $TempFile "`n`n}(window));";
+Get-Content $TempFile | Set-Content $OutputFile;
+Remove-Item $TempFile -Force;
+Copy-Item $OutputFile $FinalFile;
+Write-Host "Build Succeeded!"
