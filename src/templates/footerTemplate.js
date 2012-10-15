@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-kg.templates.defaultFooterTemplate = function () {
+ng.templates.defaultFooterTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTotalSelectContainer" ng-show="footerVisible">');
     b.append(    '<div class="kgFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');

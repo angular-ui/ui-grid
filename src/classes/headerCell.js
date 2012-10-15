@@ -23,7 +23,7 @@
             return self.column.filter;
         },
         set: function (val) {
-            self.column. = val;
+            self.column.filter = val;
         }
     };
 
@@ -59,31 +59,26 @@
     };
 
     this.filterHasFocus = false;
-
-﻿    this.startMousePosition = 0;
-    
-﻿    this.startMousePosition = 0;
+    this.startMousePosition = 0;
+    this.startMousePosition = 0;
     this.origWidth = 0;
-﻿    
     this.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
-
     this.onMouseMove = function (event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width(newWidth < self.minWidth ? self.minWidth : ( newWidth > self.maxWidth ? self.maxWidth : newWidth) );
         return false;
-﻿    };
-﻿    
+    };
     this.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width();
-﻿        $(document).mousemove(self.onMouseMove);
-﻿        $(document).mouseup(self.gripOnMouseUp);
+        $(document).mousemove(self.onMouseMove);
+        $(document).mouseup(self.gripOnMouseUp);
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         return false;

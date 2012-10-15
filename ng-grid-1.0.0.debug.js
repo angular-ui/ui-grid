@@ -2,21 +2,15 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 12:16:46
+* Compiled At: 10/15/2012 13:40:23
 ***********************************************/
 
-(function(window, undefined){
 
 /***********************************************
 * FILE: ..\src\namespace.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js"/>
-/// <reference path="../src/navigation.js"/>
-/// <reference path="../src/utils.js"/>
 
-var ng = window['ng'] = {};
+var ng = {};
 ng.templates = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
@@ -27,11 +21,6 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 /***********************************************
 * FILE: ..\src\constants.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/navigation.js"/>
-/// <reference path="../src/utils.js"/>
 
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
@@ -41,11 +30,6 @@ var GRID_KEY = '__koGrid__';
 /***********************************************
 * FILE: ..\src\navigation.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js"/>
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/utils.jsjs"/>
 
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function (grid, evt) {
@@ -111,11 +95,6 @@ ng.moveSelectionHandler = function (grid, evt) {
 /***********************************************
 * FILE: ..\src\utils.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js"/>
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/navigation.js"/>
 
 ng.utils = {
     arrayForEach: function (array, action) {
@@ -251,14 +230,8 @@ $.extend(ng.utils, {
 /***********************************************
 * FILE: ..\src\services\FilterService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-serviceModule.factory('FilterService', ['$scope', function($scope) {
+ngGridServices.factory('FilterService', ['$scope', function ($scope) {
     var filterService = {};	
     
     // array that we use to manage the filtering before it updates the final data
@@ -448,14 +421,8 @@ serviceModule.factory('FilterService', ['$scope', function($scope) {
 /***********************************************
 * FILE: ..\src\services\GridService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-serviceModule.factory('GridService', ['$scope', function ($scope) {
+ngGridServices.factory('GridService', ['$scope', function ($scope) {
     var gridService = {};
     $scope.gridCache = {};
     
@@ -467,10 +434,6 @@ serviceModule.factory('GridService', ['$scope', function ($scope) {
             return indx;
         }
         return indx;
-    ?};
-    
-    gridService.initialize = function (){
-        
     };
     gridService.StoreGrid = function (element, grid) {
         $scope.gridCache[grid.gridId] = grid;
@@ -558,15 +521,8 @@ serviceModule.factory('GridService', ['$scope', function ($scope) {
 /***********************************************
 * FILE: ..\src\services\RowService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-serviceModule.factory('RowService', ['$scope', function ($scope) {
+ngGridServices.factory('RowService', ['$scope', function ($scope) {
     var rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
@@ -737,15 +693,8 @@ serviceModule.factory('RowService', ['$scope', function ($scope) {
 /***********************************************
 * FILE: ..\src\services\SelectionService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-servicesModule.factory('SelectionService', ['$scope', function ($scope) {
+ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
     var selectionService = {};		
 	
 	// the count of selected items (supports both multi and single-select logic
@@ -895,15 +844,8 @@ servicesModule.factory('SelectionService', ['$scope', function ($scope) {
 /***********************************************
 * FILE: ..\src\services\SortService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-serviceModule.factory('SortService', ['$scope', function ($scope) {
+ngGridServices.factory('SortService', ['$scope', function ($scope) {
     var sortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting
@@ -1169,15 +1111,8 @@ serviceModule.factory('SortService', ['$scope', function ($scope) {
 /***********************************************
 * FILE: ..\src\services\TemplateService.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-serviceModule.factory('TemplateService', ['$scope', function () {
+ngGridServices.factory('TemplateService', ['$scope', function () {
     var templateService = {};
     templateService.TemplateExists = function (tmplId) {
         var el = document.getElementById(tmplId);
@@ -1262,14 +1197,8 @@ serviceModule.factory('TemplateService', ['$scope', function () {
 /***********************************************
 * FILE: ..\src\templates\footerTemplate.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-kg.templates.defaultFooterTemplate = function () {
+ng.templates.defaultFooterTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTotalSelectContainer" ng-show="footerVisible">');
     b.append(    '<div class="kgFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');
@@ -1302,14 +1231,8 @@ kg.templates.defaultFooterTemplate = function () {
 /***********************************************
 * FILE: ..\src\templates\gridTemplate.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-kg.templates.defaultGridInnerTemplate = function (options) {
+ng.templates.defaultGridInnerTemplate = function (options) {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
     b.append(    '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');
@@ -1329,14 +1252,8 @@ kg.templates.defaultGridInnerTemplate = function (options) {
 /***********************************************
 * FILE: ..\src\templates\headerCellTemplate.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-kg.templates.defaultHeaderCellTemplate = function (options) {
+ng.templates.defaultHeaderCellTemplate = function (options) {
     var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="sort" ng-class="{ \'kgSorted\': !noSortVisible }">');
     b.append('  <span>{{displayName}}</span>');
@@ -1355,14 +1272,8 @@ kg.templates.defaultHeaderCellTemplate = function (options) {
 /***********************************************
 * FILE: ..\src\templates\headerTemplate.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-kg.templates.generateHeaderTemplate = function (options) {
+ng.templates.generateHeaderTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
@@ -1387,14 +1298,8 @@ kg.templates.generateHeaderTemplate = function (options) {
 /***********************************************
 * FILE: ..\src\templates\rowTemplate.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-kg.templates.generateRowTemplate = function (options) {
+ng.templates.generateRowTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns;
     b.append('<div ng-row="rowData" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
@@ -1613,8 +1518,6 @@ ng.footer = function (grid) {
 /***********************************************
 * FILE: ..\src\classes\grid.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.7.js" />
-/// <reference path="../lib/knockout-2.0.0.debug.js" />
 
 ng.grid = function (options, gridWidth) {
     var defaults = {
@@ -2187,7 +2090,7 @@ ng.headerCell = function (col) {
             return self.column.filter;
         },
         set: function (val) {
-            self.column. = val;
+            self.column.filter = val;
         }
     };
 
@@ -2223,31 +2126,26 @@ ng.headerCell = function (col) {
     };
 
     this.filterHasFocus = false;
-
-?    this.startMousePosition = 0;
-    
-?    this.startMousePosition = 0;
+    this.startMousePosition = 0;
+    this.startMousePosition = 0;
     this.origWidth = 0;
-?    
     this.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
-
     this.onMouseMove = function (event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width(newWidth < self.minWidth ? self.minWidth : ( newWidth > self.maxWidth ? self.maxWidth : newWidth) );
         return false;
-?    };
-?    
+    };
     this.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width();
-?        $(document).mousemove(self.onMouseMove);
-?        $(document).mouseup(self.gripOnMouseUp);
+        $(document).mousemove(self.onMouseMove);
+        $(document).mouseup(self.gripOnMouseUp);
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         return false;
@@ -2275,12 +2173,6 @@ ng.Range = function (bottom, top) {
 /***********************************************
 * FILE: ..\src\classes\row.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
 ng.Row = function (entity, config, selectionManager) {
     var self = this, // constant for the selection property that we add to each data item
@@ -2365,15 +2257,8 @@ ng.Row = function (entity, config, selectionManager) {
 /***********************************************
 * FILE: ..\src\domManipulation\cssBuilder.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-kg.cssBuilder = {
+ng.cssBuilder = {
 
     buildStyles: function (grid) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
@@ -2416,15 +2301,8 @@ kg.cssBuilder = {
 /***********************************************
 * FILE: ..\src\domManipulation\domUtility.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
 
-kg.domUtility = (new function () {
+ng.domUtility = (new function () {
     var $testContainer = $('<div></div>'),
         self = this;
 
@@ -2653,14 +2531,8 @@ kg.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
-ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function (GridService, TemplateService) {
     var ngGrid = {
         scope: true,
         compile: function compile(tElement, tAttrs, transclude) {
@@ -2721,6 +2593,7 @@ ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateServi
             grid.update();
         }
     };
+    return ngGrid;
 });
 
 /***********************************************
@@ -2870,12 +2743,6 @@ ko.bindingHandlers['kgRow'] = (function () {
 /***********************************************
 * FILE: ..\src\directives\ng-rows.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 /*
 ngGridDirectives.directive('ngRows', function factory() {
     // figures out what rows already exist in DOM and 
@@ -2964,12 +2831,6 @@ ngGridDirectives.directive('ngRows', function factory() {
 /***********************************************
 * FILE: ..\src\directives\ng-size.js
 ***********************************************/
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
 
 
 ngGridDirectives.directive('ngSize', function factory() {
@@ -3017,18 +2878,9 @@ ngGridDirectives.directive('ngSize', function factory() {
 /***********************************************
 * FILE: ..\src\init.js
 ***********************************************/
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js"/>
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/navigation.js"/>
-/// <reference path="../src/utils.js"/>
 
 // initialization of services intot he main module
 angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).
     run(function(FilerService, GridService, RowService, SelectionService, SortService, TemplateService){
-        
+        return null;
     });
-
-
-}(window));

@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function (GridService, TemplateService) {
     var ngGrid = {
         scope: true,
         compile: function compile(tElement, tAttrs, transclude) {
@@ -66,4 +66,5 @@ ngGridDirectives.directive('ngGrid', function factory(GridService, TemplateServi
             grid.update();
         }
     };
+    return ngGrid;
 });

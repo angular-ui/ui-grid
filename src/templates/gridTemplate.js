@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-kg.templates.defaultGridInnerTemplate = function (options) {
+ng.templates.defaultGridInnerTemplate = function (options) {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
     b.append(    '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');

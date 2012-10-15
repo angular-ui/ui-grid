@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-kg.domUtility = (new function () {
+ng.domUtility = (new function () {
     var $testContainer = $('<div></div>'),
         self = this;
 

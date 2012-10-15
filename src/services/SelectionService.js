@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-servicesModule.factory('SelectionService', ['$scope', function ($scope) {
+ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
     var selectionService = {};		
 	
 	// the count of selected items (supports both multi and single-select logic

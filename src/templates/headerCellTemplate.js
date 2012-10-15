@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-kg.templates.defaultHeaderCellTemplate = function (options) {
+ng.templates.defaultHeaderCellTemplate = function (options) {
     var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="sort" ng-class="{ \'kgSorted\': !noSortVisible }">');
     b.append('  <span>{{displayName}}</span>');

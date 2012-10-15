@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-serviceModule.factory('RowService', ['$scope', function ($scope) {
+ngGridServices.factory('RowService', ['$scope', function ($scope) {
     var rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering

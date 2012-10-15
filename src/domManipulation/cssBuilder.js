@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-kg.cssBuilder = {
+ng.cssBuilder = {
 
     buildStyles: function (grid) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),

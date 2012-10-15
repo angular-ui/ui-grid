@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-kg.templates.generateRowTemplate = function (options) {
+ng.templates.generateRowTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns;
     b.append('<div ng-row="rowData" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');

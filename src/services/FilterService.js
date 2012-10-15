@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-serviceModule.factory('FilterService', ['$scope', function($scope) {
+ngGridServices.factory('FilterService', ['$scope', function ($scope) {
     var filterService = {};	
     
     // array that we use to manage the filtering before it updates the final data

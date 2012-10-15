@@ -4,7 +4,7 @@
 /// <reference path="../src/navigation.js"/>
 /// <reference path="../src/utils.js"/>
 
-var ng = window['ng'] = {};
+var ng = {};
 ng.templates = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);

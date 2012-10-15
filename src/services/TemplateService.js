@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-serviceModule.factory('TemplateService', ['$scope', function () {
+ngGridServices.factory('TemplateService', ['$scope', function () {
     var templateService = {};
     templateService.TemplateExists = function (tmplId) {
         var el = document.getElementById(tmplId);

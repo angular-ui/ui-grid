@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-serviceModule.factory('SortService', ['$scope', function ($scope) {
+ngGridServices.factory('SortService', ['$scope', function ($scope) {
     var sortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting

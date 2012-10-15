@@ -11,14 +11,3 @@ function gridController($scope) {
                          {name: "Ethan", age: 0}];
     }
 }
-
-angular.module('ng-grid', [])
-  // Register the 'myCurrentTime' directive factory method.
-  // We inject $timeout and dateFilter service since the factory method is DI.
-  .directive('gridOptions', function factory($timeout, dateFilter) {
-    // return the directive link function. (compile function not needed)
-    return function postLink(scope, tElement, tAttrs, controller) {
-        scope.myData = scope.myData.splice(0,2);
-        return;
-    };
-  });

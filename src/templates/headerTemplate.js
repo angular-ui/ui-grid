@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-kg.templates.generateHeaderTemplate = function (options) {
+ng.templates.generateHeaderTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
