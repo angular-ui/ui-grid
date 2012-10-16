@@ -1,7 +1,11 @@
-﻿/// <reference path="../lib/jquery-1.7.js" />
-/// <reference path="../lib/knockout-2.0.0.debug.js" />
+﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js"/>
+/// <reference path="../namespace.js" />
+/// <reference path="../navigation.js"/>
+/// <reference path="../utils.js"/>
 
-ng.grid = function (options, gridWidth) {
+ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -42,27 +46,24 @@ ng.grid = function (options, gridWidth) {
     },
 
     self = this,
-    filterManager, //ng.filterManager
-    sortManager, //ng.sortManager
     isSorting = false,
     prevScrollTop,
-    prevScrollLeft,
     prevMinRowsToRender,
     maxCanvasHt = 0,
-    h_updateTimeout;
+    hUpdateTimeout;
 
-    this.$root; //this is the root element that is passed in with the binding handler
-    this.$topPanel;
-    this.$headerContainer;
-    this.$headerScroller;
-    this.$headers;
-    this.$viewport;
-    this.$canvas;
-    this.$footerPanel;
+    this.$root = null; //this is the root element that is passed in with the binding handler
+    this.$topPanel = null;
+    this.$headerContainer = null;
+    this.$headerScroller = null;
+    this.$headers = null;
+    this.$viewport = null;
+    this.$canvas = null;
+    this.$footerPanel = null;
     this.width = gridWidth;
-    this.selectionManager;
-    this.selectedItemCount;
-    
+    this.selectionManager = null;
+    this.selectedItemCount= null;
+    this.filterIsOpen = false;
     this.config = $.extend(defaults, options);
     this.gridId = "ng" + ng.utils.newId();
     this.initPhase = 0;
@@ -79,25 +80,25 @@ ng.grid = function (options, gridWidth) {
     // computed observables register correctly;
     this.data = self.config.data;
 
-    filterManager = new ng.filterManager(self.config);
-    sortManager = new ng.sortManager({
-        data: filterManager.filteredData,
+    FilterService.Initialize(self.config);
+    SortService.Initialize({
+        data: FilterService.FilteredData,
         sortInfo: self.config.sortInfo,
         useExternalSorting: self.config.useExternalSorting
     });
 
-    this.sortInfo = sortManager.sortInfo; //observable
-    this.filterInfo = filterManager.filterInfo; //observable
+    this.sortInfo = SortService.SortInfo; //observable
+    this.filterInfo = FilterService.FilterInfo.get(); //observable
     this.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
-    this.finalData = sortManager.sortedData; //observable Array
+    this.finalData = SortService.SortedData; //observable Array
     this.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    this.maxRows = (function () {
+    this.maxRows = function () {
         var rows = self.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         self.canvasHeight(maxCanvasHt.toString() + 'px');
         return rows.length || 0;
-    })();
+    };
 
     this.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
@@ -106,10 +107,10 @@ ng.grid = function (options, gridWidth) {
     this.columns = [];
 
     //initialized in the init method
-    this.rowManager;
-    this.rows;
-    this.headerRow;
-    this.footer;
+    this.rowManager = null;
+    this.rows = null;
+    this.headerRow = null;
+    this.footer = null;
 
     this.elementDims = {
         scrollW: 0,
@@ -127,28 +128,28 @@ ng.grid = function (options, gridWidth) {
     };
     this.elementsNeedMeasuring = true;
 
-    //#region Container dimensions
+    //#region Container Dimensions
 
-    this.rootDim = new ng.dimension({ outerHeight: 20000, outerWidth: 20000 });
+    this.rootDim = new ng.Dimension({ outerHeight: 20000, outerWidth: 20000 });
 
-    this.headerDim = (function () {
-        var rootDim = self.rootDim(),
-            newDim = new ng.dimension();
+    this.headerDim = function () {
+        var rootDim = self.rootDim,
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = self.config.headerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
 
-        if (filterOpen) {
+        if (this.filterOpen) {
             newDim.outerHeight += self.config.filterRowHeight;
         }
 
         return newDim;
-    })();
+    };
 
-    this.footerDim = (function () {
-        var rootDim = self.rootDim(),
+    this.footerDim = function() {
+        var rootDim = self.rootDim,
             showFooter = self.config.footerVisible,
-            newDim = new ng.dimension();
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = self.config.footerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -158,13 +159,13 @@ ng.grid = function (options, gridWidth) {
         }
 
         return newDim;
-    })();
+    };
 
-    this.viewportDim = (function () {
+    this.viewportDim = function () {
         var rootDim = self.rootDim,
-            headerDim = self.headerDim,
-            footerDim = self.footerDim,
-            newDim = new ng.dimension();
+            headerDim = self.headerDim(),
+            footerDim = self.footerDim(),
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -172,9 +173,9 @@ ng.grid = function (options, gridWidth) {
         newDim.innerWidth = newDim.outerWidth;
 
         return newDim;
-    })();
+    };
 
-    this.totalRowWidth = (function () {
+    this.totalRowWidth = function () {
         var totalWidth = 0,
             cols = self.columns,
             numOfCols = self.columns.length,
@@ -182,7 +183,7 @@ ng.grid = function (options, gridWidth) {
             percentArray = [],
             asteriskNum = 0;
             
-        ng.utils.forEach(cols, function (col, i) {
+        angular.forEach(cols, function (col, i) {
             // get column width out of the observable
             var t = col.width;
             // check if it is a number
@@ -219,7 +220,7 @@ ng.grid = function (options, gridWidth) {
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainigWidth / asteriskNum);
             // set the width of each column based on the number of stars
-            ng.utils.forEach(asterisksArray, function (col, i) {
+            angular.forEach(asterisksArray, function (col) {
                 var t = col.width.length;
                 col.width = asteriskVal * t;
                 totalWidth += col.width;
@@ -228,16 +229,16 @@ ng.grid = function (options, gridWidth) {
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0){
             // do the math
-            ng.utils.forEach(percentArray, function (col, i) {
+            angular.forEach(percentArray, function (col) {
                 var t = col.width;
                 col.width = Math.floor(self.width * (parseInt(t.slice(0, - 1)) / 100));
                 totalWidth += col.width;
             });
         }
         return totalWidth;
-    })();
+    };
 
-    this.minRowsToRender = (function () {
+    this.minRowsToRender = function () {
         var viewportH = self.viewportDim.outerHeight || 1;
 
         if (filterIsOpen) {
@@ -247,16 +248,14 @@ ng.grid = function (options, gridWidth) {
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
 
         return prevMinRowsToRender;
-    })();
+    };
 
 
-    this.headerScrollerDim = (function () {
+    this.headerScrollerDim = function () {
         var viewportH = self.viewportDim.outerHeight,
-            filterOpen = filterIsOpen, //register this observable
             maxHeight = self.maxCanvasHeight,
             vScrollBarIsOpen = (maxHeight > viewportH),
-            hScrollBarIsOpen = (self.viewportDim.outerWidth < self.totalRowWidth),
-            newDim = new ng.dimension();
+            newDim = new ng.Dimension();
 
         newDim.autoFitHeight = true;
         newDim.outerWidth = self.totalRowWidth;
@@ -266,44 +265,31 @@ ng.grid = function (options, gridWidth) {
             newDim.outerWidth += self.elementDims.scrollW;
         }
         return newDim;
-    })();
+    };
 
     //#endregion
 
     //#region Events
-    this.toggleSelectAll;
+    this.toggleSelectAll = false;
 
     this.sortData = function (col, dir) {
         isSorting = true;
 
-        ng.utils.forEach(self.columns, function (column) {
+        angular.forEach(self.columns, function (column) {
             if (column.field !== col.field) {
                 if (column.sortDirection !== "") { column.sortDirection = ""; }
             }
         });
 
-        sortManager.sort(col, dir);
+        SortService.Sort(col, dir);
 
         isSorting = false;
     };
 
     //#endregion
 
-    //keep selected item scrolled into view
-    this.finalData.$watch(function () {
-         if (self.config.selectedItems()) {
-            var lastItemIndex = self.config.selectedItems.length - 1;
-            if (lastItemIndex <= 0) {
-                var item = self.config.selectedItems[lastItemIndex];
-                if (item) {
-                   self.scrollIntoView(item);
-                }
-            }
-        }
-    });
-
     this.scrollIntoView = function (entity) {
-        var itemIndex,
+        var itemIndex = -1,
             viewableRange = self.rowManager.viewableRange;
 
         if (entity) {
@@ -315,7 +301,7 @@ ng.grid = function (options, gridWidth) {
             if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
                 //scroll it into view
-                self.rowManager.viewableRange = new ng.range(itemIndex, itemIndex + self.minRowsToRender);
+                self.rowManager.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender);
 
                 if (self.$viewport) {
                     self.$viewport.scrollTop(itemIndex * self.config.rowHeight);
@@ -325,11 +311,11 @@ ng.grid = function (options, gridWidth) {
     };
 
     this.refreshDomSizes = function () {
-        var dim = new ng.dimension(),
+        var dim = new ng.Dimension(),
             oldDim = self.rootDim,
-            rootH = 0,
-            rootW = 0,
-            canvasH = 0;
+            rootH,
+            rootW,
+            canvasH;
 
         self.elementsNeedMeasuring = true;
 
@@ -353,7 +339,7 @@ ng.grid = function (options, gridWidth) {
             rootW += self.elementDims.scrollW || 0;
         }
 
-        //now see if we are constrained by any width dimensions
+        //now see if we are constrained by any width Dimensions
         dim.outerWidth = Math.min(self.elementDims.rootMaxW, rootW);
         dim.outerWidth = Math.max(self.elementDims.rootMinW, dim.outerWidth);
 
@@ -369,11 +355,11 @@ ng.grid = function (options, gridWidth) {
 
     this.refreshDomSizesTrigger = (function () {
 
-        if (h_updateTimeout) {
+        if (hUpdateTimeout) {
             if (window.setImmediate) {
-                window.clearImmediate(h_updateTimeout);
+                window.clearImmediate(hUpdateTimeout);
             } else {
-                window.clearTimeout(h_updateTimeout);
+                window.clearTimeout(hUpdateTimeout);
             }
         }
 
@@ -429,21 +415,11 @@ ng.grid = function (options, gridWidth) {
         if (self.config.displayRowIndex) {
             columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
         }
-        
-        var createColumnSortClosure = function (col) {
-            return function (dir) {
-                if (dir) {
-                    self.sortData(col, dir);
-                }
-            }
-        }
 
         if (columnDefs.length > 0) {
 
-            ng.utils.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.column(colDef, i);
-                column.sortDirection.$watch(createColumnSortClosure(column));                
-                column.filter.$watch(filterManager.createFilterChangeCallback(column));
+            angular.forEach(columnDefs, function (colDef, i) {
+                var column = new ng.Column(colDef, i);
                 cols.push(column);
             });
 
@@ -464,8 +440,8 @@ ng.grid = function (options, gridWidth) {
             self.config.headerTemplate = self.gridId + self.config.headerTemplate;
         }
 
-        self.rowManager = new ng.rowManager(self);
-        self.selectionManager = new ng.selectionManager({
+        RowService.Initialize(self);
+        SelectionService.Initialize({
             isMultiSelect: self.config.isMultiSelect,
             data: self.finalData,
             selectedItem: self.config.selectedItem,
@@ -473,9 +449,9 @@ ng.grid = function (options, gridWidth) {
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.isMultiSelect
-        }, self.rowManager);
+        }, RowService);
         
-        ng.utils.forEach(self.columns, function(col) {
+        angular.forEach(self.columns, function(col) {
             if (col.widthIsConfigured){
                 col.width.$watch(function(){
                     self.rowManager.dataChanged = true;
@@ -485,9 +461,9 @@ ng.grid = function (options, gridWidth) {
             }
         });
         
-        self.selectedItemCount = self.selectionManager.selectedItemCount;
-        self.toggleSelectAll = self.selectionManager.toggleSelectAll;
-        self.rows = self.rowManager.rows; // dependent observable
+        self.selectedItemCount = SelectionService.SelectedItemCount;
+        self.toggleSelectAll = SelectionService.ToggleSelectAll;
+        self.rows = RowService.Rows; // dependent observable
 
         ng.cssBuilder.buildStyles(self);
 
@@ -509,9 +485,9 @@ ng.grid = function (options, gridWidth) {
         };
 
         if (window.setImmediate) {
-            h_updateTimeout = setImmediate(updater);
+            hUpdateTimeout = window.setImmediate(updater);
         } else {
-            h_updateTimeout = setTimeout(updater, 0);
+            hUpdateTimeout = setTimeout(updater, 0);
         }
     };
 
@@ -521,7 +497,7 @@ ng.grid = function (options, gridWidth) {
     };
 
     this.clearFilter_Click = function () {
-        ng.utils.forEach(self.columns, function (col, i) {
+        angular.forEach(self.columns, function (col) {
             col.filter = null;
         });
     };
@@ -530,7 +506,7 @@ ng.grid = function (options, gridWidth) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowManager.viewableRange = new ng.range(rowIndex, rowIndex + self.minRowsToRender);
+        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender));
     };
 
     this.adjustScrollLeft = function (scrollLeft) {
@@ -539,7 +515,6 @@ ng.grid = function (options, gridWidth) {
         }
     };
     
-    self.data.$watch(self.refreshDomSizesTrigger)
     //call init
     self.init();
 };

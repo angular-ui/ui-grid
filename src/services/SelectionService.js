@@ -6,19 +6,14 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
-    var selectionService = {};		
-	
-	// the count of selected items (supports both multi and single-select logic
-    $scope.selectedItemCount = function() {
-        return $scope.selectedItems.length;
-    };
-	
+ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
+    var selectionService = {};
+
 	$scope.maxRows = function () {
 	   return $scope.dataSource.length;
 	};
 
-    selectionService.initialize = function(options, rowManager) {
+	selectionService.Initialize = function (options, RowService) {
         $scope.isMulti = options.isMulti || options.isMultiSelect;
         $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
@@ -27,7 +22,7 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
         $scope.selectedItems = options.selectedItems || [];
         $scope.selectedIndex = options.selectedIndex;
         $scope.lastClickedRow = options.lastClickedRow;
-        $scope.rowManager = rowManager;
+        $scope.RowService = RowService;
 
         // some subscriptions to keep the selectedItem in sync
         $scope.$watch($scope.selectedItem, function(val) {
@@ -84,39 +79,14 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
                 $scope.selectedItems.removeAll(itemsToRemove);
             }
         });
-
-        // writable-computed observable
-        // @return - boolean indicating if all items are selected or not
-        // @val - boolean indicating whether to select all/de-select all
-        $scope.toggleSelectAll = {
-            get: function() {
-                var cnt = $scope.selectedItemCount;
-                if ($scope.maxRows() === 0) {
-                    return false;
-                }
-                return cnt === $scope.maxRows();
-            },
-            set: function(val) {
-                var checkAll = val,
-                    dataSourceCopy = [];
-                angular.forEach(dataSource, function(item) {
-                    dataSourceCopy.push(item);
-                });
-                if (checkAll) {
-                    $scope.selectedItems = dataSourceCopy;
-                } else {
-                    $scope.selectedItems = [];
-                }
-            }
-        };
     };
 		
 	// function to manage the selection action of a data item (entity)
-    selectionService.changeSelection = function(rowItem, evt) {
+    selectionService.ChangeSelection = function(rowItem, evt) {
         if ($scope.isMulti && evt && evt.shiftKey) {
             if ($scope.lastClickedRow) {
-                var thisIndx = $scope.rowManager.rowCache.indexOf(rowItem);
-                var prevIndx = $scope.rowManager.rowCache.indexOf($scope.lastClickedRow);
+                var thisIndx = $scope.RowService.rowCache.indexOf(rowItem);
+                var prevIndx = $scope.RowService.rowCache.indexOf($scope.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -125,7 +95,7 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    $scope.rowManager.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
+                    $scope.RowService.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
                     $scope.addOrRemove(rowItem);
                 }
                 $scope.lastClickedRow(rowItem);
@@ -149,6 +119,26 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
             }
         }
     };
-	
+    
+    // the count of selected items (supports both multi and single-select logic
+    selectionService.SelectedItemCount = function () {
+        return $scope.selectedItems.length;
+    };
+    
+    // writable-computed observable
+    // @return - boolean indicating if all items are selected or not
+    // @val - boolean indicating whether to select all/de-select all
+    selectionService.ToggleSelectAll = function (checkAll) {
+        var dataSourceCopy = [];
+        angular.forEach(dataSource, function (item) {
+            dataSourceCopy.push(item);
+        });
+        if (checkAll) {
+            $scope.selectedItems = dataSourceCopy;
+        } else {
+            $scope.selectedItems = [];
+        }
+    };
+    
 	return selectionService;
 }]);

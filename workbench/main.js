@@ -10,4 +10,5 @@ function gridController($scope) {
                          {name: "Anna", age: 29},
                          {name: "Ethan", age: 0}];
     }
+    $scope.gridOptions = { data : $scope.myData };
 }

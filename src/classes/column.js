@@ -1,5 +1,4 @@
-﻿ng.column = function (colDef, index) {
-    var self = this;
+﻿ng.Column = function (colDef, index) {
         
     this.width = colDef.width;
     this.widthIsConfigured = false;

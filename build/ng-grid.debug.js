@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 13:40:23
+* Compiled At: 10/15/2012 16:59:00
 ***********************************************/
 
 
@@ -231,36 +231,36 @@ $.extend(ng.utils, {
 * FILE: ..\src\services\FilterService.js
 ***********************************************/
 
-ngGridServices.factory('FilterService', ['$scope', function ($scope) {
+ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
     var filterService = {};	
     
     // array that we use to manage the filtering before it updates the final data
-    $scope.internalFilteredData = [];
+    scope.internalFilteredData = [];
     
     // filters off _destroy = true items
-    $scope.filterDestroyed = function (arr) {
+    scope.filterDestroyed = function (arr) {
         return ng.utils.arrayFilter(arr, function (item) {
             return (item['_destroy'] === true ? false : true);
         });
     };
     
     // the array of filtered data we return to the grid
-    $scope.filteredData = function () {
-        var data = $scope.internalFilteredData;
+    scope.filteredData = function () {
+        var data = scope.internalFilteredData;
         //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
-        if ($scope.initPhase > 0) {
+        if (scope.initPhase > 0) {
             return data;
         } else {
-            return $scope.filterDestroyed(self.data);
+            return scope.filterDestroyed(self.data);
         }
     };
     
-    filterService.initialize = function (options){
+    filterService.Initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             regExCache = { }; // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
         
-        $scope.initPhase = 0;     
-        $scope.options = options;
+        scope.initPhase = 0;     
+        scope.options = options;
         // first check the wildcard as we only support * and % currently
         if (wildcard === '*' || wildcard === '%') {
             // do nothing
@@ -269,16 +269,16 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
         }
 
         // map of column.field values to filterStrings
-        $scope.filterInfo = options.filterInfo;
+        scope.filterInfo = options.filterInfo;
         // the array of data that the user defined
-        $scope.data = options.data;
+        scope.data = options.data;
 
         // utility function for checking data validity
-        $scope.isEmpty = function (data) {
+        scope.isEmpty = function (data) {
             return (data === null || data === undefined || data === '');
         };
         // performs regex matching on data strings
-        $scope.matchString = function (itemStr, filterStr) {
+        scope.matchString = function (itemStr, filterStr) {
             //first check for RegEx thats already built
             var regex = regExCache[filterStr];
             //if nothing, build the regex
@@ -314,8 +314,8 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
             return itemStr.match(regex);
         };
         // the core logic for filtering data
-        $scope.filterData = function () {
-            var fi = $scope.filterInfo,
+        scope.filterData = function () {
+            var fi = scope.filterInfo,
             data = self.data,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
@@ -325,10 +325,10 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
             itemDataStr, // the stringified version of itemData
             filterStr; // the user-entered filtering criteria
             // filter the destroyed items
-            data = $scope.filterDestroyed(data);
+            data = scope.filterDestroyed(data);
             // make sure we even have work to do before we get started
             if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
-                $scope.internalFilteredData = data;
+                scope.internalFilteredData = data;
                 return;
             }
             //clear out the regex cache so that we don't get improper results
@@ -343,15 +343,15 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
                         // grab the user-entered filter criteria
                         filterStr = fi[f];
                         // make sure they didn't just enter the wildcard character
-                        if (!$scope.isEmpty(filterStr) && filterStr !== wildcard) {
+                        if (!scope.isEmpty(filterStr) && filterStr !== wildcard) {
                             // execute regex matching
-                            if ($scope.isEmpty(itemData)) {
+                            if (scope.isEmpty(itemData)) {
                                 match = false;
                             } else if (typeof itemData === "string") {
-                                match = $scope.matchString(itemData, filterStr);
+                                match = scope.matchString(itemData, filterStr);
                             } else {
                                 itemDataStr = itemData.toString();
-                                match = $scope.matchString(itemDataStr, filterStr);
+                                match = scope.matchString(itemDataStr, filterStr);
                             }
                         }
                     }
@@ -372,22 +372,22 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
                 return keepRow;
             });
             // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
-            $scope.internalFilteredData = newArr;
+            scope.internalFilteredData = newArr;
         };
         //create subscriptions
-        $scope.$watch($scope.data, $scope.filterData);
-        $scope.$watch($scope.filterInfo, $scope.filterData);
+        scope.$watch(scope.data, scope.filterData);
+        scope.$watch(scope.filterInfo, scope.filterData);
         //increase this after initialization so that the computeds fire correctly
-        $scope.initPhase = 1;
+        scope.initPhase = 1;
     };
     
     filterService.FilterInfo = {
-        get: function()   { return $scope.filterInfo; },
-        set: function(val){ $scope.filterInfo = val;  }
+        get: function()   { return scope.filterInfo; },
+        set: function(val){ scope.filterInfo = val;  }
     };
     
     filterService.FilteredData = (function(){
-        return $scope.filteredData();
+        return scope.filteredData();
     })();
     
     // the grid uses this to asign the change handlers to the filter boxes during initialization
@@ -422,7 +422,7 @@ ngGridServices.factory('FilterService', ['$scope', function ($scope) {
 * FILE: ..\src\services\GridService.js
 ***********************************************/
 
-ngGridServices.factory('GridService', ['$scope', function ($scope) {
+ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
     var gridService = {};
     $scope.gridCache = {};
     
@@ -522,14 +522,14 @@ ngGridServices.factory('GridService', ['$scope', function ($scope) {
 * FILE: ..\src\services\RowService.js
 ***********************************************/
 
-ngGridServices.factory('RowService', ['$scope', function ($scope) {
+ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     var rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     $scope.rowCache = [];
     $scope.dataChanged = true;
     
-    rowService.initialize = function (grid) {
+    rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
             prevMinRows = 0, // for comparison purposes when scrolling
             currentPage = grid.config.currentPage,
@@ -542,7 +542,7 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
         $scope.dataSource = grid.finalData; //observableArray
         
         // change subscription to clear out our cache
-        $scope.$watch(dataSource, function () {
+        $scope.$watch($scope.dataSource, function () {
             $scope.dataChanged = true;
             $scope.rowCache = []; //if data source changes, kill this!
         });
@@ -594,14 +594,14 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
         };
         
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
-        $scope.$watch($scope.renderedRange, function (rg) {
+        $scope.$watch($scope.renderedRange, function () {
             var rowArr = [],
             row,
-            pagingOffset = (pageSize() * (currentPage() - 1)),
-            dataArr = $scope.dataSource.slice(rg.bottomRow, rg.topRow);
+            pagingOffset = (pageSize * (currentPage - 1)),
+            dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
             
             ng.utils.forEach(dataArr, function (item, i) {
-                row = $scope.buildRowFromEntity(item, rg.bottomRow + i, pagingOffset);
+                row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
                 
                 //add the row to our return array
                 rowArr.push(row);
@@ -686,6 +686,16 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
     rowService.CalcRenderedRange = function(){
         $scope.calcRenderedRange();
     };
+
+    rowService.Rows = (function () {
+        return $scope.rows;
+    })();
+
+    rowService.ViewableRange = (function (val) {
+        if (val) {
+            $scope.viewableRange = val;
+        } return $scope.viewableRange;
+    })();
     
     return rowService;
 }]);
@@ -694,19 +704,14 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
 * FILE: ..\src\services\SelectionService.js
 ***********************************************/
 
-ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
-    var selectionService = {};		
-	
-	// the count of selected items (supports both multi and single-select logic
-    $scope.selectedItemCount = function() {
-        return $scope.selectedItems.length;
-    };
-	
+ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
+    var selectionService = {};
+
 	$scope.maxRows = function () {
 	   return $scope.dataSource.length;
 	};
 
-    selectionService.initialize = function(options, rowManager) {
+	selectionService.Initialize = function (options, RowService) {
         $scope.isMulti = options.isMulti || options.isMultiSelect;
         $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
@@ -715,7 +720,7 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
         $scope.selectedItems = options.selectedItems || [];
         $scope.selectedIndex = options.selectedIndex;
         $scope.lastClickedRow = options.lastClickedRow;
-        $scope.rowManager = rowManager;
+        $scope.RowService = RowService;
 
         // some subscriptions to keep the selectedItem in sync
         $scope.$watch($scope.selectedItem, function(val) {
@@ -772,39 +777,14 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
                 $scope.selectedItems.removeAll(itemsToRemove);
             }
         });
-
-        // writable-computed observable
-        // @return - boolean indicating if all items are selected or not
-        // @val - boolean indicating whether to select all/de-select all
-        $scope.toggleSelectAll = {
-            get: function() {
-                var cnt = $scope.selectedItemCount;
-                if ($scope.maxRows() === 0) {
-                    return false;
-                }
-                return cnt === $scope.maxRows();
-            },
-            set: function(val) {
-                var checkAll = val,
-                    dataSourceCopy = [];
-                angular.forEach(dataSource, function(item) {
-                    dataSourceCopy.push(item);
-                });
-                if (checkAll) {
-                    $scope.selectedItems = dataSourceCopy;
-                } else {
-                    $scope.selectedItems = [];
-                }
-            }
-        };
     };
 		
 	// function to manage the selection action of a data item (entity)
-    selectionService.changeSelection = function(rowItem, evt) {
+    selectionService.ChangeSelection = function(rowItem, evt) {
         if ($scope.isMulti && evt && evt.shiftKey) {
             if ($scope.lastClickedRow) {
-                var thisIndx = $scope.rowManager.rowCache.indexOf(rowItem);
-                var prevIndx = $scope.rowManager.rowCache.indexOf($scope.lastClickedRow);
+                var thisIndx = $scope.RowService.rowCache.indexOf(rowItem);
+                var prevIndx = $scope.RowService.rowCache.indexOf($scope.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -813,7 +793,7 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    $scope.rowManager.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
+                    $scope.RowService.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
                     $scope.addOrRemove(rowItem);
                 }
                 $scope.lastClickedRow(rowItem);
@@ -837,7 +817,27 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
             }
         }
     };
-	
+    
+    // the count of selected items (supports both multi and single-select logic
+    selectionService.SelectedItemCount = function () {
+        return $scope.selectedItems.length;
+    };
+    
+    // writable-computed observable
+    // @return - boolean indicating if all items are selected or not
+    // @val - boolean indicating whether to select all/de-select all
+    selectionService.ToggleSelectAll = function (checkAll) {
+        var dataSourceCopy = [];
+        angular.forEach(dataSource, function (item) {
+            dataSourceCopy.push(item);
+        });
+        if (checkAll) {
+            $scope.selectedItems = dataSourceCopy;
+        } else {
+            $scope.selectedItems = [];
+        }
+    };
+    
 	return selectionService;
 }]);
 
@@ -845,7 +845,7 @@ ngGridServices.factory('SelectionService', ['$scope', function ($scope) {
 * FILE: ..\src\services\SortService.js
 ***********************************************/
 
-ngGridServices.factory('SortService', ['$scope', function ($scope) {
+ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     var sortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting
@@ -1055,7 +1055,7 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
         $scope.internalSortedData = data;
     };
     
-    sortService.initialize = function (options){
+    sortService.Initialize = function (options) {
         $scope.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
         $scope.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
         $scope.ASC = "asc", // constant for sorting direction
@@ -1073,16 +1073,7 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
         $scope.sortInfo = options.sortInfo;
         
-        $scope.sortedData = function () {
-            var sortData = internalSortedData;
-            //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
-            // dependency during the binding handler's dependency detection :(
-            if ($scope.initPhase > 0) {
-                return sortData;
-            } else {
-                return $scope.dataSource;
-            }
-        };
+
         $scope.initPhase = 1;
     };
     
@@ -1100,7 +1091,15 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
             direction: direction
         };
     };
-
+    sortService.SortedData = (function () {
+        //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
+        // dependency during the binding handler's dependency detection :(
+        if ($scope.initPhase > 0) {
+            return $scope.internalSortedData;
+        } else {
+            return $scope.dataSource;
+        }
+    })();
     //watch the changes in these objects
     $scope.$watch($scope.dataSource, $scope.sortData);
     $scope.$watch($scope.sortInfo, $scope.sortData);
@@ -1112,7 +1111,7 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
 * FILE: ..\src\services\TemplateService.js
 ***********************************************/
 
-ngGridServices.factory('TemplateService', ['$scope', function () {
+ngGridServices.factory('TemplateService', ['$rootScope', function () {
     var templateService = {};
     templateService.TemplateExists = function (tmplId) {
         var el = document.getElementById(tmplId);
@@ -1133,8 +1132,8 @@ ngGridServices.factory('TemplateService', ['$scope', function () {
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!self.templateExists(tmplId)) {
-            self.addTemplate(templateTextAccessor(), tmplId);
+        if (!templateService.TemplateExists(tmplId)) {
+            templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
 
@@ -1150,41 +1149,41 @@ ngGridServices.factory('TemplateService', ['$scope', function () {
         config = $.extend(defaults, options);
         
         //first ensure the grid template!
-        self.addTemplateSafe(GRID_TEMPLATE,  function () {
+        templateService.AddTemplateSafe(GRID_TEMPLATE, function () {
             return ng.templates.defaultGridInnerTemplate(config);
         });
         
         //header row template
         if (config.headerTemplate) {
-            self.addTemplateSafe(config.headerTemplate, function () {
+            templateService.AddTemplateSafe(config.headerTemplate, function () {
                 return ng.templates.generateHeaderTemplate(config);
             });
         }
         
         //header cell template
         if (config.headerCellTemplate) {
-            self.addTemplateSafe(config.headerCellTemplate, function () {
+            templateService.AddTemplateSafe(config.headerCellTemplate, function () {
                 return ng.templates.defaultHeaderCellTemplate(config);
             });
         }
         
         //row template
         if (config.rowTemplate) {
-            self.addTemplateSafe(config.rowTemplate, function () {
+            templateService.AddTemplateSafe(config.rowTemplate, function () {
                 return ng.templates.generateRowTemplate(config);
             });
         }
         
         //footer template
         if (config.footerTemplate) {
-            self.addTemplateSafe(config.footerTemplate, function () {
+            templateService.AddTemplateSafe(config.footerTemplate, function () {
                 return ng.templates.defaultFooterTemplate(config);
             });
         }
     };
 
     templateService.GetTemplateText = function (tmplId) {
-        if (!self.templateExists(tmplId)) {
+        if (!templateService.TemplateExists(tmplId)) {
             return "";
         } else {
             var el = document.getElementById(tmplId);
@@ -1277,7 +1276,7 @@ ng.templates.generateHeaderTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
-    ng.utils.forEach(cols, function (col, i) {
+    angular.forEach(cols, function (col, i) {
         if (col.field === SELECTED_PROP) {
             b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
             b.append('  <input type="checkbox" ng-checked="toggleSelectAll()"/>');
@@ -1376,8 +1375,7 @@ ng.CellFactory = function (cols) {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.column = function (colDef, index) {
-    var self = this;
+ng.Column = function (colDef, index) {
         
     this.width = colDef.width;
     this.widthIsConfigured = false;
@@ -1431,7 +1429,7 @@ ng.column = function (colDef, index) {
 /***********************************************
 * FILE: ..\src\classes\dimension.js
 ***********************************************/
-ng.dimension = function (options) {
+ng.Dimension = function (options) {
     this.innerHeight = null;
     this.innerWidth = null;
     this.outerHeight = null;
@@ -1519,7 +1517,7 @@ ng.footer = function (grid) {
 * FILE: ..\src\classes\grid.js
 ***********************************************/
 
-ng.grid = function (options, gridWidth) {
+ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -1560,27 +1558,24 @@ ng.grid = function (options, gridWidth) {
     },
 
     self = this,
-    filterManager, //ng.filterManager
-    sortManager, //ng.sortManager
     isSorting = false,
     prevScrollTop,
-    prevScrollLeft,
     prevMinRowsToRender,
     maxCanvasHt = 0,
-    h_updateTimeout;
+    hUpdateTimeout;
 
-    this.$root; //this is the root element that is passed in with the binding handler
-    this.$topPanel;
-    this.$headerContainer;
-    this.$headerScroller;
-    this.$headers;
-    this.$viewport;
-    this.$canvas;
-    this.$footerPanel;
+    this.$root = null; //this is the root element that is passed in with the binding handler
+    this.$topPanel = null;
+    this.$headerContainer = null;
+    this.$headerScroller = null;
+    this.$headers = null;
+    this.$viewport = null;
+    this.$canvas = null;
+    this.$footerPanel = null;
     this.width = gridWidth;
-    this.selectionManager;
-    this.selectedItemCount;
-    
+    this.selectionManager = null;
+    this.selectedItemCount= null;
+    this.filterIsOpen = false;
     this.config = $.extend(defaults, options);
     this.gridId = "ng" + ng.utils.newId();
     this.initPhase = 0;
@@ -1597,25 +1592,25 @@ ng.grid = function (options, gridWidth) {
     // computed observables register correctly;
     this.data = self.config.data;
 
-    filterManager = new ng.filterManager(self.config);
-    sortManager = new ng.sortManager({
-        data: filterManager.filteredData,
+    FilterService.Initialize(self.config);
+    SortService.Initialize({
+        data: FilterService.FilteredData,
         sortInfo: self.config.sortInfo,
         useExternalSorting: self.config.useExternalSorting
     });
 
-    this.sortInfo = sortManager.sortInfo; //observable
-    this.filterInfo = filterManager.filterInfo; //observable
+    this.sortInfo = SortService.SortInfo; //observable
+    this.filterInfo = FilterService.FilterInfo.get(); //observable
     this.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
-    this.finalData = sortManager.sortedData; //observable Array
+    this.finalData = SortService.SortedData; //observable Array
     this.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    this.maxRows = (function () {
+    this.maxRows = function () {
         var rows = self.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         self.canvasHeight(maxCanvasHt.toString() + 'px');
         return rows.length || 0;
-    })();
+    };
 
     this.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
@@ -1624,10 +1619,10 @@ ng.grid = function (options, gridWidth) {
     this.columns = [];
 
     //initialized in the init method
-    this.rowManager;
-    this.rows;
-    this.headerRow;
-    this.footer;
+    this.rowManager = null;
+    this.rows = null;
+    this.headerRow = null;
+    this.footer = null;
 
     this.elementDims = {
         scrollW: 0,
@@ -1645,28 +1640,28 @@ ng.grid = function (options, gridWidth) {
     };
     this.elementsNeedMeasuring = true;
 
-    //#region Container dimensions
+    //#region Container Dimensions
 
-    this.rootDim = new ng.dimension({ outerHeight: 20000, outerWidth: 20000 });
+    this.rootDim = new ng.Dimension({ outerHeight: 20000, outerWidth: 20000 });
 
-    this.headerDim = (function () {
-        var rootDim = self.rootDim(),
-            newDim = new ng.dimension();
+    this.headerDim = function () {
+        var rootDim = self.rootDim,
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = self.config.headerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
 
-        if (filterOpen) {
+        if (this.filterOpen) {
             newDim.outerHeight += self.config.filterRowHeight;
         }
 
         return newDim;
-    })();
+    };
 
-    this.footerDim = (function () {
-        var rootDim = self.rootDim(),
+    this.footerDim = function() {
+        var rootDim = self.rootDim,
             showFooter = self.config.footerVisible,
-            newDim = new ng.dimension();
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = self.config.footerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -1676,13 +1671,13 @@ ng.grid = function (options, gridWidth) {
         }
 
         return newDim;
-    })();
+    };
 
-    this.viewportDim = (function () {
+    this.viewportDim = function () {
         var rootDim = self.rootDim,
-            headerDim = self.headerDim,
-            footerDim = self.footerDim,
-            newDim = new ng.dimension();
+            headerDim = self.headerDim(),
+            footerDim = self.footerDim(),
+            newDim = new ng.Dimension();
 
         newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
         newDim.outerWidth = rootDim.outerWidth;
@@ -1690,9 +1685,9 @@ ng.grid = function (options, gridWidth) {
         newDim.innerWidth = newDim.outerWidth;
 
         return newDim;
-    })();
+    };
 
-    this.totalRowWidth = (function () {
+    this.totalRowWidth = function () {
         var totalWidth = 0,
             cols = self.columns,
             numOfCols = self.columns.length,
@@ -1700,7 +1695,7 @@ ng.grid = function (options, gridWidth) {
             percentArray = [],
             asteriskNum = 0;
             
-        ng.utils.forEach(cols, function (col, i) {
+        angular.forEach(cols, function (col, i) {
             // get column width out of the observable
             var t = col.width;
             // check if it is a number
@@ -1737,7 +1732,7 @@ ng.grid = function (options, gridWidth) {
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainigWidth / asteriskNum);
             // set the width of each column based on the number of stars
-            ng.utils.forEach(asterisksArray, function (col, i) {
+            angular.forEach(asterisksArray, function (col) {
                 var t = col.width.length;
                 col.width = asteriskVal * t;
                 totalWidth += col.width;
@@ -1746,16 +1741,16 @@ ng.grid = function (options, gridWidth) {
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0){
             // do the math
-            ng.utils.forEach(percentArray, function (col, i) {
+            angular.forEach(percentArray, function (col) {
                 var t = col.width;
                 col.width = Math.floor(self.width * (parseInt(t.slice(0, - 1)) / 100));
                 totalWidth += col.width;
             });
         }
         return totalWidth;
-    })();
+    };
 
-    this.minRowsToRender = (function () {
+    this.minRowsToRender = function () {
         var viewportH = self.viewportDim.outerHeight || 1;
 
         if (filterIsOpen) {
@@ -1765,16 +1760,14 @@ ng.grid = function (options, gridWidth) {
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
 
         return prevMinRowsToRender;
-    })();
+    };
 
 
-    this.headerScrollerDim = (function () {
+    this.headerScrollerDim = function () {
         var viewportH = self.viewportDim.outerHeight,
-            filterOpen = filterIsOpen, //register this observable
             maxHeight = self.maxCanvasHeight,
             vScrollBarIsOpen = (maxHeight > viewportH),
-            hScrollBarIsOpen = (self.viewportDim.outerWidth < self.totalRowWidth),
-            newDim = new ng.dimension();
+            newDim = new ng.Dimension();
 
         newDim.autoFitHeight = true;
         newDim.outerWidth = self.totalRowWidth;
@@ -1784,44 +1777,31 @@ ng.grid = function (options, gridWidth) {
             newDim.outerWidth += self.elementDims.scrollW;
         }
         return newDim;
-    })();
+    };
 
     //#endregion
 
     //#region Events
-    this.toggleSelectAll;
+    this.toggleSelectAll = false;
 
     this.sortData = function (col, dir) {
         isSorting = true;
 
-        ng.utils.forEach(self.columns, function (column) {
+        angular.forEach(self.columns, function (column) {
             if (column.field !== col.field) {
                 if (column.sortDirection !== "") { column.sortDirection = ""; }
             }
         });
 
-        sortManager.sort(col, dir);
+        SortService.Sort(col, dir);
 
         isSorting = false;
     };
 
     //#endregion
 
-    //keep selected item scrolled into view
-    this.finalData.$watch(function () {
-         if (self.config.selectedItems()) {
-            var lastItemIndex = self.config.selectedItems.length - 1;
-            if (lastItemIndex <= 0) {
-                var item = self.config.selectedItems[lastItemIndex];
-                if (item) {
-                   self.scrollIntoView(item);
-                }
-            }
-        }
-    });
-
     this.scrollIntoView = function (entity) {
-        var itemIndex,
+        var itemIndex = -1,
             viewableRange = self.rowManager.viewableRange;
 
         if (entity) {
@@ -1833,7 +1813,7 @@ ng.grid = function (options, gridWidth) {
             if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
                 //scroll it into view
-                self.rowManager.viewableRange = new ng.range(itemIndex, itemIndex + self.minRowsToRender);
+                self.rowManager.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender);
 
                 if (self.$viewport) {
                     self.$viewport.scrollTop(itemIndex * self.config.rowHeight);
@@ -1843,11 +1823,11 @@ ng.grid = function (options, gridWidth) {
     };
 
     this.refreshDomSizes = function () {
-        var dim = new ng.dimension(),
+        var dim = new ng.Dimension(),
             oldDim = self.rootDim,
-            rootH = 0,
-            rootW = 0,
-            canvasH = 0;
+            rootH,
+            rootW,
+            canvasH;
 
         self.elementsNeedMeasuring = true;
 
@@ -1871,7 +1851,7 @@ ng.grid = function (options, gridWidth) {
             rootW += self.elementDims.scrollW || 0;
         }
 
-        //now see if we are constrained by any width dimensions
+        //now see if we are constrained by any width Dimensions
         dim.outerWidth = Math.min(self.elementDims.rootMaxW, rootW);
         dim.outerWidth = Math.max(self.elementDims.rootMinW, dim.outerWidth);
 
@@ -1887,11 +1867,11 @@ ng.grid = function (options, gridWidth) {
 
     this.refreshDomSizesTrigger = (function () {
 
-        if (h_updateTimeout) {
+        if (hUpdateTimeout) {
             if (window.setImmediate) {
-                window.clearImmediate(h_updateTimeout);
+                window.clearImmediate(hUpdateTimeout);
             } else {
-                window.clearTimeout(h_updateTimeout);
+                window.clearTimeout(hUpdateTimeout);
             }
         }
 
@@ -1947,21 +1927,11 @@ ng.grid = function (options, gridWidth) {
         if (self.config.displayRowIndex) {
             columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
         }
-        
-        var createColumnSortClosure = function (col) {
-            return function (dir) {
-                if (dir) {
-                    self.sortData(col, dir);
-                }
-            }
-        }
 
         if (columnDefs.length > 0) {
 
-            ng.utils.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.column(colDef, i);
-                column.sortDirection.$watch(createColumnSortClosure(column));                
-                column.filter.$watch(filterManager.createFilterChangeCallback(column));
+            angular.forEach(columnDefs, function (colDef, i) {
+                var column = new ng.Column(colDef, i);
                 cols.push(column);
             });
 
@@ -1982,8 +1952,8 @@ ng.grid = function (options, gridWidth) {
             self.config.headerTemplate = self.gridId + self.config.headerTemplate;
         }
 
-        self.rowManager = new ng.rowManager(self);
-        self.selectionManager = new ng.selectionManager({
+        RowService.Initialize(self);
+        SelectionService.Initialize({
             isMultiSelect: self.config.isMultiSelect,
             data: self.finalData,
             selectedItem: self.config.selectedItem,
@@ -1991,9 +1961,9 @@ ng.grid = function (options, gridWidth) {
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.isMultiSelect
-        }, self.rowManager);
+        }, RowService);
         
-        ng.utils.forEach(self.columns, function(col) {
+        angular.forEach(self.columns, function(col) {
             if (col.widthIsConfigured){
                 col.width.$watch(function(){
                     self.rowManager.dataChanged = true;
@@ -2003,9 +1973,9 @@ ng.grid = function (options, gridWidth) {
             }
         });
         
-        self.selectedItemCount = self.selectionManager.selectedItemCount;
-        self.toggleSelectAll = self.selectionManager.toggleSelectAll;
-        self.rows = self.rowManager.rows; // dependent observable
+        self.selectedItemCount = SelectionService.SelectedItemCount;
+        self.toggleSelectAll = SelectionService.ToggleSelectAll;
+        self.rows = RowService.Rows; // dependent observable
 
         ng.cssBuilder.buildStyles(self);
 
@@ -2027,9 +1997,9 @@ ng.grid = function (options, gridWidth) {
         };
 
         if (window.setImmediate) {
-            h_updateTimeout = setImmediate(updater);
+            hUpdateTimeout = window.setImmediate(updater);
         } else {
-            h_updateTimeout = setTimeout(updater, 0);
+            hUpdateTimeout = setTimeout(updater, 0);
         }
     };
 
@@ -2039,7 +2009,7 @@ ng.grid = function (options, gridWidth) {
     };
 
     this.clearFilter_Click = function () {
-        ng.utils.forEach(self.columns, function (col, i) {
+        angular.forEach(self.columns, function (col) {
             col.filter = null;
         });
     };
@@ -2048,7 +2018,7 @@ ng.grid = function (options, gridWidth) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowManager.viewableRange = new ng.range(rowIndex, rowIndex + self.minRowsToRender);
+        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender));
     };
 
     this.adjustScrollLeft = function (scrollLeft) {
@@ -2057,7 +2027,6 @@ ng.grid = function (options, gridWidth) {
         }
     };
     
-    self.data.$watch(self.refreshDomSizesTrigger)
     //call init
     self.init();
 };
@@ -2285,7 +2254,7 @@ ng.cssBuilder = {
         for (; i < len; i++) {
             col = grid.columns[i];
             css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth - sumWidth - col.width));
-            sumWidth += col.width();
+            sumWidth += col.width;
         }
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
@@ -2532,36 +2501,32 @@ ng.domUtility = (new function () {
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
 
-ngGridDirectives.directive('ngGrid', function (GridService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
-        scope: true,
-        compile: function compile(tElement, tAttrs, transclude) {
-            var options = tAttrs,
-                $element = $(tElement);
-
-            //create the Grid
-            var grid = GridService.getGrid($element);
+        link: function (scope, iElement, iAttrs) {
+            var $element = $(iElement),
+                options = scope[iAttrs.ngGrid],
+                //create the Grid
+                grid = GridService.GetGrid($element);
+            
             if (!grid) {
-                grid = new ng.KoGrid(options, $(element).width());
-                GridService.storeGrid(element, grid);
+                grid = new ng.Grid(options, $($element).width(), FilterService, RowService, SelectionService, SortService);
+                GridService.StoreGrid($element, grid);
             } else {
                 return false;
             }
 
-            TemplateService.ensureGridTemplates({
+            TemplateService.EnsureGridTemplates({
                 rowTemplate: grid.config.rowTemplate,
                 headerTemplate: grid.config.headerTemplate,
                 headerCellTemplate: grid.config.headerCellTemplate,
                 footerTemplate: grid.config.footerTemplate,
-                columns: grid.columns(),
+                columns: grid.columns,
                 showFilter: grid.config.allowFiltering,
                 disableTextSelection: grid.config.disableTextSelection,
                 autogenerateColumns: grid.config.autogenerateColumns,
                 enableColumnResize: grid.config.enableColumnResize
             });
-
-
-
             //get the container sizes
             ng.domUtility.measureGrid($element, grid, true);
 
@@ -2571,26 +2536,51 @@ ngGridDirectives.directive('ngGrid', function (GridService, TemplateService) {
             $element.addClass("kgGrid")
                     .addClass("ui-widget")
                     .addClass(grid.gridId.toString());
-        },
-        link: function postLink(scope, iElement, iAttrs) {
-            var $element = $(iElement),
-                grid = GridService.getGrid($element);
+
             //subscribe to the columns and recrate the grid if they change
             scope.$watch(grid.config.columnDefs, function () {
-                var oldgrid = GridService.getGrid(element);
+                var oldgrid = GridService.GetGrid($element);
                 var oldgridId = oldgrid.gridId.toString();
                 $(element).empty();
                 $(element).removeClass("ngGrid")
                           .removeClass("ui-widget")
                           .removeClass(oldgridId);
-                GridService.removeGrid(oldgridId);
+                GridService.RemoveGrid(oldgridId);
             });
+            //keep selected item scrolled into view
+            scope.$watch(grid.finalData, function () {
+                if (grid.config.selectedItems()) {
+                    var lastItemIndex = grid.config.selectedItems.length - 1;
+                    if (lastItemIndex <= 0) {
+                        var item = grid.config.selectedItems[lastItemIndex];
+                        if (item) {
+                            grid.scrollIntoView(item);
+                        }
+                    }
+                }
+            });
+            scope.$watch(grid.data, grid.refreshDomSizesTrigger);
+            angular.forEach(grid.columns, function (column) {
+                scope.$watch(column.sortDirection, function () {
+                    return function(dir) {
+                        if (dir) {
+                            grid.sortData(column, dir);
+                        }
+                    };
+                });
+                scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
+            });
+            
+            scope.toggleSelectAll = grid.toggleSelectAll;
+            scope.filterIsOpen = grid.filterIsOpen;
             //walk the element's graph and the correct properties on the grid
-            ng.domUtility.assignGridContainers(element, grid);
+            ng.domUtility.assignGridContainers($element, grid);
             //now use the manager to assign the event handlers
-            GridService.assignGridEventHandlers(grid);
+            GridService.AssignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             grid.update();
+            scope.initPhase = 1;
+            return null;
         }
     };
     return ngGrid;
@@ -2879,8 +2869,8 @@ ngGridDirectives.directive('ngSize', function factory() {
 * FILE: ..\src\init.js
 ***********************************************/
 
-// initialization of services intot he main module
+// initialization of services into the main module
 angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).
-    run(function(FilerService, GridService, RowService, SelectionService, SortService, TemplateService){
+    run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
         return null;
     });

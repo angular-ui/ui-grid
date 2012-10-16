@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridServices.factory('GridService', ['$scope', function ($scope) {
+ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
     var gridService = {};
     $scope.gridCache = {};
     

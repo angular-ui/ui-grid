@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('TemplateService', ['$scope', function () {
+ngGridServices.factory('TemplateService', ['$rootScope', function () {
     var templateService = {};
     templateService.TemplateExists = function (tmplId) {
         var el = document.getElementById(tmplId);
@@ -27,8 +27,8 @@ ngGridServices.factory('TemplateService', ['$scope', function () {
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!self.templateExists(tmplId)) {
-            self.addTemplate(templateTextAccessor(), tmplId);
+        if (!templateService.TemplateExists(tmplId)) {
+            templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
 
@@ -44,41 +44,41 @@ ngGridServices.factory('TemplateService', ['$scope', function () {
         config = $.extend(defaults, options);
         
         //first ensure the grid template!
-        self.addTemplateSafe(GRID_TEMPLATE,  function () {
+        templateService.AddTemplateSafe(GRID_TEMPLATE, function () {
             return ng.templates.defaultGridInnerTemplate(config);
         });
         
         //header row template
         if (config.headerTemplate) {
-            self.addTemplateSafe(config.headerTemplate, function () {
+            templateService.AddTemplateSafe(config.headerTemplate, function () {
                 return ng.templates.generateHeaderTemplate(config);
             });
         }
         
         //header cell template
         if (config.headerCellTemplate) {
-            self.addTemplateSafe(config.headerCellTemplate, function () {
+            templateService.AddTemplateSafe(config.headerCellTemplate, function () {
                 return ng.templates.defaultHeaderCellTemplate(config);
             });
         }
         
         //row template
         if (config.rowTemplate) {
-            self.addTemplateSafe(config.rowTemplate, function () {
+            templateService.AddTemplateSafe(config.rowTemplate, function () {
                 return ng.templates.generateRowTemplate(config);
             });
         }
         
         //footer template
         if (config.footerTemplate) {
-            self.addTemplateSafe(config.footerTemplate, function () {
+            templateService.AddTemplateSafe(config.footerTemplate, function () {
                 return ng.templates.defaultFooterTemplate(config);
             });
         }
     };
 
     templateService.GetTemplateText = function (tmplId) {
-        if (!self.templateExists(tmplId)) {
+        if (!templateService.TemplateExists(tmplId)) {
             return "";
         } else {
             var el = document.getElementById(tmplId);

@@ -33,7 +33,7 @@ ng.cssBuilder = {
         for (; i < len; i++) {
             col = grid.columns[i];
             css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth - sumWidth - col.width));
-            sumWidth += col.width();
+            sumWidth += col.width;
         }
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");

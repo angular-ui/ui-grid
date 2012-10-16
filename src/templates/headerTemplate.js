@@ -9,7 +9,7 @@ ng.templates.generateHeaderTemplate = function (options) {
     var b = new ng.utils.StringBuilder(),
         cols = options.columns,
         showFilter = options.showFilter;
-    ng.utils.forEach(cols, function (col, i) {
+    angular.forEach(cols, function (col, i) {
         if (col.field === SELECTED_PROP) {
             b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
             b.append('  <input type="checkbox" ng-checked="toggleSelectAll()"/>');

@@ -6,14 +6,14 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('RowService', ['$scope', function ($scope) {
+ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     var rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     $scope.rowCache = [];
     $scope.dataChanged = true;
     
-    rowService.initialize = function (grid) {
+    rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
             prevMinRows = 0, // for comparison purposes when scrolling
             currentPage = grid.config.currentPage,
@@ -26,7 +26,7 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
         $scope.dataSource = grid.finalData; //observableArray
         
         // change subscription to clear out our cache
-        $scope.$watch(dataSource, function () {
+        $scope.$watch($scope.dataSource, function () {
             $scope.dataChanged = true;
             $scope.rowCache = []; //if data source changes, kill this!
         });
@@ -78,20 +78,16 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
         };
         
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
-        $scope.$watch($scope.renderedRange, function (rg) {
+        $scope.$watch($scope.renderedRange, function () {
             var rowArr = [],
-            row,
-            pagingOffset = (pageSize() * (currentPage() - 1)),
-            dataArr = $scope.dataSource.slice(rg.bottomRow, rg.topRow);
-            
+            pagingOffset = pageSize * (currentPage - 1),
+            dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
+
             ng.utils.forEach(dataArr, function (item, i) {
-                row = $scope.buildRowFromEntity(item, rg.bottomRow + i, pagingOffset);
-                
+                var row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
+
                 //add the row to our return array
                 rowArr.push(row);
-                
-                //null the row pointer for next iteration
-                row = null;
             });
             $scope.rows = rowArr;
         });
@@ -170,6 +166,16 @@ ngGridServices.factory('RowService', ['$scope', function ($scope) {
     rowService.CalcRenderedRange = function(){
         $scope.calcRenderedRange();
     };
+
+    rowService.Rows = (function () {
+        return $scope.rows;
+    })();
+
+    rowService.ViewableRange = (function (val) {
+        if (val) {
+            $scope.viewableRange = val;
+        } return $scope.viewableRange;
+    })();
     
     return rowService;
 }]);

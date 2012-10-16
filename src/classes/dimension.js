@@ -1,4 +1,4 @@
-﻿ng.dimension = function (options) {
+﻿ng.Dimension = function (options) {
     this.innerHeight = null;
     this.innerWidth = null;
     this.outerHeight = null;

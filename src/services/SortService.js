@@ -6,7 +6,7 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('SortService', ['$scope', function ($scope) {
+ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     var sortService = {};
     
     // this takes an piece of data from the cell and tries to determine its type and what sorting
@@ -216,7 +216,7 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
         $scope.internalSortedData = data;
     };
     
-    sortService.initialize = function (options){
+    sortService.Initialize = function (options) {
         $scope.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
         $scope.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
         $scope.ASC = "asc", // constant for sorting direction
@@ -233,18 +233,6 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
         $scope.sortInfo = options.sortInfo;
-        
-        $scope.sortedData = function () {
-            var sortData = internalSortedData;
-            //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
-            // dependency during the binding handler's dependency detection :(
-            if ($scope.initPhase > 0) {
-                return sortData;
-            } else {
-                return $scope.dataSource;
-            }
-        };
-        $scope.initPhase = 1;
     };
     
     // the actual sort function to call
@@ -261,7 +249,15 @@ ngGridServices.factory('SortService', ['$scope', function ($scope) {
             direction: direction
         };
     };
-
+    sortService.SortedData = (function () {
+        //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
+        // dependency during the binding handler's dependency detection :(
+        if ($scope.initPhase > 0) {
+            return $scope.internalSortedData;
+        } else {
+            return $scope.dataSource;
+        }
+    })();
     //watch the changes in these objects
     $scope.$watch($scope.dataSource, $scope.sortData);
     $scope.$watch($scope.sortInfo, $scope.sortData);
