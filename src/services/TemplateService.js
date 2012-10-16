@@ -66,13 +66,6 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
                 return ng.templates.generateRowTemplate(config);
             });
         }
-        
-        //footer template
-        if (config.footerTemplate) {
-            templateService.AddTemplateSafe(FOOTER_TEMPLATE, function () {
-                return ng.templates.defaultFooterTemplate(config);
-            });
-        }
     };
 
     templateService.GetTemplateText = function(tmplId) {

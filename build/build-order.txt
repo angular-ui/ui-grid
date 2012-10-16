@@ -8,7 +8,6 @@
 ..\src\services\SelectionService.js
 ..\src\services\SortService.js
 ..\src\services\TemplateService.js
-..\src\templates\footerTemplate.js
 ..\src\templates\gridTemplate.js
 ..\src\templates\headerCellTemplate.js
 ..\src\templates\headerTemplate.js
