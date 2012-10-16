@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 18:33:20
+* Compiled At: 10/15/2012 18:39:06
 ***********************************************/
 
 
@@ -688,11 +688,11 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         return $scope.rows;
     })();
 
-    rowService.ViewableRange = (function (val) {
+    rowService.ViewableRange = function (val) {
         if (val) {
             $scope.viewableRange = val;
         } return $scope.viewableRange;
-    })();
+    };
     
     return rowService;
 }]);
