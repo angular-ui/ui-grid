@@ -9,13 +9,8 @@
     <script type="text/javascript" src="../ng-grid-1.0.0.debug.js"></script>
     <script type="text/javascript" src="main.js"></script>
 </head>
-<body>
-    <div ng-app="ngGrid" ng-controller="gridController" ng-grid="gridOptions">
-        <button ng-click="btn_click()">Baby Born</button>
-        <div ></div>
-        <ul>
-            <li ng-repeat="item in myData">{{item.name}}</li>
-        </ul>
+<body ng-controller="bodyController">
+    <div ng-app="ngGrid"  ng-grid="gridOptions">
     </div>
 </body>
 </html>
