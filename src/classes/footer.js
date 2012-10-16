@@ -1,4 +1,4 @@
-﻿ng.footer = function (grid) {
+﻿ng.Footer = function (grid) {
     var self = this;
 
     this.maxRows;
@@ -16,11 +16,11 @@
     this.selectedPageSize = grid.config.pageSize;
     this.pageSizes = grid.config.pageSizes;
     this.currentPage = grid.config.currentPage;
-    this.maxPages = (function () {
+    this.maxPages = function () {
         var maxCnt = self.maxRows || 1,
             pageSize = self.selectedPageSize;
         return Math.ceil(maxCnt / pageSize);
-    });
+    };
 
     this.protectedCurrentPage = {
         get: function () {
@@ -34,10 +34,10 @@
         }
     };
 
-    this.pageForward = function () {
+    this.pageForward = function() {
         var page = self.currentPage;
         self.currentPage(Math.min(page + 1, self.maxPages));
-    }
+    };
 
     this.pageBackward = function () {
         var page = self.currentPage;
@@ -53,14 +53,14 @@
         self.currentPage = maxPages;
     };
 
-    this.canPageForward = ko.computed(function () {
+    this.canPageForward = function () {
         var curPage = self.currentPage;
         var maxPages = self.maxPages;
         return curPage < maxPages;
-    });
+    };
 
-    this.canPageBackward = ko.computed(function () {
+    this.canPageBackward = function () {
         var curPage = self.currentPage;
         return curPage > 1;
-    });
+    };
 };

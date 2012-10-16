@@ -1,4 +1,5 @@
-﻿/// <reference path="../services/SortService.js" />
+﻿/// <reference path="footer.js" />
+/// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
@@ -60,7 +61,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.$headers = null;
     this.$viewport = null;
     this.$canvas = null;
-    this.$footerPanel = null;
+    this.$footerPanel;
     this.width = gridWidth;
     this.selectionManager = null;
     this.selectedItemCount= null;
@@ -393,7 +394,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
         item = self.data[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            if (propName === '__ng_selected__') {
+            if (propName === SELECTED_PROP) {
                 return;
             }
 
@@ -411,7 +412,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
         if (self.config.autogenerateColumns) { self.buildColumnDefsFromData(); }
 
         if (self.config.displaySelectionCheckbox) {
-            columnDefs.splice(0, 0, { field: '__ng_selected__', width: self.elementDims.rowSelectedCellW });
+            columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
         }
         if (self.config.displayRowIndex) {
             columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
@@ -518,4 +519,5 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     
     //call init
     self.init();
+    self.$footerPanel = new ng.Footer(self);
 };

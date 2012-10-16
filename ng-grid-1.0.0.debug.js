@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 18:39:06
+* Compiled At: 10/15/2012 21:04:31
 ***********************************************/
 
 
@@ -25,6 +25,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
 var GRID_TEMPLATE = 'ng-gridTmpl';
+var FOOTER_TEMPLATE = 'ng-gridFootTempl';
 var GRID_KEY = '__koGrid__';
 
 /***********************************************
@@ -1105,28 +1106,21 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
 * FILE: ..\src\services\TemplateService.js
 ***********************************************/
 
-ngGridServices.factory('TemplateService', ['$rootScope', function () {
+ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     var templateService = {};
-    templateService.TemplateExists = function (tmplId) {
-        var el = document.getElementById(tmplId);
-        return (el !== undefined && el !== null);
-    };
-
+    
+    $scope.templateCache = {};
+    $scope.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
     templateService.AddTemplate = function (templateText, tmplId) {
-        var tmpl = document.createElement("SCRIPT");
-        tmpl.type = "text/html";
-        tmpl.id = tmplId;
-        tmpl.text = templateText;
-        document.body.appendChild(tmpl);
+        $scope.templateCache[tmplId] = templateText;
     };
 
     templateService.RemoveTemplate = function (tmplId){
-        var element = document.getElementById(tmplId);
-        if (element) element.parentNode.removeChild(element);
+        delete $scope.templateCache[tmplId];
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!templateService.TemplateExists(tmplId)) {
+        if (!$scope.templateCache[tmplId]) {
             templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
@@ -1170,19 +1164,15 @@ ngGridServices.factory('TemplateService', ['$rootScope', function () {
         
         //footer template
         if (config.footerTemplate) {
-            templateService.AddTemplateSafe(config.footerTemplate, function () {
+            templateService.AddTemplateSafe(FOOTER_TEMPLATE, function () {
                 return ng.templates.defaultFooterTemplate(config);
             });
         }
     };
 
-    templateService.GetTemplateText = function (tmplId) {
-        if (!templateService.TemplateExists(tmplId)) {
-            return "";
-        } else {
-            var el = document.getElementById(tmplId);
-            return el.text;
-        }
+    templateService.GetTemplateText = function(tmplId) {
+        var ret = $scope.templateCache[tmplId] || "";
+        return ret;
     };
     return templateService;
 }]);
@@ -1201,7 +1191,7 @@ ng.templates.defaultFooterTemplate = function () {
     b.append(        '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
     b.append(    '</div>');
     b.append('</div>');
-    b.append('<div class="kgPagerContainer" ng-show="{pagerVisible && footerVisible}" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
+    b.append('<div class="kgPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
     b.append(    '<div style="float: right;">');
     b.append(        '<div class="kgRowCountPicker">');
     b.append(            '<span class="kgLabel">Rows:</span>');
@@ -1212,7 +1202,7 @@ ng.templates.defaultFooterTemplate = function () {
     b.append(        '<div class="kgPagerControl" style="float: left; min-width: 135px;">');
     b.append(            '<input class="kgPagerFirst" type="button" ng-click="pageToFirst" ng-disable="!canPageBackward" title="First Page"/>');
     b.append(            '<input class="kgPagerPrev" type="button"  ng-click="pageBackward" ng-disable="!canPageBackward" title="Previous Page"/>');
-    b.append(            '<input class="kgPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages < 1 }" />');
+    b.append(            '<input class="kgPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages() < 1 }" />');
     b.append(            '<input class="kgPagerNext" type="button"  ng-click="pageForward" ng-disable="!canPageForward" title="Next Page"/>');
     b.append(            '<input class="kgPagerLast" type="button"  ng-click="pageToLast" ng-disable="!canPageForward" title="Last Page"/>');
     b.append(        '</div>');
@@ -1228,17 +1218,42 @@ ng.templates.defaultFooterTemplate = function () {
 ng.templates.defaultGridInnerTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div>');
-    b.append(   '<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
-    b.append(       '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');
-    b.append(           '<div class="kgHeaderScroller" ng-header-row="data" ng-size="{ dim: headerScrollerDim }">');
+    b.append(   '<div class="kgTopPanel" ng-size="headerDim">');
+    b.append(       '<div class="kgHeaderContainer" ng-size="headerDim">');
+    b.append(           '<div class="kgHeaderScroller" ng-header-row="data" ng-size="headerScrollerDim">');
     b.append(           '</div>');
     b.append(       '</div>');
     b.append(   '</div>');
-    b.append(   '<div class="kgViewport" ng-size="{ dim: viewportDim }">');
+    b.append(   '<div class="kgViewport" ng-size="viewportDim">');
     b.append(       '<div class="kgCanvas" ng-rows="rows" ng-style="{ height: canvasHeight, position: \'relative\' }">');
     b.append(       '</div>');
     b.append(   '</div>');
-    b.append(   '<div class="kgFooterPanel" ng-footer="data" ng-size="{ dim: footerDim }">'); //not sure what goes in ng-footer.
+    b.append(   '<div class="kgFooterPanel" ng-size="footerDim">');
+    b.append(       '<div class="kgTotalSelectContainer" ng-show="footerVisible">');
+    b.append(           '<div class="kgFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');
+    b.append(               '<span class="ngLabel">Total Items: {{maxRows}}</span>');
+    b.append(           '</div>');
+    b.append(           '<div class="ngFooterSelectedItems" ng-show="isMultiSelect">');
+    b.append(           '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
+    b.append(           '</div>');
+    b.append(       '</div>');
+    b.append(       '<div class="kgPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
+    b.append(           '<div style="float: right;">');
+    b.append(               '<div class="kgRowCountPicker">');
+    b.append(                   '<span class="kgLabel">Rows:</span>');
+    b.append(                   '<select ng-model="selectedPageSize">');
+    b.append(                       '<option ng-repeat="size in pageSizes">{{size}}</option>');
+    b.append(                   '</select>');
+    b.append(               '</div>');
+    b.append(               '<div class="kgPagerControl" style="float: left; min-width: 135px;">');
+    b.append(                   '<input class="kgPagerFirst" type="button" ng-click="pageToFirst" ng-disable="!canPageBackward" title="First Page"/>');
+    b.append(                   '<input class="kgPagerPrev" type="button"  ng-click="pageBackward" ng-disable="!canPageBackward" title="Previous Page"/>');
+    b.append(                   '<input class="kgPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages() < 1 }" />');
+    b.append(                   '<input class="kgPagerNext" type="button"  ng-click="pageForward" ng-disable="!canPageForward" title="Next Page"/>');
+    b.append(                   '<input class="kgPagerLast" type="button"  ng-click="pageToLast" ng-disable="!canPageForward" title="Last Page"/>');
+    b.append(               '</div>');
+    b.append(           '</div>');
+    b.append(       '</div>');
     b.append(   '</div>');
     b.append('</div>');
     return b.toString();
@@ -1442,7 +1457,7 @@ ng.Dimension = function (options) {
 /***********************************************
 * FILE: ..\src\classes\footer.js
 ***********************************************/
-ng.footer = function (grid) {
+ng.Footer = function (grid) {
     var self = this;
 
     this.maxRows;
@@ -1460,11 +1475,11 @@ ng.footer = function (grid) {
     this.selectedPageSize = grid.config.pageSize;
     this.pageSizes = grid.config.pageSizes;
     this.currentPage = grid.config.currentPage;
-    this.maxPages = (function () {
+    this.maxPages = function () {
         var maxCnt = self.maxRows || 1,
             pageSize = self.selectedPageSize;
         return Math.ceil(maxCnt / pageSize);
-    });
+    };
 
     this.protectedCurrentPage = {
         get: function () {
@@ -1478,10 +1493,10 @@ ng.footer = function (grid) {
         }
     };
 
-    this.pageForward = function () {
+    this.pageForward = function() {
         var page = self.currentPage;
         self.currentPage(Math.min(page + 1, self.maxPages));
-    }
+    };
 
     this.pageBackward = function () {
         var page = self.currentPage;
@@ -1497,16 +1512,16 @@ ng.footer = function (grid) {
         self.currentPage = maxPages;
     };
 
-    this.canPageForward = ko.computed(function () {
+    this.canPageForward = function () {
         var curPage = self.currentPage;
         var maxPages = self.maxPages;
         return curPage < maxPages;
-    });
+    };
 
-    this.canPageBackward = ko.computed(function () {
+    this.canPageBackward = function () {
         var curPage = self.currentPage;
         return curPage > 1;
-    });
+    };
 };
 
 /***********************************************
@@ -1567,7 +1582,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.$headers = null;
     this.$viewport = null;
     this.$canvas = null;
-    this.$footerPanel = null;
+    this.$footerPanel;
     this.width = gridWidth;
     this.selectionManager = null;
     this.selectedItemCount= null;
@@ -1900,7 +1915,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
         item = self.data[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            if (propName === '__ng_selected__') {
+            if (propName === SELECTED_PROP) {
                 return;
             }
 
@@ -1918,7 +1933,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
         if (self.config.autogenerateColumns) { self.buildColumnDefsFromData(); }
 
         if (self.config.displaySelectionCheckbox) {
-            columnDefs.splice(0, 0, { field: '__ng_selected__', width: self.elementDims.rowSelectedCellW });
+            columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
         }
         if (self.config.displayRowIndex) {
             columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
@@ -2025,6 +2040,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     
     //call init
     self.init();
+    self.$footerPanel = new ng.Footer(self);
 };
 
 /***********************************************
@@ -2465,33 +2481,21 @@ ng.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-footer.js
 ***********************************************/
-/*ko.bindingHandlers['kgFooter'] = (function () {
-    var makeNewValueAccessor = function (grid) {
-        return function () {
-            return { name: grid.config.footerTemplate, data: grid.footer };
+
+ngGridDirectives.directive('ngFooter', function(TemplateService, GridService) {
+    var ngFooter = {
+        template: TemplateService.GetTemplateText(FOOTER_TEMPLATE),
+        replace: false,
+        transclude: true,
+        priority: 10,
+        link: function (scope, iElement, iAttrs, controller) {
+            var element = $(iElement).parent()[0];
+            var grid = GridService.GetGrid(element);
+            grid.footer = new ng.Footer(grid);
         }
     };
-
-    var makeNewBindingContext = function (bindingContext, footer) {
-        return bindingContext.createChildContext(footer);
-    };
-
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid = bindingContext.$data;
-
-            grid.footer = new kg.Footer(grid);
-
-            return ko.bindingHandlers.template.init(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, makeNewBindingContext(bindingContext, grid.footer));
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid = bindingContext.$data;
-
-            return ko.bindingHandlers.template.update(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, makeNewBindingContext(bindingContext, grid.footer));
-        }
-    }
-} ());
-*/
+    return ngFooter;
+});
 
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
@@ -2499,8 +2503,10 @@ ng.domUtility = (new function () {
 
 ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
-        template: ng.templates.defaultGridInnerTemplate(),
+        template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: true,
+        transclude: true,
+        priority: 0,
         link: function (scope, iElement, iAttrs) {
             var $element = $(iElement),
                 options = scope[iAttrs.ngGrid],
@@ -2510,9 +2516,16 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             if (!grid) {
                 grid = new ng.Grid(options, $($element).width(), FilterService, RowService, SelectionService, SortService);
                 GridService.StoreGrid($element, grid);
+                grid.$footerPanel = new ng.Footer(grid);
             } else {
                 return false;
             }
+            ng.domUtility.measureGrid($element, grid, true);
+
+            //set the right styling on the container
+            $element.addClass("ngGrid")
+                    .addClass("ui-widget")
+                    .addClass(grid.gridId.toString());
 
             TemplateService.EnsureGridTemplates({
                 rowTemplate: grid.config.rowTemplate,
@@ -2525,17 +2538,8 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                 autogenerateColumns: grid.config.autogenerateColumns,
                 enableColumnResize: grid.config.enableColumnResize
             });
-            //get the container sizes
-            ng.domUtility.measureGrid($element, grid, true);
 
-            $element.hide(); //first hide the grid so that its not freaking the screen out
-
-            //set the right styling on the container
-            $element.addClass("ngGrid")
-                    .addClass("ui-widget")
-                    .addClass(grid.gridId.toString());
-
-            //subscribe to the columns and recrate the grid if they change
+            /*subscribe to the columns and recrate the grid if they change
             scope.$watch(grid.config.columnDefs, function () {
                 var oldgrid = GridService.GetGrid($element);
                 var oldgridId = oldgrid.gridId.toString();
@@ -2545,6 +2549,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                            .removeClass(oldgridId);
                 GridService.RemoveGrid(oldgridId);
             });
+            */
             //keep selected item scrolled into view
             scope.$watch(grid.finalData, function () {
                 if (grid.config.selectedItems) {
@@ -2576,7 +2581,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             //now use the manager to assign the event handlers
             GridService.AssignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
-            grid.update();
+            //grid.update();
             scope.initPhase = 1;
             return null;
         }

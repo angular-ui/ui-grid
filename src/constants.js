@@ -7,4 +7,5 @@
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
 var GRID_TEMPLATE = 'ng-gridTmpl';
+var FOOTER_TEMPLATE = 'ng-gridFootTempl';
 var GRID_KEY = '__koGrid__';

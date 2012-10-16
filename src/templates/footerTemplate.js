@@ -15,7 +15,7 @@ ng.templates.defaultFooterTemplate = function () {
     b.append(        '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
     b.append(    '</div>');
     b.append('</div>');
-    b.append('<div class="kgPagerContainer" ng-show="{pagerVisible && footerVisible}" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
+    b.append('<div class="kgPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
     b.append(    '<div style="float: right;">');
     b.append(        '<div class="kgRowCountPicker">');
     b.append(            '<span class="kgLabel">Rows:</span>');
@@ -26,7 +26,7 @@ ng.templates.defaultFooterTemplate = function () {
     b.append(        '<div class="kgPagerControl" style="float: left; min-width: 135px;">');
     b.append(            '<input class="kgPagerFirst" type="button" ng-click="pageToFirst" ng-disable="!canPageBackward" title="First Page"/>');
     b.append(            '<input class="kgPagerPrev" type="button"  ng-click="pageBackward" ng-disable="!canPageBackward" title="Previous Page"/>');
-    b.append(            '<input class="kgPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages < 1 }" />');
+    b.append(            '<input class="kgPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages() < 1 }" />');
     b.append(            '<input class="kgPagerNext" type="button"  ng-click="pageForward" ng-disable="!canPageForward" title="Next Page"/>');
     b.append(            '<input class="kgPagerLast" type="button"  ng-click="pageToLast" ng-disable="!canPageForward" title="Last Page"/>');
     b.append(        '</div>');

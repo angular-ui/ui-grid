@@ -1,4 +1,9 @@
-﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+﻿/// <reference path="../templates/footerTemplate.js" />
+/// <reference path="../templates/gridTemplate.js" />
+/// <reference path="../templates/headerCellTemplate.js" />
+/// <reference path="../templates/headerTemplate.js" />
+/// <reference path="../templates/rowTemplate.js" />
+/// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
 /// <reference path="../namespace.js" />
@@ -6,28 +11,21 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('TemplateService', ['$rootScope', function () {
+ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     var templateService = {};
-    templateService.TemplateExists = function (tmplId) {
-        var el = document.getElementById(tmplId);
-        return (el !== undefined && el !== null);
-    };
-
+    
+    $scope.templateCache = {};
+    $scope.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
     templateService.AddTemplate = function (templateText, tmplId) {
-        var tmpl = document.createElement("SCRIPT");
-        tmpl.type = "text/html";
-        tmpl.id = tmplId;
-        tmpl.text = templateText;
-        document.body.appendChild(tmpl);
+        $scope.templateCache[tmplId] = templateText;
     };
 
     templateService.RemoveTemplate = function (tmplId){
-        var element = document.getElementById(tmplId);
-        if (element) element.parentNode.removeChild(element);
+        delete $scope.templateCache[tmplId];
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!templateService.TemplateExists(tmplId)) {
+        if (!$scope.templateCache[tmplId]) {
             templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
@@ -71,19 +69,15 @@ ngGridServices.factory('TemplateService', ['$rootScope', function () {
         
         //footer template
         if (config.footerTemplate) {
-            templateService.AddTemplateSafe(config.footerTemplate, function () {
+            templateService.AddTemplateSafe(FOOTER_TEMPLATE, function () {
                 return ng.templates.defaultFooterTemplate(config);
             });
         }
     };
 
-    templateService.GetTemplateText = function (tmplId) {
-        if (!templateService.TemplateExists(tmplId)) {
-            return "";
-        } else {
-            var el = document.getElementById(tmplId);
-            return el.text;
-        }
+    templateService.GetTemplateText = function(tmplId) {
+        var ret = $scope.templateCache[tmplId] || "";
+        return ret;
     };
     return templateService;
 }]);

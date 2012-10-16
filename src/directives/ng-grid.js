@@ -1,4 +1,10 @@
 ﻿/// <reference path="../classes/grid.js" />
+/// <reference path="../services/FilterService.js" />
+/// <reference path="../services/GridService.js" />
+/// <reference path="../services/SelectionService.js" />
+/// <reference path="../services/RowService.js" />
+/// <reference path="../services/TemplateService.js" />
+/// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
@@ -8,8 +14,10 @@
 
 ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
-        template: ng.templates.defaultGridInnerTemplate(),
+        template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: true,
+        transclude: true,
+        priority: 0,
         link: function (scope, iElement, iAttrs) {
             var $element = $(iElement),
                 options = scope[iAttrs.ngGrid],
@@ -19,9 +27,16 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             if (!grid) {
                 grid = new ng.Grid(options, $($element).width(), FilterService, RowService, SelectionService, SortService);
                 GridService.StoreGrid($element, grid);
+                grid.$footerPanel = new ng.Footer(grid);
             } else {
                 return false;
             }
+            ng.domUtility.measureGrid($element, grid, true);
+
+            //set the right styling on the container
+            $element.addClass("ngGrid")
+                    .addClass("ui-widget")
+                    .addClass(grid.gridId.toString());
 
             TemplateService.EnsureGridTemplates({
                 rowTemplate: grid.config.rowTemplate,
@@ -34,17 +49,8 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                 autogenerateColumns: grid.config.autogenerateColumns,
                 enableColumnResize: grid.config.enableColumnResize
             });
-            //get the container sizes
-            ng.domUtility.measureGrid($element, grid, true);
 
-            $element.hide(); //first hide the grid so that its not freaking the screen out
-
-            //set the right styling on the container
-            $element.addClass("ngGrid")
-                    .addClass("ui-widget")
-                    .addClass(grid.gridId.toString());
-
-            //subscribe to the columns and recrate the grid if they change
+            /*subscribe to the columns and recrate the grid if they change
             scope.$watch(grid.config.columnDefs, function () {
                 var oldgrid = GridService.GetGrid($element);
                 var oldgridId = oldgrid.gridId.toString();
@@ -54,6 +60,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                            .removeClass(oldgridId);
                 GridService.RemoveGrid(oldgridId);
             });
+            */
             //keep selected item scrolled into view
             scope.$watch(grid.finalData, function () {
                 if (grid.config.selectedItems) {
@@ -85,7 +92,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             //now use the manager to assign the event handlers
             GridService.AssignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
-            grid.update();
+            //grid.update();
             scope.initPhase = 1;
             return null;
         }
