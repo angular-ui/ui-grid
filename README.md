@@ -9,9 +9,6 @@ ng-grid Team:
 Based on koGrid:
 * [Eric M. Barnard](https://github.com/ericmbarnard/KoGrid)
  
-Special Thanks:
-* [Stephen Commisso](https://github.com/gdscommisso/KoGrid)
-
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
 Dependencies: jQuery & angular.js
@@ -25,14 +22,20 @@ __ng-grid__ Originally built on knockout we wanted to port it to angular.
 ng-grid is in pre-alpha release currently. We are going to be adding more features here in the very near future...
 
 ***
-_The sizzle_:
+_The bare bones_:
 
 ```html
-<div ng-grid="options"></div>
+<div ng-app="ngGrid" ng-grid="myOptions"></div>
 ```
 ```javascript
+// Define your own controller somewhere..
 function MyCtrl($scope) {
-	$scope.options = [];
+	$scope.myData = [{name: "Moroni", age: 50},
+                     {name: "Tiancum", age: 43},
+                     {name: "Jacob", age: 27},
+                     {name: "Nephi", age: 29},
+                     {name: "Enos", age: 34}];
+	$scope.myOptions = { data: myData };
 };
 
 ```
