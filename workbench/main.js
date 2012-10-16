@@ -1,4 +1,4 @@
-function bodyController($scope) {
+function gridController($scope) {
     $scope.myData = [{name: "Moroni", age: 50},
                      {name: "Tiancum", age: 43},
                      {name: "Jacob", age: 27},

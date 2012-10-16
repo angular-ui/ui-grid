@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 16:59:00
+* Compiled At: 10/15/2012 18:33:20
 ***********************************************/
 
 
@@ -528,6 +528,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     $scope.rowCache = [];
     $scope.dataChanged = true;
+    $scope.dataSource = [];
     
     rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
@@ -596,18 +597,14 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
         $scope.$watch($scope.renderedRange, function () {
             var rowArr = [],
-            row,
-            pagingOffset = (pageSize * (currentPage - 1)),
+            pagingOffset = pageSize * (currentPage - 1),
             dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
-            
-            ng.utils.forEach(dataArr, function (item, i) {
-                row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
-                
+
+            angular.forEach(dataArr, function (item, i) {
+                var row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
+
                 //add the row to our return array
                 rowArr.push(row);
-                
-                //null the row pointer for next iteration
-                row = null;
             });
             $scope.rows = rowArr;
         });
@@ -847,7 +844,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
 
 ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     var sortService = {};
-    
+    $scope.dataSource = [];
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
@@ -1072,9 +1069,6 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
         $scope.sortInfo = options.sortInfo;
-        
-
-        $scope.initPhase = 1;
     };
     
     // the actual sort function to call
@@ -1091,7 +1085,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             direction: direction
         };
     };
-    sortService.SortedData = (function () {
+    sortService.SortedData = function () {
         //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
         // dependency during the binding handler's dependency detection :(
         if ($scope.initPhase > 0) {
@@ -1099,7 +1093,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         } else {
             return $scope.dataSource;
         }
-    })();
+    };
     //watch the changes in these objects
     $scope.$watch($scope.dataSource, $scope.sortData);
     $scope.$watch($scope.sortInfo, $scope.sortData);
@@ -1231,19 +1225,21 @@ ng.templates.defaultFooterTemplate = function () {
 * FILE: ..\src\templates\gridTemplate.js
 ***********************************************/
 
-ng.templates.defaultGridInnerTemplate = function (options) {
+ng.templates.defaultGridInnerTemplate = function () {
     var b = new ng.utils.StringBuilder();
-    b.append('<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
-    b.append(    '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');
-    b.append(        '<div class="kgHeaderScroller" ng-header-row="data" ng-size="{ dim: headerScrollerDim }">');
-    b.append(        '</div>');
-    b.append(    '</div>');
-    b.append('</div>');
-    b.append('<div class="kgViewport {0}" ng-size="{ dim: viewportDim }">', options.disableTextSelection ? "kgNoSelect": "");
-    b.append(    '<div class="kgCanvas" ng-rows="rows" ng-style="{ height: canvasHeight, position: \'relative\' }">');
-    b.append(    '</div>');
-    b.append('</div>');
-    b.append('<div class="kgFooterPanel" ng-footer="data" ng-size="{ dim: footerDim }">'); //not sure what goes in ng-footer.
+    b.append('<div>');
+    b.append(   '<div class="kgTopPanel" ng-size="{ dim: headerDim }">');
+    b.append(       '<div class="kgHeaderContainer" ng-size="{ dim: headerDim }">');
+    b.append(           '<div class="kgHeaderScroller" ng-header-row="data" ng-size="{ dim: headerScrollerDim }">');
+    b.append(           '</div>');
+    b.append(       '</div>');
+    b.append(   '</div>');
+    b.append(   '<div class="kgViewport" ng-size="{ dim: viewportDim }">');
+    b.append(       '<div class="kgCanvas" ng-rows="rows" ng-style="{ height: canvasHeight, position: \'relative\' }">');
+    b.append(       '</div>');
+    b.append(   '</div>');
+    b.append(   '<div class="kgFooterPanel" ng-footer="data" ng-size="{ dim: footerDim }">'); //not sure what goes in ng-footer.
+    b.append(   '</div>');
     b.append('</div>');
     return b.toString();
 };
@@ -1602,7 +1598,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.sortInfo = SortService.SortInfo; //observable
     this.filterInfo = FilterService.FilterInfo.get(); //observable
     this.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
-    this.finalData = SortService.SortedData; //observable Array
+    this.finalData = SortService.SortedData(); //observable Array
     this.canvasHeight = maxCanvasHt.toString() + 'px';
 
     this.maxRows = function () {
@@ -1753,7 +1749,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.minRowsToRender = function () {
         var viewportH = self.viewportDim.outerHeight || 1;
 
-        if (filterIsOpen) {
+        if (self.filterIsOpen) {
             return prevMinRowsToRender;
         };
 
@@ -2503,6 +2499,8 @@ ng.domUtility = (new function () {
 
 ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
+        template: ng.templates.defaultGridInnerTemplate(),
+        replace: true,
         link: function (scope, iElement, iAttrs) {
             var $element = $(iElement),
                 options = scope[iAttrs.ngGrid],
@@ -2533,7 +2531,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             $element.hide(); //first hide the grid so that its not freaking the screen out
 
             //set the right styling on the container
-            $element.addClass("kgGrid")
+            $element.addClass("ngGrid")
                     .addClass("ui-widget")
                     .addClass(grid.gridId.toString());
 
@@ -2541,15 +2539,15 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             scope.$watch(grid.config.columnDefs, function () {
                 var oldgrid = GridService.GetGrid($element);
                 var oldgridId = oldgrid.gridId.toString();
-                $(element).empty();
-                $(element).removeClass("ngGrid")
-                          .removeClass("ui-widget")
-                          .removeClass(oldgridId);
+                $($element).empty();
+                $($element).removeClass("ngGrid")
+                           .removeClass("ui-widget")
+                           .removeClass(oldgridId);
                 GridService.RemoveGrid(oldgridId);
             });
             //keep selected item scrolled into view
             scope.$watch(grid.finalData, function () {
-                if (grid.config.selectedItems()) {
+                if (grid.config.selectedItems) {
                     var lastItemIndex = grid.config.selectedItems.length - 1;
                     if (lastItemIndex <= 0) {
                         var item = grid.config.selectedItems[lastItemIndex];

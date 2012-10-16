@@ -8,6 +8,8 @@
 
 ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
+        template: ng.templates.defaultGridInnerTemplate(),
+        replace: true,
         link: function (scope, iElement, iAttrs) {
             var $element = $(iElement),
                 options = scope[iAttrs.ngGrid],
@@ -38,7 +40,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             $element.hide(); //first hide the grid so that its not freaking the screen out
 
             //set the right styling on the container
-            $element.addClass("kgGrid")
+            $element.addClass("ngGrid")
                     .addClass("ui-widget")
                     .addClass(grid.gridId.toString());
 
@@ -46,15 +48,15 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             scope.$watch(grid.config.columnDefs, function () {
                 var oldgrid = GridService.GetGrid($element);
                 var oldgridId = oldgrid.gridId.toString();
-                $(element).empty();
-                $(element).removeClass("ngGrid")
-                          .removeClass("ui-widget")
-                          .removeClass(oldgridId);
+                $($element).empty();
+                $($element).removeClass("ngGrid")
+                           .removeClass("ui-widget")
+                           .removeClass(oldgridId);
                 GridService.RemoveGrid(oldgridId);
             });
             //keep selected item scrolled into view
             scope.$watch(grid.finalData, function () {
-                if (grid.config.selectedItems()) {
+                if (grid.config.selectedItems) {
                     var lastItemIndex = grid.config.selectedItems.length - 1;
                     if (lastItemIndex <= 0) {
                         var item = grid.config.selectedItems[lastItemIndex];

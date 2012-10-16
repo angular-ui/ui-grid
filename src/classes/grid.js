@@ -1,4 +1,5 @@
-﻿/// <reference path="../../lib/jquery-1.8.2.min" />
+﻿/// <reference path="../services/SortService.js" />
+/// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
 /// <reference path="../namespace.js" />
@@ -90,7 +91,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.sortInfo = SortService.SortInfo; //observable
     this.filterInfo = FilterService.FilterInfo.get(); //observable
     this.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
-    this.finalData = SortService.SortedData; //observable Array
+    this.finalData = SortService.SortedData(); //observable Array
     this.canvasHeight = maxCanvasHt.toString() + 'px';
 
     this.maxRows = function () {
@@ -241,7 +242,7 @@ ng.Grid = function (options, gridWidth, FilterService, RowService, SelectionServ
     this.minRowsToRender = function () {
         var viewportH = self.viewportDim.outerHeight || 1;
 
-        if (filterIsOpen) {
+        if (self.filterIsOpen) {
             return prevMinRowsToRender;
         };
 

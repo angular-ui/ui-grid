@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
+/// <reference path="../classes/grid.js" />
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
@@ -12,6 +13,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     $scope.rowCache = [];
     $scope.dataChanged = true;
+    $scope.dataSource = [];
     
     rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
@@ -83,7 +85,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
             pagingOffset = pageSize * (currentPage - 1),
             dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
 
-            ng.utils.forEach(dataArr, function (item, i) {
+            angular.forEach(dataArr, function (item, i) {
                 var row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
 
                 //add the row to our return array
@@ -171,11 +173,11 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         return $scope.rows;
     })();
 
-    rowService.ViewableRange = (function (val) {
+    rowService.ViewableRange = function (val) {
         if (val) {
             $scope.viewableRange = val;
         } return $scope.viewableRange;
-    })();
+    };
     
     return rowService;
 }]);

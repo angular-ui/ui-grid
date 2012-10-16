@@ -8,7 +8,7 @@
 
 ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     var sortService = {};
-    
+    $scope.dataSource = [];
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
@@ -249,7 +249,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             direction: direction
         };
     };
-    sortService.SortedData = (function () {
+    sortService.SortedData = function () {
         //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
         // dependency during the binding handler's dependency detection :(
         if ($scope.initPhase > 0) {
@@ -257,7 +257,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         } else {
             return $scope.dataSource;
         }
-    })();
+    };
     //watch the changes in these objects
     $scope.$watch($scope.dataSource, $scope.sortData);
     $scope.$watch($scope.sortInfo, $scope.sortData);
