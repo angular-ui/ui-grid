@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/16/2012 21:56:32
+* Compiled At: 10/17/2012 14:06:52
 ***********************************************/
 
 
@@ -683,29 +683,29 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     };
     
     rowService.DataChanged = {
-        get: function()   { return $scope.dataChanged; },
-        set: function(val){ $scope.dataChanged = val;  }
+        get: function()   { return $scope._rowService.dataChanged; },
+        set: function(val){ $scope._rowService.dataChanged = val;  }
     };
     
     rowService.ClearRowCache = function() {
-        $scope.rowCache = [];
+        $scope._rowService.rowCache = [];
     };
     
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
     rowService.RowSubscriptions = {};
     
     rowService.CalcRenderedRange = function(){
-        $scope.calcRenderedRange();
+        $scope._rowService.calcRenderedRange();
     };
 
     rowService.Rows = (function () {
-        return $scope.rows;
+        return $scope._rowService.rows;
     })();
 
     rowService.ViewableRange = function (val) {
         if (val) {
-            $scope.viewableRange = val;
-        } return $scope.viewableRange;
+            $scope._rowService.viewableRange = val;
+        } return $scope._rowService.viewableRange;
     };
     
     return rowService;
