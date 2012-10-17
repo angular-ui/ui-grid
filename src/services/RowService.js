@@ -9,11 +9,12 @@
 
 ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     var rowService = {};
+	$scope._rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
-    $scope.rowCache = [];
-    $scope.dataChanged = true;
-    $scope.dataSource = [];
+    $scope._rowService.rowCache = [];
+    $scope._rowService.dataChanged = true;
+    $scope._rowService.dataSource = [];
     
     rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
@@ -23,42 +24,42 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
             prevRenderedRange = new ng.Range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
             prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
              // for comparison purposes to help throttle re-calcs when scrolling
-        $scope.internalRenderedRange = prevRenderedRange;
+        $scope._rowService.internalRenderedRange = prevRenderedRange;
         // short cut to sorted and filtered data
-        $scope.dataSource = grid.finalData; //observableArray
+        $scope._rowService.dataSource = grid.finalData; //observableArray
         
         // change subscription to clear out our cache
-        $scope.$watch($scope.dataSource, function () {
-            $scope.dataChanged = true;
-            $scope.rowCache = []; //if data source changes, kill this!
+        $scope.$watch($scope._rowService.dataSource, function () {
+            $scope._rowService.dataChanged = true;
+            $scope._rowService.rowCache = []; //if data source changes, kill this!
         });
         
         // shortcut to the calculated minimum viewport rows
-        $scope.minViewportRows = grid.minRowsToRender; //observable
+        $scope._rowService.minViewportRows = grid.minRowsToRender; //observable
         
         // the # of rows we want to add to the top and bottom of the rendered grid rows 
-        $scope.excessRows = 8;
+        $scope._rowService.excessRows = 8;
         
         // height of each row
-        $scope.rowHeight = grid.config.rowHeight;
+        $scope._rowService.rowHeight = grid.config.rowHeight;
         
         // the logic that builds cell objects
-        $scope.cellFactory = new ng.CellFactory(grid.columns);
+        $scope._rowService.cellFactory = new ng.CellFactory(grid.columns);
         
         // the actual range the user can see in the viewport
-        $scope.viewableRange = prevViewableRange;
+        $scope._rowService.viewableRange = prevViewableRange;
         
         // the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
-        $scope.renderedRange = prevRenderedRange;
+        $scope._rowService.renderedRange = prevRenderedRange;
         
         // the array of rows that we've rendered
-        $scope.rows = [];
+        $scope._rowService.rows = [];
         // Builds rows for each data item in the 'dataSource'
         // @entity - the data item
         // @rowIndex - the index of the row
         // @pagingOffset - the # of rows to add the the rowIndex in case server-side paging is happening
-        $scope.buildRowFromEntity = function (entity, rowIndex, pagingOffset) {
-            var row = $scope.rowCache[rowIndex]; // first check to see if we've already built it
+        $scope._rowService.buildRowFromEntity = function (entity, rowIndex, pagingOffset) {
+            var row = $scope._rowService.rowCache[rowIndex]; // first check to see if we've already built it
             if (!row) {
                 // build the row
                 row = new ng.Row(entity, grid.config, grid.selectionManager);
@@ -67,10 +68,10 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
                 row.offsetTop = $scope.rowHeight * rowIndex;
                 
                 //build out the cells
-                $scope.cellFactory.buildRowCells(row);
+                $scope._rowService.cellFactory.buildRowCells(row);
                 
                 // finally cache it for the next round
-                $scope.rowCache[rowIndex] = row;
+                $scope._rowService.rowCache[rowIndex] = row;
             }
             
             // store the row's index on the entity for future ref
@@ -80,31 +81,31 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         };
         
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
-        $scope.$watch($scope.renderedRange, function () {
+        $scope.$watch($scope._rowService.renderedRange, function () {
             var rowArr = [],
             pagingOffset = pageSize * (currentPage - 1),
-            dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
+            dataArr = $scope._rowService.dataSource.slice($scope._rowService.renderedRange.bottomRow, $scope._rowService.renderedRange.topRow);
 
             angular.forEach(dataArr, function (item, i) {
-                var row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
+                var row = $scope._rowService.buildRowFromEntity(item, $scope._rowService.renderedRange.bottomRow + i, pagingOffset);
 
                 //add the row to our return array
                 rowArr.push(row);
             });
-            $scope.rows = rowArr;
+            $scope._rowService.rows = rowArr;
         });
         
         // core logic that intelligently figures out the rendered range given all the contraints that we have
-        $scope.calcRenderedRange = function () {
-            var rg = $scope.viewableRange,
-            minRows = $scope.eminViewportRows,
-            maxRows = $scope.dataSource.length,
+        $scope._rowService.calcRenderedRange = function () {
+            var rg = $scope._rowService.viewableRange,
+            minRows = $scope._rowService.eminViewportRows,
+            maxRows = $scope._rowService.dataSource.length,
             isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
             newRg; // variable to hold our newly-calc'd rendered range 
             
             if (rg) {
 
-                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || self.dataChanged);
+                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || $scope._rowService.dataChanged);
                 if (!isDif && prevMaxRows !== maxRows) {
                     isDif = true;
                     rg = new ng.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
@@ -134,23 +135,29 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
                     prevMinRows = minRows;
                     
                     //one last equality check
-                    if (prevRenderedRange.topRow !== newRg.topRow || prevRenderedRange.bottomRow !== newRg.bottomRow || self.dataChanged) {
-                        self.dataChanged = false;
+                    if (prevRenderedRange.topRow !== newRg.topRow || prevRenderedRange.bottomRow !== newRg.bottomRow || $scope._rowService.dataChanged) {
+                        $scope._rowService.dataChanged = false;
                         prevRenderedRange = newRg;
                         
                         // now kicngff row building
-                        self.renderedRange = newRg;
+                        $scope._rowService.renderedRange = newRg;
                     }
                 }
             } else {
-                self.renderedRange = new ng.Range(0, 0);
+                $scope._rowService.renderedRange = new ng.Range(0, 0);
             }
         };
         
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch($scope.viewableRange, $scope.calcRenderedRange);
-        $scope.$watch($scope.minViewportRows, $scope.calcRenderedRange);
-        $scope.$watch($scope.dataSource, $scope.calcRenderedRange);
+        $scope.$watch($scope._rowService.viewableRange, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
+        $scope.$watch($scope._rowService.minViewportRows, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
+        $scope.$watch($scope._rowService.dataSource, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
     };
     
     rowService.DataChanged = {

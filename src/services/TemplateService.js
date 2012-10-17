@@ -13,19 +13,20 @@
 
 ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     var templateService = {};
+	$scope._templateService = {};
     
-    $scope.templateCache = {};
-    $scope.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
+    $scope._templateService.templateCache = {};
+    $scope._templateService.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
     templateService.AddTemplate = function (templateText, tmplId) {
-        $scope.templateCache[tmplId] = templateText;
+        $scope._templateService.templateCache[tmplId] = templateText;
     };
 
     templateService.RemoveTemplate = function (tmplId){
-        delete $scope.templateCache[tmplId];
+        delete $scope._templateService.templateCache[tmplId];
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!$scope.templateCache[tmplId]) {
+        if (!$scope._templateService.templateCache[tmplId]) {
             templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
@@ -69,7 +70,7 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     };
 
     templateService.GetTemplateText = function(tmplId) {
-        var ret = $scope.templateCache[tmplId] || "";
+        var ret = $scope._templateService.templateCache[tmplId] || "";
         return ret;
     };
     return templateService;

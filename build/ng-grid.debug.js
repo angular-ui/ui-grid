@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/15/2012 21:10:58
+* Compiled At: 10/16/2012 21:54:03
 ***********************************************/
 
 
@@ -232,27 +232,28 @@ $.extend(ng.utils, {
 * FILE: ..\src\services\FilterService.js
 ***********************************************/
 
-ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
+ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
     var filterService = {};	
+	$scope._filterService = {};
     
     // array that we use to manage the filtering before it updates the final data
-    scope.internalFilteredData = [];
+    $scope._filterService.internalFilteredData = [];
     
     // filters off _destroy = true items
-    scope.filterDestroyed = function (arr) {
+    $scope._filterService.filterDestroyed = function (arr) {
         return ng.utils.arrayFilter(arr, function (item) {
             return (item['_destroy'] === true ? false : true);
         });
     };
     
     // the array of filtered data we return to the grid
-    scope.filteredData = function () {
-        var data = scope.internalFilteredData;
+    $scope._filterService.filteredData = function () {
+        var data = $scope._filterService.internalFilteredData;
         //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
-        if (scope.initPhase > 0) {
+        if ($scope._filterService.initPhase > 0) {
             return data;
         } else {
-            return scope.filterDestroyed(self.data);
+            return $scope._filterService.filterDestroyed($scope._filterService.data);
         }
     };
     
@@ -260,8 +261,8 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             regExCache = { }; // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
         
-        scope.initPhase = 0;     
-        scope.options = options;
+        $scope._filterService.initPhase = 0;     
+        $scope._filterService.options = options;
         // first check the wildcard as we only support * and % currently
         if (wildcard === '*' || wildcard === '%') {
             // do nothing
@@ -270,16 +271,16 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
         }
 
         // map of column.field values to filterStrings
-        scope.filterInfo = options.filterInfo;
+        $scope._filterService.filterInfo = options.filterInfo;
         // the array of data that the user defined
-        scope.data = options.data;
+        $scope._filterService.data = options.data;
 
         // utility function for checking data validity
-        scope.isEmpty = function (data) {
+        $scope._filterService.isEmpty = function (data) {
             return (data === null || data === undefined || data === '');
         };
         // performs regex matching on data strings
-        scope.matchString = function (itemStr, filterStr) {
+        $scope._filterService.matchString = function (itemStr, filterStr) {
             //first check for RegEx thats already built
             var regex = regExCache[filterStr];
             //if nothing, build the regex
@@ -315,9 +316,9 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
             return itemStr.match(regex);
         };
         // the core logic for filtering data
-        scope.filterData = function () {
-            var fi = scope.filterInfo,
-            data = self.data,
+        $scope._filterService.filterData = function () {
+            var fi = $scope._filterService.filterInfo,
+            data = $scope._filterService.data,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
             newArr, // the filtered array
@@ -326,10 +327,10 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
             itemDataStr, // the stringified version of itemData
             filterStr; // the user-entered filtering criteria
             // filter the destroyed items
-            data = scope.filterDestroyed(data);
+            data = $scope._filterService.filterDestroyed(data);
             // make sure we even have work to do before we get started
             if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
-                scope.internalFilteredData = data;
+                $scope._filterService.internalFilteredData = data;
                 return;
             }
             //clear out the regex cache so that we don't get improper results
@@ -344,15 +345,15 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
                         // grab the user-entered filter criteria
                         filterStr = fi[f];
                         // make sure they didn't just enter the wildcard character
-                        if (!scope.isEmpty(filterStr) && filterStr !== wildcard) {
+                        if (!$scope._filterService.isEmpty(filterStr) && filterStr !== wildcard) {
                             // execute regex matching
-                            if (scope.isEmpty(itemData)) {
+                            if ($scope._filterService.isEmpty(itemData)) {
                                 match = false;
                             } else if (typeof itemData === "string") {
-                                match = scope.matchString(itemData, filterStr);
+                                match = $scope._filterService.matchString(itemData, filterStr);
                             } else {
                                 itemDataStr = itemData.toString();
-                                match = scope.matchString(itemDataStr, filterStr);
+                                match = $scope._filterService.matchString(itemDataStr, filterStr);
                             }
                         }
                     }
@@ -373,29 +374,33 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
                 return keepRow;
             });
             // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
-            scope.internalFilteredData = newArr;
+            $scope._filterService.internalFilteredData = newArr;
         };
         //create subscriptions
-        scope.$watch(scope.data, scope.filterData);
-        scope.$watch(scope.filterInfo, scope.filterData);
+        $scope.$watch($scope._filterService.data, function(filterData){
+			$scope._filterService.filterData();
+		});		
+        $scope.$watch($scope._filterService.filterInfo, function(filterData){
+			$scope._filterService.filterData();
+		});		
         //increase this after initialization so that the computeds fire correctly
-        scope.initPhase = 1;
+        $scope._filterService.initPhase = 1;
     };
     
     filterService.FilterInfo = {
-        get: function()   { return scope.filterInfo; },
-        set: function(val){ scope.filterInfo = val;  }
+        get: function()   { return $scope._filterService.filterInfo; },
+        set: function(val){ $scope._filterService.filterInfo = val;  }
     };
     
     filterService.FilteredData = (function(){
-        return scope.filteredData();
+        return $scope._filterService.filteredData();
     })();
     
     // the grid uses this to asign the change handlers to the filter boxes during initialization
     filterService.CreateFilterChangeCallback = function (col) {
         // the callback
         return function (newFilterVal) {
-            var info = self.filterInfo;
+            var info = $scope._filterService.filterInfo;
             if (!info && !newFilterVal) {
                 return;
             }
@@ -410,7 +415,7 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
             } else if (newFilterVal !== null && newFilterVal !== undefined) {
                 info[col.field] = newFilterVal;
             }
-            self.filterInfo = info;
+            $scope._filterService.filterInfo = info;
             if (options && options.currentPage) {
                 options.currentPage = 1;
             }
@@ -425,37 +430,38 @@ ngGridServices.factory('FilterService', ['$rootScope', function (scope) {
 
 ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
     var gridService = {};
-    $scope.gridCache = {};
+	$scope._gridService = {};
+    $scope._gridService.gridCache = {};
     
-    $scope.getIndexOfCache = function() {
+    $scope._gridService.getIndexOfCache = function() {
         var indx = -1;   
-        for (var grid in $scope.gridCache) {
+        for (var grid in $scope._gridService.gridCache) {
             indx++;
-            if (!$scope.gridCache.hasOwnProperty(grid)) continue;
+            if (!$scope._gridService.gridCache.hasOwnProperty(grid)) continue;
             return indx;
         }
         return indx;
     };
     gridService.StoreGrid = function (element, grid) {
-        $scope.gridCache[grid.gridId] = grid;
+        $scope._gridService.gridCache[grid.gridId] = grid;
         element[GRID_KEY] = grid.gridId;
     };
         
     gridService.RemoveGrid = function(gridId) {
-        delete $scope.gridCache[gridId];
+        delete $scope._gridService.gridCache[gridId];
     };
     
     gridService.GetGrid = function (element) {
         var grid;
         if (element[GRID_KEY]) {
-            grid = $scope.gridCache[element[GRID_KEY]];
+            grid = $scope._gridService.gridCache[element[GRID_KEY]];
             return grid;
         }
         return false;
     };
     
     gridService.ClearGridCache = function () {
-        $scope.gridCache = {};
+        $scope._gridService.gridCache = {};
     };
     
     gridService.AssignGridEventHandlers = function (grid) {
@@ -475,7 +481,7 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1){
-            grid.$viewport.attr('tabIndex', $scope.getIndexOfCache(grid.gridId));
+            grid.$viewport.attr('tabIndex', $scope._gridService.getIndexOfCache(grid.gridId));
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
@@ -525,11 +531,12 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
 
 ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     var rowService = {};
+	$scope._rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
-    $scope.rowCache = [];
-    $scope.dataChanged = true;
-    $scope.dataSource = [];
+    $scope._rowService.rowCache = [];
+    $scope._rowService.dataChanged = true;
+    $scope._rowService.dataSource = [];
     
     rowService.Initialize = function (grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
@@ -539,42 +546,42 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
             prevRenderedRange = new ng.Range(0, 1), // for comparison purposes to help throttle re-calcs when scrolling
             prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
              // for comparison purposes to help throttle re-calcs when scrolling
-        $scope.internalRenderedRange = prevRenderedRange;
+        $scope._rowService.internalRenderedRange = prevRenderedRange;
         // short cut to sorted and filtered data
-        $scope.dataSource = grid.finalData; //observableArray
+        $scope._rowService.dataSource = grid.finalData; //observableArray
         
         // change subscription to clear out our cache
-        $scope.$watch($scope.dataSource, function () {
-            $scope.dataChanged = true;
-            $scope.rowCache = []; //if data source changes, kill this!
+        $scope.$watch($scope._rowService.dataSource, function () {
+            $scope._rowService.dataChanged = true;
+            $scope._rowService.rowCache = []; //if data source changes, kill this!
         });
         
         // shortcut to the calculated minimum viewport rows
-        $scope.minViewportRows = grid.minRowsToRender; //observable
+        $scope._rowService.minViewportRows = grid.minRowsToRender; //observable
         
         // the # of rows we want to add to the top and bottom of the rendered grid rows 
-        $scope.excessRows = 8;
+        $scope._rowService.excessRows = 8;
         
         // height of each row
-        $scope.rowHeight = grid.config.rowHeight;
+        $scope._rowService.rowHeight = grid.config.rowHeight;
         
         // the logic that builds cell objects
-        $scope.cellFactory = new ng.CellFactory(grid.columns);
+        $scope._rowService.cellFactory = new ng.CellFactory(grid.columns);
         
         // the actual range the user can see in the viewport
-        $scope.viewableRange = prevViewableRange;
+        $scope._rowService.viewableRange = prevViewableRange;
         
         // the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
-        $scope.renderedRange = prevRenderedRange;
+        $scope._rowService.renderedRange = prevRenderedRange;
         
         // the array of rows that we've rendered
-        $scope.rows = [];
+        $scope._rowService.rows = [];
         // Builds rows for each data item in the 'dataSource'
         // @entity - the data item
         // @rowIndex - the index of the row
         // @pagingOffset - the # of rows to add the the rowIndex in case server-side paging is happening
-        $scope.buildRowFromEntity = function (entity, rowIndex, pagingOffset) {
-            var row = $scope.rowCache[rowIndex]; // first check to see if we've already built it
+        $scope._rowService.buildRowFromEntity = function (entity, rowIndex, pagingOffset) {
+            var row = $scope._rowService.rowCache[rowIndex]; // first check to see if we've already built it
             if (!row) {
                 // build the row
                 row = new ng.Row(entity, grid.config, grid.selectionManager);
@@ -583,10 +590,10 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
                 row.offsetTop = $scope.rowHeight * rowIndex;
                 
                 //build out the cells
-                $scope.cellFactory.buildRowCells(row);
+                $scope._rowService.cellFactory.buildRowCells(row);
                 
                 // finally cache it for the next round
-                $scope.rowCache[rowIndex] = row;
+                $scope._rowService.rowCache[rowIndex] = row;
             }
             
             // store the row's index on the entity for future ref
@@ -596,31 +603,31 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         };
         
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
-        $scope.$watch($scope.renderedRange, function () {
+        $scope.$watch($scope._rowService.renderedRange, function () {
             var rowArr = [],
             pagingOffset = pageSize * (currentPage - 1),
-            dataArr = $scope.dataSource.slice($scope.renderedRange.bottomRow, $scope.renderedRange.topRow);
+            dataArr = $scope._rowService.dataSource.slice($scope._rowService.renderedRange.bottomRow, $scope._rowService.renderedRange.topRow);
 
             angular.forEach(dataArr, function (item, i) {
-                var row = $scope.buildRowFromEntity(item, $scope.renderedRange.bottomRow + i, pagingOffset);
+                var row = $scope._rowService.buildRowFromEntity(item, $scope._rowService.renderedRange.bottomRow + i, pagingOffset);
 
                 //add the row to our return array
                 rowArr.push(row);
             });
-            $scope.rows = rowArr;
+            $scope._rowService.rows = rowArr;
         });
         
         // core logic that intelligently figures out the rendered range given all the contraints that we have
-        $scope.calcRenderedRange = function () {
-            var rg = $scope.viewableRange,
-            minRows = $scope.eminViewportRows,
-            maxRows = $scope.dataSource.length,
+        $scope._rowService.calcRenderedRange = function () {
+            var rg = $scope._rowService.viewableRange,
+            minRows = $scope._rowService.eminViewportRows,
+            maxRows = $scope._rowService.dataSource.length,
             isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
             newRg; // variable to hold our newly-calc'd rendered range 
             
             if (rg) {
 
-                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || self.dataChanged);
+                isDif = (rg.bottomRow !== prevViewableRange.bottomRow || rg.topRow !== prevViewableRange.topRow || $scope._rowService.dataChanged);
                 if (!isDif && prevMaxRows !== maxRows) {
                     isDif = true;
                     rg = new ng.Range(prevViewableRange.bottomRow, prevViewableRange.topRow);
@@ -650,23 +657,29 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
                     prevMinRows = minRows;
                     
                     //one last equality check
-                    if (prevRenderedRange.topRow !== newRg.topRow || prevRenderedRange.bottomRow !== newRg.bottomRow || self.dataChanged) {
-                        self.dataChanged = false;
+                    if (prevRenderedRange.topRow !== newRg.topRow || prevRenderedRange.bottomRow !== newRg.bottomRow || $scope._rowService.dataChanged) {
+                        $scope._rowService.dataChanged = false;
                         prevRenderedRange = newRg;
                         
                         // now kicngff row building
-                        self.renderedRange = newRg;
+                        $scope._rowService.renderedRange = newRg;
                     }
                 }
             } else {
-                self.renderedRange = new ng.Range(0, 0);
+                $scope._rowService.renderedRange = new ng.Range(0, 0);
             }
         };
         
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch($scope.viewableRange, $scope.calcRenderedRange);
-        $scope.$watch($scope.minViewportRows, $scope.calcRenderedRange);
-        $scope.$watch($scope.dataSource, $scope.calcRenderedRange);
+        $scope.$watch($scope._rowService.viewableRange, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
+        $scope.$watch($scope._rowService.minViewportRows, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
+        $scope.$watch($scope._rowService.dataSource, function(calcRenderedRange){
+			$scope._rowService.calcRenderedRange();
+		});		
     };
     
     rowService.DataChanged = {
@@ -704,38 +717,39 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
 
 ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
     var selectionService = {};
+	$scope._selectionService = {};
 
-	$scope.maxRows = function () {
-	   return $scope.dataSource.length;
+	$scope._selectionService.maxRows = function () {
+	   return $scope._selectionService.dataSource.length;
 	};
 
 	selectionService.Initialize = function (options, RowService) {
-        $scope.isMulti = options.isMulti || options.isMultiSelect;
-        $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-        $scope.dataSource = options.data, // the observable array datasource
+        $scope._selectionService.isMulti = options.isMulti || options.isMultiSelect;
+        $scope._selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+        $scope._selectionService.dataSource = options.data, // the observable array datasource
 
-        $scope.selectedItem = options.selectedItem || undefined;
-        $scope.selectedItems = options.selectedItems || [];
-        $scope.selectedIndex = options.selectedIndex;
-        $scope.lastClickedRow = options.lastClickedRow;
-        $scope.RowService = RowService;
+        $scope._selectionService.selectedItem = options.selectedItem || undefined;
+        $scope._selectionService.selectedItems = options.selectedItems || [];
+        $scope._selectionService.selectedIndex = options.selectedIndex;
+        $scope._selectionService.lastClickedRow = options.lastClickedRow;
+        $scope._selectionService.RowService = RowService;
 
         // some subscriptions to keep the selectedItem in sync
-        $scope.$watch($scope.selectedItem, function(val) {
-            if ($scope.ignoreSelectedItemChanges)
+        $scope.$watch($scope._selectionService.selectedItem, function(val) {
+            if ($scope._selectionService.ignoreSelectedItemChanges)
                 return;
-            $scope.selectedItems = [val];
+            $scope._selectionService.selectedItems = [val];
         });
 
-        $scope.$watch($scope.selectedItems, function(vals) {
-            $scope.ignoreSelectedItemChanges = true;
-            $scope.selectedItem = vals ? vals[0] : null;
-            $scope.ignoreSelectedItemChanges = false;
+        $scope.$watch($scope._selectionService.selectedItems, function(vals) {
+            $scope._selectionService.ignoreSelectedItemChanges = true;
+            $scope._selectionService.selectedItem = vals ? vals[0] : null;
+            $scope._selectionService.ignoreSelectedItemChanges = false;
         });
 
         // ensures our selection flag on each item stays in sync
-        $scope.$watch($scope.selectedItems, function(newItems) {
-            var data = $scope.dataSource;
+        $scope.$watch($scope._selectionService.selectedItems, function(newItems) {
+            var data = $scope._selectionService.dataSource;
             if (!newItems) {
                 newItems = [];
             }
@@ -753,7 +767,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
         });
 
         //make sure as the data changes, we keep the selectedItem(s) correct
-        $scope.$watch($scope.dataSource, function(items) {
+        $scope.$watch($scope._selectionService.dataSource, function(items) {
             var selectedItems,
                 itemsToRemove;
             if (!items) {
@@ -761,7 +775,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
             }
 
             //make sure the selectedItem(s) exist in the new data
-            selectedItems = $scope.selectedItems;
+            selectedItems = $scope._selectionService.selectedItems;
             itemsToRemove = [];
 
             angular.forEach(selectedItems, function(item) {
@@ -772,17 +786,17 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
 
             //clean out any selectedItems that don't exist in the new array
             if (itemsToRemove.length > 0) {
-                $scope.selectedItems.removeAll(itemsToRemove);
+                $scope._selectionService.selectedItems.removeAll(itemsToRemove);
             }
         });
     };
 		
 	// function to manage the selection action of a data item (entity)
     selectionService.ChangeSelection = function(rowItem, evt) {
-        if ($scope.isMulti && evt && evt.shiftKey) {
-            if ($scope.lastClickedRow) {
-                var thisIndx = $scope.RowService.rowCache.indexOf(rowItem);
-                var prevIndx = $scope.RowService.rowCache.indexOf($scope.lastClickedRow);
+        if ($scope._selectionService.isMulti && evt && evt.shiftKey) {
+            if ($scope._selectionService.lastClickedRow) {
+                var thisIndx = $scope._selectionService.RowService.rowCache.indexOf(rowItem);
+                var prevIndx = $scope._selectionService.RowService.rowCache.indexOf($scope._selectionService.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -791,34 +805,34 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    $scope.RowService.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
-                    $scope.addOrRemove(rowItem);
+                    $scope._selectionService.RowService.rowCache[prevIndx].selected = $scope._selectionService.lastClickedRow.selected;
+                    $scope._selectionService.addOrRemove(rowItem);
                 }
-                $scope.lastClickedRow(rowItem);
+                $scope._selectionService.lastClickedRow(rowItem);
                 return true;
             }
         } else if (!isMulti) {
-            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? $scope._selectionService.selectedItems = [rowItem.entity] : $scope._selectionService.selectedItems = [];
         }
-        $scope.addOrRemove(rowItem);
-        $scope.lastClickedRow(rowItem);
+        $scope._selectionService.addOrRemove(rowItem);
+        $scope._selectionService.lastClickedRow(rowItem);
         return true;
     };
 	
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            $scope.selectedItems.remove(rowItem.entity);
+            $scope._selectionService.selectedItems.remove(rowItem.entity);
         } else {
-            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
-                $scope.selectedItems.push(rowItem.entity);
+            if ($scope._selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
+                $scope._selectionService.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
     selectionService.SelectedItemCount = function () {
-        return $scope.selectedItems.length;
+        return $scope._selectionService.selectedItems.length;
     };
     
     // writable-computed observable
@@ -830,9 +844,9 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
             dataSourceCopy.push(item);
         });
         if (checkAll) {
-            $scope.selectedItems = dataSourceCopy;
+            $scope._selectionService.selectedItems = dataSourceCopy;
         } else {
-            $scope.selectedItems = [];
+            $scope._selectionService.selectedItems = [];
         }
     };
     
@@ -845,11 +859,13 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
 
 ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     var sortService = {};
-    $scope.dataSource = [];
+	$scope._sortService = {};
+	
+    $scope._sortService.dataSource = [];
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
-    $scope.guessSortFn = function (item) {
+    $scope._sortService.guessSortFn = function (item) {
         var sortFn, // sorting function that is guessed
             itemType, // the typeof item
             dateParts, // for date parsing
@@ -874,14 +890,14 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         if (sortFn) return sortFn;
         
         //check if the item is a valid Date
-        if (Object.prototype.toString.call(item) === '[object Date]') return $scope.sortDate;
+        if (Object.prototype.toString.call(item) === '[object Date]') return $scope._sortService.sortDate;
         
         // if we aren't left with a string, we can't sort full objects...
         if (itemType !== "string") return null;   
         
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return $scope.sortNumberStr;
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return $scope._sortService.sortNumberStr;
         // check for a date: dd/mm/yyyy or dd/mm/yy
         // can have / or . or - as separator
         // can be mm/dd as well
@@ -892,24 +908,24 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             day = parseInt(dateParts[2]);
             if (month > 12) {
                 // definitely dd/mm
-                return $scope.sortDDMMStr;
+                return $scope._sortService.sortDDMMStr;
             } else if (day > 12) {
-                return $scope.sortMMDDStr;
+                return $scope._sortService.sortMMDDStr;
             } else {
                 // looks like a date, but we can't tell which, so assume that it's MM/DD
-                return $scope.sortMMDDStr;
+                return $scope._sortService.sortMMDDStr;
             }
         }
         //finally just sort the normal string...
-        return $scope.sortAlpha;
+        return $scope._sortService.sortAlpha;
     };
     
     //#region Sorting Functions
-    $scope.sortNumber = function (a, b) {
+    $scope._sortService.sortNumber = function (a, b) {
         return a - b;
     };
 
-    $scope.sortNumberStr = function (a, b) {
+    $scope._sortService.sortNumberStr = function (a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
         if (isNaN(numA)) badA = true;
@@ -922,32 +938,32 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         return numA - numB;
     };
 
-    $scope.sortAlpha = function (a, b) {
+    $scope._sortService.sortAlpha = function (a, b) {
         var strA = a.toUpperCase(),
         strB = b.toUpperCase();
         return strA == strB ? 0 : (strA < strB ? -1 : 1);
     };
 
-    $scope.sortDate = function (a, b) {
+    $scope._sortService.sortDate = function (a, b) {
         var timeA = a.getTime(),
         timeB = b.getTime();
         return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
     };
 
-    $scope.sortBool = function (a, b) {
+    $scope._sortService.sortBool = function (a, b) {
         if (a && b) { return 0; }
         if (!a && !b) { return 0; }
         else { return a ? 1 : -1;}
     };
 
-    $scope.sortDDMMStr = function (a, b) {
+    $scope._sortService.sortDDMMStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match($scope.dateRE);
+        mtch = a.match($scope._sortService.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
-        mtch = b.match($scope.dateRE);
+        mtch = b.match($scope._sortService.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -957,9 +973,9 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         return 1;
     };
 
-    $scope.sortMMDDStr = function (a, b) {
+    $scope._sortService.sortMMDDStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match($scope.dateRE);
+        mtch = a.match($scope._sortService.dateRE);
         y = mtch[3]; d = mtch[2]; m = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -976,9 +992,9 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     //#endregion
 
     // the core sorting logic trigger
-    $scope.sortData = function () {
-        var data = $scope.dataSource,
-            sortInfo = self.sortInfo,
+    $scope._sortService.sortData = function () {
+        var data = $scope._sortService.dataSource,
+            sortInfo = $scope._sortService.sortInfo,
             col,
             direction,
             sortFn,
@@ -986,7 +1002,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            $scope.internalSortedData = data;
+            $scope._sortService.internalSortedData = data;
             return;
         }
         
@@ -1002,7 +1018,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = $scope.dataSource[0];
-            sortFn = self.guessSortFn(ng.utils.getPropertyPath(col.field, item));
+            sortFn = $scope._sortService.guessSortFn(ng.utils.getPropertyPath(col.field, item));
             
             //cache it
             if (sortFn) {
@@ -1011,7 +1027,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
                 // we assign the alpha sort because anything that is null/undefined will never get passed to
                 // the actual sorting function. It will get caught in our null check and returned to be sorted
                 // down to the bottom
-                sortFn = self.sortAlpha;
+                sortFn = $scope._sortService.sortAlpha;
             }
         }
         
@@ -1050,26 +1066,26 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             }
         });
         
-        $scope.internalSortedData = data;
+        $scope._sortService.internalSortedData = data;
     };
     
     sortService.Initialize = function (options) {
-        $scope.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
-        $scope.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
-        $scope.ASC = "asc", // constant for sorting direction
-        $scope.DESC = "desc", // constant for sorting direction
-        $scope.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
-        $scope.initPhase = 0, // flag for preventing improper dependency registrations with KO
-        $scope.internalSortedData = [];
+        $scope._sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+        $scope._sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
+        $scope._sortService.ASC = "asc", // constant for sorting direction
+        $scope._sortService.DESC = "desc", // constant for sorting direction
+        $scope._sortService.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
+        $scope._sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
+        $scope._sortService.internalSortedData = [];
             
-        $scope.dataSource = options.data;
+        $scope._sortService.dataSource = options.data;
         // utility function for null checking
-        $scope.isEmpty = function (val) {
+        $scope._sortService.isEmpty = function (val) {
             return (val === null || val === undefined || val === '');
         };
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        $scope.sortInfo = options.sortInfo;
+        $scope._sortService.sortInfo = options.sortInfo;
     };
     
     // the actual sort function to call
@@ -1081,7 +1097,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             return;
         }
         //if its not equal, set the observable and kicngff the event chain
-        $scope.sortInfo = {
+        $scope._sortService.sortInfo = {
             column: col,
             direction: direction
         };
@@ -1089,15 +1105,19 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     sortService.SortedData = function () {
         //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
         // dependency during the binding handler's dependency detection :(
-        if ($scope.initPhase > 0) {
-            return $scope.internalSortedData;
+        if ($scope._sortService.initPhase > 0) {
+            return $scope._sortService.internalSortedData;
         } else {
-            return $scope.dataSource;
+            return $scope._sortService.dataSource;
         }
     };
     //watch the changes in these objects
-    $scope.$watch($scope.dataSource, $scope.sortData);
-    $scope.$watch($scope.sortInfo, $scope.sortData);
+    $scope.$watch($scope._sortService.dataSource, function(resort){
+		$scope._sortService.sortData();
+	});
+    $scope.$watch($scope._sortService.sortInfo, function(resort){
+		$scope._sortService.sortData();
+	});
     
     return sortService;
 }]);
@@ -1108,19 +1128,20 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
 
 ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     var templateService = {};
+	$scope._templateService = {};
     
-    $scope.templateCache = {};
-    $scope.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
+    $scope._templateService.templateCache = {};
+    $scope._templateService.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
     templateService.AddTemplate = function (templateText, tmplId) {
-        $scope.templateCache[tmplId] = templateText;
+        $scope._templateService.templateCache[tmplId] = templateText;
     };
 
     templateService.RemoveTemplate = function (tmplId){
-        delete $scope.templateCache[tmplId];
+        delete $scope._templateService.templateCache[tmplId];
     };
 
     templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!$scope.templateCache[tmplId]) {
+        if (!$scope._templateService.templateCache[tmplId]) {
             templateService.AddTemplate(templateTextAccessor(), tmplId);
         }
     };
@@ -1164,7 +1185,7 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     };
 
     templateService.GetTemplateText = function(tmplId) {
-        var ret = $scope.templateCache[tmplId] || "";
+        var ret = $scope._templateService.templateCache[tmplId] || "";
         return ret;
     };
     return templateService;

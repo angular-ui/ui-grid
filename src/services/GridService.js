@@ -7,37 +7,38 @@
 
 ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
     var gridService = {};
-    $scope.gridCache = {};
+	$scope._gridService = {};
+    $scope._gridService.gridCache = {};
     
-    $scope.getIndexOfCache = function() {
+    $scope._gridService.getIndexOfCache = function() {
         var indx = -1;   
-        for (var grid in $scope.gridCache) {
+        for (var grid in $scope._gridService.gridCache) {
             indx++;
-            if (!$scope.gridCache.hasOwnProperty(grid)) continue;
+            if (!$scope._gridService.gridCache.hasOwnProperty(grid)) continue;
             return indx;
         }
         return indx;
     };
     gridService.StoreGrid = function (element, grid) {
-        $scope.gridCache[grid.gridId] = grid;
+        $scope._gridService.gridCache[grid.gridId] = grid;
         element[GRID_KEY] = grid.gridId;
     };
         
     gridService.RemoveGrid = function(gridId) {
-        delete $scope.gridCache[gridId];
+        delete $scope._gridService.gridCache[gridId];
     };
     
     gridService.GetGrid = function (element) {
         var grid;
         if (element[GRID_KEY]) {
-            grid = $scope.gridCache[element[GRID_KEY]];
+            grid = $scope._gridService.gridCache[element[GRID_KEY]];
             return grid;
         }
         return false;
     };
     
     gridService.ClearGridCache = function () {
-        $scope.gridCache = {};
+        $scope._gridService.gridCache = {};
     };
     
     gridService.AssignGridEventHandlers = function (grid) {
@@ -57,7 +58,7 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1){
-            grid.$viewport.attr('tabIndex', $scope.getIndexOfCache(grid.gridId));
+            grid.$viewport.attr('tabIndex', $scope._gridService.getIndexOfCache(grid.gridId));
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }

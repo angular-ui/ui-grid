@@ -8,38 +8,39 @@
 
 ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
     var selectionService = {};
+	$scope._selectionService = {};
 
-	$scope.maxRows = function () {
-	   return $scope.dataSource.length;
+	$scope._selectionService.maxRows = function () {
+	   return $scope._selectionService.dataSource.length;
 	};
 
 	selectionService.Initialize = function (options, RowService) {
-        $scope.isMulti = options.isMulti || options.isMultiSelect;
-        $scope.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-        $scope.dataSource = options.data, // the observable array datasource
+        $scope._selectionService.isMulti = options.isMulti || options.isMultiSelect;
+        $scope._selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+        $scope._selectionService.dataSource = options.data, // the observable array datasource
 
-        $scope.selectedItem = options.selectedItem || undefined;
-        $scope.selectedItems = options.selectedItems || [];
-        $scope.selectedIndex = options.selectedIndex;
-        $scope.lastClickedRow = options.lastClickedRow;
-        $scope.RowService = RowService;
+        $scope._selectionService.selectedItem = options.selectedItem || undefined;
+        $scope._selectionService.selectedItems = options.selectedItems || [];
+        $scope._selectionService.selectedIndex = options.selectedIndex;
+        $scope._selectionService.lastClickedRow = options.lastClickedRow;
+        $scope._selectionService.RowService = RowService;
 
         // some subscriptions to keep the selectedItem in sync
-        $scope.$watch($scope.selectedItem, function(val) {
-            if ($scope.ignoreSelectedItemChanges)
+        $scope.$watch($scope._selectionService.selectedItem, function(val) {
+            if ($scope._selectionService.ignoreSelectedItemChanges)
                 return;
-            $scope.selectedItems = [val];
+            $scope._selectionService.selectedItems = [val];
         });
 
-        $scope.$watch($scope.selectedItems, function(vals) {
-            $scope.ignoreSelectedItemChanges = true;
-            $scope.selectedItem = vals ? vals[0] : null;
-            $scope.ignoreSelectedItemChanges = false;
+        $scope.$watch($scope._selectionService.selectedItems, function(vals) {
+            $scope._selectionService.ignoreSelectedItemChanges = true;
+            $scope._selectionService.selectedItem = vals ? vals[0] : null;
+            $scope._selectionService.ignoreSelectedItemChanges = false;
         });
 
         // ensures our selection flag on each item stays in sync
-        $scope.$watch($scope.selectedItems, function(newItems) {
-            var data = $scope.dataSource;
+        $scope.$watch($scope._selectionService.selectedItems, function(newItems) {
+            var data = $scope._selectionService.dataSource;
             if (!newItems) {
                 newItems = [];
             }
@@ -57,7 +58,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
         });
 
         //make sure as the data changes, we keep the selectedItem(s) correct
-        $scope.$watch($scope.dataSource, function(items) {
+        $scope.$watch($scope._selectionService.dataSource, function(items) {
             var selectedItems,
                 itemsToRemove;
             if (!items) {
@@ -65,7 +66,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
             }
 
             //make sure the selectedItem(s) exist in the new data
-            selectedItems = $scope.selectedItems;
+            selectedItems = $scope._selectionService.selectedItems;
             itemsToRemove = [];
 
             angular.forEach(selectedItems, function(item) {
@@ -76,17 +77,17 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
 
             //clean out any selectedItems that don't exist in the new array
             if (itemsToRemove.length > 0) {
-                $scope.selectedItems.removeAll(itemsToRemove);
+                $scope._selectionService.selectedItems.removeAll(itemsToRemove);
             }
         });
     };
 		
 	// function to manage the selection action of a data item (entity)
     selectionService.ChangeSelection = function(rowItem, evt) {
-        if ($scope.isMulti && evt && evt.shiftKey) {
-            if ($scope.lastClickedRow) {
-                var thisIndx = $scope.RowService.rowCache.indexOf(rowItem);
-                var prevIndx = $scope.RowService.rowCache.indexOf($scope.lastClickedRow);
+        if ($scope._selectionService.isMulti && evt && evt.shiftKey) {
+            if ($scope._selectionService.lastClickedRow) {
+                var thisIndx = $scope._selectionService.RowService.rowCache.indexOf(rowItem);
+                var prevIndx = $scope._selectionService.RowService.rowCache.indexOf($scope._selectionService.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -95,34 +96,34 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    $scope.RowService.rowCache[prevIndx].selected = $scope.lastClickedRow.selected;
-                    $scope.addOrRemove(rowItem);
+                    $scope._selectionService.RowService.rowCache[prevIndx].selected = $scope._selectionService.lastClickedRow.selected;
+                    $scope._selectionService.addOrRemove(rowItem);
                 }
-                $scope.lastClickedRow(rowItem);
+                $scope._selectionService.lastClickedRow(rowItem);
                 return true;
             }
         } else if (!isMulti) {
-            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? $scope._selectionService.selectedItems = [rowItem.entity] : $scope._selectionService.selectedItems = [];
         }
-        $scope.addOrRemove(rowItem);
-        $scope.lastClickedRow(rowItem);
+        $scope._selectionService.addOrRemove(rowItem);
+        $scope._selectionService.lastClickedRow(rowItem);
         return true;
     };
 	
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            $scope.selectedItems.remove(rowItem.entity);
+            $scope._selectionService.selectedItems.remove(rowItem.entity);
         } else {
-            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
-                $scope.selectedItems.push(rowItem.entity);
+            if ($scope._selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
+                $scope._selectionService.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
     selectionService.SelectedItemCount = function () {
-        return $scope.selectedItems.length;
+        return $scope._selectionService.selectedItems.length;
     };
     
     // writable-computed observable
@@ -134,9 +135,9 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
             dataSourceCopy.push(item);
         });
         if (checkAll) {
-            $scope.selectedItems = dataSourceCopy;
+            $scope._selectionService.selectedItems = dataSourceCopy;
         } else {
-            $scope.selectedItems = [];
+            $scope._selectionService.selectedItems = [];
         }
     };
     
