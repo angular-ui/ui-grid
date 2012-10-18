@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/17/2012 22:05:24
+* Compiled At: 10/17/2012 22:10:08
 ***********************************************/
 
 (function(window, undefined){
@@ -1201,7 +1201,7 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
 
 // initialization of services into the main module
 angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
-    $scope.HELLO = "WORLD";
+        $scope.HELLO = "WORLD";
     }).
     run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
         return null;
@@ -2476,6 +2476,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
     var ngGrid = {
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
+        scope: true,
         controller: 'ngGridController',
         link: function ($scope, iElement, iAttrs) {
             var $element = $(iElement);
@@ -2770,6 +2771,7 @@ ngGridDirectives.directive('ngRows', function factory() {
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
+        scope: true,
         controller: 'ngGridController',
         link: function postLink($scope, iElement, iAttrs) {
             var $container = $(iElement),

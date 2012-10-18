@@ -7,7 +7,7 @@
 
 // initialization of services into the main module
 angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
-    $scope.HELLO = "WORLD";
+        $scope.HELLO = "WORLD";
     }).
     run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
         return null;

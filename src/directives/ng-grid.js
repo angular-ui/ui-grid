@@ -21,6 +21,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
     var ngGrid = {
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
+        scope: true,
         controller: 'ngGridController',
         link: function ($scope, iElement, iAttrs) {
             var $element = $(iElement);
