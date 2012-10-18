@@ -14,10 +14,9 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         headerRowHeight: 30,
         footerRowHeight: 55,
         filterRowHeight: 30,
-        rowTemplate: 'ngRowTemplate',
-        headerTemplate: 'ngHeaderRowTemplate',
-        headerCellTemplate: 'ngHeaderCellTemplate',
-        footerTemplate: 'ngFooterTemplate',
+        rowTemplate: ROW_TEMPLATE,
+        headerTemplate: HEADER_TEMPLATE,
+        headerCellTemplate: HEADERCELL_TEMPLATE,
         footerVisible: true,
         canSelectRows: true,
         autogenerateColumns: true,
@@ -105,7 +104,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         return maxCanvasHt || 0;
     };
 
-    self.columns = [];
+    $scope.columns = [];
 
     //initialized in the init method
     $scope.rowManager = null;
@@ -178,8 +177,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
-            cols = self.columns,
-            numOfCols = self.columns.length,
+            cols = $scope.columns,
+            numOfCols = $scope.columns.length,
             asterisksArray = [],
             percentArray = [],
             asteriskNum = 0;
@@ -276,7 +275,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     $scope.sortData = function (col, dir) {
         isSorting = true;
 
-        angular.forEach(self.columns, function (column) {
+        angular.forEach($scope.columns, function (column) {
             if (column.field !== col.field) {
                 if (column.sortDirection !== "") { column.sortDirection = ""; }
             }
@@ -371,7 +370,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
                 $scope.refreshDomSizes();
 
-                ng.cssBuilder.buildStyles(self);
+                ng.cssBuilder.buildStyles($scope, self);
 
                 if ($scope.initPhase > 0 && $scope.$root) {
                     $scope.$root.show();
@@ -424,7 +423,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
                 cols.push(column);
             });
 
-            self.columns = cols;
+            $scope.columns = cols;
         }
     };
 
@@ -452,7 +451,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
             isMulti: self.config.isMultiSelect
         }, RowService);
         
-        angular.forEach(self.columns, function(col) {
+        angular.forEach($scope.columns, function(col) {
             if (col.widthIsConfigured){
                 col.width.$watch(function(){
                     $scope.rowManager.dataChanged = true;
@@ -466,7 +465,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         $scope.toggleSelectAll = SelectionService.ToggleSelectAll;
         $scope.rows = RowService.Rows; // dependent observable
 
-        ng.cssBuilder.buildStyles(self);
+        ng.cssBuilder.buildStyles($scope, self);
 
         $scope.initPhase = 1;
     };
@@ -478,7 +477,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
             $scope.refreshDomSizes();
 
-            ng.cssBuilder.buildStyles(self);
+            ng.cssBuilder.buildStyles($scope, self);
 
             if ($scope.initPhase > 0 && $scope.$root) {
                 $scope.$root.show();
@@ -498,7 +497,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     };
 
     $scope.clearFilter_Click = function () {
-        angular.forEach(self.columns, function (col) {
+        angular.forEach($scope.columns, function (col) {
             col.filter = null;
         });
     };

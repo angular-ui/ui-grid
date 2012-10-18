@@ -13,14 +13,17 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridDirectives.directive('ngHeaderRow', function(FilterService, GridService, RowService, SortService, TemplateService) {
+ngGridDirectives.directive('ngHeaderRow', function($compile, TemplateService) {
     var ngHeaderRow = {
-        template: TemplateService.GetTemplateText(HEADER_TEMPLATE),
-        replace: true,
-        transclude: true,
-        link: function ($scope, iElement, iAttrs) {
-            
-        }
+        compile: function compile(tElement, tAttrs, transclude){
+			return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+					var headerTemplate = TemplateService.GetTemplateText(HEADER_TEMPLATE);
+					iElement.html(headerTemplate);
+					$compile(iElement.contents())($scope);
+				}
+			}
+		}
     };
     return ngHeaderRow;
 });

@@ -44,7 +44,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         $scope._rowService.rowHeight = grid.config.rowHeight;
         
         // the logic that builds cell objects
-        $scope._rowService.cellFactory = new ng.CellFactory(grid.columns);
+        $scope._rowService.cellFactory = new ng.CellFactory(scope.columns);
         
         // the actual range the user can see in the viewport
         $scope._rowService.viewableRange = prevViewableRange;

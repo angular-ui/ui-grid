@@ -131,7 +131,7 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
     // @val - boolean indicating whether to select all/de-select all
     selectionService.ToggleSelectAll = function (checkAll) {
         var dataSourceCopy = [];
-        angular.forEach(dataSource, function (item) {
+        angular.forEach($scope._selectionService.dataSource, function (item) {
             dataSourceCopy.push(item);
         });
         if (checkAll) {

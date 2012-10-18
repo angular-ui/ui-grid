@@ -8,13 +8,13 @@
 
 ng.cssBuilder = {
 
-    buildStyles: function (grid) {
+    buildStyles: function (scope, grid) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
             i = 0,
-            len = grid.columns.length,
+            len = scope.columns.length,
             css = new ng.utils.StringBuilder(),
             col,
             sumWidth = 0;
@@ -24,15 +24,15 @@ ng.cssBuilder = {
         }
         $style.empty();
         
-        css.append(".{0} .kgCanvas { width: {1}px; }", gridId, grid.totalRowWidth);
+        css.append(".{0} .kgCanvas { width: {1}px; }", gridId, scope.totalRowWidth);
         css.append(".{0} .kgCell { height: {1}px; }", gridId, rowHeight);
         css.append(".{0} .kgRow { position: absolute; left: 0; right: 0; height: {1}px; line-height: {1}px; display: inline; }", gridId, rowHeight);
         css.append(".{0} .kgHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
         css.append(".{0} .kgHeaderScroller { line-height: {1}px; overflow: none; }", gridId, headerRowHeight);    
         
         for (; i < len; i++) {
-            col = grid.columns[i];
-            css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (grid.totalRowWidth - sumWidth - col.width));
+            col = scope.columns[i];
+            css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (scope.totalRowWidth - sumWidth - col.width));
             sumWidth += col.width;
         }
         if (ng.utils.isIe) { // IE

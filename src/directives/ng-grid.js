@@ -47,7 +47,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                         headerTemplate: grid.config.headerTemplate,
                         headerCellTemplate: grid.config.headerCellTemplate,
                         footerTemplate: grid.config.footerTemplate,
-                        columns: grid.columns,
+                        columns: $scope.columns,
                         showFilter: grid.config.allowFiltering,
                         disableTextSelection: grid.config.disableTextSelection,
                         autogenerateColumns: grid.config.autogenerateColumns,
@@ -100,7 +100,8 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
 
                     $scope.initPhase = 1;
 
-                    iElement.append($compile(htmlText)($scope));
+                    iElement.html(htmlText);
+					$compile(iElement.contents())($scope);
                     return null;
                 }
             };
