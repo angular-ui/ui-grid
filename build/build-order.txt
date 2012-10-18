@@ -26,8 +26,8 @@
 ..\src\domManipulation\domUtility.js
 ..\src\directives\ng-footer.js
 ..\src\directives\ng-grid.js
-..\src\directives\ng-headerCell.js
-..\src\directives\ng-headerRow.js
+..\src\directives\ng-header-cell.js
+..\src\directives\ng-header-row.js
 ..\src\directives\ng-row.js
 ..\src\directives\ng-rows.js
 ..\src\directives\ng-size.js

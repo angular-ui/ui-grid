@@ -1,28 +1,26 @@
-﻿ng.Footer = function (grid) {
-    var self = this;
-
-    this.maxRows;
+﻿ng.Footer = function ($scope, grid) {
+    $scope.maxRows = null;
 
     if (!ng.utils.isNullOrUndefined(grid.config.totalServerItems)) {
-        this.maxRows = grid.config.totalServerItems;
+        $scope.maxRows = grid.config.totalServerItems;
     } else {
-        this.maxRows = grid.maxRows;
+        $scope.maxRows = grid.maxRows;
     }
-    this.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
-    this.selectedItemCount = grid.selectedItemCount;
+    $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
+    $scope.selectedItemCount = grid.selectedItemCount;
 
-    this.footerVisible = grid.config.footerVisible;
-    this.pagerVisible = grid.config.enablePaging;
-    this.selectedPageSize = grid.config.pageSize;
-    this.pageSizes = grid.config.pageSizes;
-    this.currentPage = grid.config.currentPage;
-    this.maxPages = function () {
+    $scope.footerVisible = grid.config.footerVisible;
+    $scope.pagerVisible = grid.config.enablePaging;
+    $scope.selectedPageSize = grid.config.pageSize;
+    $scope.pageSizes = grid.config.pageSizes;
+    $scope.currentPage = grid.config.currentPage;
+    $scope.maxPages = function () {
         var maxCnt = self.maxRows || 1,
             pageSize = self.selectedPageSize;
         return Math.ceil(maxCnt / pageSize);
     };
 
-    this.protectedCurrentPage = {
+    $scope.protectedCurrentPage = {
         get: function () {
             return self.currentPage();
         },
@@ -34,33 +32,33 @@
         }
     };
 
-    this.pageForward = function() {
+    $scope.pageForward = function () {
         var page = self.currentPage;
-        self.currentPage(Math.min(page + 1, self.maxPages));
+        $scope.currentPage = Math.min(page + 1, self.maxPages);
     };
 
-    this.pageBackward = function () {
-        var page = self.currentPage;
-        self.currentPage = Math.max(page - 1, 1);
+    $scope.pageBackward = function () {
+        var page = $scope.currentPage;
+        $scope.currentPage = Math.max(page - 1, 1);
     };
 
-    this.pageToFirst = function () {
-        self.currentPage = 1;
+    $scope.pageToFirst = function () {
+        $scope.currentPage = 1;
     };
 
-    this.pageToLast = function () {
-        var maxPages = self.maxPages;
-        self.currentPage = maxPages;
+    $scope.pageToLast = function () {
+        var maxPages = $scope.maxPages;
+        $scope.currentPage = maxPages;
     };
 
-    this.canPageForward = function () {
-        var curPage = self.currentPage;
-        var maxPages = self.maxPages;
+    $scope.canPageForward = function () {
+        var curPage = $scope.currentPage;
+        var maxPages = $scope.maxPages;
         return curPage < maxPages;
     };
 
-    this.canPageBackward = function () {
-        var curPage = self.currentPage;
+    $scope.canPageBackward = function () {
+        var curPage = $scope.currentPage;
         return curPage > 1;
     };
 };

@@ -2,12 +2,17 @@
 /// <reference path="../services/FilterService.js" />
 /// <reference path="../services/GridService.js" />
 /// <reference path="../services/SelectionService.js" />
+/// <reference path="../classes/grid.js" />
+/// <reference path="../services/FilterService.js" />
+/// <reference path="../services/GridService.js" />
+/// <reference path="../services/SelectionService.js" />
 /// <reference path="../services/RowService.js" />
 /// <reference path="../services/TemplateService.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
+/// <reference path="../classes/footer.js" />
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
@@ -15,22 +20,17 @@
 ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
-        replace: true,
+        replace: false,
         transclude: true,
         priority: 0,
-        link: function (scope, iElement, iAttrs) {
-            var $element = $(iElement),
-                options = scope[iAttrs.ngGrid],
-                //create the Grid
-                grid = GridService.GetGrid($element);
+        link: function ($scope, iElement, iAttrs) {
+            var $element = $(iElement);
+            var options = $scope[iAttrs.ngGrid];
+            var grid = new ng.Grid($scope, options, $($element).width(), FilterService, RowService, SelectionService, SortService);
             
-            if (!grid) {
-                grid = new ng.Grid(options, $($element).width(), FilterService, RowService, SelectionService, SortService);
-                GridService.StoreGrid($element, grid);
-                grid.$footerPanel = new ng.Footer(grid);
-            } else {
-                return false;
-            }
+            GridService.StoreGrid($element, grid);
+            grid.footerController = new ng.Footer($scope, grid);
+            
             ng.domUtility.measureGrid($element, grid, true);
 
             //set the right styling on the container
@@ -62,7 +62,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             });
             */
             //keep selected item scrolled into view
-            scope.$watch(grid.finalData, function () {
+            $scope.$watch(grid.finalData, function () {
                 if (grid.config.selectedItems) {
                     var lastItemIndex = grid.config.selectedItems.length - 1;
                     if (lastItemIndex <= 0) {
@@ -73,27 +73,27 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                     }
                 }
             });
-            scope.$watch(grid.data, grid.refreshDomSizesTrigger);
+            $scope.$watch(grid.data, grid.refreshDomSizesTrigger);
             angular.forEach(grid.columns, function (column) {
-                scope.$watch(column.sortDirection, function () {
+                $scope.$watch(column.sortDirection, function () {
                     return function(dir) {
                         if (dir) {
                             grid.sortData(column, dir);
                         }
                     };
                 });
-                scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
+                $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
             });
             
-            scope.toggleSelectAll = grid.toggleSelectAll;
-            scope.filterIsOpen = grid.filterIsOpen;
+            $scope.toggleSelectAll = grid.toggleSelectAll;
+            $scope.filterIsOpen = grid.filterIsOpen;
             //walk the element's graph and the correct properties on the grid
             ng.domUtility.assignGridContainers($element, grid);
             //now use the manager to assign the event handlers
             GridService.AssignGridEventHandlers(grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             //grid.update();
-            scope.initPhase = 1;
+            $scope.initPhase = 1;
             return null;
         }
     };

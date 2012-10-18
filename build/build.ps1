@@ -15,12 +15,14 @@ Add-Content $TempFile "* Authors: https://github.com/Crash8308/ng-grid/blob/mast
 Add-Content $TempFile "* License: MIT (http://www.opensource.org/licenses/mit-license.php)";
 Add-Content $TempFile "* Compiled At: $compileTime";
 Add-Content $TempFile "***********************************************/`n"
+Add-Content $TempFile "(function(window, undefined){";
 Foreach ($file in $files){
 	# Wrap each file output in a new line
 	Write-Host "Building... $file";
 	Add-Content $TempFile "`n/***********************************************`n* FILE: $file`n***********************************************/";
 	Get-Content $file | where {!$_.StartsWith("///")} | Add-Content $TempFile;
 }
+Add-Content $TempFile "}(window));";
 Get-Content $TempFile | Set-Content $OutputFile;
 Remove-Item $TempFile -Force;
 Copy-Item $OutputFile $FinalFile;

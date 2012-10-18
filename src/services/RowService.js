@@ -16,7 +16,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
     $scope._rowService.dataChanged = true;
     $scope._rowService.dataSource = [];
     
-    rowService.Initialize = function (grid) {
+    rowService.Initialize = function (scope, grid) {
         var prevMaxRows = 0, // for comparison purposes when scrolling
             prevMinRows = 0, // for comparison purposes when scrolling
             currentPage = grid.config.currentPage,
@@ -26,7 +26,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
              // for comparison purposes to help throttle re-calcs when scrolling
         $scope._rowService.internalRenderedRange = prevRenderedRange;
         // short cut to sorted and filtered data
-        $scope._rowService.dataSource = grid.finalData; //observableArray
+        $scope._rowService.dataSource = scope.finalData; //observableArray
         
         // change subscription to clear out our cache
         $scope.$watch($scope._rowService.dataSource, function () {
