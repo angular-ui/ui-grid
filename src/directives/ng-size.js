@@ -15,7 +15,7 @@
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
-        scope: false,
+        controller: 'ngGridController',
         link: function postLink($scope, iElement, iAttrs) {
             var $container = $(iElement),
                 $parent = $container.parent(),

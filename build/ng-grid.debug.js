@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/17/2012 21:12:05
+* Compiled At: 10/17/2012 22:05:24
 ***********************************************/
 
 (function(window, undefined){
@@ -1194,6 +1194,18 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
     };
     return templateService;
 }]);
+
+/***********************************************
+* FILE: ..\src\init.js
+***********************************************/
+
+// initialization of services into the main module
+angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
+    $scope.HELLO = "WORLD";
+    }).
+    run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
+        return null;
+    });
 
 /***********************************************
 * FILE: ..\src\templates\gridTemplate.js
@@ -2464,8 +2476,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
     var ngGrid = {
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
-        transclude: true,
-        scope: true,
+        controller: 'ngGridController',
         link: function ($scope, iElement, iAttrs) {
             var $element = $(iElement);
             var options = $scope.$parent[iAttrs.ngGrid];
@@ -2759,7 +2770,7 @@ ngGridDirectives.directive('ngRows', function factory() {
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
-        scope: false,
+        controller: 'ngGridController',
         link: function postLink($scope, iElement, iAttrs) {
             var $container = $(iElement),
                 $parent = $container.parent(),
@@ -2795,14 +2806,4 @@ ngGridDirectives.directive('ngSize', function factory() {
     };
     return ngSize;
 });
-
-/***********************************************
-* FILE: ..\src\init.js
-***********************************************/
-
-// initialization of services into the main module
-angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).
-    run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
-        return null;
-    });
 }(window));
