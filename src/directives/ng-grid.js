@@ -22,7 +22,7 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
         transclude: true,
-        scope: { title: '@ngGridScope' },
+        scope: true,
         link: function ($scope, iElement, iAttrs) {
             var $element = $(iElement);
             var options = $scope.$parent[iAttrs.ngGrid];
@@ -76,25 +76,25 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
             });
             $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
             angular.forEach($scope.columns, function (column) {
-                $ngGridScope.$watch(column.sortDirection, function () {
+                $scope.$watch(column.sortDirection, function () {
                     return function(dir) {
                         if (dir) {
-                            $ngGridScope.sortData(column, dir);
+                            $scope.sortData(column, dir);
                         }
                     };
                 });
-                $ngGridScope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
+                $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
             });
             
-            $ngGridScope.toggleSelectAll = $ngGridScope.toggleSelectAll;
-            $ngGridScope.filterIsOpen = $ngGridScope.filterIsOpen;
+            $scope.toggleSelectAll = $scope.toggleSelectAll;
+            $scope.filterIsOpen = $scope.filterIsOpen;
             //walk the element's graph and the correct properties on the grid
             ng.domUtility.assignGridContainers($element, grid);
             //now use the manager to assign the event handlers
-            GridService.AssignGridEventHandlers($ngGridScope, grid);
+            GridService.AssignGridEventHandlers($scope, grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             //grid.update();
-            $ngGridScope.initPhase = 1;
+            $scope.initPhase = 1;
             return null;
         }
     };
