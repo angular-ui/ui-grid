@@ -9,8 +9,6 @@
     $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
 
-    $scope.footerVisible = grid.config.footerVisible;
-    $scope.pagerVisible = grid.config.enablePaging;
     $scope.selectedPageSize = grid.config.pageSize;
     $scope.pageSizes = grid.config.pageSizes;
     $scope.currentPage = grid.config.currentPage;

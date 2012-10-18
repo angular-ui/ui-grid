@@ -4,5 +4,8 @@ function gridController($scope) {
                      {name: "Jacob", age: 27},
                      {name: "Nephi", age: 29},
                      {name: "Enos", age: 34}];
-    $scope.gridOptions = { data : $scope.myData };
+    $scope.gridOptions = {
+        data: $scope.myData,
+        enablePaging: true
+    };
 };

@@ -311,7 +311,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
         };
     };
 
-    $scope.refreshDomSizes = function () {
+    self.refreshDomSizes = function () {
         var dim = new ng.Dimension(),
             oldDim = $scope.rootDim,
             rootH,
@@ -503,7 +503,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
         });
     };
 
-    $scope.adjustScrollTop = function (scrollTop, force) {
+    self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
@@ -515,7 +515,9 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
             $scope.$headerContainer.scrollLeft(scrollLeft);
         }
     };
-    
+
+    $scope.footerVisible = self.config.footerVisible;
+    $scope.pagerVisible = self.config.enablePaging;
     //call init
     self.init();
 };

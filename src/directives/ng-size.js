@@ -15,12 +15,13 @@
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
+        scope: { title: '@ngGridScope' },
         link: function postLink($scope, iElement, iAttrs) {  
             var $container = $(iElement),
             $parent = $container.parent(),
-            dim = iAttrs.dim,
-            oldHt = $container.outerHeight(),
-            oldWdth = $container.outerWidth();
+                dim = $scope[iAttrs.ngSize],
+                oldHt = $container.outerHeight(),
+                oldWdth = $container.outerWidth();
             
             if (dim != undefined) {
                 if (dim.autoFitHeight) {

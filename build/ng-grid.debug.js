@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/17/2012 17:39:55
+* Compiled At: 10/17/2012 20:24:35
 ***********************************************/
 
 (function(window, undefined){
@@ -468,7 +468,7 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         $scope._gridService.gridCache = {};
     };
     
-    gridService.AssignGridEventHandlers = function (grid) {
+    gridService.AssignGridEventHandlers = function ($scope, grid) {
         grid.$viewport.scroll(function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
@@ -1328,187 +1328,10 @@ ng.templates.generateRowTemplate = function (options) {
 };
 
 /***********************************************
-* FILE: ..\src\classes\cell.js
-***********************************************/
-ng.Cell = function (col) {
-    this.data = '';
-    this.column = col;
-    this.row = null;
-};
-
-/***********************************************
-* FILE: ..\src\classes\cellFactory.js
-***********************************************/
-ng.CellFactory = function (cols) {
-    var colCache = cols,
-        len = colCache.length;
-
-    this.buildRowCells = function (row) {
-        var cell,
-            cells = [],
-            col,
-            i = 0;
-
-        for (; i < len; i++) {
-            col = colCache[i];
-
-            cell = new ng.Cell(col);
-            cell.row = row;
-            //enabling nested property values in a viewmodel
-            cell.data = ng.utils.getPropertyPath(col.field, row.entity); 
-            cells.push(cell);
-            row.cellMap[col.field] = cell;
-        }
-        row.cells(cells);
-
-        return row;
-    };
-};
-
-/***********************************************
-* FILE: ..\src\classes\column.js
-***********************************************/
-ng.Column = function (colDef, index) {
-        
-    this.width = colDef.width;
-    this.widthIsConfigured = false;
-    this.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    this.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-    
-    this.field = colDef.field;
-    if (colDef.displayName === undefined || colDef.displayName === null) {
-        // Allow empty column names -- do not check for empty string
-        colDef.displayName = colDef.field;
-    }
-    this.displayName = colDef.displayName;
-    this.index = index;
-    this.isVisible = false;
-
-    //sorting
-    if (colDef.sortable === undefined || colDef.sortable === null) {
-        colDef.sortable = true;
-    }
-    
-    //resizing
-    if (colDef.resizable === undefined || colDef.resizable === null) {
-        colDef.resizable = true;
-    }
-    //resizing
-    if (colDef.filterable === undefined || colDef.filterable === null) {
-        colDef.filterable = true;
-    }
-    
-    this.allowSort = colDef.sortable;
-    this.allowResize = colDef.resizable;
-    this.allowFilter = colDef.filterable;
-    
-    this.sortDirection = "";
-    this.sortingAlgorithm = colDef.sortFn;
-
-    //filtering
-    this.filter;
-
-    //cell Template
-    this.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
-    this.hasCellTemplate = (this.cellTemplate ? true : false);
-
-    this.cellClass = colDef.cellClass;
-    this.headerClass = colDef.headerClass;
-
-    this.headerTemplate = colDef.headerTemplate
-    this.hasHeaderTemplate = (this.headerTemplate ? true : false);
-};
-
-/***********************************************
-* FILE: ..\src\classes\dimension.js
-***********************************************/
-ng.Dimension = function (options) {
-    this.innerHeight = null;
-    this.innerWidth = null;
-    this.outerHeight = null;
-    this.outerWidth = null;
-    this.widthDiff = null;
-    this.heightDiff = null;
-
-    this.autoFitHeight = false; //tells it to just fit to the wrapping container
-    this.autoFitWidth = false;
-
-    $.extend(this, options);
-};
-
-/***********************************************
-* FILE: ..\src\classes\footer.js
-***********************************************/
-ng.Footer = function ($scope, grid) {
-    $scope.maxRows = null;
-
-    if (!ng.utils.isNullOrUndefined(grid.config.totalServerItems)) {
-        $scope.maxRows = grid.config.totalServerItems;
-    } else {
-        $scope.maxRows = grid.maxRows;
-    }
-    $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
-    $scope.selectedItemCount = grid.selectedItemCount;
-
-    $scope.footerVisible = grid.config.footerVisible;
-    $scope.pagerVisible = grid.config.enablePaging;
-    $scope.selectedPageSize = grid.config.pageSize;
-    $scope.pageSizes = grid.config.pageSizes;
-    $scope.currentPage = grid.config.currentPage;
-    $scope.maxPages = function () {
-        var maxCnt = self.maxRows || 1,
-            pageSize = self.selectedPageSize;
-        return Math.ceil(maxCnt / pageSize);
-    };
-
-    $scope.protectedCurrentPage = {
-        get: function () {
-            return self.currentPage();
-        },
-        set: function (page) {
-            var pageInt = parseInt(page);
-            if (!isNaN(pageInt) || (pageInt && pageInt <= self.maxPages && pageInt > 0)) {
-                self.currentPage = pageInt;
-            }
-        }
-    };
-
-    $scope.pageForward = function () {
-        var page = self.currentPage;
-        $scope.currentPage = Math.min(page + 1, self.maxPages);
-    };
-
-    $scope.pageBackward = function () {
-        var page = $scope.currentPage;
-        $scope.currentPage = Math.max(page - 1, 1);
-    };
-
-    $scope.pageToFirst = function () {
-        $scope.currentPage = 1;
-    };
-
-    $scope.pageToLast = function () {
-        var maxPages = $scope.maxPages;
-        $scope.currentPage = maxPages;
-    };
-
-    $scope.canPageForward = function () {
-        var curPage = $scope.currentPage;
-        var maxPages = $scope.maxPages;
-        return curPage < maxPages;
-    };
-
-    $scope.canPageBackward = function () {
-        var curPage = $scope.currentPage;
-        return curPage > 1;
-    };
-};
-
-/***********************************************
-* FILE: ..\src\classes\grid.js
+* FILE: ..\src\controllers\gridCtrl.js
 ***********************************************/
 
-ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, SelectionService, SortService) {
+var gridCtrl = function ($scope) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -1812,7 +1635,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
         };
     };
 
-    $scope.refreshDomSizes = function () {
+    self.refreshDomSizes = function () {
         var dim = new ng.Dimension(),
             oldDim = $scope.rootDim,
             rootH,
@@ -2004,7 +1827,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
         });
     };
 
-    $scope.adjustScrollTop = function (scrollTop, force) {
+    self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
@@ -2016,7 +1839,706 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
             $scope.$headerContainer.scrollLeft(scrollLeft);
         }
     };
+
+    $scope.footerVisible = self.config.footerVisible;
+    $scope.pagerVisible = self.config.enablePaging;
+    //call init
+    self.init();
+};
+
+/***********************************************
+* FILE: ..\src\classes\cell.js
+***********************************************/
+ng.Cell = function (col) {
+    this.data = '';
+    this.column = col;
+    this.row = null;
+};
+
+/***********************************************
+* FILE: ..\src\classes\cellFactory.js
+***********************************************/
+ng.CellFactory = function (cols) {
+    var colCache = cols,
+        len = colCache.length;
+
+    this.buildRowCells = function (row) {
+        var cell,
+            cells = [],
+            col,
+            i = 0;
+
+        for (; i < len; i++) {
+            col = colCache[i];
+
+            cell = new ng.Cell(col);
+            cell.row = row;
+            //enabling nested property values in a viewmodel
+            cell.data = ng.utils.getPropertyPath(col.field, row.entity); 
+            cells.push(cell);
+            row.cellMap[col.field] = cell;
+        }
+        row.cells(cells);
+
+        return row;
+    };
+};
+
+/***********************************************
+* FILE: ..\src\classes\column.js
+***********************************************/
+ng.Column = function (colDef, index) {
+        
+    this.width = colDef.width;
+    this.widthIsConfigured = false;
+    this.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    this.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     
+    this.field = colDef.field;
+    if (colDef.displayName === undefined || colDef.displayName === null) {
+        // Allow empty column names -- do not check for empty string
+        colDef.displayName = colDef.field;
+    }
+    this.displayName = colDef.displayName;
+    this.index = index;
+    this.isVisible = false;
+
+    //sorting
+    if (colDef.sortable === undefined || colDef.sortable === null) {
+        colDef.sortable = true;
+    }
+    
+    //resizing
+    if (colDef.resizable === undefined || colDef.resizable === null) {
+        colDef.resizable = true;
+    }
+    //resizing
+    if (colDef.filterable === undefined || colDef.filterable === null) {
+        colDef.filterable = true;
+    }
+    
+    this.allowSort = colDef.sortable;
+    this.allowResize = colDef.resizable;
+    this.allowFilter = colDef.filterable;
+    
+    this.sortDirection = "";
+    this.sortingAlgorithm = colDef.sortFn;
+
+    //filtering
+    this.filter;
+
+    //cell Template
+    this.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    this.hasCellTemplate = (this.cellTemplate ? true : false);
+
+    this.cellClass = colDef.cellClass;
+    this.headerClass = colDef.headerClass;
+
+    this.headerTemplate = colDef.headerTemplate
+    this.hasHeaderTemplate = (this.headerTemplate ? true : false);
+};
+
+/***********************************************
+* FILE: ..\src\classes\dimension.js
+***********************************************/
+ng.Dimension = function (options) {
+    this.innerHeight = null;
+    this.innerWidth = null;
+    this.outerHeight = null;
+    this.outerWidth = null;
+    this.widthDiff = null;
+    this.heightDiff = null;
+
+    this.autoFitHeight = false; //tells it to just fit to the wrapping container
+    this.autoFitWidth = false;
+
+    $.extend(this, options);
+};
+
+/***********************************************
+* FILE: ..\src\classes\footer.js
+***********************************************/
+ng.Footer = function ($scope, grid) {
+    $scope.maxRows = null;
+
+    if (!ng.utils.isNullOrUndefined(grid.config.totalServerItems)) {
+        $scope.maxRows = grid.config.totalServerItems;
+    } else {
+        $scope.maxRows = grid.maxRows;
+    }
+    $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
+    $scope.selectedItemCount = grid.selectedItemCount;
+
+    $scope.selectedPageSize = grid.config.pageSize;
+    $scope.pageSizes = grid.config.pageSizes;
+    $scope.currentPage = grid.config.currentPage;
+    $scope.maxPages = function () {
+        var maxCnt = self.maxRows || 1,
+            pageSize = self.selectedPageSize;
+        return Math.ceil(maxCnt / pageSize);
+    };
+
+    $scope.protectedCurrentPage = {
+        get: function () {
+            return self.currentPage();
+        },
+        set: function (page) {
+            var pageInt = parseInt(page);
+            if (!isNaN(pageInt) || (pageInt && pageInt <= self.maxPages && pageInt > 0)) {
+                self.currentPage = pageInt;
+            }
+        }
+    };
+
+    $scope.pageForward = function () {
+        var page = self.currentPage;
+        $scope.currentPage = Math.min(page + 1, self.maxPages);
+    };
+
+    $scope.pageBackward = function () {
+        var page = $scope.currentPage;
+        $scope.currentPage = Math.max(page - 1, 1);
+    };
+
+    $scope.pageToFirst = function () {
+        $scope.currentPage = 1;
+    };
+
+    $scope.pageToLast = function () {
+        var maxPages = $scope.maxPages;
+        $scope.currentPage = maxPages;
+    };
+
+    $scope.canPageForward = function () {
+        var curPage = $scope.currentPage;
+        var maxPages = $scope.maxPages;
+        return curPage < maxPages;
+    };
+
+    $scope.canPageBackward = function () {
+        var curPage = $scope.currentPage;
+        return curPage > 1;
+    };
+};
+
+/***********************************************
+* FILE: ..\src\classes\grid.js
+***********************************************/
+
+ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, SelectionService, SortService) {
+    var defaults = {
+        rowHeight: 30,
+        columnWidth: 100,
+        headerRowHeight: 30,
+        footerRowHeight: 55,
+        filterRowHeight: 30,
+        rowTemplate: 'ngRowTemplate',
+        headerTemplate: 'ngHeaderRowTemplate',
+        headerCellTemplate: 'ngHeaderCellTemplate',
+        footerTemplate: 'ngFooterTemplate',
+        footerVisible: true,
+        canSelectRows: true,
+        autogenerateColumns: true,
+        data: [],
+        columnDefs: [],
+        pageSizes: [250, 500, 1000], //page Sizes
+        enablePaging: false,
+        pageSize: 250, //Paging: Size of Paging data
+        totalServerItems: undefined, //Paging: how many items are on the server
+        currentPage: 1, //Paging: initial displayed page.
+        selectedItems: [],
+        selectedIndex: 0, //index of the selectedItem in the data array
+        displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
+        displayRowIndex: true, //shows the rowIndex cell at the far left of each row
+        useExternalFiltering: false,
+        useExternalSorting: false,
+        filterInfo: undefined, // holds filter information (fields, and filtering strings)
+        sortInfo: undefined, // similar to filterInfo
+        filterWildcard: "*",
+        includeDestroyed: false, // flag to show _destroy=true items in grid
+        selectWithCheckboxOnly: false,
+        keepLastSelectedAround: false,
+        isMultiSelect: true,
+        lastClickedRow: undefined,
+        tabIndex: -1,
+        disableTextSelection: false,
+        enableColumnResize: true
+    },
+    self = this,
+    controller,
+    isSorting = false,
+    prevScrollTop,
+    prevMinRowsToRender,
+    maxCanvasHt = 0,
+    hUpdateTimeout;
+    
+    self.controller = ng.GridCtrl;
+
+    $scope.$root = null; //this is the root element that is passed in with the binding handler
+    $scope.$topPanel = null;
+    $scope.$headerContainer = null;
+    $scope.$headerScroller = null;
+    $scope.$headers = null;
+    $scope.$viewport = null;
+    $scope.$canvas = null;
+    $scope.footerController = null;
+    $scope.width = gridWidth;
+    $scope.selectionManager = null;
+    $scope.selectedItemCount= null;
+    $scope.filterIsOpen = false;
+    self.config = $.extend(defaults, options);
+    self.gridId = "ng" + ng.utils.newId();
+    $scope.initPhase = 0;
+
+
+    // Set new default footer height if not overridden, and multi select is disabled
+    if (self.config.footerRowHeight === defaults.footerRowHeight
+        && !self.config.canSelectRows) {
+        defaults.footerRowHeight = 30;
+        self.config.footerRowHeight = 30;
+    }
+    
+    // set this during the constructor execution so that the
+    // computed observables register correctly;
+    $scope.data = self.config.data;
+
+    FilterService.Initialize(self.config);
+    SortService.Initialize({
+        data: FilterService.FilteredData,
+        sortInfo: self.config.sortInfo,
+        useExternalSorting: self.config.useExternalSorting
+    });
+
+    $scope.sortInfo = SortService.SortInfo; //observable
+    $scope.filterInfo = FilterService.FilterInfo.get(); //observable
+    $scope.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
+    $scope.finalData = SortService.SortedData(); //observable Array
+    $scope.canvasHeight = maxCanvasHt.toString() + 'px';
+
+    $scope.maxRows = function () {
+        var rows = $scope.finalData;
+        maxCanvasHt = rows.length * self.config.rowHeight;
+        $scope.canvasHeight(maxCanvasHt.toString() + 'px');
+        return rows.length || 0;
+    };
+
+    $scope.maxCanvasHeight = function () {
+        return maxCanvasHt || 0;
+    };
+
+    self.columns = [];
+
+    //initialized in the init method
+    $scope.rowManager = null;
+    $scope.rows = null;
+    $scope.headerRow = null;
+    $scope.footer = null;
+
+    self.elementDims = {
+        scrollW: 0,
+        scrollH: 0,
+        cellHdiff: 0,
+        cellWdiff: 0,
+        rowWdiff: 0,
+        rowHdiff: 0,
+        rowIndexCellW: 25,
+        rowSelectedCellW: 25,
+        rootMaxW: 0,
+        rootMaxH: 0,
+        rootMinW: 0,
+        rootMinH: 0
+    };
+    $scope.elementsNeedMeasuring = true;
+
+    //#region Container Dimensions
+
+    $scope.rootDim = new ng.Dimension({ outerHeight: 20000, outerWidth: 20000 });
+
+    $scope.headerDim = function () {
+        var rootDim = $scope.rootDim,
+            newDim = new ng.Dimension();
+
+        newDim.outerHeight = self.config.headerRowHeight;
+        newDim.outerWidth = rootDim.outerWidth;
+
+        if ($scope.filterOpen) {
+            newDim.outerHeight += self.config.filterRowHeight;
+        }
+
+        return newDim;
+    };
+
+    $scope.footerDim = function() {
+        var rootDim = $scope.rootDim,
+            showFooter = self.config.footerVisible,
+            newDim = new ng.Dimension();
+
+        newDim.outerHeight = self.config.footerRowHeight;
+        newDim.outerWidth = rootDim.outerWidth;
+
+        if (!showFooter) {
+            newDim.outerHeight = 3;
+        }
+
+        return newDim;
+    };
+
+    $scope.viewportDim = function () {
+        var rootDim = $scope.rootDim,
+            headerDim = $scope.headerDim(),
+            footerDim = $scope.footerDim(),
+            newDim = new ng.Dimension();
+
+        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
+        newDim.outerWidth = rootDim.outerWidth;
+        newDim.innerHeight = newDim.outerHeight;
+        newDim.innerWidth = newDim.outerWidth;
+
+        return newDim;
+    };
+
+    $scope.totalRowWidth = function () {
+        var totalWidth = 0,
+            cols = self.columns,
+            numOfCols = self.columns.length,
+            asterisksArray = [],
+            percentArray = [],
+            asteriskNum = 0;
+            
+        angular.forEach(cols, function (col, i) {
+            // get column width out of the observable
+            var t = col.width;
+            // check if it is a number
+            if (isNaN(t)){
+                // figure out if the width is defined or if we need to calculate it
+                if (t == undefined) {
+                    // set the width to the length of the header title +30 for sorting icons and padding
+                    col.width = (col.displayName.length * ng.domUtility.letterW) + 30; 
+                } else if (t.indexOf("*") != -1){
+                    // if it is the last of the columns just configure it to use the remaining space
+                    if (i + 1 == numOfCols && asteriskNum == 0){
+                        col.width = $scope.width - totalWidth;
+                    } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
+                        asteriskNum += t.length;
+                        asterisksArray.push(col);
+                        return;
+                    }
+                } else if (ng.utils.endsWith(t, "%")){ // If the width is a percentage, save it until the very last.
+                    percentArray.push(col);
+                    return;
+                } else { // we can't parse the width so lets throw an error.
+                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+                }
+            }
+            // add the caluclated or pre-defined width the total width
+            totalWidth += col.width;
+            // set the flag as the width is configured so the subscribers can be added
+            col.widthIsConfigured = true;
+        });
+        // check if we saved any asterisk columns for calculating later
+        if (asterisksArray.length > 0){
+            // get the remaining width
+            var remainigWidth = $scope.width - totalWidth;
+            // calculate the weight of each asterisk rounded down
+            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
+            // set the width of each column based on the number of stars
+            angular.forEach(asterisksArray, function (col) {
+                var t = col.width.length;
+                col.width = asteriskVal * t;
+                totalWidth += col.width;
+            });
+        }
+        // Now we check if we saved any percentage columns for calculating last
+        if (percentArray.length > 0){
+            // do the math
+            angular.forEach(percentArray, function (col) {
+                var t = col.width;
+                col.width = Math.floor($scope.width * (parseInt(t.slice(0, - 1)) / 100));
+                totalWidth += col.width;
+            });
+        }
+        return totalWidth;
+    };
+
+    $scope.minRowsToRender = function () {
+        var viewportH = $scope.viewportDim.outerHeight || 1;
+
+        if ($scope.filterIsOpen) {
+            return prevMinRowsToRender;
+        };
+
+        prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
+
+        return prevMinRowsToRender;
+    };
+
+
+    $scope.headerScrollerDim = function () {
+        var viewportH = $scope.viewportDim.outerHeight,
+            maxHeight = $scope.maxCanvasHeight,
+            vScrollBarIsOpen = (maxHeight > viewportH),
+            newDim = new ng.Dimension();
+
+        newDim.autoFitHeight = true;
+        newDim.outerWidth = $scope.totalRowWidth;
+
+        if (vScrollBarIsOpen) { newDim.outerWidth += self.elementDims.scrollW; }
+        else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { //if the horizontal scroll is open it forces the viewport to be smaller
+            newDim.outerWidth += self.elementDims.scrollW;
+        }
+        return newDim;
+    };
+
+    //#endregion
+
+    //#region Events
+    $scope.toggleSelectAll = false;
+
+    $scope.sortData = function (col, dir) {
+        isSorting = true;
+
+        angular.forEach(self.columns, function (column) {
+            if (column.field !== col.field) {
+                if (column.sortDirection !== "") { column.sortDirection = ""; }
+            }
+        });
+
+        SortService.Sort(col, dir);
+
+        isSorting = false;
+    };
+
+    //#endregion
+
+    $scope.scrollIntoView = function (entity) {
+        var itemIndex = -1,
+            viewableRange = $scope.rowManager.viewableRange;
+
+        if (entity) {
+            itemIndex = ng.utils.arrayIndexOf($scope.finalData, entity);
+        }
+
+        if (itemIndex > -1) {
+            //check and see if its already in view!
+            if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
+
+                //scroll it into view
+                $scope.rowManager.viewableRange = new ng.Range(itemIndex, itemIndex + $scope.minRowsToRender);
+
+                if ($scope.$viewport) {
+                    $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
+                }
+            }
+        };
+    };
+
+    self.refreshDomSizes = function () {
+        var dim = new ng.Dimension(),
+            oldDim = $scope.rootDim,
+            rootH,
+            rootW,
+            canvasH;
+
+        $scope.elementsNeedMeasuring = true;
+
+        //calculate the POSSIBLE biggest viewport height
+        rootH = $scope.maxCanvasHeight + self.config.headerRowHeight + self.config.footerRowHeight;
+
+        //see which viewport height will be allowed to be used
+        rootH = Math.min(self.elementDims.rootMaxH, rootH);
+        rootH = Math.max(self.elementDims.rootMinH, rootH);
+
+        //now calc the canvas height of what is going to be used in rendering
+        canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
+
+        //get the max row Width for rendering
+        rootW = $scope.totalRowWidth + self.elementDims.rowWdiff;
+
+        //now see if we are going to have a vertical scroll bar present
+        if ($scope.maxCanvasHeight > canvasH) {
+
+            //if we are, then add that width to the max width 
+            rootW += self.elementDims.scrollW || 0;
+        }
+
+        //now see if we are constrained by any width Dimensions
+        dim.outerWidth = Math.min(self.elementDims.rootMaxW, rootW);
+        dim.outerWidth = Math.max(self.elementDims.rootMinW, dim.outerWidth);
+
+        dim.outerHeight = rootH;
+
+        //finally don't fire the subscriptions if we aren't changing anything!
+        if (dim.outerHeight !== oldDim.outerHeight || dim.outerWidth !== oldDim.outerWidth) {
+
+            //if its not the same, then fire the subscriptions
+            $scope.rootDim = dim;
+        }
+    };
+
+    $scope.refreshDomSizesTrigger = (function () {
+
+        if (hUpdateTimeout) {
+            if (window.setImmediate) {
+                window.clearImmediate(hUpdateTimeout);
+            } else {
+                window.clearTimeout(hUpdateTimeout);
+            }
+        }
+
+        if ($scope.initPhase > 0) {
+
+            //don't shrink the grid if we sorting or filtering
+            if (!filterIsOpen && !isSorting) {
+
+                $scope.refreshDomSizes();
+
+                ng.cssBuilder.buildStyles(self);
+
+                if ($scope.initPhase > 0 && $scope.$root) {
+                    $scope.$root.show();
+                }
+            }
+        }
+
+    })();
+
+    $scope.buildColumnDefsFromData = function () {
+        if (self.config.columnDefs.length > 0){
+            return;
+        }
+        if (!$scope.data || !$scope.data[0]) {
+            throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
+        }
+
+        var item;
+        item = $scope.data[0];
+
+        ng.utils.forIn(item, function (prop, propName) {
+            if (propName === SELECTED_PROP) {
+                return;
+            }
+
+            self.config.columnDefs.push({
+                field: propName
+            });
+        });
+
+    };
+
+    $scope.buildColumns = function () {
+        var columnDefs = self.config.columnDefs,
+            cols = [];
+
+        if (self.config.autogenerateColumns) { $scope.buildColumnDefsFromData(); }
+
+        if (self.config.displaySelectionCheckbox) {
+            columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
+        }
+        if (self.config.displayRowIndex) {
+            columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
+        }
+
+        if (columnDefs.length > 0) {
+
+            angular.forEach(columnDefs, function (colDef, i) {
+                var column = new ng.Column(colDef, i);
+                cols.push(column);
+            });
+
+            self.columns = cols;
+        }
+    };
+
+    this.init = function () {
+
+        $scope.buildColumns();
+
+        //now if we are using the default templates, then make the generated ones unique
+        if (self.config.rowTemplate === 'ngRowTemplate') {
+            self.config.rowTemplate = self.gridId + self.config.rowTemplate;
+        }
+
+        if (self.config.headerTemplate === 'ngHeaderRowTemplate') {
+            self.config.headerTemplate = self.gridId + self.config.headerTemplate;
+        }
+
+        RowService.Initialize($scope, self);
+        SelectionService.Initialize({
+            isMultiSelect: self.config.isMultiSelect,
+            data: $scope.finalData,
+            selectedItem: self.config.selectedItem,
+            selectedItems: self.config.selectedItems,
+            selectedIndex: self.config.selectedIndex,
+            lastClickedRow: self.config.lastClickedRow,
+            isMulti: self.config.isMultiSelect
+        }, RowService);
+        
+        angular.forEach(self.columns, function(col) {
+            if (col.widthIsConfigured){
+                col.width.$watch(function(){
+                    $scope.rowManager.dataChanged = true;
+                    $scope.rowManager.rowCache = []; //if data source changes, kill this!
+                    $scope.rowManager.calcRenderedRange();
+                });
+            }
+        });
+        
+        $scope.selectedItemCount = SelectionService.SelectedItemCount;
+        $scope.toggleSelectAll = SelectionService.ToggleSelectAll;
+        $scope.rows = RowService.Rows; // dependent observable
+
+        ng.cssBuilder.buildStyles(self);
+
+        $scope.initPhase = 1;
+    };
+
+    this.update = function () {
+        //we have to update async, or else all the observables are registered as dependencies
+
+        var updater = function () {
+
+            $scope.refreshDomSizes();
+
+            ng.cssBuilder.buildStyles(self);
+
+            if ($scope.initPhase > 0 && $scope.$root) {
+                $scope.$root.show();
+            }
+        };
+
+        if (window.setImmediate) {
+            hUpdateTimeout = window.setImmediate(updater);
+        } else {
+            hUpdateTimeout = setTimeout(updater, 0);
+        }
+    };
+
+    $scope.showFilter_Click = function () {
+        $scope.headerRow.filterVisible = !$scope.filterIsOpen;
+        $scope.filterIsOpen = !$scope.filterIsOpen;
+    };
+
+    $scope.clearFilter_Click = function () {
+        angular.forEach(self.columns, function (col) {
+            col.filter = null;
+        });
+    };
+
+    self.adjustScrollTop = function (scrollTop, force) {
+        if (prevScrollTop === scrollTop && !force) { return; }
+        var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
+        prevScrollTop = scrollTop;
+        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + $scope.minRowsToRender));
+    };
+
+    $scope.adjustScrollLeft = function (scrollLeft) {
+        if ($scope.$headerContainer) {
+            $scope.$headerContainer.scrollLeft(scrollLeft);
+        }
+    };
+
+    $scope.footerVisible = self.config.footerVisible;
+    $scope.pagerVisible = self.config.enablePaging;
     //call init
     self.init();
 };
@@ -2457,25 +2979,6 @@ ng.domUtility = (new function () {
 } ());
 
 /***********************************************
-* FILE: ..\src\directives\ng-footer.js
-***********************************************/
-
-ngGridDirectives.directive('ngFooter', function(TemplateService, GridService) {
-    var ngFooter = {
-        template: TemplateService.GetTemplateText(FOOTER_TEMPLATE),
-        replace: false,
-        transclude: true,
-        priority: 10,
-        link: function (scope, iElement, iAttrs, controller) {
-            var element = $(iElement).parent()[0];
-            var grid = GridService.GetGrid(element);
-            grid.footer = new ng.Footer(grid);
-        }
-    };
-    return ngFooter;
-});
-
-/***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
 
@@ -2484,11 +2987,12 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
         template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
         transclude: true,
-        priority: 0,
+        require: 'grid',
         link: function ($scope, iElement, iAttrs) {
             var $element = $(iElement);
-            var options = $scope[iAttrs.ngGrid];
+            var options = $scope.$parent[iAttrs.ngGrid];
             var grid = new ng.Grid($scope, options, $($element).width(), FilterService, RowService, SelectionService, SortService);
+
             
             GridService.StoreGrid($element, grid);
             grid.footerController = new ng.Footer($scope, grid);
@@ -2535,24 +3039,24 @@ ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowSe
                     }
                 }
             });
-            $scope.$watch(grid.data, grid.refreshDomSizesTrigger);
-            angular.forEach(grid.columns, function (column) {
+            $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
+            angular.forEach($scope.columns, function (column) {
                 $scope.$watch(column.sortDirection, function () {
                     return function(dir) {
                         if (dir) {
-                            grid.sortData(column, dir);
+                            $scope.sortData(column, dir);
                         }
                     };
                 });
                 $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
             });
             
-            $scope.toggleSelectAll = grid.toggleSelectAll;
-            $scope.filterIsOpen = grid.filterIsOpen;
+            $scope.toggleSelectAll = $scope.toggleSelectAll;
+            $scope.filterIsOpen = $scope.filterIsOpen;
             //walk the element's graph and the correct properties on the grid
             ng.domUtility.assignGridContainers($element, grid);
             //now use the manager to assign the event handlers
-            GridService.AssignGridEventHandlers(grid);
+            GridService.AssignGridEventHandlers($scope, grid);
             //call update on the grid, which will refresh the dome measurements asynchronously
             //grid.update();
             $scope.initPhase = 1;
@@ -2654,49 +3158,6 @@ ngGridDirectives.directive('ngHeaderRow', function(FilterService, GridService, R
     };
     return ngHeaderRow;
 });
-            
-
-/*ko.bindingHandlers['kgHeaderRow'] = (function () {
-
-    var buildHeaders = function (grid) {
-        var cols = grid.columns(),
-            cell,
-            headerRow = new kg.HeaderRow();
-
-        kg.utils.forEach(cols, function (col, i) {
-            cell = new kg.HeaderCell(col);
-            cell.colIndex = i;
-
-            headerRow.headerCells.push(cell);
-            headerRow.headerCellMap[col.field] = cell;
-        });
-
-        grid.headerRow = headerRow;
-        grid.headerRow.height = grid.config.headerRowHeight;
-    };
-
-    var makeNewValueAccessor = function (grid) {
-        return function () {
-            return { name: grid.config.headerTemplate, data: grid.headerRow };
-        }
-    };
-
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid = bindingContext.$data;
-
-            buildHeaders(grid);
-
-            return ko.bindingHandlers.template.init(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var grid = bindingContext.$data;
-
-            return ko.bindingHandlers.template.update(element, makeNewValueAccessor(grid), allBindingsAccessor, grid, bindingContext);
-        }
-    }
-} ());
-*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-row.js
@@ -2713,39 +3174,6 @@ ngGridDirectives.directive('ngRow', function (SelectionService, TemplateService)
     };
     return ngRow;
 });
-
-/*
-ko.bindingHandlers['kgRow'] = (function () {
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var row = valueAccessor(),
-                classes = 'kgRow',
-                grid = bindingContext.$parent,
-                rowManager = bindingContext.$parent.rowManager,
-                rowSubscription;
-
-            if (grid.config.canSelectRows) {
-                classes += ' kgCanSelect';
-            }
-            classes += (row.rowIndex % 2) === 0 ? ' even' : ' odd';
-
-            element['__kg_rowIndex__'] = row.rowIndex;
-            element.style.top = row.offsetTop + 'px';
-            element.className = classes;
-
-            //ensure we know the node to dispose later!
-
-            rowSubscription = rowManager.rowSubscriptions[row.rowIndex];
-            if (rowSubscription) {
-                rowSubscription.node = element;
-            }
-        }
-    };
-} ());
-*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-rows.js
@@ -2853,12 +3281,13 @@ ngGridDirectives.directive('ngRows', function factory() {
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
-        link: function postLink($scope, iElement, iAttrs) {  
+        require: 'grid',
+        link: function postLink($scope, iElement, iAttrs) {
             var $container = $(iElement),
             $parent = $container.parent(),
-            dim = iAttrs.dim,
-            oldHt = $container.outerHeight(),
-            oldWdth = $container.outerWidth();
+                dim = $scope[iAttrs.ngSize],
+                oldHt = $container.outerHeight(),
+                oldWdth = $container.outerWidth();
             
             if (dim != undefined) {
                 if (dim.autoFitHeight) {

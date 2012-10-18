@@ -24,7 +24,6 @@
 ..\src\classes\row.js
 ..\src\domManipulation\cssBuilder.js
 ..\src\domManipulation\domUtility.js
-..\src\directives\ng-footer.js
 ..\src\directives\ng-grid.js
 ..\src\directives\ng-header-cell.js
 ..\src\directives\ng-header-row.js

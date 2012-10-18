@@ -41,7 +41,7 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         $scope._gridService.gridCache = {};
     };
     
-    gridService.AssignGridEventHandlers = function (grid) {
+    gridService.AssignGridEventHandlers = function ($scope, grid) {
         grid.$viewport.scroll(function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
