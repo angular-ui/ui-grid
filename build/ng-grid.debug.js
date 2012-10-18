@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/17/2012 22:10:08
+* Compiled At: 10/18/2012 12:21:53
 ***********************************************/
 
 (function(window, undefined){
@@ -1196,18 +1196,6 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
 }]);
 
 /***********************************************
-* FILE: ..\src\init.js
-***********************************************/
-
-// initialization of services into the main module
-angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']).controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
-        $scope.HELLO = "WORLD";
-    }).
-    run(function(FilterService, GridService, RowService, SelectionService, SortService, TemplateService){
-        return null;
-    });
-
-/***********************************************
 * FILE: ..\src\templates\gridTemplate.js
 ***********************************************/
 
@@ -1518,7 +1506,7 @@ ng.Footer = function ($scope, grid) {
 * FILE: ..\src\classes\grid.js
 ***********************************************/
 
-ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, SelectionService, SortService) {
+ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -1605,7 +1593,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
     $scope.finalData = SortService.SortedData(); //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    $scope.maxRows = function () {
+    $scope.$parent.maxRows = function () {
         var rows = $scope.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         $scope.canvasHeight(maxCanvasHt.toString() + 'px');
@@ -1642,7 +1630,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
 
     //#region Container Dimensions
 
-    $scope.rootDim = new ng.Dimension({ outerHeight: 20000, outerWidth: 20000 });
+    $scope.rootDim = new ng.Dimension({ outerHeight: gridHeight, outerWidth: gridWidth });
 
     $scope.headerDim = function () {
         var rootDim = $scope.rootDim,
@@ -2472,85 +2460,93 @@ ng.domUtility = (new function () {
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
 
-ngGridDirectives.directive('ngGrid', function (FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
     var ngGrid = {
-        template: TemplateService.GetTemplateText(GRID_TEMPLATE),
         replace: false,
         scope: true,
+        transclude: true,
         controller: 'ngGridController',
-        link: function ($scope, iElement, iAttrs) {
-            var $element = $(iElement);
-            var options = $scope.$parent[iAttrs.ngGrid];
-            var grid = new ng.Grid($scope, options, $($element).width(), FilterService, RowService, SelectionService, SortService);
+        compile: function (iElement, iAttrs, transclude) {
+            return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+                    var htmlText = TemplateService.GetTemplateText(GRID_TEMPLATE);
+                    var $element = $(iElement);
+                    var options = $scope[iAttrs.ngGrid];
+                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), FilterService, RowService, SelectionService, SortService);
 
-            
-            GridService.StoreGrid($element, grid);
-            grid.footerController = new ng.Footer($scope, grid);
-            
-            ng.domUtility.measureGrid($element, grid, true);
 
-            //set the right styling on the container
-            $element.addClass("ngGrid")
-                    .addClass("ui-widget")
-                    .addClass(grid.gridId.toString());
+                    GridService.StoreGrid($element, grid);
+                    grid.footerController = new ng.Footer($scope, grid);
 
-            TemplateService.EnsureGridTemplates({
-                rowTemplate: grid.config.rowTemplate,
-                headerTemplate: grid.config.headerTemplate,
-                headerCellTemplate: grid.config.headerCellTemplate,
-                footerTemplate: grid.config.footerTemplate,
-                columns: grid.columns,
-                showFilter: grid.config.allowFiltering,
-                disableTextSelection: grid.config.disableTextSelection,
-                autogenerateColumns: grid.config.autogenerateColumns,
-                enableColumnResize: grid.config.enableColumnResize
-            });
+                    ng.domUtility.measureGrid($element, grid, true);
 
-            /*subscribe to the columns and recrate the grid if they change
-            scope.$watch(grid.config.columnDefs, function () {
-                var oldgrid = GridService.GetGrid($element);
-                var oldgridId = oldgrid.gridId.toString();
-                $($element).empty();
-                $($element).removeClass("ngGrid")
-                           .removeClass("ui-widget")
-                           .removeClass(oldgridId);
-                GridService.RemoveGrid(oldgridId);
-            });
-            */
-            //keep selected item scrolled into view
-            $scope.$watch(grid.finalData, function () {
-                if (grid.config.selectedItems) {
-                    var lastItemIndex = grid.config.selectedItems.length - 1;
-                    if (lastItemIndex <= 0) {
-                        var item = grid.config.selectedItems[lastItemIndex];
-                        if (item) {
-                            grid.scrollIntoView(item);
+                    //set the right styling on the container
+                    $element.addClass("ngGrid")
+                        .addClass("ui-widget")
+                        .addClass(grid.gridId.toString());
+
+                    TemplateService.EnsureGridTemplates({
+                        rowTemplate: grid.config.rowTemplate,
+                        headerTemplate: grid.config.headerTemplate,
+                        headerCellTemplate: grid.config.headerCellTemplate,
+                        footerTemplate: grid.config.footerTemplate,
+                        columns: grid.columns,
+                        showFilter: grid.config.allowFiltering,
+                        disableTextSelection: grid.config.disableTextSelection,
+                        autogenerateColumns: grid.config.autogenerateColumns,
+                        enableColumnResize: grid.config.enableColumnResize
+                    });
+
+                    /*subscribe to the columns and recrate the grid if they change
+                    scope.$watch(grid.config.columnDefs, function () {
+                        var oldgrid = GridService.GetGrid($element);
+                        var oldgridId = oldgrid.gridId.toString();
+                        $($element).empty();
+                        $($element).removeClass("ngGrid")
+                                   .removeClass("ui-widget")
+                                   .removeClass(oldgridId);
+                        GridService.RemoveGrid(oldgridId);
+                    });
+                    */
+                    //keep selected item scrolled into view
+                    $scope.$watch(grid.finalData, function() {
+                        if (grid.config.selectedItems) {
+                            var lastItemIndex = grid.config.selectedItems.length - 1;
+                            if (lastItemIndex <= 0) {
+                                var item = grid.config.selectedItems[lastItemIndex];
+                                if (item) {
+                                    grid.scrollIntoView(item);
+                                }
+                            }
                         }
-                    }
+                    });
+                    $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
+                    angular.forEach($scope.columns, function(column) {
+                        $scope.$watch(column.sortDirection, function() {
+                            return function(dir) {
+                                if (dir) {
+                                    $scope.sortData(column, dir);
+                                }
+                            };
+                        });
+                        $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
+                    });
+
+                    $scope.toggleSelectAll = $scope.toggleSelectAll;
+                    $scope.filterIsOpen = $scope.filterIsOpen;
+                    //walk the element's graph and the correct properties on the grid
+                    ng.domUtility.assignGridContainers($element, grid);
+                    //now use the manager to assign the event handlers
+                    GridService.AssignGridEventHandlers($scope, grid);
+                    //call update on the grid, which will refresh the dome measurements asynchronously
+                    //grid.update();
+
+                    $scope.initPhase = 1;
+
+                    iElement.append($compile(htmlText)($scope));
+                    return null;
                 }
-            });
-            $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
-            angular.forEach($scope.columns, function (column) {
-                $scope.$watch(column.sortDirection, function () {
-                    return function(dir) {
-                        if (dir) {
-                            $scope.sortData(column, dir);
-                        }
-                    };
-                });
-                $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
-            });
-            
-            $scope.toggleSelectAll = $scope.toggleSelectAll;
-            $scope.filterIsOpen = $scope.filterIsOpen;
-            //walk the element's graph and the correct properties on the grid
-            ng.domUtility.assignGridContainers($element, grid);
-            //now use the manager to assign the event handlers
-            GridService.AssignGridEventHandlers($scope, grid);
-            //call update on the grid, which will refresh the dome measurements asynchronously
-            //grid.update();
-            $scope.initPhase = 1;
-            return null;
+            };
         }
     };
     return ngGrid;
@@ -2771,12 +2767,13 @@ ngGridDirectives.directive('ngRows', function factory() {
 
 ngGridDirectives.directive('ngSize', function factory() {
     var ngSize = {
-        scope: true,
+        scope: false,
         controller: 'ngGridController',
+        terminal: true,
         link: function postLink($scope, iElement, iAttrs) {
             var $container = $(iElement),
                 $parent = $container.parent(),
-                dim = $scope[iAttrs.ngSize],
+                dim = $scope[iAttrs.ngSize](),
                 oldHt = $container.outerHeight(),
                 oldWdth = $container.outerWidth();
             
@@ -2807,5 +2804,21 @@ ngGridDirectives.directive('ngSize', function factory() {
         }
     };
     return ngSize;
+});
+
+/***********************************************
+* FILE: ..\src\init.js
+***********************************************/
+
+// initialization of services into the main module
+var ngGridApp = angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']);
+
+/***********************************************
+* FILE: ..\src\controllers\ngGridController.js
+***********************************************/
+
+
+ngGridApp.controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
+    return;
 });
 }(window));

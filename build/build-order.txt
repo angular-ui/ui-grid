@@ -8,7 +8,6 @@
 ..\src\services\SelectionService.js
 ..\src\services\SortService.js
 ..\src\services\TemplateService.js
-..\src\init.js
 ..\src\templates\gridTemplate.js
 ..\src\templates\headerCellTemplate.js
 ..\src\templates\headerTemplate.js
@@ -31,3 +30,5 @@
 ..\src\directives\ng-row.js
 ..\src\directives\ng-rows.js
 ..\src\directives\ng-size.js
+..\src\init.js
+..\src\controllers\ngGridController.js

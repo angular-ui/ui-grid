@@ -12,24 +12,24 @@ angular.module('grid', [])
     // return the directive link function. (compile function not needed)
     return {
         compile: function compile(tElement, tAttrs, transclude) {
-          return {
-              pre: function preLink(scope, iElement, iAttrs, controller) { 
-                return; 
-              },
-              post: function postLink(scope, iElement, iAttrs, controller) { 
-                return; 
-              }
-          }
+            return {
+                pre: function preLink(scope, iElement, iAttrs, controller) {
+                    return;
+                },
+                post: function postLink(scope, iElement, iAttrs, controller) {
+                    return;
+                }
+            };
         },
-        link: function link(scope, iElement, iAttrs) { 
-          return {
-              pre: function preLink(scope, iElement, iAttrs, controller) { 
-                return; 
-              },
-              post: function postLink(scope, iElement, iAttrs, controller) { 
-                return; 
-              }
-          } 
+        link: function link(scope, iElement, iAttrs) {
+            return {
+                pre: function preLink(scope, iElement, iAttrs, controller) {
+                    return;
+                },
+                post: function postLink(scope, iElement, iAttrs, controller) {
+                    return;
+                }
+            };
         }
     };
   });

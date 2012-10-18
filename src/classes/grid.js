@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, SelectionService, SortService) {
+ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -94,7 +94,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
     $scope.finalData = SortService.SortedData(); //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    $scope.maxRows = function () {
+    $scope.$parent.maxRows = function () {
         var rows = $scope.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         $scope.canvasHeight(maxCanvasHt.toString() + 'px');
@@ -131,7 +131,7 @@ ng.Grid = function ($scope, options, gridWidth, FilterService, RowService, Selec
 
     //#region Container Dimensions
 
-    $scope.rootDim = new ng.Dimension({ outerHeight: 20000, outerWidth: 20000 });
+    $scope.rootDim = new ng.Dimension({ outerHeight: gridHeight, outerWidth: gridWidth });
 
     $scope.headerDim = function () {
         var rootDim = $scope.rootDim,
