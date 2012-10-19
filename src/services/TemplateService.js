@@ -54,13 +54,6 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
             });
         }
         
-        //header cell template
-        if (config.headerCellTemplate) {
-            templateService.AddTemplateSafe(config.headerCellTemplate, function () {
-                return ng.templates.defaultHeaderCellTemplate(config);
-            });
-        }
-        
         //row template
         if (config.rowTemplate) {
             templateService.AddTemplateSafe(config.rowTemplate, function () {

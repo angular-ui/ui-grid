@@ -149,13 +149,13 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         };
         
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch($scope._rowService.viewableRange, function(calcRenderedRange){
+        $scope.$watch($scope._rowService.viewableRange, function(){
 			$scope._rowService.calcRenderedRange();
 		});		
-        $scope.$watch($scope._rowService.minViewportRows, function(calcRenderedRange){
+        $scope.$watch($scope._rowService.minViewportRows, function(){
 			$scope._rowService.calcRenderedRange();
 		});		
-        $scope.$watch($scope._rowService.dataSource, function(calcRenderedRange){
+        $scope.$watch($scope._rowService.dataSource, function(){
 			$scope._rowService.calcRenderedRange();
 		});		
     };
@@ -176,9 +176,9 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
         $scope._rowService.calcRenderedRange();
     };
 
-    rowService.Rows = (function () {
+    rowService.Rows = function () {
         return $scope._rowService.rows;
-    })();
+    };
 
     rowService.ViewableRange = function (val) {
         if (val) {

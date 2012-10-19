@@ -9,12 +9,36 @@ ng.templates.defaultGridInnerTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="ngTopPanel" ng-size="headerDim">');
     b.append(    '<div class="ngHeaderContainer" ng-size="headerDim">');
-    b.append(        '<div class="ngHeaderScroller" ng-header-row="config" ng-size="headerScrollerDim">');
+    b.append(        '<div class="ngHeaderScroller" ng-size="headerScrollerDim">');
+    
+    //b.append(            '<div ng-show="displayRowIndex" class="ngHeaderCell col0 ngNoSort">');
+    //b.append(                '<div title="Filter Results" class="ngFilterBtn openBtn" ng-hide="filterVisible" ng-click="showFilter_Click()"></div>');
+    //b.append(                '<div title="Close" class="ngFilterBtn closeBtn" ng-show="filterVisible" ng-click="showFilter_Click()"></div>');
+    //b.append(                '<div title="Clear Filters" class="ngFilterBtn clearBtn" ng-show="filterVisible" ng-click="clearFilter_Click()"></div>');
+    //b.append(            '</div>');
+    //b.append(            '<div ng-show="displaySelectionCheckbox" class="ngSelectionCell ngHeaderCell col1 ngNoSort">');
+    //b.append(                '<input type="checkbox" ng-checked="toggleSelectAll()"/>');
+    //b.append(            '</div>');
+
+    b.append(             '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}; height:{{col.headerRowHeight}}">');
+    b.append(                 '<div ng-click="sort" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append(                    '<span>{{col.displayName}}</span>');
+    b.append(                    '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
+    b.append(                    '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
+    b.append(                 '</div>');
+    b.append(                 '<div class="ngHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');
+    b.append(                 '<div ng-show="_filterVisible">');
+    b.append(                     '<input type="text" ng-model="column.filter" style="width: 80%" tabindex="1" />');
+    b.append(                 '</div>');
+    b.append(             '</div>');
     b.append(        '</div>');
     b.append(    '</div>');
     b.append('</div>');
     b.append('<div class="ngViewport" ng-size="viewportDim">');
-    b.append(    '<div class="ngCanvas" ng-rows="config" ng-style="{ height: canvasHeight, position: \'relative\' }">');
+    b.append(    '<div class="ngCanvas" ng-style="{ height: canvasHeight, position: \'relative\' }">'); 
+    b.append(        '<div ng-repeat="row in rows()" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
+    b.append(           '<div ng-repeat="col in columns" class="kgCell {{columnClass($index)}} {{col.cellClass}}">{{col.field}}</div>');
+    b.append(        '</div>');
     b.append(    '</div>');
     b.append('</div>');
     b.append('<div class="ngFooterPanel" ng-size="footerDim">');

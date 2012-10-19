@@ -67,7 +67,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     $scope.initPhase = 0;
-
+    $scope.displayRowIndex = self.config.displayRowIndex;
+    $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
 
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -92,8 +93,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     $scope.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
     $scope.finalData = SortService.SortedData(); //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
-
-    $scope.$parent.maxRows = function () {
+    
+    $scope.maxRows = function () {
         var rows = $scope.finalData;
         maxCanvasHt = rows.length * self.config.rowHeight;
         $scope.canvasHeight(maxCanvasHt.toString() + 'px');
@@ -107,7 +108,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     $scope.columns = [];
 
     //initialized in the init method
-    $scope.rowManager = null;
+    $scope.rowManager = RowService;
     $scope.rows = null;
     $scope.headerRow = null;
     $scope.footer = null;
@@ -402,7 +403,11 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         });
 
     };
-    $scope.headerControllers = [];
+    $scope.columnClass = function (indx) {
+        var i = $scope.displayRowIndex ? 0 : 1;
+        i += $scope.displaySelectionCheckbox ? 0 : 1;
+        return "col" + (indx - i);
+    };
     $scope.buildColumns = function () {
         $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
@@ -410,20 +415,17 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
         if (self.config.autogenerateColumns) { $scope.buildColumnDefsFromData(); }
 
-        if (self.config.displaySelectionCheckbox) {
-            columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
-        }
-        if (self.config.displayRowIndex) {
-            columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
-        }
+        //if ($scope.displaySelectionCheckbox) {
+        //    columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
+        //}
+        //if ($scope.displayRowIndex) {
+        //    columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
+        //}
 
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var newScope = $scope.$new();
-                var column = new ng.Column(newScope, colDef, i);
-                var newController = function controller($scope) { return new ng.HeaderCell(newScope, column); };
-                $scope.headerControllers.push(newController);
+                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight);
                 cols.push(column);
             });
 
@@ -444,7 +446,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
             self.config.headerTemplate = self.gridId + self.config.headerTemplate;
         }
 
-        RowService.Initialize($scope, self);
+        $scope.rowManager.Initialize($scope, self);
         SelectionService.Initialize({
             isMultiSelect: self.config.isMultiSelect,
             data: $scope.finalData,
