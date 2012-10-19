@@ -1,18 +1,21 @@
-﻿ng.Column = function (colDef, index) {
-        
-    this.width = colDef.width;
-    this.widthIsConfigured = false;
-    this.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    this.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+﻿ng.Column = function ($scope, colDef, index) {
     
-    this.field = colDef.field;
+    var self = this;
+    self.width = colDef.width;
+    $scope.width = self.width;
+    $scope.widthIsConfigured = false;
+    $scope.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    $scope.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    
+    $scope.field = colDef.field;
     if (colDef.displayName === undefined || colDef.displayName === null) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
-    this.displayName = colDef.displayName;
-    this.index = index;
-    this.isVisible = false;
+    self.displayName = colDef.displayName;
+    $scope.displayName = self.displayName;
+    self.index = index;
+    $scope.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -28,23 +31,23 @@
         colDef.filterable = true;
     }
     
-    this.allowSort = colDef.sortable;
-    this.allowResize = colDef.resizable;
-    this.allowFilter = colDef.filterable;
+    $scope.allowSort = colDef.sortable;
+    $scope.allowResize = colDef.resizable;
+    $scope.allowFilter = colDef.filterable;
     
-    this.sortDirection = "";
-    this.sortingAlgorithm = colDef.sortFn;
+    $scope.sortDirection = "";
+    $scope.sortingAlgorithm = colDef.sortFn;
 
     //filtering
-    this.filter;
+    $scope.filter = null;
 
     //cell Template
-    this.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
-    this.hasCellTemplate = (this.cellTemplate ? true : false);
+    $scope.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    $scope.hasCellTemplate = ($scope.cellTemplate ? true : false);
 
-    this.cellClass = colDef.cellClass;
-    this.headerClass = colDef.headerClass;
+    $scope.cellClass = colDef.cellClass;
+    $scope.headerClass = colDef.headerClass;
 
-    this.headerTemplate = colDef.headerTemplate
-    this.hasHeaderTemplate = (this.headerTemplate ? true : false);
+    $scope.headerTemplate = colDef.headerTemplate;
+    $scope.hasHeaderTemplate = ($scope.headerTemplate ? true : false);
 };

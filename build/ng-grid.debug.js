@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/18/2012 13:42:32
+* Compiled At: 10/18/2012 17:34:42
 ***********************************************/
 
 (function(window, undefined){
@@ -26,7 +26,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
 var GRID_TEMPLATE = 'ng-gridTmpl';
-var HEADER_TEMPLATE = 'ng-gridHeaderTmpl';
+var HEADERROW_TEMPLATE = 'ng-gridHeaderTmpl';
 var HEADERCELL_TEMPLATE = 'ng-gridHeaderCellTmpl';
 var ROW_TEMPLATE = 'ng-gridRowTmpl';
 var GRID_KEY = '__koGrid__';
@@ -1151,9 +1151,10 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
 
     templateService.EnsureGridTemplates = function (options) {
         var defaults = {
-            rowTemplate: ROW_TEMPLATE,
-            headerTemplate: HEADER_TEMPLATE,
-            headerCellTemplate: HEADERCELL_TEMPLATE,
+            rowTemplate: '',
+            headerTemplate: '',
+            headerCellTemplate: '',
+            footerTemplate: '',
             columns: null,
             showFilter: true
         },
@@ -1265,7 +1266,6 @@ ng.templates.defaultHeaderCellTemplate = function (options) {
 
 ng.templates.generateHeaderTemplate = function ($scope) {
     var b = new ng.utils.StringBuilder();
-    b.append('<div>');
     angular.forEach($scope.columns, function (col, i) {
         if (col.field === SELECTED_PROP) {
             b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
@@ -1273,15 +1273,25 @@ ng.templates.generateHeaderTemplate = function ($scope) {
             b.append('</div>');
         } else if (col.field === 'rowIndex' && $scope.showFilter) {
             b.append('<div class="kgHeaderCell col{0} kgNoSort">', col.index);
-            b.append('      <div title="Filter Results" class="kgFilterBtn openBtn" ng-hide="filterVisible" ng-click="showFilter_Click()"></div>');
-            b.append('      <div title="Close" class="kgFilterBtn closeBtn" ng-show="filterVisible" ng-click="showFilter_Click()"></div>');
-            b.append('      <div title="Clear Filters" class="kgFilterBtn clearBtn" ng-show="filterVisible" ng-click="clearFilter_Click()"></div>');
+            b.append('    <div title="Filter Results" class="kgFilterBtn openBtn" ng-hide="filterVisible" ng-click="showFilter_Click()"></div>');
+            b.append('    <div title="Close" class="kgFilterBtn closeBtn" ng-show="filterVisible" ng-click="showFilter_Click()"></div>');
+            b.append('    <div title="Clear Filters" class="kgFilterBtn clearBtn" ng-show="filterVisible" ng-click="clearFilter_Click()"></div>');
             b.append('</div>');
         } else {
-            b.append('<div class="kgHeaderCell col{0}" ng-style="{ width: colWidth }" ng-class="{ \'kgNoSort\': {1} }">{{field}}</div>', col.index, !col.allowSort);
+            b.append('<div class="kgHeaderCell col{0}" ng-style="{ width: colWidth }" ng-class="{ \'kgNoSort\': {1} }">{{displayName}}', col.index, !col.allowSort);
+            b.append('    <div ng-click="sort" ng-class="{ \'kgSorted\': !noSortVisible }">');
+            b.append('        <span>{{displayName}}</span>');
+            //b.append('        <div class="kgSortButtonDown" ng-show="{allowSort ? (noSortVisible || sortAscVisible) : allowSort}"></div>');
+            //b.append('        <div class="kgSortButtonUp" ng-show="{allowSort ? (noSortVisible || sortDescVisible) : allowSort}"></div>');
+            b.append('    </div>');
+            if (!col.autogenerateColumns && col.enableColumnResize) {
+            b.append('    <div class="kgHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');}
+            b.append('    <div ng-show="_filterVisible">');
+            b.append('        <input type="text" ng-model="column.filter" style="width: 80%" tabindex="1" />');
+            b.append('    </div>');
+            b.append('</div>');
         }
     });
-    b.append('</div>');
     return b.toString();
 };
 
@@ -1366,21 +1376,24 @@ ng.CellFactory = function (cols) {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.Column = function (colDef, index) {
-        
-    this.width = colDef.width;
-    this.widthIsConfigured = false;
-    this.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    this.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+ng.Column = function ($scope, colDef, index) {
     
-    this.field = colDef.field;
+    var self = this;
+    self.width = colDef.width;
+    $scope.width = self.width;
+    $scope.widthIsConfigured = false;
+    $scope.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    $scope.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    
+    $scope.field = colDef.field;
     if (colDef.displayName === undefined || colDef.displayName === null) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
-    this.displayName = colDef.displayName;
-    this.index = index;
-    this.isVisible = false;
+    self.displayName = colDef.displayName;
+    $scope.displayName = self.displayName;
+    self.index = index;
+    $scope.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -1396,25 +1409,25 @@ ng.Column = function (colDef, index) {
         colDef.filterable = true;
     }
     
-    this.allowSort = colDef.sortable;
-    this.allowResize = colDef.resizable;
-    this.allowFilter = colDef.filterable;
+    $scope.allowSort = colDef.sortable;
+    $scope.allowResize = colDef.resizable;
+    $scope.allowFilter = colDef.filterable;
     
-    this.sortDirection = "";
-    this.sortingAlgorithm = colDef.sortFn;
+    $scope.sortDirection = "";
+    $scope.sortingAlgorithm = colDef.sortFn;
 
     //filtering
-    this.filter;
+    $scope.filter = null;
 
     //cell Template
-    this.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
-    this.hasCellTemplate = (this.cellTemplate ? true : false);
+    $scope.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    $scope.hasCellTemplate = ($scope.cellTemplate ? true : false);
 
-    this.cellClass = colDef.cellClass;
-    this.headerClass = colDef.headerClass;
+    $scope.cellClass = colDef.cellClass;
+    $scope.headerClass = colDef.headerClass;
 
-    this.headerTemplate = colDef.headerTemplate
-    this.hasHeaderTemplate = (this.headerTemplate ? true : false);
+    $scope.headerTemplate = colDef.headerTemplate;
+    $scope.hasHeaderTemplate = ($scope.headerTemplate ? true : false);
 };
 
 /***********************************************
@@ -1512,7 +1525,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         footerRowHeight: 55,
         filterRowHeight: 30,
         rowTemplate: ROW_TEMPLATE,
-        headerTemplate: HEADER_TEMPLATE,
+        headerTemplate: HEADERROW_TEMPLATE,
         headerCellTemplate: HEADERCELL_TEMPLATE,
         footerVisible: true,
         canSelectRows: true,
@@ -1899,8 +1912,9 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         });
 
     };
-
+    $scope.headerControllers = [];
     $scope.buildColumns = function () {
+        $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
             cols = [];
 
@@ -1916,7 +1930,10 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i);
+                var newScope = $scope.$new();
+                var column = new ng.Column(newScope, colDef, i);
+                var newController = function controller($scope) { return new ng.HeaderCell(newScope, column); };
+                $scope.headerControllers.push(newController);
                 cols.push(column);
             });
 
@@ -2021,10 +2038,11 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 /***********************************************
 * FILE: ..\src\classes\headerCell.js
 ***********************************************/
-ng.headerCell = function (col) {
+
+ng.HeaderCell = function ($scope, col) {
     var self = this;
 
-    this.colIndex = col.colIndex;
+    this.colIndex = col.index;
     this.displayName = col.displayName;
     this.field = col.field;
     this.column = col;
@@ -2111,9 +2129,10 @@ ng.headerCell = function (col) {
 /***********************************************
 * FILE: ..\src\classes\headerRow.js
 ***********************************************/
-ng.headerRow = function () {
+
+ng.HeaderRow = function () {
     this.headerCells = [];
-    this.height;
+    this.height = null;
     this.headerCellMap = {};
     this.filterVisible = false;
 };
@@ -2471,7 +2490,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                     var options = $scope[iAttrs.ngGrid];
                     var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), FilterService, RowService, SelectionService, SortService);
 
-
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
 
@@ -2540,8 +2558,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
 
                     $scope.initPhase = 1;
 
-                    iElement.html(htmlText);
-					$compile(iElement.contents())($scope);
+                    iElement.append($compile(htmlText)($scope));
                     return null;
                 }
             };
@@ -2551,96 +2568,21 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
 });
 
 /***********************************************
-* FILE: ..\src\directives\ng-header-cell.js
-***********************************************/
-
-ngGridDirectives.directive('ngHeaderCell', function (FilterService, GridService, RowService, SortService, TemplateService) {
-    var ngHeaderCell = {
-        template: TemplateService.GetTemplateText(HEADERCELL_TEMPLATE),
-        replace: true,
-        transclude: true,
-        link: function ($scope, iElement, iAttrs) {
-
-        }
-    };
-    return ngHeaderCell;
-});
-
-
-/*
-ko.bindingHandlers['kgHeader'] = (function () {
-    var makeNewValueAccessor = function (headerCell, grid) {
-        return function () {
-            return {
-                name: headerCell.headerTemplate || grid.config.headerCellTemplate,
-                data: headerCell
-            };
-        };
-    };
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var headerRow = bindingContext.$data,
-                cell,
-                property,
-                options = valueAccessor(); //string of the property name
-
-            if (options) {
-                property = options.value;
-                cell = headerRow.headerCellMap[property];
-                if (cell) {
-                    if (property !== 'rowIndex' && property !== '__kg_selected__') {
-                        return { 'controlsDescendantBindings': true }
-                    }
-                }
-            }
-
-            
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var headerRow = bindingContext.$data,
-                grid = bindingContext.$parent,
-                cell,
-                property,
-                options = valueAccessor(); //string of the property name
-
-            if (options) {
-                property = options.value;
-                cell = headerRow.headerCellMap[property];
-                if (cell) {
-                    
-                    //format the header cell
-                    element.className += " kgHeaderCell col" + cell.colIndex + " ";
-                    
-                    //add the custom class in case it has been provided
-                    if (cell.headerClass) {
-                        element.className += " " + cell.headerClass;
-                    }
-
-                    if (property !== 'rowIndex' && property !== '__kg_selected__') {
-                        //render the cell template
-                        return ko.bindingHandlers.template.update(element, makeNewValueAccessor(cell, grid), allBindingsAccessor, viewModel, bindingContext);
-                    }
-                }
-            }
-        }
-    }
-} ());
-*/
-
-/***********************************************
 * FILE: ..\src\directives\ng-header-row.js
 ***********************************************/
 
 ngGridDirectives.directive('ngHeaderRow', function($compile, TemplateService) {
     var ngHeaderRow = {
+        scope: false,
+        controller: 'ngGridController',
         compile: function compile(tElement, tAttrs, transclude){
-			return {
+            return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-					var headerTemplate = TemplateService.GetTemplateText(HEADER_TEMPLATE);
-					iElement.html(headerTemplate);
-					$compile(iElement.contents())($scope);
-				}
-			}
+                    var headerTemplate = TemplateService.GetTemplateText(HEADERROW_TEMPLATE);
+                    iElement.replaceWith(headerTemplate);
+                    $compile(iElement.contents())($scope);
+                }
+            };
 		}
     };
     return ngHeaderRow;
@@ -2668,99 +2610,13 @@ ngGridDirectives.directive('ngRow', function (SelectionService, TemplateService)
 
 ngGridDirectives.directive('ngRows', function (FilterService, GridService, RowService, SortService, TemplateService) {
     var ngRows = {
-        template: TemplateService.GetTemplateText(HEADER_TEMPLATE),
         replace: true,
-        transclude: true,
         link: function ($scope, iElement, iAttrs) {
 
         }
     };
     return ngRows;
 });
-/*
-ngGridDirectives.directive('ngRows', function factory() {
-    // figures out what rows already exist in DOM and 
-    // what rows need to be added as new DOM nodes
-    //
-    // the 'currentNodeCache' is dictionary of currently existing
-    // DOM nodes indexed by rowIndex
-    var compareRows = function (rows, rowSubscriptions) {
-        var rowMap = {},
-            newRows = [],
-            rowSubscriptionsToRemove = [];
-        
-        //figure out what rows need to be added
-        ng.utils.arrayForEach(rows, function (row) {
-            rowMap[row.rowIndex] = row;
-            
-            // make sure that we create new rows when sorting/filtering happen.
-            // The rowKey tells us whether the row for that rowIndex is different or not
-            var possibleRow = rowSubscriptions[row.rowIndex];
-            if (!possibleRow) {
-                newRows.push(row);
-            } else if (possibleRow.rowKey !== row.rowKey) {
-                newRows.push(row);
-            }
-        });
-        //figure out what needs to be deleted
-        ng.utils.forIn(rowSubscriptions, function (rowSubscription, index) {
-            
-            //get the row we might be able to compare to
-            var compareRow = rowMap[index];
-            
-            // if there is no compare row, we want to remove the row from the DOM
-            // if there is a compare row and the rowKeys are different, we want to remove from the DOM
-            //  bc its most likely due to sorting etc..
-            if (!compareRow) {
-                rowSubscriptionsToRemove.push(rowSubscription);
-            } else if (compareRow.rowKey !== rowSubscription.rowKey) {
-                rowSubscriptionsToRemove.push(rowSubscription);
-            }
-        });
-        return {
-            add: newRows,
-            remove: rowSubscriptionsToRemove
-        };
-    };
-    return function(scope, iElement, iAttrs){ //TODO: need to make this actually work.
-        var rowManager = scope.rowManager,
-        rows = scope.rows,
-        grid = bindingContext.$data,
-        rowChanges;
-        //figure out what needs to change
-        rowChanges = compareRows(rows, rowManager.rowSubscriptions || {});
-        // FIRST!! We need to remove old ones in case we are sorting and simply replacing the data at the same rowIndex            
-        ng.utils.arrayForEach(rowChanges.remove, function (rowSubscription) {
-            if (rowSubscription.node) {
-                ko.removeNode(rowSubscription.node);
-            }
-            rowSubscription.subscription.dispose();
-            delete rowManager.rowSubscriptions[rowSubscription.rowIndex];
-        });
-        // and then we add the new row after removing the old rows
-        ng.utils.arrayForEach(rowChanges.add, function (row) {
-            var newBindingCtx,
-                rowSubscription,
-                divNode = document.createElement('DIV');
-            //make sure the bindingContext of the template is the row and not the grid!
-            newBindingCtx = bindingContext.createChildContext(row);
-            //create a node in the DOM to replace, because KO doesn't give us a good hook to just do this...
-            element.appendChild(divNode);
-            //create a row subscription to add data to
-            rowSubscription = new rowSubscription();
-            rowSubscription.rowKey = row.rowKey;
-            rowSubscription.rowIndex = row.rowIndex;
-            rowManager.rowSubscriptions[row.rowIndex] = rowSubscription;
-            rowSubscription.subscription = ko.renderTemplate(grid.config.rowTemplate, newBindingCtx, null, divNode, 'replaceNode');
-        });
-        //only measure the row and cell differences when data changes
-        if (grid.elementsNeedMeasuring && grid.initPhase > 0) {
-            //Measure the cell and row differences after rendering
-            kg.domUtility.measureRow($(element), grid);
-        }
-    };
-});
-*/
 
 /***********************************************
 * FILE: ..\src\directives\ng-size.js
@@ -2769,43 +2625,42 @@ ngGridDirectives.directive('ngRows', function factory() {
 ngGridDirectives.directive('ngSize', function($compile) {
     var ngSize = {
         scope: false,
-        controller: 'ngGridController',
         compile: function compile(tElement, tAttrs, transclude){
-			return {
+            return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-					var $container = $(iElement),
-						$parent = $container.parent(),
-						dim = $scope[iAttrs.ngSize](),
-						oldHt = $container.outerHeight(),
-						oldWdth = $container.outerWidth();
-					
-					if (dim != undefined) {
-						if (dim.autoFitHeight) {
-							dim.outerHeight = $parent.height();
-						}
-						if (dim.innerHeight && dim.innerWidth) {
-							$container.height(dim.innerHeight);
-							$container.width(dim.innerWidth);
-							return;
-						};
-						if (oldHt !== dim.outerHeight || oldWdth !== dim.outerWidth) {
-							//now set it to the new dimension, remeasure, and set it to the newly calculated
-							$container.height(dim.outerHeight).width(dim.outerWidth);
-							
-							//remeasure
-							oldHt = $container.outerHeight();
-							oldWdth = $container.outerWidth();
-							
-							dim.heightDiff = oldHt - $container.height();
-							dim.widthDiff = oldWdth - $container.width();
-							
-							$container.height(dim.outerHeight - dim.heightDiff);
-							$container.width(dim.outerWidth - dim.widthDiff);
-						}
-						$compile(iElement.contents())($scope);
-					}
-				}
-			}
+                    var $container = $(iElement),
+                        $parent = $container.parent(),
+                        dim = $scope[iAttrs.ngSize](),
+                        oldHt = $container.outerHeight(),
+                        oldWdth = $container.outerWidth();
+
+                    if (dim != undefined) {
+                        if (dim.autoFitHeight) {
+                            dim.outerHeight = $parent.height();
+                        }
+                        if (dim.innerHeight && dim.innerWidth) {
+                            $container.height(dim.innerHeight);
+                            $container.width(dim.innerWidth);
+                            return;
+                        }
+                        if (oldHt !== dim.outerHeight || oldWdth !== dim.outerWidth) {
+                            //now set it to the new dimension, remeasure, and set it to the newly calculated
+                            $container.height(dim.outerHeight).width(dim.outerWidth);
+
+                            //remeasure
+                            oldHt = $container.outerHeight();
+                            oldWdth = $container.outerWidth();
+
+                            dim.heightDiff = oldHt - $container.height();
+                            dim.widthDiff = oldWdth - $container.width();
+
+                            $container.height(dim.outerHeight - dim.heightDiff);
+                            $container.width(dim.outerWidth - dim.widthDiff);
+                        }
+                        $compile(iElement.contents())($scope);
+                    }
+                }
+            };
 		}
 	};
     return ngSize;

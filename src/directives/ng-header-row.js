@@ -5,6 +5,7 @@
 /// <reference path="../services/RowService.js" />
 /// <reference path="../services/TemplateService.js" />
 /// <reference path="../services/SortService.js" />
+/// <reference path="../classes/headerRow.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js"/>
@@ -15,14 +16,16 @@
 
 ngGridDirectives.directive('ngHeaderRow', function($compile, TemplateService) {
     var ngHeaderRow = {
+        scope: false,
+        controller: 'ngGridController',
         compile: function compile(tElement, tAttrs, transclude){
-			return {
+            return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-					var headerTemplate = TemplateService.GetTemplateText(HEADER_TEMPLATE);
-					iElement.html(headerTemplate);
-					$compile(iElement.contents())($scope);
-				}
-			}
+                    var headerTemplate = TemplateService.GetTemplateText(HEADERROW_TEMPLATE);
+                    iElement.replaceWith(headerTemplate);
+                    $compile(iElement.contents())($scope);
+                }
+            };
 		}
     };
     return ngHeaderRow;

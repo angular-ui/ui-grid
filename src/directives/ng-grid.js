@@ -31,7 +31,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                     var options = $scope[iAttrs.ngGrid];
                     var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), FilterService, RowService, SelectionService, SortService);
 
-
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
 
@@ -100,8 +99,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
 
                     $scope.initPhase = 1;
 
-                    iElement.html(htmlText);
-					$compile(iElement.contents())($scope);
+                    iElement.append($compile(htmlText)($scope));
                     return null;
                 }
             };

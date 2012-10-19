@@ -15,7 +15,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         footerRowHeight: 55,
         filterRowHeight: 30,
         rowTemplate: ROW_TEMPLATE,
-        headerTemplate: HEADER_TEMPLATE,
+        headerTemplate: HEADERROW_TEMPLATE,
         headerCellTemplate: HEADERCELL_TEMPLATE,
         footerVisible: true,
         canSelectRows: true,
@@ -402,8 +402,9 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         });
 
     };
-
+    $scope.headerControllers = [];
     $scope.buildColumns = function () {
+        $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
             cols = [];
 
@@ -419,7 +420,10 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i);
+                var newScope = $scope.$new();
+                var column = new ng.Column(newScope, colDef, i);
+                var newController = function controller($scope) { return new ng.HeaderCell(newScope, column); };
+                $scope.headerControllers.push(newController);
                 cols.push(column);
             });
 

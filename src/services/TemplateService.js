@@ -1,4 +1,5 @@
-﻿/// <reference path="../templates/gridTemplate.js" />
+﻿/// <reference path="../templates/footerTemplate.js" />
+/// <reference path="../templates/gridTemplate.js" />
 /// <reference path="../templates/headerCellTemplate.js" />
 /// <reference path="../templates/headerTemplate.js" />
 /// <reference path="../templates/rowTemplate.js" />
@@ -32,9 +33,10 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
 
     templateService.EnsureGridTemplates = function (options) {
         var defaults = {
-            rowTemplate: ROW_TEMPLATE,
-            headerTemplate: HEADER_TEMPLATE,
-            headerCellTemplate: HEADERCELL_TEMPLATE,
+            rowTemplate: '',
+            headerTemplate: '',
+            headerCellTemplate: '',
+            footerTemplate: '',
             columns: null,
             showFilter: true
         },
