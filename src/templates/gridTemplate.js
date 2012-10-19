@@ -21,7 +21,7 @@ ng.templates.defaultGridInnerTemplate = function () {
     //b.append(            '</div>');
 
     b.append(             '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}; height:{{col.headerRowHeight}}">');
-    b.append(                 '<div ng-click="sort" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append(                 '<div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
     b.append(                    '<span>{{col.displayName}}</span>');
     b.append(                    '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append(                    '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
@@ -35,8 +35,8 @@ ng.templates.defaultGridInnerTemplate = function () {
     b.append(    '</div>');
     b.append('</div>');
     b.append('<div class="ngViewport" ng-size="viewportDim">');
-    b.append(    '<div class="ngCanvas" ng-style="{ height: canvasHeight, position: \'relative\' }">'); 
-    b.append(        '<div ng-repeat="row in rows()" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
+    b.append(    '<div class="ngCanvas" style="height: {{canvasHeight}};">'); 
+    b.append(        '<div ng-repeat="row in finalRows" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
     b.append(           '<div ng-repeat="col in columns" class="kgCell {{columnClass($index)}} {{col.cellClass}}">{{col.field}}</div>');
     b.append(        '</div>');
     b.append(    '</div>');

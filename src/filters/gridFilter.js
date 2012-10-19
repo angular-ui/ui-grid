@@ -12,24 +12,6 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
     // array that we use to manage the filtering before it updates the final data
     $scope._filterService.internalFilteredData = [];
     
-    // filters off _destroy = true items
-    $scope._filterService.filterDestroyed = function (arr) {
-        return ng.utils.arrayFilter(arr, function (item) {
-            return (item['_destroy'] === true ? false : true);
-        });
-    };
-    
-    // the array of filtered data we return to the grid
-    $scope._filterService.filteredData = function () {
-        var data = $scope._filterService.internalFilteredData;
-        //this is a bit funky, but it prevents our options.data observable from being registered as a subscription to our grid.update bindingHandler
-        if ($scope._filterService.initPhase > 0) {
-            return data;
-        } else {
-            return $scope._filterService.filterDestroyed($scope._filterService.data);
-        }
-    };
-    
     filterService.Initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             regExCache = { }; // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
@@ -100,7 +82,7 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
             itemDataStr, // the stringified version of itemData
             filterStr; // the user-entered filtering criteria
             // filter the destroyed items
-            data = $scope._filterService.filterDestroyed(data);
+            data = $scope._filterService.internalFilteredData;
             // make sure we even have work to do before we get started
             if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
                 $scope._filterService.internalFilteredData = data;
@@ -159,15 +141,10 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
         //increase this after initialization so that the computeds fire correctly
         $scope._filterService.initPhase = 1;
     };
-    
-    filterService.FilterInfo = {
-        get: function()   { return $scope._filterService.filterInfo; },
-        set: function(val){ $scope._filterService.filterInfo = val;  }
-    };
-    
-    filterService.FilteredData = (function(){
-        return $scope._filterService.filteredData();
-    })();
+
+    filterService.FilterInfo = $scope._filterService.filterInfo;
+
+    filterService.FilteredData = $scope._filterService.internalFilteredData;
     
     // the grid uses this to asign the change handlers to the filter boxes during initialization
     filterService.CreateFilterChangeCallback = function (col) {

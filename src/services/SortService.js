@@ -251,15 +251,8 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             direction: direction
         };
     };
-    sortService.SortedData = function () {
-        //We have to do this because any observable that is invoked inside of a bindingHandler (init or update) is registered as a
-        // dependency during the binding handler's dependency detection :(
-        if ($scope._sortService.initPhase > 0) {
-            return $scope._sortService.internalSortedData;
-        } else {
-            return $scope._sortService.dataSource;
-        }
-    };
+    sortService.SortedData = $scope._sortService.internalSortedData;
+
     //watch the changes in these objects
     $scope.$watch($scope._sortService.dataSource, function(resort){
 		$scope._sortService.sortData();

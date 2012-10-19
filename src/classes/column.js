@@ -1,5 +1,4 @@
 ﻿ng.Column = function ($scope, colDef, index, headerRowHeight) {
-    
     var self = this;
 
     $scope.allowSort = colDef.allowSort;
@@ -47,7 +46,7 @@
     $scope.sortingAlgorithm = colDef.sortFn;
 
     //filtering
-    $scope.filter = null;
+    self.filter = null;
 
     //cell Template
     $scope.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
@@ -58,23 +57,24 @@
 
     $scope.headerTemplate = colDef.headerTemplate;
     $scope.hasHeaderTemplate = ($scope.headerTemplate ? true : false);
-    $scope.showSortButtonUp = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "desc") : allowSort;
+    
+    self.showSortButtonUp = function () {
+        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "desc") : $scope.allowSort;
     };
-    $scope.showSortButtonDown = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "asc") : allowSort;
+    self.showSortButtonDown = function () {
+        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "asc") : $scope.allowSort;
     };    
   
     $scope.filter = "";
     this.filterVisible = false;
 
     $scope.noSortVisible = function () {
-        var sortDir = self.column.sortDirection;
-        return sortDir !== "asc" && sortDir !== "desc";
+        var ret = $scope.sortDirection !== "asc" && $scope.sortDirection !== "desc";
+        return ret;
     };
 
-    $scope.sort = function () {
-        if (!self.allowSort) {
+    self.sort = function () {
+        if (!$scope.allowSort) {
             return; // column sorting is disabled, do nothing
         }
         var dir = $scope.sortDirection === "asc" ? "desc" : "asc";

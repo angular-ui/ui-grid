@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowService, SelectionService, SortService) {
+ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, SelectionService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -70,6 +70,10 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
 
+    //initialized in the init method
+    self.rowService = RowService;
+    self.selectionService = SelectionService;
+
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
         && !self.config.canSelectRows) {
@@ -81,21 +85,21 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     // computed observables register correctly;
     $scope.data = self.config.data;
 
-    FilterService.Initialize(self.config);
-    SortService.Initialize({
-        data: FilterService.FilteredData,
-        sortInfo: self.config.sortInfo,
-        useExternalSorting: self.config.useExternalSorting
-    });
-
-    $scope.sortInfo = SortService.SortInfo; //observable
-    $scope.filterInfo = FilterService.FilterInfo.get(); //observable
-    $scope.filterIsOpen = false, //flag so that the header can subscribe and change height when opened
-    $scope.finalData = SortService.SortedData(); //observable Array
+    //FilterService.Initialize(self.config);
+    //SortService.Initialize({
+    //    data: FilterService.FilteredData,
+    //    sortInfo: self.config.sortInfo,
+    //    useExternalSorting: self.config.useExternalSorting
+    //});
+     
+    //$scope.sortInfo = SortService.SortInfo; //observable
+    //$scope.filterInfo = FilterService.FilterInfo; //observable
+    $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
+    $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
     
     $scope.maxRows = function () {
-        var rows = $scope.finalData;
+        var rows = $scope.finalRows;
         maxCanvasHt = rows.length * self.config.rowHeight;
         $scope.canvasHeight(maxCanvasHt.toString() + 'px');
         return rows.length || 0;
@@ -107,8 +111,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
     $scope.columns = [];
 
-    //initialized in the init method
-    $scope.rowManager = RowService;
+
     $scope.rows = null;
     $scope.headerRow = null;
     $scope.footer = null;
@@ -273,28 +276,28 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
     //#region Events
     $scope.toggleSelectAll = false;
 
-    $scope.sortData = function (col, dir) {
-        isSorting = true;
+    //$scope.sortData = function (col, dir) {
+    //    isSorting = true;
 
-        angular.forEach($scope.columns, function (column) {
-            if (column.field !== col.field) {
-                if (column.sortDirection !== "") { column.sortDirection = ""; }
-            }
-        });
+    //    angular.forEach($scope.columns, function (column) {
+    //        if (column.field !== col.field) {
+    //            if (column.sortDirection !== "") { column.sortDirection = ""; }
+    //        }
+    //    });
 
-        SortService.Sort(col, dir);
+    //    SortService.Sort(col, dir);
 
-        isSorting = false;
-    };
+    //    isSorting = false;
+    //};
 
     //#endregion
 
     $scope.scrollIntoView = function (entity) {
         var itemIndex = -1,
-            viewableRange = $scope.rowManager.viewableRange;
+            viewableRange = self.rowService.viewableRange;
 
         if (entity) {
-            itemIndex = ng.utils.arrayIndexOf($scope.finalData, entity);
+            itemIndex = ng.utils.arrayIndexOf($scope.finalRows, entity);
         }
 
         if (itemIndex > -1) {
@@ -302,7 +305,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
             if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
                 //scroll it into view
-                $scope.rowManager.viewableRange = new ng.Range(itemIndex, itemIndex + $scope.minRowsToRender);
+                self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + $scope.minRowsToRender);
 
                 if ($scope.$viewport) {
                     $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
@@ -381,7 +384,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
 
     })();
 
-    $scope.buildColumnDefsFromData = function () {
+    self.buildColumnDefsFromData = function () {
         if (self.config.columnDefs.length > 0){
             return;
         }
@@ -408,12 +411,12 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         i += $scope.displaySelectionCheckbox ? 0 : 1;
         return "col" + (indx - i);
     };
-    $scope.buildColumns = function () {
+    self.buildColumns = function () {
         $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
             cols = [];
 
-        if (self.config.autogenerateColumns) { $scope.buildColumnDefsFromData(); }
+        if (self.config.autogenerateColumns) { self.buildColumnDefsFromData(); }
 
         //if ($scope.displaySelectionCheckbox) {
         //    columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
@@ -433,9 +436,9 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         }
     };
 
-    this.init = function () {
+    self.init = function () {
 
-        $scope.buildColumns();
+        self.buildColumns();
 
         //now if we are using the default templates, then make the generated ones unique
         if (self.config.rowTemplate === 'ngRowTemplate') {
@@ -446,10 +449,10 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
             self.config.headerTemplate = self.gridId + self.config.headerTemplate;
         }
 
-        $scope.rowManager.Initialize($scope, self);
-        SelectionService.Initialize({
+        self.rowService.Initialize($scope, self);
+        self.selectionService.Initialize({
             isMultiSelect: self.config.isMultiSelect,
-            data: $scope.finalData,
+            data: $scope.finalRows,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
@@ -460,23 +463,23 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, FilterService, RowSe
         angular.forEach($scope.columns, function(col) {
             if (col.widthIsConfigured){
                 col.width.$watch(function(){
-                    $scope.rowManager.dataChanged = true;
-                    $scope.rowManager.rowCache = []; //if data source changes, kill this!
-                    $scope.rowManager.calcRenderedRange();
+                    self.rowService.dataChanged = true;
+                    self.rowService.rowCache = []; //if data source changes, kill this!
+                    self.rowService.calcRenderedRange();
                 });
             }
         });
         
-        $scope.selectedItemCount = SelectionService.SelectedItemCount;
-        $scope.toggleSelectAll = SelectionService.ToggleSelectAll;
-        $scope.rows = RowService.Rows; // dependent observable
+        $scope.selectedItemCount = self.selectionService.SelectedItemCount;
+        $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
+        $scope.finalRows = self.rowService.RowsToDisplay;
 
         ng.cssBuilder.buildStyles($scope, self);
 
         $scope.initPhase = 1;
     };
 
-    this.update = function () {
+    self.update = function () {
         //we have to update async, or else all the observables are registered as dependencies
 
         var updater = function () {

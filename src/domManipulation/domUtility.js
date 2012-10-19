@@ -173,7 +173,7 @@ ng.domUtility = (new function () {
 
     this.scrollH = 17; // default in IE, Chrome, & most browsers
     this.scrollW = 17; // default in IE, Chrome, & most browsers
-    this.letterW = 5;
+    this.letterW = 10;
 
     $(function () {
         $testContainer.appendTo('body');
