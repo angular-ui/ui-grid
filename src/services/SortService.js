@@ -52,7 +52,7 @@ ngGridServices.factory('SortService', function () {
         if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
         
         // if we aren't left with a string, we can't sort full objects...
-        if (itemType !== "string") return null;   
+        if (itemType !== "string") return sortService.basicSort;
         
         // now lets string check..
         //check if the item data is a valid number
@@ -60,7 +60,7 @@ ngGridServices.factory('SortService', function () {
         // check for a date: dd/mm/yyyy or dd/mm/yy
         // can have / or . or - as separator
         // can be mm/dd as well
-        dateParts = item.match(dateRE);
+        dateParts = item.match(sortService.dateRE);
         if (dateParts) {
             // looks like a date
             month = parseInt(dateParts[1]);
@@ -75,10 +75,16 @@ ngGridServices.factory('SortService', function () {
                 return sortService.sortMMDDStr;
             }
         }
+        
         //finally just sort the normal string...
         return sortService.sortAlpha;
     };
     
+    sortService.basicSort = function (a, b) {
+        if (a == b) return 0;
+        if (a < b) return -1;
+        return 1;
+    };
     //#region Sorting Functions
     sortService.sortNumber = function (a, b) {
         return a - b;
