@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 15:38:59
+* Compiled At: 10/20/2012 16:31:44
 ***********************************************/
 
 (function(window, undefined){
@@ -346,10 +346,10 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.sortedData; //observableArray
+        rowService.dataSource = $scope.sortedData; 
         
         // shortcut to the calculated minimum viewport rows
-        rowService.minViewportRows = grid.minRowsToRender; //observable
+        rowService.minViewportRows = grid.minRowsToRender(); 
         
         // the # of rows we want to add to the top and bottom of the rendered grid rows 
         rowService.excessRows = 8;
@@ -371,7 +371,7 @@ ngGridServices.factory('RowService', function () {
 
 		$scope.$watch(rowService.minViewportRows, rowService.CalcRenderedRange);
 
-		$scope.$watch(rowService.dataSource, rowService.CalcRenderedRange);
+		$scope.$watch('sortedData', rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -448,6 +448,7 @@ ngGridServices.factory('RowService', function () {
 		} else {
 			rowService.renderedRange = new ng.Range(0, 0);
 		}
+		rowService.renderedChange();
 	};
 		
 	rowService.renderedChange = function () {
@@ -495,6 +496,7 @@ ngGridServices.factory('SelectionService', function () {
 	};
 
 	selectionService.Initialize = function ($scope, options, rowService) {
+	    selectionService.$scope = $scope;
         selectionService.isMulti = options.isMulti || options.isMultiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
@@ -583,7 +585,7 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -593,18 +595,18 @@ ngGridServices.factory('SelectionService', function () {
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            var indx = $scope.selectedItems.indexOf(rowItem.entity);
-            $scope.selectedItems.splice(indx, 1);
+            var indx = selectionService.$scope.selectedItems.indexOf(rowItem.entity);
+            selectionService.$scope.selectedItems.splice(indx, 1);
         } else {
-            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
-                $scope.selectedItems.push(rowItem.entity);
+            if (selectionService.$scope.selectedItems.indexOf(rowItem.entity) === -1) {
+                selectionService.$scope.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
     selectionService.SelectedItemCount = function () {
-        return $scope.selectedItems.length;
+        return selectionService.$scope.selectedItems.length;
     };
     
     // writable-computed observable
@@ -616,9 +618,9 @@ ngGridServices.factory('SelectionService', function () {
             dataSourceCopy.push(item);
         });
         if (checkAll) {
-            $scope.selectedItems = dataSourceCopy;
+            selectionService.$scope.selectedItems = dataSourceCopy;
         } else {
-            $scope.selectedItems = [];
+            selectionService.$scope.selectedItems = [];
         }
     };
     
@@ -1394,7 +1396,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         return totalWidth;
     };
 
-    $scope.minRowsToRender = function () {
+    self.minRowsToRender = function () {
         var viewportH = $scope.viewportDim.outerHeight || 1;
 
         if ($scope.filterIsOpen) {
@@ -1457,7 +1459,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
                 //scroll it into view
-                self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + $scope.minRowsToRender);
+                self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender());
 
                 if ($scope.$viewport) {
                     $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
@@ -1658,7 +1660,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + $scope.minRowsToRender));
+        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender()));
     };
 
     $scope.adjustScrollLeft = function (scrollLeft) {
@@ -1676,7 +1678,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 /***********************************************
 * FILE: ..\src\classes\headerRow.js
 ***********************************************/
-
 ng.HeaderRow = function () {
     this.headerCells = [];
     this.height = null;

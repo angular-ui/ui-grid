@@ -14,6 +14,7 @@ ngGridServices.factory('SelectionService', function () {
 	};
 
 	selectionService.Initialize = function ($scope, options, rowService) {
+	    selectionService.$scope = $scope;
         selectionService.isMulti = options.isMulti || options.isMultiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
@@ -102,7 +103,7 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -112,18 +113,18 @@ ngGridServices.factory('SelectionService', function () {
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            var indx = $scope.selectedItems.indexOf(rowItem.entity);
-            $scope.selectedItems.splice(indx, 1);
+            var indx = selectionService.$scope.selectedItems.indexOf(rowItem.entity);
+            selectionService.$scope.selectedItems.splice(indx, 1);
         } else {
-            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
-                $scope.selectedItems.push(rowItem.entity);
+            if (selectionService.$scope.selectedItems.indexOf(rowItem.entity) === -1) {
+                selectionService.$scope.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
     selectionService.SelectedItemCount = function () {
-        return $scope.selectedItems.length;
+        return selectionService.$scope.selectedItems.length;
     };
     
     // writable-computed observable
@@ -135,9 +136,9 @@ ngGridServices.factory('SelectionService', function () {
             dataSourceCopy.push(item);
         });
         if (checkAll) {
-            $scope.selectedItems = dataSourceCopy;
+            selectionService.$scope.selectedItems = dataSourceCopy;
         } else {
-            $scope.selectedItems = [];
+            selectionService.$scope.selectedItems = [];
         }
     };
     

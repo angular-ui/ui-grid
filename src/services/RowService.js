@@ -29,10 +29,10 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.sortedData; //observableArray
+        rowService.dataSource = $scope.sortedData; 
         
         // shortcut to the calculated minimum viewport rows
-        rowService.minViewportRows = grid.minRowsToRender; //observable
+        rowService.minViewportRows = grid.minRowsToRender(); 
         
         // the # of rows we want to add to the top and bottom of the rendered grid rows 
         rowService.excessRows = 8;
@@ -54,7 +54,7 @@ ngGridServices.factory('RowService', function () {
 
 		$scope.$watch(rowService.minViewportRows, rowService.CalcRenderedRange);
 
-		$scope.$watch(rowService.dataSource, rowService.CalcRenderedRange);
+		$scope.$watch('sortedData', rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -131,6 +131,7 @@ ngGridServices.factory('RowService', function () {
 		} else {
 			rowService.renderedRange = new ng.Range(0, 0);
 		}
+		rowService.renderedChange();
 	};
 		
 	rowService.renderedChange = function () {
