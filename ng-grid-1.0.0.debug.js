@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 01:08:58
+* Compiled At: 10/20/2012 13:59:05
 ***********************************************/
 
 (function(window, undefined){
@@ -874,8 +874,6 @@ ngGridServices.factory('SortService', function () {
         sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
         $scope.$watch(sortService.dataSource, sortService.sortData);
-
-        $scope.$watch(sortService.sortInfo, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -887,6 +885,7 @@ ngGridServices.factory('SortService', function () {
             column: col,
             direction: direction
         };
+		sortService.sortData();
     };
     return sortService;
 });
@@ -1253,8 +1252,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         defaults.footerRowHeight = 30;
         self.config.footerRowHeight = 30;
     }
-    
-    $scope.sortInfo = SortService.SortInfo;
     
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array

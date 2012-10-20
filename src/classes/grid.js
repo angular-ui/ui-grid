@@ -99,8 +99,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.config.footerRowHeight = 30;
     }
     
-    $scope.sortInfo = SortService.SortInfo;
-    
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';

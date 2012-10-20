@@ -238,8 +238,6 @@ ngGridServices.factory('SortService', function () {
         sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
         $scope.$watch(sortService.dataSource, sortService.sortData);
-
-        $scope.$watch(sortService.sortInfo, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -251,6 +249,7 @@ ngGridServices.factory('SortService', function () {
             column: col,
             direction: direction
         };
+		sortService.sortData();
     };
     return sortService;
 });
