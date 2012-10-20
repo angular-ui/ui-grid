@@ -472,7 +472,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         
         $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
-        $scope.finalRows = self.rowService.RowsToDisplay;
+        $scope.finalRows = self.rowService.RowsToDisplay();
 
         ng.cssBuilder.buildStyles($scope, self);
 

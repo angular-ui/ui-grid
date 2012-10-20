@@ -13,7 +13,7 @@
     self.headerRowHeight = headerRowHeight;
     $scope.headerRowHeight = self.headerRowHeight;
 
-    $scope.field = colDef.field;
+    self.field = colDef.field;
     if (colDef.displayName === undefined || colDef.displayName === null) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;

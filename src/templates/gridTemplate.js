@@ -36,8 +36,8 @@ ng.templates.defaultGridInnerTemplate = function () {
     b.append('</div>');
     b.append('<div class="ngViewport" ng-size="viewportDim">');
     b.append(    '<div class="ngCanvas" style="height: {{canvasHeight}};">'); 
-    b.append(        '<div ng-repeat="row in finalRows" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
-    b.append(           '<div ng-repeat="col in columns" class="kgCell {{columnClass($index)}} {{col.cellClass}}">{{col.field}}</div>');
+    b.append(        '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows" ng-click="toggleSelected" class="ngRow">');
+    b.append(           '<div ng-repeat="col in columns" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        '</div>');
     b.append(    '</div>');
     b.append('</div>');
