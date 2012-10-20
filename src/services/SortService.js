@@ -158,17 +158,16 @@ ngGridServices.factory('SortService', function () {
 
     // the core sorting logic trigger
     sortService.sortData = function () {
-        var data = sortService.dataSource,
-            sortInfo = sortService.sortInfo,
-            options = sortService.options,
+        var data = sortService.$scope.dataSource,
+            sortInfo = sortService.$scope.sortInfo,
             col,
             direction,
             sortFn,
             item;
         
         // first make sure we are even supposed to do work
-        if (!data || !sortInfo || options.useExternalSorting) {
-            sortService.SortedData = data;
+        if (!data || !sortInfo || sortService.useExternalSorting) {
+            sortService.$scope.sortedData = data;
             return;
         }
         
@@ -183,7 +182,7 @@ ngGridServices.factory('SortService', function () {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = sortService.dataSource[0];
+            item = sortService.$scope.dataSource[0];
             sortFn = sortService.guessSortFn(item[col.field]);
             
             //cache it
@@ -232,18 +231,15 @@ ngGridServices.factory('SortService', function () {
             }
         });
         
-        sortService.SortedData = data;
+        sortService.$scope.sortedData = data;
     };
     
-    sortService.Initialize = function ($scope, options) {
-        sortService.options = options;
-        sortService.SortedData = options.data;
-        sortService.dataSource = options.data;
+    sortService.Initialize = function ($scope, useExtSorting) {
+        sortService.$scope = $scope;
+        sortService.useExternalSorting = useExtSorting;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch(sortService.dataSource, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -251,11 +247,10 @@ ngGridServices.factory('SortService', function () {
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
         //if its not equal, set the observable and kicngff the event chain
-        sortService.sortInfo = {
+        sortService.$scope.sortInfo = {
             column: col,
             direction: direction
         };
-		sortService.sortData();
     };
     return sortService;
 });

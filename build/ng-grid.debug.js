@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 14:19:59
+* Compiled At: 10/20/2012 15:38:59
 ***********************************************/
 
 (function(window, undefined){
@@ -332,6 +332,7 @@ ngGridServices.factory('RowService', function () {
     rowService.rowCache = [];
     rowService.dataChanged = true;
     rowService.dataSource = [];
+    rowService.rows = [];
     
     rowService.Initialize = function ($scope, grid) {
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
@@ -345,13 +346,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.finalData; //observableArray
-        
-        // change subscription to clear out our cache
-        $scope.$watch(rowService.dataSource, function () {
-            rowService.dataChanged = true;
-            rowService.rowCache = []; //if data source changes, kill this!
-        });
+        rowService.dataSource = $scope.sortedData; //observableArray
         
         // shortcut to the calculated minimum viewport rows
         rowService.minViewportRows = grid.minRowsToRender; //observable
@@ -367,12 +362,10 @@ ngGridServices.factory('RowService', function () {
 		
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         rowService.renderedRange = rowService.prevRenderedRange;
-		
-		rowService.renderedRange = rowService.renderedChange();
-        
+        rowService.renderedChange();
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
-        
+        $scope.$watch(rowService.renderedRange, rowService.renderedChange);
         // make sure that if any of these change, we re-fire the calc logic
 		$scope.$watch(rowService.viewableRange, rowService.CalcRenderedRange);
 
@@ -470,12 +463,6 @@ ngGridServices.factory('RowService', function () {
 		});
 		rowService.rows = rowArr;
 	};
-	
-	
-	
-    rowService.RowsToDisplay = function() {
-		return rowService.rows;
-    };
 	
     rowService.DataChanged = {
         get: function()   { return rowService.dataChanged; },
@@ -794,17 +781,16 @@ ngGridServices.factory('SortService', function () {
 
     // the core sorting logic trigger
     sortService.sortData = function () {
-        var data = sortService.dataSource,
-            sortInfo = sortService.sortInfo,
-            options = sortService.options,
+        var data = sortService.$scope.dataSource,
+            sortInfo = sortService.$scope.sortInfo,
             col,
             direction,
             sortFn,
             item;
         
         // first make sure we are even supposed to do work
-        if (!data || !sortInfo || options.useExternalSorting) {
-            sortService.SortedData = data;
+        if (!data || !sortInfo || sortService.useExternalSorting) {
+            sortService.$scope.sortedData = data;
             return;
         }
         
@@ -819,7 +805,7 @@ ngGridServices.factory('SortService', function () {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = sortService.dataSource[0];
+            item = sortService.$scope.dataSource[0];
             sortFn = sortService.guessSortFn(item[col.field]);
             
             //cache it
@@ -868,18 +854,15 @@ ngGridServices.factory('SortService', function () {
             }
         });
         
-        sortService.SortedData = data;
+        sortService.$scope.sortedData = data;
     };
     
-    sortService.Initialize = function ($scope, options) {
-        sortService.options = options;
-        sortService.SortedData = options.data;
-        sortService.dataSource = options.data;
+    sortService.Initialize = function ($scope, useExtSorting) {
+        sortService.$scope = $scope;
+        sortService.useExternalSorting = useExtSorting;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch(sortService.dataSource, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -887,11 +870,10 @@ ngGridServices.factory('SortService', function () {
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
         //if its not equal, set the observable and kicngff the event chain
-        sortService.sortInfo = {
+        sortService.$scope.sortInfo = {
             column: col,
             direction: direction
         };
-		sortService.sortData();
     };
     return sortService;
 });
@@ -1226,21 +1208,24 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-    self.data = self.config.data;
+
+    $scope.dataSource = self.config.data;
+
+    $scope.sortInfo = self.config.sortInfo;
+    $scope.sortedData = self.config.data;
+
+
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
-
-    self.sortService = SortService;
-    self.sortService.Initialize($scope.$new(), {
-        data: self.data,
-        sortInfo: self.config.sortInfo,
-        useExternalSorting: self.config.useExternalSorting
-    });
-
-    $scope.finalData = self.sortService.SortedData;
     
-    $scope.$watch('finalData', function (newVal) {
+    self.sortService = SortService;
+    self.sortService.Initialize($scope, self.config.useExternalSorting);
+
+    $scope.$watch('sortedData', function (newVal) {
+        self.rowService.dataChanged = true;
+        self.rowService.rowCache = []; //if data source changes, kill this!
+        self.rowService.CalcRenderedRange();
         if (self.config.selectedItems) {
             var lastItemIndex = self.config.selectedItems.length - 1;
             if (lastItemIndex <= 0) {
@@ -1250,7 +1235,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 }
             }
         }
-    });
+    }, true);
+    $scope.$watch('dataSource', self.sortService.sortData);
+    $scope.$watch('sortInfo', self.sortService.sortData);
     
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -1553,12 +1540,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (self.config.columnDefs.length > 0){
             return;
         }
-        if (!self.data || !self.data[0]) {
+        if (!$scope.dataSource || !$scope.dataSource[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
 
         var item;
-        item = self.data[0];
+        item = $scope.dataSource[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             if (propName === SELECTED_PROP) {
@@ -1608,7 +1595,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
-            data: $scope.finalData,
+            data: $scope.sortedData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
@@ -1628,7 +1615,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         
         $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
-        $scope.finalRows = self.rowService.RowsToDisplay();
+        $scope.finalRows = self.rowService.rows;
 
         ng.cssBuilder.buildStyles($scope, self);
 

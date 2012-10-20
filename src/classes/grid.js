@@ -66,21 +66,24 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-    self.data = self.config.data;
+
+    $scope.dataSource = self.config.data;
+
+    $scope.sortInfo = self.config.sortInfo;
+    $scope.sortedData = self.config.data;
+
+
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
-
-    self.sortService = SortService;
-    self.sortService.Initialize($scope.$new(), {
-        data: self.data,
-        sortInfo: self.config.sortInfo,
-        useExternalSorting: self.config.useExternalSorting
-    });
-
-    $scope.finalData = self.sortService.SortedData;
     
-    $scope.$watch('finalData', function (newVal) {
+    self.sortService = SortService;
+    self.sortService.Initialize($scope, self.config.useExternalSorting);
+
+    $scope.$watch('sortedData', function (newVal) {
+        self.rowService.dataChanged = true;
+        self.rowService.rowCache = []; //if data source changes, kill this!
+        self.rowService.CalcRenderedRange();
         if (self.config.selectedItems) {
             var lastItemIndex = self.config.selectedItems.length - 1;
             if (lastItemIndex <= 0) {
@@ -90,7 +93,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 }
             }
         }
-    });
+    }, true);
+    $scope.$watch('dataSource', self.sortService.sortData);
+    $scope.$watch('sortInfo', self.sortService.sortData);
     
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -393,12 +398,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (self.config.columnDefs.length > 0){
             return;
         }
-        if (!self.data || !self.data[0]) {
+        if (!$scope.dataSource || !$scope.dataSource[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
 
         var item;
-        item = self.data[0];
+        item = $scope.dataSource[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             if (propName === SELECTED_PROP) {
@@ -448,7 +453,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
-            data: $scope.finalData,
+            data: $scope.sortedData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
@@ -468,7 +473,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         
         $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
-        $scope.finalRows = self.rowService.RowsToDisplay();
+        $scope.finalRows = self.rowService.rows;
 
         ng.cssBuilder.buildStyles($scope, self);
 

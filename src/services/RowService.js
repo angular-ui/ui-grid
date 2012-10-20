@@ -15,6 +15,7 @@ ngGridServices.factory('RowService', function () {
     rowService.rowCache = [];
     rowService.dataChanged = true;
     rowService.dataSource = [];
+    rowService.rows = [];
     
     rowService.Initialize = function ($scope, grid) {
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
@@ -28,13 +29,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.finalData; //observableArray
-        
-        // change subscription to clear out our cache
-        $scope.$watch(rowService.dataSource, function () {
-            rowService.dataChanged = true;
-            rowService.rowCache = []; //if data source changes, kill this!
-        });
+        rowService.dataSource = $scope.sortedData; //observableArray
         
         // shortcut to the calculated minimum viewport rows
         rowService.minViewportRows = grid.minRowsToRender; //observable
@@ -50,12 +45,10 @@ ngGridServices.factory('RowService', function () {
 		
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         rowService.renderedRange = rowService.prevRenderedRange;
-		
-		rowService.renderedRange = rowService.renderedChange();
-        
+        rowService.renderedChange();
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
-        
+        $scope.$watch(rowService.renderedRange, rowService.renderedChange);
         // make sure that if any of these change, we re-fire the calc logic
 		$scope.$watch(rowService.viewableRange, rowService.CalcRenderedRange);
 
@@ -153,12 +146,6 @@ ngGridServices.factory('RowService', function () {
 		});
 		rowService.rows = rowArr;
 	};
-	
-	
-	
-    rowService.RowsToDisplay = function() {
-		return rowService.rows;
-    };
 	
     rowService.DataChanged = {
         get: function()   { return rowService.dataChanged; },
