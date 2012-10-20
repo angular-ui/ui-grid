@@ -5,36 +5,18 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Row = function (entity, config, selectionManager) {
+ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
+    
     this.selectedItems = config.selectedItems;
     this.entity = entity;
-    this.selectionManager = selectionManager;
+    this.selectionService = selectionService;
     //selectify the entity
     if (this.entity[SELECTED_PROP] === undefined) {
         this.entity[SELECTED_PROP] = false;
     }
-    this.selected = {
-        get: function() {
-            if (!canSelectRows) {
-                return false;
-            }
-            var val = self.entity['__ng_selected__'];
-            return val;
-        },
-        set: function(val, evt) {
-            if (!canSelectRows) {
-                return true;
-            }
-            self.beforeSelectionChange();
-            self.entity[SELECTED_PROP] = val;
-            self.selectionManager.changeSelection(self, evt);
-            self.afterSelectionChange();
-            self.onSelectionChanged();
-            return val;
-        }
-    };
+    this.selected = false;
 
     this.toggleSelected = function (data, event) {
         if (!canSelectRows) {
@@ -49,7 +31,10 @@ ng.Row = function (entity, config, selectionManager) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            self.selected ? self.selected.set(false, event) : self.selected.set(true, event);
+            self.beforeSelectionChange();
+            self.selected ? self.selected = false : self.selected = true;
+            self.selectionService.ChangeSelection(data, event);
+            self.afterSelectionChange();
         }
         return true;
     };
@@ -74,9 +59,8 @@ ng.Row = function (entity, config, selectionManager) {
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
 
-    this.onSelectionChanged = function () { }; //replaced in rowManager
-    this.beforeSelectionChange = function () { };
-    this.afterSelectionChange = function () { };
+    this.beforeSelectionChange = config.beforeSelectionChange || function () { };
+    this.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
         ng.utils.forIn(entity, function (prop, propName) {

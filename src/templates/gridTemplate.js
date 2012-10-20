@@ -20,15 +20,15 @@ ng.templates.defaultGridInnerTemplate = function () {
     //b.append(                '<input type="checkbox" ng-checked="toggleSelectAll()"/>');
     //b.append(            '</div>');
 
-    b.append(             '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}; height:{{col.headerRowHeight}}">');
+    b.append(             '<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">');
     b.append(                 '<div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append(                    '<span>{{col.displayName}}</span>');
+    b.append(                    '<span style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">{{col.displayName}}</span>');
     b.append(                    '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append(                    '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append(                 '</div>');
     b.append(                 '<div class="ngHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');
     b.append(                 '<div ng-show="_filterVisible">');
-    b.append(                     '<input type="text" ng-model="column.filter" style="width: 80%" tabindex="1" />');
+    b.append(                     '<input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
     b.append(                 '</div>');
     b.append(             '</div>');
     b.append(        '</div>');
@@ -36,8 +36,8 @@ ng.templates.defaultGridInnerTemplate = function () {
     b.append('</div>');
     b.append('<div class="ngViewport" ng-size="viewportDim">');
     b.append(    '<div class="ngCanvas" style="height: {{canvasHeight}};">'); 
-    b.append(        '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows" ng-click="toggleSelected" class="ngRow">');
-    b.append(           '<div ng-repeat="col in columns" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
+    b.append(        '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(           '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        '</div>');
     b.append(    '</div>');
     b.append('</div>');

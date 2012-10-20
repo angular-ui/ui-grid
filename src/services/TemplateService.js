@@ -46,20 +46,6 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
         templateService.AddTemplateSafe(GRID_TEMPLATE, function () {
             return ng.templates.defaultGridInnerTemplate(config);
         });
-        
-        //header row template
-        if (config.headerTemplate) {
-            templateService.AddTemplateSafe(config.headerTemplate, function () {
-                return ng.templates.generateHeaderTemplate(config);
-            });
-        }
-        
-        //row template
-        if (config.rowTemplate) {
-            templateService.AddTemplateSafe(config.rowTemplate, function () {
-                return ng.templates.generateRowTemplate(config);
-            });
-        }
     };
 
     templateService.GetTemplateText = function(tmplId) {

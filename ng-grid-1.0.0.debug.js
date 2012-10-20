@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/19/2012 17:08:20
+* Compiled At: 10/19/2012 21:34:59
 ***********************************************/
 
 (function(window, undefined){
@@ -405,7 +405,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
 		var row = $scope._rowService.rowCache[rowIndex]; // first check to see if we've already built it
 		if (!row) {
 			// build the row
-			row = new ng.Row(entity, $scope._rowService.grid.config, $scope._rowService.grid.selectionManager);
+		    row = new ng.Row(entity, $scope._rowService.grid.config, $scope._rowService.grid.selectionService);
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex + pagingOffset;
 			row.offsetTop = $scope._rowService.rowHeight * rowIndex;
@@ -616,18 +616,19 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
                 $scope._selectionService.lastClickedRow(rowItem);
                 return true;
             }
-        } else if (!isMulti) {
+        } else if (!$scope._selectionService.isMulti) {
             rowItem.selected ? $scope._selectionService.selectedItems = [rowItem.entity] : $scope._selectionService.selectedItems = [];
         }
-        $scope._selectionService.addOrRemove(rowItem);
-        $scope._selectionService.lastClickedRow(rowItem);
+        selectionService.addOrRemove(rowItem);
+        $scope._selectionService.lastClickedRow = rowItem;
         return true;
     };
 	
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            $scope._selectionService.selectedItems.remove(rowItem.entity);
+            var indx = $scope._selectionService.selectedItems.indexOf(rowItem.entity);
+            $scope._selectionService.selectedItems.splice(indx, 1);
         } else {
             if ($scope._selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
                 $scope._selectionService.selectedItems.push(rowItem.entity);
@@ -959,20 +960,6 @@ ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
         templateService.AddTemplateSafe(GRID_TEMPLATE, function () {
             return ng.templates.defaultGridInnerTemplate(config);
         });
-        
-        //header row template
-        if (config.headerTemplate) {
-            templateService.AddTemplateSafe(config.headerTemplate, function () {
-                return ng.templates.generateHeaderTemplate(config);
-            });
-        }
-        
-        //row template
-        if (config.rowTemplate) {
-            templateService.AddTemplateSafe(config.rowTemplate, function () {
-                return ng.templates.generateRowTemplate(config);
-            });
-        }
     };
 
     templateService.GetTemplateText = function(tmplId) {
@@ -1174,15 +1161,15 @@ ng.templates.defaultGridInnerTemplate = function () {
     //b.append(                '<input type="checkbox" ng-checked="toggleSelectAll()"/>');
     //b.append(            '</div>');
 
-    b.append(             '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}; height:{{col.headerRowHeight}}">');
+    b.append(             '<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">');
     b.append(                 '<div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append(                    '<span>{{col.displayName}}</span>');
+    b.append(                    '<span style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">{{col.displayName}}</span>');
     b.append(                    '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append(                    '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append(                 '</div>');
     b.append(                 '<div class="ngHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');
     b.append(                 '<div ng-show="_filterVisible">');
-    b.append(                     '<input type="text" ng-model="column.filter" style="width: 80%" tabindex="1" />');
+    b.append(                     '<input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
     b.append(                 '</div>');
     b.append(             '</div>');
     b.append(        '</div>');
@@ -1190,8 +1177,8 @@ ng.templates.defaultGridInnerTemplate = function () {
     b.append('</div>');
     b.append('<div class="ngViewport" ng-size="viewportDim">');
     b.append(    '<div class="ngCanvas" style="height: {{canvasHeight}};">'); 
-    b.append(        '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows" ng-click="toggleSelected" class="ngRow">');
-    b.append(           '<div ng-repeat="col in columns" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
+    b.append(        '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(           '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        '</div>');
     b.append(    '</div>');
     b.append('</div>');
@@ -1221,81 +1208,6 @@ ng.templates.defaultGridInnerTemplate = function () {
     b.append(           '</div>');
     b.append(       '</div>');
     b.append(   '</div>');
-    b.append('</div>');
-    return b.toString();
-};
-
-/***********************************************
-* FILE: ..\src\templates\headerTemplate.js
-***********************************************/
-
-ng.templates.generateHeaderTemplate = function ($scope) {
-    var b = new ng.utils.StringBuilder();
-    angular.forEach($scope.columns, function (col, i) {
-        if (col.field === SELECTED_PROP) {
-            b.append('<div class="kgSelectionCell kgHeaderCell col{0} kgNoSort">', col.index);
-            b.append('  <input type="checkbox" ng-checked="toggleSelectAll()"/>');
-            b.append('</div>');
-        } else if (col.field === 'rowIndex' && $scope.showFilter) {
-            b.append('<div class="kgHeaderCell col{0} kgNoSort">', col.index);
-            b.append('    <div title="Filter Results" class="kgFilterBtn openBtn" ng-hide="filterVisible" ng-click="showFilter_Click()"></div>');
-            b.append('    <div title="Close" class="kgFilterBtn closeBtn" ng-show="filterVisible" ng-click="showFilter_Click()"></div>');
-            b.append('    <div title="Clear Filters" class="kgFilterBtn clearBtn" ng-show="filterVisible" ng-click="clearFilter_Click()"></div>');
-            b.append('</div>');
-        } else {
-            b.append('<div class="kgHeaderCell col{0}" ng-style="{ width: colWidth }" ng-class="{ \'kgNoSort\': {1} }">{{displayName}}', col.index, !col.allowSort);
-            b.append('    <div ng-click="sort" ng-class="{ \'kgSorted\': !noSortVisible }">');
-            b.append('        <span>{{displayName}}</span>');
-            //b.append('        <div class="kgSortButtonDown" ng-show="{allowSort ? (noSortVisible || sortAscVisible) : allowSort}"></div>');
-            //b.append('        <div class="kgSortButtonUp" ng-show="{allowSort ? (noSortVisible || sortDescVisible) : allowSort}"></div>');
-            b.append('    </div>');
-            if (!col.autogenerateColumns && col.enableColumnResize) {
-            b.append('    <div class="kgHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');}
-            b.append('    <div ng-show="_filterVisible">');
-            b.append('        <input type="text" ng-model="column.filter" style="width: 80%" tabindex="1" />');
-            b.append('    </div>');
-            b.append('</div>');
-        }
-    });
-    return b.toString();
-};
-
-/***********************************************
-* FILE: ..\src\templates\rowTemplate.js
-***********************************************/
-
-ng.templates.generateRowTemplate = function (options) {
-    var b = new ng.utils.StringBuilder(),
-        cols = options.columns;
-    b.append('<div ng-repeat="row in rowService.Rows()" ng-click="toggleSelected" ng-class="{ \'kgSelected\': selected }">');
-    angular.forEach(cols, function (col) {
-        //// check for the Selection Column
-        //if (col.field === SELECTED_PROP) {
-        //    b.append('<div class="kgSelectionCell" ng-class="[\'kgCell\',\'col{0}]\']">', col.index);
-        //    b.append('  <input type="checkbox" ng-checked="selected"/>');
-        //    b.append('</div>');
-        //}
-        //// check for RowIndex Column
-        //else if (col.field === 'rowIndex') {
-        //    b.append('<div class="kgRowIndexCell" ng-class="[\'kgCell\',\'col{0}]\']">{{rowIndex}}</div>', col.index);
-        //}
-        // check for a Column with a Cell Template
-        //if (col.hasCellTemplate) {
-        //    // first pull the template
-        //    var tmpl = ng.templateManager.getTemplateText(col.cellTemplate);
-        //    // build the replacement text
-        //    var replacer = "{{field}}' }";
-        //    // run any changes on the template for re-usable templates
-        //    tmpl = tmpl.replace(/\$cellClass/g, col.cellClass || 'kgEmpty');
-        //    tmpl = tmpl.replace(/\$cellValue/g, col.field);
-        //    tmpl = tmpl.replace(/\$cell/g, replacer);
-        //    b.append(tmpl);
-        //}
-        // finally just use a basic template for the cell
-        //else {
-        b.append('  <div ng-class="[\'kgCell\',\'col{0}]\', \'{0}\']">{{field}}</div>', col.cellClass || 'kgEmpty',  col.index);
-        //}
-    });
     b.append('</div>');
     return b.toString();
 };
@@ -2045,36 +1957,18 @@ ng.Range = function (bottom, top) {
 * FILE: ..\src\classes\row.js
 ***********************************************/
 
-ng.Row = function (entity, config, selectionManager) {
+ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
+    
     this.selectedItems = config.selectedItems;
     this.entity = entity;
-    this.selectionManager = selectionManager;
+    this.selectionService = selectionService;
     //selectify the entity
     if (this.entity[SELECTED_PROP] === undefined) {
         this.entity[SELECTED_PROP] = false;
     }
-    this.selected = {
-        get: function() {
-            if (!canSelectRows) {
-                return false;
-            }
-            var val = self.entity['__ng_selected__'];
-            return val;
-        },
-        set: function(val, evt) {
-            if (!canSelectRows) {
-                return true;
-            }
-            self.beforeSelectionChange();
-            self.entity[SELECTED_PROP] = val;
-            self.selectionManager.changeSelection(self, evt);
-            self.afterSelectionChange();
-            self.onSelectionChanged();
-            return val;
-        }
-    };
+    this.selected = false;
 
     this.toggleSelected = function (data, event) {
         if (!canSelectRows) {
@@ -2089,7 +1983,10 @@ ng.Row = function (entity, config, selectionManager) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            self.selected ? self.selected.set(false, event) : self.selected.set(true, event);
+            self.beforeSelectionChange();
+            self.selected ? self.selected = false : self.selected = true;
+            self.selectionService.ChangeSelection(data, event);
+            self.afterSelectionChange();
         }
         return true;
     };
@@ -2114,9 +2011,8 @@ ng.Row = function (entity, config, selectionManager) {
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
 
-    this.onSelectionChanged = function () { }; //replaced in rowManager
-    this.beforeSelectionChange = function () { };
-    this.afterSelectionChange = function () { };
+    this.beforeSelectionChange = config.beforeSelectionChange || function () { };
+    this.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
         ng.utils.forIn(entity, function (prop, propName) {
@@ -2461,36 +2357,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
         }
     };
     return ngGrid;
-});
-
-/***********************************************
-* FILE: ..\src\directives\ng-row.js
-***********************************************/
-
-ngGridDirectives.directive('ngRow', function (SelectionService, TemplateService) {
-    var ngRow = {
-        template: TemplateService.GetTemplateText(ROW_TEMPLATE),
-        replace: true,
-        transclude: true,
-        link: function ($scope, iElement, iAttrs) {
-
-        }
-    };
-    return ngRow;
-});
-
-/***********************************************
-* FILE: ..\src\directives\ng-rows.js
-***********************************************/
-
-ngGridDirectives.directive('ngRows', function (FilterService, GridService, RowService, SortService, TemplateService) {
-    var ngRows = {
-        replace: true,
-        link: function ($scope, iElement, iAttrs) {
-
-        }
-    };
-    return ngRows;
 });
 
 /***********************************************

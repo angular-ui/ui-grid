@@ -102,18 +102,19 @@ ngGridServices.factory('SelectionService', ['$rootScope', function ($scope) {
                 $scope._selectionService.lastClickedRow(rowItem);
                 return true;
             }
-        } else if (!isMulti) {
+        } else if (!$scope._selectionService.isMulti) {
             rowItem.selected ? $scope._selectionService.selectedItems = [rowItem.entity] : $scope._selectionService.selectedItems = [];
         }
-        $scope._selectionService.addOrRemove(rowItem);
-        $scope._selectionService.lastClickedRow(rowItem);
+        selectionService.addOrRemove(rowItem);
+        $scope._selectionService.lastClickedRow = rowItem;
         return true;
     };
 	
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            $scope._selectionService.selectedItems.remove(rowItem.entity);
+            var indx = $scope._selectionService.selectedItems.indexOf(rowItem.entity);
+            $scope._selectionService.selectedItems.splice(indx, 1);
         } else {
             if ($scope._selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
                 $scope._selectionService.selectedItems.push(rowItem.entity);

@@ -76,7 +76,7 @@ ngGridServices.factory('RowService', ['$rootScope', function ($scope) {
 		var row = $scope._rowService.rowCache[rowIndex]; // first check to see if we've already built it
 		if (!row) {
 			// build the row
-			row = new ng.Row(entity, $scope._rowService.grid.config, $scope._rowService.grid.selectionManager);
+		    row = new ng.Row(entity, $scope._rowService.grid.config, $scope._rowService.grid.selectionService);
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex + pagingOffset;
 			row.offsetTop = $scope._rowService.rowHeight * rowIndex;

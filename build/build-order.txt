@@ -9,8 +9,6 @@
 ..\src\services\TemplateService.js
 ..\src\filters\gridFilter.js
 ..\src\templates\gridTemplate.js
-..\src\templates\headerTemplate.js
-..\src\templates\rowTemplate.js
 ..\src\classes\column.js
 ..\src\classes\dimension.js
 ..\src\classes\footer.js
@@ -21,8 +19,6 @@
 ..\src\domManipulation\cssBuilder.js
 ..\src\domManipulation\domUtility.js
 ..\src\directives\ng-grid.js
-..\src\directives\ng-row.js
-..\src\directives\ng-rows.js
 ..\src\directives\ng-size.js
 ..\src\init.js
 ..\src\controllers\ngGridController.js
