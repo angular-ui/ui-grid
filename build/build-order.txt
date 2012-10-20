@@ -6,7 +6,6 @@
 ..\src\services\RowService.js
 ..\src\services\SelectionService.js
 ..\src\services\SortService.js
-..\src\filters\gridFilter.js
 ..\src\templates\gridTemplate.js
 ..\src\classes\column.js
 ..\src\classes\dimension.js

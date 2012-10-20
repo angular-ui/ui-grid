@@ -5,19 +5,19 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
-    var filterService = {};	
-	$scope._filterService = {};
-    
+ngGridServices.factory('FilterService', function () {
+    var filterService = {};
+
+    filterService.columnFilters = [];
     // array that we use to manage the filtering before it updates the final data
-    $scope._filterService.internalFilteredData = [];
+    filterService.internalFilteredData = [];
     
     filterService.Initialize = function (options){
         var wildcard = options.filterWildcard || "*", // the wildcard character used by the user
             regExCache = { }; // a cache of filterString to regex objects, eg: { 'abc%' : RegExp("abc[^\']*, "gi") }
         
-        $scope._filterService.initPhase = 0;     
-        $scope._filterService.options = options;
+        filterService.initPhase = 0;     
+        filterService.options = options;
         // first check the wildcard as we only support * and % currently
         if (wildcard === '*' || wildcard === '%') {
             // do nothing
@@ -26,16 +26,16 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
         }
 
         // map of column.field values to filterStrings
-        $scope._filterService.filterInfo = options.filterInfo;
+        filterService.filterInfo = options.filterInfo;
         // the array of data that the user defined
-        $scope._filterService.data = options.data;
+        filterService.data = options.data;
 
         // utility function for checking data validity
-        $scope._filterService.isEmpty = function (data) {
+        filterService.isEmpty = function (data) {
             return (data === null || data === undefined || data === '');
         };
         // performs regex matching on data strings
-        $scope._filterService.matchString = function (itemStr, filterStr) {
+        filterService.matchString = function (itemStr, filterStr) {
             //first check for RegEx thats already built
             var regex = regExCache[filterStr];
             //if nothing, build the regex
@@ -71,9 +71,9 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
             return itemStr.match(regex);
         };
         // the core logic for filtering data
-        $scope._filterService.filterData = function () {
-            var fi = $scope._filterService.filterInfo,
-            data = $scope._filterService.data,
+        filterService.filterData = function () {
+            var fi = filterService.filterInfo,
+            data = filterService.internalFilteredData,
             keepRow = false, // flag to say if the row will be removed or kept in the viewport
             match = true, // flag for matching logic
             newArr, // the filtered array
@@ -81,11 +81,10 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
             itemData, // the data from the specific row's column
             itemDataStr, // the stringified version of itemData
             filterStr; // the user-entered filtering criteria
-            // filter the destroyed items
-            data = $scope._filterService.internalFilteredData;
+            
             // make sure we even have work to do before we get started
             if (!fi || $.isEmptyObject(fi) || options.useExternalFiltering) {
-                $scope._filterService.internalFilteredData = data;
+                filterService.internalFilteredData = data;
                 return;
             }
             //clear out the regex cache so that we don't get improper results
@@ -100,15 +99,15 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
                         // grab the user-entered filter criteria
                         filterStr = fi[f];
                         // make sure they didn't just enter the wildcard character
-                        if (!$scope._filterService.isEmpty(filterStr) && filterStr !== wildcard) {
+                        if (!filterService.isEmpty(filterStr) && filterStr !== wildcard) {
                             // execute regex matching
-                            if ($scope._filterService.isEmpty(itemData)) {
+                            if (filterService.isEmpty(itemData)) {
                                 match = false;
                             } else if (typeof itemData === "string") {
-                                match = $scope._filterService.matchString(itemData, filterStr);
+                                match = filterService.matchString(itemData, filterStr);
                             } else {
                                 itemDataStr = itemData.toString();
-                                match = $scope._filterService.matchString(itemDataStr, filterStr);
+                                match = filterService.matchString(itemDataStr, filterStr);
                             }
                         }
                     }
@@ -129,28 +128,28 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
                 return keepRow;
             });
             // finally set our internal array to the filtered stuff, which will tell the rest of the manager to propogate it up to the grid
-            $scope._filterService.internalFilteredData = newArr;
+            filterService.internalFilteredData = newArr;
         };
         //create subscriptions
-        $scope.$watch($scope._filterService.data, function(filterData){
-			$scope._filterService.filterData();
+        $scope.$watch(filterService.data, function(){
+			filterService.filterData();
 		});		
-        $scope.$watch($scope._filterService.filterInfo, function(filterData){
-			$scope._filterService.filterData();
+        $scope.$watch(filterService.filterInfo, function(){
+			filterService.filterData();
 		});		
         //increase this after initialization so that the computeds fire correctly
-        $scope._filterService.initPhase = 1;
+        filterService.initPhase = 1;
     };
 
-    filterService.FilterInfo = $scope._filterService.filterInfo;
+    filterService.FilterInfo = filterService.filterInfo;
 
-    filterService.FilteredData = $scope._filterService.internalFilteredData;
+    filterService.FilteredData = filterService.internalFilteredData;
     
     // the grid uses this to asign the change handlers to the filter boxes during initialization
     filterService.CreateFilterChangeCallback = function (col) {
         // the callback
         return function (newFilterVal) {
-            var info = $scope._filterService.filterInfo;
+            var info = filterService.filterInfo;
             if (!info && !newFilterVal) {
                 return;
             }
@@ -165,11 +164,11 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
             } else if (newFilterVal !== null && newFilterVal !== undefined) {
                 info[col.field] = newFilterVal;
             }
-            $scope._filterService.filterInfo = info;
+            filterService.filterInfo = info;
             if (options && options.currentPage) {
                 options.currentPage = 1;
             }
         };
     };
     return filterService;
-}]);
+});
