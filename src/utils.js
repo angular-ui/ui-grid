@@ -1,9 +1,4 @@
 ﻿ng.utils = {
-    arrayForEach: function (array, action) {
-        for (var i = 0, j = array.length; i < j; i++)
-        action(array[i]);
-    },
-
     arrayIndexOf: function (array, item) {
         if (typeof Array.prototype.indexOf == "function")
             return Array.prototype.indexOf.call(array, item);

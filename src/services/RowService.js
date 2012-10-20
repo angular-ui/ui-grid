@@ -28,7 +28,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.data; //observableArray
+        rowService.dataSource = grid.data; //observableArray
         
         // change subscription to clear out our cache
         $scope.$watch(rowService.dataSource, function () {

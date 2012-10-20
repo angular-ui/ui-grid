@@ -223,36 +223,28 @@ ngGridServices.factory('SortService', function () {
         sortService.internalSortedData = data;
     };
     
-    sortService.Initialize = function ($scope) {
+    sortService.Initialize = function ($scope, options) {
         sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
         sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
         sortService.ASC = "asc", // constant for sorting direction
         sortService.DESC = "desc", // constant for sorting direction
-        sortService.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
         sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
         sortService.internalSortedData = [];
             
-        sortService.dataSource = $scope.data;
+        $scope.dataSource = options.data;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        sortService.sortInfo = $scope.sortInfo;
+        $scope.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch(sortService.dataSource, function () {
-            sortService.sortData();
-        });
-        $scope.$watch(sortService.sortInfo, function () {
-            sortService.sortData();
-        });
+        $scope.$watch('dataSource', sortService.sortData);
+
+        $scope.$watch('sortInfo', sortService.sortData);
     };
     
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
-        //do an equality check first
-        if (col === prevSortInfo.column && direction === prevSortInfo.direction) {
-            return;
-        }
         //if its not equal, set the observable and kicngff the event chain
         sortService.sortInfo = {
             column: col,

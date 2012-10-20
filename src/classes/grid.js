@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, SelectionService) {
+ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -57,7 +57,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
     $scope.$viewport = null;
     $scope.$canvas = null;
     $scope.footerController = null;
-    $scope.width = gridWidth;
+    $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
     $scope.selectedItemCount= null;
     $scope.filterIsOpen = false;
@@ -66,11 +66,18 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-
+    self.data = self.config.data;
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
 
+    self.sortService = SortService;
+    self.sortService.Initialize($scope.$new(), {
+        data: self.data,
+        sortInfo: self.config.sortInfo,
+        useExternalSorting: self.config.useExternalSorting
+    });
+    
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
         && !self.config.canSelectRows) {
@@ -78,19 +85,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         self.config.footerRowHeight = 30;
     }
     
-    // set this during the constructor execution so that the
-    // computed observables register correctly;
-    $scope.data = self.config.data;
-
-    //FilterService.Initialize(self.config);
-    //SortService.Initialize({
-    //    data: FilterService.FilteredData,
-    //    sortInfo: self.config.sortInfo,
-    //    useExternalSorting: self.config.useExternalSorting
-    //});
-     
-    //$scope.sortInfo = SortService.SortInfo; //observable
-    //$scope.filterInfo = FilterService.FilterInfo; //observable
+    $scope.sortInfo = SortService.SortInfo;
+    
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
@@ -131,7 +127,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
 
     //#region Container Dimensions
 
-    $scope.rootDim = new ng.Dimension({ outerHeight: gridHeight, outerWidth: gridWidth });
+    $scope.rootDim = gridDim;
 
     $scope.headerDim = function () {
         var rootDim = $scope.rootDim,
@@ -385,12 +381,12 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         if (self.config.columnDefs.length > 0){
             return;
         }
-        if (!$scope.data || !$scope.data[0]) {
+        if (!self.data || !self.data[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
 
         var item;
-        item = $scope.data[0];
+        item = self.data[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             if (propName === SELECTED_PROP) {
@@ -425,7 +421,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight);
+                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight, self.sortService);
                 cols.push(column);
             });
 
@@ -437,8 +433,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope, self);
-        self.selectionService.Initialize($scope, {
+        self.rowService.Initialize($scope.$new(), self);
+        self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
             data: $scope.finalRows,
             selectedItem: self.config.selectedItem,
@@ -446,7 +442,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.isMultiSelect
-        }, RowService);
+        }, self.rowService);
         
         angular.forEach($scope.columns, function(col) {
             if (col.widthIsConfigured){

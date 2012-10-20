@@ -26,7 +26,8 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                     var htmlText = ng.defaultGridTemplate();
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
-                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService, SortService);
+                    var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    var grid = new ng.Grid($scope, options, gridDim, RowService, SelectionService, SortService);
                     
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);

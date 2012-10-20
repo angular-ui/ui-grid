@@ -1,6 +1,7 @@
-﻿ng.Column = function ($scope, colDef, index, headerRowHeight) {
+﻿ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
     var self = this;
-
+    
+    self.sortService = sortService;
     $scope.allowSort = colDef.allowSort;
     $scope.allowFilter = colDef.allowFilter;
     $scope.allowResize = colDef.allowResize;
@@ -66,7 +67,7 @@
     };    
   
     $scope.filter = "";
-    this.filterVisible = false;
+    self.filterVisible = false;
 
     $scope.noSortVisible = function () {
         var ret = $scope.sortDirection !== "asc" && $scope.sortDirection !== "desc";
@@ -79,6 +80,7 @@
         }
         var dir = $scope.sortDirection === "asc" ? "desc" : "asc";
         $scope.sortDirection = dir;
+        self.sortService.Sort(self, dir);
     };
 
     $scope.filterHasFocus = false;

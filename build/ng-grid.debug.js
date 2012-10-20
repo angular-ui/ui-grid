@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/19/2012 22:45:10
+* Compiled At: 10/19/2012 23:40:58
 ***********************************************/
 
 (function(window, undefined){
@@ -95,11 +95,6 @@ ng.moveSelectionHandler = function (grid, evt) {
 * FILE: ..\src\utils.js
 ***********************************************/
 ng.utils = {
-    arrayForEach: function (array, action) {
-        for (var i = 0, j = array.length; i < j; i++)
-        action(array[i]);
-    },
-
     arrayIndexOf: function (array, item) {
         if (typeof Array.prototype.indexOf == "function")
             return Array.prototype.indexOf.call(array, item);
@@ -350,7 +345,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = $scope.data; //observableArray
+        rowService.dataSource = grid.data; //observableArray
         
         // change subscription to clear out our cache
         $scope.$watch(rowService.dataSource, function () {
@@ -523,29 +518,29 @@ ngGridServices.factory('SelectionService', function () {
 	selectionService.Initialize = function ($scope, options, rowService) {
         selectionService.isMulti = options.isMulti || options.isMultiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-        selectionService.dataSource = options.data, // the observable array datasource
+        $scope.dataSource = options.data, // the observable array datasource
 
-        selectionService.selectedItem = options.selectedItem || undefined;
-        selectionService.selectedItems = options.selectedItems || [];
+        $scope.selectedItem = options.selectedItem || undefined;
+        $scope.selectedItems = options.selectedItems || [];
         selectionService.selectedIndex = options.selectedIndex;
         selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
 
         // some subscriptions to keep the selectedItem in sync
-        $scope.$watch(selectionService.selectedItem, function(val) {
+        $scope.$watch('selectedItem', function(val) {
             if (selectionService.ignoreSelectedItemChanges)
                 return;
             selectionService.selectedItems = [val];
         });
 
-        $scope.$watch(selectionService.selectedItems, function(vals) {
+        $scope.$watch('selectedItems', function(vals) {
             selectionService.ignoreSelectedItemChanges = true;
-            selectionService.selectedItem = vals ? vals[0] : null;
+            $scope.selectedItem = vals ? vals[0] : null;
             selectionService.ignoreSelectedItemChanges = false;
         });
 
         // ensures our selection flag on each item stays in sync
-        $scope.$watch(selectionService.selectedItems, function(newItems) {
+        $scope.$watch('selectedItems', function(newItems) {
             var data = selectionService.dataSource;
             if (!newItems) {
                 newItems = [];
@@ -564,7 +559,7 @@ ngGridServices.factory('SelectionService', function () {
         });
 
         //make sure as the data changes, we keep the selectedItem(s) correct
-        $scope.$watch(selectionService.dataSource, function(items) {
+        $scope.$watch('dataSource', function(items) {
             var selectedItems,
                 itemsToRemove;
             if (!items) {
@@ -572,7 +567,7 @@ ngGridServices.factory('SelectionService', function () {
             }
 
             //make sure the selectedItem(s) exist in the new data
-            selectedItems = selectionService.selectedItems;
+            selectedItems = $scope.selectedItems;
             itemsToRemove = [];
 
             angular.forEach(selectedItems, function(item) {
@@ -583,7 +578,7 @@ ngGridServices.factory('SelectionService', function () {
 
             //clean out any selectedItems that don't exist in the new array
             if (itemsToRemove.length > 0) {
-                selectionService.selectedItems.removeAll(itemsToRemove);
+                $scope.selectedItems.removeAll(itemsToRemove);
             }
         });
     };
@@ -609,7 +604,7 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? selectionService.selectedItems = [rowItem.entity] : selectionService.selectedItems = [];
+            rowItem.selected ? $scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -619,18 +614,18 @@ ngGridServices.factory('SelectionService', function () {
 	// just call this func and hand it the rowItem you want to select (or de-select)    
     selectionService.addOrRemove = function(rowItem) {
         if (!rowItem.selected) {
-            var indx = selectionService.selectedItems.indexOf(rowItem.entity);
-            selectionService.selectedItems.splice(indx, 1);
+            var indx = $scope.selectedItems.indexOf(rowItem.entity);
+            $scope.selectedItems.splice(indx, 1);
         } else {
-            if (selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
-                selectionService.selectedItems.push(rowItem.entity);
+            if ($scope.selectedItems.indexOf(rowItem.entity) === -1) {
+                $scope.selectedItems.push(rowItem.entity);
             }
         }
     };
     
     // the count of selected items (supports both multi and single-select logic
     selectionService.SelectedItemCount = function () {
-        return selectionService.selectedItems.length;
+        return $scope.selectedItems.length;
     };
     
     // writable-computed observable
@@ -642,9 +637,9 @@ ngGridServices.factory('SelectionService', function () {
             dataSourceCopy.push(item);
         });
         if (checkAll) {
-            selectionService.selectedItems = dataSourceCopy;
+            $scope.selectedItems = dataSourceCopy;
         } else {
-            selectionService.selectedItems = [];
+            $scope.selectedItems = [];
         }
     };
     
@@ -872,36 +867,28 @@ ngGridServices.factory('SortService', function () {
         sortService.internalSortedData = data;
     };
     
-    sortService.Initialize = function ($scope) {
+    sortService.Initialize = function ($scope, options) {
         sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
         sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
         sortService.ASC = "asc", // constant for sorting direction
         sortService.DESC = "desc", // constant for sorting direction
-        sortService.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
         sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
         sortService.internalSortedData = [];
             
-        sortService.dataSource = $scope.data;
+        $scope.dataSource = options.data;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        sortService.sortInfo = $scope.sortInfo;
+        $scope.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch(sortService.dataSource, function () {
-            sortService.sortData();
-        });
-        $scope.$watch(sortService.sortInfo, function () {
-            sortService.sortData();
-        });
+        $scope.$watch('dataSource', sortService.sortData);
+
+        $scope.$watch('sortInfo', sortService.sortData);
     };
     
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
-        //do an equality check first
-        if (col === prevSortInfo.column && direction === prevSortInfo.direction) {
-            return;
-        }
         //if its not equal, set the observable and kicngff the event chain
         sortService.sortInfo = {
             column: col,
@@ -986,9 +973,10 @@ ng.defaultGridTemplate = function () {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.Column = function ($scope, colDef, index, headerRowHeight) {
+ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
     var self = this;
-
+    
+    self.sortService = sortService;
     $scope.allowSort = colDef.allowSort;
     $scope.allowFilter = colDef.allowFilter;
     $scope.allowResize = colDef.allowResize;
@@ -1054,7 +1042,7 @@ ng.Column = function ($scope, colDef, index, headerRowHeight) {
     };    
   
     $scope.filter = "";
-    this.filterVisible = false;
+    self.filterVisible = false;
 
     $scope.noSortVisible = function () {
         var ret = $scope.sortDirection !== "asc" && $scope.sortDirection !== "desc";
@@ -1067,6 +1055,7 @@ ng.Column = function ($scope, colDef, index, headerRowHeight) {
         }
         var dir = $scope.sortDirection === "asc" ? "desc" : "asc";
         $scope.sortDirection = dir;
+        self.sortService.Sort(self, dir);
     };
 
     $scope.filterHasFocus = false;
@@ -1182,7 +1171,7 @@ ng.Footer = function ($scope, grid) {
 * FILE: ..\src\classes\grid.js
 ***********************************************/
 
-ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, SelectionService) {
+ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, SortService) {
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
@@ -1232,7 +1221,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
     $scope.$viewport = null;
     $scope.$canvas = null;
     $scope.footerController = null;
-    $scope.width = gridWidth;
+    $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
     $scope.selectedItemCount= null;
     $scope.filterIsOpen = false;
@@ -1241,11 +1230,18 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-
+    self.data = self.config.data;
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
 
+    self.sortService = SortService;
+    self.sortService.Initialize($scope.$new(), {
+        data: self.data,
+        sortInfo: self.config.sortInfo,
+        useExternalSorting: self.config.useExternalSorting
+    });
+    
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
         && !self.config.canSelectRows) {
@@ -1253,19 +1249,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         self.config.footerRowHeight = 30;
     }
     
-    // set this during the constructor execution so that the
-    // computed observables register correctly;
-    $scope.data = self.config.data;
-
-    //FilterService.Initialize(self.config);
-    //SortService.Initialize({
-    //    data: FilterService.FilteredData,
-    //    sortInfo: self.config.sortInfo,
-    //    useExternalSorting: self.config.useExternalSorting
-    //});
-     
-    //$scope.sortInfo = SortService.SortInfo; //observable
-    //$scope.filterInfo = FilterService.FilterInfo; //observable
+    $scope.sortInfo = SortService.SortInfo;
+    
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
@@ -1306,7 +1291,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
 
     //#region Container Dimensions
 
-    $scope.rootDim = new ng.Dimension({ outerHeight: gridHeight, outerWidth: gridWidth });
+    $scope.rootDim = gridDim;
 
     $scope.headerDim = function () {
         var rootDim = $scope.rootDim,
@@ -1560,12 +1545,12 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         if (self.config.columnDefs.length > 0){
             return;
         }
-        if (!$scope.data || !$scope.data[0]) {
+        if (!self.data || !self.data[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
 
         var item;
-        item = $scope.data[0];
+        item = self.data[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             if (propName === SELECTED_PROP) {
@@ -1600,7 +1585,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight);
+                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight, self.sortService);
                 cols.push(column);
             });
 
@@ -1612,8 +1597,8 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope, self);
-        self.selectionService.Initialize($scope, {
+        self.rowService.Initialize($scope.$new(), self);
+        self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
             data: $scope.finalRows,
             selectedItem: self.config.selectedItem,
@@ -1621,7 +1606,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.isMultiSelect
-        }, RowService);
+        }, self.rowService);
         
         angular.forEach($scope.columns, function(col) {
             if (col.widthIsConfigured){
@@ -2036,7 +2021,8 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                     var htmlText = ng.defaultGridTemplate();
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
-                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService, SortService);
+                    var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    var grid = new ng.Grid($scope, options, gridDim, RowService, SelectionService, SortService);
                     
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
