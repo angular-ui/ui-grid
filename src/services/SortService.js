@@ -8,8 +8,13 @@
 
 ngGridServices.factory('SortService', function () {
     var sortService = {};
-	
+
+    sortService.SortedData = [];
     sortService.dataSource = [];
+    sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+    sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
+    var ASC = "asc"; // constant for sorting direction
+    sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
 
     // utility function for null checking
     sortService.isEmpty = function (val) {
@@ -149,6 +154,7 @@ ngGridServices.factory('SortService', function () {
     sortService.sortData = function () {
         var data = sortService.dataSource,
             sortInfo = sortService.sortInfo,
+            options = sortService.options,
             col,
             direction,
             sortFn,
@@ -156,7 +162,7 @@ ngGridServices.factory('SortService', function () {
         
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            sortService.internalSortedData = data;
+            sortService.SortedData = data;
             return;
         }
         
@@ -165,18 +171,18 @@ ngGridServices.factory('SortService', function () {
         direction = sortInfo.direction;
         
         //see if we already figured out what to use to sort the column
-        if (colSortFnCache[col.field]) {
-            sortFn = colSortFnCache[col.field];
+        if (sortService.colSortFnCache[col.field]) {
+            sortFn = sortService.colSortFnCache[col.field];
         } else if (col.sortingAlgorithm != undefined){
             sortFn = col.sortingAlgorithm;
-            colSortFnCache[col.field] = col.sortingAlgorithm;
+            sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = sortService.dataSource[0];
-            sortFn = sortService.guessSortFn(ng.utils.getPropertyPath(col.field, item));
+            sortFn = sortService.guessSortFn(item[col.field]);
             
             //cache it
             if (sortFn) {
-                colSortFnCache[col.field] = sortFn;
+                sortService.colSortFnCache[col.field] = sortFn;
             } else {
                 // we assign the alpha sort because anything that is null/undefined will never get passed to
                 // the actual sorting function. It will get caught in our null check and returned to be sorted
@@ -220,25 +226,20 @@ ngGridServices.factory('SortService', function () {
             }
         });
         
-        sortService.internalSortedData = data;
+        sortService.SortedData = data;
     };
     
     sortService.Initialize = function ($scope, options) {
-        sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
-        sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
-        sortService.ASC = "asc", // constant for sorting direction
-        sortService.DESC = "desc", // constant for sorting direction
-        sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
-        sortService.internalSortedData = [];
-            
-        $scope.dataSource = options.data;
+        sortService.options = options;
+        sortService.SortedData = options.data;
+        sortService.dataSource = options.data;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        $scope.sortInfo = options.sortInfo;
+        sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch('dataSource', sortService.sortData);
+        $scope.$watch(sortService.dataSource, sortService.sortData);
 
-        $scope.$watch('sortInfo', sortService.sortData);
+        $scope.$watch(sortService.sortInfo, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -251,7 +252,5 @@ ngGridServices.factory('SortService', function () {
             direction: direction
         };
     };
-    sortService.SortedData = sortService.internalSortedData;
-    
     return sortService;
 });

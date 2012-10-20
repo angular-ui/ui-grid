@@ -77,6 +77,20 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         sortInfo: self.config.sortInfo,
         useExternalSorting: self.config.useExternalSorting
     });
+
+    $scope.finalData = self.sortService.SortedData;
+    
+    $scope.$watch('finalData', function (newVal) {
+        if (self.config.selectedItems) {
+            var lastItemIndex = self.config.selectedItems.length - 1;
+            if (lastItemIndex <= 0) {
+                var item = self.config.selectedItems[lastItemIndex];
+                if (item) {
+                    self.scrollIntoView(item);
+                }
+            }
+        }
+    });
     
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -433,10 +447,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope.$new(), self);
+        self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
-            data: $scope.finalRows,
+            data: $scope.finalData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,

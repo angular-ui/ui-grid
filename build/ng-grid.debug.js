@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/19/2012 23:40:58
+* Compiled At: 10/20/2012 01:08:58
 ***********************************************/
 
 (function(window, undefined){
@@ -345,7 +345,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = grid.data; //observableArray
+        rowService.dataSource = $scope.finalData; //observableArray
         
         // change subscription to clear out our cache
         $scope.$watch(rowService.dataSource, function () {
@@ -374,15 +374,11 @@ ngGridServices.factory('RowService', function () {
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
         
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch(rowService.viewableRange, function(){
-			rowService.calcRenderedRange();
-		});		
-        $scope.$watch(rowService.minViewportRows, function(){
-			rowService.calcRenderedRange();
-		});		
-        $scope.$watch(rowService.dataSource, function(){
-			rowService.calcRenderedRange();
-		});		
+		$scope.$watch(rowService.viewableRange, rowService.CalcRenderedRange);
+
+		$scope.$watch(rowService.minViewportRows, rowService.CalcRenderedRange);
+
+		$scope.$watch(rowService.dataSource, rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -409,7 +405,7 @@ ngGridServices.factory('RowService', function () {
 	};
 	
 	// core logic that intelligently figures out the rendered range given all the contraints that we have
-	rowService.calcRenderedRange = function () {
+	rowService.CalcRenderedRange = function () {
 		var rg = rowService.viewableRange,
 		minRows = rowService.eminViewportRows,
 		maxRows = rowService.dataSource.length,
@@ -493,10 +489,6 @@ ngGridServices.factory('RowService', function () {
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
     rowService.RowSubscriptions = {};
     
-    rowService.CalcRenderedRange = function(){
-        rowService.calcRenderedRange();
-    };
-
     rowService.ViewableRange = function () {
         return rowService.viewableRange;
     };
@@ -652,8 +644,13 @@ ngGridServices.factory('SelectionService', function () {
 
 ngGridServices.factory('SortService', function () {
     var sortService = {};
-	
+
+    sortService.SortedData = [];
     sortService.dataSource = [];
+    sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+    sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
+    var ASC = "asc"; // constant for sorting direction
+    sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
 
     // utility function for null checking
     sortService.isEmpty = function (val) {
@@ -793,6 +790,7 @@ ngGridServices.factory('SortService', function () {
     sortService.sortData = function () {
         var data = sortService.dataSource,
             sortInfo = sortService.sortInfo,
+            options = sortService.options,
             col,
             direction,
             sortFn,
@@ -800,7 +798,7 @@ ngGridServices.factory('SortService', function () {
         
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            sortService.internalSortedData = data;
+            sortService.SortedData = data;
             return;
         }
         
@@ -809,18 +807,18 @@ ngGridServices.factory('SortService', function () {
         direction = sortInfo.direction;
         
         //see if we already figured out what to use to sort the column
-        if (colSortFnCache[col.field]) {
-            sortFn = colSortFnCache[col.field];
+        if (sortService.colSortFnCache[col.field]) {
+            sortFn = sortService.colSortFnCache[col.field];
         } else if (col.sortingAlgorithm != undefined){
             sortFn = col.sortingAlgorithm;
-            colSortFnCache[col.field] = col.sortingAlgorithm;
+            sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = sortService.dataSource[0];
-            sortFn = sortService.guessSortFn(ng.utils.getPropertyPath(col.field, item));
+            sortFn = sortService.guessSortFn(item[col.field]);
             
             //cache it
             if (sortFn) {
-                colSortFnCache[col.field] = sortFn;
+                sortService.colSortFnCache[col.field] = sortFn;
             } else {
                 // we assign the alpha sort because anything that is null/undefined will never get passed to
                 // the actual sorting function. It will get caught in our null check and returned to be sorted
@@ -864,25 +862,20 @@ ngGridServices.factory('SortService', function () {
             }
         });
         
-        sortService.internalSortedData = data;
+        sortService.SortedData = data;
     };
     
     sortService.Initialize = function ($scope, options) {
-        sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
-        sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
-        sortService.ASC = "asc", // constant for sorting direction
-        sortService.DESC = "desc", // constant for sorting direction
-        sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
-        sortService.internalSortedData = [];
-            
-        $scope.dataSource = options.data;
+        sortService.options = options;
+        sortService.SortedData = options.data;
+        sortService.dataSource = options.data;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        $scope.sortInfo = options.sortInfo;
+        sortService.sortInfo = options.sortInfo;
         //watch the changes in these objects
-        $scope.$watch('dataSource', sortService.sortData);
+        $scope.$watch(sortService.dataSource, sortService.sortData);
 
-        $scope.$watch('sortInfo', sortService.sortData);
+        $scope.$watch(sortService.sortInfo, sortService.sortData);
     };
     
     // the actual sort function to call
@@ -895,8 +888,6 @@ ngGridServices.factory('SortService', function () {
             direction: direction
         };
     };
-    sortService.SortedData = sortService.internalSortedData;
-    
     return sortService;
 });
 
@@ -1240,6 +1231,20 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         data: self.data,
         sortInfo: self.config.sortInfo,
         useExternalSorting: self.config.useExternalSorting
+    });
+
+    $scope.finalData = self.sortService.SortedData;
+    
+    $scope.$watch('finalData', function (newVal) {
+        if (self.config.selectedItems) {
+            var lastItemIndex = self.config.selectedItems.length - 1;
+            if (lastItemIndex <= 0) {
+                var item = self.config.selectedItems[lastItemIndex];
+                if (item) {
+                    self.scrollIntoView(item);
+                }
+            }
+        }
     });
     
     // Set new default footer height if not overridden, and multi select is disabled
@@ -1597,10 +1602,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope.$new(), self);
+        self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             isMultiSelect: self.config.isMultiSelect,
-            data: $scope.finalRows,
+            data: $scope.finalData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
@@ -2034,7 +2039,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
 
-                    $scope.$watch(grid.finalData, function() {
+                    $scope.$watch($scope.finalData, function () {
                         if (grid.config.selectedItems) {
                             var lastItemIndex = grid.config.selectedItems.length - 1;
                             if (lastItemIndex <= 0) {
@@ -2067,7 +2072,8 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
 
                     $scope.initPhase = 1;
 
-                    iElement.append($compile(htmlText)($scope));
+                    iElement.append($compile(htmlText)($scope));                    // make sure that if any of these change, we re-fire the calc logic
+                    
                     return null;
                 }
             };

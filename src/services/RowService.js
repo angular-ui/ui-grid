@@ -28,7 +28,7 @@ ngGridServices.factory('RowService', function () {
              // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // short cut to sorted and filtered data
-        rowService.dataSource = grid.data; //observableArray
+        rowService.dataSource = $scope.finalData; //observableArray
         
         // change subscription to clear out our cache
         $scope.$watch(rowService.dataSource, function () {
@@ -57,15 +57,11 @@ ngGridServices.factory('RowService', function () {
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
         
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch(rowService.viewableRange, function(){
-			rowService.calcRenderedRange();
-		});		
-        $scope.$watch(rowService.minViewportRows, function(){
-			rowService.calcRenderedRange();
-		});		
-        $scope.$watch(rowService.dataSource, function(){
-			rowService.calcRenderedRange();
-		});		
+		$scope.$watch(rowService.viewableRange, rowService.CalcRenderedRange);
+
+		$scope.$watch(rowService.minViewportRows, rowService.CalcRenderedRange);
+
+		$scope.$watch(rowService.dataSource, rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -92,7 +88,7 @@ ngGridServices.factory('RowService', function () {
 	};
 	
 	// core logic that intelligently figures out the rendered range given all the contraints that we have
-	rowService.calcRenderedRange = function () {
+	rowService.CalcRenderedRange = function () {
 		var rg = rowService.viewableRange,
 		minRows = rowService.eminViewportRows,
 		maxRows = rowService.dataSource.length,
@@ -176,10 +172,6 @@ ngGridServices.factory('RowService', function () {
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
     rowService.RowSubscriptions = {};
     
-    rowService.CalcRenderedRange = function(){
-        rowService.calcRenderedRange();
-    };
-
     rowService.ViewableRange = function () {
         return rowService.viewableRange;
     };

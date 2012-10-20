@@ -39,7 +39,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
 
-                    $scope.$watch(grid.finalData, function() {
+                    $scope.$watch($scope.finalData, function () {
                         if (grid.config.selectedItems) {
                             var lastItemIndex = grid.config.selectedItems.length - 1;
                             if (lastItemIndex <= 0) {
@@ -72,7 +72,8 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
 
                     $scope.initPhase = 1;
 
-                    iElement.append($compile(htmlText)($scope));
+                    iElement.append($compile(htmlText)($scope));                    // make sure that if any of these change, we re-fire the calc logic
+                    
                     return null;
                 }
             };
