@@ -6,15 +6,20 @@
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
 
-ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
+ngGridServices.factory('SortService', function () {
     var sortService = {};
-	$scope._sortService = {};
 	
-    $scope._sortService.dataSource = [];
+    sortService.dataSource = [];
+
+    // utility function for null checking
+    sortService.isEmpty = function (val) {
+        return (val === null || val === undefined || val === '');
+    };
+    
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
-    $scope._sortService.guessSortFn = function (item) {
+    sortService.guessSortFn = function (item) {
         var sortFn, // sorting function that is guessed
             itemType, // the typeof item
             dateParts, // for date parsing
@@ -28,10 +33,10 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         //check for numbers and booleans
         switch (itemType) {
             case "number":
-            sortFn = $scope.sortNumber;
+                sortFn = sortService.sortNumber;
             break;
             case "boolean":
-            sortFn = $scope.sortBool;
+                sortFn = sortService.sortBool;
             break;
         }
         
@@ -39,14 +44,14 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         if (sortFn) return sortFn;
         
         //check if the item is a valid Date
-        if (Object.prototype.toString.call(item) === '[object Date]') return $scope._sortService.sortDate;
+        if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
         
         // if we aren't left with a string, we can't sort full objects...
         if (itemType !== "string") return null;   
         
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return $scope._sortService.sortNumberStr;
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return sortService.sortNumberStr;
         // check for a date: dd/mm/yyyy or dd/mm/yy
         // can have / or . or - as separator
         // can be mm/dd as well
@@ -57,24 +62,24 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             day = parseInt(dateParts[2]);
             if (month > 12) {
                 // definitely dd/mm
-                return $scope._sortService.sortDDMMStr;
+                return sortService.sortDDMMStr;
             } else if (day > 12) {
-                return $scope._sortService.sortMMDDStr;
+                return sortService.sortMMDDStr;
             } else {
                 // looks like a date, but we can't tell which, so assume that it's MM/DD
-                return $scope._sortService.sortMMDDStr;
+                return sortService.sortMMDDStr;
             }
         }
         //finally just sort the normal string...
-        return $scope._sortService.sortAlpha;
+        return sortService.sortAlpha;
     };
     
     //#region Sorting Functions
-    $scope._sortService.sortNumber = function (a, b) {
+    sortService.sortNumber = function (a, b) {
         return a - b;
     };
 
-    $scope._sortService.sortNumberStr = function (a, b) {
+    sortService.sortNumberStr = function (a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
         if (isNaN(numA)) badA = true;
@@ -87,32 +92,32 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         return numA - numB;
     };
 
-    $scope._sortService.sortAlpha = function (a, b) {
+    sortService.sortAlpha = function (a, b) {
         var strA = a.toUpperCase(),
         strB = b.toUpperCase();
         return strA == strB ? 0 : (strA < strB ? -1 : 1);
     };
 
-    $scope._sortService.sortDate = function (a, b) {
+    sortService.sortDate = function (a, b) {
         var timeA = a.getTime(),
         timeB = b.getTime();
         return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
     };
 
-    $scope._sortService.sortBool = function (a, b) {
+    sortService.sortBool = function (a, b) {
         if (a && b) { return 0; }
         if (!a && !b) { return 0; }
         else { return a ? 1 : -1;}
     };
 
-    $scope._sortService.sortDDMMStr = function (a, b) {
+    sortService.sortDDMMStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match($scope._sortService.dateRE);
+        mtch = a.match(sortService.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
-        mtch = b.match($scope._sortService.dateRE);
+        mtch = b.match(sortService.dateRE);
         y = mtch[3]; m = mtch[2]; d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -122,9 +127,9 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         return 1;
     };
 
-    $scope._sortService.sortMMDDStr = function (a, b) {
+    sortService.sortMMDDStr = function (a, b) {
         var dateA, dateB, mtch, m, d, y;
-        mtch = a.match($scope._sortService.dateRE);
+        mtch = a.match(sortService.dateRE);
         y = mtch[3]; d = mtch[2]; m = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
@@ -141,9 +146,9 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
     //#endregion
 
     // the core sorting logic trigger
-    $scope._sortService.sortData = function () {
-        var data = $scope._sortService.dataSource,
-            sortInfo = $scope._sortService.sortInfo,
+    sortService.sortData = function () {
+        var data = sortService.dataSource,
+            sortInfo = sortService.sortInfo,
             col,
             direction,
             sortFn,
@@ -151,7 +156,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
         
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || options.useExternalSorting) {
-            $scope._sortService.internalSortedData = data;
+            sortService.internalSortedData = data;
             return;
         }
         
@@ -166,8 +171,8 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             sortFn = col.sortingAlgorithm;
             colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = $scope.dataSource[0];
-            sortFn = $scope._sortService.guessSortFn(ng.utils.getPropertyPath(col.field, item));
+            item = sortService.dataSource[0];
+            sortFn = sortService.guessSortFn(ng.utils.getPropertyPath(col.field, item));
             
             //cache it
             if (sortFn) {
@@ -176,7 +181,7 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
                 // we assign the alpha sort because anything that is null/undefined will never get passed to
                 // the actual sorting function. It will get caught in our null check and returned to be sorted
                 // down to the bottom
-                sortFn = $scope._sortService.sortAlpha;
+                sortFn = sortService.sortAlpha;
             }
         }
         
@@ -195,8 +200,8 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
                 if (propB !== undefined && propB !== null) { propB = propB[propPath[i]]; }
             }
             
-            propAEmpty = $scope.isEmpty(propA);
-            propBEmpty = $scope.isEmpty(propB);
+            propAEmpty = sortService.isEmpty(propA);
+            propBEmpty = sortService.isEmpty(propB);
             
             // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
             if (propAEmpty && propBEmpty) {
@@ -215,26 +220,29 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             }
         });
         
-        $scope._sortService.internalSortedData = data;
+        sortService.internalSortedData = data;
     };
     
-    sortService.Initialize = function (options) {
-        $scope._sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
-        $scope._sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
-        $scope._sortService.ASC = "asc", // constant for sorting direction
-        $scope._sortService.DESC = "desc", // constant for sorting direction
-        $scope._sortService.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
-        $scope._sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
-        $scope._sortService.internalSortedData = [];
+    sortService.Initialize = function ($scope) {
+        sortService.colSortFnCache = {}, // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+        sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/, // nasty regex for date parsing
+        sortService.ASC = "asc", // constant for sorting direction
+        sortService.DESC = "desc", // constant for sorting direction
+        sortService.prevSortInfo = {}, // obj for previous sorting comparison (helps with throttling events)
+        sortService.initPhase = 0, // flag for preventing improper dependency registrations with KO
+        sortService.internalSortedData = [];
             
-        $scope._sortService.dataSource = options.data;
-        // utility function for null checking
-        $scope._sortService.isEmpty = function (val) {
-            return (val === null || val === undefined || val === '');
-        };
+        sortService.dataSource = $scope.data;
         
         // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        $scope._sortService.sortInfo = options.sortInfo;
+        sortService.sortInfo = $scope.sortInfo;
+        //watch the changes in these objects
+        $scope.$watch(sortService.dataSource, function () {
+            sortService.sortData();
+        });
+        $scope.$watch(sortService.sortInfo, function () {
+            sortService.sortData();
+        });
     };
     
     // the actual sort function to call
@@ -246,20 +254,12 @@ ngGridServices.factory('SortService', ['$rootScope', function ($scope) {
             return;
         }
         //if its not equal, set the observable and kicngff the event chain
-        $scope._sortService.sortInfo = {
+        sortService.sortInfo = {
             column: col,
             direction: direction
         };
     };
-    sortService.SortedData = $scope._sortService.internalSortedData;
-
-    //watch the changes in these objects
-    $scope.$watch($scope._sortService.dataSource, function(resort){
-		$scope._sortService.sortData();
-	});
-    $scope.$watch($scope._sortService.sortInfo, function(resort){
-		$scope._sortService.sortData();
-	});
+    sortService.SortedData = sortService.internalSortedData;
     
     return sortService;
-}]);
+});

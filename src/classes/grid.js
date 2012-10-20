@@ -450,7 +450,7 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         }
 
         self.rowService.Initialize($scope, self);
-        self.selectionService.Initialize({
+        self.selectionService.Initialize($scope, {
             isMultiSelect: self.config.isMultiSelect,
             data: $scope.finalRows,
             selectedItem: self.config.selectedItem,

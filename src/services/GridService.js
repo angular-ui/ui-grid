@@ -5,40 +5,39 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
+ngGridServices.factory('GridService', function () {
     var gridService = {};
-	$scope._gridService = {};
-    $scope._gridService.gridCache = {};
+    gridService.gridCache = {};
     
-    $scope._gridService.getIndexOfCache = function() {
+    gridService.getIndexOfCache = function() {
         var indx = -1;   
-        for (var grid in $scope._gridService.gridCache) {
+        for (var grid in gridService.gridCache) {
             indx++;
-            if (!$scope._gridService.gridCache.hasOwnProperty(grid)) continue;
+            if (!gridService.gridCache.hasOwnProperty(grid)) continue;
             return indx;
         }
         return indx;
     };
     gridService.StoreGrid = function (element, grid) {
-        $scope._gridService.gridCache[grid.gridId] = grid;
+        gridService.gridCache[grid.gridId] = grid;
         element[GRID_KEY] = grid.gridId;
     };
         
     gridService.RemoveGrid = function(gridId) {
-        delete $scope._gridService.gridCache[gridId];
+        delete gridService.gridCache[gridId];
     };
     
     gridService.GetGrid = function (element) {
         var grid;
         if (element[GRID_KEY]) {
-            grid = $scope._gridService.gridCache[element[GRID_KEY]];
+            grid = gridService.gridCache[element[GRID_KEY]];
             return grid;
         }
         return false;
     };
     
     gridService.ClearGridCache = function () {
-        $scope._gridService.gridCache = {};
+        gridService.gridCache = {};
     };
     
     gridService.AssignGridEventHandlers = function ($scope, grid) {
@@ -58,7 +57,7 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1){
-            grid.$viewport.attr('tabIndex', $scope._gridService.getIndexOfCache(grid.gridId));
+            grid.$viewport.attr('tabIndex', gridService.getIndexOfCache(grid.gridId));
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
@@ -100,4 +99,4 @@ ngGridServices.factory('GridService', ['$rootScope', function ($scope) {
         });
     };
     return gridService;
-}]);
+});
