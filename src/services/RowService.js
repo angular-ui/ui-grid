@@ -15,9 +15,9 @@ ngGridServices.factory('RowService', function () {
     rowService.rowCache = [];
     rowService.dataChanged = true;
     rowService.dataSource = [];
-    rowService.rows = [];
     
     rowService.Initialize = function ($scope, grid) {
+        rowService.$scope = $scope;
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
         rowService.prevMinRows = 0; // for comparison purposes when scrolling
         rowService.currentPage = grid.config.currentPage;
@@ -45,7 +45,6 @@ ngGridServices.factory('RowService', function () {
 		
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         rowService.renderedRange = rowService.prevRenderedRange;
-        rowService.renderedChange();
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
         $scope.$watch(rowService.renderedRange, rowService.renderedChange);
@@ -145,7 +144,7 @@ ngGridServices.factory('RowService', function () {
 			//add the row to our return array
 			rowArr.push(row);
 		});
-		rowService.rows = rowArr;
+		rowService.$scope.finalRows = rowArr;
 	};
 	
     rowService.DataChanged = {

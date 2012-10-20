@@ -107,7 +107,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
-    
+
     $scope.maxRows = function () {
         var rows = $scope.finalRows;
         maxCanvasHt = rows.length * self.config.rowHeight;
@@ -121,8 +121,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.columns = [];
 
-
-    $scope.rows = null;
     $scope.headerRow = null;
     $scope.footer = null;
 
@@ -473,7 +471,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         
         $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
-        $scope.finalRows = self.rowService.rows;
 
         ng.cssBuilder.buildStyles($scope, self);
 

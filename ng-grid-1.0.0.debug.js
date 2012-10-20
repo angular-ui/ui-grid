@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 16:31:44
+* Compiled At: 10/20/2012 16:57:14
 ***********************************************/
 
 (function(window, undefined){
@@ -332,9 +332,9 @@ ngGridServices.factory('RowService', function () {
     rowService.rowCache = [];
     rowService.dataChanged = true;
     rowService.dataSource = [];
-    rowService.rows = [];
     
     rowService.Initialize = function ($scope, grid) {
+        rowService.$scope = $scope;
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
         rowService.prevMinRows = 0; // for comparison purposes when scrolling
         rowService.currentPage = grid.config.currentPage;
@@ -362,7 +362,6 @@ ngGridServices.factory('RowService', function () {
 		
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         rowService.renderedRange = rowService.prevRenderedRange;
-        rowService.renderedChange();
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array 
         //$scope.$watch(rowService.renderedRange, rowService.renderedChange);     
         $scope.$watch(rowService.renderedRange, rowService.renderedChange);
@@ -462,7 +461,7 @@ ngGridServices.factory('RowService', function () {
 			//add the row to our return array
 			rowArr.push(row);
 		});
-		rowService.rows = rowArr;
+		rowService.$scope.finalRows = rowArr;
 	};
 	
     rowService.DataChanged = {
@@ -1251,7 +1250,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
-    
+
     $scope.maxRows = function () {
         var rows = $scope.finalRows;
         maxCanvasHt = rows.length * self.config.rowHeight;
@@ -1265,8 +1264,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.columns = [];
 
-
-    $scope.rows = null;
     $scope.headerRow = null;
     $scope.footer = null;
 
@@ -1617,7 +1614,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         
         $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
-        $scope.finalRows = self.rowService.rows;
 
         ng.cssBuilder.buildStyles($scope, self);
 
