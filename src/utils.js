@@ -1,10 +1,4 @@
-﻿/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js"/>
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/navigation.js"/>
-
-ng.utils = {
+﻿ng.utils = {
     arrayForEach: function (array, action) {
         for (var i = 0, j = array.length; i < j; i++)
         action(array[i]);

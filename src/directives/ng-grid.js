@@ -17,19 +17,16 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
     var ngGrid = {
-        replace: false,
         scope: true,
-        transclude: true,
-        controller: 'ngGridController',
         compile: function (iElement, iAttrs, transclude) {
             return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-                    var htmlText = TemplateService.GetTemplateText(GRID_TEMPLATE);
+                    var htmlText = ng.defaultGridTemplate();
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
-                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService);
+                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService, SortService);
                     
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
@@ -41,30 +38,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
 
-                    TemplateService.EnsureGridTemplates({
-                        rowTemplate: grid.config.rowTemplate,
-                        headerTemplate: grid.config.headerTemplate,
-                        headerCellTemplate: grid.config.headerCellTemplate,
-                        footerTemplate: grid.config.footerTemplate,
-                        columns: $scope.columns,
-                        showFilter: grid.config.allowFiltering,
-                        disableTextSelection: grid.config.disableTextSelection,
-                        autogenerateColumns: grid.config.autogenerateColumns,
-                        enableColumnResize: grid.config.enableColumnResize
-                    });
-
-                    /*subscribe to the columns and recrate the grid if they change
-                    scope.$watch(grid.config.columnDefs, function () {
-                        var oldgrid = GridService.GetGrid($element);
-                        var oldgridId = oldgrid.gridId.toString();
-                        $($element).empty();
-                        $($element).removeClass("ngGrid")
-                                   .removeClass("ui-widget")
-                                   .removeClass(oldgridId);
-                        GridService.RemoveGrid(oldgridId);
-                    });
-                    */
-                    //keep selected item scrolled into view
                     $scope.$watch(grid.finalData, function() {
                         if (grid.config.selectedItems) {
                             var lastItemIndex = grid.config.selectedItems.length - 1;
@@ -85,7 +58,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                                 }
                             };
                         });
-                        $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
                     });
 
                     $scope.toggleSelectAll = $scope.toggleSelectAll;

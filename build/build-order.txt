@@ -6,7 +6,6 @@
 ..\src\services\RowService.js
 ..\src\services\SelectionService.js
 ..\src\services\SortService.js
-..\src\services\TemplateService.js
 ..\src\filters\gridFilter.js
 ..\src\templates\gridTemplate.js
 ..\src\classes\column.js
@@ -21,4 +20,3 @@
 ..\src\directives\ng-grid.js
 ..\src\directives\ng-size.js
 ..\src\init.js
-..\src\controllers\ngGridController.js

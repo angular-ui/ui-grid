@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/19/2012 22:25:09
+* Compiled At: 10/19/2012 22:38:39
 ***********************************************/
 
 (function(window, undefined){
@@ -12,7 +12,6 @@
 ***********************************************/
 
 var ng = {};
-ng.templates = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
 var ngGridFilters = angular.module('ngGrid.filters', []);
@@ -25,10 +24,6 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
-var GRID_TEMPLATE = 'ng-gridTmpl';
-var HEADERROW_TEMPLATE = 'ng-gridHeaderTmpl';
-var HEADERCELL_TEMPLATE = 'ng-gridHeaderCellTmpl';
-var ROW_TEMPLATE = 'ng-gridRowTmpl';
 var GRID_KEY = '__koGrid__';
 
 /***********************************************
@@ -99,7 +94,6 @@ ng.moveSelectionHandler = function (grid, evt) {
 /***********************************************
 * FILE: ..\src\utils.js
 ***********************************************/
-
 ng.utils = {
     arrayForEach: function (array, action) {
         for (var i = 0, j = array.length; i < j; i++)
@@ -920,54 +914,6 @@ ngGridServices.factory('SortService', function () {
 });
 
 /***********************************************
-* FILE: ..\src\services\TemplateService.js
-***********************************************/
-
-ngGridServices.factory('TemplateService', ['$rootScope', function ($scope) {
-    var templateService = {};
-	$scope._templateService = {};
-    
-    $scope._templateService.templateCache = {};
-    $scope._templateService.templateCache[GRID_TEMPLATE] = ng.templates.defaultGridInnerTemplate();
-    templateService.AddTemplate = function (templateText, tmplId) {
-        $scope._templateService.templateCache[tmplId] = templateText;
-    };
-
-    templateService.RemoveTemplate = function (tmplId){
-        delete $scope._templateService.templateCache[tmplId];
-    };
-
-    templateService.AddTemplateSafe = function (tmplId, templateTextAccessor) {
-        if (!$scope._templateService.templateCache[tmplId]) {
-            templateService.AddTemplate(templateTextAccessor(), tmplId);
-        }
-    };
-
-    templateService.EnsureGridTemplates = function (options) {
-        var defaults = {
-            rowTemplate: '',
-            headerTemplate: '',
-            headerCellTemplate: '',
-            footerTemplate: '',
-            columns: null,
-            showFilter: true
-        },
-        config = $.extend(defaults, options);
-        
-        //first ensure the grid template!
-        templateService.AddTemplateSafe(GRID_TEMPLATE, function () {
-            return ng.templates.defaultGridInnerTemplate(config);
-        });
-    };
-
-    templateService.GetTemplateText = function(tmplId) {
-        var ret = $scope._templateService.templateCache[tmplId] || "";
-        return ret;
-    };
-    return templateService;
-}]);
-
-/***********************************************
 * FILE: ..\src\filters\gridFilter.js
 ***********************************************/
 
@@ -1144,7 +1090,7 @@ ngGridServices.factory('FilterService', ['$rootScope', function ($scope) {
 * FILE: ..\src\templates\gridTemplate.js
 ***********************************************/
 
-ng.templates.defaultGridInnerTemplate = function () {
+ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="ngTopPanel" ng-size="headerDim">');
     b.append(    '<div class="ngHeaderContainer" ng-size="headerDim">');
@@ -1416,9 +1362,6 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         headerRowHeight: 30,
         footerRowHeight: 55,
         filterRowHeight: 30,
-        rowTemplate: ROW_TEMPLATE,
-        headerTemplate: HEADERROW_TEMPLATE,
-        headerCellTemplate: HEADERCELL_TEMPLATE,
         footerVisible: true,
         canSelectRows: true,
         autogenerateColumns: true,
@@ -1842,15 +1785,6 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
 
         self.buildColumns();
 
-        //now if we are using the default templates, then make the generated ones unique
-        if (self.config.rowTemplate === 'ngRowTemplate') {
-            self.config.rowTemplate = self.gridId + self.config.rowTemplate;
-        }
-
-        if (self.config.headerTemplate === 'ngHeaderRowTemplate') {
-            self.config.headerTemplate = self.gridId + self.config.headerTemplate;
-        }
-
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope, {
             isMultiSelect: self.config.isMultiSelect,
@@ -2266,19 +2200,16 @@ ng.domUtility = (new function () {
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
 
-ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridService, RowService, SelectionService, SortService, TemplateService) {
+ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
     var ngGrid = {
-        replace: false,
         scope: true,
-        transclude: true,
-        controller: 'ngGridController',
         compile: function (iElement, iAttrs, transclude) {
             return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-                    var htmlText = TemplateService.GetTemplateText(GRID_TEMPLATE);
+                    var htmlText = ng.defaultGridTemplate();
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
-                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService);
+                    var grid = new ng.Grid($scope, options, $($element).height(), $($element).width(), RowService, SelectionService, SortService);
                     
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
@@ -2290,30 +2221,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
 
-                    TemplateService.EnsureGridTemplates({
-                        rowTemplate: grid.config.rowTemplate,
-                        headerTemplate: grid.config.headerTemplate,
-                        headerCellTemplate: grid.config.headerCellTemplate,
-                        footerTemplate: grid.config.footerTemplate,
-                        columns: $scope.columns,
-                        showFilter: grid.config.allowFiltering,
-                        disableTextSelection: grid.config.disableTextSelection,
-                        autogenerateColumns: grid.config.autogenerateColumns,
-                        enableColumnResize: grid.config.enableColumnResize
-                    });
-
-                    /*subscribe to the columns and recrate the grid if they change
-                    scope.$watch(grid.config.columnDefs, function () {
-                        var oldgrid = GridService.GetGrid($element);
-                        var oldgridId = oldgrid.gridId.toString();
-                        $($element).empty();
-                        $($element).removeClass("ngGrid")
-                                   .removeClass("ui-widget")
-                                   .removeClass(oldgridId);
-                        GridService.RemoveGrid(oldgridId);
-                    });
-                    */
-                    //keep selected item scrolled into view
                     $scope.$watch(grid.finalData, function() {
                         if (grid.config.selectedItems) {
                             var lastItemIndex = grid.config.selectedItems.length - 1;
@@ -2334,7 +2241,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, FilterService, GridServ
                                 }
                             };
                         });
-                        $scope.$watch(column.filter, FilterService.CreateFilterChangeCallback(column));
                     });
 
                     $scope.toggleSelectAll = $scope.toggleSelectAll;
@@ -2411,13 +2317,4 @@ ngGridDirectives.directive('ngSize', function($compile) {
 
 // initialization of services into the main module
 var ngGridApp = angular.module('ngGrid', ['ngGrid.filters', 'ngGrid.services', 'ngGrid.directives']);
-
-/***********************************************
-* FILE: ..\src\controllers\ngGridController.js
-***********************************************/
-
-
-ngGridApp.controller('ngGridController', function ngGridController($scope, $element, $attrs, $transclude) {
-    return;
-});
 }(window));

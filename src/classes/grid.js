@@ -14,9 +14,6 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
         headerRowHeight: 30,
         footerRowHeight: 55,
         filterRowHeight: 30,
-        rowTemplate: ROW_TEMPLATE,
-        headerTemplate: HEADERROW_TEMPLATE,
-        headerCellTemplate: HEADERCELL_TEMPLATE,
         footerVisible: true,
         canSelectRows: true,
         autogenerateColumns: true,
@@ -439,15 +436,6 @@ ng.Grid = function ($scope, options, gridHeight, gridWidth, RowService, Selectio
     self.init = function () {
 
         self.buildColumns();
-
-        //now if we are using the default templates, then make the generated ones unique
-        if (self.config.rowTemplate === 'ngRowTemplate') {
-            self.config.rowTemplate = self.gridId + self.config.rowTemplate;
-        }
-
-        if (self.config.headerTemplate === 'ngHeaderRowTemplate') {
-            self.config.headerTemplate = self.gridId + self.config.headerTemplate;
-        }
 
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope, {

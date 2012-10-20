@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.templates.defaultGridInnerTemplate = function () {
+ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="ngTopPanel" ng-size="headerDim">');
     b.append(    '<div class="ngHeaderContainer" ng-size="headerDim">');

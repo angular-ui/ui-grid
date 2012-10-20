@@ -5,7 +5,6 @@
 /// <reference path="../src/utils.js"/>
 
 var ng = {};
-ng.templates = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
 var ngGridFilters = angular.module('ngGrid.filters', []);
