@@ -43,14 +43,14 @@ ng.defaultGridTemplate = function () {
     b.append('</div>');
     b.append('<div class="ngFooterPanel" ng-size="footerDim">');
     b.append(   '<div class="ngTotalSelectContainer" ng-show="footerVisible">');
-    b.append(       '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');
-    b.append(           '<span class="ngLabel">Total Items: {{maxRows}}</span>');
+    b.append(       '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
+    b.append(           '<span class="ngLabel">Total Items: {{maxRows()}}</span>');
     b.append(       '</div>');
-    b.append(       '<div class="ngFooterSelectedItems" ng-show="isMultiSelect">');
+    b.append(       '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append(       '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
     b.append(       '</div>');
     b.append(   '</div>');
-    b.append(   '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
+    b.append(   '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
     b.append(       '<div style="float: right;">');
     b.append(           '<div class="ngRowCountPicker">');
     b.append(               '<span class="ngLabel">Rows:</span>');

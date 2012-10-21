@@ -6,7 +6,7 @@
     } else {
         $scope.maxRows = grid.maxRows;
     }
-    $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
+    $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
 
     $scope.selectedPageSize = grid.config.pageSize;

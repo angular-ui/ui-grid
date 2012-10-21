@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 16:57:14
+* Compiled At: 10/20/2012 17:16:19
 ***********************************************/
 
 (function(window, undefined){
@@ -496,7 +496,7 @@ ngGridServices.factory('SelectionService', function () {
 
 	selectionService.Initialize = function ($scope, options, rowService) {
 	    selectionService.$scope = $scope;
-        selectionService.isMulti = options.isMulti || options.isMultiSelect;
+        selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
 
@@ -584,7 +584,7 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : selectionService.$scope.selectedItems = [];
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -921,14 +921,14 @@ ng.defaultGridTemplate = function () {
     b.append('</div>');
     b.append('<div class="ngFooterPanel" ng-size="footerDim">');
     b.append(   '<div class="ngTotalSelectContainer" ng-show="footerVisible">');
-    b.append(       '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}" >');
-    b.append(           '<span class="ngLabel">Total Items: {{maxRows}}</span>');
+    b.append(       '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
+    b.append(           '<span class="ngLabel">Total Items: {{maxRows()}}</span>');
     b.append(       '</div>');
-    b.append(       '<div class="ngFooterSelectedItems" ng-show="isMultiSelect">');
+    b.append(       '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append(       '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
     b.append(       '</div>');
     b.append(   '</div>');
-    b.append(   '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !isMultiSelect}">');
+    b.append(   '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
     b.append(       '<div style="float: right;">');
     b.append(           '<div class="ngRowCountPicker">');
     b.append(               '<span class="ngLabel">Rows:</span>');
@@ -1091,7 +1091,7 @@ ng.Footer = function ($scope, grid) {
     } else {
         $scope.maxRows = grid.maxRows;
     }
-    $scope.isMultiSelect = (grid.config.canSelectRows && grid.config.isMultiSelect);
+    $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
 
     $scope.selectedPageSize = grid.config.pageSize;
@@ -1179,7 +1179,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         includeDestroyed: false, // flag to show _destroy=true items in grid
         selectWithCheckboxOnly: false,
         keepLastSelectedAround: false,
-        isMultiSelect: true,
+        multiSelect: true,
         lastClickedRow: undefined,
         tabIndex: -1,
         disableTextSelection: false,
@@ -1593,13 +1593,13 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
-            isMultiSelect: self.config.isMultiSelect,
+            multiSelect: self.config.multiSelect,
             data: $scope.sortedData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
-            isMulti: self.config.isMultiSelect
+            isMulti: self.config.multiSelect
         }, self.rowService);
         
         angular.forEach($scope.columns, function(col) {

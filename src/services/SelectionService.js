@@ -15,7 +15,7 @@ ngGridServices.factory('SelectionService', function () {
 
 	selectionService.Initialize = function ($scope, options, rowService) {
 	    selectionService.$scope = $scope;
-        selectionService.isMulti = options.isMulti || options.isMultiSelect;
+        selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
         $scope.dataSource = options.data, // the observable array datasource
 
@@ -103,7 +103,7 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : $scope.selectedItems = [];
+            rowItem.selected ? selectionService.$scope.selectedItems = [rowItem.entity] : selectionService.$scope.selectedItems = [];
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;

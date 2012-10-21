@@ -36,7 +36,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         includeDestroyed: false, // flag to show _destroy=true items in grid
         selectWithCheckboxOnly: false,
         keepLastSelectedAround: false,
-        isMultiSelect: true,
+        multiSelect: true,
         lastClickedRow: undefined,
         tabIndex: -1,
         disableTextSelection: false,
@@ -450,13 +450,13 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
-            isMultiSelect: self.config.isMultiSelect,
+            multiSelect: self.config.multiSelect,
             data: $scope.sortedData,
             selectedItem: self.config.selectedItem,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
-            isMulti: self.config.isMultiSelect
+            isMulti: self.config.multiSelect
         }, self.rowService);
         
         angular.forEach($scope.columns, function(col) {
