@@ -1,25 +1,29 @@
 function userController($scope) {
-    $scope.myData = [{name: "Moroni", age: 50},
-                     {name: "Tiancum", age: 47},
-                     {name: "Jacob", age: 27},
-                     {name: "Nephi", age: 29},
-                     {name: "Enos", age: 34},
-                     {name: "Ether", age: 42},
-                     {name: "Alma", age: 43},
-                     {name: "Jared", age: 21},
-                     {name: "Gideon", age: 35},
-                     {name: "Jarom", age: 22},
-                     {name: "Omni", age: 31},
-                     {name: "Mosiah", age: 68},
-                     {name: "Helaman", age: 56},
-                     {name: "Sam", age: 17},
-                     {name: "Laman", age: 26},
-                     {name: "Lemuel", age: 26}];
+    var self = this;
+    self.myData = [{name: "Moroni", age: 50, born: '350 A.D.'},
+                     {name: "Tiancum", age: 47, born: '350 A.D.'},
+                     {name: "Jacob", age: 27, born: '350 A.D.'},
+                     {name: "Nephi", age: 29, born: '350 A.D.'},
+                     {name: "Enos", age: 34, born: '350 A.D.'},
+                     {name: "Ether", age: 42, born: '350 A.D.'},
+                     {name: "Alma", age: 43, born: '350 A.D.'},
+                     {name: "Jared", age: 21, born: '350 A.D.'},
+                     {name: "Gideon", age: 35, born: '350 B.C.'},
+                     {name: "Jarom", age: 22, born: '350 B.C.'},
+                     {name: "Omni", age: 31, born: '350 B.C.'},
+                     {name: "Mosiah", age: 68, born: '350 B.C.'},
+                     {name: "Helaman", age: 56, born: '350 A.D.'},
+                     {name: "Sam", age: 17, born: '400 B.C.'},
+                     {name: "Laman", age: 26, born: '380 B.C.'},
+                     {name: "Lemuel", age: 26, born: '380 B.C.'}];
     $scope.$root.gridOptions = {
-        data: $scope.myData,
+        data: self.myData,
         enablePaging: true,
-        selectedItems: $scope.mySelection,
+        selectedItems: self.mySelection,
         multiSelect: false
     };
-    $scope.mySelection = [];
+    self.mySelection = [];
+    $scope.showNumberOfItems = function(){
+        alert(self.mySelection.length);
+    };
 };
