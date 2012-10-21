@@ -273,7 +273,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             newDim = new ng.Dimension();
 
         newDim.autoFitHeight = true;
-        newDim.outerWidth = $scope.totalRowWidth;
+        newDim.outerWidth = $scope.totalRowWidth();
 
         if (vScrollBarIsOpen) { newDim.outerWidth += self.elementDims.scrollW; }
         else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { //if the horizontal scroll is open it forces the viewport to be smaller

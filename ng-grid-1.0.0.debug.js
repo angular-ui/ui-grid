@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/21/2012 10:54:52
+* Compiled At: 10/21/2012 15:42:38
 ***********************************************/
 
 (function(window, undefined){
@@ -893,7 +893,7 @@ ng.defaultGridTemplate = function () {
     //b.append(            '</div>');
 
     b.append(             	'<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)">');
-    b.append(                 	'<div class="ngHeaderColumn" ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append(                 	'<div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
     b.append(                   	 '<span class="ngHeaderText">{{col.displayName}}</span>');
     b.append(                   	 '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append(                   	 '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
@@ -1407,7 +1407,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             newDim = new ng.Dimension();
 
         newDim.autoFitHeight = true;
-        newDim.outerWidth = $scope.totalRowWidth;
+        newDim.outerWidth = $scope.totalRowWidth();
 
         if (vScrollBarIsOpen) { newDim.outerWidth += self.elementDims.scrollW; }
         else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { //if the horizontal scroll is open it forces the viewport to be smaller
@@ -1757,11 +1757,11 @@ ng.cssBuilder = {
         }
         $style.empty();
         
-        css.append(".{0} .kgCanvas { width: {1}px; }", gridId, scope.totalRowWidth());
-        css.append(".{0} .kgCell { height: {1}px; }", gridId, rowHeight);
-        css.append(".{0} .kgRow { position: absolute; left: 0; right: 0; height: {1}px; line-height: {1}px; display: inline; }", gridId, rowHeight);
-        css.append(".{0} .kgHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
-        css.append(".{0} .kgHeaderScroller { line-height: {1}px; overflow: none; }", gridId, headerRowHeight);
+        if(scope.totalRowWidth() > scope.width)
+			css.append(".{0} .ngCanvas { width: {1}px; }", gridId, scope.totalRowWidth());
+        css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
+        css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
+        css.append(".{0} .ngHeaderScroller { line-height: {1}px; }", gridId, headerRowHeight);
         
         for (; i < len; i++) {
             col = scope.columns[i];

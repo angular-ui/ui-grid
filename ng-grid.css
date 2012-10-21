@@ -22,9 +22,7 @@
     overflow: hidden;
     font-weight: bold;
 }
-.ngHeaderScroller {
-    position: absolute;
-}
+
 .ngHeaderCell {
     position: absolute;
     background-color: rgb(234, 234, 234); 
@@ -34,10 +32,6 @@
 
 .ngHeaderText {
 	margin-left: 5px;
-}
-
-.ngHeaderColumn{
-	padding-top: 5px;
 }
 
 div.ngHeaderCell{
