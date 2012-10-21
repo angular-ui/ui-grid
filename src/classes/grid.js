@@ -24,7 +24,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         pageSize: 250, //Paging: Size of Paging data
         totalServerItems: undefined, //Paging: how many items are on the server
         currentPage: 1, //Paging: initial displayed page.
-        selectedItems: [],
+        selectedItems: [], // array, only used if multi turned on
+        selectedIndex: 0, //index of the selectedItem in the data array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
@@ -58,7 +59,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.footerController = null;
     $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
-    $scope.selectedItemCount= null;
     $scope.filterIsOpen = false;
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
@@ -443,6 +443,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             multiSelect: self.config.multiSelect,
             sortedData: $scope.sortedData,
             selectedItems: self.config.selectedItems,
+            selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.multiSelect
         }, self.rowService);
@@ -457,7 +458,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             }
         });
         
-        $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
 
         ng.cssBuilder.buildStyles($scope, self);

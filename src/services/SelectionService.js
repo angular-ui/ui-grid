@@ -16,30 +16,13 @@ ngGridServices.factory('SelectionService', function () {
 	selectionService.Initialize = function ($scope, options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.sortedData, // the observable array datasource
+	    selectionService.dataSource = options.data, // the observable array datasource
 
 	    selectionService.selectedItems = options.selectedItems;
-        selectionService.lastClickedRow = undefined;
+        selectionService.selectedIndex = options.selectedIndex;
+        selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
 
-	    // ensures our selection flag on each item stays in sync
-        $scope.$watch('selectedItems', function(newItems) {
-            var data = selectionService.dataSource;
-            if (!newItems) {
-                newItems = [];
-            }
-            angular.forEach(data, function(item) {
-                if (!item[SELECTED_PROP]) {
-                    item[SELECTED_PROP] = false;
-                }
-                if (ng.utils.arrayIndexOf(newItems, item) > -1) {
-                    //newItems contains the item
-                    item[SELECTED_PROP] = true;
-                } else {
-                    item[SELECTED_PROP] = false;
-                }
-            });
-        });
 
         //make sure as the data changes, we keep the selectedItem(s) correct
         $scope.$watch('dataSource', function(items) {
@@ -91,7 +74,15 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? selectionService.selectedItems = [rowItem.entity] : selectionService.selectedItems = [];
+            if (selectionService.lastClickedRow) selectionService.lastClickedRow.selected = false;
+            if (rowItem.selected) {
+                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
+                selectionService.selectedItems.push(rowItem.entity);
+            } else {
+                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
+            }
+            selectionService.lastClickedRow = rowItem;
+            return true;
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -108,11 +99,6 @@ ngGridServices.factory('SelectionService', function () {
                 selectionService.selectedItems.push(rowItem.entity);
             }
         }
-    };
-    
-    // the count of selected items (supports both multi and single-select logic
-    selectionService.SelectedItemCount = function () {
-        return selectionService.selectedItems.length;
     };
     
     // writable-computed observable

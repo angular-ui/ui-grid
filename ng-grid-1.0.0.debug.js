@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 22:12:15
+* Compiled At: 10/20/2012 23:01:03
 ***********************************************/
 
 (function(window, undefined){
@@ -497,30 +497,13 @@ ngGridServices.factory('SelectionService', function () {
 	selectionService.Initialize = function ($scope, options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.sortedData, // the observable array datasource
+	    selectionService.dataSource = options.data, // the observable array datasource
 
 	    selectionService.selectedItems = options.selectedItems;
-        selectionService.lastClickedRow = undefined;
+        selectionService.selectedIndex = options.selectedIndex;
+        selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
 
-	    // ensures our selection flag on each item stays in sync
-        $scope.$watch('selectedItems', function(newItems) {
-            var data = selectionService.dataSource;
-            if (!newItems) {
-                newItems = [];
-            }
-            angular.forEach(data, function(item) {
-                if (!item[SELECTED_PROP]) {
-                    item[SELECTED_PROP] = false;
-                }
-                if (ng.utils.arrayIndexOf(newItems, item) > -1) {
-                    //newItems contains the item
-                    item[SELECTED_PROP] = true;
-                } else {
-                    item[SELECTED_PROP] = false;
-                }
-            });
-        });
 
         //make sure as the data changes, we keep the selectedItem(s) correct
         $scope.$watch('dataSource', function(items) {
@@ -572,7 +555,15 @@ ngGridServices.factory('SelectionService', function () {
                 return true;
             }
         } else if (!selectionService.isMulti) {
-            rowItem.selected ? selectionService.selectedItems = [rowItem.entity] : selectionService.selectedItems = [];
+            if (selectionService.lastClickedRow) selectionService.lastClickedRow.selected = false;
+            if (rowItem.selected) {
+                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
+                selectionService.selectedItems.push(rowItem.entity);
+            } else {
+                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
+            }
+            selectionService.lastClickedRow = rowItem;
+            return true;
         }
         selectionService.addOrRemove(rowItem);
         selectionService.lastClickedRow = rowItem;
@@ -589,11 +580,6 @@ ngGridServices.factory('SelectionService', function () {
                 selectionService.selectedItems.push(rowItem.entity);
             }
         }
-    };
-    
-    // the count of selected items (supports both multi and single-select logic
-    selectionService.SelectedItemCount = function () {
-        return selectionService.selectedItems.length;
     };
     
     // writable-computed observable
@@ -1174,7 +1160,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         pageSize: 250, //Paging: Size of Paging data
         totalServerItems: undefined, //Paging: how many items are on the server
         currentPage: 1, //Paging: initial displayed page.
-        selectedItems: [],
+        selectedItems: [], // array, only used if multi turned on
+        selectedIndex: 0, //index of the selectedItem in the data array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
@@ -1208,7 +1195,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.footerController = null;
     $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
-    $scope.selectedItemCount= null;
     $scope.filterIsOpen = false;
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
@@ -1593,6 +1579,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             multiSelect: self.config.multiSelect,
             sortedData: $scope.sortedData,
             selectedItems: self.config.selectedItems,
+            selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.multiSelect
         }, self.rowService);
@@ -1607,7 +1594,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             }
         });
         
-        $scope.selectedItemCount = self.selectionService.SelectedItemCount;
         $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
 
         ng.cssBuilder.buildStyles($scope, self);
