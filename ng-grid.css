@@ -143,9 +143,8 @@ div.ngHeaderCell:last-child{
 /******** Footer ********/
 .ngFooterPanel{
     background-color: rgb(234, 234, 234);
-    padding: 2px 0;
-    border-top: 1px solid rgb(229, 229, 229);
-    border-bottom: 1px solid rgb(229, 229, 229);
+    padding: 0;
+	border-top: 1px solid rgb(212,212,212);
 	position: relative;
 }
 .ngTotalSelectContainer {

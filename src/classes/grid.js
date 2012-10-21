@@ -183,8 +183,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             footerDim = $scope.footerDim(),
             newDim = new ng.Dimension();
 
-        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
-        newDim.outerWidth = rootDim.outerWidth;
+        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight - 2;
+        newDim.outerWidth = rootDim.outerWidth - 2;
         newDim.innerHeight = newDim.outerHeight;
         newDim.innerWidth = newDim.outerWidth;
 

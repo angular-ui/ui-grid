@@ -24,7 +24,7 @@ ngGridDirectives.directive('ngSize', function($compile) {
                         dim = $scope[iAttrs.ngSize](),
                         oldHt = $container.outerHeight(),
                         oldWdth = $container.outerWidth();
-
+					dim.outerWidth = dim.outerWidth - 2;
                     if (dim != undefined) {
                         if (dim.autoFitHeight) {
                             dim.outerHeight = $parent.height();

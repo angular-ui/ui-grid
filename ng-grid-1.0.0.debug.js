@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 23:01:03
+* Compiled At: 10/20/2012 23:06:18
 ***********************************************/
 
 (function(window, undefined){
@@ -1319,8 +1319,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             footerDim = $scope.footerDim(),
             newDim = new ng.Dimension();
 
-        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight;
-        newDim.outerWidth = rootDim.outerWidth;
+        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight - 2;
+        newDim.outerWidth = rootDim.outerWidth - 2;
         newDim.innerHeight = newDim.outerHeight;
         newDim.innerWidth = newDim.outerWidth;
 
@@ -2065,7 +2065,7 @@ ngGridDirectives.directive('ngSize', function($compile) {
                         dim = $scope[iAttrs.ngSize](),
                         oldHt = $container.outerHeight(),
                         oldWdth = $container.outerWidth();
-
+					dim.outerWidth = dim.outerWidth - 2;
                     if (dim != undefined) {
                         if (dim.autoFitHeight) {
                             dim.outerHeight = $parent.height();
