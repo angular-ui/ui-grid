@@ -15,7 +15,7 @@ ng.moveSelectionHandler = function (grid, evt) {
         
     var offset,
         charCode = (evt.which) ? evt.which : event.keyCode,
-        rowKey = '__kg_rowIndex__'; // constant for the entity's row's rowIndex
+        rowKey = '__ng_rowIndex__'; // constant for the entity's row's rowIndex
 
     // detect which direction for arrow keys to navigate the grid
     switch (charCode) {
@@ -47,7 +47,7 @@ ng.moveSelectionHandler = function (grid, evt) {
         // fire the selection
         row.toggleSelected(null, evt);
 
-        itemToView = ng.utils.getElementsByClassName("kgSelected");
+        itemToView = ng.utils.getElementsByClassName("ngSelected");
 
         // finally scroll it into view as we arrow through
         if (!Element.prototype.scrollIntoViewIfNeeded) {

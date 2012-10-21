@@ -27,19 +27,19 @@ ng.domUtility = (new function () {
         grid.$root = $(rootEl);
 
         //Headers
-        grid.$topPanel = $(".kgTopPanel", grid.$root[0]);
-        grid.$headerContainer = $(".kgHeaderContainer", grid.$topPanel[0]);
-        grid.$headerScroller = $(".kgHeaderScroller", grid.$headerContainer[0]);
+        grid.$topPanel = $(".ngTopPanel", grid.$root[0]);
+        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[0]);
+        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[0]);
         grid.$headers = grid.$headerContainer.children();
 
         //Viewport
-        grid.$viewport = $(".kgViewport", grid.$root[0]);
+        grid.$viewport = $(".ngViewport", grid.$root[0]);
 
         //Canvas
-        grid.$canvas = $(".kgCanvas", grid.$viewport[0]);
+        grid.$canvas = $(".ngCanvas", grid.$viewport[0]);
 
         //Footers
-        grid.$footerPanel = $(".kgFooterPanel", grid.$root[0]);
+        grid.$footerPanel = $(".ngFooterPanel", grid.$root[0]);
     };
 
     this.measureElementMaxDims = function ($container) {
@@ -143,7 +143,7 @@ ng.domUtility = (new function () {
         $row = $canvas.children().first();
         if ($row.length === 0) {
             //add a dummy row
-            $canvas.append('<div class="kgRow"></div>');
+            $canvas.append('<div class="ngRow"></div>');
             $row = $canvas.children().first();
             isDummyRow = true;
         }
@@ -151,7 +151,7 @@ ng.domUtility = (new function () {
         $cell = $row.children().first();
         if ($cell.length === 0) {
             //add a dummy cell
-            $row.append('<div class="kgCell col0"></div>');
+            $row.append('<div class="ngCell col0"></div>');
             $cell = $row.children().first();
             isDummyCell = true;
         }

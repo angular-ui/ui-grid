@@ -102,23 +102,18 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         defaults.footerRowHeight = 30;
         self.config.footerRowHeight = 30;
     }
-    
+    $scope.renderedRows = [];
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
     $scope.finalRows = []; //observable Array
-    $scope.canvasHeight = maxCanvasHt.toString() + 'px';
+    $scope.canvasHeight = function() {
+        return maxCanvasHt.toString() + 'px';
+    };
 
 	$scope.$watch($scope.finalRows, function(){
-		$scope.maxRows = $scope.finalRows.length;
+	    $scope.maxRows = $scope.finalRows.length;
+	    maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
 	});
-	
-	//Old max rows
-    //$scope.maxRows = function () {
-    //    var rows = $scope.finalRows;
-    //    maxCanvasHt = rows.length * self.config.rowHeight;
-    //    $scope.canvasHeight(maxCanvasHt.toString() + 'px');
-    //    return rows.length || 0;
-    //};
-
+ 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -255,7 +250,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
 
     self.minRowsToRender = function () {
-        var viewportH = $scope.viewportDim.outerHeight || 1;
+        var viewportH = $scope.viewportDim().outerHeight || 1;
 
         if ($scope.filterIsOpen) {
             return prevMinRowsToRender;
@@ -268,8 +263,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
 
     $scope.headerScrollerDim = function () {
-        var viewportH = $scope.viewportDim.outerHeight,
-            maxHeight = $scope.maxCanvasHeight,
+        var viewportH = $scope.viewportDim().outerHeight,
+            maxHeight = $scope.maxCanvasHeight(),
             vScrollBarIsOpen = (maxHeight > viewportH),
             newDim = new ng.Dimension();
 
@@ -322,7 +317,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         $scope.elementsNeedMeasuring = true;
 
         //calculate the POSSIBLE biggest viewport height
-        rootH = $scope.maxCanvasHeight + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
 
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
@@ -335,7 +330,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         rootW = $scope.totalRowWidth + self.elementDims.rowWdiff;
 
         //now see if we are going to have a vertical scroll bar present
-        if ($scope.maxCanvasHeight > canvasH) {
+        if ($scope.maxCanvasHeight() > canvasH) {
 
             //if we are, then add that width to the max width 
             rootW += self.elementDims.scrollW || 0;
@@ -355,7 +350,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
     };
 
-    $scope.refreshDomSizesTrigger = (function () {
+    $scope.refreshDomSizesTrigger = function () {
 
         if (hUpdateTimeout) {
             if (window.setImmediate) {
@@ -368,9 +363,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if ($scope.initPhase > 0) {
 
             //don't shrink the grid if we sorting or filtering
-            if (!filterIsOpen && !isSorting) {
+            if (!$scope.filterIsOpen && !isSorting) {
 
-                $scope.refreshDomSizes();
+                self.refreshDomSizes();
 
                 ng.cssBuilder.buildStyles($scope, self);
 
@@ -380,7 +375,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             }
         }
 
-    })();
+    };
 
     self.buildColumnDefsFromData = function () {
         if (self.config.columnDefs.length > 0){
@@ -501,10 +496,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        RowService.ViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender()));
+        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender()));
     };
 
-    $scope.adjustScrollLeft = function (scrollLeft) {
+    self.adjustScrollLeft = function (scrollLeft) {
         if ($scope.$headerContainer) {
             $scope.$headerContainer.scrollLeft(scrollLeft);
         }
