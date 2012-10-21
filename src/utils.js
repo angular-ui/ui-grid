@@ -109,7 +109,7 @@
             iElems[0]
         );
         return version > 4 ? version : undefined;
-    })(),
+    })()
 };
 
 $.extend(ng.utils, {

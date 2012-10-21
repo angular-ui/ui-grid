@@ -11,7 +11,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     var defaults = {
         rowHeight: 30,
         columnWidth: 100,
-        headerRowHeight: 30,
+        headerRowHeight: 32,
         footerRowHeight: 55,
         filterRowHeight: 30,
         footerVisible: true,
@@ -108,12 +108,17 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.finalRows = []; //observable Array
     $scope.canvasHeight = maxCanvasHt.toString() + 'px';
 
-    $scope.maxRows = function () {
-        var rows = $scope.finalRows;
-        maxCanvasHt = rows.length * self.config.rowHeight;
-        $scope.canvasHeight(maxCanvasHt.toString() + 'px');
-        return rows.length || 0;
-    };
+	$scope.$watch($scope.finalRows, function(){
+		$scope.maxRows = $scope.finalRows.length;
+	});
+	
+	//Old max rows
+    //$scope.maxRows = function () {
+    //    var rows = $scope.finalRows;
+    //    maxCanvasHt = rows.length * self.config.rowHeight;
+    //    $scope.canvasHeight(maxCanvasHt.toString() + 'px');
+    //    return rows.length || 0;
+    //};
 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;

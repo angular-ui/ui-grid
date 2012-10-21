@@ -8,17 +8,18 @@
 /******** Grid ********/
 .ngGrid {
     background-color: rgb(253, 253, 253);
+	border: 1px solid rgb(212,212,212);
 }
 
 /******** Header ********/
 .ngTopPanel {
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(234, 234, 234);
     overflow: hidden;
+	border-bottom: 1px solid rgb(212,212,212);
 }
 .ngHeaderContainer {
     position: relative;
     overflow: hidden;
-    border-bottom: 1px solid rgb(229, 229, 229);
     font-weight: bold;
 }
 .ngHeaderScroller {
@@ -26,11 +27,33 @@
 }
 .ngHeaderCell {
     position: absolute;
-    background-color: rgb(241, 241, 241); 
-    padding: 0;
+    background-color: rgb(234, 234, 234); 
+    padding: 0 0 0 0;
     cursor: pointer;
-    border-right: 1px solid rgb(241, 241, 241);
 }
+
+.ngHeaderText {
+	margin-left: 5px;
+}
+
+.ngHeaderColumn{
+	padding-top: 5px;
+}
+
+div.ngHeaderCell{
+	border-left: 1px solid rgb(212,212,212);
+	border-right: 1px solid rgb(212,212,212);
+}
+
+div.ngHeaderCell:first-child{
+	border-left: 0px;
+}
+
+div.ngHeaderCell:last-child{
+	border-right: 1px solid rgb(212,212,212);
+}
+
+
 /******** Viewport ********/
 .ngViewport{
     background-color: rgb(255, 255, 255);
@@ -47,10 +70,10 @@
     cursor: pointer;
 }
 .ngRow.even {
-    background-color: rgb(253, 253, 253);
+    background-color: rgb(243, 243, 243);
 }
 .ngRow.odd {
-    background-color: rgb(249, 249, 249);
+    background-color: rgb(253, 253, 253);
 }
 .ngRow.selected {
     background-color: rgb(255, 255, 204);
@@ -63,8 +86,10 @@
 .ngCell {
     overflow: hidden; 
     position: absolute;
+	margin-left: 4px;
     padding: 0;
     display: inline;
+	margin-top: 5px;
 }
 .ngRowIndexCell{ 
     text-align: center;
@@ -117,7 +142,7 @@
 
 /******** Footer ********/
 .ngFooterPanel{
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(234, 234, 234);
     padding: 2px 0;
     border-top: 1px solid rgb(229, 229, 229);
     border-bottom: 1px solid rgb(229, 229, 229);
@@ -319,7 +344,7 @@
 .ngSortButtonUp {
     position: absolute;
     top: 10px;
-    margin-left: 5px;
+	right: 4px;
     display: inline;
 	border-color: gray transparent;
 	border-style: solid;
@@ -330,7 +355,7 @@
 .ngSortButtonDown {
     position: absolute;
     top: 17px;
-    margin-left: 5px;
+	right: 4px;
     display: inline;
 	border-color: gray transparent;
 	border-style: solid;
