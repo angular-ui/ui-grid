@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/20/2012 21:36:11
+* Compiled At: 10/20/2012 22:12:15
 ***********************************************/
 
 (function(window, undefined){
@@ -497,28 +497,13 @@ ngGridServices.factory('SelectionService', function () {
 	selectionService.Initialize = function ($scope, options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.data, // the observable array datasource
+	    selectionService.dataSource = options.sortedData, // the observable array datasource
 
-        selectionService.selectedItem = options.selectedItem || undefined;
-	    selectionService.selectedItems = options.selectedItems || [];
-        selectionService.selectedIndex = options.selectedIndex;
-        selectionService.lastClickedRow = options.lastClickedRow;
+	    selectionService.selectedItems = options.selectedItems;
+        selectionService.lastClickedRow = undefined;
         selectionService.rowService = rowService;
 
-        // some subscriptions to keep the selectedItem in sync
-        $scope.$watch('selectedItem', function(val) {
-            if (selectionService.ignoreSelectedItemChanges)
-                return;
-            selectionService.selectedItems = [val];
-        });
-
-        $scope.$watch('selectedItems', function(vals) {
-            selectionService.ignoreSelectedItemChanges = true;
-            selectionService.selectedItem = vals ? vals[0] : null;
-            selectionService.ignoreSelectedItemChanges = false;
-        });
-
-        // ensures our selection flag on each item stays in sync
+	    // ensures our selection flag on each item stays in sync
         $scope.$watch('selectedItems', function(newItems) {
             var data = selectionService.dataSource;
             if (!newItems) {
@@ -583,7 +568,7 @@ ngGridServices.factory('SelectionService', function () {
                     selectionService.rowService.rowCache[prevIndx].selected = selectionService.lastClickedRow.selected;
                     selectionService.addOrRemove(rowItem);
                 }
-                selectionService.lastClickedRow(rowItem);
+                selectionService.lastClickedRow = rowItem;
                 return true;
             }
         } else if (!selectionService.isMulti) {
@@ -634,9 +619,9 @@ ngGridServices.factory('SelectionService', function () {
 ***********************************************/
 
 ngGridServices.factory('SortService', function () {
-    var sortService = {};
+    var sortService = { };
 
-    sortService.SortedData = [];
+    sortService.sortedData = [];
     sortService.dataSource = [];
     sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
@@ -644,43 +629,43 @@ ngGridServices.factory('SortService', function () {
     sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
 
     // utility function for null checking
-    sortService.isEmpty = function (val) {
+    sortService.isEmpty = function(val) {
         return (val === null || val === undefined || val === '');
     };
-    
+
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
-    sortService.guessSortFn = function (item) {
+    sortService.guessSortFn = function(item) {
         var sortFn, // sorting function that is guessed
             itemType, // the typeof item
             dateParts, // for date parsing
             month, // for date parsing
             day; // for date parsing
-        
+
         if (item === undefined || item === null || item === '') return null;
-        
-        itemType = typeof (item);
-        
+
+        itemType = typeof(item);
+
         //check for numbers and booleans
         switch (itemType) {
-            case "number":
-                sortFn = sortService.sortNumber;
+        case "number":
+            sortFn = sortService.sortNumber;
             break;
-            case "boolean":
-                sortFn = sortService.sortBool;
+        case "boolean":
+            sortFn = sortService.sortBool;
             break;
         }
-        
+
         //if we found one, return it
         if (sortFn) return sortFn;
-        
+
         //check if the item is a valid Date
         if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
-        
+
         // if we aren't left with a string, we can't sort full objects...
         if (itemType !== "string") return sortService.basicSort;
-        
+
         // now lets string check..
         //check if the item data is a valid number
         if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return sortService.sortNumberStr;
@@ -702,22 +687,22 @@ ngGridServices.factory('SortService', function () {
                 return sortService.sortMMDDStr;
             }
         }
-        
+
         //finally just sort the normal string...
         return sortService.sortAlpha;
     };
-    
-    sortService.basicSort = function (a, b) {
+
+    sortService.basicSort = function(a, b) {
         if (a == b) return 0;
         if (a < b) return -1;
         return 1;
     };
     //#region Sorting Functions
-    sortService.sortNumber = function (a, b) {
+    sortService.sortNumber = function(a, b) {
         return a - b;
     };
 
-    sortService.sortNumberStr = function (a, b) {
+    sortService.sortNumberStr = function(a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
         if (isNaN(numA)) badA = true;
@@ -725,38 +710,47 @@ ngGridServices.factory('SortService', function () {
         if (isNaN(numB)) badB = true;
         // we want bad ones to get pushed to the bottom... which effectively is "greater than"
         if (badA && badB) return 0;
-        if (badA) return 1; 
+        if (badA) return 1;
         if (badB) return -1;
         return numA - numB;
     };
 
-    sortService.sortAlpha = function (a, b) {
+    sortService.sortAlpha = function(a, b) {
         var strA = a.toUpperCase(),
-        strB = b.toUpperCase();
+            strB = b.toUpperCase();
         return strA == strB ? 0 : (strA < strB ? -1 : 1);
     };
 
-    sortService.sortDate = function (a, b) {
+    sortService.sortDate = function(a, b) {
         var timeA = a.getTime(),
-        timeB = b.getTime();
+            timeB = b.getTime();
         return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
     };
 
-    sortService.sortBool = function (a, b) {
-        if (a && b) { return 0; }
-        if (!a && !b) { return 0; }
-        else { return a ? 1 : -1;}
+    sortService.sortBool = function(a, b) {
+        if (a && b) {
+            return 0;
+        }
+        if (!a && !b) {
+            return 0;
+        } else {
+            return a ? 1 : -1;
+        }
     };
 
-    sortService.sortDDMMStr = function (a, b) {
+    sortService.sortDDMMStr = function(a, b) {
         var dateA, dateB, mtch, m, d, y;
         mtch = a.match(sortService.dateRE);
-        y = mtch[3]; m = mtch[2]; d = mtch[1];
+        y = mtch[3];
+        m = mtch[2];
+        d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
         mtch = b.match(sortService.dateRE);
-        y = mtch[3]; m = mtch[2]; d = mtch[1];
+        y = mtch[3];
+        m = mtch[2];
+        d = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateB = y + m + d;
@@ -765,15 +759,19 @@ ngGridServices.factory('SortService', function () {
         return 1;
     };
 
-    sortService.sortMMDDStr = function (a, b) {
+    sortService.sortMMDDStr = function(a, b) {
         var dateA, dateB, mtch, m, d, y;
         mtch = a.match(sortService.dateRE);
-        y = mtch[3]; d = mtch[2]; m = mtch[1];
+        y = mtch[3];
+        d = mtch[2];
+        m = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
         mtch = b.match(dateRE);
-        y = mtch[3]; d = mtch[2]; m = mtch[1];
+        y = mtch[3];
+        d = mtch[2];
+        m = mtch[1];
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateB = y + m + d;
@@ -784,34 +782,34 @@ ngGridServices.factory('SortService', function () {
     //#endregion
 
     // the core sorting logic trigger
-    sortService.sortData = function () {
+    sortService.sortData = function() {
         var data = sortService.$scope.dataSource,
             sortInfo = sortService.$scope.sortInfo,
             col,
             direction,
             sortFn,
             item;
-        
+
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || sortService.useExternalSorting) {
             sortService.$scope.sortedData = data;
             return;
         }
-        
+
         // grab the metadata for the rest of the logic
         col = sortInfo.column;
         direction = sortInfo.direction;
-        
+
         //see if we already figured out what to use to sort the column
         if (sortService.colSortFnCache[col.field]) {
             sortFn = sortService.colSortFnCache[col.field];
-        } else if (col.sortingAlgorithm != undefined){
+        } else if (col.sortingAlgorithm != undefined) {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = sortService.$scope.dataSource[0];
             sortFn = sortService.guessSortFn(item[col.field]);
-            
+
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;
@@ -822,25 +820,29 @@ ngGridServices.factory('SortService', function () {
                 sortFn = sortService.sortAlpha;
             }
         }
-        
+
         //now actually sort the data
-        data.sort(function (itemA, itemB) {
+        data.sort(function(itemA, itemB) {
             var propA = itemA,
-            propB = itemB,
-            propAEmpty,
-            propBEmpty,
-            propPath,
-            i;
-            
+                propB = itemB,
+                propAEmpty,
+                propBEmpty,
+                propPath,
+                i;
+
             propPath = col.field.split(".");
             for (i = 0; i < propPath.length; i++) {
-                if (propA !== undefined && propA !== null) { propA = propA[propPath[i]]; }
-                if (propB !== undefined && propB !== null) { propB = propB[propPath[i]]; }
+                if (propA !== undefined && propA !== null) {
+                    propA = propA[propPath[i]];
+                }
+                if (propB !== undefined && propB !== null) {
+                    propB = propB[propPath[i]];
+                }
             }
-            
+
             propAEmpty = sortService.isEmpty(propA);
             propBEmpty = sortService.isEmpty(propB);
-            
+
             // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
             if (propAEmpty && propBEmpty) {
                 return 0;
@@ -849,7 +851,7 @@ ngGridServices.factory('SortService', function () {
             } else if (propBEmpty) {
                 return -1;
             }
-            
+
             //made it this far, we don't have to worry about null & undefined
             if (direction === ASC) {
                 return sortFn(propA, propB);
@@ -857,27 +859,31 @@ ngGridServices.factory('SortService', function () {
                 return 0 - sortFn(propA, propB);
             }
         });
-        
+
         sortService.$scope.sortedData = data;
     };
-    
-    sortService.Initialize = function ($scope, useExtSorting) {
+
+    sortService.Initialize = function($scope, useExtSorting) {
         sortService.$scope = $scope;
         sortService.useExternalSorting = useExtSorting;
-        
-        // the sorting metadata, eg: { column: { field: 'sku' }, direction: "asc" }
-        //watch the changes in these objects
     };
-    
+
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
-        //if its not equal, set the observable and kicngff the event chain
+        if (sortService.isSorting == true) return;
+        sortService.isSorting = true;
+        angular.forEach(sortService.$scope.columns, function (column) {
+            if (column.field !== col.field) {
+                column.sortDirection = "";
+            }
+        });
         sortService.$scope.sortInfo = {
             column: col,
             direction: direction
         };
+        sortService.isSorting = false;
     };
     return sortService;
 });
@@ -926,10 +932,10 @@ ng.defaultGridTemplate = function () {
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');
     b.append(   	 '<div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append(       	 '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append(          		 '<span class="ngLabel">Total Items: {{maxRows}}</span>');
+    b.append(          		 '<span class="ngLabel">Total Items: {{sortedData.length}}</span>');
     b.append(       	 '</div>');
     b.append(       	 '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
-    b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
+    b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append(       	 '</div>');
     b.append(   	 '</div>');
     b.append(   	 '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
@@ -961,28 +967,24 @@ ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
     var self = this;
     
     self.sortService = sortService;
-    $scope.allowSort = colDef.allowSort;
-    $scope.allowFilter = colDef.allowFilter;
-    $scope.allowResize = colDef.allowResize;
+    self.allowSort = colDef.allowSort;
+    self.allowFilter = colDef.allowFilter;
+    self.allowResize = colDef.allowResize;
 
     self.width = colDef.width;
-    $scope.width = self.width;
-    $scope.widthIsConfigured = false;
-    $scope.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    $scope.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    self.widthIsConfigured = false;
+    self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = headerRowHeight;
-    $scope.headerRowHeight = self.headerRowHeight;
 
     self.field = colDef.field;
-    if (colDef.displayName === undefined || colDef.displayName === null) {
+    if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
-    $scope.displayName = self.displayName;
     self.index = index;
-    $scope.index = self.index;
-    $scope.isVisible = false;
+    self.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -998,66 +1000,66 @@ ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
         colDef.filterable = true;
     }
 
-    $scope.allowSort = colDef.sortable;
-    $scope.allowResize = colDef.resizable;
-    $scope.allowFilter = colDef.filterable;
+    self.allowSort = colDef.sortable;
+    self.allowResize = colDef.resizable;
+    self.allowFilter = colDef.filterable;
 
-    $scope.sortDirection = "";
-    $scope.sortingAlgorithm = colDef.sortFn;
+    self.sortDirection = "";
+    self.sortingAlgorithm = colDef.sortFn;
 
     //filtering
     self.filter = null;
 
     //cell Template
-    $scope.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
-    $scope.hasCellTemplate = ($scope.cellTemplate ? true : false);
+    self.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    self.hasCellTemplate = (self.cellTemplate ? true : false);
 
-    $scope.cellClass = colDef.cellClass;
-    $scope.headerClass = colDef.headerClass;
+    self.cellClass = colDef.cellClass;
+    self.headerClass = colDef.headerClass;
 
-    $scope.headerTemplate = colDef.headerTemplate;
-    $scope.hasHeaderTemplate = ($scope.headerTemplate ? true : false);
+    self.headerTemplate = colDef.headerTemplate;
+    self.hasHeaderTemplate = (self.headerTemplate ? true : false);
     
     self.showSortButtonUp = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "desc") : $scope.allowSort;
+        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;
     };
     self.showSortButtonDown = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "asc") : $scope.allowSort;
+        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "asc") : self.allowSort;
     };    
   
-    $scope.filter = "";
+    self.filter = "";
     self.filterVisible = false;
 
-    $scope.noSortVisible = function () {
-        var ret = $scope.sortDirection !== "asc" && $scope.sortDirection !== "desc";
-        return ret;
+    self.noSortVisible = function () {
+        var ret = self.sortDirection !== "asc" && self.sortDirection !== "desc";
+        return !self.sortDirection;
     };
 
     self.sort = function () {
-        if (!$scope.allowSort) {
+        if (!self.allowSort) {
             return; // column sorting is disabled, do nothing
         }
-        var dir = $scope.sortDirection === "asc" ? "desc" : "asc";
-        $scope.sortDirection = dir;
+        var dir = self.sortDirection === "asc" ? "desc" : "asc";
+        self.sortDirection = dir;
         self.sortService.Sort(self, dir);
     };
 
-    $scope.filterHasFocus = false;
-    $scope.startMousePosition = 0;
-    $scope.origWidth = 0;
-    $scope.gripOnMouseUp = function () {
+    self.filterHasFocus = false;
+    self.startMousePosition = 0;
+    self.origWidth = 0;
+    self.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
-    $scope.onMouseMove = function (event) {
-        var diff = event.clientX - $scope.startMousePosition;
-        var newWidth = diff + $scope.origWidth;
-        $scope.width = newWidth < self.minWidth ? $scope.minWidth : (newWidth > $scope.maxWidth ? $scope.maxWidth : newWidth);
+    self.onMouseMove = function (event) {
+        var diff = event.clientX - self.startMousePosition;
+        var newWidth = diff + self.origWidth;
+        self.width = newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth);
         return false;
     };
-    $scope.gripOnMouseDown = function (event) {
+    self.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width;
         $(document).mousemove(self.onMouseMove);
@@ -1173,7 +1175,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         totalServerItems: undefined, //Paging: how many items are on the server
         currentPage: 1, //Paging: initial displayed page.
         selectedItems: [],
-        selectedIndex: 0, //index of the selectedItem in the data array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
@@ -1216,7 +1217,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
 
     $scope.dataSource = self.config.data;
-
+    $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
     $scope.sortedData = self.config.data;
 
@@ -1437,20 +1438,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     //#region Events
     $scope.toggleSelectAll = false;
 
-    //$scope.sortData = function (col, dir) {
-    //    isSorting = true;
-
-    //    angular.forEach($scope.columns, function (column) {
-    //        if (column.field !== col.field) {
-    //            if (column.sortDirection !== "") { column.sortDirection = ""; }
-    //        }
-    //    });
-
-    //    SortService.Sort(col, dir);
-
-    //    isSorting = false;
-    //};
-
     //#endregion
 
     $scope.scrollIntoView = function (entity) {
@@ -1604,10 +1591,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
-            data: $scope.sortedData,
-            selectedItem: self.config.selectedItem,
+            sortedData: $scope.sortedData,
             selectedItems: self.config.selectedItems,
-            selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.multiSelect
         }, self.rowService);

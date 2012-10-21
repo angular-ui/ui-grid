@@ -45,10 +45,10 @@ ng.defaultGridTemplate = function () {
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');
     b.append(   	 '<div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append(       	 '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append(          		 '<span class="ngLabel">Total Items: {{maxRows}}</span>');
+    b.append(          		 '<span class="ngLabel">Total Items: {{sortedData.length}}</span>');
     b.append(       	 '</div>');
     b.append(       	 '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
-    b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItemCount}}</span>');
+    b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append(       	 '</div>');
     b.append(   	 '</div>');
     b.append(   	 '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');

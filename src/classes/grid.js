@@ -25,7 +25,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         totalServerItems: undefined, //Paging: how many items are on the server
         currentPage: 1, //Paging: initial displayed page.
         selectedItems: [],
-        selectedIndex: 0, //index of the selectedItem in the data array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
@@ -68,7 +67,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
 
     $scope.dataSource = self.config.data;
-
+    $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
     $scope.sortedData = self.config.data;
 
@@ -289,20 +288,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     //#region Events
     $scope.toggleSelectAll = false;
 
-    //$scope.sortData = function (col, dir) {
-    //    isSorting = true;
-
-    //    angular.forEach($scope.columns, function (column) {
-    //        if (column.field !== col.field) {
-    //            if (column.sortDirection !== "") { column.sortDirection = ""; }
-    //        }
-    //    });
-
-    //    SortService.Sort(col, dir);
-
-    //    isSorting = false;
-    //};
-
     //#endregion
 
     $scope.scrollIntoView = function (entity) {
@@ -456,10 +441,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.Initialize($scope, self);
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
-            data: $scope.sortedData,
-            selectedItem: self.config.selectedItem,
+            sortedData: $scope.sortedData,
             selectedItems: self.config.selectedItems,
-            selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
             isMulti: self.config.multiSelect
         }, self.rowService);

@@ -16,28 +16,13 @@ ngGridServices.factory('SelectionService', function () {
 	selectionService.Initialize = function ($scope, options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.data, // the observable array datasource
+	    selectionService.dataSource = options.sortedData, // the observable array datasource
 
-        selectionService.selectedItem = options.selectedItem || undefined;
-	    selectionService.selectedItems = options.selectedItems || [];
-        selectionService.selectedIndex = options.selectedIndex;
-        selectionService.lastClickedRow = options.lastClickedRow;
+	    selectionService.selectedItems = options.selectedItems;
+        selectionService.lastClickedRow = undefined;
         selectionService.rowService = rowService;
 
-        // some subscriptions to keep the selectedItem in sync
-        $scope.$watch('selectedItem', function(val) {
-            if (selectionService.ignoreSelectedItemChanges)
-                return;
-            selectionService.selectedItems = [val];
-        });
-
-        $scope.$watch('selectedItems', function(vals) {
-            selectionService.ignoreSelectedItemChanges = true;
-            selectionService.selectedItem = vals ? vals[0] : null;
-            selectionService.ignoreSelectedItemChanges = false;
-        });
-
-        // ensures our selection flag on each item stays in sync
+	    // ensures our selection flag on each item stays in sync
         $scope.$watch('selectedItems', function(newItems) {
             var data = selectionService.dataSource;
             if (!newItems) {
@@ -102,7 +87,7 @@ ngGridServices.factory('SelectionService', function () {
                     selectionService.rowService.rowCache[prevIndx].selected = selectionService.lastClickedRow.selected;
                     selectionService.addOrRemove(rowItem);
                 }
-                selectionService.lastClickedRow(rowItem);
+                selectionService.lastClickedRow = rowItem;
                 return true;
             }
         } else if (!selectionService.isMulti) {

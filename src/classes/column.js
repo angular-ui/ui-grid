@@ -2,28 +2,24 @@
     var self = this;
     
     self.sortService = sortService;
-    $scope.allowSort = colDef.allowSort;
-    $scope.allowFilter = colDef.allowFilter;
-    $scope.allowResize = colDef.allowResize;
+    self.allowSort = colDef.allowSort;
+    self.allowFilter = colDef.allowFilter;
+    self.allowResize = colDef.allowResize;
 
     self.width = colDef.width;
-    $scope.width = self.width;
-    $scope.widthIsConfigured = false;
-    $scope.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    $scope.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    self.widthIsConfigured = false;
+    self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = headerRowHeight;
-    $scope.headerRowHeight = self.headerRowHeight;
 
     self.field = colDef.field;
-    if (colDef.displayName === undefined || colDef.displayName === null) {
+    if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
-    $scope.displayName = self.displayName;
     self.index = index;
-    $scope.index = self.index;
-    $scope.isVisible = false;
+    self.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -39,66 +35,66 @@
         colDef.filterable = true;
     }
 
-    $scope.allowSort = colDef.sortable;
-    $scope.allowResize = colDef.resizable;
-    $scope.allowFilter = colDef.filterable;
+    self.allowSort = colDef.sortable;
+    self.allowResize = colDef.resizable;
+    self.allowFilter = colDef.filterable;
 
-    $scope.sortDirection = "";
-    $scope.sortingAlgorithm = colDef.sortFn;
+    self.sortDirection = "";
+    self.sortingAlgorithm = colDef.sortFn;
 
     //filtering
     self.filter = null;
 
     //cell Template
-    $scope.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
-    $scope.hasCellTemplate = ($scope.cellTemplate ? true : false);
+    self.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    self.hasCellTemplate = (self.cellTemplate ? true : false);
 
-    $scope.cellClass = colDef.cellClass;
-    $scope.headerClass = colDef.headerClass;
+    self.cellClass = colDef.cellClass;
+    self.headerClass = colDef.headerClass;
 
-    $scope.headerTemplate = colDef.headerTemplate;
-    $scope.hasHeaderTemplate = ($scope.headerTemplate ? true : false);
+    self.headerTemplate = colDef.headerTemplate;
+    self.hasHeaderTemplate = (self.headerTemplate ? true : false);
     
     self.showSortButtonUp = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "desc") : $scope.allowSort;
+        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;
     };
     self.showSortButtonDown = function () {
-        return $scope.allowSort ? ($scope.noSortVisible() || $scope.sortDirection === "asc") : $scope.allowSort;
+        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "asc") : self.allowSort;
     };    
   
-    $scope.filter = "";
+    self.filter = "";
     self.filterVisible = false;
 
-    $scope.noSortVisible = function () {
-        var ret = $scope.sortDirection !== "asc" && $scope.sortDirection !== "desc";
-        return ret;
+    self.noSortVisible = function () {
+        var ret = self.sortDirection !== "asc" && self.sortDirection !== "desc";
+        return !self.sortDirection;
     };
 
     self.sort = function () {
-        if (!$scope.allowSort) {
+        if (!self.allowSort) {
             return; // column sorting is disabled, do nothing
         }
-        var dir = $scope.sortDirection === "asc" ? "desc" : "asc";
-        $scope.sortDirection = dir;
+        var dir = self.sortDirection === "asc" ? "desc" : "asc";
+        self.sortDirection = dir;
         self.sortService.Sort(self, dir);
     };
 
-    $scope.filterHasFocus = false;
-    $scope.startMousePosition = 0;
-    $scope.origWidth = 0;
-    $scope.gripOnMouseUp = function () {
+    self.filterHasFocus = false;
+    self.startMousePosition = 0;
+    self.origWidth = 0;
+    self.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
-    $scope.onMouseMove = function (event) {
-        var diff = event.clientX - $scope.startMousePosition;
-        var newWidth = diff + $scope.origWidth;
-        $scope.width = newWidth < self.minWidth ? $scope.minWidth : (newWidth > $scope.maxWidth ? $scope.maxWidth : newWidth);
+    self.onMouseMove = function (event) {
+        var diff = event.clientX - self.startMousePosition;
+        var newWidth = diff + self.origWidth;
+        self.width = newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth);
         return false;
     };
-    $scope.gripOnMouseDown = function (event) {
+    self.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width;
         $(document).mousemove(self.onMouseMove);
