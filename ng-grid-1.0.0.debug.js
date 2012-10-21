@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/21/2012 01:28:45
+* Compiled At: 10/21/2012 10:19:08
 ***********************************************/
 
 (function(window, undefined){
@@ -892,9 +892,9 @@ ng.defaultGridTemplate = function () {
     //b.append(                '<input type="checkbox" ng-checked="toggleSelectAll()"/>');
     //b.append(            '</div>');
 
-    b.append(             	'<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">');
+    b.append(             	'<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)">');
     b.append(                 	'<div class="ngHeaderColumn" ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append(                   	 '<span class="ngHeaderText" style="width:{{col.width}}px; height:{{col.headerRowHeight}}px">{{col.displayName}}</span>');
+    b.append(                   	 '<span class="ngHeaderText">{{col.displayName}}</span>');
     b.append(                   	 '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append(                   	 '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append(                	 '</div>');
@@ -1319,6 +1319,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         return newDim;
     };
+	
+	$scope.headerCellSize = function(col){
+		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  }//{'width:' + col.width + 'px; height:' + col.headerRowHeight + 'px;'};
+	};
 
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
