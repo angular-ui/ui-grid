@@ -187,7 +187,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
 	
 	$scope.headerCellSize = function(col){
-		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  }//{'width:' + col.width + 'px; height:' + col.headerRowHeight + 'px;'};
+		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
 	};
 
     $scope.totalRowWidth = function () {

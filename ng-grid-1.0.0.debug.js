@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/21/2012 10:45:44
+* Compiled At: 10/21/2012 10:54:52
 ***********************************************/
 
 (function(window, undefined){
@@ -1321,7 +1321,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
 	
 	$scope.headerCellSize = function(col){
-		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  }//{'width:' + col.width + 'px; height:' + col.headerRowHeight + 'px;'};
+		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
 	};
 
     $scope.totalRowWidth = function () {
