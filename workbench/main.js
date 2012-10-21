@@ -209,7 +209,7 @@ function userController($scope) {
 {name: "Helaman", age: 56, born: '350 A.D.'},
 {name: "Sam", age: 17, born: '400 B.C.'},
 {name: "Laman", age: 26, born: '380 B.C.'},
-{name: "Lemuel", age: 26, born: '380 B.C.'},
+{name: "Lemuel", age: 26, born: '380 B.C.'}
 ];
     $scope.gridOptions = {
         data: self.myData,
