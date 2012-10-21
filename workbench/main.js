@@ -1,5 +1,6 @@
 function userController($scope) {
     var self = this;
+    self.mySelection = [];
     self.myData = [{name: "Moroni", age: 50, born: '350 A.D.'},
                      {name: "Tiancum", age: 47, born: '350 A.D.'},
                      {name: "Jacob", age: 27, born: '350 A.D.'},
@@ -16,13 +17,13 @@ function userController($scope) {
                      {name: "Sam", age: 17, born: '400 B.C.'},
                      {name: "Laman", age: 26, born: '380 B.C.'},
                      {name: "Lemuel", age: 26, born: '380 B.C.'},];
-    $scope.$root.gridOptions = {
+    $scope.gridOptions = {
         data: self.myData,
         enablePaging: true,
         selectedItems: self.mySelection,
         multiSelect: true
     };
-    self.mySelection = [];
+
     $scope.showNumberOfItems = function(){
         alert(self.mySelection.length);
     };
