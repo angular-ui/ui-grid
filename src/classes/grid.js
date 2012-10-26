@@ -76,6 +76,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     self.rowService = RowService;
     self.selectionService = SelectionService;
     
+    $scope.$watch('sortedData', self.rowService.CalcRenderedRange);
+
     self.sortService = SortService;
     self.sortService.Initialize($scope, self.config.useExternalSorting);
 
@@ -107,15 +109,11 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.canvasHeight = function() {
         return maxCanvasHt.toString() + 'px';
     };
-	
-	$scope.finalRows = function(){
-		return self.rowService.renderedRows;
-	}
 
-	$scope.$watch(self.rowService.renderedRows, function(){
-	    $scope.maxRows = self.rowService.renderedRows.length;
-	    maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
-	});
+    $scope.finalRows = function() {
+        return self.rowService.$scope.renderedRows;
+    };
+
  
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
@@ -440,7 +438,11 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope, self);
+        self.rowService.Initialize($scope.$new(), self);
+        $scope.$watch(self.rowService.$scope.renderedRows, function () {
+            $scope.maxRows = self.rowService.$scope.renderedRows.length;
+            maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
+        });
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
             sortedData: $scope.sortedData,

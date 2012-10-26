@@ -51,7 +51,7 @@ ngGridServices.factory('SortService', function () {
         //check if the item is a valid Date
         if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
 
-        // if we aren't left with a string, we can't sort full objects...
+        // if we aren't left with a string, return a basic sorting function...
         if (itemType !== "string") return sortService.basicSort;
 
         // now lets string check..
