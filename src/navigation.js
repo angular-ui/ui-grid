@@ -10,7 +10,7 @@ ng.moveSelectionHandler = function (grid, evt) {
     if (grid === null || grid === undefined)
         return true;
 
-    if (grid.config.selectedItems() === undefined)
+    if (grid.config.selectedItems === undefined)
         return true;
         
     var offset,

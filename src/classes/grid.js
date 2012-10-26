@@ -102,19 +102,18 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         defaults.footerRowHeight = 30;
         self.config.footerRowHeight = 30;
     }
-    $scope.renderedRows = [];
+	
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
-    $scope.renderedRows = []; //observable Array
     $scope.canvasHeight = function() {
         return maxCanvasHt.toString() + 'px';
     };
 	
 	$scope.finalRows = function(){
-		return self.rowService.$scope.renderedRows;
+		return self.rowService.renderedRows;
 	}
 
-	$scope.$watch($scope.renderedRows, function(){
-	    $scope.maxRows = $scope.renderedRows.length;
+	$scope.$watch(self.rowService.renderedRows, function(){
+	    $scope.maxRows = self.rowService.renderedRows.length;
 	    maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
 	});
  
@@ -298,7 +297,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             viewableRange = self.rowService.viewableRange;
 
         if (entity) {
-            itemIndex = ng.utils.arrayIndexOf($scope.renderedRows, entity);
+            itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
         }
 
         if (itemIndex > -1) {

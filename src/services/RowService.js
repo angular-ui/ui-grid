@@ -20,6 +20,7 @@ ngGridServices.factory('RowService', function () {
     
     rowService.Initialize = function ($scope, grid) {
         rowService.$scope = $scope;
+		rowService.renderedRows = [];
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
         rowService.prevMinRows = 0; // for comparison purposes when scrolling
         rowService.currentPage = grid.config.currentPage;
@@ -146,7 +147,7 @@ ngGridServices.factory('RowService', function () {
 			//add the row to our return array
 			rowArr.push(row);
 		});
-		rowService.$scope.renderedRows = rowArr;
+		rowService.renderedRows = rowArr;
 	};
 	
 	rowService.UpdateViewableRange = function (newRange) {
