@@ -37,7 +37,7 @@ ng.defaultGridTemplate = function () {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
     b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');

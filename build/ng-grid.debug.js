@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/21/2012 15:42:38
+* Compiled At: 10/25/2012 23:07:50
 ***********************************************/
 
 (function(window, undefined){
@@ -908,7 +908,7 @@ ng.defaultGridTemplate = function () {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
     b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
@@ -1238,13 +1238,17 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     }
     $scope.renderedRows = [];
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
-    $scope.finalRows = []; //observable Array
+    $scope.renderedRows = []; //observable Array
     $scope.canvasHeight = function() {
         return maxCanvasHt.toString() + 'px';
     };
+	
+	$scope.finalRows = function(){
+		return self.rowService.$scope.renderedRows;
+	}
 
-	$scope.$watch($scope.finalRows, function(){
-	    $scope.maxRows = $scope.finalRows.length;
+	$scope.$watch($scope.renderedRows, function(){
+	    $scope.maxRows = $scope.renderedRows.length;
 	    maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
 	});
  
@@ -1428,7 +1432,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             viewableRange = self.rowService.viewableRange;
 
         if (entity) {
-            itemIndex = ng.utils.arrayIndexOf($scope.finalRows, entity);
+            itemIndex = ng.utils.arrayIndexOf($scope.renderedRows, entity);
         }
 
         if (itemIndex > -1) {
