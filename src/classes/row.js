@@ -59,17 +59,11 @@ ng.Row = function (entity, config, selectionService) {
     this.offsetTop = 0;
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
-    this.classes = function () {
-        if (this.rowIndex % 2 == 0) {
-            this.rowClasses += " even";
-        }
-        else {
-            this.rowClasses += " odd";
-        }
-        return this.rowClasses;
-    };
-    this.isOdd = function () {
-        return !this.isEven();
+    this.class = function () {
+        if (this.rowIndex % 2 == 0)
+            return "even";
+        else
+            return "odd";
     };
     this.beforeSelectionChange = config.beforeSelectionChange || function () { };
     this.afterSelectionChange = config.afterSelectionChange || function () { };

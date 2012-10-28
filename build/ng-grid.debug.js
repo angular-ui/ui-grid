@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/28/2012 00:17:40
+* Compiled At: 10/28/2012 00:35:55
 ***********************************************/
 
 (function(window, undefined){
@@ -902,7 +902,7 @@ ng.defaultGridTemplate = function () {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(            '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="row.class()" ng-class-even="row.class()">');
     b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
@@ -1724,17 +1724,11 @@ ng.Row = function (entity, config, selectionService) {
     this.offsetTop = 0;
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
-    this.classes = function () {
-        if (this.rowIndex % 2 == 0) {
-            this.rowClasses += " even";
-        }
-        else {
-            this.rowClasses += " odd";
-        }
-        return this.rowClasses;
-    };
-    this.isOdd = function () {
-        return !this.isEven();
+    this.class = function () {
+        if (this.rowIndex % 2 == 0)
+            return "even";
+        else
+            return "odd";
     };
     this.beforeSelectionChange = config.beforeSelectionChange || function () { };
     this.afterSelectionChange = config.afterSelectionChange || function () { };
