@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/25/2012 23:42:31
+* Compiled At: 10/28/2012 00:17:40
 ***********************************************/
 
 (function(window, undefined){
@@ -360,15 +360,11 @@ ngGridServices.factory('RowService', function () {
         // shortcut to the calculated minimum viewport rows
         $scope.minViewportRows = grid.minRowsToRender();
         // the actual range the user can see in the viewport
-        $scope.viewableRange = rowService.prevViewableRange;
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         $scope.renderedRange = rowService.prevRenderedRange;
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array     
         $scope.$watch('renderedRange', rowService.renderedChange);
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch('viewableRange', rowService.CalcRenderedRange);
-
-        $scope.$watch('minViewportRows', rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -396,7 +392,7 @@ ngGridServices.factory('RowService', function () {
 	
 	// core logic that intelligently figures out the rendered range given all the contraints that we have
 	rowService.CalcRenderedRange = function () {
-		var rg = rowService.$scope.viewableRange,
+		var rg = rowService.$scope.renderedRange,
 		    minRows = rowService.$scope.minViewportRows,
 		    maxRows = rowService.dataSource.length,
 		    prevMaxRows = rowService.prevMaxRows,
@@ -906,7 +902,7 @@ ng.defaultGridTemplate = function () {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
+    b.append(        	 '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="\'odd\'" ng-class-even="\'even\'">');
     b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
@@ -1222,7 +1218,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             if (lastItemIndex <= 0) {
                 var item = self.config.selectedItems[lastItemIndex];
                 if (item) {
-                    self.scrollIntoView(item);
+                    //self.scrollIntoView(item);
                 }
             }
         }
@@ -1422,27 +1418,27 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     //#endregion
 
-    $scope.scrollIntoView = function (entity) {
-        var itemIndex = -1,
-            viewableRange = self.rowService.viewableRange;
+    //$scope.scrollIntoView = function (entity) {
+    //    var itemIndex = -1,
+    //        viewableRange = self.rowService.viewableRange;
 
-        if (entity) {
-            itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
-        }
+    //    if (entity) {
+    //        itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
+    //    }
 
-        if (itemIndex > -1) {
-            //check and see if its already in view!
-            if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
+    //    if (itemIndex > -1) {
+    //        //check and see if its already in view!
+    //        if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
-                //scroll it into view
-                self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender());
+    //            //scroll it into view
+    //            self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender());
 
-                if ($scope.$viewport) {
-                    $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
-                }
-            }
-        };
-    };
+    //            if ($scope.$viewport) {
+    //                $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
+    //            }
+    //        }
+    //    };
+    //};
 
     self.refreshDomSizes = function () {
         var dim = new ng.Dimension(),
@@ -1632,12 +1628,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             col.filter = null;
         });
     };
-
+    self.excessRows = 8;
     self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender()));
+        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + self.excessRows));
     };
 
     self.adjustScrollLeft = function (scrollLeft) {
@@ -1677,7 +1673,8 @@ ng.Range = function (bottom, top) {
 ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
-    
+
+    this.rowClasses = config.rowClasses;
     this.selectedItems = config.selectedItems;
     this.entity = entity;
     this.selectionService = selectionService;
@@ -1727,7 +1724,18 @@ ng.Row = function (entity, config, selectionService) {
     this.offsetTop = 0;
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
-
+    this.classes = function () {
+        if (this.rowIndex % 2 == 0) {
+            this.rowClasses += " even";
+        }
+        else {
+            this.rowClasses += " odd";
+        }
+        return this.rowClasses;
+    };
+    this.isOdd = function () {
+        return !this.isEven();
+    };
     this.beforeSelectionChange = config.beforeSelectionChange || function () { };
     this.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row

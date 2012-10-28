@@ -8,7 +8,8 @@
 ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
-    
+
+    this.rowClasses = config.rowClasses;
     this.selectedItems = config.selectedItems;
     this.entity = entity;
     this.selectionService = selectionService;
@@ -58,7 +59,18 @@ ng.Row = function (entity, config, selectionService) {
     this.offsetTop = 0;
     this.rowKey = ng.utils.newId();
     this.rowDisplayIndex = 0;
-
+    this.classes = function () {
+        if (this.rowIndex % 2 == 0) {
+            this.rowClasses += " even";
+        }
+        else {
+            this.rowClasses += " odd";
+        }
+        return this.rowClasses;
+    };
+    this.isOdd = function () {
+        return !this.isEven();
+    };
     this.beforeSelectionChange = config.beforeSelectionChange || function () { };
     this.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row

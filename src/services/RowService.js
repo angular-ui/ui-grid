@@ -43,15 +43,11 @@ ngGridServices.factory('RowService', function () {
         // shortcut to the calculated minimum viewport rows
         $scope.minViewportRows = grid.minRowsToRender();
         // the actual range the user can see in the viewport
-        $scope.viewableRange = rowService.prevViewableRange;
 		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
         $scope.renderedRange = rowService.prevRenderedRange;
         // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array     
         $scope.$watch('renderedRange', rowService.renderedChange);
         // make sure that if any of these change, we re-fire the calc logic
-        $scope.$watch('viewableRange', rowService.CalcRenderedRange);
-
-        $scope.$watch('minViewportRows', rowService.CalcRenderedRange);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -79,7 +75,7 @@ ngGridServices.factory('RowService', function () {
 	
 	// core logic that intelligently figures out the rendered range given all the contraints that we have
 	rowService.CalcRenderedRange = function () {
-		var rg = rowService.$scope.viewableRange,
+		var rg = rowService.$scope.renderedRange,
 		    minRows = rowService.$scope.minViewportRows,
 		    maxRows = rowService.dataSource.length,
 		    prevMaxRows = rowService.prevMaxRows,

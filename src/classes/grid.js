@@ -90,7 +90,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             if (lastItemIndex <= 0) {
                 var item = self.config.selectedItems[lastItemIndex];
                 if (item) {
-                    self.scrollIntoView(item);
+                    //self.scrollIntoView(item);
                 }
             }
         }
@@ -290,27 +290,27 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     //#endregion
 
-    $scope.scrollIntoView = function (entity) {
-        var itemIndex = -1,
-            viewableRange = self.rowService.viewableRange;
+    //$scope.scrollIntoView = function (entity) {
+    //    var itemIndex = -1,
+    //        viewableRange = self.rowService.viewableRange;
 
-        if (entity) {
-            itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
-        }
+    //    if (entity) {
+    //        itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
+    //    }
 
-        if (itemIndex > -1) {
-            //check and see if its already in view!
-            if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
+    //    if (itemIndex > -1) {
+    //        //check and see if its already in view!
+    //        if (itemIndex > viewableRange.topRow || itemIndex < viewableRange.bottomRow - 5) {
 
-                //scroll it into view
-                self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender());
+    //            //scroll it into view
+    //            self.rowService.viewableRange = new ng.Range(itemIndex, itemIndex + self.minRowsToRender());
 
-                if ($scope.$viewport) {
-                    $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
-                }
-            }
-        };
-    };
+    //            if ($scope.$viewport) {
+    //                $scope.$viewport.scrollTop(itemIndex * self.config.rowHeight);
+    //            }
+    //        }
+    //    };
+    //};
 
     self.refreshDomSizes = function () {
         var dim = new ng.Dimension(),
@@ -500,12 +500,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             col.filter = null;
         });
     };
-
+    self.excessRows = 8;
     self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender()));
+        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + self.excessRows));
     };
 
     self.adjustScrollLeft = function (scrollLeft) {
