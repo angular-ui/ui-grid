@@ -165,9 +165,6 @@ ngGridServices.factory('FilterService', function () {
                 info[col.field] = newFilterVal;
             }
             filterService.filterInfo = info;
-            if (options && options.currentPage) {
-                options.currentPage = 1;
-            }
         };
     };
     return filterService;

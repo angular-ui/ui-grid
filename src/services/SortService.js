@@ -15,6 +15,7 @@ ngGridServices.factory('SortService', function () {
     var ASC = "asc"; // constant for sorting direction
     sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
     sortService.columns = [];
+    sortService.sortingCallback = function () { };
     
     // utility function for null checking
     sortService.isEmpty = function(val) {

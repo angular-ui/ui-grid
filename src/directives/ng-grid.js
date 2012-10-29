@@ -23,53 +23,25 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
         compile: function (iElement, iAttrs, transclude) {
             return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-                    var htmlText = ng.defaultGridTemplate();
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, gridDim, RowService, SelectionService, SortService);
-                    
+                    var htmlText = ng.defaultGridTemplate(grid.config);
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
-
                     ng.domUtility.measureGrid($element, grid, true);
-
                     //set the right styling on the container
                     $element.addClass("ngGrid")
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
-
-                    $scope.$watch($scope.finalData, function () {
-                        if (grid.config.selectedItems) {
-                            var lastItemIndex = grid.config.selectedItems.length - 1;
-                            if (lastItemIndex <= 0) {
-                                var item = grid.config.selectedItems[lastItemIndex];
-                                if (item) {
-                                    grid.scrollIntoView(item);
-                                }
-                            }
-                        }
-                    });
                     $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
-                    angular.forEach($scope.columns, function(column) {
-                        $scope.$watch(column.sortDirection, function() {
-                            return function(dir) {
-                                if (dir) {
-                                    $scope.sortData(column, dir);
-                                }
-                            };
-                        });
-                    });
-
                     $scope.toggleSelectAll = $scope.toggleSelectAll;
                     $scope.filterIsOpen = $scope.filterIsOpen;
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     //grid.update();
-
                     $scope.initPhase = 1;
-
                     iElement.append($compile(htmlText)($scope));                    // make sure that if any of these change, we re-fire the calc logic
-
                     //walk the element's graph and the correct properties on the grid
                     ng.domUtility.assignGridContainers($element, grid);
                     //now use the manager to assign the event handlers

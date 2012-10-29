@@ -66,8 +66,8 @@ ng.Row = function (entity, config, selectionService) {
         else
             return "odd";
     };
-    self.beforeSelectionChange = config.beforeSelectionChange || function () { };
-    self.afterSelectionChange = config.afterSelectionChange || function () { };
+    self.beforeSelectionChange = config.beforeSelectionChangeCallback;
+    self.afterSelectionChange = config.afterSelectionChangeCallback;
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
         ng.utils.forIn(entity, function (prop, propName) {
