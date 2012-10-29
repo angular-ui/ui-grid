@@ -71,11 +71,13 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.headerRow = null;
     $scope.footer = null;
     $scope.dataSource = self.config.data;
+    $scope.totalItemsLength = function() {
+        return self.sortedData.length;
+    };
     $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
     self.sortedData = self.config.data;
     $scope.renderedRows = [];
-
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;

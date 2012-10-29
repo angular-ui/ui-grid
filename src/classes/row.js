@@ -9,17 +9,17 @@ ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
-    this.rowClasses = config.rowClasses;
-    this.selectedItems = config.selectedItems;
-    this.entity = entity;
-    this.selectionService = selectionService;
+    self.rowClasses = config.rowClasses;
+    self.selectedItems = config.selectedItems;
+    self.entity = entity;
+    self.selectionService = selectionService;
     //selectify the entity
-    if (this.entity[SELECTED_PROP] === undefined) {
-        this.entity[SELECTED_PROP] = false;
+    if (self.entity[SELECTED_PROP] === undefined) {
+        self.entity[SELECTED_PROP] = false;
     }
-    this.selected = false;
+    self.selected = false;
 
-    this.toggleSelected = function (data, event) {
+    self.toggleSelected = function (data, event) {
         if (!canSelectRows) {
             return true;
         }
@@ -33,6 +33,7 @@ ng.Row = function (entity, config, selectionService) {
             return true;
         } else {
             self.beforeSelectionChange();
+            self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
             self.selected ? self.selected = false : self.selected = true;
             self.selectionService.ChangeSelection(data, event);
             self.afterSelectionChange();
@@ -40,7 +41,7 @@ ng.Row = function (entity, config, selectionService) {
         return true;
     };
 
-    this.toggle = function(item) {
+    self.toggle = function(item) {
         if (item.selected.get()) {
             item.selected.set(false);
             self.selectedItems.remove(item.entity);
@@ -53,20 +54,20 @@ ng.Row = function (entity, config, selectionService) {
 
     };
 
-    this.cells = [];
-    this.cellMap = {};
-    this.rowIndex = 0;
-    this.offsetTop = 0;
-    this.rowKey = ng.utils.newId();
-    this.rowDisplayIndex = 0;
-    this.class = function () {
-        if (this.rowIndex % 2 == 0)
+    self.cells = [];
+    self.cellMap = {};
+    self.rowIndex = 0;
+    self.offsetTop = 0;
+    self.rowKey = ng.utils.newId();
+    self.rowDisplayIndex = 0;
+    self.class = function () {
+        if (self.rowIndex % 2 == 0)
             return "even";
         else
             return "odd";
     };
-    this.beforeSelectionChange = config.beforeSelectionChange || function () { };
-    this.afterSelectionChange = config.afterSelectionChange || function () { };
+    self.beforeSelectionChange = config.beforeSelectionChange || function () { };
+    self.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
         ng.utils.forIn(entity, function (prop, propName) {

@@ -24,8 +24,8 @@ ngGridServices.factory('RowService', function () {
         rowService.rowHeight = grid.config.rowHeight;
         rowService.grid = grid;
         rowService.pageSize = grid.config.pageSize;// constant for the entity's rowCache rowIndex
-        rowService.prevRenderedRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
-        rowService.prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
+        rowService.prevRenderedRange = new ng.Range(0, grid.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
+        rowService.prevViewableRange = new ng.Range(0, grid.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
         // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // height of each row
@@ -47,7 +47,7 @@ ngGridServices.factory('RowService', function () {
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex + pagingOffset;
 			row.offsetTop = rowService.rowHeight * rowIndex;
-			
+		    row.selected = entity[SELECTED_PROP];
 			// finally cache it for the next round
 			rowService.rowCache[rowIndex] = row;
 		}
@@ -81,7 +81,7 @@ ngGridServices.factory('RowService', function () {
 			
 		if (isDif) {
 		    //Now build out the new rendered range
-		    rg.topRow = rg.bottomRow + minRows;
+		    //rg.topRow = rg.bottomRow + minRows;
 
 		    //store it for next rev
 		    rowService.prevViewableRange = rg;

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/28/2012 19:32:59
+* Compiled At: 10/28/2012 20:10:40
 ***********************************************/
 
 (function(window, undefined){
@@ -343,8 +343,8 @@ ngGridServices.factory('RowService', function () {
         rowService.rowHeight = grid.config.rowHeight;
         rowService.grid = grid;
         rowService.pageSize = grid.config.pageSize;// constant for the entity's rowCache rowIndex
-        rowService.prevRenderedRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
-        rowService.prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
+        rowService.prevRenderedRange = new ng.Range(0, grid.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
+        rowService.prevViewableRange = new ng.Range(0, grid.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
         // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
         // height of each row
@@ -366,7 +366,7 @@ ngGridServices.factory('RowService', function () {
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex + pagingOffset;
 			row.offsetTop = rowService.rowHeight * rowIndex;
-			
+		    row.selected = entity[SELECTED_PROP];
 			// finally cache it for the next round
 			rowService.rowCache[rowIndex] = row;
 		}
@@ -400,7 +400,7 @@ ngGridServices.factory('RowService', function () {
 			
 		if (isDif) {
 		    //Now build out the new rendered range
-		    rg.topRow = rg.bottomRow + minRows;
+		    //rg.topRow = rg.bottomRow + minRows;
 
 		    //store it for next rev
 		    rowService.prevViewableRange = rg;
@@ -914,29 +914,29 @@ ng.defaultGridTemplate = function () {
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');
     b.append(   	 '<div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append(       	 '<div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append(          		 '<span class="ngLabel">Total Items: {{sortedData.length}}</span>');
+    b.append(          		 '<span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
     b.append(       	 '</div>');
     b.append(       	 '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append(       	 '</div>');
     b.append(   	 '</div>');
-    b.append(   	 '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
-    b.append(       	 '<div style="float: right;">');
-    b.append(           	 '<div class="ngRowCountPicker">');
-    b.append(               	 '<span class="ngLabel">Rows:</span>');
-    b.append(               	 '<select ng-model="selectedPageSize">');
-    b.append(                   	 '<option ng-repeat="size in pageSizes">{{size}}</option>');
-    b.append(               	 '</select>');
-    b.append(           	 '</div>');
-    b.append(           	 '<div class="ngPagerControl" style="float: left; min-width: 135px;">');
-    b.append(               	 '<input class="ngPagerFirst" type="button" ng-click="pageToFirst" ng-disable="!canPageBackward" title="First Page"/>');
-    b.append(               	 '<input class="ngPagerPrev" type="button"  ng-click="pageBackward" ng-disable="!canPageBackward" title="Previous Page"/>');
-    b.append(               	 '<input class="ngPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages() < 1 }" />');
-    b.append(               	 '<input class="ngPagerNext" type="button"  ng-click="pageForward" ng-disable="!canPageForward" title="Next Page"/>');
-    b.append(               	 '<input class="ngPagerLast" type="button"  ng-click="pageToLast" ng-disable="!canPageForward" title="Last Page"/>');
-    b.append(           	 '</div>');
-    b.append(       	 '</div>');
-    b.append(   	 '</div>');
+    //b.append(   	 '<div class="ngPagerContainer" ng-show="pagerVisible && footerVisible" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
+    //b.append(       	 '<div style="float: right;">');
+    //b.append(           	 '<div class="ngRowCountPicker">');
+    //b.append(               	 '<span class="ngLabel">Rows:</span>');
+    //b.append(               	 '<select ng-model="selectedPageSize">');
+    //b.append(                   	 '<option ng-repeat="size in pageSizes">{{size}}</option>');
+    //b.append(               	 '</select>');
+    //b.append(           	 '</div>');
+    //b.append(           	 '<div class="ngPagerControl" style="float: left; min-width: 135px;">');
+    //b.append(               	 '<input class="ngPagerFirst" type="button" ng-click="pageToFirst" ng-disable="!canPageBackward" title="First Page"/>');
+    //b.append(               	 '<input class="ngPagerPrev" type="button"  ng-click="pageBackward" ng-disable="!canPageBackward" title="Previous Page"/>');
+    //b.append(               	 '<input class="ngPagerCurrent" type="text" ng-model="protectedCurrentPage" ng-disable="{ maxPages() < 1 }" />');
+    //b.append(               	 '<input class="ngPagerNext" type="button"  ng-click="pageForward" ng-disable="!canPageForward" title="Next Page"/>');
+    //b.append(               	 '<input class="ngPagerLast" type="button"  ng-click="pageToLast" ng-disable="!canPageForward" title="Last Page"/>');
+    //b.append(           	 '</div>');
+    //b.append(       	 '</div>');
+    //b.append(   	 '</div>');
     b.append(	 '</div>');
     b.append('</div>');
     return b.toString();
@@ -1203,11 +1203,13 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.headerRow = null;
     $scope.footer = null;
     $scope.dataSource = self.config.data;
+    $scope.totalItemsLength = function() {
+        return self.sortedData.length;
+    };
     $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
     self.sortedData = self.config.data;
     $scope.renderedRows = [];
-
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
@@ -1672,17 +1674,17 @@ ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
-    this.rowClasses = config.rowClasses;
-    this.selectedItems = config.selectedItems;
-    this.entity = entity;
-    this.selectionService = selectionService;
+    self.rowClasses = config.rowClasses;
+    self.selectedItems = config.selectedItems;
+    self.entity = entity;
+    self.selectionService = selectionService;
     //selectify the entity
-    if (this.entity[SELECTED_PROP] === undefined) {
-        this.entity[SELECTED_PROP] = false;
+    if (self.entity[SELECTED_PROP] === undefined) {
+        self.entity[SELECTED_PROP] = false;
     }
-    this.selected = false;
+    self.selected = false;
 
-    this.toggleSelected = function (data, event) {
+    self.toggleSelected = function (data, event) {
         if (!canSelectRows) {
             return true;
         }
@@ -1696,6 +1698,7 @@ ng.Row = function (entity, config, selectionService) {
             return true;
         } else {
             self.beforeSelectionChange();
+            self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
             self.selected ? self.selected = false : self.selected = true;
             self.selectionService.ChangeSelection(data, event);
             self.afterSelectionChange();
@@ -1703,7 +1706,7 @@ ng.Row = function (entity, config, selectionService) {
         return true;
     };
 
-    this.toggle = function(item) {
+    self.toggle = function(item) {
         if (item.selected.get()) {
             item.selected.set(false);
             self.selectedItems.remove(item.entity);
@@ -1716,20 +1719,20 @@ ng.Row = function (entity, config, selectionService) {
 
     };
 
-    this.cells = [];
-    this.cellMap = {};
-    this.rowIndex = 0;
-    this.offsetTop = 0;
-    this.rowKey = ng.utils.newId();
-    this.rowDisplayIndex = 0;
-    this.class = function () {
-        if (this.rowIndex % 2 == 0)
+    self.cells = [];
+    self.cellMap = {};
+    self.rowIndex = 0;
+    self.offsetTop = 0;
+    self.rowKey = ng.utils.newId();
+    self.rowDisplayIndex = 0;
+    self.class = function () {
+        if (self.rowIndex % 2 == 0)
             return "even";
         else
             return "odd";
     };
-    this.beforeSelectionChange = config.beforeSelectionChange || function () { };
-    this.afterSelectionChange = config.afterSelectionChange || function () { };
+    self.beforeSelectionChange = config.beforeSelectionChange || function () { };
+    self.afterSelectionChange = config.afterSelectionChange || function () { };
     //during row initialization, let's make all the entities properties first-class properties on the row
     (function () {
         ng.utils.forIn(entity, function (prop, propName) {
