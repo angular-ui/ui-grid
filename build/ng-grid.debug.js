@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/29/2012 13:18:31
+* Compiled At: 10/29/2012 14:20:00
 ***********************************************/
 
 (function(window, undefined){
@@ -878,7 +878,7 @@ ng.defaultGridTemplate = function (options) {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append('<div style="height: {{rowHeight}}px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
+    b.append(            '<div style="height: {{rowHeight}}px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
@@ -901,11 +901,7 @@ ng.defaultGridTemplate = function (options) {
 ***********************************************/
 
 ng.defaultRowTemplate = function () {
-    var b = new ng.utils.StringBuilder();
-    b.append('<div>');
-    b.append(   '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>');
-    b.append('</div>');
-    return b.toString();
+    return '<div ng-repeat="col in columns" style="height: {{rowHeight}}px; width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
 };
 
 /***********************************************
