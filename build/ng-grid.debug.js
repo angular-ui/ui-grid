@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/29/2012 14:20:00
+* Compiled At: 10/29/2012 15:07:16
 ***********************************************/
 
 (function(window, undefined){
@@ -877,8 +877,8 @@ ng.defaultGridTemplate = function (options) {
     b.append(    	 '</div>');
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
-    b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(            '<div style="height: {{rowHeight}}px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
+    b.append(    	 '<div class="ngCanvas" ng-style="canvasHeight()">'); 
+    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
@@ -1142,9 +1142,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     }
 	
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
-    $scope.canvasHeight = function() {
-        return maxCanvasHt.toString() + 'px';
-    };
 
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;
@@ -1219,6 +1216,14 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 	
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
+	};
+	
+	$scope.rowStyle = function(row){
+		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
+	};
+	
+	$scope.canvasHeight = function(){
+		return { "height": maxCanvasHt.toString() + "px"};
 	};
 
     $scope.totalRowWidth = function () {

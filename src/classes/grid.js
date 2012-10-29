@@ -97,9 +97,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     }
 	
     $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
-    $scope.canvasHeight = function() {
-        return maxCanvasHt.toString() + 'px';
-    };
 
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;
@@ -174,6 +171,14 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 	
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
+	};
+	
+	$scope.rowStyle = function(row){
+		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
+	};
+	
+	$scope.canvasHeight = function(){
+		return { "height": maxCanvasHt.toString() + "px"};
 	};
 
     $scope.totalRowWidth = function () {
