@@ -19,18 +19,14 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         autogenerateColumns: true,
         data: [],
         columnDefs: [],
-        selectedItems: [], // array, only used if multi turned on
-        selectedIndex: 0, //index of the selectedItem in the data array
+        selectedItems: [], // array, if multi turned off will have only one item in array
         //displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
+        //selectWithCheckboxOnly: false,
         //displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
         useExternalSorting: false,
         filterInfo: undefined, // holds filter information (fields, and filtering strings)
         sortInfo: undefined, // similar to filterInfo
-        filterWildcard: "*",
-        includeDestroyed: false, // flag to show _destroy=true items in grid
-        selectWithCheckboxOnly: false,
-        keepLastSelectedAround: false,
         multiSelect: true,
         lastClickedRow: undefined,
         tabIndex: -1,
