@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/28/2012 21:56:02
+* Compiled At: 10/29/2012 13:18:31
 ***********************************************/
 
 (function(window, undefined){
@@ -878,8 +878,7 @@ ng.defaultGridTemplate = function (options) {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(            '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="row.class()" ng-class-even="row.class()">');
-    b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
+    b.append('<div style="height: {{rowHeight}}px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
@@ -893,6 +892,18 @@ ng.defaultGridTemplate = function (options) {
     b.append(       	 '</div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
+    b.append('</div>');
+    return b.toString();
+};
+
+/***********************************************
+* FILE: ..\src\templates\rowTemplate.js
+***********************************************/
+
+ng.defaultRowTemplate = function () {
+    var b = new ng.utils.StringBuilder();
+    b.append('<div>');
+    b.append(   '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>');
     b.append('</div>');
     return b.toString();
 };
@@ -948,7 +959,9 @@ ng.Column = function (colDef, index, headerRowHeight, sortService) {
     self.filter = null;
 
     //cell Template
-    self.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    self.cellTemplate = function() {
+        return colDef.cellTemplate || '<div>{{row.entity[col.field]}}</div>';
+    };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
     self.cellClass = colDef.cellClass;
@@ -1055,25 +1068,22 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         autogenerateColumns: true,
         data: [],
         columnDefs: [],
-        selectedItems: [], // array, only used if multi turned on
-        selectedIndex: 0, //index of the selectedItem in the data array
+        selectedItems: [], // array, if multi turned off will have only one item in array
         //displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
+        //selectWithCheckboxOnly: false,
         //displayRowIndex: true, //shows the rowIndex cell at the far left of each row
         useExternalFiltering: false,
         useExternalSorting: false,
         filterInfo: undefined, // holds filter information (fields, and filtering strings)
         sortInfo: undefined, // similar to filterInfo
-        filterWildcard: "*",
-        includeDestroyed: false, // flag to show _destroy=true items in grid
-        selectWithCheckboxOnly: false,
-        keepLastSelectedAround: false,
         multiSelect: true,
         lastClickedRow: undefined,
         tabIndex: -1,
         disableTextSelection: false,
         enableColumnResize: true,
-        beforeSelectionChange: function () {},
-        afterSelectionChange: function () {}
+        beforeSelectionChange: function () { return true;},
+        afterSelectionChange: function () { return true;},
+        rowTemplate: undefined
     },
     self = this,
     isSorting = false,
@@ -1100,6 +1110,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.initPhase = 0;
     $scope.columns = [];
     $scope.headerRow = null;
+    $scope.rowHeight = self.config.rowHeight;
     $scope.footer = null;
     $scope.dataSource = self.config.data;
     $scope.totalItemsLength = function() {
@@ -1148,6 +1159,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
+    };
+
+    $scope.rowTemplate = function() {
+        return self.config.rowTemplate || ng.defaultRowTemplate();
     };
 
     self.elementDims = {
@@ -1402,7 +1417,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight
+        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
         
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
@@ -1537,13 +1552,13 @@ ng.Row = function (entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            self.beforeSelectionChange();
-            self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
-            self.selected ? self.selected = false : self.selected = true;
-            self.selectionService.ChangeSelection(data, event);
-            self.afterSelectionChange();
+            if (self.beforeSelectionChange()) {
+                self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
+                self.selected ? self.selected = false : self.selected = true;
+                self.selectionService.ChangeSelection(data, event);
+            }
         }
-        return true;
+        return self.afterSelectionChange();
     };
 
     self.toggle = function(item) {
@@ -1863,6 +1878,45 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
         }
     };
     return ngGrid;
+});
+
+/***********************************************
+* FILE: ..\src\directives\ng-row.js
+***********************************************/
+
+ngGridDirectives.directive('ngRow', function ($compile) {
+    var ngRow = {
+        scope: false,
+        compile: function compile(tElement, tAttrs, transclude) {
+            return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+                    var html = $scope.$parent.rowTemplate();
+                    iElement.append($compile(html)($scope));
+                }
+            };
+        },
+    };
+    return ngRow;
+});
+
+/***********************************************
+* FILE: ..\src\directives\ng-cell.js
+***********************************************/
+
+ngGridDirectives.directive('ngCell', function($compile) {
+    var ngCell = {
+        scope: false,
+        terminal: true,
+        compile: function compile(tElement, tAttrs, transclude) {
+            return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+                    var html = $scope.col.cellTemplate();
+                    iElement.append($compile(html)($scope));
+                }
+            };
+        },
+    };
+    return ngCell;
 });
 
 /***********************************************

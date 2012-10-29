@@ -216,6 +216,9 @@ function userController($scope) {
         data: self.myData,
         selectedItems: $scope.mySelections,
         selectedItem: $scope.mySelection,
-        multiSelect: true
+        multiSelect: true,
+        rowTemplate: '<div>' +
+            '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>' +
+        '</div>'
     };
 };

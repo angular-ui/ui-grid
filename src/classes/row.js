@@ -32,13 +32,13 @@ ng.Row = function (entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            self.beforeSelectionChange();
-            self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
-            self.selected ? self.selected = false : self.selected = true;
-            self.selectionService.ChangeSelection(data, event);
-            self.afterSelectionChange();
+            if (self.beforeSelectionChange()) {
+                self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
+                self.selected ? self.selected = false : self.selected = true;
+                self.selectionService.ChangeSelection(data, event);
+            }
         }
-        return true;
+        return self.afterSelectionChange();
     };
 
     self.toggle = function(item) {

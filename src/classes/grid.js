@@ -32,8 +32,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         tabIndex: -1,
         disableTextSelection: false,
         enableColumnResize: true,
-        beforeSelectionChange: function () {},
-        afterSelectionChange: function () {}
+        beforeSelectionChange: function () { return true;},
+        afterSelectionChange: function () { return true;},
+        rowTemplate: undefined
     },
     self = this,
     isSorting = false,
@@ -60,6 +61,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.initPhase = 0;
     $scope.columns = [];
     $scope.headerRow = null;
+    $scope.rowHeight = self.config.rowHeight;
     $scope.footer = null;
     $scope.dataSource = self.config.data;
     $scope.totalItemsLength = function() {
@@ -108,6 +110,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
+    };
+
+    $scope.rowTemplate = function() {
+        return self.config.rowTemplate || ng.defaultRowTemplate();
     };
 
     self.elementDims = {
@@ -362,7 +368,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight
+        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
         
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,

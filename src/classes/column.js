@@ -46,7 +46,9 @@
     self.filter = null;
 
     //cell Template
-    self.cellTemplate = colDef.cellTemplate; // string of the cellTemplate script element id
+    self.cellTemplate = function() {
+        return colDef.cellTemplate || '<div>{{row.entity[col.field]}}</div>';
+    };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
     self.cellClass = colDef.cellClass;
