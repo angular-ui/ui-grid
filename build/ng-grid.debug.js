@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/28/2012 00:35:55
+* Compiled At: 10/28/2012 19:32:59
 ***********************************************/
 
 (function(window, undefined){
@@ -25,6 +25,8 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 var ROW_KEY = '__ng_rowIndex__';
 var SELECTED_PROP = '__ng_selected__';
 var GRID_KEY = '__koGrid__';
+// the # of rows we want to add to the top and bottom of the rendered grid rows 
+var EXCESS_ROWS = 8;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -326,7 +328,6 @@ ngGridServices.factory('GridService', function () {
 
 ngGridServices.factory('RowService', function () {
     var rowService = {};
-	rowService = {};
 
     // we cache rows when they are built, and then blow the cache away when sorting/filtering
     rowService.rowCache = [];
@@ -335,9 +336,7 @@ ngGridServices.factory('RowService', function () {
     rowService.prevMaxRows = 0; // for comparison purposes when scrolling
     rowService.prevMinRows = 0; // for comparison purposes when scrolling
     
-    rowService.Initialize = function ($scope, grid) {
-        rowService.$scope = $scope;
-		rowService.$scope.renderedRows = [];
+    rowService.Initialize = function (grid) {
         rowService.prevMaxRows = 0; // for comparison purposes when scrolling
         rowService.prevMinRows = 0; // for comparison purposes when scrolling
         rowService.currentPage = grid.config.currentPage;
@@ -346,25 +345,13 @@ ngGridServices.factory('RowService', function () {
         rowService.pageSize = grid.config.pageSize;// constant for the entity's rowCache rowIndex
         rowService.prevRenderedRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
         rowService.prevViewableRange = new ng.Range(0, 1); // for comparison purposes to help throttle re-calcs when scrolling
-             // for comparison purposes to help throttle re-calcs when scrolling
+        // for comparison purposes to help throttle re-calcs when scrolling
         rowService.internalRenderedRange = rowService.prevRenderedRange;
-        // short cut to sorted and filtered data
-        rowService.dataSource = $scope.sortedData; 
-        
-        // the # of rows we want to add to the top and bottom of the rendered grid rows 
-        rowService.excessRows = 8;
-        
         // height of each row
         rowService.rowHeight = grid.config.rowHeight;
-
-        // shortcut to the calculated minimum viewport rows
-        $scope.minViewportRows = grid.minRowsToRender();
         // the actual range the user can see in the viewport
-		// the range of rows that we actually render on the canvas ... essentially 'viewableRange' + 'excessRows' on top and bottom
-        $scope.renderedRange = rowService.prevRenderedRange;
-        // core logic here - anytime we updated the renderedRange, we need to update the 'rows' array     
-        $scope.$watch('renderedRange', rowService.renderedChange);
-        // make sure that if any of these change, we re-fire the calc logic
+        rowService.renderedRange = rowService.prevRenderedRange;
+        rowService.sortedDataChanged(grid.sortedData);
     };
 	
 	// Builds rows for each data item in the 'dataSource'
@@ -392,86 +379,89 @@ ngGridServices.factory('RowService', function () {
 	
 	// core logic that intelligently figures out the rendered range given all the contraints that we have
 	rowService.CalcRenderedRange = function () {
-		var rg = rowService.$scope.renderedRange,
-		    minRows = rowService.$scope.minViewportRows,
+		var rg = rowService.renderedRange,
+		    minRows = rowService.grid.minRowsToRender(),
 		    maxRows = rowService.dataSource.length,
 		    prevMaxRows = rowService.prevMaxRows,
 		    prevMinRows = rowService.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
-		    newRg; // variable to hold our newly-calc'd rendered range 
+		    newRg = new ng.Range(0, 0); // variable to hold our newly-calc'd rendered range 
 		
-		if (rg) {
-
-			isDif = (rg.bottomRow !== rowService.prevViewableRange.bottomRow || rg.topRow !== rowService.prevViewableRange.topRow || rowService.dataChanged);
-			if (!isDif && prevMaxRows !== maxRows) {
-				isDif = true;
-				rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
-			}
-			
-			if (!isDif && prevMinRows !== minRows) {
-				isDif = true;
-				rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
-			}
-			
-			if (isDif) {
-				//Now build out the new rendered range
-				rg.topRow = rg.bottomRow + minRows;
-				
-				//store it for next rev
-				rowService.prevViewableRange = rg;
-				
-				// now build the new rendered range
-				newRg = new ng.Range(rg.bottomRow, rg.topRow);
-				
-				// make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
-				newRg.bottomRow = Math.max(0, rg.bottomRow - rowService.excessRows);
-				newRg.topRow = Math.min(maxRows, rg.topRow + rowService.excessRows);
-				
-				// store them for later comparison purposes
-				rowService.prevMaxRows = maxRows;
-				rowService.prevMinRows = minRows;
-				
-				//one last equality check
-				if (rowService.prevRenderedRange.topRow !== newRg.topRow || rowService.prevRenderedRange.bottomRow !== newRg.bottomRow || rowService.dataChanged) {
-					rowService.dataChanged = false;
-					rowService.prevRenderedRange = newRg;
-					
-					// now kicngff row building
-					rowService.$scope.renderedRange = newRg;
-				}
-			}
-		} else {
-			rowService.$scope.renderedRange = new ng.Range(0, 0);
+		isDif = (rg.bottomRow !== rowService.prevViewableRange.bottomRow || rg.topRow !== rowService.prevViewableRange.topRow || rowService.dataChanged);
+		if (!isDif && prevMaxRows !== maxRows) {
+			isDif = true;
+			rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
 		}
+			
+		if (!isDif && prevMinRows !== minRows) {
+			isDif = true;
+			rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
+		}
+			
+		if (isDif) {
+		    //Now build out the new rendered range
+		    rg.topRow = rg.bottomRow + minRows;
+
+		    //store it for next rev
+		    rowService.prevViewableRange = rg;
+
+		    // now build the new rendered range
+		    newRg = new ng.Range(rg.bottomRow, rg.topRow);
+
+		    // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
+		    newRg.bottomRow = Math.max(0, rg.bottomRow - EXCESS_ROWS);
+		    newRg.topRow = Math.min(maxRows, rg.topRow + EXCESS_ROWS);
+
+		    // store them for later comparison purposes
+		    rowService.prevMaxRows = maxRows;
+		    rowService.prevMinRows = minRows;
+
+		    //one last equality check
+		    if (rowService.prevRenderedRange.topRow !== newRg.topRow || rowService.prevRenderedRange.bottomRow !== newRg.bottomRow || rowService.dataChanged) {
+		        rowService.dataChanged = false;
+		        rowService.prevRenderedRange = newRg;
+		    }
+		}
+	    rowService.UpdateViewableRange(newRg);
 	};
 		
 	rowService.renderedChange = function () {
 		var rowArr = [],
 			pagingOffset = rowService.pageSize * (rowService.currentPage - 1);
-		var dataArr = rowService.dataSource.slice(rowService.$scope.renderedRange.bottomRow, rowService.$scope.renderedRange.topRow);
+		var dataArr = rowService.dataSource.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
 
 		angular.forEach(dataArr, function (item, i) {
-			var row = rowService.buildRowFromEntity(item, rowService.$scope.renderedRange.bottomRow + i, pagingOffset);
+			var row = rowService.buildRowFromEntity(item, rowService.renderedRange.bottomRow + i, pagingOffset);
 
 			//add the row to our return array
 			rowArr.push(row);
 		});
-		rowService.$scope.renderedRows = rowArr;
+	    rowService.grid.setRenderedRows(rowArr);
 	};
 	
 	rowService.UpdateViewableRange = function (newRange) {
-	    rowService.$scope.$apply(function () {
-	        rowService.$scope.renderedRange = newRange;
-	    });
+	    rowService.renderedRange = newRange;
+	    rowService.renderedChange();
     };
     
-    rowService.ClearRowCache = function() {
-        rowService.rowCache = [];
+	rowService.sortedDataChanged = function (newVal) {
+	    rowService.dataSource = newVal;
+        rowService.dataChanged = true;
+        rowService.rowCache = []; //if data source changes, kill this!
+        rowService.CalcRenderedRange();
+        //if (self.config.selectedItems) {
+        //    var lastItemIndex = self.config.selectedItems.length - 1;
+        //    if (lastItemIndex <= 0) {
+        //        var item = self.config.selectedItems[lastItemIndex];
+        //        if (item) {
+        //            //self.scrollIntoView(item);
+        //        }
+        //    }
+        //}
     };
     
     // change handler subscriptions for disposal purposes (used heavily by the 'rows' binding)
     rowService.RowSubscriptions = {};
-    
     return rowService;
 });
 
@@ -599,13 +589,13 @@ ngGridServices.factory('SelectionService', function () {
 ngGridServices.factory('SortService', function () {
     var sortService = { };
 
-    sortService.sortedData = [];
     sortService.dataSource = [];
     sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
     var ASC = "asc"; // constant for sorting direction
     sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
-
+    sortService.columns = [];
+    
     // utility function for null checking
     sortService.isEmpty = function(val) {
         return (val === null || val === undefined || val === '');
@@ -761,8 +751,8 @@ ngGridServices.factory('SortService', function () {
 
     // the core sorting logic trigger
     sortService.sortData = function() {
-        var data = sortService.$scope.dataSource,
-            sortInfo = sortService.$scope.sortInfo,
+        var data = sortService.dataSource,
+            sortInfo = sortService.sortInfo,
             col,
             direction,
             sortFn,
@@ -770,8 +760,7 @@ ngGridServices.factory('SortService', function () {
 
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || sortService.useExternalSorting) {
-            sortService.$scope.sortedData = data;
-            return;
+            return data;
         }
 
         // grab the metadata for the rest of the logic
@@ -785,7 +774,7 @@ ngGridServices.factory('SortService', function () {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = sortService.$scope.dataSource[0];
+            item = data[0];
             sortFn = sortService.guessSortFn(item[col.field]);
 
             //cache it
@@ -838,30 +827,45 @@ ngGridServices.factory('SortService', function () {
             }
         });
 
-        sortService.$scope.sortedData = data;
+        sortService.sortingCallback(data);
     };
 
-    sortService.Initialize = function($scope, useExtSorting) {
-        sortService.$scope = $scope;
-        sortService.useExternalSorting = useExtSorting;
+    sortService.Initialize = function(config) {
+        sortService.useExternalSorting = config.useExtSorting;
+        sortService.columns = config.columns;
+        sortService.sortInfo = config.sortInfo;
+        sortService.sortingCallback = config.sortingCallback;
     };
 
+    sortService.updateDataSource = function(newData) {
+        sortService.dataSource = newData;
+        sortService.clearSortingData();
+    };
+    sortService.updateSortInfo = function(newInfo) {
+        sortService.sortInfo = newInfo;
+        sortService.clearSortingData();
+    };
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
         if (sortService.isSorting == true) return;
         sortService.isSorting = true;
-        angular.forEach(sortService.$scope.columns, function (column) {
-            if (column.field !== col.field) {
-                column.sortDirection = "";
-            }
-        });
-        sortService.$scope.sortInfo = {
+        sortService.clearSortingData(col.field);
+        sortService.sortInfo = {
             column: col,
             direction: direction
         };
+        sortService.sortData();
         sortService.isSorting = false;
+    };
+
+    sortService.clearSortingData = function(exceptField) {
+        angular.forEach(sortService.columns, function(column) {
+            if (exceptField && column.field !== exceptField) {
+                column.sortDirection = "";
+            }
+        });
     };
     return sortService;
 });
@@ -902,7 +906,7 @@ ng.defaultGridTemplate = function () {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" style="height: {{canvasHeight()}};">'); 
-    b.append(            '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in finalRows()" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="row.class()" ng-class-even="row.class()">');
+    b.append(            '<div style="height: 30px; top: {{row.offsetTop}}px; width: {{totalRowWidth()}}" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" ng-class="{\'selected\': row.selected}" class="ngRow" ng-class-odd="row.class()" ng-class-even="row.class()">');
     b.append(        	    '<div ng-repeat="col in columns" style="width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}">{{row.entity[col.field]}}</div>');
     b.append(        	 '</div>');
     b.append(   	 '</div>');
@@ -941,7 +945,7 @@ ng.defaultGridTemplate = function () {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
+ng.Column = function (colDef, index, headerRowHeight, sortService) {
     var self = this;
     
     self.sortService = sortService;
@@ -1176,6 +1180,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     prevMinRowsToRender,
     maxCanvasHt = 0,
     hUpdateTimeout;
+   
+    self.config = $.extend(defaults, options);
+    self.gridId = "ng" + ng.utils.newId();
+    
 
     $scope.$root = null; //this is the root element that is passed in with the binding handler
     $scope.$topPanel = null;
@@ -1188,44 +1196,36 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
     $scope.filterIsOpen = false;
-    self.config = $.extend(defaults, options);
-    self.gridId = "ng" + ng.utils.newId();
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-
+    $scope.columns = [];
+    $scope.headerRow = null;
+    $scope.footer = null;
     $scope.dataSource = self.config.data;
     $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
-    $scope.sortedData = self.config.data;
-
+    self.sortedData = self.config.data;
+    $scope.renderedRows = [];
 
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
     
-    $scope.$watch('sortedData', self.rowService.CalcRenderedRange);
-
     self.sortService = SortService;
-    self.sortService.Initialize($scope, self.config.useExternalSorting);
-
-    $scope.$watch('sortedData', function (newVal) {
-        self.rowService.dataChanged = true;
-        self.rowService.rowCache = []; //if data source changes, kill this!
-        self.rowService.CalcRenderedRange();
-        if (self.config.selectedItems) {
-            var lastItemIndex = self.config.selectedItems.length - 1;
-            if (lastItemIndex <= 0) {
-                var item = self.config.selectedItems[lastItemIndex];
-                if (item) {
-                    //self.scrollIntoView(item);
-                }
-            }
+    self.sortService.Initialize({
+        useExternalSorting: self.config.useExternalSorting,
+        columns: $scope.columns,
+        sortInfo: $scope.sortInfo,
+        sortingCallback: function (newData) {
+            self.sortedData = newData;
+            self.rowService.sortedDataChanged(self.sortedData);
         }
-    }, true);
-    $scope.$watch('dataSource', self.sortService.sortData);
-    $scope.$watch('sortInfo', self.sortService.sortData);
+    });
     
+    $scope.$watch('dataSource', self.sortService.updateDataSource);
+    $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
         && !self.config.canSelectRows) {
@@ -1238,19 +1238,16 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         return maxCanvasHt.toString() + 'px';
     };
 
-    $scope.finalRows = function() {
-        return self.rowService.$scope.renderedRows;
+    self.setRenderedRows = function (newRows) {
+        $scope.renderedRows = newRows;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };
 
- 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
-
-    $scope.columns = [];
-
-    $scope.headerRow = null;
-    $scope.footer = null;
 
     self.elementDims = {
         scrollW: 0,
@@ -1418,12 +1415,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     //#endregion
 
-    //$scope.scrollIntoView = function (entity) {
+    //self.scrollIntoView = function (entity) {
     //    var itemIndex = -1,
-    //        viewableRange = self.rowService.viewableRange;
+    //        viewableRange = self.rowService.$scope.renderedRange;
 
     //    if (entity) {
-    //        itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
+    //        itemIndex = self.rowService.$scope.renderedRows.indexOf(entity);
     //    }
 
     //    if (itemIndex > -1) {
@@ -1554,7 +1551,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight, self.sortService);
+                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService);
                 cols.push(column);
             });
 
@@ -1566,14 +1563,15 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope.$new(), self);
-        $scope.$watch(self.rowService.$scope.renderedRows, function () {
-            $scope.maxRows = self.rowService.$scope.renderedRows.length;
-            maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
-        });
+        self.rowService.Initialize(self);
+        $scope.maxRows = $scope.renderedRows.length;
+        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
+        //$scope.$watch(self.rowService.$scope.renderedRows, function () {
+
+        //});
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
-            sortedData: $scope.sortedData,
+            sortedData: self.sortedData,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
@@ -1628,12 +1626,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             col.filter = null;
         });
     };
-    self.excessRows = 8;
+    
     self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + self.excessRows));
+        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
     };
 
     self.adjustScrollLeft = function (scrollLeft) {

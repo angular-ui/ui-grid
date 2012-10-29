@@ -1,4 +1,4 @@
-﻿ng.Column = function ($scope, colDef, index, headerRowHeight, sortService) {
+﻿ng.Column = function (colDef, index, headerRowHeight, sortService) {
     var self = this;
     
     self.sortService = sortService;

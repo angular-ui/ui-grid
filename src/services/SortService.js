@@ -9,13 +9,13 @@
 ngGridServices.factory('SortService', function () {
     var sortService = { };
 
-    sortService.sortedData = [];
     sortService.dataSource = [];
     sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
     var ASC = "asc"; // constant for sorting direction
     sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
-
+    sortService.columns = [];
+    
     // utility function for null checking
     sortService.isEmpty = function(val) {
         return (val === null || val === undefined || val === '');
@@ -171,8 +171,8 @@ ngGridServices.factory('SortService', function () {
 
     // the core sorting logic trigger
     sortService.sortData = function() {
-        var data = sortService.$scope.dataSource,
-            sortInfo = sortService.$scope.sortInfo,
+        var data = sortService.dataSource,
+            sortInfo = sortService.sortInfo,
             col,
             direction,
             sortFn,
@@ -180,8 +180,7 @@ ngGridServices.factory('SortService', function () {
 
         // first make sure we are even supposed to do work
         if (!data || !sortInfo || sortService.useExternalSorting) {
-            sortService.$scope.sortedData = data;
-            return;
+            return data;
         }
 
         // grab the metadata for the rest of the logic
@@ -195,7 +194,7 @@ ngGridServices.factory('SortService', function () {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
-            item = sortService.$scope.dataSource[0];
+            item = data[0];
             sortFn = sortService.guessSortFn(item[col.field]);
 
             //cache it
@@ -248,30 +247,45 @@ ngGridServices.factory('SortService', function () {
             }
         });
 
-        sortService.$scope.sortedData = data;
+        sortService.sortingCallback(data);
     };
 
-    sortService.Initialize = function($scope, useExtSorting) {
-        sortService.$scope = $scope;
-        sortService.useExternalSorting = useExtSorting;
+    sortService.Initialize = function(config) {
+        sortService.useExternalSorting = config.useExtSorting;
+        sortService.columns = config.columns;
+        sortService.sortInfo = config.sortInfo;
+        sortService.sortingCallback = config.sortingCallback;
     };
 
+    sortService.updateDataSource = function(newData) {
+        sortService.dataSource = newData;
+        sortService.clearSortingData();
+    };
+    sortService.updateSortInfo = function(newInfo) {
+        sortService.sortInfo = newInfo;
+        sortService.clearSortingData();
+    };
     // the actual sort function to call
     // @col - the column to sort
     // @direction - "asc" or "desc"
     sortService.Sort = function (col, direction) {
         if (sortService.isSorting == true) return;
         sortService.isSorting = true;
-        angular.forEach(sortService.$scope.columns, function (column) {
-            if (column.field !== col.field) {
-                column.sortDirection = "";
-            }
-        });
-        sortService.$scope.sortInfo = {
+        sortService.clearSortingData(col.field);
+        sortService.sortInfo = {
             column: col,
             direction: direction
         };
+        sortService.sortData();
         sortService.isSorting = false;
+    };
+
+    sortService.clearSortingData = function(exceptField) {
+        angular.forEach(sortService.columns, function(column) {
+            if (exceptField && column.field !== exceptField) {
+                column.sortDirection = "";
+            }
+        });
     };
     return sortService;
 });

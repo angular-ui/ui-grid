@@ -48,6 +48,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     prevMinRowsToRender,
     maxCanvasHt = 0,
     hUpdateTimeout;
+   
+    self.config = $.extend(defaults, options);
+    self.gridId = "ng" + ng.utils.newId();
+    
 
     $scope.$root = null; //this is the root element that is passed in with the binding handler
     $scope.$topPanel = null;
@@ -60,44 +64,36 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
     $scope.filterIsOpen = false;
-    self.config = $.extend(defaults, options);
-    self.gridId = "ng" + ng.utils.newId();
     $scope.initPhase = 0;
     $scope.displayRowIndex = self.config.displayRowIndex;
     $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-
+    $scope.columns = [];
+    $scope.headerRow = null;
+    $scope.footer = null;
     $scope.dataSource = self.config.data;
     $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
-    $scope.sortedData = self.config.data;
-
+    self.sortedData = self.config.data;
+    $scope.renderedRows = [];
 
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
     
-    $scope.$watch('sortedData', self.rowService.CalcRenderedRange);
-
     self.sortService = SortService;
-    self.sortService.Initialize($scope, self.config.useExternalSorting);
-
-    $scope.$watch('sortedData', function (newVal) {
-        self.rowService.dataChanged = true;
-        self.rowService.rowCache = []; //if data source changes, kill this!
-        self.rowService.CalcRenderedRange();
-        if (self.config.selectedItems) {
-            var lastItemIndex = self.config.selectedItems.length - 1;
-            if (lastItemIndex <= 0) {
-                var item = self.config.selectedItems[lastItemIndex];
-                if (item) {
-                    //self.scrollIntoView(item);
-                }
-            }
+    self.sortService.Initialize({
+        useExternalSorting: self.config.useExternalSorting,
+        columns: $scope.columns,
+        sortInfo: $scope.sortInfo,
+        sortingCallback: function (newData) {
+            self.sortedData = newData;
+            self.rowService.sortedDataChanged(self.sortedData);
         }
-    }, true);
-    $scope.$watch('dataSource', self.sortService.sortData);
-    $scope.$watch('sortInfo', self.sortService.sortData);
+    });
     
+    $scope.$watch('dataSource', self.sortService.updateDataSource);
+    $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
         && !self.config.canSelectRows) {
@@ -110,19 +106,16 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         return maxCanvasHt.toString() + 'px';
     };
 
-    $scope.finalRows = function() {
-        return self.rowService.$scope.renderedRows;
+    self.setRenderedRows = function (newRows) {
+        $scope.renderedRows = newRows;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };
 
- 
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
-
-    $scope.columns = [];
-
-    $scope.headerRow = null;
-    $scope.footer = null;
 
     self.elementDims = {
         scrollW: 0,
@@ -290,12 +283,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     //#endregion
 
-    //$scope.scrollIntoView = function (entity) {
+    //self.scrollIntoView = function (entity) {
     //    var itemIndex = -1,
-    //        viewableRange = self.rowService.viewableRange;
+    //        viewableRange = self.rowService.$scope.renderedRange;
 
     //    if (entity) {
-    //        itemIndex = ng.utils.arrayIndexOf(self.rowService.renderedRows, entity);
+    //        itemIndex = self.rowService.$scope.renderedRows.indexOf(entity);
     //    }
 
     //    if (itemIndex > -1) {
@@ -426,7 +419,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (columnDefs.length > 0) {
 
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column($scope.$new(), colDef, i, self.config.headerRowHeight, self.sortService);
+                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService);
                 cols.push(column);
             });
 
@@ -438,14 +431,15 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         self.buildColumns();
 
-        self.rowService.Initialize($scope.$new(), self);
-        $scope.$watch(self.rowService.$scope.renderedRows, function () {
-            $scope.maxRows = self.rowService.$scope.renderedRows.length;
-            maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
-        });
+        self.rowService.Initialize(self);
+        $scope.maxRows = $scope.renderedRows.length;
+        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
+        //$scope.$watch(self.rowService.$scope.renderedRows, function () {
+
+        //});
         self.selectionService.Initialize($scope.$new(), {
             multiSelect: self.config.multiSelect,
-            sortedData: $scope.sortedData,
+            sortedData: self.sortedData,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
@@ -500,12 +494,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             col.filter = null;
         });
     };
-    self.excessRows = 8;
+    
     self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + self.excessRows));
+        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
     };
 
     self.adjustScrollLeft = function (scrollLeft) {
