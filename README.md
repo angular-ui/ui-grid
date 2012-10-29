@@ -25,7 +25,15 @@ ng-grid is in pre-alpha release currently. We are going to be adding more featur
 _The bare bones_:
 
 ```html
-<div ng-app="ngGrid" ng-grid="myOptions"></div>
+<script type="text/javascript" src="angular.js"></script>
+<script type="text/javascript" src="ng-grid.js"></script>
+<script>
+    angular.module('myApp',['ngGrid', ... {other includes}]);
+</script>
+<link rel="stylesheet" type="text/css" href="../ng-grid.css" /> 
+<body ng-app="myApp">
+    <div ng-grid="myOptions"></div>
+<body>
 ```
 ```javascript
 // Define your own controller somewhere..
