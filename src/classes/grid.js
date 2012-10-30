@@ -34,7 +34,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         enableColumnResize: true,
         beforeSelectionChange: function () { return true;},
         afterSelectionChange: function () { return true;},
-        rowTemplate: undefined
+        rowTemplate: undefined,
+        headerRowTemplate: undefined
     },
     self = this,
     isSorting = false,
@@ -111,6 +112,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.rowTemplate = function() {
         return self.config.rowTemplate || ng.defaultRowTemplate();
+    };
+
+    $scope.headerRowTemplate = function() {
+        return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
 
     self.elementDims = {

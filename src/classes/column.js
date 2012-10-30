@@ -54,8 +54,9 @@
     self.cellClass = colDef.cellClass;
     self.headerClass = colDef.headerClass;
 
-    self.headerTemplate = colDef.headerTemplate;
-    self.hasHeaderTemplate = (self.headerTemplate ? true : false);
+    self.headerCellTemplate = function() {
+        return colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
+    };
     
     self.showSortButtonUp = function () {
         return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;

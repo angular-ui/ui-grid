@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/29/2012 15:07:16
+* Compiled At: 10/29/2012 23:24:36
 ***********************************************/
 
 (function(window, undefined){
@@ -861,25 +861,12 @@ ng.defaultGridTemplate = function (options) {
     b.append('<div class="ngGrid">');
     b.append('	 <div class="ngTopPanel" ng-size="headerDim">');
     b.append(    	'<div class="ngHeaderContainer" ng-size="headerDim">');
-    b.append(        	'<div class="ngHeaderScroller" ng-size="headerScrollerDim">');
-    b.append(             	'<div unselectable="on" ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)">');
-    b.append(                 	'<div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append(                   	 '<span class="ngHeaderText">{{col.displayName}}</span>');
-    b.append(                   	 '<div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
-    b.append(                   	 '<div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
-    b.append(                	 '</div>');
-    b.append(                	 '<div class="ngHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');
-    b.append(                 	 '<div ng-show="_filterVisible">');
-    b.append(                     	'<input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
-    b.append(                 	 '</div>');
-    b.append(             	 '</div>');
-    b.append(        	 '</div>');
+    b.append(        	'<div class="ngHeaderScroller" ng-size="headerScrollerDim" ng-header-row></div>');
     b.append(    	 '</div>');
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" ng-style="canvasHeight()">'); 
-    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row>');
-    b.append(        	 '</div>');
+    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row></div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');
@@ -888,7 +875,7 @@ ng.defaultGridTemplate = function (options) {
     b.append(          		 '<span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
     b.append(       	 '</div>');
     b.append(       	 '<div class="ngFooterSelectedItems" ng-show="multiSelect">');
-    b.append(       	 '<span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
+    b.append(       	    '<span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append(       	 '</div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
@@ -902,6 +889,34 @@ ng.defaultGridTemplate = function (options) {
 
 ng.defaultRowTemplate = function () {
     return '<div ng-repeat="col in columns" style="height: {{rowHeight}}px; width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
+};
+
+/***********************************************
+* FILE: ..\src\templates\headerRowTemplate.js
+***********************************************/
+
+ng.defaultHeaderRowTemplate = function () {
+    return '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
+};
+
+/***********************************************
+* FILE: ..\src\templates\headerCellTemplate.js
+***********************************************/
+
+ng.defaultHeaderCellTemplate = function () {
+    var b = new ng.utils.StringBuilder();
+    b.append('<div>');
+    b.append('  <div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append('      <span class="ngHeaderText">{{col.displayName}}</span>');
+    b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
+    b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
+    b.append('  </div>');
+    b.append('  <div class="ngHeaderGrip" ng-show="allowResize" ng-mouseDown="gripOnMouseDown()"></div>');
+    b.append('  <div ng-show="_filterVisible">');
+    b.append('      <input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
+    b.append('  </div>');
+    b.append('</div>');
+    return b.toString();
 };
 
 /***********************************************
@@ -963,8 +978,9 @@ ng.Column = function (colDef, index, headerRowHeight, sortService) {
     self.cellClass = colDef.cellClass;
     self.headerClass = colDef.headerClass;
 
-    self.headerTemplate = colDef.headerTemplate;
-    self.hasHeaderTemplate = (self.headerTemplate ? true : false);
+    self.headerCellTemplate = function() {
+        return colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
+    };
     
     self.showSortButtonUp = function () {
         return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;
@@ -1079,7 +1095,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         enableColumnResize: true,
         beforeSelectionChange: function () { return true;},
         afterSelectionChange: function () { return true;},
-        rowTemplate: undefined
+        rowTemplate: undefined,
+        headerRowTemplate: undefined
     },
     self = this,
     isSorting = false,
@@ -1156,6 +1173,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     $scope.rowTemplate = function() {
         return self.config.rowTemplate || ng.defaultRowTemplate();
+    };
+
+    $scope.headerRowTemplate = function() {
+        return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
 
     self.elementDims = {
@@ -1907,7 +1928,6 @@ ngGridDirectives.directive('ngRow', function ($compile) {
 ngGridDirectives.directive('ngCell', function($compile) {
     var ngCell = {
         scope: false,
-        terminal: true,
         compile: function compile(tElement, tAttrs, transclude) {
             return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
@@ -1963,6 +1983,48 @@ ngGridDirectives.directive('ngSize', function($compile) {
 		}
 	};
     return ngSize;
+});
+
+/***********************************************
+* FILE: ..\src\directives\ng-header-row.js
+***********************************************/
+
+ngGridDirectives.directive('ngHeaderRow', function($compile) {
+    var ngHeaderRow = {
+        scope: false,
+        compile: function compile(tElement, tAttrs, transclude) {
+            return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+                    if (iElement.children().length == 0) {
+                        var html = $scope.headerRowTemplate();
+                        iElement.append($compile(html)($scope));
+                    }
+                }
+            };
+        },
+    };
+    return ngHeaderRow;
+});
+
+/***********************************************
+* FILE: ..\src\directives\ng-header-cell.js
+***********************************************/
+
+ngGridDirectives.directive('ngHeaderCell', function ($compile) {
+    var ngHeaderCell = {
+        scope: false,
+        terminal: true,
+        compile: function compile(tElement, tAttrs, transclude) {
+            return {
+                pre: function preLink($scope, iElement, iAttrs, controller) {
+                    var html = $scope.col.headerCellTemplate();
+                    iElement.html(html);
+                    $compile(iElement.children())($scope);
+                }
+            };
+        },
+    };
+    return ngHeaderCell;
 });
 
 /***********************************************

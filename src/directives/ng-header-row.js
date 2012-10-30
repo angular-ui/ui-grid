@@ -13,17 +13,19 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ngGridDirectives.directive('ngCell', function($compile) {
-    var ngCell = {
+ngGridDirectives.directive('ngHeaderRow', function($compile) {
+    var ngHeaderRow = {
         scope: false,
         compile: function compile(tElement, tAttrs, transclude) {
             return {
                 pre: function preLink($scope, iElement, iAttrs, controller) {
-                    var html = $scope.col.cellTemplate();
-                    iElement.append($compile(html)($scope));
+                    if (iElement.children().length == 0) {
+                        var html = $scope.headerRowTemplate();
+                        iElement.append($compile(html)($scope));
+                    }
                 }
             };
         },
     };
-    return ngCell;
+    return ngHeaderRow;
 });

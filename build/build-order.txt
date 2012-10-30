@@ -8,6 +8,8 @@
 ..\src\services\SortService.js
 ..\src\templates\gridTemplate.js
 ..\src\templates\rowTemplate.js
+..\src\templates\headerRowTemplate.js
+..\src\templates\headerCellTemplate.js
 ..\src\classes\column.js
 ..\src\classes\dimension.js
 ..\src\classes\footer.js
@@ -21,4 +23,6 @@
 ..\src\directives\ng-row.js
 ..\src\directives\ng-cell.js
 ..\src\directives\ng-size.js
+..\src\directives\ng-header-row.js
+..\src\directives\ng-header-cell.js
 ..\src\init.js
