@@ -19,7 +19,7 @@ __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
 ##Disclaimer##
 
-ng-grid is in pre-alpha release currently. We are going to be adding more features here in the very near future...
+ng-grid is in pre-beta release currently. We are going to be adding more features here as we head to a 1.0 release.
 
 ***
 _The bare bones_:
