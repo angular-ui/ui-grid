@@ -28,8 +28,8 @@ ngGridServices.factory('SelectionService', function () {
     selectionService.ChangeSelection = function(rowItem, evt) {
         if (selectionService.isMulti && evt && evt.shiftKey) {
             if (selectionService.lastClickedRow) {
-                var thisIndx = selectionService.rowService.rowCache.indexOf(rowItem);
-                var prevIndx = selectionService.rowService.rowCache.indexOf(selectionService.lastClickedRow);
+                var thisIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, rowItem);
+                var prevIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, selectionService.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {

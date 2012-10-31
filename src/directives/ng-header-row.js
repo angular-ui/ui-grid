@@ -25,7 +25,7 @@ ngGridDirectives.directive('ngHeaderRow', function($compile) {
                     }
                 }
             };
-        },
+        }
     };
     return ngHeaderRow;
 });

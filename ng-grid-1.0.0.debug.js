@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/30/2012 23:34:56
+* Compiled At: 10/31/2012 01:26:55
 ***********************************************/
 
 (function(window, undefined){
@@ -96,6 +96,33 @@ ng.moveSelectionHandler = function (grid, evt) {
 /***********************************************
 * FILE: ..\src\utils.js
 ***********************************************/
+//Taken from MDC: indexOf is a recent addition to the ECMA-262 standard; as such 
+//it may not be present in all browsers. This algorithm is exactly the one specified 
+//in ECMA-262, 5th edition, assuming Object, TypeError, Number, Math.floor, 
+//Math.abs, and Math.max have their original value.
+
+if (!Array.prototype.indexOf)
+{
+	Array.prototype.indexOf = function(elt /*, from*/)
+	{
+		var len = this.length >>> 0;
+
+		var from = Number(arguments[1]) || 0;
+		from = (from < 0)
+			? Math.ceil(from)
+			: Math.floor(from);
+		if (from < 0)
+			from += len;
+
+		for (; from < len; from++)
+		{
+			if (from in this && this[from] === elt)
+				return from;
+		}
+		return -1;
+	};
+}
+
 ng.utils = {
     arrayIndexOf: function (array, item) {
         if (typeof Array.prototype.indexOf == "function")
@@ -472,8 +499,8 @@ ngGridServices.factory('SelectionService', function () {
     selectionService.ChangeSelection = function(rowItem, evt) {
         if (selectionService.isMulti && evt && evt.shiftKey) {
             if (selectionService.lastClickedRow) {
-                var thisIndx = selectionService.rowService.rowCache.indexOf(rowItem);
-                var prevIndx = selectionService.rowService.rowCache.indexOf(selectionService.lastClickedRow);
+                var thisIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, rowItem);
+                var prevIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, selectionService.lastClickedRow);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -1920,7 +1947,7 @@ ngGridDirectives.directive('ngCell', function($compile) {
                     iElement.append($compile(html)($scope));
                 }
             };
-        },
+        }
     };
     return ngCell;
 });
@@ -1986,7 +2013,7 @@ ngGridDirectives.directive('ngHeaderRow', function($compile) {
                     }
                 }
             };
-        },
+        }
     };
     return ngHeaderRow;
 });
@@ -2007,7 +2034,7 @@ ngGridDirectives.directive('ngHeaderCell', function ($compile) {
                     $compile(iElement.children())($scope);
                 }
             };
-        },
+        }
     };
     return ngHeaderCell;
 });

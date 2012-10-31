@@ -25,7 +25,7 @@ ngGridDirectives.directive('ngHeaderCell', function ($compile) {
                     $compile(iElement.children())($scope);
                 }
             };
-        },
+        }
     };
     return ngHeaderCell;
 });

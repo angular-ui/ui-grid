@@ -23,7 +23,7 @@ ngGridDirectives.directive('ngCell', function($compile) {
                     iElement.append($compile(html)($scope));
                 }
             };
-        },
+        }
     };
     return ngCell;
 });
