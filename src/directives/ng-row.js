@@ -23,7 +23,7 @@ ngGridDirectives.directive('ngRow', function ($compile) {
                     iElement.append($compile(html)($scope));
                 }
             };
-        },
+        }
     };
     return ngRow;
 });

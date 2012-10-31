@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/30/2012 23:09:39
+* Compiled At: 10/30/2012 23:34:56
 ***********************************************/
 
 (function(window, undefined){
@@ -841,7 +841,7 @@ ng.defaultGridTemplate = function (options) {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" ng-style="canvasHeight()">'); 
-    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row></div>');
+    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');
@@ -1071,7 +1071,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         afterSelectionChange: function () { return true;},
         rowTemplate: undefined,
         headerRowTemplate: undefined,
-        plugins: [],
+        plugins: []
     },
     self = this,
     isSorting = false,
@@ -1434,7 +1434,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
-            isMulti: self.config.multiSelect,
+            isMulti: self.config.multiSelect
         }, self.rowService);
         
         self.rowService.Initialize({
@@ -1589,11 +1589,10 @@ ng.Row = function (entity, config, selectionService) {
     self.offsetTop = 0;
     self.rowKey = ng.utils.newId();
     self.rowDisplayIndex = 0;
-    self.class = function () {
+    self.alternatingRowClass = function () {
         if (self.rowIndex % 2 == 0)
             return "even";
-        else
-            return "odd";
+		return "odd";
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
@@ -1902,7 +1901,7 @@ ngGridDirectives.directive('ngRow', function ($compile) {
                     iElement.append($compile(html)($scope));
                 }
             };
-        },
+        }
     };
     return ngRow;
 });

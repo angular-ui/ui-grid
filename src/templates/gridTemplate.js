@@ -15,7 +15,7 @@ ng.defaultGridTemplate = function (options) {
     b.append(	 '</div>');
     b.append(	 '<div class="ngViewport" ng-size="viewportDim">');
     b.append(    	 '<div class="ngCanvas" ng-style="canvasHeight()">'); 
-    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.class()" ng-class-even="row.class()" ng-row></div>');
+    b.append(            '<div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected(row,$event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append(   	 '</div>');
     b.append(	 '</div>');
     b.append(	 '<div class="ngFooterPanel" ng-size="footerDim">');

@@ -35,7 +35,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         afterSelectionChange: function () { return true;},
         rowTemplate: undefined,
         headerRowTemplate: undefined,
-        plugins: [],
+        plugins: []
     },
     self = this,
     isSorting = false,
@@ -398,7 +398,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
-            isMulti: self.config.multiSelect,
+            isMulti: self.config.multiSelect
         }, self.rowService);
         
         self.rowService.Initialize({

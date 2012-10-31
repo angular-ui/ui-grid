@@ -59,11 +59,10 @@ ng.Row = function (entity, config, selectionService) {
     self.offsetTop = 0;
     self.rowKey = ng.utils.newId();
     self.rowDisplayIndex = 0;
-    self.class = function () {
+    self.alternatingRowClass = function () {
         if (self.rowIndex % 2 == 0)
             return "even";
-        else
-            return "odd";
+		return "odd";
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
