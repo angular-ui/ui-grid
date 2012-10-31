@@ -36,7 +36,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
-                    $scope.toggleSelectAll = $scope.toggleSelectAll;
                     $scope.filterIsOpen = $scope.filterIsOpen;
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     //grid.update();

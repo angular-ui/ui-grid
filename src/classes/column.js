@@ -59,10 +59,10 @@
     };
     
     self.showSortButtonUp = function () {
-        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;
+        return self.allowSort ? self.sortDirection === "desc" : self.allowSort;
     };
     self.showSortButtonDown = function () {
-        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "asc") : self.allowSort;
+        return self.allowSort ? self.sortDirection === "asc" : self.allowSort;
     };    
   
     self.filter = "";

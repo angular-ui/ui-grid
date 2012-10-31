@@ -35,7 +35,7 @@ ngGridServices.factory('RowService', function () {
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex;
 			row.offsetTop = rowService.rowHeight * rowIndex;
-		    row.selected = entity[SELECTED_PROP];
+			row.selected = entity[SELECTED_PROP];
 			// finally cache it for the next round
 			rowService.rowCache[rowIndex] = row;
 		}

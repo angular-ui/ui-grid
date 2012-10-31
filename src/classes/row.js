@@ -23,17 +23,16 @@ ng.Row = function (entity, config, selectionService) {
         if (!canSelectRows) {
             return true;
         }
-        var element = event.target;
+        var element = event.target || event;
 
         //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className.indexOf("ngSelectionCell" !== -1)) {
+        if (element.type == "checkbox" && element.parentElement.className != "ng-scope") {
             return true;
         } 
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
             if (self.beforeSelectionChange()) {
-                self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
                 self.selected ? self.selected = false : self.selected = true;
                 self.selectionService.ChangeSelection(data, event);
             }

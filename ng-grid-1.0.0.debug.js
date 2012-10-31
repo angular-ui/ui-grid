@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/29/2012 23:24:36
+* Compiled At: 10/30/2012 23:09:39
 ***********************************************/
 
 (function(window, undefined){
@@ -23,7 +23,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 ***********************************************/
 
 var ROW_KEY = '__ng_rowIndex__';
-var SELECTED_PROP = '__ng_selected__';
+var SELECTED_PROP = '__ng_selected__'; 
 var GRID_KEY = '__koGrid__';
 // the # of rows we want to add to the top and bottom of the rendered grid rows 
 var EXCESS_ROWS = 8;
@@ -354,7 +354,7 @@ ngGridServices.factory('RowService', function () {
 			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
 			row.rowDisplayIndex = row.rowIndex;
 			row.offsetTop = rowService.rowHeight * rowIndex;
-		    row.selected = entity[SELECTED_PROP];
+			row.selected = entity[SELECTED_PROP];
 			// finally cache it for the next round
 			rowService.rowCache[rowIndex] = row;
 		}
@@ -457,44 +457,15 @@ ngGridServices.factory('SelectionService', function () {
 	   return selectionService.dataSource.length;
 	};
 
-	selectionService.Initialize = function ($scope, options, rowService) {
+	selectionService.Initialize = function (options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.data, // the observable array datasource
+	    selectionService.sortedData = options.sortedData, // the observable array datasource
 
 	    selectionService.selectedItems = options.selectedItems;
         selectionService.selectedIndex = options.selectedIndex;
         selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
-
-
-        //make sure as the data changes, we keep the selectedItem(s) correct
-        $scope.$watch('dataSource', function(items) {
-            var selectedItems,
-                itemsToRemove;
-            if (!items) {
-                return;
-            }
-
-            //make sure the selectedItem(s) exist in the new data
-            selectedItems = selectionService.selectedItems;
-            itemsToRemove = [];
-
-            angular.forEach(selectedItems, function(item) {
-                if (ng.utils.arrayIndexOf(items, item) < 0) {
-                    itemsToRemove.push(item);
-                }
-            });
-
-            //clean out any selectedItems that don't exist in the new array
-            if (itemsToRemove.length > 0) {
-                angular.forEach(itemsToRemove, function(obj) {
-                    var indx = selectionService.selectedItems.indexOf(obj);
-                    selectionService.selectedItems.splice(indx, 1);
-                });
-                
-            }
-        });
     };
 		
 	// function to manage the selection action of a data item (entity)
@@ -548,18 +519,21 @@ ngGridServices.factory('SelectionService', function () {
     // writable-computed observable
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    selectionService.ToggleSelectAll = function (checkAll) {
-        var dataSourceCopy = [];
-        angular.forEach(selectionService.dataSource, function (item) {
-            dataSourceCopy.push(item);
-        });
-        if (checkAll) {
-            selectionService.selectedItems = dataSourceCopy;
-        } else {
-            selectionService.selectedItems = [];
+    selectionService.toggleSelectAll = function (checkAll) {
+        var selectedlength = selectionService.selectedItems.length;
+        if (selectedlength > 0) {
+            selectionService.selectedItems.splice(0, selectedlength);
         }
+        angular.forEach(selectionService.sortedData, function (item) {
+            item[SELECTED_PROP] = checkAll;
+            if (checkAll) {
+                selectionService.selectedItems.push(item);
+            }
+        });
+        angular.forEach(selectionService.rowService.rowCache, function (row) {
+            row.selected = checkAll;
+        });
     };
-    
 	return selectionService;
 });
 
@@ -637,7 +611,6 @@ ngGridServices.factory('SortService', function () {
                 return sortService.sortMMDDStr;
             }
         }
-
         //finally just sort the normal string...
         return sortService.sortAlpha;
     };
@@ -814,7 +787,6 @@ ngGridServices.factory('SortService', function () {
 
     sortService.Initialize = function(config) {
         sortService.useExternalSorting = config.useExtSorting;
-        sortService.columns = config.columns;
         sortService.sortInfo = config.sortInfo;
         sortService.sortingCallback = config.sortingCallback;
     };
@@ -833,21 +805,24 @@ ngGridServices.factory('SortService', function () {
     sortService.Sort = function (col, direction) {
         if (sortService.isSorting == true) return;
         sortService.isSorting = true;
-        sortService.clearSortingData(col.field);
+        sortService.clearSortingData(col);
         sortService.sortInfo = {
             column: col,
             direction: direction
         };
+        sortService.lastSortedColumn = col;
         sortService.sortData();
         sortService.isSorting = false;
     };
 
-    sortService.clearSortingData = function(exceptField) {
-        angular.forEach(sortService.columns, function(column) {
-            if (exceptField && column.field !== exceptField) {
-                column.sortDirection = "";
-            }
-        });
+    sortService.clearSortingData = function(col) {
+        if (!col) {
+            angular.forEach(sortService.columns, function(c) {
+                c.sortDirection = "";
+            });
+        } else if (sortService.lastSortedColumn && col != sortService.lastSortedColumn) {
+            sortService.lastSortedColumn.sortDirection = "";
+        }
     };
     return sortService;
 });
@@ -983,10 +958,10 @@ ng.Column = function (colDef, index, headerRowHeight, sortService) {
     };
     
     self.showSortButtonUp = function () {
-        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "desc") : self.allowSort;
+        return self.allowSort ? self.sortDirection === "desc" : self.allowSort;
     };
     self.showSortButtonDown = function () {
-        return self.allowSort ? (self.noSortVisible() || self.sortDirection === "asc") : self.allowSort;
+        return self.allowSort ? self.sortDirection === "asc" : self.allowSort;
     };    
   
     self.filter = "";
@@ -1077,13 +1052,11 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         filterRowHeight: 30,
         footerVisible: true,
         canSelectRows: true,
-        autogenerateColumns: true,
         data: [],
-        columnDefs: [],
+        columnDefs: undefined,
         selectedItems: [], // array, if multi turned off will have only one item in array
-        //displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
-        //selectWithCheckboxOnly: false,
-        //displayRowIndex: true, //shows the rowIndex cell at the far left of each row
+        displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
+        selectWithCheckboxOnly: false,
         useExternalFiltering: false,
         useExternalSorting: false,
         filterInfo: undefined, // holds filter information (fields, and filtering strings)
@@ -1093,10 +1066,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         tabIndex: -1,
         disableTextSelection: false,
         enableColumnResize: true,
+        enableSorting: true,
         beforeSelectionChange: function () { return true;},
         afterSelectionChange: function () { return true;},
         rowTemplate: undefined,
-        headerRowTemplate: undefined
+        headerRowTemplate: undefined,
+        plugins: [],
     },
     self = this,
     isSorting = false,
@@ -1131,25 +1106,16 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
     $scope.selectedItems = self.config.selectedItems;
     $scope.sortInfo = self.config.sortInfo;
+    $scope.multiSelect = self.config.multiSelect;
+    $scope.toggleSelectAll = function (a) {
+        self.selectionService.toggleSelectAll(a);
+    };
+    
     self.sortedData = self.config.data;
     $scope.renderedRows = [];
     //initialized in the init method
     self.rowService = RowService;
     self.selectionService = SelectionService;
-    
-    self.sortService = SortService;
-    self.sortService.Initialize({
-        useExternalSorting: self.config.useExternalSorting,
-        columns: $scope.columns,
-        sortInfo: $scope.sortInfo,
-        sortingCallback: function (newData) {
-            self.sortedData = newData;
-            self.rowService.sortedDataChanged(self.sortedData);
-        }
-    });
-    
-    $scope.$watch('dataSource', self.sortService.updateDataSource);
-    $scope.$watch('sortInfo', self.sortService.updateSortInfo);
 
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -1390,8 +1356,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
 
     self.buildColumnDefsFromData = function () {
-        if (self.config.columnDefs.length > 0){
-            return;
+        if (!self.config.columnDefs > 0){
+            self.config.columnDefs = [];
         }
         if (!$scope.dataSource || !$scope.dataSource[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
@@ -1400,9 +1366,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         item = $scope.dataSource[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            if (propName === SELECTED_PROP) {
-                return;
-            }
             self.config.columnDefs.push({
                 field: propName
             });
@@ -1417,13 +1380,21 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         var columnDefs = self.config.columnDefs,
             cols = [];
 
-        if (self.config.autogenerateColumns) { self.buildColumnDefsFromData(); }
-        //if (self.config.displaySelectionCheckbox) {
-        //    columnDefs.splice(0, 0, { field: SELECTED_PROP, width: self.elementDims.rowSelectedCellW });
-        //}
-        //if (self.config.displayRowIndex) {
-        //    columnDefs.splice(0, 0, { field: 'rowIndex', width: self.elementDims.rowIndexCellW });
-        //}
+        if (!columnDefs) {
+            self.buildColumnDefsFromData();
+            columnDefs = self.config.columnDefs;
+        }
+        if (self.config.displaySelectionCheckbox) {
+            columnDefs.splice(0, 0, {
+                field: '',
+                width: self.elementDims.rowSelectedCellW,
+                sortable: false,
+                filterable: false,
+                resizable: false,
+                headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
+                cellTemplate: '<div><input class="ngSelectionCell" type="checkbox" ng-checked="row.selected" /></div>'
+            });
+        }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
                 var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService);
@@ -1434,20 +1405,36 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
 
     self.init = function () {
+        
+        self.sortService = SortService;
+        self.sortService.Initialize({
+            useExternalSorting: self.config.useExternalSorting,
+            sortInfo: $scope.sortInfo,
+            sortingCallback: function (newData) {
+                self.sortedData = newData;
+                self.rowService.sortedDataChanged(self.sortedData);
+            }
+        });
 
         self.buildColumns();
+        
+        self.sortService.columns = $scope.columns,
 
+        $scope.$watch('dataSource', self.sortService.updateDataSource);
+        $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
         
-        self.selectionService.Initialize($scope.$new(), {
+
+        
+        self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             sortedData: self.sortedData,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             lastClickedRow: self.config.lastClickedRow,
-            isMulti: self.config.multiSelect
+            isMulti: self.config.multiSelect,
         }, self.rowService);
         
         self.rowService.Initialize({
@@ -1475,11 +1462,12 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 });
             }
         });
-        
-        $scope.toggleSelectAll = self.selectionService.ToggleSelectAll;
 
         ng.cssBuilder.buildStyles($scope, self);
-
+        //initialize plugins.
+        angular.forEach(self.config.plugins, function(p) {
+            p.init($scope.$new(), self);
+        });
         $scope.initPhase = 1;
     };
 
@@ -1565,17 +1553,16 @@ ng.Row = function (entity, config, selectionService) {
         if (!canSelectRows) {
             return true;
         }
-        var element = event.target;
+        var element = event.target || event;
 
         //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className.indexOf("ngSelectionCell" !== -1)) {
+        if (element.type == "checkbox" && element.parentElement.className != "ng-scope") {
             return true;
         } 
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
             if (self.beforeSelectionChange()) {
-                self.entity[SELECTED_PROP] ? self.entity[SELECTED_PROP] = false : self.entity[SELECTED_PROP] = true;
                 self.selected ? self.selected = false : self.selected = true;
                 self.selectionService.ChangeSelection(data, event);
             }
@@ -1884,7 +1871,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
-                    $scope.toggleSelectAll = $scope.toggleSelectAll;
                     $scope.filterIsOpen = $scope.filterIsOpen;
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     //grid.update();

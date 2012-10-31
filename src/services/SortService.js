@@ -76,7 +76,6 @@ ngGridServices.factory('SortService', function () {
                 return sortService.sortMMDDStr;
             }
         }
-
         //finally just sort the normal string...
         return sortService.sortAlpha;
     };
@@ -253,7 +252,6 @@ ngGridServices.factory('SortService', function () {
 
     sortService.Initialize = function(config) {
         sortService.useExternalSorting = config.useExtSorting;
-        sortService.columns = config.columns;
         sortService.sortInfo = config.sortInfo;
         sortService.sortingCallback = config.sortingCallback;
     };
@@ -272,21 +270,24 @@ ngGridServices.factory('SortService', function () {
     sortService.Sort = function (col, direction) {
         if (sortService.isSorting == true) return;
         sortService.isSorting = true;
-        sortService.clearSortingData(col.field);
+        sortService.clearSortingData(col);
         sortService.sortInfo = {
             column: col,
             direction: direction
         };
+        sortService.lastSortedColumn = col;
         sortService.sortData();
         sortService.isSorting = false;
     };
 
-    sortService.clearSortingData = function(exceptField) {
-        angular.forEach(sortService.columns, function(column) {
-            if (exceptField && column.field !== exceptField) {
-                column.sortDirection = "";
-            }
-        });
+    sortService.clearSortingData = function(col) {
+        if (!col) {
+            angular.forEach(sortService.columns, function(c) {
+                c.sortDirection = "";
+            });
+        } else if (sortService.lastSortedColumn && col != sortService.lastSortedColumn) {
+            sortService.lastSortedColumn.sortDirection = "";
+        }
     };
     return sortService;
 });

@@ -13,44 +13,15 @@ ngGridServices.factory('SelectionService', function () {
 	   return selectionService.dataSource.length;
 	};
 
-	selectionService.Initialize = function ($scope, options, rowService) {
+	selectionService.Initialize = function (options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
         selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.dataSource = options.data, // the observable array datasource
+	    selectionService.sortedData = options.sortedData, // the observable array datasource
 
 	    selectionService.selectedItems = options.selectedItems;
         selectionService.selectedIndex = options.selectedIndex;
         selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
-
-
-        //make sure as the data changes, we keep the selectedItem(s) correct
-        $scope.$watch('dataSource', function(items) {
-            var selectedItems,
-                itemsToRemove;
-            if (!items) {
-                return;
-            }
-
-            //make sure the selectedItem(s) exist in the new data
-            selectedItems = selectionService.selectedItems;
-            itemsToRemove = [];
-
-            angular.forEach(selectedItems, function(item) {
-                if (ng.utils.arrayIndexOf(items, item) < 0) {
-                    itemsToRemove.push(item);
-                }
-            });
-
-            //clean out any selectedItems that don't exist in the new array
-            if (itemsToRemove.length > 0) {
-                angular.forEach(itemsToRemove, function(obj) {
-                    var indx = selectionService.selectedItems.indexOf(obj);
-                    selectionService.selectedItems.splice(indx, 1);
-                });
-                
-            }
-        });
     };
 		
 	// function to manage the selection action of a data item (entity)
@@ -104,17 +75,20 @@ ngGridServices.factory('SelectionService', function () {
     // writable-computed observable
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    selectionService.ToggleSelectAll = function (checkAll) {
-        var dataSourceCopy = [];
-        angular.forEach(selectionService.dataSource, function (item) {
-            dataSourceCopy.push(item);
-        });
-        if (checkAll) {
-            selectionService.selectedItems = dataSourceCopy;
-        } else {
-            selectionService.selectedItems = [];
+    selectionService.toggleSelectAll = function (checkAll) {
+        var selectedlength = selectionService.selectedItems.length;
+        if (selectedlength > 0) {
+            selectionService.selectedItems.splice(0, selectedlength);
         }
+        angular.forEach(selectionService.sortedData, function (item) {
+            item[SELECTED_PROP] = checkAll;
+            if (checkAll) {
+                selectionService.selectedItems.push(item);
+            }
+        });
+        angular.forEach(selectionService.rowService.rowCache, function (row) {
+            row.selected = checkAll;
+        });
     };
-    
 	return selectionService;
 });
