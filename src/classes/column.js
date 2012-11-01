@@ -47,7 +47,7 @@
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div>{{row.entity[col.field]}}</div>';
+        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field]}}</div>';
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 

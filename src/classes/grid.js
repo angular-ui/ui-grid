@@ -356,7 +356,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 filterable: false,
                 resizable: false,
                 headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                cellTemplate: '<div><input class="ngSelectionCell" type="checkbox" ng-checked="row.selected" /></div>'
+                cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
             });
         }
         if (columnDefs.length > 0) {

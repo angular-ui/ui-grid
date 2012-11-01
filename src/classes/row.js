@@ -26,7 +26,7 @@ ng.Row = function (entity, config, selectionService) {
         var element = event.target || event;
 
         //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className != "ng-scope") {
+        if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
             return true;
         } 
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){

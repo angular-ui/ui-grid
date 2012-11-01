@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/31/2012 01:26:55
+* Compiled At: 10/31/2012 14:47:15
 ***********************************************/
 
 (function(window, undefined){
@@ -973,7 +973,7 @@ ng.Column = function (colDef, index, headerRowHeight, sortService) {
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div>{{row.entity[col.field]}}</div>';
+        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field]}}</div>';
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -1419,7 +1419,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 filterable: false,
                 resizable: false,
                 headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                cellTemplate: '<div><input class="ngSelectionCell" type="checkbox" ng-checked="row.selected" /></div>'
+                cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
             });
         }
         if (columnDefs.length > 0) {
@@ -1583,7 +1583,7 @@ ng.Row = function (entity, config, selectionService) {
         var element = event.target || event;
 
         //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className != "ng-scope") {
+        if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
             return true;
         } 
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){

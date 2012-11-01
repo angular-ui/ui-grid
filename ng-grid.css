@@ -81,26 +81,41 @@ div.ngHeaderCell:last-child{
 .ngCell {
     overflow: hidden; 
     position: absolute;
-	margin-left: 4px;
     padding: 0;
     display: inline;
-	margin-top: 5px;
 }
 .ngRowIndexCell{ 
     text-align: center;
 }
-.ngSelectionCell {
-}
+
 .ngSelectionHeader {
-    position: absolute;
-    top: 7px; 
-    left: 4px;
+	position: absolute;
+    top: 11px; 
+    left: 6px;
 }
-.ngSelectionCell input[type="checkbox"] {
-    margin-left: 5px;
-    margin-top: 10px;
-    height: 15px;
-    width: 15px;
+
+.ng-scope {
+	margin: 0;
+	padding: 0;
+}
+
+input[type="checkbox"] {
+	margin: 0;
+	padding: 0;
+}
+
+input {
+	vertical-align:top;
+}
+
+.ngSelectionCell{
+	margin-top: 9px;
+	margin-left: 6px;
+}
+
+.ngCellText {
+	margin-top: 5px;
+	margin-left: 4px;
 }
 
 /******** Header Sorting ********/
