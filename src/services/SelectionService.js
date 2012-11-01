@@ -39,7 +39,7 @@ ngGridServices.factory('SelectionService', function () {
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     selectionService.rowService.rowCache[prevIndx].selected = selectionService.lastClickedRow.selected;
-                    selectionService.addOrRemove(rowItem);
+                    selectionService.addOrRemove(selectionService.rowService.rowCache[prevIndx]);
                 }
                 selectionService.lastClickedRow = rowItem;
                 return true;
