@@ -43,7 +43,7 @@ local.properties
 *.sln
 *.
 *.*roj
-
+web.config
 # Build results
 [Dd]ebug/
 [Rr]elease/
