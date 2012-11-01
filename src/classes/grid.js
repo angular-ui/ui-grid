@@ -13,7 +13,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         columnWidth: 100,
         headerRowHeight: 32,
         footerRowHeight: 55,
-        filterRowHeight: 30,
         footerVisible: true,
         canSelectRows: true,
         data: [],
@@ -21,9 +20,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         selectedItems: [], // array, if multi turned off will have only one item in array
         displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
         selectWithCheckboxOnly: false,
-        useExternalFiltering: false,
         useExternalSorting: false,
-        filterInfo: undefined, // holds filter information (fields, and filtering strings)
         sortInfo: undefined, // similar to filterInfo
         multiSelect: true,
         lastClickedRow: undefined,
@@ -46,7 +43,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
    
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
-    
 
     $scope.$root = null; //this is the root element that is passed in with the binding handler
     $scope.$topPanel = null;
@@ -58,7 +54,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.footerController = null;
     $scope.width = gridDim.outerWidth;
     $scope.selectionManager = null;
-    $scope.filterIsOpen = false;
     $scope.initPhase = 0;
     $scope.columns = [];
     $scope.headerRow = null;
@@ -88,8 +83,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.config.footerRowHeight = 30;
     }
 	
-    $scope.filterIsOpen = false; //flag so that the header can subscribe and change height when opened
-
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
@@ -133,9 +126,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
         newDim.outerHeight = self.config.headerRowHeight;
         newDim.outerWidth = rootDim.outerWidth;
-        if ($scope.filterOpen) {
-            newDim.outerHeight += self.config.filterRowHeight;
-        }
         return newDim;
     };
 
@@ -242,9 +232,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDim().outerHeight || 1;
-        if ($scope.filterIsOpen) {
-            return prevMinRowsToRender;
-        };
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
         return prevMinRowsToRender;
     };
@@ -308,8 +295,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if ($scope.initPhase > 0) {
 
-            //don't shrink the grid if we sorting or filtering
-            if (!$scope.filterIsOpen && !isSorting) {
+            //don't shrink the grid if we sorting
+            if (!isSorting) {
                 self.refreshDomSizes();
                 ng.cssBuilder.buildStyles($scope, self);
                 if ($scope.initPhase > 0 && $scope.$root) {
@@ -336,9 +323,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         });
 
     };
-    $scope.columnClass = function (indx) {
-        return "col" + (indx);
-    };
+
     self.buildColumns = function () {
         $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
@@ -353,7 +338,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 field: '',
                 width: self.elementDims.rowSelectedCellW,
                 sortable: false,
-                filterable: false,
                 resizable: false,
                 headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
                 cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
@@ -449,17 +433,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             hUpdateTimeout = setTimeout(updater, 0);
         }
     };
-
-    $scope.showFilter_Click = function () {
-        $scope.headerRow.filterVisible = !$scope.filterIsOpen;
-        $scope.filterIsOpen = !$scope.filterIsOpen;
-    };
-    $scope.clearFilter_Click = function () {
-        angular.forEach($scope.columns, function (col) {
-            col.filter = null;
-        });
-    };
-    
+   
     self.adjustScrollTop = function (scrollTop, force) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);

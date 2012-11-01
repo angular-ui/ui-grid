@@ -2,9 +2,6 @@
     var self = this;
     
     self.sortService = sortService;
-    self.allowSort = colDef.allowSort;
-    self.allowFilter = colDef.allowFilter;
-    self.allowResize = colDef.allowResize;
 
     self.width = colDef.width;
     self.widthIsConfigured = false;
@@ -30,20 +27,11 @@
     if (colDef.resizable === undefined || colDef.resizable === null) {
         colDef.resizable = true;
     }
-    //resizing
-    if (colDef.filterable === undefined || colDef.filterable === null) {
-        colDef.filterable = true;
-    }
 
     self.allowSort = colDef.sortable;
-    self.allowResize = colDef.resizable;
-    self.allowFilter = colDef.filterable;
 
     self.sortDirection = "";
     self.sortingAlgorithm = colDef.sortFn;
-
-    //filtering
-    self.filter = null;
 
     //cell Template
     self.cellTemplate = function() {
@@ -65,9 +53,6 @@
         return self.allowSort ? self.sortDirection === "asc" : self.allowSort;
     };    
   
-    self.filter = "";
-    self.filterVisible = false;
-
     self.noSortVisible = function () {
         var ret = self.sortDirection !== "asc" && self.sortDirection !== "desc";
         return !self.sortDirection;
@@ -80,30 +65,5 @@
         var dir = self.sortDirection === "asc" ? "desc" : "asc";
         self.sortDirection = dir;
         self.sortService.Sort(self, dir);
-    };
-
-    self.filterHasFocus = false;
-    self.startMousePosition = 0;
-    self.origWidth = 0;
-    self.gripOnMouseUp = function () {
-        $(document).off('mousemove');
-        $(document).off('mouseup');
-        document.body.style.cursor = 'default';
-        return false;
-    };
-    self.onMouseMove = function (event) {
-        var diff = event.clientX - self.startMousePosition;
-        var newWidth = diff + self.origWidth;
-        self.width = newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth);
-        return false;
-    };
-    self.gripOnMouseDown = function (event) {
-        self.startMousePosition = event.clientX;
-        self.origWidth = self.width;
-        $(document).mousemove(self.onMouseMove);
-        $(document).mouseup(self.gripOnMouseUp);
-        document.body.style.cursor = 'col-resize';
-        event.target.parentElement.style.cursor = 'col-resize';
-        return false;
     };
 };

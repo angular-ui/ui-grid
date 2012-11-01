@@ -1,9 +1,7 @@
 ﻿/// <reference path="../classes/grid.js" />
-/// <reference path="../services/FilterService.js" />
 /// <reference path="../services/GridService.js" />
 /// <reference path="../services/SelectionService.js" />
 /// <reference path="../classes/grid.js" />
-/// <reference path="../services/FilterService.js" />
 /// <reference path="../services/GridService.js" />
 /// <reference path="../services/SelectionService.js" />
 /// <reference path="../services/RowService.js" />
@@ -36,7 +34,6 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     $scope.$watch($scope.data, $scope.refreshDomSizesTrigger);
-                    $scope.filterIsOpen = $scope.filterIsOpen;
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     //grid.update();
                     $scope.initPhase = 1;

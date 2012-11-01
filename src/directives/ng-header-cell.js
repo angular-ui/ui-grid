@@ -1,5 +1,4 @@
 ﻿/// <reference path="../classes/grid.js" />
-/// <reference path="../services/FilterService.js" />
 /// <reference path="../services/GridService.js" />
 /// <reference path="../services/SelectionService.js" />
 /// <reference path="../services/RowService.js" />

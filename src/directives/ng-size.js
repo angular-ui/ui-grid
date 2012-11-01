@@ -1,5 +1,4 @@
 ﻿/// <reference path="../classes/grid.js" />
-/// <reference path="../services/FilterService.js" />
 /// <reference path="../services/GridService.js" />
 /// <reference path="../services/SelectionService.js" />
 /// <reference path="../services/RowService.js" />
@@ -18,7 +17,7 @@ ngGridDirectives.directive('ngSize', function($compile) {
         scope: false,
         compile: function compile(tElement, tAttrs, transclude){
             return {
-                pre: function preLink($scope, iElement, iAttrs, controller) {
+                pre: function preLink($scope, iElement, iAttrs) {
                     var $container = $(iElement),
                         $parent = $container.parent(),
                         dim = $scope[iAttrs.ngSize](),

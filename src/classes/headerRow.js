@@ -2,5 +2,4 @@
     this.headerCells = [];
     this.height = null;
     this.headerCellMap = {};
-    this.filterVisible = false;
 };

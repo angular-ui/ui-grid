@@ -10,7 +10,7 @@
 ngGridServices.factory('RowService', function () {
     var rowService = {};
 
-    // we cache rows when they are built, and then blow the cache away when sorting/filtering
+    // we cache rows when they are built, and then blow the cache away when sorting
     rowService.rowCache = [];
     rowService.dataChanged = true;
     rowService.dataSource = [];
