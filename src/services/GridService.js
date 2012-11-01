@@ -49,7 +49,7 @@ ngGridServices.factory('GridService', function () {
         });
         grid.$viewport.off('keydown');
         grid.$viewport.on('keydown', function (e) {
-            return ng.moveSelectionHandler(grid, e);
+            return ng.moveSelectionHandler($scope, grid, e);
         });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so

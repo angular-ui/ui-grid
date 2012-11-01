@@ -5,26 +5,17 @@
 
 if (!Array.prototype.indexOf)
 {
-	Array.prototype.indexOf = function(elt /*, from*/)
-	{
+	Array.prototype.indexOf = function(elt /*, from*/){
 		var len = this.length >>> 0;
-
 		var from = Number(arguments[1]) || 0;
-		from = (from < 0)
-			? Math.ceil(from)
-			: Math.floor(from);
-		if (from < 0)
-			from += len;
-
-		for (; from < len; from++)
-		{
-			if (from in this && this[from] === elt)
-				return from;
+		from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+		if (from < 0) from += len;
+		for (; from < len; from++){
+			if (from in this && this[from] === elt) return from;
 		}
 		return -1;
 	};
 }
-
 ng.utils = {
     arrayIndexOf: function (array, item) {
         if (typeof Array.prototype.indexOf == "function")
@@ -34,7 +25,6 @@ ng.utils = {
                 return i;
         return -1;
     },
-    
     arrayFilter: function (array, predicate) {
         array = array || [];
         var result = [];
@@ -43,7 +33,6 @@ ng.utils = {
         result.push(array[i]);
         return result;
     },
-
     forIn: function (obj, action) {
         var prop;
 
@@ -53,7 +42,6 @@ ng.utils = {
             }
         }
     },
-        
     endsWith: function (str, suffix) {
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
@@ -63,7 +51,6 @@ ng.utils = {
     },
     StringBuilder: function () {
         var strArr = [];
-        
         this.append = function (str, data) {
             var len = arguments.length,
                 intMatch = 0,
@@ -85,7 +72,6 @@ ng.utils = {
             }
             strArr.push(str);
         };
-
         this.toString = function () {
             var separator = arguments[0];
             if (separator !== null && separator !== undefined) {
@@ -95,7 +81,6 @@ ng.utils = {
             }
         };
     },
-    
     getElementsByClassName: function(cl) {
         var retnode = [];
         var myclass = new RegExp('\\b'+cl+'\\b');
@@ -106,17 +91,6 @@ ng.utils = {
         }
         return retnode;
     },
-    
-    getPropertyPath: function(path, entity){
-        var propPath = path.split('.');
-        var tempProp = entity[propPath[0]];
-
-        for (var j = 1; j < propPath.length; j++){
-            tempProp = tempProp[propPath[j]];
-        }
-        return tempProp;
-    },
-    
     newId: (function () {
         var seedId = new Date().getTime();
 

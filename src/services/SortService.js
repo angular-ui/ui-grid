@@ -12,7 +12,6 @@ ngGridServices.factory('SortService', function () {
     sortService.dataSource = [];
     sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
-    var ASC = "asc"; // constant for sorting direction
     sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
     sortService.columns = [];
     sortService.sortingCallback = function () { };
@@ -248,6 +247,7 @@ ngGridServices.factory('SortService', function () {
         });
 
         sortService.sortingCallback(data);
+        return data;
     };
 
     sortService.Initialize = function(config) {

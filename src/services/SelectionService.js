@@ -9,18 +9,23 @@
 ngGridServices.factory('SelectionService', function () {
     var selectionService = {};
 
+    selectionService.lastClickedRow = undefined;
+    selectionService.isMulti = undefined;
+    selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+    selectionService.sortedData = undefined; // the observable array datasource
+    selectionService.selectedItems = undefined;
+    selectionService.selectedIndex = undefined;
+    selectionService.rowService = undefined;
+    
 	selectionService.maxRows = function () {
 	   return selectionService.dataSource.length;
 	};
 
 	selectionService.Initialize = function (options, rowService) {
         selectionService.isMulti = options.isMulti || options.multiSelect;
-        selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-	    selectionService.sortedData = options.sortedData, // the observable array datasource
-
-	    selectionService.selectedItems = options.selectedItems;
+	    selectionService.sortedData = options.sortedData;
+        selectionService.selectedItems = options.selectedItems;
         selectionService.selectedIndex = options.selectedIndex;
-        selectionService.lastClickedRow = options.lastClickedRow;
         selectionService.rowService = rowService;
     };
 		

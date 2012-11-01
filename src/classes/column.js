@@ -30,7 +30,7 @@
 
     self.allowSort = colDef.sortable;
 
-    self.sortDirection = "";
+    self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
 
     //cell Template
@@ -47,14 +47,14 @@
     };
     
     self.showSortButtonUp = function () {
-        return self.allowSort ? self.sortDirection === "desc" : self.allowSort;
+        return self.allowSort ? self.sortDirection === DESC : self.allowSort;
     };
     self.showSortButtonDown = function () {
-        return self.allowSort ? self.sortDirection === "asc" : self.allowSort;
+        return self.allowSort ? self.sortDirection === ASC : self.allowSort;
     };    
   
     self.noSortVisible = function () {
-        var ret = self.sortDirection !== "asc" && self.sortDirection !== "desc";
+        var ret = self.sortDirection !== ASC && self.sortDirection !== DESC;
         return !self.sortDirection;
     };
 
@@ -62,7 +62,7 @@
         if (!self.allowSort) {
             return; // column sorting is disabled, do nothing
         }
-        var dir = self.sortDirection === "asc" ? "desc" : "asc";
+        var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
         self.sortService.Sort(self, dir);
     };

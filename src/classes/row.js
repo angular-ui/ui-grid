@@ -19,12 +19,11 @@ ng.Row = function (entity, config, selectionService) {
     }
     self.selected = false;
 
-    self.toggleSelected = function (data, event) {
+    self.toggleSelected = function (event) {
         if (!canSelectRows) {
             return true;
         }
         var element = event.target || event;
-
         //check and make sure its not the bubbling up of our checked 'click' event 
         if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
             return true;
@@ -32,9 +31,9 @@ ng.Row = function (entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox"){
             return true;
         } else {
-            if (self.beforeSelectionChange()) {
+            if (self.beforeSelectionChange(self)) {
                 self.selected ? self.selected = false : self.selected = true;
-                self.selectionService.ChangeSelection(data, event);
+                self.selectionService.ChangeSelection(self, event);
             }
         }
         return self.afterSelectionChange();
