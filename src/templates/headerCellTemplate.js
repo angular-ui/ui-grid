@@ -13,10 +13,6 @@ ng.defaultHeaderCellTemplate = function () {
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('  </div>');
-    b.append('  <div class="ngHeaderGrip" ng-show="col.allowResize" ng-mouseDown="col.gripOnMouseDown($event)"></div>');
-    b.append('  <div ng-show="_filterVisible">');
-    b.append('      <input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
-    b.append('  </div>');
     b.append('</div>');
     return b.toString();
 };

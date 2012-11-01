@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 10/31/2012 17:42:58
+* Compiled At: 10/31/2012 23:45:38
 ***********************************************/
 
 (function(window, undefined){
@@ -890,7 +890,7 @@ ng.defaultGridTemplate = function () {
 ***********************************************/
 
 ng.defaultRowTemplate = function () {
-    return '<div ng-repeat="col in columns" style="height: {{rowHeight}}px; width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
+    return '<div ng-repeat="col in columns" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
 };
 
 /***********************************************
@@ -898,7 +898,7 @@ ng.defaultRowTemplate = function () {
 ***********************************************/
 
 ng.defaultHeaderRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
+    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
 };
 
 /***********************************************
@@ -912,10 +912,6 @@ ng.defaultHeaderCellTemplate = function () {
     b.append('      <span class="ngHeaderText">{{col.displayName}}</span>');
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
-    b.append('  </div>');
-    b.append('  <div class="ngHeaderGrip" ng-show="col.allowResize" ng-mouseDown="col.gripOnMouseDown($event)"></div>');
-    b.append('  <div ng-show="_filterVisible">');
-    b.append('      <input type="text" ng-model="col.filter" style="width: 80%" tabindex="1" />');
     b.append('  </div>');
     b.append('</div>');
     return b.toString();
@@ -1636,7 +1632,6 @@ ng.Row = function (entity, config, selectionService) {
 ***********************************************/
 
 ng.cssBuilder = {
-
     buildStyles: function (scope, grid) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
@@ -1648,29 +1643,23 @@ ng.cssBuilder = {
             col,
             sumWidth = 0;
 
-        if (!$style) {
-            $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('head'));
-        }
+        if (!$style) $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('html'));
         $style.empty();
-        
         if(scope.totalRowWidth() > scope.width)
 			css.append(".{0} .ngCanvas { width: {1}px; }", gridId, scope.totalRowWidth());
         css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
         css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
         css.append(".{0} .ngHeaderScroller { line-height: {1}px; }", gridId, headerRowHeight);
-        
         for (; i < len; i++) {
             col = scope.columns[i];
-            css.append(".{0} .col{1} { left: {2}px; right: {3}px; }", gridId, i, sumWidth, (scope.totalRowWidth() - sumWidth - scope.columns[i].width));
+            css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, scope.columns[i].width, sumWidth, (scope.totalRowWidth() - sumWidth - scope.columns[i].width), rowHeight);
             sumWidth += col.width;
         }
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
-        }
-        else {
+        } else {
             $style[0].appendChild(document.createTextNode(css.toString(" ")));
         }
-
         grid.$styleSheet = $style;
     }
 };

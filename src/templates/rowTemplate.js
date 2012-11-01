@@ -6,5 +6,5 @@
 /// <reference path="../utils.js"/>
 
 ng.defaultRowTemplate = function () {
-    return '<div ng-repeat="col in columns" style="height: {{rowHeight}}px; width: {{col.width}}px" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
+    return '<div ng-repeat="col in columns" class="ngCell {{columnClass($index)}} {{col.cellClass}}" ng-cell></div>';
 };

@@ -6,5 +6,5 @@
 /// <reference path="../utils.js"/>
 
 ng.defaultHeaderRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngHeaderCell {{columnClass($index)}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
+    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
 };
