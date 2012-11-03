@@ -184,8 +184,8 @@ input {
 }
 .ngHeaderGrip { 
     cursor: col-resize; 
-    width: 1px; 
-	right: 0px;
+    width: 5px; 
+	right: -1px;
 	margin-right: -2px;
 	margin-left: 3px;
     top: 0; 
@@ -194,12 +194,10 @@ input {
     z-index: 1000; 
 }
 .ngHeaderGrip:hover { 
-    border-right-color: gray;
-    border-right-style: dotted;
-	border-right-width: 3px;
+	background-color:darkgray;
     cursor: col-resize; 
-    width: 1px; 
-    right: 0px;
+    width: 5px; 
+    right: -1px;
     margin-right: -2px;
     margin-left: 3px;
     top: 0; 

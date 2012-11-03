@@ -17,6 +17,17 @@ if (!Array.prototype.indexOf)
 	};
 }
 ng.utils = {
+    visualLength: function (string) {
+        var elem = document.getElementById('testDataLength');
+        if (!elem) {
+            elem = document.createElement('SPAN');
+            elem.id = "testDataLength";
+            elem.style.visibility = "hidden";
+            document.body.appendChild(elem);
+        }
+        elem.innerHTML = string;
+        return elem.offsetWidth;
+    },
     arrayIndexOf: function (array, item) {
         if (typeof Array.prototype.indexOf == "function")
             return Array.prototype.indexOf.call(array, item);

@@ -1,4 +1,4 @@
-﻿ng.Column = function (colDef, index, headerRowHeight, sortService) {
+﻿ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder) {
     var self = this;
     
     self.sortService = sortService;
@@ -8,7 +8,8 @@
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = headerRowHeight;
-
+    self.widthWatcher = null;
+    
     self.field = colDef.field;
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
@@ -65,5 +66,37 @@
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
         self.sortService.Sort(self, dir);
+    };
+    var delay = 500,
+        clicks = 0,
+        timer = null;
+    self.gripClick = function (event) {
+        clicks++;  //count clicks
+        if (clicks === 1) {
+            timer = setTimeout(function () {
+                //Here you can add a single click action.
+                clicks = 0;  //after action performed, reset counter
+            }, delay);
+        } else {
+            clearTimeout(timer);  //prevent single-click action
+            resizeOnDataCallback(self.column);  //perform double-click action
+            clicks = 0;  //after action performed, reset counter
+        }
+    };
+
+    self.gripOnMouseUp = function (event) {
+        $(document).off('mouseup');
+        var diff = event.clientX - self.startMousePosition;
+        var newWidth = diff + self.origWidth;
+        self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        cssBuilder.buildStyles();
+        return false;
+    };
+    
+    self.gripOnMouseDown = function (event) {
+        self.startMousePosition = event.clientX;
+        self.origWidth = self.width;
+        $(document).mouseup(self.gripOnMouseUp);
+        return false;
     };
 };

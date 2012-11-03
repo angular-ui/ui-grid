@@ -1,6 +1,6 @@
 ﻿ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
     var ngGrid = {
-        scope: true,
+        scope: false,
         compile: function () {
             return {
                 pre: function ($scope, iElement, iAttrs) {

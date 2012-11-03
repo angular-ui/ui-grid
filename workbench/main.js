@@ -5,7 +5,7 @@ function userController($scope) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelection = undefined;
-    self.myData = [{name: "Moroni", age: 50, born: '350 A.D.'},
+    self.myData = [{name: "MoroniMoroniMoroniMoroniMoroniMoroniMoroni", age: 50, born: '350 A.D.'},
                    {name: "Tiancum", age: 47, born: '350 A.D.'},
                    {name: "Jacob", age: 27, born: '350 A.D.'},
                    {name: "Nephi", age: 29, born: '350 A.D.'},
@@ -26,6 +26,9 @@ function userController($scope) {
         selectedItems: $scope.mySelections,
         selectedItem: $scope.mySelection,
         multiSelect: true,
-        plugins: [new ngGridResizable()]
+        plugins: [new ngGridResizable()],
+        columnDefs: [{ field: 'name', width: "auto"},
+                     { field: 'age', width: 100 },
+                     { field: 'born', width: 100 }]
     };
 };

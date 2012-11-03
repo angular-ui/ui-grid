@@ -159,13 +159,14 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService);
+                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder);
                 cols.push(column);
             });
             $scope.columns = cols;
         }
     };
     self.init = function () {
+        self.cssBuilder = new ng.CssBuilder($scope, self);
         self.sortService = SortService;
         self.sortService.Initialize({
             useExternalSorting: self.config.useExternalSorting,
@@ -212,13 +213,13 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 });
             }
         });
-        ng.cssBuilder.buildStyles($scope, self);
+        self.cssBuilder.buildStyles();
         $scope.initPhase = 1;
     };
     self.update = function () {
         var updater = function () {
             $scope.refreshDomSizes();
-            ng.cssBuilder.buildStyles($scope, self);
+            self.cssBuilder.buildStyles();
             if ($scope.initPhase > 0 && $scope.$root) {
                 $scope.$root.show();
             }
@@ -239,6 +240,28 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if ($scope.$headerContainer) {
             $scope.$headerContainer.scrollLeft(scrollLeft);
         }
+    };
+    self.resizeOnData = function (col, override) {
+        if (col.longest) { // check for cache so we don't calculate again
+            col.width = col.longest;
+        } else {// we calculate the longest data.
+            var road = override || self.config.resizeOnAllData;
+            var longest = col.minWidth;
+            var arr = road ? self.sortedData : $scope.renderedRows ;
+            angular.forEach(arr, function (data) {
+                var i = ng.utils.visualLength(data[col.field]);
+                if (i > longest) {
+                    longest = i;
+                }
+            });
+            longest += 10; //add 10 px for decent padding if resizing on data.
+            col.longest = longest > col.maxWidth ? col.maxWidth : longest;
+            col.width = longest;
+        }
+        if (col.widthWatcher) {
+            col.widthWatcher();
+        }
+        self.cssBuilder.buildStyles();
     };
     
     //$scope vars
@@ -328,7 +351,14 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 // figure out if the width is defined or if we need to calculate it
                 if (t == undefined) {
                     // set the width to the length of the header title +30 for sorting icons and padding
-                    col.width = (col.displayName.length * ng.domUtility.letterW) + 30; 
+                    col.width = (col.displayName.length * ng.domUtility.letterW) + 30;
+                } else if (t == "auto") { // set it for now until we have data and subscribe when it changes so we can set the width.
+                    col.width = col.minWidth;
+                    col.widthWatcher = $scope.$watch('renderedRows', function (newArr) {
+                        if (newArr.length > 0) {
+                            self.resizeOnData(col, true);
+                        }
+                    });
                 } else if (t.indexOf("*") != -1){
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0){
@@ -361,6 +391,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 var t = col.width.length;
                 col.width = asteriskVal * t;
                 totalWidth += col.width;
+                col.widthIsConfigured = true;
             });
         }
         // Now we check if we saved any percentage columns for calculating last
@@ -370,6 +401,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
                 var t = col.width;
                 col.width = Math.floor($scope.width * (parseInt(t.slice(0, - 1)) / 100));
                 totalWidth += col.width;
+                col.widthIsConfigured = true;
             });
         }
         return totalWidth;

@@ -1,7 +1,6 @@
 ﻿ngGridDirectives.directive('ngHeaderCell', function ($compile) {
     var ngHeaderCell = {
         scope: false,
-        terminal: true,
         compile: function () {
             return {
                 pre: function ($scope, iElement) {
