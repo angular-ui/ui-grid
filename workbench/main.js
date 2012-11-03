@@ -1,4 +1,4 @@
-/// <reference path="../plugins/ng-grid-resizable.js" />
+/// <reference path="../plugins/ng-grid-reorderable.js" />
 /// <reference path="../ng-grid-1.0.0.debug.js" />
 
 function userController($scope) {
@@ -26,7 +26,7 @@ function userController($scope) {
         selectedItems: $scope.mySelections,
         selectedItem: $scope.mySelection,
         multiSelect: true,
-        plugins: [new ngGridResizable()],
+        plugins: [new ngGridReorderable()],
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: "auto"},
                      { field: 'age', width: 100 },
                      { field: 'born', width: 100 }]
