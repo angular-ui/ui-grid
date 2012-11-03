@@ -10,7 +10,7 @@ ng.defaultGridTemplate = function () {
     b.append('<div class="ngGrid">');
     b.append('	 <div class="ngTopPanel" ng-size="headerDim">');
     b.append('      <div class="ngHeaderContainer" ng-size="headerDim">');
-    b.append('         <div class="ngHeaderScroller" ng-size="headerScrollerDim" ng-header-row></div>');
+    b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerWidth()" ng-header-row></div>');
     b.append('    	</div>');
     b.append('	 </div>');
     b.append('	 <div class="ngViewport" ng-size="viewportDim">');

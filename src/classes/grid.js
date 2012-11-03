@@ -335,6 +335,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 	$scope.canvasHeight = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
+	$scope.headerScrollerWidth = function(){
+		return { "width": $scope.totalRowWidth() + "px", "height": "32px"};
+	}
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,

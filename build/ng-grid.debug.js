@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 21:30:47
+* Compiled At: 11/02/2012 21:56:58
 ***********************************************/
 
 (function(window, undefined){
@@ -840,7 +840,7 @@ ng.defaultGridTemplate = function () {
     b.append('<div class="ngGrid">');
     b.append('	 <div class="ngTopPanel" ng-size="headerDim">');
     b.append('      <div class="ngHeaderContainer" ng-size="headerDim">');
-    b.append('         <div class="ngHeaderScroller" ng-size="headerScrollerDim" ng-header-row></div>');
+    b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerWidth()" ng-header-row></div>');
     b.append('    	</div>');
     b.append('	 </div>');
     b.append('	 <div class="ngViewport" ng-size="viewportDim">');
@@ -1373,6 +1373,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 	$scope.canvasHeight = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
+	$scope.headerScrollerWidth = function(){
+		return { "width": $scope.totalRowWidth() + "px", "height": "32px"};
+	}
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,
