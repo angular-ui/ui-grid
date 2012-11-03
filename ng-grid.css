@@ -34,6 +34,8 @@
     background-color: rgb(234, 234, 234); 
     padding: 0 0 0 0;
     cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .ngHeaderText {
@@ -89,6 +91,8 @@ div.ngHeaderCell:last-child{
     position: absolute;
     padding: 0;
     display: inline;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .ngRowIndexCell{ 
     text-align: center;

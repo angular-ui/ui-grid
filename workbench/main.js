@@ -27,7 +27,7 @@ function userController($scope) {
         selectedItem: $scope.mySelection,
         multiSelect: true,
         plugins: [new ngGridResizable()],
-        columnDefs: [{ field: 'name', width: "auto", resizable: false},
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: "auto"},
                      { field: 'age', width: 100 },
                      { field: 'born', width: 100 }]
     };
