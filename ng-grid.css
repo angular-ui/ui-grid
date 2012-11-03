@@ -32,6 +32,9 @@
 .ngHeaderScroller {
 	position:absolute;
 }
+.ngHeaderSortColumn{
+	cursor: pointer;
+}
 
 .ngHeaderCell {
     position: absolute;

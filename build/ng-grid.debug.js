@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 22:19:53
+* Compiled At: 11/02/2012 22:26:07
 ***********************************************/
 
 (function(window, undefined){
@@ -885,7 +885,7 @@ ng.defaultHeaderRowTemplate = function () {
 ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div>');
-    b.append('  <div ng-click="col.sort()" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append('  <div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
     b.append('      <span class="ngHeaderText">{{col.displayName}}</span>');
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
