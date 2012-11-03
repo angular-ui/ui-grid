@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 21:56:58
+* Compiled At: 11/02/2012 22:02:49
 ***********************************************/
 
 (function(window, undefined){
@@ -1275,8 +1275,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
     };
     self.adjustScrollLeft = function (scrollLeft) {
-        if ($scope.$headerContainer) {
-            $scope.$headerContainer.scrollLeft(scrollLeft);
+        if (self.$headerContainer) {
+            self.$headerContainer.scrollLeft(scrollLeft);
         }
     };
     self.resizeOnData = function (col, override) {

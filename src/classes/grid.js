@@ -237,8 +237,8 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
     };
     self.adjustScrollLeft = function (scrollLeft) {
-        if ($scope.$headerContainer) {
-            $scope.$headerContainer.scrollLeft(scrollLeft);
+        if (self.$headerContainer) {
+            self.$headerContainer.scrollLeft(scrollLeft);
         }
     };
     self.resizeOnData = function (col, override) {
