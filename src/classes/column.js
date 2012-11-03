@@ -70,6 +70,7 @@
     var delay = 500,
         clicks = 0,
         timer = null;
+    
     self.gripClick = function (event) {
         clicks++;  //count clicks
         if (clicks === 1) {
@@ -79,24 +80,31 @@
             }, delay);
         } else {
             clearTimeout(timer);  //prevent single-click action
-            resizeOnDataCallback(self.column);  //perform double-click action
+            resizeOnDataCallback(self);  //perform double-click action
             clicks = 0;  //after action performed, reset counter
         }
     };
 
-    self.gripOnMouseUp = function (event) {
-        $(document).off('mouseup');
+    self.gripOnMouseDown = function (event) {
+        document.body.style.cursor = 'col-resize';
+        event.target.parentElement.style.cursor = 'col-resize';
+        self.startMousePosition = event.clientX;
+        self.origWidth = self.width;
+        $(document).mousemove(self.onMouseMove);
+        $(document).mouseup(self.gripOnMouseUp);
+        return false;
+    };
+    self.onMouseMove = function (event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         cssBuilder.buildStyles();
         return false;
     };
-    
-    self.gripOnMouseDown = function (event) {
-        self.startMousePosition = event.clientX;
-        self.origWidth = self.width;
-        $(document).mouseup(self.gripOnMouseUp);
+    self.gripOnMouseUp = function () {
+        $(document).off('mousemove');
+        $(document).off('mouseup');
+        document.body.style.cursor = 'default';
         return false;
     };
 };

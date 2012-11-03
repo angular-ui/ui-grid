@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 20:08:05
+* Compiled At: 11/02/2012 20:16:42
 ***********************************************/
 
 (function(window, undefined){
@@ -889,8 +889,8 @@ ng.defaultHeaderCellTemplate = function () {
     b.append('      <span class="ngHeaderText">{{col.displayName}}</span>');
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
-    b.append('      <div class="ngHeaderGrip" ng-mousedown="col.gripOnMouseDown($event)"></div>');
     b.append('  </div>');
+    b.append('  <div class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>');
     b.append('</div>');
     return b.toString();
 };
@@ -970,6 +970,7 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
     var delay = 500,
         clicks = 0,
         timer = null;
+    
     self.gripClick = function (event) {
         clicks++;  //count clicks
         if (clicks === 1) {
@@ -979,24 +980,31 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
             }, delay);
         } else {
             clearTimeout(timer);  //prevent single-click action
-            resizeOnDataCallback(self.column);  //perform double-click action
+            resizeOnDataCallback(self);  //perform double-click action
             clicks = 0;  //after action performed, reset counter
         }
     };
 
-    self.gripOnMouseUp = function (event) {
-        $(document).off('mouseup');
+    self.gripOnMouseDown = function (event) {
+        document.body.style.cursor = 'col-resize';
+        event.target.parentElement.style.cursor = 'col-resize';
+        self.startMousePosition = event.clientX;
+        self.origWidth = self.width;
+        $(document).mousemove(self.onMouseMove);
+        $(document).mouseup(self.gripOnMouseUp);
+        return false;
+    };
+    self.onMouseMove = function (event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         cssBuilder.buildStyles();
         return false;
     };
-    
-    self.gripOnMouseDown = function (event) {
-        self.startMousePosition = event.clientX;
-        self.origWidth = self.width;
-        $(document).mouseup(self.gripOnMouseUp);
+    self.gripOnMouseUp = function () {
+        $(document).off('mousemove');
+        $(document).off('mouseup');
+        document.body.style.cursor = 'default';
         return false;
     };
 };
