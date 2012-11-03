@@ -159,7 +159,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder);
+                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder, self.config.enableColumnResize);
                 cols.push(column);
             });
             $scope.columns = cols;

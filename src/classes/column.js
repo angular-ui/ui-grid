@@ -1,4 +1,4 @@
-﻿ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder) {
+﻿ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder, enableResize) {
     var self = this;
     
     self.sortService = sortService;
@@ -30,7 +30,8 @@
     }
 
     self.allowSort = colDef.sortable;
-
+    self.allowResize = enableResize ? colDef.resizable : false;
+    
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
 
@@ -55,7 +56,6 @@
     };    
   
     self.noSortVisible = function () {
-        var ret = self.sortDirection !== ASC && self.sortDirection !== DESC;
         return !self.sortDirection;
     };
 
@@ -71,7 +71,7 @@
         clicks = 0,
         timer = null;
     
-    self.gripClick = function (event) {
+    self.gripClick = function () {
         clicks++;  //count clicks
         if (clicks === 1) {
             timer = setTimeout(function () {

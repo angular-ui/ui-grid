@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 20:16:42
+* Compiled At: 11/02/2012 20:27:08
 ***********************************************/
 
 (function(window, undefined){
@@ -890,7 +890,7 @@ ng.defaultHeaderCellTemplate = function () {
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('  </div>');
-    b.append('  <div class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>');
+    b.append('  <div ng-show="col.allowResize" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>');
     b.append('</div>');
     return b.toString();
 };
@@ -898,7 +898,7 @@ ng.defaultHeaderCellTemplate = function () {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder) {
+ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder, enableResize) {
     var self = this;
     
     self.sortService = sortService;
@@ -930,7 +930,8 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
     }
 
     self.allowSort = colDef.sortable;
-
+    self.allowResize = enableResize ? colDef.resizable : false;
+    
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
 
@@ -955,7 +956,6 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
     };    
   
     self.noSortVisible = function () {
-        var ret = self.sortDirection !== ASC && self.sortDirection !== DESC;
         return !self.sortDirection;
     };
 
@@ -971,7 +971,7 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
         clicks = 0,
         timer = null;
     
-    self.gripClick = function (event) {
+    self.gripClick = function () {
         clicks++;  //count clicks
         if (clicks === 1) {
             timer = setTimeout(function () {
@@ -1197,7 +1197,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder);
+                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder, self.config.enableColumnResize);
                 cols.push(column);
             });
             $scope.columns = cols;
