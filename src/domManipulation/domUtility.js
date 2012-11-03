@@ -23,8 +23,8 @@ ng.domUtility = (new function () {
         grid.$root = $(rootEl);
         //Headers
         grid.$topPanel = $(".ngTopPanel", grid.$root[0]);
-        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[0]);
-        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[0]);
+        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[1]);
+        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[1]);
         grid.$headers = grid.$headerContainer.children();
         //Viewport
         grid.$viewport = $(".ngViewport", grid.$root[0]);

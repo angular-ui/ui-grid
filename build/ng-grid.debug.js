@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 21:03:06
+* Compiled At: 11/02/2012 21:30:47
 ***********************************************/
 
 (function(window, undefined){
@@ -1633,8 +1633,8 @@ ng.domUtility = (new function () {
         grid.$root = $(rootEl);
         //Headers
         grid.$topPanel = $(".ngTopPanel", grid.$root[0]);
-        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[0]);
-        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[0]);
+        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[1]);
+        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[1]);
         grid.$headers = grid.$headerContainer.children();
         //Viewport
         grid.$viewport = $(".ngViewport", grid.$root[0]);
