@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ng-grid by timothyswt</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/timothyswt/ng-grid">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/timothyswt/ng-grid/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/timothyswt/ng-grid/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>ng-grid</h1>
+          <p>Angular Data Grid based on slickgrid/koGrid</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/timothyswt">timothyswt</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>ngGrid : An Angular DataGrid</h1>
+
+<p><strong>Contributors:</strong></p>
+
+<p>ng-grid Team:</p>
+
+<ul>
+<li><a href="http://ornerydevelopment.blogspot.com/">Tim Sweet</a></li>
+<li><a href="https://github.com/xcrico">Jonathon Ricaurte</a></li>
+</ul><p>Based on koGrid:</p>
+
+<ul>
+<li><a href="https://github.com/ericmbarnard/KoGrid">Eric M. Barnard</a></li>
+</ul><p>License: <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a></p>
+
+<p>Dependencies: jQuery &amp; angular.js</p>
+
+<hr><h2>About</h2>
+
+<p><strong>ng-grid</strong> Originally built on knockout we wanted to port it to angular.</p>
+
+<h2>Disclaimer</h2>
+
+<p>ng-grid is in pre-beta release currently. We are going to be adding more features here as we head to a 1.0 release.</p>
+
+<hr><p><em>The bare bones</em>:</p>
+
+<div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"angular.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"ng-grid.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+    <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,[</span><span class="s1">'ngGrid'</span><span class="p">,</span> <span class="p">...</span> <span class="p">{</span><span class="nx">other</span> <span class="nx">includes</span><span class="p">}]);</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href=</span><span class="s">"../ng-grid.css"</span> <span class="nt">/&gt;</span> 
+<span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">ng-grid=</span><span class="s">"myOptions"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1">// Define your own controller somewhere..</span>
+<span class="kd">function</span> <span class="nx">MyCtrl</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$scope</span><span class="p">.</span><span class="nx">myData</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Moroni"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">50</span><span class="p">},</span>
+                     <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Tiancum"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">43</span><span class="p">},</span>
+                     <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Jacob"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">27</span><span class="p">},</span>
+                     <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Nephi"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">29</span><span class="p">},</span>
+                     <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Enos"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">34</span><span class="p">}];</span>
+    <span class="nx">$scope</span><span class="p">.</span><span class="nx">myOptions</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">myData</span> <span class="p">};</span>
+<span class="p">};</span>
+
+</pre></div>
+
+<h2>Want More?</h2>
+
+<p>Check out the <a href="https://github.com/Crash8308/ng-grid/wiki/Getting-Started">Getting Started</a> and other <a href="https://github.com/Crash8308/ng-grid/wiki">Docs</a></p>
+
+<h2>Examples</h2>
+
+<p>Coming soon...</p>
+
+<h2>Change Log</h2>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
