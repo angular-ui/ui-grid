@@ -1,6 +1,6 @@
 ﻿ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
     var ngGrid = {
-        scope: false,
+        scope: true,
         compile: function () {
             return {
                 pre: function ($scope, iElement, iAttrs) {
@@ -17,9 +17,9 @@
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     //call update on the grid, which will refresh the dome measurements asynchronously
-                    //grid.update();
-                    $scope.initPhase = 1;
-                    iElement.append($compile(htmlText)($scope));                    // make sure that if any of these change, we re-fire the calc logic
+                    grid.update();
+                    grid.initPhase = 1;
+                    iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     ng.domUtility.assignGridContainers($element, grid);
                     //now use the manager to assign the event handlers

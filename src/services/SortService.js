@@ -258,7 +258,6 @@ ngGridServices.factory('SortService', function () {
 
     sortService.updateDataSource = function(newData) {
         sortService.dataSource = newData;
-        sortService.clearSortingData();
     };
     sortService.updateSortInfo = function(newInfo) {
         sortService.sortInfo = newInfo;

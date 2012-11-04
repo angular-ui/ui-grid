@@ -13,7 +13,7 @@ ngGridServices.factory('RowService', function () {
     // we cache rows when they are built, and then blow the cache away when sorting
     rowService.rowCache = [];
     rowService.dataChanged = true;
-    rowService.dataSource = [];
+    rowService.sortedData = [];
     rowService.prevMaxRows = 0; // for comparison purposes when scrolling
     rowService.prevMinRows = 0; // for comparison purposes when scrolling
     rowService.rowConfig = {};
@@ -24,7 +24,7 @@ ngGridServices.factory('RowService', function () {
     rowService.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     rowService.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     
-	// Builds rows for each data item in the 'dataSource'
+    // Builds rows for each data item in the 'sortedData'
 	// @entity - the data item
 	// @rowIndex - the index of the row
 	rowService.buildRowFromEntity = function (entity, rowIndex) {
@@ -48,7 +48,7 @@ ngGridServices.factory('RowService', function () {
 	rowService.CalcRenderedRange = function () {
 		var rg = rowService.renderedRange,
 		    minRows = rowService.minRowsToRender(),
-		    maxRows = rowService.dataSource.length,
+		    maxRows = rowService.sortedData.length,
 		    prevMaxRows = rowService.prevMaxRows,
 		    prevMinRows = rowService.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -85,7 +85,7 @@ ngGridServices.factory('RowService', function () {
 		
 	rowService.renderedChange = function () {
 		var rowArr = [];
-		var dataArr = rowService.dataSource.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
+		var dataArr = rowService.sortedData.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
 
 		angular.forEach(dataArr, function (item, i) {
 			var row = rowService.buildRowFromEntity(item, rowService.renderedRange.bottomRow + i);
@@ -102,7 +102,7 @@ ngGridServices.factory('RowService', function () {
     };
     
 	rowService.sortedDataChanged = function (newVal) {
-	    rowService.dataSource = newVal;
+	    rowService.sortedData = newVal;
         rowService.dataChanged = true;
         rowService.rowCache = []; //if data source changes, kill this!
         rowService.CalcRenderedRange();

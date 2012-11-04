@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/02/2012 22:26:07
+* Compiled At: 11/03/2012 18:03:01
 ***********************************************/
 
 (function(window, undefined){
@@ -331,7 +331,7 @@ ngGridServices.factory('RowService', function () {
     // we cache rows when they are built, and then blow the cache away when sorting
     rowService.rowCache = [];
     rowService.dataChanged = true;
-    rowService.dataSource = [];
+    rowService.sortedData = [];
     rowService.prevMaxRows = 0; // for comparison purposes when scrolling
     rowService.prevMinRows = 0; // for comparison purposes when scrolling
     rowService.rowConfig = {};
@@ -342,7 +342,7 @@ ngGridServices.factory('RowService', function () {
     rowService.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     rowService.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     
-	// Builds rows for each data item in the 'dataSource'
+    // Builds rows for each data item in the 'sortedData'
 	// @entity - the data item
 	// @rowIndex - the index of the row
 	rowService.buildRowFromEntity = function (entity, rowIndex) {
@@ -366,7 +366,7 @@ ngGridServices.factory('RowService', function () {
 	rowService.CalcRenderedRange = function () {
 		var rg = rowService.renderedRange,
 		    minRows = rowService.minRowsToRender(),
-		    maxRows = rowService.dataSource.length,
+		    maxRows = rowService.sortedData.length,
 		    prevMaxRows = rowService.prevMaxRows,
 		    prevMinRows = rowService.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -403,7 +403,7 @@ ngGridServices.factory('RowService', function () {
 		
 	rowService.renderedChange = function () {
 		var rowArr = [];
-		var dataArr = rowService.dataSource.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
+		var dataArr = rowService.sortedData.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
 
 		angular.forEach(dataArr, function (item, i) {
 			var row = rowService.buildRowFromEntity(item, rowService.renderedRange.bottomRow + i);
@@ -420,7 +420,7 @@ ngGridServices.factory('RowService', function () {
     };
     
 	rowService.sortedDataChanged = function (newVal) {
-	    rowService.dataSource = newVal;
+	    rowService.sortedData = newVal;
         rowService.dataChanged = true;
         rowService.rowCache = []; //if data source changes, kill this!
         rowService.CalcRenderedRange();
@@ -797,7 +797,6 @@ ngGridServices.factory('SortService', function () {
 
     sortService.updateDataSource = function(newData) {
         sortService.dataSource = newData;
-        sortService.clearSortingData();
     };
     sortService.updateSortInfo = function(newInfo) {
         sortService.sortInfo = newInfo;
@@ -1133,6 +1132,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             rootW,
             canvasH;
 
+        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
         rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
@@ -1157,6 +1157,26 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         if (dim.outerHeight !== oldDim.outerHeight || dim.outerWidth !== oldDim.outerWidth) {
             //if its not the same, then fire the subscriptions
             $scope.rootDim = dim;
+        }
+    };
+    self.refreshDomSizesTrigger = function () {
+        if (hUpdateTimeout) {
+            if (window.setImmediate) {
+                window.clearImmediate(hUpdateTimeout);
+            } else {
+                window.clearTimeout(hUpdateTimeout);
+            }
+        }
+        if (self.initPhase > 0) {
+
+            //don't shrink the grid if we sorting
+            if (!isSorting) {
+                self.refreshDomSizes();
+                ng.cssBuilder.buildStyles();
+                if (self.initPhase > 0 && self.$root) {
+                    self.$root.show();
+                }
+            }
         }
     };
     self.buildColumnDefsFromData = function () {
@@ -1216,10 +1236,15 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         });
         self.buildColumns();
         self.sortService.columns = $scope.columns,
-        $scope.$watch('dataSource', self.sortService.updateDataSource);
+        $scope.$watch('dataSource', function (a) {
+            if (!a) return;
+            self.rowService.sortedDataChanged(a);
+            self.sortService.updateDataSource(a);
+            self.refreshDomSizes();
+        }, true);
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = $scope.dataSource.length * self.config.rowHeight;
+        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             sortedData: self.sortedData,
@@ -1256,10 +1281,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
     self.update = function () {
         var updater = function () {
-            $scope.refreshDomSizes();
+            self.refreshDomSizes();
             self.cssBuilder.buildStyles();
-            if ($scope.initPhase > 0 && $scope.$root) {
-                $scope.$root.show();
+            if (self.initPhase > 0 && self.$root) {
+                self.$root.show();
             }
         };
         if (window.setImmediate) {
@@ -1285,7 +1310,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         } else {// we calculate the longest data.
             var road = override || self.config.resizeOnAllData;
             var longest = col.minWidth;
-            var arr = road ? self.sortedData : $scope.renderedRows ;
+            var arr = road ? self.sortedData : $scope.renderedRows;
             angular.forEach(arr, function (data) {
                 var i = ng.utils.visualLength(data[col.field]);
                 if (i > longest) {
@@ -1303,6 +1328,7 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
     
     //$scope vars
+    $scope.dataSource = self.config.data;
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
@@ -1310,7 +1336,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.footer = null;
-    $scope.dataSource = self.config.data;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
@@ -1373,9 +1398,9 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
 	$scope.canvasHeight = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-	$scope.headerScrollerWidth = function(){
-	    return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
-	}
+    $scope.headerScrollerWidth = function() {
+        return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
+    };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,
@@ -1460,26 +1485,6 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
             newDim.outerWidth += self.elementDims.scrollW;
         }
         return newDim;
-    };
-    $scope.refreshDomSizesTrigger = function () {
-        if (hUpdateTimeout) {
-            if (window.setImmediate) {
-                window.clearImmediate(hUpdateTimeout);
-            } else {
-                window.clearTimeout(hUpdateTimeout);
-            }
-        }
-        if ($scope.initPhase > 0) {
-
-            //don't shrink the grid if we sorting
-            if (!isSorting) {
-                self.refreshDomSizes();
-                ng.cssBuilder.buildStyles($scope, self);
-                if ($scope.initPhase > 0 && $scope.$root) {
-                    $scope.$root.show();
-                }
-            }
-        }
     };
     //call init
     self.init();
@@ -1775,7 +1780,7 @@ ng.domUtility = (new function () {
 ***********************************************/
 ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
     var ngGrid = {
-        scope: false,
+        scope: true,
         compile: function () {
             return {
                 pre: function ($scope, iElement, iAttrs) {
@@ -1792,9 +1797,9 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     //call update on the grid, which will refresh the dome measurements asynchronously
-                    //grid.update();
-                    $scope.initPhase = 1;
-                    iElement.append($compile(htmlText)($scope));                    // make sure that if any of these change, we re-fire the calc logic
+                    grid.update();
+                    grid.initPhase = 1;
+                    iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     ng.domUtility.assignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
