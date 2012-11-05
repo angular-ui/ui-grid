@@ -13,13 +13,28 @@
         angular.module('myApp',['ngGrid']);
     </script>
 </head>
+Try:
+
     <body ng-app="myApp" ng-controller="userController">
-        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions">
+        <ul>
+            <li>Sorting by clicking the header row.</li>
+            <li>Reordering columns and rows. (plugin ng-grid-reorderable)</li>
+            <li>Selecting all (this is a multselect grid)</li>
+            <li>double click the header grips to resize base don the column data.</li>
+        </ul>
+        <div>
+            <div style="margin: 10px;  width: 600px; height: 400px; style="float: left;" ng-grid="gridOptions">
+            </div>
+            <span style="float: right; width: 50%;">mySelections: {{mySelections | json}}</span>
         </div>
+        <p>Try: 
+        Adding more data..</p>
         <button ng-click="changeData()">Insert Rows</button>
-    <span>mySelections: {{mySelections | json}}</span>
-        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
+        <p>This is a single select grid with no reorderable plugin. You can navigate your selection with arrow keys! (up/down)</p>
+        <div>
+            <div style="margin: 10px;  width: 600px; height: 400px; style="float: left;" ng-grid="gridOptions2">
+            </div>
+            <span style="float: right; width: 50%;">mySelections2: {{mySelections2 | json}}</span>
         </div>
-        <span>mySelections2: {{mySelections2 | json}}</span>
     </body>
 </html>
