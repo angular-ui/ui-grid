@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/03/2012 18:03:01
+* Compiled At: 11/04/2012 18:59:34
 ***********************************************/
 
 (function(window, undefined){
@@ -322,238 +322,14 @@ ngGridServices.factory('GridService', function () {
 });
 
 /***********************************************
-* FILE: ..\src\services\RowService.js
-***********************************************/
-
-ngGridServices.factory('RowService', function () {
-    var rowService = {};
-
-    // we cache rows when they are built, and then blow the cache away when sorting
-    rowService.rowCache = [];
-    rowService.dataChanged = true;
-    rowService.sortedData = [];
-    rowService.prevMaxRows = 0; // for comparison purposes when scrolling
-    rowService.prevMinRows = 0; // for comparison purposes when scrolling
-    rowService.rowConfig = {};
-    rowService.selectionService = undefined;
-    rowService.minRowsToRender = undefined;
-    rowService.rowHeight = 30;
-    rowService.setRenderedRowsCallback = undefined;
-    rowService.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
-    rowService.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
-    
-    // Builds rows for each data item in the 'sortedData'
-	// @entity - the data item
-	// @rowIndex - the index of the row
-	rowService.buildRowFromEntity = function (entity, rowIndex) {
-		var row = rowService.rowCache[rowIndex]; // first check to see if we've already built it
-		if (!row) {
-			// build the row
-		    row = new ng.Row(entity, rowService.rowConfig, rowService.selectionService);
-			row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
-			row.rowDisplayIndex = row.rowIndex;
-			row.offsetTop = rowService.rowHeight * rowIndex;
-			row.selected = entity[SELECTED_PROP];
-			// finally cache it for the next round
-			rowService.rowCache[rowIndex] = row;
-		}
-		// store the row's index on the entity for future ref
-		entity[ROW_KEY] = rowIndex;
-		return row;
-	};
-	
-	// core logic that intelligently figures out the rendered range given all the contraints that we have
-	rowService.CalcRenderedRange = function () {
-		var rg = rowService.renderedRange,
-		    minRows = rowService.minRowsToRender(),
-		    maxRows = rowService.sortedData.length,
-		    prevMaxRows = rowService.prevMaxRows,
-		    prevMinRows = rowService.prevMinRows,
-		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
-		    newRg = new ng.Range(0, 0); // variable to hold our newly-calc'd rendered range 
-		
-		isDif = (rg.bottomRow !== rowService.prevViewableRange.bottomRow || rg.topRow !== rowService.prevViewableRange.topRow || rowService.dataChanged);
-		if (!isDif && prevMaxRows !== maxRows) {
-			isDif = true;
-			rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
-		}
-		if (!isDif && prevMinRows !== minRows) {
-			isDif = true;
-			rg = new ng.Range(rowService.prevViewableRange.bottomRow, rowService.prevViewableRange.topRow);
-		}
-		if (isDif) {
-		    //store it for next rev
-		    rowService.prevViewableRange = rg;
-		    // now build the new rendered range
-		    newRg = new ng.Range(rg.bottomRow, rg.topRow);
-		    // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
-		    newRg.bottomRow = Math.max(0, rg.bottomRow - EXCESS_ROWS);
-		    newRg.topRow = Math.min(maxRows, rg.topRow + EXCESS_ROWS);
-		    // store them for later comparison purposes
-		    rowService.prevMaxRows = maxRows;
-		    rowService.prevMinRows = minRows;
-		    //one last equality check
-		    if (rowService.prevRenderedRange.topRow !== newRg.topRow || rowService.prevRenderedRange.bottomRow !== newRg.bottomRow || rowService.dataChanged) {
-		        rowService.dataChanged = false;
-		        rowService.prevRenderedRange = newRg;
-		    }
-		}
-	    rowService.UpdateViewableRange(newRg);
-	};
-		
-	rowService.renderedChange = function () {
-		var rowArr = [];
-		var dataArr = rowService.sortedData.slice(rowService.renderedRange.bottomRow, rowService.renderedRange.topRow);
-
-		angular.forEach(dataArr, function (item, i) {
-			var row = rowService.buildRowFromEntity(item, rowService.renderedRange.bottomRow + i);
-
-			//add the row to our return array
-			rowArr.push(row);
-		});
-	    rowService.setRenderedRowsCallback(rowArr);
-	};
-	
-	rowService.UpdateViewableRange = function (newRange) {
-	    rowService.renderedRange = newRange;
-	    rowService.renderedChange();
-    };
-    
-	rowService.sortedDataChanged = function (newVal) {
-	    rowService.sortedData = newVal;
-        rowService.dataChanged = true;
-        rowService.rowCache = []; //if data source changes, kill this!
-        rowService.CalcRenderedRange();
-	};
-    
-	rowService.Initialize = function (config) {
-	    rowService.prevMaxRows = 0; // for comparison purposes when scrolling
-	    rowService.prevMinRows = 0; // for comparison purposes when scrolling
-	    // height of each row
-	    rowService.rowConfig = config.rowConfig;
-	    rowService.selectionService = config.selectionService;
-	    rowService.minRowsToRender = config.minRowsToRenderCallback;
-	    rowService.rowHeight = config.rowHeight;
-	    rowService.setRenderedRowsCallback = config.setRenderedRowsCallback;
-	    rowService.prevRenderedRange = new ng.Range(0, rowService.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
-	    rowService.prevViewableRange = new ng.Range(0, rowService.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
-	    // the actual range the user can see in the viewport
-	    rowService.renderedRange = rowService.prevRenderedRange;
-	    rowService.sortedDataChanged(config.sortedData);
-	};
-    
-    return rowService;
-});
-
-/***********************************************
-* FILE: ..\src\services\SelectionService.js
-***********************************************/
-
-ngGridServices.factory('SelectionService', function () {
-    var selectionService = {};
-
-    selectionService.lastClickedRow = undefined;
-    selectionService.isMulti = undefined;
-    selectionService.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-    selectionService.sortedData = undefined; // the observable array datasource
-    selectionService.selectedItems = undefined;
-    selectionService.selectedIndex = undefined;
-    selectionService.rowService = undefined;
-    
-	selectionService.maxRows = function () {
-	   return selectionService.dataSource.length;
-	};
-
-	selectionService.Initialize = function (options, rowService) {
-        selectionService.isMulti = options.isMulti || options.multiSelect;
-	    selectionService.sortedData = options.sortedData;
-        selectionService.selectedItems = options.selectedItems;
-        selectionService.selectedIndex = options.selectedIndex;
-        selectionService.rowService = rowService;
-    };
-		
-	// function to manage the selection action of a data item (entity)
-    selectionService.ChangeSelection = function(rowItem, evt) {
-        if (selectionService.isMulti && evt && evt.shiftKey) {
-            if (selectionService.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, rowItem);
-                var prevIndx = ng.utils.arrayIndexOf(selectionService.rowService.rowCache, selectionService.lastClickedRow);
-                if (thisIndx == prevIndx) return false;
-                prevIndx++;
-                if (thisIndx < prevIndx) {
-                    thisIndx = thisIndx ^ prevIndx;
-                    prevIndx = thisIndx ^ prevIndx;
-                    thisIndx = thisIndx ^ prevIndx;
-                }
-                for (; prevIndx <= thisIndx; prevIndx++) {
-                    selectionService.rowService.rowCache[prevIndx].selected = selectionService.lastClickedRow.selected;
-                    selectionService.addOrRemove(selectionService.rowService.rowCache[prevIndx]);
-                }
-                selectionService.lastClickedRow = rowItem;
-                return true;
-            }
-        } else if (!selectionService.isMulti) {
-            if (selectionService.lastClickedRow) selectionService.lastClickedRow.selected = false;
-            if (rowItem.selected) {
-                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
-                selectionService.selectedItems.push(rowItem.entity);
-            } else {
-                selectionService.selectedItems.splice(0, selectionService.selectedItems.length);
-            }
-            selectionService.lastClickedRow = rowItem;
-            return true;
-        }
-        selectionService.addOrRemove(rowItem);
-        selectionService.lastClickedRow = rowItem;
-        return true;
-    };
-	
-	// just call this func and hand it the rowItem you want to select (or de-select)    
-    selectionService.addOrRemove = function(rowItem) {
-        if (!rowItem.selected) {
-            var indx = selectionService.selectedItems.indexOf(rowItem.entity);
-            selectionService.selectedItems.splice(indx, 1);
-        } else {
-            if (selectionService.selectedItems.indexOf(rowItem.entity) === -1) {
-                selectionService.selectedItems.push(rowItem.entity);
-            }
-        }
-    };
-    
-    // writable-computed observable
-    // @return - boolean indicating if all items are selected or not
-    // @val - boolean indicating whether to select all/de-select all
-    selectionService.toggleSelectAll = function (checkAll) {
-        var selectedlength = selectionService.selectedItems.length;
-        if (selectedlength > 0) {
-            selectionService.selectedItems.splice(0, selectedlength);
-        }
-        angular.forEach(selectionService.sortedData, function (item) {
-            item[SELECTED_PROP] = checkAll;
-            if (checkAll) {
-                selectionService.selectedItems.push(item);
-            }
-        });
-        angular.forEach(selectionService.rowService.rowCache, function (row) {
-            row.selected = checkAll;
-        });
-    };
-	return selectionService;
-});
-
-/***********************************************
 * FILE: ..\src\services\SortService.js
 ***********************************************/
 
 ngGridServices.factory('SortService', function () {
     var sortService = { };
 
-    sortService.dataSource = [];
     sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
-    sortService.initPhase = 0; // flag for preventing improper dependency registrations with KO
-    sortService.columns = [];
-    sortService.sortingCallback = function () { };
     
     // utility function for null checking
     sortService.isEmpty = function(val) {
@@ -708,22 +484,18 @@ ngGridServices.factory('SortService', function () {
     //#endregion
 
     // the core sorting logic trigger
-    sortService.sortData = function() {
-        var data = sortService.dataSource,
-            sortInfo = sortService.sortInfo,
-            col,
-            direction,
-            sortFn,
-            item;
+    sortService.sortData = function(data /*datasource*/, sortInfo) {
 
         // first make sure we are even supposed to do work
-        if (!data || !sortInfo || sortService.useExternalSorting) {
-            return data;
+        if (!data || !sortInfo) {
+            return;
         }
 
         // grab the metadata for the rest of the logic
-        col = sortInfo.column;
-        direction = sortInfo.direction;
+        var col = sortInfo.column,
+            direction = sortInfo.direction,
+            sortFn,
+            item;
 
         //see if we already figured out what to use to sort the column
         if (sortService.colSortFnCache[col.field]) {
@@ -784,48 +556,14 @@ ngGridServices.factory('SortService', function () {
                 return 0 - sortFn(propA, propB);
             }
         });
-
-        sortService.sortingCallback(data);
-        return data;
+        return;
     };
-
-    sortService.Initialize = function(config) {
-        sortService.useExternalSorting = config.useExtSorting;
-        sortService.sortInfo = config.sortInfo;
-        sortService.sortingCallback = config.sortingCallback;
-    };
-
-    sortService.updateDataSource = function(newData) {
-        sortService.dataSource = newData;
-    };
-    sortService.updateSortInfo = function(newInfo) {
-        sortService.sortInfo = newInfo;
-        sortService.clearSortingData();
-    };
-    // the actual sort function to call
-    // @col - the column to sort
-    // @direction - "asc" or "desc"
-    sortService.Sort = function (col, direction) {
-        if (sortService.isSorting == true) return;
+    
+    sortService.Sort = function (sortInfo, data) {
+        if (sortService.isSorting) return;
         sortService.isSorting = true;
-        sortService.clearSortingData(col);
-        sortService.sortInfo = {
-            column: col,
-            direction: direction
-        };
-        sortService.lastSortedColumn = col;
-        sortService.sortData();
+        sortService.sortData(data, sortInfo);
         sortService.isSorting = false;
-    };
-
-    sortService.clearSortingData = function(col) {
-        if (!col) {
-            angular.forEach(sortService.columns, function(c) {
-                c.sortDirection = "";
-            });
-        } else if (sortService.lastSortedColumn && col != sortService.lastSortedColumn) {
-            sortService.lastSortedColumn.sortDirection = "";
-        }
     };
     return sortService;
 });
@@ -897,11 +635,16 @@ ng.defaultHeaderCellTemplate = function () {
 /***********************************************
 * FILE: ..\src\classes\column.js
 ***********************************************/
-ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder, enableResize) {
-    var self = this;
+ng.Column = function (config) {
+    var self = this,
+        colDef = config.colDef,
+        index = config.index,
+        headerRowHeight = config.headerRowHeight,
+        sortCallback = config.sortCallback,
+        resizeOnDataCallback = config.resizeOnDataCallback,
+        cssBuilder = config.cssBuilder,
+        enableResize = config.enableResize;
     
-    self.sortService = sortService;
-
     self.width = colDef.width;
     self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
@@ -964,7 +707,7 @@ ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataC
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        self.sortService.Sort(self, dir);
+        sortCallback(self, dir);
     };
     var delay = 500,
         clicks = 0,
@@ -1041,10 +784,131 @@ ng.Footer = function ($scope, grid) {
 };
 
 /***********************************************
+* FILE: ..\src\classes\rowFactory.js
+***********************************************/
+ng.RowFactory = function () {
+    var self = this;
+
+    // we cache rows when they are built, and then blow the cache away when sorting
+    self.rowCache = [];
+    self.dataChanged = true;
+    self.sortedData = [];
+    self.prevMaxRows = 0; // for comparison purposes when scrolling
+    self.prevMinRows = 0; // for comparison purposes when scrolling
+    self.rowConfig = {};
+    self.selectionService = undefined;
+    self.minRowsToRender = undefined;
+    self.rowHeight = 30;
+    self.setRenderedRowsCallback = undefined;
+    self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
+    self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
+
+    // Builds rows for each data item in the 'sortedData'
+    // @entity - the data item
+    // @rowIndex - the index of the row
+    self.buildRowFromEntity = function (entity, rowIndex) {
+        var row = self.rowCache[rowIndex]; // first check to see if we've already built it
+        if (!row) {
+            // build the row
+            row = new ng.Row(entity, self.rowConfig, self.selectionService);
+            row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
+            row.rowDisplayIndex = row.rowIndex;
+            row.offsetTop = self.rowHeight * rowIndex;
+            row.selected = entity[SELECTED_PROP];
+            // finally cache it for the next round
+            self.rowCache[rowIndex] = row;
+        }
+        // store the row's index on the entity for future ref
+        entity[ROW_KEY] = rowIndex;
+        return row;
+    };
+
+    // core logic that intelligently figures out the rendered range given all the contraints that we have
+    self.CalcRenderedRange = function () {
+        var rg = self.renderedRange,
+		    minRows = self.minRowsToRender(),
+		    maxRows = self.sortedData.length,
+		    prevMaxRows = self.prevMaxRows,
+		    prevMinRows = self.prevMinRows,
+		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
+		    newRg = new ng.Range(0, 0); // variable to hold our newly-calc'd rendered range 
+
+        isDif = (rg.bottomRow !== self.prevViewableRange.bottomRow || rg.topRow !== self.prevViewableRange.topRow || self.dataChanged);
+        if (!isDif && prevMaxRows !== maxRows) {
+            isDif = true;
+            rg = new ng.Range(self.prevViewableRange.bottomRow, self.prevViewableRange.topRow);
+        }
+        if (!isDif && prevMinRows !== minRows) {
+            isDif = true;
+            rg = new ng.Range(self.prevViewableRange.bottomRow, self.prevViewableRange.topRow);
+        }
+        if (isDif) {
+            //store it for next rev
+            self.prevViewableRange = rg;
+            // now build the new rendered range
+            newRg = new ng.Range(rg.bottomRow, rg.topRow);
+            // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
+            newRg.bottomRow = Math.max(0, rg.bottomRow - EXCESS_ROWS);
+            newRg.topRow = Math.min(maxRows, rg.topRow + EXCESS_ROWS);
+            // store them for later comparison purposes
+            self.prevMaxRows = maxRows;
+            self.prevMinRows = minRows;
+            //one last equality check
+            if (self.prevRenderedRange.topRow !== newRg.topRow || self.prevRenderedRange.bottomRow !== newRg.bottomRow || self.dataChanged) {
+                self.dataChanged = false;
+                self.prevRenderedRange = newRg;
+            }
+        }
+        self.UpdateViewableRange(newRg);
+    };
+
+    self.renderedChange = function () {
+        var rowArr = [];
+        var dataArr = self.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
+
+        angular.forEach(dataArr, function (item, i) {
+            var row = self.buildRowFromEntity(item, self.renderedRange.bottomRow + i);
+
+            //add the row to our return array
+            rowArr.push(row);
+        });
+        self.setRenderedRowsCallback(rowArr);
+    };
+
+    self.UpdateViewableRange = function (newRange) {
+        self.renderedRange = newRange;
+        self.renderedChange();
+    };
+
+    self.sortedDataChanged = function (newVal) {
+        self.sortedData = newVal;
+        self.dataChanged = true;
+        self.rowCache = []; //if data source changes, kill this!
+        self.CalcRenderedRange();
+    };
+
+    self.Initialize = function (config) {
+        self.prevMaxRows = 0; // for comparison purposes when scrolling
+        self.prevMinRows = 0; // for comparison purposes when scrolling
+        // height of each row
+        self.rowConfig = config.rowConfig;
+        self.selectionService = config.selectionService;
+        self.minRowsToRender = config.minRowsToRenderCallback;
+        self.rowHeight = config.rowHeight;
+        self.setRenderedRowsCallback = config.setRenderedRowsCallback;
+        self.prevRenderedRange = new ng.Range(0, self.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
+        self.prevViewableRange = new ng.Range(0, self.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
+        // the actual range the user can see in the viewport
+        self.renderedRange = self.prevRenderedRange;
+        self.sortedDataChanged(config.sortedData);
+    };
+}
+
+/***********************************************
 * FILE: ..\src\classes\grid.js
 ***********************************************/
 
-ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, SortService) {
+ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -1091,8 +955,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     self.sortInfo = self.config.sortInfo;
     self.sortedData = self.config.data;
     //initialized in the init method
-    self.rowService = RowService;
-    self.selectionService = SelectionService;
+    self.rowService = new ng.RowFactory();
+    self.selectionService = new ng.SelectionService();
+    self.sortService = SortService;
+    self.lastSortedColumn = undefined;
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -1217,7 +1083,15 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder, self.config.enableColumnResize);
+                var column = new ng.Column({
+                    colDef : colDef, 
+                    index: i, 
+                    headerRowHeight: self.config.headerRowHeight,
+                    sortCallback: self.sortData, 
+                    resizeOnDataCallback: self.resizeOnData,
+                    cssBuilder: self.cssBuilder,
+                    enableResize: self.config.enableColumnResize
+                });
                 cols.push(column);
             });
             $scope.columns = cols;
@@ -1225,21 +1099,11 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
     self.init = function () {
         self.cssBuilder = new ng.CssBuilder($scope, self);
-        self.sortService = SortService;
-        self.sortService.Initialize({
-            useExternalSorting: self.config.useExternalSorting,
-            sortInfo: $scope.sortInfo,
-            sortingCallback: function (newData) {
-                self.sortedData = newData;
-                self.rowService.sortedDataChanged(self.sortedData);
-            }
-        });
         self.buildColumns();
         self.sortService.columns = $scope.columns,
         $scope.$watch('dataSource', function (a) {
             if (!a) return;
             self.rowService.sortedDataChanged(a);
-            self.sortService.updateDataSource(a);
             self.refreshDomSizes();
         }, true);
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
@@ -1326,7 +1190,25 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         self.cssBuilder.buildStyles();
     };
-    
+    self.sortData = function(col, direction) {
+        sortInfo = {
+            column: col,
+            direction: direction
+        };
+        self.clearSortingData(col);
+        self.sortService.Sort(sortInfo, self.sortedData);
+        self.lastSortedColumn = col;
+        self.rowService.sortedDataChanged(self.sortedData);
+    };
+    self.clearSortingData = function (col) {
+        if (!col) {
+            angular.forEach($scope.columns, function (c) {
+                c.sortDirection = "";
+            });
+        } else if (self.lastSortedColumn && col != self.lastSortedColumn) {
+            self.lastSortedColumn.sortDirection = "";
+        }
+    };
     //$scope vars
     $scope.dataSource = self.config.data;
     $scope.elementsNeedMeasuring = true;
@@ -1580,6 +1462,100 @@ ng.Row = function (entity, config, selectionService) {
 }; 
 
 /***********************************************
+* FILE: ..\src\classes\selectionService.js
+***********************************************/
+ng.SelectionService = function () {
+    var self = this;
+
+    self.lastClickedRow = undefined;
+    self.isMulti = undefined;
+    self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+    self.sortedData = undefined; // the observable array datasource
+    self.selectedItems = undefined;
+    self.selectedIndex = undefined;
+    self.rowService = undefined;
+    
+	self.maxRows = function () {
+	   return self.dataSource.length;
+	};
+
+	self.Initialize = function (options, rowService) {
+        self.isMulti = options.isMulti || options.multiSelect;
+	    self.sortedData = options.sortedData;
+        self.selectedItems = options.selectedItems;
+        self.selectedIndex = options.selectedIndex;
+        self.rowService = rowService;
+    };
+		
+	// function to manage the selection action of a data item (entity)
+    self.ChangeSelection = function(rowItem, evt) {
+        if (self.isMulti && evt && evt.shiftKey) {
+            if (self.lastClickedRow) {
+                var thisIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, rowItem);
+                var prevIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, self.lastClickedRow);
+                if (thisIndx == prevIndx) return false;
+                prevIndx++;
+                if (thisIndx < prevIndx) {
+                    thisIndx = thisIndx ^ prevIndx;
+                    prevIndx = thisIndx ^ prevIndx;
+                    thisIndx = thisIndx ^ prevIndx;
+                }
+                for (; prevIndx <= thisIndx; prevIndx++) {
+                    self.rowService.rowCache[prevIndx].selected = self.lastClickedRow.selected;
+                    self.addOrRemove(self.rowService.rowCache[prevIndx]);
+                }
+                self.lastClickedRow = rowItem;
+                return true;
+            }
+        } else if (!self.isMulti) {
+            if (self.lastClickedRow) self.lastClickedRow.selected = false;
+            if (rowItem.selected) {
+                self.selectedItems.splice(0, self.selectedItems.length);
+                self.selectedItems.push(rowItem.entity);
+            } else {
+                self.selectedItems.splice(0, self.selectedItems.length);
+            }
+            self.lastClickedRow = rowItem;
+            return true;
+        }
+        self.addOrRemove(rowItem);
+        self.lastClickedRow = rowItem;
+        return true;
+    };
+	
+	// just call this func and hand it the rowItem you want to select (or de-select)    
+    self.addOrRemove = function(rowItem) {
+        if (!rowItem.selected) {
+            var indx = self.selectedItems.indexOf(rowItem.entity);
+            self.selectedItems.splice(indx, 1);
+        } else {
+            if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+                self.selectedItems.push(rowItem.entity);
+            }
+        }
+    };
+    
+    // writable-computed observable
+    // @return - boolean indicating if all items are selected or not
+    // @val - boolean indicating whether to select all/de-select all
+    self.toggleSelectAll = function (checkAll) {
+        var selectedlength = self.selectedItems.length;
+        if (selectedlength > 0) {
+            self.selectedItems.splice(0, selectedlength);
+        }
+        angular.forEach(self.sortedData, function (item) {
+            item[SELECTED_PROP] = checkAll;
+            if (checkAll) {
+                self.selectedItems.push(item);
+            }
+        });
+        angular.forEach(self.rowService.rowCache, function (row) {
+            row.selected = checkAll;
+        });
+    };
+};
+
+/***********************************************
 * FILE: ..\src\domManipulation\cssBuilder.js
 ***********************************************/
 
@@ -1778,7 +1754,7 @@ ng.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
+ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -1787,7 +1763,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, RowService, SelectionService, SortService);
+                    var grid = new ng.Grid($scope, options, gridDim, SortService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);

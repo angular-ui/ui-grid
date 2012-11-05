@@ -3,8 +3,6 @@
 ..\src\navigation.js
 ..\src\utils.js
 ..\src\services\GridService.js
-..\src\services\RowService.js
-..\src\services\SelectionService.js
 ..\src\services\SortService.js
 ..\src\templates\gridTemplate.js
 ..\src\templates\rowTemplate.js
@@ -13,10 +11,12 @@
 ..\src\classes\column.js
 ..\src\classes\dimension.js
 ..\src\classes\footer.js
+..\src\classes\rowFactory.js
 ..\src\classes\grid.js
 ..\src\classes\headerRow.js
 ..\src\classes\range.js
 ..\src\classes\row.js
+..\src\classes\selectionService.js
 ..\src\domManipulation\cssBuilder.js
 ..\src\domManipulation\domUtility.js
 ..\src\directives\ng-grid.js

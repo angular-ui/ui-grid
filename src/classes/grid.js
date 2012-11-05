@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, SortService) {
+ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -54,8 +54,10 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     self.sortInfo = self.config.sortInfo;
     self.sortedData = self.config.data;
     //initialized in the init method
-    self.rowService = RowService;
-    self.selectionService = SelectionService;
+    self.rowService = new ng.RowFactory();
+    self.selectionService = new ng.SelectionService();
+    self.sortService = SortService;
+    self.lastSortedColumn = undefined;
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -180,7 +182,15 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
-                var column = new ng.Column(colDef, i, self.config.headerRowHeight, self.sortService, self.resizeOnData, self.cssBuilder, self.config.enableColumnResize);
+                var column = new ng.Column({
+                    colDef : colDef, 
+                    index: i, 
+                    headerRowHeight: self.config.headerRowHeight,
+                    sortCallback: self.sortData, 
+                    resizeOnDataCallback: self.resizeOnData,
+                    cssBuilder: self.cssBuilder,
+                    enableResize: self.config.enableColumnResize
+                });
                 cols.push(column);
             });
             $scope.columns = cols;
@@ -188,21 +198,11 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
     };
     self.init = function () {
         self.cssBuilder = new ng.CssBuilder($scope, self);
-        self.sortService = SortService;
-        self.sortService.Initialize({
-            useExternalSorting: self.config.useExternalSorting,
-            sortInfo: $scope.sortInfo,
-            sortingCallback: function (newData) {
-                self.sortedData = newData;
-                self.rowService.sortedDataChanged(self.sortedData);
-            }
-        });
         self.buildColumns();
         self.sortService.columns = $scope.columns,
         $scope.$watch('dataSource', function (a) {
             if (!a) return;
             self.rowService.sortedDataChanged(a);
-            self.sortService.updateDataSource(a);
             self.refreshDomSizes();
         }, true);
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
@@ -289,7 +289,25 @@ ng.Grid = function ($scope, options, gridDim, RowService, SelectionService, Sort
         }
         self.cssBuilder.buildStyles();
     };
-    
+    self.sortData = function(col, direction) {
+        sortInfo = {
+            column: col,
+            direction: direction
+        };
+        self.clearSortingData(col);
+        self.sortService.Sort(sortInfo, self.sortedData);
+        self.lastSortedColumn = col;
+        self.rowService.sortedDataChanged(self.sortedData);
+    };
+    self.clearSortingData = function (col) {
+        if (!col) {
+            angular.forEach($scope.columns, function (c) {
+                c.sortDirection = "";
+            });
+        } else if (self.lastSortedColumn && col != self.lastSortedColumn) {
+            self.lastSortedColumn.sortDirection = "";
+        }
+    };
     //$scope vars
     $scope.dataSource = self.config.data;
     $scope.elementsNeedMeasuring = true;

@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', function ($compile, GridService, RowService, SelectionService, SortService) {
+﻿ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -7,7 +7,7 @@
                     var $element = $(iElement);
                     var options = $scope[iAttrs.ngGrid];
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, RowService, SelectionService, SortService);
+                    var grid = new ng.Grid($scope, options, gridDim, SortService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);

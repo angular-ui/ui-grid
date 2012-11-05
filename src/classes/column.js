@@ -1,8 +1,13 @@
-﻿ng.Column = function (colDef, index, headerRowHeight, sortService, resizeOnDataCallback, cssBuilder, enableResize) {
-    var self = this;
+﻿ng.Column = function (config) {
+    var self = this,
+        colDef = config.colDef,
+        index = config.index,
+        headerRowHeight = config.headerRowHeight,
+        sortCallback = config.sortCallback,
+        resizeOnDataCallback = config.resizeOnDataCallback,
+        cssBuilder = config.cssBuilder,
+        enableResize = config.enableResize;
     
-    self.sortService = sortService;
-
     self.width = colDef.width;
     self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
@@ -65,7 +70,7 @@
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        self.sortService.Sort(self, dir);
+        sortCallback(self, dir);
     };
     var delay = 500,
         clicks = 0,
