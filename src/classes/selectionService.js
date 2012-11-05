@@ -22,11 +22,15 @@ ng.SelectionService = function () {
     };
 		
 	// function to manage the selection action of a data item (entity)
-    self.ChangeSelection = function(rowItem, evt) {
-        if (self.isMulti && evt && evt.shiftKey) {
+	self.ChangeSelection = function (rowItem, evt) {
+	    if (!self.isMulti) {
+	        if (self.lastClickedRow && self.lastClickedRow.selected) {
+	            self.setSelection(self.lastClickedRow, false);
+	        }
+	    } else if (evt && evt.shiftKey) {
             if (self.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, rowItem);
-                var prevIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, self.lastClickedRow);
+                var thisIndx = ng.utils.arrayIndexOf(self.sortedData, rowItem.entity);
+                var prevIndx = ng.utils.arrayIndexOf(self.sortedData, self.lastClickedRow.entity);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -35,31 +39,22 @@ ng.SelectionService = function () {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    self.rowService.rowCache[prevIndx].selected = self.lastClickedRow.selected;
-                    self.addOrRemove(self.rowService.rowCache[prevIndx]);
+                    self.setSelection(self.rowService.rowCache[prevIndx], self.lastClickedRow.selected);
                 }
                 self.lastClickedRow = rowItem;
                 return true;
             }
-        } else if (!self.isMulti) {
-            if (self.lastClickedRow) self.lastClickedRow.selected = false;
-            if (rowItem.selected) {
-                self.selectedItems.splice(0, self.selectedItems.length);
-                self.selectedItems.push(rowItem.entity);
-            } else {
-                self.selectedItems.splice(0, self.selectedItems.length);
-            }
-            self.lastClickedRow = rowItem;
-            return true;
-        }
-        self.addOrRemove(rowItem);
-        self.lastClickedRow = rowItem;
+	    }
+	    self.setSelection(rowItem, rowItem.selected ? false : true);
+	    self.lastClickedRow = rowItem;
         return true;
     };
-	
-	// just call this func and hand it the rowItem you want to select (or de-select)    
-    self.addOrRemove = function(rowItem) {
-        if (!rowItem.selected) {
+
+    // just call this func and hand it the rowItem you want to select (or de-select)    
+    self.setSelection = function(rowItem, isSelected) {
+        rowItem.selected = isSelected ;
+        rowItem.entity[SELECTED_PROP] = isSelected;
+        if (!isSelected) {
             var indx = self.selectedItems.indexOf(rowItem.entity);
             self.selectedItems.splice(indx, 1);
         } else {

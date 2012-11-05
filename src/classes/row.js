@@ -32,25 +32,11 @@ ng.Row = function (entity, config, selectionService) {
             return true;
         } else {
             if (self.beforeSelectionChange(self)) {
-                self.selected ? self.selected = false : self.selected = true;
-                self.entity[SELECTED_PROP] = self.selected;
                 self.selectionService.ChangeSelection(self, event);
+                return self.afterSelectionChange();
             }
         }
-        return self.afterSelectionChange();
-    };
-
-    self.toggle = function(item) {
-        if (item.selected.get()) {
-            item.selected.set(false);
-            self.selectedItems.remove(item.entity);
-        } else {
-            item.selected.set(true);
-            if (self.selectedItems.indexOf(item.entity) === -1) {
-                self.selectedItems.push(item.entity);
-            }
-        }
-
+        return false;
     };
 
     self.cells = [];

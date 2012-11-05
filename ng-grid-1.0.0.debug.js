@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/05/2012 12:55:08
+* Compiled At: 11/05/2012 13:30:13
 ***********************************************/
 
 (function(window, undefined){
@@ -1426,25 +1426,11 @@ ng.Row = function (entity, config, selectionService) {
             return true;
         } else {
             if (self.beforeSelectionChange(self)) {
-                self.selected ? self.selected = false : self.selected = true;
-                self.entity[SELECTED_PROP] = self.selected;
                 self.selectionService.ChangeSelection(self, event);
+                return self.afterSelectionChange();
             }
         }
-        return self.afterSelectionChange();
-    };
-
-    self.toggle = function(item) {
-        if (item.selected.get()) {
-            item.selected.set(false);
-            self.selectedItems.remove(item.entity);
-        } else {
-            item.selected.set(true);
-            if (self.selectedItems.indexOf(item.entity) === -1) {
-                self.selectedItems.push(item.entity);
-            }
-        }
-
+        return false;
     };
 
     self.cells = [];
@@ -1495,11 +1481,15 @@ ng.SelectionService = function () {
     };
 		
 	// function to manage the selection action of a data item (entity)
-    self.ChangeSelection = function(rowItem, evt) {
-        if (self.isMulti && evt && evt.shiftKey) {
+	self.ChangeSelection = function (rowItem, evt) {
+	    if (!self.isMulti) {
+	        if (self.lastClickedRow && self.lastClickedRow.selected) {
+	            self.setSelection(self.lastClickedRow, false);
+	        }
+	    } else if (evt && evt.shiftKey) {
             if (self.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, rowItem);
-                var prevIndx = ng.utils.arrayIndexOf(self.rowService.rowCache, self.lastClickedRow);
+                var thisIndx = ng.utils.arrayIndexOf(self.sortedData, rowItem.entity);
+                var prevIndx = ng.utils.arrayIndexOf(self.sortedData, self.lastClickedRow.entity);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -1508,31 +1498,22 @@ ng.SelectionService = function () {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    self.rowService.rowCache[prevIndx].selected = self.lastClickedRow.selected;
-                    self.addOrRemove(self.rowService.rowCache[prevIndx]);
+                    self.setSelection(self.rowService.rowCache[prevIndx], self.lastClickedRow.selected);
                 }
                 self.lastClickedRow = rowItem;
                 return true;
             }
-        } else if (!self.isMulti) {
-            if (self.lastClickedRow) self.lastClickedRow.selected = false;
-            if (rowItem.selected) {
-                self.selectedItems.splice(0, self.selectedItems.length);
-                self.selectedItems.push(rowItem.entity);
-            } else {
-                self.selectedItems.splice(0, self.selectedItems.length);
-            }
-            self.lastClickedRow = rowItem;
-            return true;
-        }
-        self.addOrRemove(rowItem);
-        self.lastClickedRow = rowItem;
+	    }
+	    self.setSelection(rowItem, rowItem.selected ? false : true);
+	    self.lastClickedRow = rowItem;
         return true;
     };
-	
-	// just call this func and hand it the rowItem you want to select (or de-select)    
-    self.addOrRemove = function(rowItem) {
-        if (!rowItem.selected) {
+
+    // just call this func and hand it the rowItem you want to select (or de-select)    
+    self.setSelection = function(rowItem, isSelected) {
+        rowItem.selected = isSelected ;
+        rowItem.entity[SELECTED_PROP] = isSelected;
+        if (!isSelected) {
             var indx = self.selectedItems.indexOf(rowItem.entity);
             self.selectedItems.splice(indx, 1);
         } else {
