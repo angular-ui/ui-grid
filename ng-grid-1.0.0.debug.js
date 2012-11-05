@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/04/2012 18:59:34
+* Compiled At: 11/04/2012 21:30:52
 ***********************************************/
 
 (function(window, undefined){
@@ -64,17 +64,23 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
     if (index >= 0 && index < n) {
         selected = items[index];
         var row = rowCache[selected[ROW_KEY]];
-        // fire the selection
-        row.toggleSelected(evt);
-        itemToView = ng.utils.getElementsByClassName("selected");
-        // finally scroll it into view as we arrow through
-        if (!Element.prototype.scrollIntoViewIfNeeded) {
-            itemToView[0].scrollIntoView(false);
-            grid.$viewport.focus();
-        } else {
-            itemToView[0].scrollIntoViewIfNeeded();
+        if (row) {
+            row.toggleSelected(evt);
+            itemToView = ng.utils.getElementsByClassName("selected");
+            // finally scroll it into view as we arrow through
+            if (itemToView && itemToView[0]) {
+                if (!Element.prototype.scrollIntoViewIfNeeded) {
+                    itemToView[0].scrollIntoView(false);
+                    grid.$viewport.focus();
+                } else {
+                    itemToView[0].scrollIntoViewIfNeeded();
+                }
+            }
         }
-        $scope.$apply();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+        // fire the selection
         return false;
     }
     return false;
