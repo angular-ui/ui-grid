@@ -27,7 +27,7 @@
         // If we have a scope let's get the column associated with the header.
         if (headerScope) {
             headerContainer.attr('draggable', 'true');
-            headerContainer.on('dragstart', self.onDragStart);
+            headerContainer.on('dragstart', self.onDragStart).on('dragend', self.onDragStop);
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
             // Set the onmouseup event last in case there was an issue getting here.
@@ -40,10 +40,16 @@
             self.colToMove.header.css('background-color', 'rgb(255, 255, 204)');
         }
     };
+    
+    self.onDragStop = function () {
+        // Set the column to move header color back to normal
+        if (self.colToMove) {
+            self.colToMove.header.css('background-color', 'rgb(234, 234, 234)');
+        }
+    };
 
     self.onDrop = function (event) {
-        // Set the column to move header color back to normal
-        self.colToMove.header.css('background-color', 'rgb(234, 234, 234)');
+        self.onDragStop();
         // Get the closest header to where we dropped
         var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
         // Get the scope from the header.
