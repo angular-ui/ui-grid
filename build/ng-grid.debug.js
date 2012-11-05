@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/05/2012 11:00:31
+* Compiled At: 11/05/2012 12:55:08
 ***********************************************/
 
 (function(window, undefined){
@@ -1427,6 +1427,7 @@ ng.Row = function (entity, config, selectionService) {
         } else {
             if (self.beforeSelectionChange(self)) {
                 self.selected ? self.selected = false : self.selected = true;
+                self.entity[SELECTED_PROP] = self.selected;
                 self.selectionService.ChangeSelection(self, event);
             }
         }

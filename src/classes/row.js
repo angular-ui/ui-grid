@@ -33,6 +33,7 @@ ng.Row = function (entity, config, selectionService) {
         } else {
             if (self.beforeSelectionChange(self)) {
                 self.selected ? self.selected = false : self.selected = true;
+                self.entity[SELECTED_PROP] = self.selected;
                 self.selectionService.ChangeSelection(self, event);
             }
         }
