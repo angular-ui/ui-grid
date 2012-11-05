@@ -22,16 +22,16 @@ ng.domUtility = (new function () {
     this.assignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
-        grid.$topPanel = $(".ngTopPanel", grid.$root[0]);
-        grid.$headerContainer = $(".ngHeaderContainer", grid.$topPanel[1]);
-        grid.$headerScroller = $(".ngHeaderScroller", grid.$headerContainer[1]);
-        grid.$headers = grid.$headerContainer.children();
+        grid.$topPanel = grid.$root.find(".ngTopPanel");
+        grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
+        grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
+        grid.$headers = grid.$headerScroller.children();
         //Viewport
-        grid.$viewport = $(".ngViewport", grid.$root[0]);
+        grid.$viewport = grid.$root.find(".ngViewport");
         //Canvas
-        grid.$canvas = $(".ngCanvas", grid.$viewport[0]);
+        grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
-        grid.$footerPanel = $(".ngFooterPanel", grid.$root[0]);
+        grid.$footerPanel = grid.$root.find(".ngFooterPanel");
     };
 
     this.measureElementMaxDims = function ($container) {
