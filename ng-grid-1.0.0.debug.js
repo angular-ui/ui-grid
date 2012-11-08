@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/07/2012 20:31:31
+* Compiled At: 11/07/2012 22:59:03
 ***********************************************/
 
 (function(window, undefined){
@@ -1240,7 +1240,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2);
+        return Math.max(0, $scope.rootDim.outerHeight - self.config.headerRowHeight - self.config.footerRowHeight - 2);
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
@@ -1255,13 +1255,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
 	$scope.headerSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": $scope.viewportDimHeight() + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
 	};
 	$scope.footerSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.footerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
 	
     $scope.totalRowWidth = function () {
@@ -1619,14 +1619,14 @@ ng.domUtility = (new function () {
 
     this.measureElementMinDims = function ($container) {
         var dims = { };
-        var testContainer = $container.clone();
+        var $testContainer = $container.clone();
         $testContainer.appendTo($container.parent().first());
         dims.minWidth = 0;
         dims.minHeight = 0;
         //since its cloned... empty it out
-        testContainer.empty();
+        $testContainer.empty();
         var $test = $("<div style='height: 0x; width: 0px;'></div>");
-        testContainer.append($test);
+        $testContainer.append($test);
         //$testContainer.wrap("<div style='width: 1px; height: 1px;'></div>");
         dims.minWidth = $testContainer.width();
         dims.minHeight = $testContainer.height();

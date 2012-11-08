@@ -333,7 +333,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2);
+        return Math.max(0, $scope.rootDim.outerHeight - self.config.headerRowHeight - self.config.footerRowHeight - 2);
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
@@ -348,13 +348,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
 	$scope.headerSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": $scope.viewportDimHeight() + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
 	};
 	$scope.footerSize = function() {
-		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.footerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
 	
     $scope.totalRowWidth = function () {

@@ -62,14 +62,14 @@ ng.domUtility = (new function () {
 
     this.measureElementMinDims = function ($container) {
         var dims = { };
-        var testContainer = $container.clone();
+        var $testContainer = $container.clone();
         $testContainer.appendTo($container.parent().first());
         dims.minWidth = 0;
         dims.minHeight = 0;
         //since its cloned... empty it out
-        testContainer.empty();
+        $testContainer.empty();
         var $test = $("<div style='height: 0x; width: 0px;'></div>");
-        testContainer.append($test);
+        $testContainer.append($test);
         //$testContainer.wrap("<div style='width: 1px; height: 1px;'></div>");
         dims.minWidth = $testContainer.width();
         dims.minHeight = $testContainer.height();
