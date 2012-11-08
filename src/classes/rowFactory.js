@@ -36,7 +36,7 @@
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
 		    minRows = grid.minRowsToRender(),
-		    maxRows = grid.sortedData.length,
+		    maxRows = Math.max(grid.sortedData.length, grid.minRowsToRender()),
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -92,7 +92,7 @@
     self.sortedDataChanged = function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
-        self.selectionService.clearSelectedItems();
+        self.selectionService.toggleSelectAll(false);
         self.CalcRenderedRange();
     };
 

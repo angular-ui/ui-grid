@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/08/2012 12:55:07
+* Compiled At: 11/08/2012 13:06:00
 ***********************************************/
 
 (function(window, undefined){
@@ -830,7 +830,7 @@ ng.RowFactory = function (grid) {
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
 		    minRows = grid.minRowsToRender(),
-		    maxRows = grid.sortedData.length,
+		    maxRows = Math.max(grid.sortedData.length, grid.minRowsToRender()),
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -886,6 +886,7 @@ ng.RowFactory = function (grid) {
     self.sortedDataChanged = function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
+        self.selectionService.toggleSelectAll(false);
         self.CalcRenderedRange();
     };
 
