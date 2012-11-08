@@ -10,15 +10,6 @@ function userController($scope) {
         data: 'myData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
-        plugins: [new ngGridGroupable({
-            group: {
-                field: 'name',
-                label: 'Fancy Name',
-                group: {
-                    field: 'age',
-                    label: 'Fancy Age'
-                }
-            }})],
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200},
                      { field: 'age', width: 100 },
                      { field: 'born', width: 100 }]
