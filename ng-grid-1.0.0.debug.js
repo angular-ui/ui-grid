@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/07/2012 17:32:57
+* Compiled At: 11/07/2012 20:16:33
 ***********************************************/
 
 (function(window, undefined){
@@ -234,7 +234,7 @@ $.extend(ng.utils, {
 ngGridServices.factory('GridService', function () {
     var gridService = {};
     gridService.gridCache = {};
-    
+    gridService.eventStorage = {};
     gridService.getIndexOfCache = function() {
         var indx = -1;   
         for (var grid in gridService.gridCache) {
@@ -959,7 +959,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = self.config.data;
+    self.sortedData = $scope[self.config.data] || self.config.data; // cannot watch for updates if you don't pass the string name
     //initialized in the init method
     self.rowService = new ng.RowFactory();
     self.selectionService = new ng.SelectionService();
@@ -1055,11 +1055,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (!self.config.columnDefs > 0) {
             self.config.columnDefs = [];
         }
-        if (!$scope.dataSource || !$scope.dataSource[0]) {
+        if (!self.sortedData || !self.sortedData[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
         var item;
-        item = $scope.dataSource[0];
+        item = self.sortedData[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             self.config.columnDefs.push({
@@ -1107,11 +1107,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.cssBuilder = new ng.CssBuilder($scope, self);
         self.buildColumns();
         self.sortService.columns = $scope.columns,
-        $scope.$watch('dataSource', function (a) {
-            if (!a) return;
-            self.rowService.sortedDataChanged(a);
-            self.refreshDomSizes();
-        }, true);
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.sortedData.length * self.config.rowHeight;
@@ -1216,7 +1211,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
     };
     //$scope vars
-    $scope.dataSource = self.config.data;
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
@@ -1737,12 +1731,20 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
                     ng.domUtility.measureGrid($element, grid, true);
+                    // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
+                    if (typeof options.data == "string") {
+                        $scope.$watch(options.data, function (a) {
+                            if (!a) return;
+                            grid.sortedData = a;
+                            grid.rowService.sortedDataChanged(a);
+                            grid.refreshDomSizes();
+                        }, options.watchDataItems);
+                    }
                     //set the right styling on the container
                     $element.addClass("ngGrid")
                         .addClass("ui-widget")
                         .addClass(grid.gridId.toString());
                     //call update on the grid, which will refresh the dome measurements asynchronously
-                    grid.update();
                     grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
@@ -1751,8 +1753,9 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
                     GridService.AssignGridEventHandlers($scope, grid);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
-                        p.init($scope.$new(), grid);
+                        p.init($scope.$new(), grid, { GridService: GridService, SortService: SortService });
                     });
+                    grid.update();
                     return null;
                 }
             };

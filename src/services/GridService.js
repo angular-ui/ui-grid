@@ -8,7 +8,7 @@
 ngGridServices.factory('GridService', function () {
     var gridService = {};
     gridService.gridCache = {};
-    
+    gridService.eventStorage = {};
     gridService.getIndexOfCache = function() {
         var indx = -1;   
         for (var grid in gridService.gridCache) {

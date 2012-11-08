@@ -9,15 +9,15 @@
     self.myGrid = null;
 
     // The init method gets called during the ng-grid directive execution.
-    self.init = function (scope, grid) {
+    self.init = function (scope, grid, services) {
         // The directive passes in the grid scope and the grid object which we will want to save for manipulation later.
         self.$scope = scope;
         self.myGrid = grid;
+        self.services = services;
         // In this example we want to assign grid events.
         self.assignEvents();
     };
     self.colToMove = undefined;
-    self.rowToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
         if (self.config.enableHeader) {
@@ -92,7 +92,7 @@
             // set draggable events
             targetRow.attr('draggable', 'true');
             // Save the row for later.
-            self.rowToMove = { targetRow: targetRow, scope: rowScope };
+            self.services.GridService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
         }
     };
 
@@ -103,16 +103,17 @@
         var rowScope = angular.element(targetRow).scope();
         if (rowScope) {
             // If we have the same Row, do nothing.
-            if (self.rowToMove.scope.row == rowScope.row) return;
+            var prevRow = self.services.GridService.eventStorage.rowToMove;
+            if (prevRow.scope.row == rowScope.row) return;
             // Splice the Rows via the actual datasource
-            var i = self.$scope.dataSource.indexOf(self.rowToMove.scope.row.entity);
-            var j = self.$scope.dataSource.indexOf(rowScope.row.entity);
-            self.$scope.dataSource.splice(i, 1);
-            self.$scope.dataSource.splice(j, 0, self.rowToMove.scope.row.entity);
+            var i = self.myGrid.sortedData.indexOf(prevRow.scope.row.entity);
+            var j = self.myGrid.sortedData.indexOf(rowScope.row.entity);
+            self.myGrid.sortedData.splice(i, 1);
+            self.myGrid.sortedData.splice(j, 0, prevRow.scope.row.entity);
+            self.myGrid.rowService.sortedDataChanged(self.myGrid.sortedData);
             // clear out the rowToMove object
-            self.rowToMove = undefined;
+            self.services.GridService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one
-            if (!self.$scope.$$phase) self.$scope.$apply();
         }
     };
 };

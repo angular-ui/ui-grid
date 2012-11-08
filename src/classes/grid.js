@@ -52,7 +52,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = self.config.data;
+    self.sortedData = $scope[self.config.data] || self.config.data; // cannot watch for updates if you don't pass the string name
     //initialized in the init method
     self.rowService = new ng.RowFactory();
     self.selectionService = new ng.SelectionService();
@@ -148,11 +148,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (!self.config.columnDefs > 0) {
             self.config.columnDefs = [];
         }
-        if (!$scope.dataSource || !$scope.dataSource[0]) {
+        if (!self.sortedData || !self.sortedData[0]) {
             throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
         }
         var item;
-        item = $scope.dataSource[0];
+        item = self.sortedData[0];
 
         ng.utils.forIn(item, function (prop, propName) {
             self.config.columnDefs.push({
@@ -200,11 +200,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.cssBuilder = new ng.CssBuilder($scope, self);
         self.buildColumns();
         self.sortService.columns = $scope.columns,
-        $scope.$watch('dataSource', function (a) {
-            if (!a) return;
-            self.rowService.sortedDataChanged(a);
-            self.refreshDomSizes();
-        }, true);
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.sortedData.length * self.config.rowHeight;
@@ -309,7 +304,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
     };
     //$scope vars
-    $scope.dataSource = self.config.data;
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
