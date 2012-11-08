@@ -1,10 +1,9 @@
-﻿ng.RowFactory = function () {
+﻿ng.RowFactory = function (grid) {
     var self = this;
 
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
     self.dataChanged = true;
-    self.sortedData = [];
     self.prevMaxRows = 0; // for comparison purposes when scrolling
     self.prevMinRows = 0; // for comparison purposes when scrolling
     self.rowConfig = {};
@@ -39,7 +38,7 @@
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
 		    minRows = self.minRowsToRender(),
-		    maxRows = self.sortedData.length,
+		    maxRows = grid.sortedData.length,
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -76,7 +75,7 @@
 
     self.renderedChange = function () {
         var rowArr = [];
-        var dataArr = self.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
+        var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
 
         angular.forEach(dataArr, function (item, i) {
             var row = self.buildRowFromEntity(item, self.renderedRange.bottomRow + i);
@@ -92,8 +91,7 @@
         self.renderedChange();
     };
 
-    self.sortedDataChanged = function (newVal) {
-        self.sortedData = newVal;
+    self.sortedDataChanged = function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
         self.CalcRenderedRange();
@@ -112,6 +110,6 @@
         self.prevViewableRange = new ng.Range(0, self.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        self.sortedDataChanged(config.sortedData);
+        self.sortedDataChanged();
     };
 }

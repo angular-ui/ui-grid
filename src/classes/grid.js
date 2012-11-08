@@ -52,10 +52,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = $scope[self.config.data] || self.config.data; // cannot watch for updates if you don't pass the string name
+    self.sortedData = $scope.$parent[self.config.data] || self.config.data; // we cannot watch for updates if you don't pass the string name
     //initialized in the init method
-    self.rowService = new ng.RowFactory();
-    self.selectionService = new ng.SelectionService();
+    self.rowFactory = new ng.RowFactory(self);
+    self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
     self.elementDims = {
@@ -205,17 +205,15 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         maxCanvasHt = self.sortedData.length * self.config.rowHeight;
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
-            sortedData: self.sortedData,
             selectedItems: self.config.selectedItems,
             selectedIndex: self.config.selectedIndex,
             isMulti: self.config.multiSelect
-        }, self.rowService);
-        self.rowService.Initialize({
+        }, self.rowFactory);
+        self.rowFactory.Initialize({
             selectionService: self.selectionService,
             rowHeight: self.config.rowHeight,
             minRowsToRenderCallback: self.minRowsToRender,
             setRenderedRowsCallback: self.setRenderedRows,
-            sortedData: self.sortedData,
             rowConfig: {
                 canSelectRows: self.config.canSelectRows,
                 rowClasses: self.config.rowClasses,
@@ -228,9 +226,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         angular.forEach($scope.columns, function (col) {
             if (col.widthIsConfigured) {
                 col.width.$watch(function () {
-                    self.rowService.dataChanged = true;
-                    self.rowService.rowCache = []; //if data source changes, kill this!
-                    self.rowService.calcRenderedRange();
+                    self.rowFactory.dataChanged = true;
+                    self.rowFactory.rowCache = []; //if data source changes, kill this!
+                    self.rowFactory.calcRenderedRange();
                 });
             }
         });
@@ -255,7 +253,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         prevScrollTop = scrollTop;
-        self.rowService.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
+        self.rowFactory.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
     };
     self.adjustScrollLeft = function (scrollLeft) {
         if (self.$headerContainer) {
@@ -292,7 +290,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.clearSortingData(col);
         self.sortService.Sort(sortInfo, self.sortedData);
         self.lastSortedColumn = col;
-        self.rowService.sortedDataChanged(self.sortedData);
+        self.rowFactory.sortedDataChanged(self.sortedData);
     };
     self.clearSortingData = function (col) {
         if (!col) {

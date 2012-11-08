@@ -17,7 +17,7 @@
                         $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
                             grid.sortedData = a;
-                            grid.rowService.sortedDataChanged(a);
+                            grid.rowFactory.sortedDataChanged();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }

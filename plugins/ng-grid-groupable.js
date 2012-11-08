@@ -18,12 +18,12 @@
     };
 
     self.setOverrides = function() {
-        self.myGrid.rowService.renderedChange = self.renderedChangeOverride;
+        self.myGrid.rowFactory.renderedChange = self.renderedChangeOverride;
     };
 
     self.getGrouping = function () {
         // Here we set the onmousedown event handler to the header container.
-        var data = self.myGrid.rowService.sortedData;
+        var data = self.myGrid.rowFactory.sortedData;
         self.groupedData = { };
         angular.forEach(data, function (item) {
             var ptr = self.groupedData;
@@ -70,12 +70,12 @@
         };
         parseGroup(self.groupedData);
 
-        var dataArray = groupArr.slice(self.myGrid.rowService.renderedRange.bottomRow, self.myGrid.rowService.renderedRange.topRow);
+        var dataArray = groupArr.slice(self.myGrid.rowFactory.renderedRange.bottomRow, self.myGrid.rowFactory.renderedRange.topRow);
         $.each(dataArray, function (indx, item) {
             if (item.isGroupRow) {
                 
             }
-            var row = self.myGrid.rowService.buildRowFromEntity(item, self.myGrid.rowService.renderedRange.bottomRow + indx);
+            var row = self.myGrid.rowFactory.buildRowFromEntity(item, self.myGrid.rowFactory.renderedRange.bottomRow + indx);
             //add the row to our return array
             rowArr.push(row);
         });

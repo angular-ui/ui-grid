@@ -1,24 +1,14 @@
-ng.SelectionService = function () {
+ng.SelectionService = function (grid) {
     var self = this;
 
     self.lastClickedRow = undefined;
-    self.isMulti = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-    self.sortedData = undefined; // the observable array datasource
-    self.selectedItems = undefined;
-    self.selectedIndex = undefined;
-    self.rowService = undefined;
     
-	self.maxRows = function () {
-	   return self.dataSource.length;
-	};
-
-	self.Initialize = function (options, rowService) {
+	self.Initialize = function (options, rowFactory) {
         self.isMulti = options.isMulti || options.multiSelect;
-	    self.sortedData = options.sortedData;
         self.selectedItems = options.selectedItems;
         self.selectedIndex = options.selectedIndex;
-        self.rowService = rowService;
+        self.rowFactory = rowFactory;
     };
 		
 	// function to manage the selection action of a data item (entity)
@@ -29,8 +19,8 @@ ng.SelectionService = function () {
 	        }
 	    } else if (evt && evt.shiftKey) {
             if (self.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(self.sortedData, rowItem.entity);
-                var prevIndx = ng.utils.arrayIndexOf(self.sortedData, self.lastClickedRow.entity);
+                var thisIndx = ng.utils.arrayIndexOf(grid.sortedData, rowItem.entity);
+                var prevIndx = ng.utils.arrayIndexOf(grid.sortedData, self.lastClickedRow.entity);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -39,7 +29,7 @@ ng.SelectionService = function () {
                     thisIndx = thisIndx ^ prevIndx;
                 }
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    self.setSelection(self.rowService.rowCache[prevIndx], self.lastClickedRow.selected);
+                    self.setSelection(self.rowFactory.rowCache[prevIndx], self.lastClickedRow.selected);
                 }
                 self.lastClickedRow = rowItem;
                 return true;
@@ -72,13 +62,13 @@ ng.SelectionService = function () {
         if (selectedlength > 0) {
             self.selectedItems.splice(0, selectedlength);
         }
-        angular.forEach(self.sortedData, function (item) {
+        angular.forEach(grid.sortedData, function (item) {
             item[SELECTED_PROP] = checkAll;
             if (checkAll) {
                 self.selectedItems.push(item);
             }
         });
-        angular.forEach(self.rowService.rowCache, function (row) {
+        angular.forEach(self.rowFactory.rowCache, function (row) {
             row.selected = checkAll;
         });
     };

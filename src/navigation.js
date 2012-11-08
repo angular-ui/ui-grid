@@ -29,7 +29,7 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
     var items = grid.sortedData,
         n = items.length,
         index = ng.utils.arrayIndexOf(items, grid.selectionService.lastClickedRow.entity) + offset,
-        rowCache = grid.rowService.rowCache,
+        rowCache = grid.rowFactory.rowCache,
         selected,
         itemToView;
 

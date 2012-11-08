@@ -110,7 +110,7 @@
             var j = self.myGrid.sortedData.indexOf(rowScope.row.entity);
             self.myGrid.sortedData.splice(i, 1);
             self.myGrid.sortedData.splice(j, 0, prevRow.scope.row.entity);
-            self.myGrid.rowService.sortedDataChanged(self.myGrid.sortedData);
+            self.myGrid.rowFactory.sortedDataChanged(self.myGrid.sortedData);
             // clear out the rowToMove object
             self.services.GridService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one
