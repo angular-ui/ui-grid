@@ -38,7 +38,7 @@
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
 		    minRows = self.minRowsToRender(),
-		    maxRows = grid.sortedData.length,
+		    maxRows = Math.max(grid.sortedData.length,self.minRowsToRender()),
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
