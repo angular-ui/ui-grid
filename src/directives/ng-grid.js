@@ -14,7 +14,7 @@
                     ng.domUtility.measureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$watch(options.data, function (a) {
+                        $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
                             grid.sortedData = a;
                             grid.rowService.sortedDataChanged(a);

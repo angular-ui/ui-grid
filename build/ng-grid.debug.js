@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/07/2012 20:24:11
+* Compiled At: 11/07/2012 20:31:31
 ***********************************************/
 
 (function(window, undefined){
@@ -1733,7 +1733,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
                     ng.domUtility.measureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$watch(options.data, function (a) {
+                        $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
                             grid.sortedData = a;
                             grid.rowService.sortedDataChanged(a);
