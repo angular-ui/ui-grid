@@ -22,7 +22,6 @@
 ..\src\directives\ng-grid.js
 ..\src\directives\ng-row.js
 ..\src\directives\ng-cell.js
-..\src\directives\ng-size.js
 ..\src\directives\ng-header-row.js
 ..\src\directives\ng-header-cell.js
 ..\src\init.js

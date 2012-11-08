@@ -86,7 +86,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
     };
     self.minRowsToRender = function () {
-        var viewportH = $scope.viewportDim().outerHeight || 1;
+        var viewportH = $scope.viewportDimHeight() || 1;
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
         return prevMinRowsToRender;
     };
@@ -107,7 +107,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         //now calc the canvas height of what is going to be used in rendering
         canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
         //get the max row Width for rendering
-        rootW = $scope.totalRowWidth + self.elementDims.rowWdiff;
+        rootW = $scope.totalRowWidth() + self.elementDims.rowWdiff;
         //now see if we are going to have a vertical scroll bar present
         if ($scope.maxCanvasHeight() > canvasH) {
             //if we are, then add that width to the max width 
@@ -328,7 +328,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.totalItemsLength = function () {
         return self.sortedData.length;
     };
-    
+	
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -338,37 +338,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.headerRowTemplate = function() {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
-    $scope.headerDim = function () {
-        var rootDim = $scope.rootDim,
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = self.config.headerRowHeight;
-        newDim.outerWidth = rootDim.outerWidth;
-        return newDim;
-    };
-    $scope.footerDim = function() {
-        var rootDim = $scope.rootDim,
-            showFooter = self.config.footerVisible,
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = self.config.footerRowHeight;
-        newDim.outerWidth = rootDim.outerWidth;
-        if (!showFooter) {
-            newDim.outerHeight = 3;
-        }
-        return newDim;
-    };
-    $scope.viewportDim = function () {
-        var rootDim = $scope.rootDim,
-            headerDim = $scope.headerDim(),
-            footerDim = $scope.footerDim(),
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight - 2;
-        newDim.outerWidth = rootDim.outerWidth - 2;
-        newDim.innerHeight = newDim.outerHeight;
-        newDim.innerWidth = newDim.outerWidth;
-        return newDim;
+    $scope.viewportDimHeight = function () {
+        return self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2;
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
@@ -379,9 +350,19 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.canvasHeight = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-    $scope.headerScrollerWidth = function() {
+    $scope.headerScrollerSize = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
+	$scope.headerSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.headerRowHeight + "px" };
+	};
+	$scope.viewportSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": $scope.viewportDimHeight() + "px" };
+	};
+	$scope.footerSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.footerRowHeight + "px" };
+	};
+	
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,
@@ -454,7 +435,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return totalWidth;
     };
     $scope.headerScrollerDim = function () {
-        var viewportH = $scope.viewportDim().outerHeight,
+        var viewportH = $scope.viewportDimHeight(),
             maxHeight = $scope.maxCanvasHeight(),
             vScrollBarIsOpen = (maxHeight > viewportH),
             newDim = new ng.Dimension();

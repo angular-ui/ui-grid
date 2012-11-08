@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/05/2012 13:30:13
+* Compiled At: 11/07/2012 17:32:57
 ***********************************************/
 
 (function(window, undefined){
@@ -580,18 +580,18 @@ ngGridServices.factory('SortService', function () {
 
 ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
-    b.append('<div class="ngGrid">');
-    b.append('	 <div class="ngTopPanel" ng-size="headerDim">');
-    b.append('      <div class="ngHeaderContainer" ng-size="headerDim">');
-    b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerWidth()" ng-header-row></div>');
+    b.append('<div>');
+    b.append('	 <div class="ngTopPanel" ng-style="headerSize()">');
+    b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
+    b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerSize()" ng-header-row></div>');
     b.append('    	</div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngViewport" ng-size="viewportDim">');
+    b.append('	 <div class="ngViewport" ng-style="viewportSize()">');
     b.append('    	 <div class="ngCanvas" ng-style="canvasHeight()">');
     b.append('           <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append('       </div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngFooterPanel" ng-size="footerDim">');
+    b.append('	 <div class="ngFooterPanel" ng-style="footerSize()">');
     b.append('   	 <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
     b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
@@ -993,7 +993,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
     };
     self.minRowsToRender = function () {
-        var viewportH = $scope.viewportDim().outerHeight || 1;
+        var viewportH = $scope.viewportDimHeight() || 1;
         prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
         return prevMinRowsToRender;
     };
@@ -1014,7 +1014,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         //now calc the canvas height of what is going to be used in rendering
         canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
         //get the max row Width for rendering
-        rootW = $scope.totalRowWidth + self.elementDims.rowWdiff;
+        rootW = $scope.totalRowWidth() + self.elementDims.rowWdiff;
         //now see if we are going to have a vertical scroll bar present
         if ($scope.maxCanvasHeight() > canvasH) {
             //if we are, then add that width to the max width 
@@ -1235,7 +1235,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.totalItemsLength = function () {
         return self.sortedData.length;
     };
-    
+	
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -1245,37 +1245,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.headerRowTemplate = function() {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
-    $scope.headerDim = function () {
-        var rootDim = $scope.rootDim,
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = self.config.headerRowHeight;
-        newDim.outerWidth = rootDim.outerWidth;
-        return newDim;
-    };
-    $scope.footerDim = function() {
-        var rootDim = $scope.rootDim,
-            showFooter = self.config.footerVisible,
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = self.config.footerRowHeight;
-        newDim.outerWidth = rootDim.outerWidth;
-        if (!showFooter) {
-            newDim.outerHeight = 3;
-        }
-        return newDim;
-    };
-    $scope.viewportDim = function () {
-        var rootDim = $scope.rootDim,
-            headerDim = $scope.headerDim(),
-            footerDim = $scope.footerDim(),
-            newDim = new ng.Dimension();
-
-        newDim.outerHeight = rootDim.outerHeight - headerDim.outerHeight - footerDim.outerHeight - 2;
-        newDim.outerWidth = rootDim.outerWidth - 2;
-        newDim.innerHeight = newDim.outerHeight;
-        newDim.innerWidth = newDim.outerWidth;
-        return newDim;
+    $scope.viewportDimHeight = function () {
+        return self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2;
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
@@ -1286,9 +1257,19 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.canvasHeight = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-    $scope.headerScrollerWidth = function() {
+    $scope.headerScrollerSize = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
+	$scope.headerSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.headerRowHeight + "px" };
+	};
+	$scope.viewportSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": $scope.viewportDimHeight() + "px" };
+	};
+	$scope.footerSize = function() {
+		return { "width": self.elementDims.rootMaxW + "px", "height": self.config.footerRowHeight + "px" };
+	};
+	
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,
@@ -1361,7 +1342,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return totalWidth;
     };
     $scope.headerScrollerDim = function () {
-        var viewportH = $scope.viewportDim().outerHeight,
+        var viewportH = $scope.viewportDimHeight(),
             maxHeight = $scope.maxCanvasHeight(),
             vScrollBarIsOpen = (maxHeight > viewportH),
             newDim = new ng.Dimension();
@@ -1814,50 +1795,6 @@ ngGridDirectives.directive('ngCell', function($compile) {
         }
     };
     return ngCell;
-});
-
-/***********************************************
-* FILE: ..\src\directives\ng-size.js
-***********************************************/
-ngGridDirectives.directive('ngSize', function($compile) {
-    var ngSize = {
-        scope: false,
-        compile: function (){
-            return {
-                pre: function ($scope, iElement, iAttrs) {
-                    var $container = $(iElement),
-                        $parent = $container.parent(),
-                        dim = $scope[iAttrs.ngSize](),
-                        oldHt = $container.outerHeight(),
-                        oldWdth = $container.outerWidth();
-					dim.outerWidth = dim.outerWidth - 2;
-                    if (dim != undefined) {
-                        if (dim.autoFitHeight) {
-                            dim.outerHeight = $parent.height();
-                        }
-                        if (dim.innerHeight && dim.innerWidth) {
-                            $container.height(dim.innerHeight);
-                            $container.width(dim.innerWidth);
-                            return;
-                        }
-                        if (oldHt !== dim.outerHeight || oldWdth !== dim.outerWidth) {
-                            //now set it to the new dimension, remeasure, and set it to the newly calculated
-                            $container.height(dim.outerHeight).width(dim.outerWidth);
-                            //remeasure
-                            oldHt = $container.outerHeight();
-                            oldWdth = $container.outerWidth();
-                            dim.heightDiff = oldHt - $container.height();
-                            dim.widthDiff = oldWdth - $container.width();
-                            $container.height(dim.outerHeight - dim.heightDiff);
-                            $container.width(dim.outerWidth - dim.widthDiff);
-                        }
-                        $compile(iElement.contents())($scope);
-                    }
-                }
-            };
-		}
-	};
-    return ngSize;
 });
 
 /***********************************************
