@@ -8,9 +8,7 @@
     self.prevMinRows = 0; // for comparison purposes when scrolling
     self.rowConfig = {};
     self.selectionService = undefined;
-    self.minRowsToRender = undefined;
     self.rowHeight = 30;
-    self.setRenderedRowsCallback = undefined;
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
 
@@ -37,7 +35,7 @@
     // core logic that intelligently figures out the rendered range given all the contraints that we have
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
-		    minRows = self.minRowsToRender(),
+		    minRows = grid.minRowsToRender(),
 		    maxRows = grid.sortedData.length,
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
@@ -83,7 +81,7 @@
             //add the row to our return array
             rowArr.push(row);
         });
-        self.setRenderedRowsCallback(rowArr);
+        grid.setRenderedRows(rowArr);
     };
 
     self.UpdateViewableRange = function (newRange) {
@@ -94,6 +92,7 @@
     self.sortedDataChanged = function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
+        self.selectionService.clearSelectedItems();
         self.CalcRenderedRange();
     };
 
@@ -103,11 +102,10 @@
         // height of each row
         self.rowConfig = config.rowConfig;
         self.selectionService = config.selectionService;
-        self.minRowsToRender = config.minRowsToRenderCallback;
         self.rowHeight = config.rowHeight;
-        self.setRenderedRowsCallback = config.setRenderedRowsCallback;
-        self.prevRenderedRange = new ng.Range(0, self.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
-        self.prevViewableRange = new ng.Range(0, self.minRowsToRender()); // for comparison purposes to help throttle re-calcs when scrolling
+        var i = grid.minRowsToRender();
+        self.prevRenderedRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
+        self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
         self.sortedDataChanged();

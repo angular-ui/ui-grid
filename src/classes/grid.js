@@ -212,8 +212,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.rowFactory.Initialize({
             selectionService: self.selectionService,
             rowHeight: self.config.rowHeight,
-            minRowsToRenderCallback: self.minRowsToRender,
-            setRenderedRowsCallback: self.setRenderedRows,
             rowConfig: {
                 canSelectRows: self.config.canSelectRows,
                 rowClasses: self.config.rowClasses,
