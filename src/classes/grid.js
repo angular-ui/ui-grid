@@ -333,7 +333,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2;
+        return Math.max(0, self.elementDims.rootMaxH - self.config.headerRowHeight - self.config.footerRowHeight - 2);
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
