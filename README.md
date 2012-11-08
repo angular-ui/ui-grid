@@ -49,7 +49,7 @@ function MyCtrl($scope) {
 ```
 
 ##Want More?##
-Check out the [Getting Started](https://github.com/Crash8308/ng-grid/wiki/Getting-Started) and other [Docs](https://github.com/Crash8308/ng-grid/wiki)
+Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/timothyswt/ng-grid/wiki)
 
 ##Examples##
 Coming soon...
