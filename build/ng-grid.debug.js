@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/07/2012 22:59:03
+* Compiled At: 11/08/2012 07:33:13
 ***********************************************/
 
 (function(window, undefined){
@@ -1655,8 +1655,7 @@ ng.domUtility = (new function () {
         dims = self.measureElementMinDims($container);
         grid.elementDims.rootMinW = dims.minWidth;
         // do a little magic here to ensure we always have a decent viewport
-        dims.minHeight = Math.max(dims.minHeight, (grid.config.headerRowHeight + grid.config.footerRowHeight + (3 * grid.config.rowHeight)));
-        dims.minHeight = Math.min(grid.elementDims.rootMaxH, dims.minHeight);
+        dims.minHeight = Math.max(grid.elementDims.rootMaxH, dims.minHeight);
         grid.elementDims.rootMinH = dims.minHeight;
     };
 

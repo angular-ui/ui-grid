@@ -98,8 +98,7 @@ ng.domUtility = (new function () {
         dims = self.measureElementMinDims($container);
         grid.elementDims.rootMinW = dims.minWidth;
         // do a little magic here to ensure we always have a decent viewport
-        dims.minHeight = Math.max(dims.minHeight, (grid.config.headerRowHeight + grid.config.footerRowHeight + (3 * grid.config.rowHeight)));
-        dims.minHeight = Math.min(grid.elementDims.rootMaxH, dims.minHeight);
+        dims.minHeight = Math.max(grid.elementDims.rootMaxH, dims.minHeight);
         grid.elementDims.rootMinH = dims.minHeight;
     };
 
