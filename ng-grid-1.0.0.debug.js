@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/08/2012 16:35:03
+* Compiled At: 11/08/2012 19:05:59
 ***********************************************/
 
 (function(window, undefined){
@@ -944,7 +944,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
-            plugins: []
+            plugins: [],
+            keepLastSelected: true
         },
         self = this,
         isSorting = false,
@@ -1471,7 +1472,12 @@ ng.SelectionService = function (grid) {
                 return true;
             }
 	    }
-	    self.setSelection(rowItem, rowItem.selected ? false : true);
+	    if (grid.config.keepLastSelected && !self.isMulti) {
+	        self.setSelection(rowItem, true);
+	    } else {
+	        self.setSelection(rowItem, rowItem.selected ? false : true);
+	    }
+	    
 	    self.lastClickedRow = rowItem;
         return true;
     };

@@ -31,7 +31,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
-            plugins: []
+            plugins: [],
+            keepLastSelected: true
         },
         self = this,
         isSorting = false,

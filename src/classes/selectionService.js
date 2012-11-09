@@ -35,7 +35,12 @@ ng.SelectionService = function (grid) {
                 return true;
             }
 	    }
-	    self.setSelection(rowItem, rowItem.selected ? false : true);
+	    if (grid.config.keepLastSelected && !self.isMulti) {
+	        self.setSelection(rowItem, true);
+	    } else {
+	        self.setSelection(rowItem, rowItem.selected ? false : true);
+	    }
+	    
 	    self.lastClickedRow = rowItem;
         return true;
     };
