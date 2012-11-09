@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/08/2012 16:01:12
+* Compiled At: 11/08/2012 16:30:34
 ***********************************************/
 
 (function(window, undefined){
@@ -13,6 +13,7 @@
 var ng = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
+var ngGridFilters = angular.module('ngGrid.filters', []);
 // Declare app level module which depends on filters, and services
 
 
@@ -226,6 +227,15 @@ $.extend(ng.utils, {
         return ng.utils.ieVersion !== undefined; 
     })()
 }); 
+
+/***********************************************
+* FILE: ..\src\filters\checkmark.js
+***********************************************/
+ngGridFilters.filter('checkmark', function () {
+    return function (input) {
+        return input ? '\u2713' : '\u2718';
+    };
+});
 
 /***********************************************
 * FILE: ..\src\services\GridService.js
@@ -1824,5 +1834,5 @@ ngGridDirectives.directive('ngHeaderCell', function ($compile) {
 * FILE: ..\src\init.js
 ***********************************************/
 // initialization of services into the main module
-angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives']);
+angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives', 'ngGrid.filters']);
 }(window));
