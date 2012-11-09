@@ -1,0 +1,31 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ng-grid workbench</title>
+    <link rel="stylesheet" type="text/css" href="https://raw.github.com/timothyswt/ng-grid/master/ng-grid.css" /> 
+    <link rel="stylesheet" type="text/css" href="http://timothyswt.github.com/ng-grid/javascripts/jquery-ui/css/ui-darkness/jquery-ui-1.9.1.custom.min.css" /> 
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/jquery-ui/js/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/jquery-ui/js/jquery-ui-1.9.1.custom.min.js"></script>
+    <script type="text/javascript" src="http://code.angularjs.org/1.0.2/angular.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/ng-grid-1.0.0.debug.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/main.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/largeLoad.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/largeTestData.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/plugins/ng-grid-reorderable.js"></script>
+    <script>
+        angular.module('myApp',['ngGrid']);
+    </script>
+</head>
+Try:
+
+    <body ng-app="myApp" ng-controller="userController">
+        <span>We now support jquery themes!</span>
+        <ul>
+            <li>Check out the <a href="http://timothyswt.github.com/ng-grid/examples/smoothness.html">smoothness</a> theme.</li>
+            <li>Check out the <a href="http://timothyswt.github.com/ng-grid/examples/overcast.html">overcast</a> theme.</li>
+        </ul>
+        <div style="margin: 10px;  width: 600px; height: 400px; style="float: left;" ng-grid="gridOptions">
+        </div>
+        <span style="float: right; width: 50%;">mySelections: {{mySelections | json}}</span>
+    </body>
+</html>
