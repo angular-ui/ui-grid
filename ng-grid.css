@@ -132,8 +132,9 @@ input {
 }
 
 .ngCellText {
-	margin-top: 5px;
-	margin-left: 4px;
+	position: absolute;
+	top: 5px;
+	left: 4px;
 }
 
 /******** Header Sorting ********/

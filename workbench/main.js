@@ -11,7 +11,7 @@ function userController($scope) {
         selectedItems: $scope.mySelections,
         multiSelect: true,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200},
-                     { field: 'age', width: 100 },
+                     { field: 'age', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field]}}</div></div>'},
                      { field: 'born', width: 100 }]
     };
     $scope.myData2 = [{name: "MoroniMoroniMoroniMoroniMoroniMoroniMoroni", age: 50, born: '350 A.D.'},
