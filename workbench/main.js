@@ -23,39 +23,30 @@ function userController($scope) {
                      { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
                      { field: 'alive', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
     };
-    $scope.myData2 = [{name: "MoroniMoroniMoroniMoroniMoroniMoroniMoroni", age: 50, born: '350 A.D.'},
-                        {name: "Tiancum", age: 47, born: '350 A.D.'},
-                        {name: "Jacob", age: 27, born: '350 A.D.'},
-                        {name: "Nephi", age: 29, born: '350 A.D.'},
-                        {name: "Enos", age: 34, born: '350 A.D.'},
-                        {name: "Ether", age: 42, born: '350 A.D.'},
-                        {name: "Alma", age: 43, born: '350 A.D.'},
-                        {name: "Jared", age: 21, born: '350 A.D.'}];
+    $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
+                      { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
+                      { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': '1293', 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
+                      { 'Sku': 'W-4295255', 'Vendor': 'REEB', 'SeasonCode': '6283', 'Mfg_Id': '861-4929378', 'UPC': '644134774391' },
+                      { 'Sku': 'X-9829445', 'Vendor': 'DOCK', 'SeasonCode': '6670', 'Mfg_Id': '298-5235913', 'UPC': '872941679110' },
+                      { 'Sku': 'H-2415929', 'Vendor': 'REEB', 'SeasonCode': '3884', 'Mfg_Id': '615-8231520', 'UPC': '310547300561' },
+                      { 'Sku': 'X-2718366', 'Vendor': 'MERR', 'SeasonCode': '4054', 'Mfg_Id': '920-2961971', 'UPC': '157891269493' },
+                      { 'Sku': 'Q-1505237', 'Vendor': 'AX', 'SeasonCode': '9145', 'Mfg_Id': '371-6918101', 'UPC': '553657492213' },
+                      { 'Sku': 'M-1626429', 'Vendor': 'REEB', 'SeasonCode': '1846', 'Mfg_Id': '242-5856618', 'UPC': '029388467459' },
+                      { 'Sku': 'Y-1914652', 'Vendor': 'LEVI', 'SeasonCode': '5553', 'Mfg_Id': '80-9194110', 'UPC': '433360049369' }];
     $scope.gridOptions2 = {
-        data: $scope.myData2,
+        data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
-        plugins: [new ngGridReorderable()],
-        columnDefs: [{ field: 'name'},
-        { field: 'age'},
-        { field: 'born'}]
+        columnDefs: [{ field: 'Sku', displayName: 'My Sku', width: 'auto'}, 
+                     { field: 'Vendor', displayName: 'Supplier', width: 120 },
+                     { field: 'SeasonCode', displayName: 'My SeasonCode', width: 140, cellTemplate: '<div class="ngCellText"><input type="text" ng-model="row.entity[col.field]" style="width: 80px"/></div>' }, 
+                     { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
+                     { field: 'UPC', displayName: 'Bar Code', width: "*" }],
+        plugins: [new ngGridReorderable()]
     };
     $scope.changeData = function(){
-        $scope.myData = [{name: "Moronisdgfasdgasg", age: 50, born: '350 A.D.'},
-                                {name: "Tiancum", age: 47, born: '350 A.D.'},
-                                {name: "Jacob", age: 27, born: '350 A.D.'},
-                                {name: "Nephi", age: 29, born: '350 A.D.'},
-                                {name: "Enos", age: 34, born: '350 A.D.'},
-                                {name: "Ether", age: 42, born: '350 A.D.'},
-                                {name: "Alma", age: 43, born: '350 A.D.'},
-                                {name: "Jared", age: 21, born: '350 A.D.'},
-                                {name: "Gideon", age: 35, born: '350 B.C.'},
-                                {name: "Jarom", age: 22, born: '350 B.C.'},
-                                {name: "Omni", age: 31, born: '350 B.C.'},
-                                {name: "Mosiah", age: 68, born: '350 B.C.'},
-                                {name: "Helaman", age: 56, born: '350 A.D.'},
-                                {name: "Sam", age: 17, born: '400 B.C.'},
-                                {name: "Laman", age: 26, born: '380 B.C.'}];
+        $scope.myData2 = window.getTestData();
+        $scope.myData = largeLoad();
      };
     
 };
