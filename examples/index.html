@@ -8,6 +8,7 @@
     <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/ng-grid-1.0.0.debug.js"></script>
     <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/main.js"></script>
     <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/largeLoad.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/workbench/largeTestData.js"></script>
     <script type="text/javascript" src="https://raw.github.com/timothyswt/ng-grid/master/plugins/ng-grid-reorderable.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
@@ -30,7 +31,7 @@ Try:
         <p>Try: 
         Adding more data..</p>
         <button ng-click="changeData()">Insert Rows</button>
-        <p>This is a single select grid with no reorderable plugin. You can navigate your selection with arrow keys! (up/down)</p>
+        <p>This is a single select. You can navigate your selection with arrow keys! (up/down)</p>
         <div>
             <div style="margin: 10px;  width: 600px; height: 400px; style="float: left;" ng-grid="gridOptions2">
             </div>
