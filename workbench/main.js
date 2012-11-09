@@ -5,14 +5,14 @@ function userController($scope) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
-    $scope.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , alive: true},
-                     {name: "Tiancum", allowance: 47, birthday: 1351728000000 , alive: false},
-                     {name: "Jacob", allowance: 27, birthday: 1351728000000 , alive: false},
-                     {name: "Nephi", allowance: 29, birthday: 1351728000000 , alive: false},
-                     {name: "Enos", allowance: 34, birthday: 1351728000000 , alive: false},
-                     {name: "Ether", allowance: 42, birthday: 1288323623006 , alive: false},
-                     {name: "Alma", allowance: 43, birthday: 1288323623006 , alive: true},
-                     {name: "Jared", allowance: 21, birthday: 1288323623006 , alive: true}];
+    $scope.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , paid: true},
+                     {name: "Tiancum", allowance: 47, birthday: 1351728000000 , paid: false},
+                     {name: "Jacob", allowance: 27, birthday: 1351728000000 , paid: false},
+                     {name: "Nephi", allowance: 29, birthday: 1351728000000 , paid: false},
+                     {name: "Enos", allowance: 34, birthday: 1351728000000 , paid: false},
+                     {name: "Ether", allowance: 42, birthday: 1288323623006 , paid: false},
+                     {name: "Alma", allowance: 43, birthday: 1288323623006 , paid: true},
+                     {name: "Jared", allowance: 21, birthday: 1288323623006 , paid: true}];
     $scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.mySelections,
@@ -21,7 +21,7 @@ function userController($scope) {
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
                      { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
-                     { field: 'alive', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
+                     { field: 'paid', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
