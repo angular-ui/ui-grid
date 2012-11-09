@@ -43,6 +43,7 @@ local.properties
 *.sln
 *.
 *.*roj
+workbench/jquery*
 web.config
 # Build results
 [Dd]ebug/

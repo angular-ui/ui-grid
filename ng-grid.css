@@ -39,7 +39,6 @@
 
 .ngHeaderCell {
     position: absolute;
-    background-color: rgb(234, 234, 234); 
     padding: 0 0 0 0;
     cursor: pointer;
     white-space: nowrap;
