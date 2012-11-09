@@ -52,7 +52,7 @@ function MyCtrl($scope) {
 
 ##Want More?##
 Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/timothyswt/ng-grid/wiki)
-
+Examples are found [here](https://timothyswt.github.com/ng-grid/examples) 
 ##Examples##
 Coming soon...
 
