@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/08/2012 16:30:34
+* Compiled At: 11/08/2012 16:35:03
 ***********************************************/
 
 (function(window, undefined){
@@ -233,7 +233,7 @@ $.extend(ng.utils, {
 ***********************************************/
 ngGridFilters.filter('checkmark', function () {
     return function (input) {
-        return input ? '\u2713' : '\u2718';
+        return input ? '\u2714' : '\u2718';
     };
 });
 
