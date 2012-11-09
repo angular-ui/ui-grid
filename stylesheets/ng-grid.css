@@ -1,0 +1,228 @@
+﻿/******** Grid Global ********/
+.nglabel {
+    display: block;
+    float: left;
+    font-weight: bold;
+    padding-right: 5px;
+}
+/******** Grid ********/
+
+.ngGrid{
+    background-color: rgb(253, 253, 253);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/******** Header ********/
+.ngTopPanel {
+    background-color: rgb(234, 234, 234);
+    overflow: hidden;
+	border-bottom: 1px solid rgb(212,212,212);
+}
+.ngHeaderContainer {
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+}
+
+.ngHeaderScroller {
+	position:absolute;
+}
+.ngHeaderSortColumn{
+	cursor: pointer;
+    overflow: hidden;
+}
+
+.ngHeaderCell {
+    position: absolute;
+    padding: 0 0 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ngHeaderText {
+	margin-left: 5px;
+}
+
+div.ngHeaderCell{
+	border-left: 1px solid rgb(212,212,212);
+	border-right: 1px solid rgb(212,212,212);
+}
+
+div.ngHeaderCell:first-child{
+	border-left: 0px;
+}
+
+div.ngHeaderCell:last-child{
+	border-right: 1px solid rgb(212,212,212);
+}
+
+
+/******** Viewport ********/
+.ngViewport{
+    background-color: rgb(255, 255, 255);
+	overflow: auto;
+}
+
+.ngCanvas{
+    position: relative;
+}
+
+/******** Rows ********/
+.ngRow {
+    position: absolute;
+    border-bottom: 1px solid rgb(229, 229, 229);
+    cursor: pointer;
+}
+.ngRow.even {
+    background-color: rgb(243, 243, 243);
+}
+.ngRow.odd {
+    background-color: rgb(253, 253, 253);
+}
+.ngRow.selected {
+    background-color: rgb(255, 255, 204);
+}
+.ngRow.canSelect {
+    cursor: pointer;
+}
+
+/******** Cells ********/
+.ngCell {
+    overflow: hidden; 
+    position: absolute;
+    padding: 0;
+    display: inline;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.ngRowIndexCell{ 
+    text-align: center;
+}
+
+.ngSelectionHeader {
+	position: absolute;
+    top: 11px; 
+    left: 6px;
+}
+
+.ng-scope {
+	margin: 0;
+	padding: 0;
+}
+
+input[type="checkbox"] {
+	margin: 0;
+	padding: 0;
+}
+
+input {
+	vertical-align:top;
+}
+
+.ngSelectionCell{
+	margin-top: 9px;
+	margin-left: 6px;
+}
+
+.ngCellText {
+	position: absolute;
+	top: 5px;
+	left: 4px;
+}
+
+/******** Header Sorting ********/
+.ngSortImg{
+    height: 9px;
+    width: 7px;
+}
+
+.ngNoSort {
+    cursor:default;
+}
+
+/******** Footer ********/
+.ngFooterPanel{
+    background-color: rgb(234, 234, 234);
+    padding: 0;
+	border-top: 1px solid rgb(212,212,212);
+	position: relative;
+}
+.ngTotalSelectContainer {
+    float: left;
+    margin: 5px;
+    margin-top: 7px;
+}
+.ngFooterSelectedItems {
+	padding: 2px;
+}
+.ngFooterTotalItems {
+	padding: 2px;
+}
+.ngFooterTotalItems.ngnoMultiSelect {
+    padding: 0px !important;
+}
+
+.ngHeaderDisplayNameContainer{
+}
+
+.ngHeaderDisplayName{
+    
+}
+.ngSortButtonUp {
+    position: absolute;
+    top: 3px;
+	left: 44%;
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 0px 5px 5px 5px;
+	height: 0px;
+	width: 0px;
+}
+.ngSortButtonDown {
+    position: absolute;
+    top: 3px;
+	left: 44%;
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 5px 5px 0px 5px;
+    height: 0px;
+	width: 0px;
+}
+.ngHeaderGrip { 
+    cursor: col-resize; 
+    width: 5px; 
+	right: -1px;
+	margin-right: -2px;
+	margin-left: 3px;
+    top: 0; 
+    height: 100%; 
+    position: absolute; 
+    z-index: 1000; 
+}
+.ngHeaderGrip:hover { 
+	background-color:darkgray;
+    cursor: col-resize; 
+    width: 5px; 
+    right: -1px;
+    margin-right: -2px;
+    margin-left: 3px;
+    top: 0; 
+    height: 100%; 
+    position: absolute; 
+    z-index: 1000; 
+}
+
+.ngNoSelect{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
