@@ -1,4 +1,4 @@
-﻿var ng = {};
+﻿window.ng = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
 var ngGridFilters = angular.module('ngGrid.filters', []);

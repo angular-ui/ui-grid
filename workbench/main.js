@@ -16,8 +16,19 @@ function userController($scope) {
     $scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.mySelections,
+        displaySelectionCheckbox: false,
         multiSelect: true,
-        plugins: [new ngGridReorderable()],
+        plugins: [new ngGridReorderable(),
+                  new ngGridGroupable({
+                      group: {
+                          field: 'name',
+                          label: 'Fancy Name',
+                          group: {
+                              field: 'allowance',
+                              label: 'Fancy Age'
+                          }
+                      }
+                  })],
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
                      { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },

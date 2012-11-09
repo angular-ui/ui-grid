@@ -163,7 +163,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 
     };
     self.buildColumns = function () {
-        $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
             cols = [];
 

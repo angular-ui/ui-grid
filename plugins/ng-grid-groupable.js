@@ -1,11 +1,15 @@
 ﻿ngGridGroupable = function (config) {
     var self = this;
+    var NG_FIELD = '_ng_field_';
+    var NG_LABEL = '_ng_label_';
+    var NG_DEPTH = '_ng_depth_';
     var defaults = { group: {} };
     self.config = $.extend(defaults, config);
     
     self.$scope = null;
     self.myGrid = null;
     self.services = null;
+    self.groupedData = {};
     // The init method gets called during the ng-grid directive execution.
     self.init = function ($scope, grid, services) {
         // The directive passes in the grid scope and the grid object which we will want to save for manipulation later.
@@ -14,30 +18,34 @@
         self.services = services;
         // In this example we are grouping data.
         self.setOverrides();
-        self.getGrouping();
+        self.getGrouping(self.config.group);
     };
 
     self.setOverrides = function() {
         self.myGrid.rowFactory.renderedChange = self.renderedChangeOverride;
     };
 
-    self.getGrouping = function () {
+    self.getGrouping = function (groupDef) {
+        self.groupedData = {};
         // Here we set the onmousedown event handler to the header container.
-        var data = self.myGrid.rowFactory.sortedData;
-        self.groupedData = { };
+        var data = self.myGrid.sortedData;
         angular.forEach(data, function (item) {
             var ptr = self.groupedData;
-            var current = self.config.group;
+            var current = groupDef;
+            var depth = 0;
             while (current) {
                 var i = item[current.field].toString();
                 if (!ptr[i]) {
                     ptr[i] = {};
                 }
-                if (!ptr['_ng_field_']) {
-                    ptr['_ng_field_'] = current.field;
+                if (!ptr[NG_FIELD]) {
+                    ptr[NG_FIELD] = current.field;
                 }
-                if (!ptr['_ng_label_']) {
-                    ptr['_ng_label_'] = current.label;
+                if (!ptr[NG_LABEL]) {
+                    ptr[NG_LABEL] = current.label;
+                }
+                if (!ptr[NG_DEPTH]) {
+                    ptr[NG_DEPTH] = depth++;
                 }
                 ptr = ptr[i];
                 current = current.group;
@@ -59,10 +67,13 @@
                     groupArr.push(item);
                 });
             } else {
-                groupArr.push({ name: g['_ng_field_'], age: g['_ng_label_'], isGroupRow: true });
+                if (g.hasOwnProperty(NG_LABEL)) {
+                    groupArr.push({ gField: g[NG_FIELD], gLabel: g[NG_LABEL], gDepth: g[NG_DEPTH], isAggRow: true });
+                }
                 for (var prop in g) {
-                    if (prop == '_ng_label_' || prop == '_ng_field_' ) continue;
-                    if (g.hasOwnProperty(prop)) {
+                    if (prop == NG_FIELD || prop == NG_LABEL) {
+                        continue;
+                    } else if (g.hasOwnProperty(prop)) {
                         parseGroup(g[prop]);
                     }
                 } 
@@ -71,21 +82,32 @@
         parseGroup(self.groupedData);
 
         var dataArray = groupArr.slice(self.myGrid.rowFactory.renderedRange.bottomRow, self.myGrid.rowFactory.renderedRange.topRow);
+        var maxDepth = -1;
+        var cols = self.$scope.columns;
         $.each(dataArray, function (indx, item) {
-            if (item.isGroupRow) {
-                
+            if (item.isAggRow && maxDepth < item.gDepth) {
+                maxDepth = Math.max(maxDepth, item.gDepth);
+                cols.splice(item.gDepth, 0, new ng.Column({
+                    colDef: {
+                        field: '',
+                        width: 25,
+                        sortable: false,
+                        resizable: false,
+                        headerCellTemplate: '<div></div>',
+                        cellTemplate: '<div style="overflow: visible;">{{row.label}}</div>'
+                    },
+                    index: item.gDepth,
+                    headerRowHeight: self.myGrid.config.headerRowHeight
+                }));
             }
             var row = self.myGrid.rowFactory.buildRowFromEntity(item, self.myGrid.rowFactory.renderedRange.bottomRow + indx);
             //add the row to our return array
             rowArr.push(row);
         });
-        
+        angular.forEach(cols, function (col, i) {
+            col.index = i;
+        });
+        self.$scope.columns = cols;
         self.myGrid.setRenderedRows(rowArr);
-    };
-    //Header functions
-    
-    self.forIn = function (obj, action) {
-        var prop;
-        
     };
 };

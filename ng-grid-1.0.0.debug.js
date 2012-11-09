@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/09/2012 00:05:30
+* Compiled At: 11/09/2012 12:59:43
 ***********************************************/
 
 (function(window, undefined){
@@ -10,7 +10,7 @@
 /***********************************************
 * FILE: ..\src\namespace.js
 ***********************************************/
-var ng = {};
+window.ng = {};
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
 var ngGridFilters = angular.module('ngGrid.filters', []);
@@ -1076,7 +1076,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 
     };
     self.buildColumns = function () {
-        $scope.headerControllers = [];
         var columnDefs = self.config.columnDefs,
             cols = [];
 
