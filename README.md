@@ -44,7 +44,7 @@ function MyCtrl($scope) {
                      {name: "Nephi", age: 29},
                      {name: "Enos", age: 34}];
 	$scope.myOptions = { data: 'myData' };
-	// you can also specify data as: $scope.myOptions = { data: 'myData' }. 
+	// you can also specify data as: $scope.myOptions = { data: $scope.myData }. 
 	// However, updates to the underlying data will not be reflected in the grid
 };
 
