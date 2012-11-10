@@ -177,7 +177,10 @@ input {
 .ngSortButtonUp {
     position: absolute;
     top: 3px;
-	left: 44%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
 	border-color: gray transparent;
 	border-style: solid;
 	border-width: 0px 5px 5px 5px;
@@ -187,7 +190,10 @@ input {
 .ngSortButtonDown {
     position: absolute;
     top: 3px;
-	left: 44%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
 	border-color: gray transparent;
 	border-style: solid;
 	border-width: 5px 5px 0px 5px;
