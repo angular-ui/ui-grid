@@ -32,7 +32,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rowTemplate: undefined,
             headerRowTemplate: undefined,
             plugins: [],
-            keepLastSelected: true
+            keepLastSelected: true,
+            groups: []
         },
         self = this,
         isSorting = false,
@@ -55,7 +56,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.sortInfo = self.config.sortInfo;
     self.sortedData = $scope.$parent[self.config.data] || self.config.data; // we cannot watch for updates if you don't pass the string name
     //initialized in the init method
-    self.rowFactory = new ng.RowFactory(self);
+    self.rowFactory = new ng.RowFactory(self, $scope);
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;

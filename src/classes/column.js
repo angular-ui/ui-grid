@@ -1,27 +1,21 @@
 ﻿ng.Column = function (config) {
     var self = this,
-        colDef = config.colDef,
-        index = config.index,
-        headerRowHeight = config.headerRowHeight,
-        sortCallback = config.sortCallback,
-        resizeOnDataCallback = config.resizeOnDataCallback,
-        cssBuilder = config.cssBuilder,
-        enableResize = config.enableResize;
+        colDef = config.colDef;
     
     self.width = colDef.width;
     self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-    self.headerRowHeight = headerRowHeight;
+    self.headerRowHeight = config.headerRowHeight;
     self.widthWatcher = null;
-    
+    self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
-    self.index = index;
+    self.index = config.index;
     self.isVisible = false;
 
     //sorting
@@ -35,7 +29,7 @@
     }
 
     self.allowSort = colDef.sortable;
-    self.allowResize = enableResize ? colDef.resizable : false;
+    self.allowResize = config.enableResize ? colDef.resizable : false;
     
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
@@ -70,7 +64,7 @@
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        sortCallback(self, dir);
+        config.sortCallback(self, dir);
     };
     var delay = 500,
         clicks = 0,
@@ -85,7 +79,7 @@
             }, delay);
         } else {
             clearTimeout(timer);  //prevent single-click action
-            resizeOnDataCallback(self);  //perform double-click action
+            config.resizeOnDataCallback(self);  //perform double-click action
             clicks = 0;  //after action performed, reset counter
         }
     };
@@ -103,7 +97,7 @@
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
-        cssBuilder.buildStyles();
+        config.cssBuilder.buildStyles();
         return false;
     };
     self.gripOnMouseUp = function () {

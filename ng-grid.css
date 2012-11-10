@@ -232,3 +232,19 @@ input {
     -ms-user-select: none;
     user-select: none;
 }
+
+.ngAggregateClosed {
+    position: absolute;
+    background-color: rgb(95,168,184);
+    width: 100%;
+    height: 100%;
+    padding-bottom: 1px;
+}
+
+.ngAggregateOpen {
+    position: absolute;
+    background-color: darkgray;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 1px;
+}
