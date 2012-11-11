@@ -32,7 +32,6 @@ ng.Aggregate = function (aggEntity, rowFactory) {
                     foundMyself = true;
                 }
             }
-            
         });
         rowFactory.parsedData.needsUpdate = true;
         rowFactory.renderedChange();

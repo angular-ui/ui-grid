@@ -60,6 +60,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
+    self.groupMode = self.config.groups.length > 0;
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -99,7 +100,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
         rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
@@ -203,7 +204,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             selectedItems: self.config.selectedItems,
@@ -220,15 +221,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 selectWithCheckboxOnly: self.config.selectWithCheckboxOnly,
                 beforeSelectionChangeCallback: self.config.beforeSelectionChange,
                 afterSelectionChangeCallback: self.config.afterSelectionChange
-            }
-        });
-        angular.forEach($scope.columns, function (col) {
-            if (col.widthIsConfigured) {
-                col.width.$watch(function () {
-                    self.rowFactory.dataChanged = true;
-                    self.rowFactory.rowCache = []; //if data source changes, kill this!
-                    self.rowFactory.calcRenderedRange();
-                });
             }
         });
         self.cssBuilder.buildStyles();

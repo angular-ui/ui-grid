@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 22:18:33
+* Compiled At: 11/10/2012 22:36:16
 ***********************************************/
 
 (function(window, undefined){
@@ -687,7 +687,6 @@ ng.Aggregate = function (aggEntity, rowFactory) {
                     foundMyself = true;
                 }
             }
-            
         });
         rowFactory.parsedData.needsUpdate = true;
         rowFactory.renderedChange();
@@ -935,12 +934,12 @@ ng.RowFactory = function (grid, $scope) {
         self.UpdateViewableRange(newRg);
     };
 
-    self.renderedChange2 = function () {
+    self.renderedChangeNoGroups = function () {
         var rowArr = [];
         var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
 
         angular.forEach(dataArr, function (item, i) {
-            var row = self.buildRowFromEntity(item, self.renderedRange.bottomRow + i);
+            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i);
             //add the row to our return array
             rowArr.push(row);
         });
@@ -1030,6 +1029,11 @@ ng.RowFactory = function (grid, $scope) {
     self.parsedData = { needsUpdate: true, values: [] };
     
     self.renderedChange = function () {
+        if (!grid.groupMode) {
+            self.renderedChangeNoGroups();
+            grid.refreshDomSizes();
+            return;
+        }
         var rowArr = [];
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
@@ -1072,6 +1076,7 @@ ng.RowFactory = function (grid, $scope) {
             }
         }
         self.parsedData.needsUpdate = false;
+        grid.refreshDomSizes();
     };
 }
 
@@ -1132,6 +1137,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
+    self.groupMode = self.config.groups.length > 0;
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -1171,7 +1177,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
         rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
@@ -1275,7 +1281,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             selectedItems: self.config.selectedItems,
@@ -1292,15 +1298,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 selectWithCheckboxOnly: self.config.selectWithCheckboxOnly,
                 beforeSelectionChangeCallback: self.config.beforeSelectionChange,
                 afterSelectionChangeCallback: self.config.afterSelectionChange
-            }
-        });
-        angular.forEach($scope.columns, function (col) {
-            if (col.widthIsConfigured) {
-                col.width.$watch(function () {
-                    self.rowFactory.dataChanged = true;
-                    self.rowFactory.rowCache = []; //if data source changes, kill this!
-                    self.rowFactory.calcRenderedRange();
-                });
             }
         });
         self.cssBuilder.buildStyles();

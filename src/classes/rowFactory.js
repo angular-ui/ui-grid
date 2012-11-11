@@ -88,12 +88,12 @@
         self.UpdateViewableRange(newRg);
     };
 
-    self.renderedChange2 = function () {
+    self.renderedChangeNoGroups = function () {
         var rowArr = [];
         var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
 
         angular.forEach(dataArr, function (item, i) {
-            var row = self.buildRowFromEntity(item, self.renderedRange.bottomRow + i);
+            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i);
             //add the row to our return array
             rowArr.push(row);
         });
@@ -183,6 +183,11 @@
     self.parsedData = { needsUpdate: true, values: [] };
     
     self.renderedChange = function () {
+        if (!grid.groupMode) {
+            self.renderedChangeNoGroups();
+            grid.refreshDomSizes();
+            return;
+        }
         var rowArr = [];
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
@@ -225,5 +230,6 @@
             }
         }
         self.parsedData.needsUpdate = false;
+        grid.refreshDomSizes();
     };
 }
