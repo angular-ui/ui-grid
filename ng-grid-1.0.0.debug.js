@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 17:00:29
+* Compiled At: 11/10/2012 17:04:40
 ***********************************************/
 
 (function(window, undefined){
@@ -621,6 +621,14 @@ ng.defaultGridTemplate = function () {
 
 ng.defaultRowTemplate = function () {
     return '<div ng-repeat="col in columns" class="ngCell col{{$index}} {{col.cellClass}} ui-widget-content" ng-cell></div>';
+};
+
+/***********************************************
+* FILE: ..\src\templates\aggregateTemplate.js
+***********************************************/
+
+ng.aggregateTemplate = function () {
+    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}</span></div>';
 };
 
 /***********************************************
@@ -1892,7 +1900,7 @@ ngGridDirectives.directive('ngRow', function ($compile) {
                 pre: function ($scope, iElement) {
                     var html;
                     if ($scope.row.isAggRow) {
-                        html = '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}</span></div>';
+                        html = ng.aggregateTemplate();
                     } else {
                         html = $scope.$parent.rowTemplate();
                     }

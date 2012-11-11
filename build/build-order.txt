@@ -7,6 +7,7 @@
 ..\src\services\SortService.js
 ..\src\templates\gridTemplate.js
 ..\src\templates\rowTemplate.js
+..\src\templates\aggregateTemplate.js
 ..\src\templates\headerRowTemplate.js
 ..\src\templates\headerCellTemplate.js
 ..\src\classes\aggregate.js

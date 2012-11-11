@@ -154,6 +154,7 @@
             if (!ptr.values) {
                 ptr.values = [];
             }
+            item.hidden = false;
             ptr.values.push(item);
         });
     };
@@ -182,7 +183,7 @@
         var dataArray = groupArr.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         var maxDepth = -1;
         var cols = $scope.columns;
-        $.each(dataArray, function (indx, item) {
+        angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow && maxDepth < item.gDepth) {
                 if (!cols[item.gDepth].isAggCol) {
@@ -205,7 +206,9 @@
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
             }
             //add the row to our return array
-            rowArr.push(row);
+            if (!item.hidden) {
+                rowArr.push(row.hid);
+            }
         });
         angular.forEach(cols, function (col, i) {
             col.index = i;
