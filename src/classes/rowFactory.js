@@ -1,7 +1,8 @@
-﻿ng.RowFactory = function (grid, $scope) {
+﻿/// <reference path="../namespace.js" />
+/// <reference path="../../lib/angular.js" />
+/// <reference path="../constants.js" />
+ng.RowFactory = function (grid, $scope) {
     var self = this;
-    var NG_FIELD = '_ng_field_';
-    var NG_DEPTH = '_ng_depth_';
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
     self.aggCache = {};
@@ -170,7 +171,7 @@
             if (!ptr.values) {
                 ptr.values = [];
             }
-            item.hidden = false;
+            item[NG_HIDDEN] = false;
             ptr.values.push(item);
         });
         //fix column indexes
@@ -207,25 +208,32 @@
         grid.setRenderedRows(rowArr);
     };
     //magical recursion
-    var parentAgg = { };
+    var parentAgg = undefined;
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
                 parentAgg.children.push(item);
                 //add the row to our return array
-                if (item.hidden == false) {
+                if (!item[NG_HIDDEN]) {
                     self.parsedData.values.push(item);
                 }
             });
+            parentAgg = undefined;
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    parentAgg = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [] };
-                    self.buildAggregateRow(parentAgg, 0);
-                    self.parsedData.values.push(parentAgg);
-                    self.numberOfAggregates++;
+                    var temp = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [], aggChildren: [] };
+                    var agg = self.buildAggregateRow(temp, 0);
+                    if (parentAgg) {
+                        parentAgg.aggChildren.push(agg);
+                    }
+                    parentAgg = temp;
+                    if (!agg.hidden) {
+                        self.parsedData.values.push(temp);
+                        self.numberOfAggregates++;
+                    }
                     self.parseGroupData(g[prop]);
                 }
             }

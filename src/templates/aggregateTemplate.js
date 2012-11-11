@@ -6,5 +6,5 @@
 /// <reference path="../utils.js"/>
 
 ng.aggregateTemplate = function () {
-    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}   ({{row.children.length}} items)</span></div>';
+    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}   ({{row.totalChildren()}} items)</span></div>';
 };

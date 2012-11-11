@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 22:47:28
+* Compiled At: 11/11/2012 13:49:15
 ***********************************************/
 
 (function(window, undefined){
@@ -27,6 +27,9 @@ var GRID_KEY = '__koGrid__';
 var EXCESS_ROWS = 8;
 var ASC = "asc"; // constant for sorting direction
 var DESC = "desc"; // constant for sorting direction
+var NG_FIELD = '_ng_field_';
+var NG_DEPTH = '_ng_depth_';
+var NG_HIDDEN = '_ng_hidden_';
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -628,7 +631,7 @@ ng.defaultRowTemplate = function () {
 ***********************************************/
 
 ng.aggregateTemplate = function () {
-    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}   ({{row.children.length}} items)</span></div>';
+    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}   ({{row.totalChildren()}} items)</span></div>';
 };
 
 /***********************************************
@@ -669,16 +672,31 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
     self.children = aggEntity.children;
+    self.aggChildren = aggEntity.aggChildren;
+    self.hidden = false;
     self.collapsed = false;
     self.isAggRow = true;
-    self.toggleExpand = function () {
+    self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
-        angular.forEach(self.children, function (child) {
+        self.notifyChildren();
+    };
+    self.setExpand = function (state) {
+        self.collapsed = state;
+        self.notifyChildren();
+    };
+    self.notifyChildren = function() {
+        angular.forEach(self.aggChildren, function(child) {
             child.hidden = self.collapsed;
+            if (self.collapsed) {
+                child.setExpand(self.collapsed);
+            }
+        });
+        angular.forEach(self.children, function(child) {
+            child[NG_HIDDEN] = self.collapsed;
         });
         rowFactory.rowCache = [];
         var foundMyself = false;
-        angular.forEach(rowFactory.aggCache, function (agg, i) {
+        angular.forEach(rowFactory.aggCache, function(agg, i) {
             if (foundMyself) {
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
@@ -693,6 +711,24 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     };
     self.aggClass = function() {
         return self.collapsed ? "ngAggregateOpen" : "ngAggregateClosed";
+    };
+    self.totalChildren = function() {
+        if (self.aggChildren.length > 0) {
+            var i = 0;
+            var recurse = function(cur) {
+                angular.forEach(cur, function (a) {
+                    if (a.aggChildren.length > 0) {
+                        recurse(a.aggChildren);
+                    } else {
+                        i += a.children.length;
+                    }
+                });
+            };
+            recurse(self.aggChildren);
+            return i;
+        } else {
+            return self.children.length;
+        }
     };
 }; 
 
@@ -846,8 +882,6 @@ ng.Footer = function ($scope, grid) {
 ***********************************************/
 ng.RowFactory = function (grid, $scope) {
     var self = this;
-    var NG_FIELD = '_ng_field_';
-    var NG_DEPTH = '_ng_depth_';
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
     self.aggCache = {};
@@ -1016,7 +1050,7 @@ ng.RowFactory = function (grid, $scope) {
             if (!ptr.values) {
                 ptr.values = [];
             }
-            item.hidden = false;
+            item[NG_HIDDEN] = false;
             ptr.values.push(item);
         });
         //fix column indexes
@@ -1053,25 +1087,32 @@ ng.RowFactory = function (grid, $scope) {
         grid.setRenderedRows(rowArr);
     };
     //magical recursion
-    var parentAgg = { };
+    var parentAgg = undefined;
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
                 parentAgg.children.push(item);
                 //add the row to our return array
-                if (item.hidden == false) {
+                if (!item[NG_HIDDEN]) {
                     self.parsedData.values.push(item);
                 }
             });
+            parentAgg = undefined;
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    parentAgg = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [] };
-                    self.buildAggregateRow(parentAgg, 0);
-                    self.parsedData.values.push(parentAgg);
-                    self.numberOfAggregates++;
+                    var temp = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [], aggChildren: [] };
+                    var agg = self.buildAggregateRow(temp, 0);
+                    if (parentAgg) {
+                        parentAgg.aggChildren.push(agg);
+                    }
+                    parentAgg = temp;
+                    if (!agg.hidden) {
+                        self.parsedData.values.push(temp);
+                        self.numberOfAggregates++;
+                    }
                     self.parseGroupData(g[prop]);
                 }
             }
