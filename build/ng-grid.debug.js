@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 22:36:16
+* Compiled At: 11/10/2012 22:47:28
 ***********************************************/
 
 (function(window, undefined){
@@ -885,11 +885,11 @@ ng.RowFactory = function (grid, $scope) {
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
-            agg.index = aggIndex + 1; //not a zero-based rowIndex
-            agg.offsetTop = self.rowHeight * aggIndex;
-            // finally cache it for the next round
             self.aggCache[aggEntity.gLabel] = agg;
         }
+        agg.index = aggIndex + 1; //not a zero-based rowIndex
+        agg.offsetTop = self.rowHeight * aggIndex;
+        // finally cache it for the next round
         // store the row's index on the entity for future ref
         aggEntity[ROW_KEY] = aggIndex;
         return agg;
@@ -1043,7 +1043,7 @@ ng.RowFactory = function (grid, $scope) {
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
-                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx, self);
+                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx);
             } else {
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
             }
@@ -1069,6 +1069,7 @@ ng.RowFactory = function (grid, $scope) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     parentAgg = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [] };
+                    self.buildAggregateRow(parentAgg, 0);
                     self.parsedData.values.push(parentAgg);
                     self.numberOfAggregates++;
                     self.parseGroupData(g[prop]);

@@ -39,11 +39,11 @@
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
-            agg.index = aggIndex + 1; //not a zero-based rowIndex
-            agg.offsetTop = self.rowHeight * aggIndex;
-            // finally cache it for the next round
             self.aggCache[aggEntity.gLabel] = agg;
         }
+        agg.index = aggIndex + 1; //not a zero-based rowIndex
+        agg.offsetTop = self.rowHeight * aggIndex;
+        // finally cache it for the next round
         // store the row's index on the entity for future ref
         aggEntity[ROW_KEY] = aggIndex;
         return agg;
@@ -197,7 +197,7 @@
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
-                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx, self);
+                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx);
             } else {
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
             }
@@ -223,6 +223,7 @@
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     parentAgg = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [] };
+                    self.buildAggregateRow(parentAgg, 0);
                     self.parsedData.values.push(parentAgg);
                     self.numberOfAggregates++;
                     self.parseGroupData(g[prop]);
