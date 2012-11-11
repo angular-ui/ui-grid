@@ -7,12 +7,15 @@
 
 ng.Aggregate = function (aggEntity, indx) {
     var self = this;
-    self.aggIndex = indx;
+    self.index = indx;
     self.offsetTop = 0;
-    self.ngLabel = undefined;
-    self.ngField = undefined;
+    self.offsetleft = aggEntity.gDepth * 25;
+    self.label = aggEntity.gLabel;
+    self.field = aggEntity.gField;
+    self.depth = aggEntity.gDepth;
     self.values = [];
     self.expanded = true;
+    self.isAggRow = true;
     self.toggleExpand = function() {
         self.expanded = !self.expanded;
     };

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 12:28:00
+* Compiled At: 11/10/2012 17:00:29
 ***********************************************/
 
 (function(window, undefined){
@@ -654,12 +654,15 @@ ng.defaultHeaderCellTemplate = function () {
 
 ng.Aggregate = function (aggEntity, indx) {
     var self = this;
-    self.aggIndex = indx;
+    self.index = indx;
     self.offsetTop = 0;
-    self.ngLabel = undefined;
-    self.ngField = undefined;
+    self.offsetleft = aggEntity.gDepth * 25;
+    self.label = aggEntity.gLabel;
+    self.field = aggEntity.gField;
+    self.depth = aggEntity.gDepth;
     self.values = [];
     self.expanded = true;
+    self.isAggRow = true;
     self.toggleExpand = function() {
         self.expanded = !self.expanded;
     };
@@ -819,7 +822,6 @@ ng.Footer = function ($scope, grid) {
 ng.RowFactory = function (grid, $scope) {
     var self = this;
     var NG_FIELD = '_ng_field_';
-    var NG_LABEL = '_ng_label_';
     var NG_DEPTH = '_ng_depth_';
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
@@ -857,7 +859,7 @@ ng.RowFactory = function (grid, $scope) {
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity);
-            agg.aggIndex = aggIndex + 1; //not a zero-based rowIndex
+            agg.index = aggIndex + 1; //not a zero-based rowIndex
             agg.offsetTop = self.rowHeight * aggIndex;
             // finally cache it for the next round
             self.rowCache[aggIndex] = agg;
@@ -937,8 +939,8 @@ ng.RowFactory = function (grid, $scope) {
         self.rowConfig = config.rowConfig;
         self.selectionService = config.selectionService;
         self.rowHeight = config.rowHeight;
-        if (grid.config.groups.group) {
-            self.getGrouping(grid.config.groups.group);
+        if (grid.config.group) {
+            self.getGrouping(grid.config.group);
         }
         var i = grid.minRowsToRender();
         self.prevRenderedRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
@@ -949,7 +951,7 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     self.getGrouping = function (groupDef) {
-        self.groupedData = { hasChanged: true };
+        self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
         var data = grid.sortedData;
         angular.forEach(data, function (item) {
@@ -963,9 +965,6 @@ ng.RowFactory = function (grid, $scope) {
                 }
                 if (!ptr[NG_FIELD]) {
                     ptr[NG_FIELD] = current.field;
-                }
-                if (!ptr[NG_LABEL]) {
-                    ptr[NG_LABEL] = current.label;
                 }
                 if (!ptr[NG_DEPTH]) {
                     ptr[NG_DEPTH] = depth++;
@@ -983,28 +982,24 @@ ng.RowFactory = function (grid, $scope) {
     self.renderedChange = function () {
         var rowArr = [];
         var groupArr = [];
-        if (self.groupedData.hasChanged) {
-            var parseGroup = function (g) {
-                if (g.values) {
-                    angular.forEach(g.values, function (item) {
-                        //add the row to our return array
-                        groupArr.push(item);
-                    });
-                } else {
-                    if (g.hasOwnProperty(NG_LABEL)) {
-                        groupArr.push({ gField: g[NG_FIELD], gLabel: g[NG_LABEL], gDepth: g[NG_DEPTH], isAggRow: true });
-                    }
-                    for (var prop in g) {
-                        if (prop == NG_FIELD || prop == NG_LABEL) {
-                            continue;
-                        } else if (g.hasOwnProperty(prop)) {
-                            parseGroup(g[prop]);
-                        }
+        var parseGroup = function (g) {
+            if (g.values) {
+                angular.forEach(g.values, function (item) {
+                    //add the row to our return array
+                    groupArr.push(item);
+                });
+            } else {
+                for (var prop in g) {
+                    if (prop == NG_FIELD || prop == NG_DEPTH) {
+                        continue;
+                    } else if (g.hasOwnProperty(prop)) {
+                        groupArr.push({ gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true });
+                        parseGroup(g[prop]);
                     }
                 }
-            };
-            parseGroup(self.groupedData);
-        }
+            }
+        };
+        parseGroup(self.groupedData);
         var dataArray = groupArr.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         var maxDepth = -1;
         var cols = $scope.columns;
@@ -1019,8 +1014,7 @@ ng.RowFactory = function (grid, $scope) {
                             width: 25,
                             sortable: false,
                             resizable: false,
-                            headerCellTemplate: '<div></div>',
-                            cellTemplate: '<div style="overflow: visible;">{{row.label}}</div>'
+                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
                         },
                         isAggCol: true,
                         index: item.gDepth,
@@ -1897,8 +1891,8 @@ ngGridDirectives.directive('ngRow', function ($compile) {
             return {
                 pre: function ($scope, iElement) {
                     var html;
-                    if ($scope.row.hasOwnProperty('aggIndex')) {
-                        html = '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"></div>';
+                    if ($scope.row.isAggRow) {
+                        html = '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}</span></div>';
                     } else {
                         html = $scope.$parent.rowTemplate();
                     }

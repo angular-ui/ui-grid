@@ -7,8 +7,8 @@ ngGridDirectives.directive('ngRow', function ($compile) {
             return {
                 pre: function ($scope, iElement) {
                     var html;
-                    if ($scope.row.hasOwnProperty('aggIndex')) {
-                        html = '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"></div>';
+                    if ($scope.row.isAggRow) {
+                        html = '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}</span></div>';
                     } else {
                         html = $scope.$parent.rowTemplate();
                     }

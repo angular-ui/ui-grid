@@ -19,13 +19,12 @@ function userController($scope) {
         displaySelectionCheckbox: false,
         multiSelect: true,
         plugins: [new ngGridReorderable()],
-        groups: {
+        group: {
+            field: 'name',
             group: {
-                field: 'name',
-                label: 'Fancy Name',
+                field: 'allowance',
                 group: {
-                    field: 'allowance',
-                    label: 'Fancy Age'
+                    field: 'paid',
                 }
             }
         },
