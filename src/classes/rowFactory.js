@@ -4,6 +4,7 @@
     var NG_DEPTH = '_ng_depth_';
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
+    self.aggCache = {};
     self.dataChanged = true;
     self.prevMaxRows = 0; // for comparison purposes when scrolling
     self.prevMinRows = 0; // for comparison purposes when scrolling
@@ -34,14 +35,14 @@
     };
 
     self.buildAggregateRow = function (aggEntity, aggIndex) {
-        var agg = self.rowCache[aggIndex]; // first check to see if we've already built it
+        var agg = self.aggCache[aggEntity.gLabel]; // first check to see if we've already built it
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity);
+            agg = new ng.Aggregate(aggEntity, self);
             agg.index = aggIndex + 1; //not a zero-based rowIndex
             agg.offsetTop = self.rowHeight * aggIndex;
             // finally cache it for the next round
-            self.rowCache[aggIndex] = agg;
+            self.aggCache[aggEntity.gLabel] = agg;
         }
         // store the row's index on the entity for future ref
         aggEntity[ROW_KEY] = aggIndex;
@@ -118,14 +119,14 @@
         self.rowConfig = config.rowConfig;
         self.selectionService = config.selectionService;
         self.rowHeight = config.rowHeight;
-        if (grid.config.groups) {
-            self.getGrouping(grid.config.groups);
-        }
         var i = grid.minRowsToRender();
         self.prevRenderedRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
+        if (grid.config.groups) {
+            self.getGrouping(grid.config.groups);
+        }
         self.sortedDataChanged();
     };
     
@@ -191,30 +192,33 @@
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
-                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx);
+                row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx, self);
             } else {
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
             }
             //add the row to our return array
-            if (!item.hidden) {
-                rowArr.push(row);
-            }
+            rowArr.push(row);
         });
         grid.setRenderedRows(rowArr);
     };
     //magical recursion
+    var parentAgg = { };
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
+                parentAgg.children.push(item);
                 //add the row to our return array
-                self.parsedData.values.push(item);
+                if (item.hidden == false) {
+                    self.parsedData.values.push(item);
+                }
             });
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    self.parsedData.values.push({ gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true });
+                    parentAgg = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [] };
+                    self.parsedData.values.push(parentAgg);
                     self.numberOfAggregates++;
                     self.parseGroupData(g[prop]);
                 }
