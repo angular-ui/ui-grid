@@ -118,8 +118,8 @@
         self.rowConfig = config.rowConfig;
         self.selectionService = config.selectionService;
         self.rowHeight = config.rowHeight;
-        if (grid.config.group) {
-            self.getGrouping(grid.config.group);
+        if (grid.config.groups) {
+            self.getGrouping(grid.config.groups);
         }
         var i = grid.minRowsToRender();
         self.prevRenderedRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
@@ -129,28 +129,25 @@
         self.sortedDataChanged();
     };
     
-    self.getGrouping = function (groupDef) {
+    self.getGrouping = function (groups) {
         self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
         var data = grid.sortedData;
         angular.forEach(data, function (item) {
             var ptr = self.groupedData;
-            var current = groupDef;
-            var depth = 0;
-            while (current) {
-                var i = item[current.field].toString();
-                if (!ptr[i]) {
-                    ptr[i] = {};
+            angular.forEach(groups, function(group, depth) {
+                var val = item[group].toString();
+                if (!ptr[val]) {
+                    ptr[val] = {};
                 }
                 if (!ptr[NG_FIELD]) {
-                    ptr[NG_FIELD] = current.field;
+                    ptr[NG_FIELD] = group;
                 }
                 if (!ptr[NG_DEPTH]) {
-                    ptr[NG_DEPTH] = depth++;
+                    ptr[NG_DEPTH] = depth;
                 }
-                ptr = ptr[i];
-                current = current.group;
-            }
+                ptr = ptr[val];
+            });
             if (!ptr.values) {
                 ptr.values = [];
             }
@@ -207,7 +204,7 @@
             }
             //add the row to our return array
             if (!item.hidden) {
-                rowArr.push(row.hid);
+                rowArr.push(row);
             }
         });
         angular.forEach(cols, function (col, i) {
