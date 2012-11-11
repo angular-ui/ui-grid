@@ -52,7 +52,7 @@
     self.CalcRenderedRange = function () {
         var rg = self.renderedRange,
 		    minRows = grid.minRowsToRender(),
-		    maxRows = Math.max(grid.sortedData.length, grid.minRowsToRender()),
+		    maxRows = Math.max(grid.sortedData.length + self.numberOfAggregates, grid.minRowsToRender()),
 		    prevMaxRows = self.prevMaxRows,
 		    prevMinRows = self.prevMinRows,
 		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
@@ -130,6 +130,7 @@
     };
     
     self.getGrouping = function (groups) {
+        self.numberOfAggregates = 0;
         self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
         var data = grid.sortedData;
@@ -183,13 +184,13 @@
     self.renderedChange = function () {
         var rowArr = [];
         if (self.parsedData.needsUpdate) {
+            self.parsedData.values.length = 0;
             self.parseGroupData(self.groupedData);
         }
         var dataArray = self.parsedData.values.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
-
                 row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx);
             } else {
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
@@ -199,7 +200,6 @@
                 rowArr.push(row);
             }
         });
-        
         grid.setRenderedRows(rowArr);
     };
     //magical recursion
@@ -215,9 +215,11 @@
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     self.parsedData.values.push({ gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true });
+                    self.numberOfAggregates++;
                     self.parseGroupData(g[prop]);
                 }
             }
         }
+        self.parsedData.needsUpdate = false;
     };
 }
