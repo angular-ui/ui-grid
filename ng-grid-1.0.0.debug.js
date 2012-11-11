@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/10/2012 19:53:18
+* Compiled At: 11/10/2012 20:11:12
 ***********************************************/
 
 (function(window, undefined){
@@ -668,7 +668,7 @@ ng.Aggregate = function (aggEntity, indx) {
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
-    self.values = [];
+    self.children = [];
     self.expanded = true;
     self.isAggRow = true;
     self.toggleExpand = function() {
@@ -962,9 +962,26 @@ ng.RowFactory = function (grid, $scope) {
         self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
         var data = grid.sortedData;
+        var maxDepth = groups.length;
+        var cols = $scope.columns;
+
         angular.forEach(data, function (item) {
             var ptr = self.groupedData;
-            angular.forEach(groups, function(group, depth) {
+            angular.forEach(groups, function (group, depth) {
+                if (!cols[depth].isAggCol && depth <= maxDepth) {
+                    cols.splice(item.gDepth, 0, new ng.Column({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
+                        },
+                        isAggCol: true,
+                        index: item.gDepth,
+                        headerRowHeight: grid.config.headerRowHeight
+                    }));
+                }
                 var val = item[group].toString();
                 if (!ptr[val]) {
                     ptr[val] = {};
@@ -983,50 +1000,24 @@ ng.RowFactory = function (grid, $scope) {
             item.hidden = false;
             ptr.values.push(item);
         });
+        //fix column indexes
+        angular.forEach(cols, function (col, i) {
+            col.index = i;
+        });
+        $scope.columns = cols;
     };
     
+    self.parsedData = { needsUpdate: true, values: [] };
     self.renderedChange = function () {
         var rowArr = [];
-        var groupArr = [];
-        var parseGroup = function (g) {
-            if (g.values) {
-                angular.forEach(g.values, function (item) {
-                    //add the row to our return array
-                    groupArr.push(item);
-                });
-            } else {
-                for (var prop in g) {
-                    if (prop == NG_FIELD || prop == NG_DEPTH) {
-                        continue;
-                    } else if (g.hasOwnProperty(prop)) {
-                        groupArr.push({ gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true });
-                        parseGroup(g[prop]);
-                    }
-                }
-            }
-        };
-        parseGroup(self.groupedData);
-        var dataArray = groupArr.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
-        var maxDepth = -1;
-        var cols = $scope.columns;
+        if (self.parsedData.needsUpdate) {
+            self.parseGroupData(self.groupedData);
+        }
+        var dataArray = self.parsedData.values.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         angular.forEach(dataArray, function (item, indx) {
             var row;
-            if (item.isAggRow && maxDepth < item.gDepth) {
-                if (!cols[item.gDepth].isAggCol) {
-                    maxDepth = Math.max(maxDepth, item.gDepth);
-                    cols.splice(item.gDepth, 0, new ng.Column({
-                        colDef: {
-                            field: '',
-                            width: 25,
-                            sortable: false,
-                            resizable: false,
-                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
-                        },
-                        isAggCol: true,
-                        index: item.gDepth,
-                        headerRowHeight: grid.config.headerRowHeight
-                    }));
-                }
+            if (item.isAggRow) {
+
                 row = self.buildAggregateRow(item, self.renderedRange.bottomRow + indx);
             } else {
                 row = self.buildEntityRow(item, self.renderedRange.bottomRow + indx);
@@ -1036,11 +1027,26 @@ ng.RowFactory = function (grid, $scope) {
                 rowArr.push(row);
             }
         });
-        angular.forEach(cols, function (col, i) {
-            col.index = i;
-        });
-        $scope.columns = cols;
+        
         grid.setRenderedRows(rowArr);
+    };
+    //magical recursion
+    self.parseGroupData = function (g) {
+        if (g.values) {
+            angular.forEach(g.values, function (item) {
+                //add the row to our return array
+                self.parsedData.values.push(item);
+            });
+        } else {
+            for (var prop in g) {
+                if (prop == NG_FIELD || prop == NG_DEPTH) {
+                    continue;
+                } else if (g.hasOwnProperty(prop)) {
+                    self.parsedData.values.push({ gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true });
+                    self.parseGroupData(g[prop]);
+                }
+            }
+        }
     };
 }
 
