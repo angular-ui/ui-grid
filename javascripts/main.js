@@ -1,11 +1,11 @@
 /// <reference path="../plugins/ng-grid-reorderable.js" />
 /// <reference path="../ng-grid-1.0.0.debug.js" />
 
-function userController($scope) {
+function userController($scope, $filter) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
-    $scope.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , paid: true},
+    self.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , paid: true},
                      {name: "Tiancum", allowance: 47, birthday: 1351728000000 , paid: false},
                      {name: "Jacob", allowance: 27, birthday: 1351728000000 , paid: false},
                      {name: "Nephi", allowance: 29, birthday: 1351728000000 , paid: false},
@@ -13,8 +13,22 @@ function userController($scope) {
                      {name: "Ether", allowance: 42, birthday: 1288323623006 , paid: false},
                      {name: "Alma", allowance: 43, birthday: 1288323623006 , paid: true},
                      {name: "Jared", allowance: 21, birthday: 1288323623006 , paid: true}];
+					 
+	$scope.filteredData = self.myData;
+					 
+	$scope.filterData = function(){
+		$scope.filteredData = $filter('filter')(self.myData, $scope.searchText);
+	};
+	
+	$scope.$watch('searchText', function(){
+		$scope.filterData();
+		if(!$scope.$$phase) {
+			$scope.$apply();
+		}
+	});
+	 
     $scope.gridOptions = {
-        data: 'myData',
+		data: 'filteredData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
         plugins: [new ngGridReorderable()],
