@@ -14,7 +14,7 @@ ng.RowFactory = function (grid, $scope) {
     self.rowHeight = 30;
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
-
+    self.numberOfAggregates = 0;
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row

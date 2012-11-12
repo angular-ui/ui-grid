@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/11/2012 22:23:35
+* Compiled At: 11/11/2012 22:42:13
 ***********************************************/
 
 (function(window, undefined){
@@ -894,7 +894,7 @@ ng.RowFactory = function (grid, $scope) {
     self.rowHeight = 30;
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
-
+    self.numberOfAggregates = 0;
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
