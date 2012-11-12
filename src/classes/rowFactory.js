@@ -232,7 +232,7 @@ ng.RowFactory = function (grid, $scope) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    var temp = {
+                    var agg = self.buildAggregateRow({
                         gField: g[NG_FIELD],
                         gLabel: prop,
                         gDepth: g[NG_DEPTH],
@@ -240,15 +240,14 @@ ng.RowFactory = function (grid, $scope) {
                         '_ng_hidden_': false,
                         children: [],
                         aggChildren: [],
-                        aggIndex: self.numberOfAggregates++
-                    };
-                    var agg = self.buildAggregateRow(temp, 0);
-                    if (parentAgg) {
-                        temp.parent = parentAgg;
-                        parentAgg.aggChildren.push(agg);
+                        aggIndex: self.numberOfAggregates++,
+                        parent: parentAgg
+                    }, 0);
+                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1) {
+                        agg.entity.parent.aggChildren.push(agg);
                     }
-                    parentAgg = temp;
-                    self.parsedData.values.push(temp);
+                    self.parsedData.values.push(agg.entity);
+                    parentAgg = agg.entity;
                     self.parseGroupData(g[prop]);
                 }
             }
