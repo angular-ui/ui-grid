@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/11/2012 21:05:50
+* Compiled At: 11/11/2012 21:56:00
 ***********************************************/
 
 (function(window, undefined){
@@ -672,6 +672,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
+    self.parent = aggEntity.parent;
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
     self.aggIndex = aggEntity.aggIndex;
@@ -1105,7 +1106,7 @@ ng.RowFactory = function (grid, $scope) {
                 //add the row to our return array
                 self.parsedData.values.push(item);
             });
-            parentAgg = undefined;
+            parentAgg = parentAgg.parent;
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
@@ -1122,11 +1123,11 @@ ng.RowFactory = function (grid, $scope) {
                         aggIndex: self.numberOfAggregates++,
                         parent: parentAgg
                     }, 0);
-                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1) {
+                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
                         agg.entity.parent.aggChildren.push(agg);
                     }
                     self.parsedData.values.push(agg.entity);
-                    parentAgg = agg.entity;
+                    parentAgg = agg;
                     self.parseGroupData(g[prop]);
                 }
             }

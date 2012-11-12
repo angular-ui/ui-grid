@@ -14,6 +14,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
+    self.parent = aggEntity.parent;
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
     self.aggIndex = aggEntity.aggIndex;

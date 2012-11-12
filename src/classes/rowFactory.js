@@ -226,7 +226,7 @@ ng.RowFactory = function (grid, $scope) {
                 //add the row to our return array
                 self.parsedData.values.push(item);
             });
-            parentAgg = undefined;
+            parentAgg = parentAgg.parent;
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
@@ -243,11 +243,11 @@ ng.RowFactory = function (grid, $scope) {
                         aggIndex: self.numberOfAggregates++,
                         parent: parentAgg
                     }, 0);
-                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1) {
+                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
                         agg.entity.parent.aggChildren.push(agg);
                     }
                     self.parsedData.values.push(agg.entity);
-                    parentAgg = agg.entity;
+                    parentAgg = agg;
                     self.parseGroupData(g[prop]);
                 }
             }
