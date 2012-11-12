@@ -53,7 +53,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
-        return self.collapsed ? "ngAggregateOpen" : "ngAggregateClosed";
+        return self.collapsed ? "ngAggArrowCollapsed" : "ngAggArrowExpanded";
     };
     self.totalChildren = function() {
         if (self.aggChildren.length > 0) {

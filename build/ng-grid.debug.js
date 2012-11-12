@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/11/2012 21:56:00
+* Compiled At: 11/11/2012 22:23:35
 ***********************************************/
 
 (function(window, undefined){
@@ -631,7 +631,7 @@ ng.defaultRowTemplate = function () {
 ***********************************************/
 
 ng.aggregateTemplate = function () {
-    return '<div ng-click="row.toggleExpand()" class="{{row.aggClass()}}"><span style="position: absolute; left: {{row.offsetleft}}px;">{{row.label}}   ({{row.totalChildren()}} items)</span></div>';
+    return '<div ng-click="row.toggleExpand()" style="left: {{row.offsetleft}}px;" class="ngAggregate"><span class="ngAggregateText">{{row.label}}  ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';
 };
 
 /***********************************************
@@ -711,7 +711,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
-        return self.collapsed ? "ngAggregateOpen" : "ngAggregateClosed";
+        return self.collapsed ? "ngAggArrowCollapsed" : "ngAggArrowExpanded";
     };
     self.totalChildren = function() {
         if (self.aggChildren.length > 0) {
@@ -916,7 +916,7 @@ ng.RowFactory = function (grid, $scope) {
     };
 
     self.buildAggregateRow = function (aggEntity, rowIndex) {
-        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it
+        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
@@ -1097,7 +1097,7 @@ ng.RowFactory = function (grid, $scope) {
         grid.refreshDomSizes();
     };
     
-    //magical recursion
+    //magical recursion. it works. I swear it.
     var parentAgg = undefined;
     self.parseGroupData = function (g) {
         if (g.values) {
@@ -1123,6 +1123,7 @@ ng.RowFactory = function (grid, $scope) {
                         aggIndex: self.numberOfAggregates++,
                         parent: parentAgg
                     }, 0);
+                    //we want the aggregates that are at a deeper level and aren't already children.
                     if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
                         agg.entity.parent.aggChildren.push(agg);
                     }

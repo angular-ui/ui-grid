@@ -36,7 +36,7 @@ ng.RowFactory = function (grid, $scope) {
     };
 
     self.buildAggregateRow = function (aggEntity, rowIndex) {
-        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it
+        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
@@ -217,7 +217,7 @@ ng.RowFactory = function (grid, $scope) {
         grid.refreshDomSizes();
     };
     
-    //magical recursion
+    //magical recursion. it works. I swear it.
     var parentAgg = undefined;
     self.parseGroupData = function (g) {
         if (g.values) {
@@ -243,6 +243,7 @@ ng.RowFactory = function (grid, $scope) {
                         aggIndex: self.numberOfAggregates++,
                         parent: parentAgg
                     }, 0);
+                    //we want the aggregates that are at a deeper level and aren't already children.
                     if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
                         agg.entity.parent.aggChildren.push(agg);
                     }
