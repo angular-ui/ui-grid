@@ -60,7 +60,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
-    self.groupMode = self.config.groups.length > 0;
+    self.calcMaxCanvasHeight = function() {
+        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.values.filter(function (e) {
+            return e[NG_HIDDEN] === false;
+        }).length * self.config.rowHeight) : (self.sortedData.length * self.config.rowHeight);
+    };
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -87,6 +91,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (!$scope.$$phase) {
             $scope.$apply();
         }
+        self.refreshDomSizes();
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -100,10 +105,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
-        rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
         rootH = Math.max(self.elementDims.rootMinH, rootH);
@@ -204,7 +209,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             selectedItems: self.config.selectedItems,

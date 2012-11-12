@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/11/2012 13:49:15
+* Compiled At: 11/11/2012 20:45:20
 ***********************************************/
 
 (function(window, undefined){
@@ -673,9 +673,10 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.depth = aggEntity.gDepth;
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
-    self.hidden = false;
+    self.aggIndex = aggEntity.aggIndex;
     self.collapsed = false;
     self.isAggRow = true;
+    self.entity = aggEntity;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();
@@ -686,7 +687,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     };
     self.notifyChildren = function() {
         angular.forEach(self.aggChildren, function(child) {
-            child.hidden = self.collapsed;
+            child.entity[NG_HIDDEN] = self.collapsed;
             if (self.collapsed) {
                 child.setExpand(self.collapsed);
             }
@@ -701,12 +702,11 @@ ng.Aggregate = function (aggEntity, rowFactory) {
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
             } else {
-                if (i == self.label) {
+                if (i == self.aggIndex) {
                     foundMyself = true;
                 }
             }
         });
-        rowFactory.parsedData.needsUpdate = true;
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
@@ -715,16 +715,16 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.totalChildren = function() {
         if (self.aggChildren.length > 0) {
             var i = 0;
-            var recurse = function(cur) {
-                angular.forEach(cur, function (a) {
-                    if (a.aggChildren.length > 0) {
-                        recurse(a.aggChildren);
-                    } else {
-                        i += a.children.length;
-                    }
-                });
+            var recurse = function (cur) {
+                if (cur.aggChildren.length > 0) {
+                    angular.forEach(cur.aggChildren, function (a) {
+                        recurse(a);
+                    });
+                } else {
+                    i += cur.children.length;
+                }
             };
-            recurse(self.aggChildren);
+            recurse(self);
             return i;
         } else {
             return self.children.length;
@@ -914,18 +914,18 @@ ng.RowFactory = function (grid, $scope) {
         return row;
     };
 
-    self.buildAggregateRow = function (aggEntity, aggIndex) {
-        var agg = self.aggCache[aggEntity.gLabel]; // first check to see if we've already built it
+    self.buildAggregateRow = function (aggEntity, rowIndex) {
+        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
-            self.aggCache[aggEntity.gLabel] = agg;
+            self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = aggIndex + 1; //not a zero-based rowIndex
-        agg.offsetTop = self.rowHeight * aggIndex;
+        agg.index = rowIndex + 1; //not a zero-based rowIndex
+        agg.offsetTop = self.rowHeight * rowIndex;
         // finally cache it for the next round
         // store the row's index on the entity for future ref
-        aggEntity[ROW_KEY] = aggIndex;
+        aggEntity[ROW_KEY] = rowIndex;
         return agg;
     };
 
@@ -989,6 +989,10 @@ ng.RowFactory = function (grid, $scope) {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
         self.selectionService.toggleSelectAll(false);
+        if (grid.config.groups.length > 0) {
+            self.getGrouping(grid.config.groups);
+            self.parsedData.needsUpdate = true;
+        }
         self.CalcRenderedRange();
     };
 
@@ -1004,10 +1008,11 @@ ng.RowFactory = function (grid, $scope) {
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        if (grid.config.groups) {
+        if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }
         self.sortedDataChanged();
+        self.parsedData.needsUpdate = true;
     };
     
     self.getGrouping = function (groups) {
@@ -1063,7 +1068,7 @@ ng.RowFactory = function (grid, $scope) {
     self.parsedData = { needsUpdate: true, values: [] };
     
     self.renderedChange = function () {
-        if (!grid.groupMode) {
+        if (grid.config.groups.length < 1) {
             self.renderedChangeNoGroups();
             grid.refreshDomSizes();
             return;
@@ -1072,8 +1077,11 @@ ng.RowFactory = function (grid, $scope) {
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
             self.parseGroupData(self.groupedData);
+            self.parsedData.needsUpdate = false;
         }
-        var dataArray = self.parsedData.values.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
+        var dataArray = self.parsedData.values.filter(function (e) {
+             return e[NG_HIDDEN] === false;
+        }).slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
@@ -1085,7 +1093,9 @@ ng.RowFactory = function (grid, $scope) {
             rowArr.push(row);
         });
         grid.setRenderedRows(rowArr);
+        grid.refreshDomSizes();
     };
+    
     //magical recursion
     var parentAgg = undefined;
     self.parseGroupData = function (g) {
@@ -1093,9 +1103,7 @@ ng.RowFactory = function (grid, $scope) {
             angular.forEach(g.values, function (item) {
                 parentAgg.children.push(item);
                 //add the row to our return array
-                if (!item[NG_HIDDEN]) {
-                    self.parsedData.values.push(item);
-                }
+                self.parsedData.values.push(item);
             });
             parentAgg = undefined;
         } else {
@@ -1103,22 +1111,27 @@ ng.RowFactory = function (grid, $scope) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    var temp = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [], aggChildren: [] };
+                    var temp = {
+                        gField: g[NG_FIELD],
+                        gLabel: prop,
+                        gDepth: g[NG_DEPTH],
+                        isAggRow: true,
+                        '_ng_hidden_': false,
+                        children: [],
+                        aggChildren: [],
+                        aggIndex: self.numberOfAggregates++
+                    };
                     var agg = self.buildAggregateRow(temp, 0);
                     if (parentAgg) {
+                        temp.parent = parentAgg;
                         parentAgg.aggChildren.push(agg);
                     }
                     parentAgg = temp;
-                    if (!agg.hidden) {
-                        self.parsedData.values.push(temp);
-                        self.numberOfAggregates++;
-                    }
+                    self.parsedData.values.push(temp);
                     self.parseGroupData(g[prop]);
                 }
             }
         }
-        self.parsedData.needsUpdate = false;
-        grid.refreshDomSizes();
     };
 }
 
@@ -1179,7 +1192,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
-    self.groupMode = self.config.groups.length > 0;
+    self.calcMaxCanvasHeight = function() {
+        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.values.filter(function (e) {
+            return e[NG_HIDDEN] === false;
+        }).length * self.config.rowHeight) : (self.sortedData.length * self.config.rowHeight);
+    };
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -1206,6 +1223,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (!$scope.$$phase) {
             $scope.$apply();
         }
+        self.refreshDomSizes();
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -1219,10 +1237,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
-        rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
         rootH = Math.max(self.elementDims.rootMinH, rootH);
@@ -1323,7 +1341,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.groupMode ? self.rowFactory.parsedData.values.length * self.config.rowHeight : self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             selectedItems: self.config.selectedItems,

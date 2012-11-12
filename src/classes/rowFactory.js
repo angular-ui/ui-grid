@@ -35,18 +35,18 @@ ng.RowFactory = function (grid, $scope) {
         return row;
     };
 
-    self.buildAggregateRow = function (aggEntity, aggIndex) {
-        var agg = self.aggCache[aggEntity.gLabel]; // first check to see if we've already built it
+    self.buildAggregateRow = function (aggEntity, rowIndex) {
+        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it
         if (!agg) {
             // build the row
             agg = new ng.Aggregate(aggEntity, self);
-            self.aggCache[aggEntity.gLabel] = agg;
+            self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = aggIndex + 1; //not a zero-based rowIndex
-        agg.offsetTop = self.rowHeight * aggIndex;
+        agg.index = rowIndex + 1; //not a zero-based rowIndex
+        agg.offsetTop = self.rowHeight * rowIndex;
         // finally cache it for the next round
         // store the row's index on the entity for future ref
-        aggEntity[ROW_KEY] = aggIndex;
+        aggEntity[ROW_KEY] = rowIndex;
         return agg;
     };
 
@@ -110,6 +110,10 @@ ng.RowFactory = function (grid, $scope) {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
         self.selectionService.toggleSelectAll(false);
+        if (grid.config.groups.length > 0) {
+            self.getGrouping(grid.config.groups);
+            self.parsedData.needsUpdate = true;
+        }
         self.CalcRenderedRange();
     };
 
@@ -125,10 +129,11 @@ ng.RowFactory = function (grid, $scope) {
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        if (grid.config.groups) {
+        if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }
         self.sortedDataChanged();
+        self.parsedData.needsUpdate = true;
     };
     
     self.getGrouping = function (groups) {
@@ -184,7 +189,7 @@ ng.RowFactory = function (grid, $scope) {
     self.parsedData = { needsUpdate: true, values: [] };
     
     self.renderedChange = function () {
-        if (!grid.groupMode) {
+        if (grid.config.groups.length < 1) {
             self.renderedChangeNoGroups();
             grid.refreshDomSizes();
             return;
@@ -193,8 +198,11 @@ ng.RowFactory = function (grid, $scope) {
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
             self.parseGroupData(self.groupedData);
+            self.parsedData.needsUpdate = false;
         }
-        var dataArray = self.parsedData.values.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
+        var dataArray = self.parsedData.values.filter(function (e) {
+             return e[NG_HIDDEN] === false;
+        }).slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
@@ -206,7 +214,9 @@ ng.RowFactory = function (grid, $scope) {
             rowArr.push(row);
         });
         grid.setRenderedRows(rowArr);
+        grid.refreshDomSizes();
     };
+    
     //magical recursion
     var parentAgg = undefined;
     self.parseGroupData = function (g) {
@@ -214,9 +224,7 @@ ng.RowFactory = function (grid, $scope) {
             angular.forEach(g.values, function (item) {
                 parentAgg.children.push(item);
                 //add the row to our return array
-                if (!item[NG_HIDDEN]) {
-                    self.parsedData.values.push(item);
-                }
+                self.parsedData.values.push(item);
             });
             parentAgg = undefined;
         } else {
@@ -224,21 +232,26 @@ ng.RowFactory = function (grid, $scope) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
-                    var temp = { gField: g[NG_FIELD], gLabel: prop, gDepth: g[NG_DEPTH], isAggRow: true, children: [], aggChildren: [] };
+                    var temp = {
+                        gField: g[NG_FIELD],
+                        gLabel: prop,
+                        gDepth: g[NG_DEPTH],
+                        isAggRow: true,
+                        '_ng_hidden_': false,
+                        children: [],
+                        aggChildren: [],
+                        aggIndex: self.numberOfAggregates++
+                    };
                     var agg = self.buildAggregateRow(temp, 0);
                     if (parentAgg) {
+                        temp.parent = parentAgg;
                         parentAgg.aggChildren.push(agg);
                     }
                     parentAgg = temp;
-                    if (!agg.hidden) {
-                        self.parsedData.values.push(temp);
-                        self.numberOfAggregates++;
-                    }
+                    self.parsedData.values.push(temp);
                     self.parseGroupData(g[prop]);
                 }
             }
         }
-        self.parsedData.needsUpdate = false;
-        grid.refreshDomSizes();
     };
 }

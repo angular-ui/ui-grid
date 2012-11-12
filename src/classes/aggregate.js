@@ -15,9 +15,10 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.depth = aggEntity.gDepth;
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
-    self.hidden = false;
+    self.aggIndex = aggEntity.aggIndex;
     self.collapsed = false;
     self.isAggRow = true;
+    self.entity = aggEntity;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();
@@ -28,7 +29,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     };
     self.notifyChildren = function() {
         angular.forEach(self.aggChildren, function(child) {
-            child.hidden = self.collapsed;
+            child.entity[NG_HIDDEN] = self.collapsed;
             if (self.collapsed) {
                 child.setExpand(self.collapsed);
             }
@@ -43,12 +44,11 @@ ng.Aggregate = function (aggEntity, rowFactory) {
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
             } else {
-                if (i == self.label) {
+                if (i == self.aggIndex) {
                     foundMyself = true;
                 }
             }
         });
-        rowFactory.parsedData.needsUpdate = true;
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
@@ -57,16 +57,16 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.totalChildren = function() {
         if (self.aggChildren.length > 0) {
             var i = 0;
-            var recurse = function(cur) {
-                angular.forEach(cur, function (a) {
-                    if (a.aggChildren.length > 0) {
-                        recurse(a.aggChildren);
-                    } else {
-                        i += a.children.length;
-                    }
-                });
+            var recurse = function (cur) {
+                if (cur.aggChildren.length > 0) {
+                    angular.forEach(cur.aggChildren, function (a) {
+                        recurse(a);
+                    });
+                } else {
+                    i += cur.children.length;
+                }
             };
-            recurse(self.aggChildren);
+            recurse(self);
             return i;
         } else {
             return self.children.length;
