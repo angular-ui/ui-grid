@@ -66,7 +66,7 @@
 		// clear out the colToMove object
 		if(self.groupToMove){			
 			// Get the closest header to where we dropped
-			var groupContainer = $(event.srcElement).closest('.ngGroupItem');
+			var groupContainer = $(event.srcElement).closest('.ngGroupElement');
 			// Get the scope from the header.
 			if(groupContainer.context.className == 'ngGroupPanel'){
 				self.myGrid.config.groups.splice(self.groupToMove.index,1);
