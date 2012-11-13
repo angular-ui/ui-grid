@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 20:57:49
+* Compiled At: 11/12/2012 21:08:10
 ***********************************************/
 
 (function(window, undefined){
@@ -1133,6 +1133,7 @@ ng.RowFactory = function (grid, $scope) {
                     }, 0);
                     //we want the aggregates that are at a deeper level and aren't already children.
                     if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
+                        agg.entity.parent.collapsed = false;
                         agg.entity.parent.aggChildren.push(agg);
                     }
                     self.parsedData.values.push(agg.entity);

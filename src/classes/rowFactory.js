@@ -248,6 +248,7 @@ ng.RowFactory = function (grid, $scope) {
                     }, 0);
                     //we want the aggregates that are at a deeper level and aren't already children.
                     if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
+                        agg.entity.parent.collapsed = false;
                         agg.entity.parent.aggChildren.push(agg);
                     }
                     self.parsedData.values.push(agg.entity);
