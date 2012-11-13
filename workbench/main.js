@@ -11,8 +11,6 @@ function userController($scope) {
         selectedItems: $scope.mySelections,
         displaySelectionCheckbox: false,
         multiSelect: true,
-        plugins: [new ngGridReorderable()],
-        groups: [],
 		showGroupPanel: true,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},

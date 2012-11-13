@@ -11,6 +11,7 @@
 ..\src\templates\headerRowTemplate.js
 ..\src\templates\headerCellTemplate.js
 ..\src\classes\aggregate.js
+..\src\classes\aggregateProvider.js
 ..\src\classes\column.js
 ..\src\classes\dimension.js
 ..\src\classes\footer.js

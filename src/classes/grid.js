@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, SortService) {
+ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -34,7 +34,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             plugins: [],
             keepLastSelected: true,
             groups: [],
-			showGroupPanel: false
+            showGroupPanel: false,
+            enableRowRerodering: false
         },
         self = this,
         isSorting = false,
