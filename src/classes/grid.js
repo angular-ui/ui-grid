@@ -147,7 +147,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                ng.cssBuilder.buildStyles();
+                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -369,7 +369,14 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerSize = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-	
+
+    $scope.removeGroup = function(index) {
+        $scope.columns.splice(index, 1);
+        $scope.configGroups.splice(index, 1);
+        if ($scope.configGroups.length == 0) {
+            self.cssBuilder.buildStyles();
+        }
+    };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,

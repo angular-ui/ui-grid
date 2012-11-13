@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 21:16:19
+* Compiled At: 11/12/2012 21:27:54
 ***********************************************/
 
 (function(window, undefined){
@@ -597,7 +597,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
 	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
 	b.append('	 		<ul class="ngGroupList">');
-	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
+	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
@@ -1289,7 +1289,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                ng.cssBuilder.buildStyles();
+                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -1511,7 +1511,14 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerSize = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-	
+
+    $scope.removeGroup = function(index) {
+        $scope.columns.splice(index, 1);
+        $scope.configGroups.splice(index, 1);
+        if ($scope.configGroups.length == 0) {
+            self.cssBuilder.buildStyles();
+        }
+    };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,

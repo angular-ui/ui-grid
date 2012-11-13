@@ -11,7 +11,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
 	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
 	b.append('	 		<ul class="ngGroupList">');
-	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
+	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
