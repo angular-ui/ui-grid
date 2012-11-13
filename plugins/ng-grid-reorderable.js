@@ -82,7 +82,9 @@
                 }
             }
         } else {
-            self.$scope.configGroups.push(self.colToMove.col.field);
+            if (self.$scope.configGroups.indexOf(self.colToMove.col.field) == -1) {
+                self.$scope.configGroups.push(self.colToMove.col.field);
+            }
         }
         self.$scope.$apply();
         self.colToMove = undefined;
@@ -118,6 +120,7 @@
     };
 
     self.onHeaderDrop = function (event) {
+        if (!self.colToMove) return;
         self.onHeaderDragStop();
         // Get the closest header to where we dropped
         var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
