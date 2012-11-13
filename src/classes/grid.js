@@ -35,7 +35,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             keepLastSelected: true,
             groups: [],
             showGroupPanel: false,
-            enableRowRerodering: false
+            enableRowReordering: false
         },
         self = this,
         isSorting = false,

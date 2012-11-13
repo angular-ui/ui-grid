@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 23:10:37
+* Compiled At: 11/12/2012 23:13:36
 ***********************************************/
 
 (function(window, undefined){
@@ -1354,7 +1354,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             keepLastSelected: true,
             groups: [],
             showGroupPanel: false,
-            enableRowRerodering: false
+            enableRowReordering: false
         },
         self = this,
         isSorting = false,
