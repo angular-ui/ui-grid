@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 20:48:56
+* Compiled At: 11/12/2012 20:52:02
 ***********************************************/
 
 (function(window, undefined){
@@ -1465,10 +1465,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     };
 	$scope.showGroupPanel = function(){
 		return self.config.showGroupPanel;
-	}	
+	};
 	$scope.groups = function(){
 		return self.config.groups;
-	}	
+	};
+	$scope.topPanelHeight = function(){
+		return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
+	};
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -1479,7 +1482,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, $scope.rootDim.outerHeight - self.config.headerRowHeight - self.config.footerRowHeight - 2);
+        return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
 	$scope.headerCellSize = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
@@ -1494,7 +1497,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
 	$scope.topPanelSize = function() {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": (self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight) + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerSize = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
