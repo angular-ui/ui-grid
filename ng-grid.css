@@ -60,6 +60,19 @@
 	margin-left: 2px;
 }
 
+.ngRemoveGroup {
+	width: 5px;
+	float:right;
+	opacity: 0.4;
+	margin-top: -1px;
+	margin-left: 5px;
+}
+.ngRemoveGroup:hover {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+	opacity: 0.7;
+}
 .ngGroupArrow {
 	width: 0; 
 	height: 0; 

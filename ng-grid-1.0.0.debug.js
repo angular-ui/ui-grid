@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 21:08:10
+* Compiled At: 11/12/2012 21:16:19
 ***********************************************/
 
 (function(window, undefined){
@@ -597,7 +597,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
 	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
 	b.append('	 		<ul class="ngGroupList">');
-	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><div class="ngGroupElement"><div class="ngGroupName">{{group}}</div><div ng-hide="$last" class="ngGroupArrow"></div></div></li>');
+	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
