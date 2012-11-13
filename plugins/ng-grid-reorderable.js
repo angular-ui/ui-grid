@@ -51,14 +51,18 @@
     self.onGroupMouseDown = function(event) {
         var groupItem = $(event.srcElement);
         // Get the scope from the header container
-        var groupItemScope = angular.element(groupItem).scope();
-        if (groupItemScope) {
-            // set draggable events
-            groupItem.attr('draggable', 'true');
-            groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
-            // Save the column for later.
-            self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
-        }
+		if(groupItem[0].className != 'ngRemoveGroup'){
+			var groupItemScope = angular.element(groupItem).scope();
+			if (groupItemScope) {
+				// set draggable events
+				groupItem.attr('draggable', 'true');
+				groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+				// Save the column for later.
+				self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
+			}
+		} else {
+			self.groupToMove = undefined;
+		}
     };
 
     self.onGroupDrop = function(event) {
@@ -75,10 +79,11 @@
                 var groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
-                    if (self.groupToMove.index == groupScope.$index) return;
-                    // Splice the columns
-                    self.$scope.configGroups.splice(self.groupToMove.index, 1);
-                    self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+                    if (self.groupToMove.index != groupScope.$index){
+						// Splice the columns
+						self.$scope.configGroups.splice(self.groupToMove.index, 1);
+						self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+					}
                 }
             }
         } else {
@@ -87,6 +92,7 @@
             }
         }
         self.$scope.$apply();
+		self.groupToMove = undefined;
         self.colToMove = undefined;
     };
 	
