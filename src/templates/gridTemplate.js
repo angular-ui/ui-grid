@@ -10,8 +10,8 @@ ng.defaultGridTemplate = function () {
     b.append('<div class="ui-widget">');
     b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
 	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
-	b.append('	 		<div class="ngGroupPanelDescription" ng-show="groups().length == 0">Drag a column header here and drop it to group by that column</div>');
-	b.append('	 		<ul ng-show="groups().length > 0" class="ngGroupList">');
+	b.append('	 		<div class="ngGroupPanelDescription" ng-show="configGroups.length == 0">Drag a column header here and drop it to group by that column</div>');
+	b.append('	 		<ul ng-show="configGroups.length > 0" class="ngGroupList">');
 	b.append('	 			<li class="ngGroupItem" ng-repeat="group in configGroups"><span class="ngGroupElement"><span class="ngGroupName">{{group.displayName}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
