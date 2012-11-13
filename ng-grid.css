@@ -307,6 +307,7 @@ input {
     top: 1;
     bottom: 1px;
     right: 0;
+	left: 0;
     padding-top: 3px;
 }
 

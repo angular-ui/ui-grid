@@ -10,7 +10,6 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.index = 0;
     self.offsetTop = 0;
     self.entity = aggEntity;
-    self.offsetleft = aggEntity.gDepth * 25;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
@@ -20,6 +19,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.aggIndex = aggEntity.aggIndex;
     self.collapsed = true;
     self.isAggRow = true;
+    self.offsetleft = aggEntity.gDepth * 25;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/13/2012 10:16:57
+* Compiled At: 11/13/2012 11:46:19
 ***********************************************/
 
 (function(window, undefined){
@@ -637,7 +637,7 @@ ng.defaultRowTemplate = function () {
 ***********************************************/
 
 ng.aggregateTemplate = function () {
-    return '<div ng-click="row.toggleExpand()" style="left: {{row.offsetleft}}px;" class="ngAggregate"><span class="ngAggregateText">{{row.label}}  ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';
+    return '<div ng-click="row.toggleExpand()" ng-style="{ \'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label}}  ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';
 };
 
 /***********************************************
@@ -674,7 +674,6 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.index = 0;
     self.offsetTop = 0;
     self.entity = aggEntity;
-    self.offsetleft = aggEntity.gDepth * 25;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
     self.depth = aggEntity.gDepth;
@@ -684,6 +683,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.aggIndex = aggEntity.aggIndex;
     self.collapsed = true;
     self.isAggRow = true;
+    self.offsetleft = aggEntity.gDepth * 25;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();
