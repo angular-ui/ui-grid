@@ -66,9 +66,9 @@
     };
 
     self.onGroupDrop = function(event) {
-        self.onHeaderDragStop();
         // clear out the colToMove object
         if (self.groupToMove) {
+			self.onGroupDragStop();
             // Get the closest header to where we dropped
             var groupContainer = $(event.srcElement).closest('.ngGroupElement');
             // Get the scope from the header.
@@ -85,15 +85,16 @@
 						self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
 					}
                 }
-            }
-        } else {
+            }			
+			self.groupToMove = undefined;
+        } else {	
+			self.onHeaderDragStop();
             if (self.$scope.configGroups.indexOf(self.colToMove.col.field) == -1) {
                 self.$scope.configGroups.push(self.colToMove.col.field);
-            }
+            }			
+			self.colToMove = undefined;
         }
         self.$scope.$apply();
-		self.groupToMove = undefined;
-        self.colToMove = undefined;
     };
 	
     //Header functions
