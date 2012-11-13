@@ -30,6 +30,11 @@
 	border-bottom: 1px solid rgb(212,212,212);
 }
 
+.ngGroupPanelDescription{
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
 .ngGroupList {
 	list-style-type: none;
 	margin: 0px;
