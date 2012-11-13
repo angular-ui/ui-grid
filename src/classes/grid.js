@@ -331,9 +331,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.showGroupPanel = function(){
 		return self.config.showGroupPanel;
 	};
-	$scope.groups = function(){
-		return self.config.groups;
-	};
 	$scope.topPanelHeight = function(){
 		return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
