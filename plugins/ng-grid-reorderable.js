@@ -47,9 +47,9 @@
             self.groupToMove.header.css('background-color', 'rgb(247,247,247)');
         }
     };
-	
-	self.onGroupMouseDown = function (event){
-		var groupItem = $(event.srcElement);
+
+    self.onGroupMouseDown = function(event) {
+        var groupItem = $(event.srcElement);
         // Get the scope from the header container
         var groupItemScope = angular.element(groupItem).scope();
         if (groupItemScope) {
@@ -59,34 +59,34 @@
             // Save the column for later.
             self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
         }
-	}
-	
-	self.onGroupDrop = function (event) {
-		self.onHeaderDragStop();
-		// clear out the colToMove object
-		if(self.groupToMove){			
-			// Get the closest header to where we dropped
-			var groupContainer = $(event.srcElement).closest('.ngGroupElement');
-			// Get the scope from the header.
-			if(groupContainer.context.className == 'ngGroupPanel'){
-				self.myGrid.config.groups.splice(self.groupToMove.index,1);
-				self.myGrid.config.groups.push(self.groupToMove.groupName);
-			}  else {
-				var groupScope = angular.element(groupContainer).scope();
-				if (groupScope) {
-					// If we have the same column, do nothing.
-					if (self.groupToMove.index == groupScope.$index) return;
-					// Splice the columns
-					self.myGrid.config.groups.splice(self.groupToMove.index, 1);
-					self.myGrid.config.groups.splice(groupScope.$index, 0, self.groupToMove.groupName);
-				}
-			}
-		} else {
-			self.myGrid.config.groups.push(self.colToMove.col.field);
-		}
-		self.$scope.$apply();
-		self.colToMove = undefined;
-	}
+    };
+
+    self.onGroupDrop = function(event) {
+        self.onHeaderDragStop();
+        // clear out the colToMove object
+        if (self.groupToMove) {
+            // Get the closest header to where we dropped
+            var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+            // Get the scope from the header.
+            if (groupContainer.context.className == 'ngGroupPanel') {
+                self.$scope.configGroups.splice(self.groupToMove.index, 1);
+                self.$scope.configGroups.push(self.groupToMove.groupName);
+            } else {
+                var groupScope = angular.element(groupContainer).scope();
+                if (groupScope) {
+                    // If we have the same column, do nothing.
+                    if (self.groupToMove.index == groupScope.$index) return;
+                    // Splice the columns
+                    self.$scope.configGroups.splice(self.groupToMove.index, 1);
+                    self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+                }
+            }
+        } else {
+            self.$scope.configGroups.push(self.colToMove.col.field);
+        }
+        self.$scope.$apply();
+        self.colToMove = undefined;
+    };
 	
     //Header functions
     self.onHeaderMouseDown = function (event) {

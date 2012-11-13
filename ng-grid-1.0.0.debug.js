@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 20:24:42
+* Compiled At: 11/12/2012 20:48:56
 ***********************************************/
 
 (function(window, undefined){
@@ -1069,6 +1069,7 @@ ng.RowFactory = function (grid, $scope) {
             col.index = i;
         });
         $scope.columns = cols;
+        grid.cssBuilder.buildStyles();
     };
     
     self.parsedData = { needsUpdate: true, values: [] };
@@ -1348,6 +1349,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.buildColumns();
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+        $scope.$watch('configGroups', function (a) {
+            if (!a) return;
+            self.config.groups = a;
+            self.rowFactory.sortedDataChanged();
+        }, true);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
@@ -1449,6 +1455,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.configGroups = self.config.groups;
     //scope funcs
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);

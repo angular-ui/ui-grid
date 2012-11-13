@@ -210,6 +210,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.buildColumns();
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+        $scope.$watch('configGroups', function (a) {
+            if (!a) return;
+            self.config.groups = a;
+            self.rowFactory.sortedDataChanged();
+        }, true);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
@@ -311,6 +316,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.configGroups = self.config.groups;
     //scope funcs
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
