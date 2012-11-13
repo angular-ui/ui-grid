@@ -73,7 +73,17 @@
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-                $scope.configGroups.push(self.colToMove.col);
+				var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+				// Get the scope from the header.
+				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
+					$scope.configGroups.push(self.colToMove.col);
+				} else {
+					var groupScope = angular.element(groupContainer).scope();
+					if (groupScope) {
+						// Splice the columns
+						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
+					}
+				}	
             }			
 			self.colToMove = undefined;
         }

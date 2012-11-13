@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 23:13:36
+* Compiled At: 11/13/2012 10:16:57
 ***********************************************/
 
 (function(window, undefined){
@@ -817,7 +817,17 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-                $scope.configGroups.push(self.colToMove.col);
+				var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+				// Get the scope from the header.
+				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
+					$scope.configGroups.push(self.colToMove.col);
+				} else {
+					var groupScope = angular.element(groupContainer).scope();
+					if (groupScope) {
+						// Splice the columns
+						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
+					}
+				}	
             }			
 			self.colToMove = undefined;
         }
