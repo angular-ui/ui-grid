@@ -137,6 +137,8 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     self.getGrouping = function (groups) {
+        self.aggCache = [];
+        self.rowCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
@@ -176,7 +178,7 @@ ng.RowFactory = function (grid, $scope) {
             if (!ptr.values) {
                 ptr.values = [];
             }
-            item[NG_HIDDEN] = false;
+            item[NG_HIDDEN] = true;
             ptr.values.push(item);
         });
         //fix column indexes

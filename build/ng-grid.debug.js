@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 20:52:02
+* Compiled At: 11/12/2012 20:57:49
 ***********************************************/
 
 (function(window, undefined){
@@ -681,7 +681,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
     self.aggIndex = aggEntity.aggIndex;
-    self.collapsed = false;
+    self.collapsed = true;
     self.isAggRow = true;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
@@ -1022,6 +1022,8 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     self.getGrouping = function (groups) {
+        self.aggCache = [];
+        self.rowCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = { };
         // Here we set the onmousedown event handler to the header container.
@@ -1061,7 +1063,7 @@ ng.RowFactory = function (grid, $scope) {
             if (!ptr.values) {
                 ptr.values = [];
             }
-            item[NG_HIDDEN] = false;
+            item[NG_HIDDEN] = true;
             ptr.values.push(item);
         });
         //fix column indexes
