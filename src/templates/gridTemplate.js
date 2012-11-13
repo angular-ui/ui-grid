@@ -8,7 +8,10 @@
 ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="ui-widget">');
-    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="headerSize()">');
+    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
+	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
+	b.append('	 		<div ng-repeat="group in groups()" class="ngGroupItem">{{group}}<div ng-hide="$index == (groups().length - 1)" class="ngGroupArrow"></div></div>');
+	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
     b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerSize()" ng-header-row></div>');
     b.append('    	</div>');

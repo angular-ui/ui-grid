@@ -33,7 +33,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             headerRowTemplate: undefined,
             plugins: [],
             keepLastSelected: true,
-            groups: []
+            groups: [],
+			showGroupPanel: false
         },
         self = this,
         isSorting = false,
@@ -47,6 +48,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
+	self.$groupPanel = null;
     self.$topPanel = null;
     self.$headerContainer = null;
     self.$headerScroller = null;
@@ -316,7 +318,12 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.totalItemsLength = function () {
         return self.sortedData.length;
     };
-	
+	$scope.showGroupPanel = function(){
+		return self.config.showGroupPanel;
+	}	
+	$scope.groups = function(){
+		return self.config.groups;
+	}	
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -341,6 +348,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.headerScrollerSize = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
+	$scope.topPanelSize = function() {
+		return { "width": $scope.rootDim.outerWidth + "px", "height": (self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight) + "px" };
+	};
 	$scope.headerSize = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/11/2012 22:42:13
+* Compiled At: 11/12/2012 17:58:42
 ***********************************************/
 
 (function(window, undefined){
@@ -594,7 +594,10 @@ ngGridServices.factory('SortService', function () {
 ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div class="ui-widget">');
-    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="headerSize()">');
+    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
+	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
+	b.append('	 		<div ng-repeat="group in groups()" class="ngGroupItem">{{group}}<div ng-hide="$index == (groups().length - 1)" class="ngGroupArrow"></div></div>');
+	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
     b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerSize()" ng-header-row></div>');
     b.append('    	</div>');
@@ -1166,7 +1169,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             headerRowTemplate: undefined,
             plugins: [],
             keepLastSelected: true,
-            groups: []
+            groups: [],
+			showGroupPanel: false
         },
         self = this,
         isSorting = false,
@@ -1180,6 +1184,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
+	self.$groupPanel = null;
     self.$topPanel = null;
     self.$headerContainer = null;
     self.$headerScroller = null;
@@ -1449,7 +1454,12 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.totalItemsLength = function () {
         return self.sortedData.length;
     };
-	
+	$scope.showGroupPanel = function(){
+		return self.config.showGroupPanel;
+	}	
+	$scope.groups = function(){
+		return self.config.groups;
+	}	
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -1474,6 +1484,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.headerScrollerSize = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
+	$scope.topPanelSize = function() {
+		return { "width": $scope.rootDim.outerWidth + "px", "height": (self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight) + "px" };
+	};
 	$scope.headerSize = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
@@ -1795,6 +1808,7 @@ ng.domUtility = (new function () {
         grid.$root = $(rootEl);
         //Headers
         grid.$topPanel = grid.$root.find(".ngTopPanel");
+        grid.$groupPanel = grid.$root.find(".ngGroupPanel");
         grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
         grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
         grid.$headers = grid.$headerScroller.children();

@@ -18,8 +18,11 @@
         self.assignEvents();
     };
     self.colToMove = undefined;
+	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
+		self.myGrid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+		
         if (self.config.enableHeader) {
             self.myGrid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
         }
@@ -29,7 +32,62 @@
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
+    };	
+    
+    self.onGroupDragStart = function () {
+        // color the header so we know what we are moving
+        if (self.groupToMove) {
+            self.groupToMove.header.css('background-color', 'rgb(255, 255, 204)');
+        }
+    };	
+    
+    self.onGroupDragStop = function () {
+        // Set the column to move header color back to normal
+        if (self.groupToMove) {
+            self.groupToMove.header.css('background-color', 'rgb(247,247,247)');
+        }
     };
+	
+	self.onGroupMouseDown = function (event){
+		var groupItem = $(event.srcElement);
+        // Get the scope from the header container
+        var groupItemScope = angular.element(groupItem).scope();
+        if (groupItemScope) {
+            // set draggable events
+            groupItem.attr('draggable', 'true');
+            groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+            // Save the column for later.
+            self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
+        }
+	}
+	
+	self.onGroupDrop = function (event) {
+		self.onHeaderDragStop();
+		// clear out the colToMove object
+		if(self.groupToMove){			
+			// Get the closest header to where we dropped
+			var groupContainer = $(event.srcElement).closest('.ngGroupItem');
+			// Get the scope from the header.
+			if(groupContainer.context.className == 'ngGroupPanel'){
+				self.myGrid.config.groups.splice(self.groupToMove.index,1);
+				self.myGrid.config.groups.push(self.groupToMove.groupName);
+			}  else {
+				var groupScope = angular.element(groupContainer).scope();
+				if (groupScope) {
+					// If we have the same column, do nothing.
+					if (self.groupToMove.index == groupScope.$index) return;
+					// Splice the columns
+					self.myGrid.config.groups.splice(self.groupToMove.index, 1);
+					self.myGrid.config.groups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+				}
+			}
+		} else {
+			self.myGrid.config.groups.push(self.colToMove.col.field);
+		}
+		self.$scope.$apply();
+		self.colToMove = undefined;
+	}
+	
     //Header functions
     self.onHeaderMouseDown = function (event) {
         // Get the closest header container from where we clicked.
