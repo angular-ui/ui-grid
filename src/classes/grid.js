@@ -212,7 +212,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.$watch('configGroups', function (a) {
             if (!a) return;
-            self.config.groups = a;
+            var tempArr = [];
+            angular.forEach(a, function(item) {
+                tempArr.push(item.field);
+            });
+            self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
         }, true);
         $scope.maxRows = $scope.renderedRows.length;

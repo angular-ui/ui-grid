@@ -89,8 +89,8 @@
 			self.groupToMove = undefined;
         } else {	
 			self.onHeaderDragStop();
-            if (self.$scope.configGroups.indexOf(self.colToMove.col.displayName) == -1) {
-                self.$scope.configGroups.push(self.colToMove.col.displayName);
+            if (self.$scope.configGroups.indexOf(self.colToMove.col) == -1) {
+                self.$scope.configGroups.push(self.colToMove.col);
             }			
 			self.colToMove = undefined;
         }

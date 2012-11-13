@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/12/2012 22:18:47
+* Compiled At: 11/12/2012 22:50:30
 ***********************************************/
 
 (function(window, undefined){
@@ -598,7 +598,7 @@ ng.defaultGridTemplate = function () {
 	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
 	b.append('	 		<div class="ngGroupPanelDescription" ng-show="groups().length == 0">Drag a column header here and drop it to group by that column</div>');
 	b.append('	 		<ul ng-show="groups().length > 0" class="ngGroupList">');
-	b.append('	 			<li class="ngGroupItem" ng-repeat="group in groups()"><span class="ngGroupElement"><span class="ngGroupName">{{group}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
+	b.append('	 			<li class="ngGroupItem" ng-repeat="group in configGroups"><span class="ngGroupElement"><span class="ngGroupName">{{group.displayName}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
@@ -1355,7 +1355,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
         $scope.$watch('configGroups', function (a) {
             if (!a) return;
-            self.config.groups = a;
+            var tempArr = [];
+            angular.forEach(a, function(item) {
+                tempArr.push(item.field);
+            });
+            self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
         }, true);
         $scope.maxRows = $scope.renderedRows.length;
