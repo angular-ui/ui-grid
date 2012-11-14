@@ -5,3 +5,6 @@ var GRID_KEY = '__koGrid__';
 var EXCESS_ROWS = 8;
 var ASC = "asc"; // constant for sorting direction
 var DESC = "desc"; // constant for sorting direction
+var NG_FIELD = '_ng_field_';
+var NG_DEPTH = '_ng_depth_';
+var NG_HIDDEN = '_ng_hidden_';
