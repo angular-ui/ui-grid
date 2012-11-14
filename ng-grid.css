@@ -304,7 +304,7 @@ input {
 .ngAggregate {
     position: absolute;
     background-color: rgb(95,168,184);
-    top: 1;
+    top: 1px;
     bottom: 1px;
     right: 0;
 	left: 0;
@@ -314,6 +314,7 @@ input {
 .ngAggregateText {
     position: absolute;
     left: 27px;
+	top:3px;
 }
 
 .ngAggArrowExpanded {
