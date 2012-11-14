@@ -14,7 +14,7 @@ function userController($scope) {
 		showGroupPanel: true,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
-                     { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
+                     { field: 'birthday', width: '120px', cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
                      { field: 'paid', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
@@ -32,7 +32,7 @@ function userController($scope) {
         selectedItems: $scope.mySelections2,
         multiSelect: false,
         columnDefs: [{ field: 'Sku', displayName: 'My Sku', width: 'auto'}, 
-                     { field: 'Vendor', displayName: 'Supplier', width: 120 },
+                     { field: 'Vendor', displayName: 'Supplier', width: '120px' },
                      { field: 'SeasonCode', displayName: 'My SeasonCode', width: 140, cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
                      { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
                      { field: 'UPC', displayName: 'Bar Code', width: "*" }],

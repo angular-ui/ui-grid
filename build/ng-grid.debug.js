@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/13/2012 11:46:19
+* Compiled At: 11/13/2012 21:38:16
 ***********************************************/
 
 (function(window, undefined){
@@ -1718,7 +1718,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
-            var t = col.width;
+            var t = parseInt(col.width);
             // check if it is a number
             if (isNaN(t)){
                 // figure out if the width is defined or if we need to calculate it
@@ -1749,7 +1749,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
                 }
             }
             // add the caluclated or pre-defined width the total width
-            totalWidth += col.width;
+            totalWidth += col.width = t;
             // set the flag as the width is configured so the subscribers can be added
             col.widthIsConfigured = true;
         });
