@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 11:33:45
+* Compiled At: 11/14/2012 11:46:54
 ***********************************************/
 
 (function(window, undefined){
@@ -1717,7 +1717,7 @@ ng.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortService) {
+ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', function ($compile, GridService, SortService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -1762,12 +1762,12 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
         }
     };
     return ngGrid;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-row.js
 ***********************************************/
-ngGridDirectives.directive('ngRow', function ($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
     var ngRow = {
         scope: false,
         compile: function () {
@@ -1780,12 +1780,12 @@ ngGridDirectives.directive('ngRow', function ($compile) {
         }
     };
     return ngRow;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngCell', function($compile) {
+ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
     var ngCell = {
         scope: false,
         compile: function () {
@@ -1798,12 +1798,12 @@ ngGridDirectives.directive('ngCell', function($compile) {
         }
     };
     return ngCell;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-header-row.js
 ***********************************************/
-ngGridDirectives.directive('ngHeaderRow', function($compile) {
+ngGridDirectives.directive('ngHeaderRow', ['$compile', function($compile) {
     var ngHeaderRow = {
         scope: false,
         compile: function () {
@@ -1818,12 +1818,12 @@ ngGridDirectives.directive('ngHeaderRow', function($compile) {
         }
     };
     return ngHeaderRow;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-header-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngHeaderCell', function ($compile) {
+ngGridDirectives.directive('ngHeaderCell', ['$compile', function ($compile) {
     var ngHeaderCell = {
         scope: false,
         compile: function () {
@@ -1837,7 +1837,7 @@ ngGridDirectives.directive('ngHeaderCell', function ($compile) {
         }
     };
     return ngHeaderCell;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\init.js

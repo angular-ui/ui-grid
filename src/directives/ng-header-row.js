@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngHeaderRow', function($compile) {
+﻿ngGridDirectives.directive('ngHeaderRow', ['$compile', function($compile) {
     var ngHeaderRow = {
         scope: false,
         compile: function () {
@@ -13,4 +13,4 @@
         }
     };
     return ngHeaderRow;
-});
+}]);
