@@ -24,21 +24,19 @@
     <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="../ng-grid-1.0.0.debug.js"></script>
     <script type="text/javascript" src="../plugins/ng-grid-reorderable.js"></script>
-    <script type="text/javascript" src="../plugins/ng-grid-groupable.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
-		<input ng-model="searchText" />
-        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions">
+
+        <div style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px;" ng-grid="gridOptions">
         </div>
         <button ng-click="changeData()">Insert Rows</button>
         <span>mySelections: {{mySelections | json}}</span>
-        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
+<!--        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
         </div>
-		<button ng-click="changingData()">getdata</button>
-        <span>mySelections2: {{mySelections2 | json}}</span>
+        <span>mySelections2: {{mySelections2 | json}}</span>-->
     </body>
 </html>

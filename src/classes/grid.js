@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, SortService) {
+ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -33,7 +33,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             headerRowTemplate: undefined,
 			jqueryUITheme: false,
             plugins: [],
-            keepLastSelected: true
+            keepLastSelected: true,
+            groups: [],
+            showGroupPanel: false,
+            enableRowReordering: false
         },
         self = this,
         isSorting = false,
@@ -47,6 +50,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
+	self.$groupPanel = null;
     self.$topPanel = null;
     self.$headerContainer = null;
     self.$headerScroller = null;
@@ -56,10 +60,15 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.sortInfo = self.config.sortInfo;
     self.sortedData = $.extend(true,[], $scope.$parent[self.config.data] || self.config.data); // we cannot watch for updates if you don't pass the string name
     //initialized in the init method
-    self.rowFactory = new ng.RowFactory(self);
+    self.rowFactory = new ng.RowFactory(self, $scope);
     self.selectionService = new ng.SelectionService(self);
     self.sortService = SortService;
     self.lastSortedColumn = undefined;
+    self.calcMaxCanvasHeight = function() {
+        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.values.filter(function (e) {
+            return e[NG_HIDDEN] === false;
+        }).length * self.config.rowHeight) : (self.sortedData.length * self.config.rowHeight);
+    };
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
@@ -86,6 +95,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         if (!$scope.$$phase) {
             $scope.$apply();
         }
+        self.refreshDomSizes();
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -99,10 +109,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
-        rootH = $scope.maxCanvasHeight() + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
         rootH = Math.max(self.elementDims.rootMinH, rootH);
@@ -139,7 +149,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                ng.cssBuilder.buildStyles();
+                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -202,8 +212,17 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.buildColumns();
         self.sortService.columns = $scope.columns,
         $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+        $scope.$watch('configGroups', function (a) {
+            if (!a) return;
+            var tempArr = [];
+            angular.forEach(a, function(item) {
+                tempArr.push(item.field);
+            });
+            self.config.groups = tempArr;
+            self.rowFactory.sortedDataChanged();
+        }, true);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.sortedData.length * self.config.rowHeight;
+        maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
             multiSelect: self.config.multiSelect,
             selectedItems: self.config.selectedItems,
@@ -220,15 +239,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 selectWithCheckboxOnly: self.config.selectWithCheckboxOnly,
                 beforeSelectionChangeCallback: self.config.beforeSelectionChange,
                 afterSelectionChangeCallback: self.config.afterSelectionChange
-            }
-        });
-        angular.forEach($scope.columns, function (col) {
-            if (col.widthIsConfigured) {
-                col.width.$watch(function () {
-                    self.rowFactory.dataChanged = true;
-                    self.rowFactory.rowCache = []; //if data source changes, kill this!
-                    self.rowFactory.calcRenderedRange();
-                });
             }
         });
         self.cssBuilder.buildStyles();
@@ -313,6 +323,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.configGroups = self.config.groups;
     //scope funcs
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
@@ -320,7 +331,12 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.totalItemsLength = function () {
         return self.sortedData.length;
     };
-	
+	$scope.showGroupPanel = function(){
+		return self.config.showGroupPanel;
+	};
+	$scope.topPanelHeight = function(){
+	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
+	};
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
     };
@@ -331,30 +347,43 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, $scope.rootDim.outerHeight - self.config.headerRowHeight - self.config.footerRowHeight - 2);
+        return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
-	$scope.headerCellSize = function(col){
+    $scope.topPanelStyle = function() {
+        return { "height": $scope.topPanelHeight() + "px" };
+    };
+	$scope.headerCellStyle = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
 	};
-	$scope.canvasHeight = function(){
+	$scope.canvasStyle = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-    $scope.headerScrollerSize = function() {
+    $scope.headerScrollerStyle = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
-	$scope.headerSize = function() {
+	$scope.topPanelStyle = function() {
+		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
+	};
+	$scope.headerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
-	$scope.viewportSize = function() {
+	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
 	};
-	$scope.footerSize = function() {
+	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-	
+
+    $scope.removeGroup = function(index) {
+        $scope.columns.splice(index, 1);
+        $scope.configGroups.splice(index, 1);
+        if ($scope.configGroups.length == 0) {
+            self.cssBuilder.buildStyles();
+        }
+    };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
             cols = $scope.columns,
@@ -365,7 +394,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
-            var t = col.width;
+            var t = parseInt(col.width);
             // check if it is a number
             if (isNaN(t)){
                 // figure out if the width is defined or if we need to calculate it
@@ -396,7 +425,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 }
             }
             // add the caluclated or pre-defined width the total width
-            totalWidth += col.width;
+            totalWidth += col.width = t;
             // set the flag as the width is configured so the subscribers can be added
             col.widthIsConfigured = true;
         });

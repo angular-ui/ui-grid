@@ -1,37 +1,16 @@
-﻿/* 
-DO NOT USE THIS PLUGIN. IT IS ONLY AN EXAMPLE FOR INSTRUCTIONAL PURPOSES.
-*/
+﻿ng.AggregateProvider = function (grid, $scope, gridService) {
 
-ngGridReorderable = function (options) {
-    var defaults = {
-        enableHeader: true,
-        enableRow: true
-    };
     var self = this;
-    self.config = $.extend(defaults, options);
-    self.$scope = null;
-    self.myGrid = null;
-
     // The init method gets called during the ng-grid directive execution.
-    self.init = function (scope, grid, services) {
-        // The directive passes in the grid scope and the grid object which we will want to save for manipulation later.
-        self.$scope = scope;
-        self.myGrid = grid;
-        self.services = services;
-        // In this example we want to assign grid events.
-        self.assignEvents();
-    };
+
     self.colToMove = undefined;
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		self.myGrid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-		
-        if (self.config.enableHeader) {
-            self.myGrid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-        }
-        if (self.config.enableRow) {
-            self.myGrid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
+		grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+        grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
+        if (grid.config.enableRowRerodering) {
+            grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
         }
     };
     self.dragOver = function(evt) {
@@ -77,28 +56,38 @@ ngGridReorderable = function (options) {
             var groupContainer = $(event.srcElement).closest('.ngGroupElement');
             // Get the scope from the header.
             if (groupContainer.context.className == 'ngGroupPanel') {
-                self.$scope.configGroups.splice(self.groupToMove.index, 1);
-                self.$scope.configGroups.push(self.groupToMove.groupName);
+                $scope.configGroups.splice(self.groupToMove.index, 1);
+                $scope.configGroups.push(self.groupToMove.groupName);
             } else {
                 var groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
                     if (self.groupToMove.index != groupScope.$index){
 						// Splice the columns
-						self.$scope.configGroups.splice(self.groupToMove.index, 1);
-						self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+						$scope.configGroups.splice(self.groupToMove.index, 1);
+						$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
 					}
                 }
             }			
 			self.groupToMove = undefined;
         } else {	
 			self.onHeaderDragStop();
-            if (self.$scope.configGroups.indexOf(self.colToMove.col) == -1) {
-                self.$scope.configGroups.push(self.colToMove.col);
+            if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
+				var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+				// Get the scope from the header.
+				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
+					$scope.configGroups.push(self.colToMove.col);
+				} else {
+					var groupScope = angular.element(groupContainer).scope();
+					if (groupScope) {
+						// Splice the columns
+						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
+					}
+				}	
             }			
 			self.colToMove = undefined;
         }
-        self.$scope.$apply();
+        $scope.$apply();
     };
 	
     //Header functions
@@ -141,14 +130,14 @@ ngGridReorderable = function (options) {
             // If we have the same column, do nothing.
             if (self.colToMove.col == headerScope.col) return;
             // Splice the columns
-            self.$scope.columns.splice(self.colToMove.col.index, 1);
-            self.$scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
+            $scope.columns.splice(self.colToMove.col.index, 1);
+            $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             // Fix all the indexes on the columns so if we reorder again the columns will line up correctly.
-            angular.forEach(self.$scope.columns, function(col, i) {
+            angular.forEach($scope.columns, function(col, i) {
                 col.index = i;
             });
             // Finally, rebuild the CSS styles.
-            self.myGrid.cssBuilder.buildStyles();
+            grid.cssBuilder.buildStyles();
             // clear out the colToMove object
             self.colToMove = undefined;
         }
@@ -164,7 +153,7 @@ ngGridReorderable = function (options) {
             // set draggable events
             targetRow.attr('draggable', 'true');
             // Save the row for later.
-            self.services.GridService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
+            gridService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
         }
     };
 
@@ -175,17 +164,19 @@ ngGridReorderable = function (options) {
         var rowScope = angular.element(targetRow).scope();
         if (rowScope) {
             // If we have the same Row, do nothing.
-            var prevRow = self.services.GridService.eventStorage.rowToMove;
+            var prevRow = gridService.eventStorage.rowToMove;
             if (prevRow.scope.row == rowScope.row) return;
             // Splice the Rows via the actual datasource
-            var i = self.myGrid.sortedData.indexOf(prevRow.scope.row.entity);
-            var j = self.myGrid.sortedData.indexOf(rowScope.row.entity);
-            self.myGrid.sortedData.splice(i, 1);
-            self.myGrid.sortedData.splice(j, 0, prevRow.scope.row.entity);
-            self.myGrid.rowFactory.sortedDataChanged(self.myGrid.sortedData);
+            var i = grid.sortedData.indexOf(prevRow.scope.row.entity);
+            var j = grid.sortedData.indexOf(rowScope.row.entity);
+            grid.sortedData.splice(i, 1);
+            grid.sortedData.splice(j, 0, prevRow.scope.row.entity);
+            grid.rowFactory.sortedDataChanged(grid.sortedData);
             // clear out the rowToMove object
-            self.services.GridService.eventStorage.rowToMove = undefined;
+            gridService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one
         }
     };
+    // In this example we want to assign grid events.
+    self.assignEvents();
 };
