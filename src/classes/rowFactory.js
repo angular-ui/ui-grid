@@ -225,15 +225,18 @@ ng.RowFactory = function (grid, $scope) {
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
+                // get the last parent in the array because that's where our children want to be
                 parents[parents.length -1].children.push(item);
                 //add the row to our return array
                 self.parsedData.values.push(item);
             });
         } else {
             for (var prop in g) {
+                // exclude the meta properties.
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
+                    //build the aggregate row
                     var agg = self.buildAggregateRow({
                         gField: g[NG_FIELD],
                         gLabel: prop,
@@ -244,13 +247,18 @@ ng.RowFactory = function (grid, $scope) {
                         aggChildren: [],
                         aggIndex: self.numberOfAggregates++,
                     }, 0);
+                    //set the aggregate parent to the parent in the array that is one less deep.
                     agg.parent = parents[agg.depth - 1];
+                    // if we have a parent, set the parent to not be collapsed and append the current agg to its children
                     if (agg.parent) {
                         agg.parent.collapsed = false;
                         agg.parent.aggChildren.push(agg);
                     }
+                    // add the aggregate row to the parsed data.
                     self.parsedData.values.push(agg.entity);
+                    // the current aggregate now the parent of the current depth
                     parents[agg.depth] = agg;
+                    // dig deeper for more aggregates or children.
                     self.parseGroupData(g[prop]);
                 }
             }
