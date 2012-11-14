@@ -216,7 +216,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             if (!a) return;
             var tempArr = [];
             angular.forEach(a, function(item) {
-                tempArr.push(item.field);
+                tempArr.push(item.field || item);
             });
             self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();

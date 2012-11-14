@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 12:10:31
+* Compiled At: 11/14/2012 14:23:35
 ***********************************************/
 
 (function(window, undefined){
@@ -1551,7 +1551,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             if (!a) return;
             var tempArr = [];
             angular.forEach(a, function(item) {
-                tempArr.push(item.field);
+                tempArr.push(item.field || item);
             });
             self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
