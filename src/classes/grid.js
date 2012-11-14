@@ -31,6 +31,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
+			jqueryUITheme: false,
             plugins: [],
             keepLastSelected: true,
             groups: [],
@@ -316,6 +317,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
+	$scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
@@ -333,7 +335,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
 		return self.config.showGroupPanel;
 	};
 	$scope.topPanelHeight = function(){
-		return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
+	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
@@ -347,28 +349,31 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     $scope.viewportDimHeight = function () {
         return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
-	$scope.headerCellSize = function(col){
+    $scope.topPanelStyle = function() {
+        return { "height": $scope.topPanelHeight() + "px" };
+    };
+	$scope.headerCellStyle = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
 	};
-	$scope.canvasHeight = function(){
+	$scope.canvasStyle = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-    $scope.headerScrollerSize = function() {
+    $scope.headerScrollerStyle = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
-	$scope.topPanelSize = function() {
+	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
-	$scope.headerSize = function() {
+	$scope.headerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
-	$scope.viewportSize = function() {
+	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
 	};
-	$scope.footerSize = function() {
+	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
 

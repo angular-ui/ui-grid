@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 11:41:33
+* Compiled At: 11/14/2012 12:10:31
 ***********************************************/
 
 (function(window, undefined){
@@ -593,24 +593,24 @@ ngGridServices.factory('SortService', function () {
 
 ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
-    b.append('<div class="ui-widget">');
-    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="topPanelSize()">');
-	b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerSize()">');
+    b.append('<div ng-class="{\'ui-widget\': jqueryUITheme}">');
+    b.append('	 <div class="ngTopPanel" ng-class="{\'ui-widget-header\':jqueryUITheme, \'ui-corner-top\': jqueryUITheme}" ng-style="topPanelStyle()">');
+    b.append('	 	<div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerStyle()">');
 	b.append('	 		<div class="ngGroupPanelDescription" ng-show="configGroups.length == 0">Drag a column header here and drop it to group by that column</div>');
 	b.append('	 		<ul ng-show="configGroups.length > 0" class="ngGroupList">');
 	b.append('	 			<li class="ngGroupItem" ng-repeat="group in configGroups"><span class="ngGroupElement"><span class="ngGroupName">{{group.displayName}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li>');
 	b.append('	 		</ul>');
 	b.append('	 	</div>');
-    b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
-    b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerSize()" ng-header-row></div>');
+	b.append('      <div class="ngHeaderContainer" ng-style="headerStyle()">');
+	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
     b.append('    	</div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngViewport ui-widget-content" ng-style="viewportSize()">');
-    b.append('    	 <div class="ngCanvas" ng-style="canvasHeight()">');
+    b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
+    b.append('    	 <div class="ngCanvas" ng-style="canvasStyle()">');
     b.append('           <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append('       </div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngFooterPanel ui-widget-content ui-corner-bottom" ng-style="footerSize()">');
+    b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()">');
     b.append('   	 <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
     b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
@@ -1366,6 +1366,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
+			jqueryUITheme: false,
             plugins: [],
             keepLastSelected: true,
             groups: [],
@@ -1651,6 +1652,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
+	$scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
@@ -1668,7 +1670,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
 		return self.config.showGroupPanel;
 	};
 	$scope.topPanelHeight = function(){
-		return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
+	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
     $scope.maxCanvasHeight = function () {
         return maxCanvasHt || 0;
@@ -1682,28 +1684,31 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     $scope.viewportDimHeight = function () {
         return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
-	$scope.headerCellSize = function(col){
+    $scope.topPanelStyle = function() {
+        return { "height": $scope.topPanelHeight() + "px" };
+    };
+	$scope.headerCellStyle = function(col){
 		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
 	};
-	$scope.canvasHeight = function(){
+	$scope.canvasStyle = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
-    $scope.headerScrollerSize = function() {
+    $scope.headerScrollerStyle = function() {
         return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
     };
-	$scope.topPanelSize = function() {
+	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
-	$scope.headerSize = function() {
+	$scope.headerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
-	$scope.viewportSize = function() {
+	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
 	};
-	$scope.footerSize = function() {
+	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
 
@@ -2162,7 +2167,7 @@ ng.domUtility = (new function () {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortService) {
+ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', function ($compile, GridService, SortService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -2208,12 +2213,12 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
         }
     };
     return ngGrid;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-row.js
 ***********************************************/
-ngGridDirectives.directive('ngRow', function ($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
     var ngRow = {
         scope: false,
         compile: function () {
@@ -2231,12 +2236,12 @@ ngGridDirectives.directive('ngRow', function ($compile) {
         }
     };
     return ngRow;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngCell', function($compile) {
+ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
     var ngCell = {
         scope: false,
         compile: function () {
@@ -2249,12 +2254,12 @@ ngGridDirectives.directive('ngCell', function($compile) {
         }
     };
     return ngCell;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-header-row.js
 ***********************************************/
-ngGridDirectives.directive('ngHeaderRow', function($compile) {
+ngGridDirectives.directive('ngHeaderRow', ['$compile', function($compile) {
     var ngHeaderRow = {
         scope: false,
         compile: function () {
@@ -2269,12 +2274,12 @@ ngGridDirectives.directive('ngHeaderRow', function($compile) {
         }
     };
     return ngHeaderRow;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-header-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngHeaderCell', function ($compile) {
+ngGridDirectives.directive('ngHeaderCell', ['$compile', function ($compile) {
     var ngHeaderCell = {
         scope: false,
         compile: function () {
@@ -2288,7 +2293,7 @@ ngGridDirectives.directive('ngHeaderCell', function ($compile) {
         }
     };
     return ngHeaderCell;
-});
+}]);
 
 /***********************************************
 * FILE: ..\src\init.js

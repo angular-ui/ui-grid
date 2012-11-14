@@ -1,6 +1,6 @@
-﻿/// <reference path="../templates/aggregateTemplate.js" />
+﻿﻿/// <reference path="../templates/aggregateTemplate.js" />
 /// <reference path="../namespace.js" />
-ngGridDirectives.directive('ngRow', function ($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
     var ngRow = {
         scope: false,
         compile: function () {
@@ -18,4 +18,4 @@ ngGridDirectives.directive('ngRow', function ($compile) {
         }
     };
     return ngRow;
-});
+}]);

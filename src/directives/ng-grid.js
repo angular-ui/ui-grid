@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', function ($compile, GridService, SortService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -44,4 +44,4 @@
         }
     };
     return ngGrid;
-});
+}]);

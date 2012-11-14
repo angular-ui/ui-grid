@@ -7,7 +7,8 @@ function userController($scope) {
     $scope.mySelections2 = [];
     $scope.myData = largeLoad();
     $scope.gridOptions = {
-        data: 'myData',
+		data: 'myData',
+		jqueryUITheme: false,
         selectedItems: $scope.mySelections,
         displaySelectionCheckbox: false,
         multiSelect: true,
