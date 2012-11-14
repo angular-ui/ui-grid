@@ -89,10 +89,12 @@
         self.renderedChange();
     };
 
-    self.sortedDataChanged = function () {
+    self.sortedDataChanged = function (toggleSelectAll) {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
-        self.selectionService.toggleSelectAll(false);
+		if (toggleSelectAll){
+			self.selectionService.toggleSelectAll(false);
+		}
         self.CalcRenderedRange();
     };
 
@@ -108,6 +110,6 @@
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        self.sortedDataChanged();
+        self.sortedDataChanged(true);
     };
 }

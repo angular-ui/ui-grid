@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/09/2012 12:59:43
+* Compiled At: 11/13/2012 17:15:39
 ***********************************************/
 
 (function(window, undefined){
@@ -893,10 +893,12 @@ ng.RowFactory = function (grid) {
         self.renderedChange();
     };
 
-    self.sortedDataChanged = function () {
+    self.sortedDataChanged = function (toggleSelectAll) {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
-        self.selectionService.toggleSelectAll(false);
+		if (toggleSelectAll){
+			self.selectionService.toggleSelectAll(false);
+		}
         self.CalcRenderedRange();
     };
 
@@ -912,7 +914,7 @@ ng.RowFactory = function (grid) {
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        self.sortedDataChanged();
+        self.sortedDataChanged(true);
     };
 }
 
@@ -966,7 +968,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = $scope.$parent[self.config.data] || self.config.data; // we cannot watch for updates if you don't pass the string name
+    self.sortedData = $.extend(true,[], $scope.$parent[self.config.data] || self.config.data); // we cannot watch for updates if you don't pass the string name
     //initialized in the init method
     self.rowFactory = new ng.RowFactory(self);
     self.selectionService = new ng.SelectionService(self);
@@ -1201,7 +1203,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         self.clearSortingData(col);
         self.sortService.Sort(sortInfo, self.sortedData);
         self.lastSortedColumn = col;
-        self.rowFactory.sortedDataChanged(self.sortedData);
+        self.rowFactory.sortedDataChanged();
     };
     self.clearSortingData = function (col) {
         if (!col) {
@@ -1731,7 +1733,7 @@ ngGridDirectives.directive('ngGrid', function ($compile, GridService, SortServic
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
-                            grid.sortedData = a;
+                            grid.sortedData = $.extend(true,[], a);
                             grid.rowFactory.sortedDataChanged();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
