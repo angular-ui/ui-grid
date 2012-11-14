@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/13/2012 22:09:24
+* Compiled At: 11/14/2012 10:56:53
 ***********************************************/
 
 (function(window, undefined){
@@ -1293,15 +1293,14 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     //magical recursion. it works. I swear it.
-    var parentAgg = undefined;
+    var parents = [];
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
-                parentAgg.children.push(item);
+                parents[parents.length -1].children.push(item);
                 //add the row to our return array
                 self.parsedData.values.push(item);
             });
-            parentAgg = parentAgg.parent;
         } else {
             for (var prop in g) {
                 if (prop == NG_FIELD || prop == NG_DEPTH) {
@@ -1316,15 +1315,14 @@ ng.RowFactory = function (grid, $scope) {
                         children: [],
                         aggChildren: [],
                         aggIndex: self.numberOfAggregates++,
-                        parent: parentAgg
                     }, 0);
-                    //we want the aggregates that are at a deeper level and aren't already children.
-                    if (agg.entity.parent && agg.entity.parent.aggChildren.indexOf(agg) == -1 && agg.depth > parentAgg.depth) {
-                        agg.entity.parent.collapsed = false;
-                        agg.entity.parent.aggChildren.push(agg);
+                    agg.parent = parents[agg.depth - 1];
+                    if (agg.parent) {
+                        agg.parent.collapsed = false;
+                        agg.parent.aggChildren.push(agg);
                     }
                     self.parsedData.values.push(agg.entity);
-                    parentAgg = agg;
+                    parents[agg.depth] = agg;
                     self.parseGroupData(g[prop]);
                 }
             }
