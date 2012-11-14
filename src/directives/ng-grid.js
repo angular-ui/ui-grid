@@ -16,7 +16,7 @@
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
-                            grid.sortedData = a;
+                            grid.sortedData = $.extend(true,[], a);
                             grid.rowFactory.sortedDataChanged();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);

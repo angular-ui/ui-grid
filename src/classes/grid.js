@@ -57,7 +57,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = $scope.$parent[self.config.data] || self.config.data; // we cannot watch for updates if you don't pass the string name
+    self.sortedData = $.extend(true,[], $scope.$parent[self.config.data] || self.config.data); // we cannot watch for updates if you don't pass the string name
     //initialized in the init method
     self.rowFactory = new ng.RowFactory(self, $scope);
     self.selectionService = new ng.SelectionService(self);
@@ -298,7 +298,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
         self.clearSortingData(col);
         self.sortService.Sort(sortInfo, self.sortedData);
         self.lastSortedColumn = col;
-        self.rowFactory.sortedDataChanged(self.sortedData);
+        self.rowFactory.sortedDataChanged();
     };
     self.clearSortingData = function (col) {
         if (!col) {
