@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/13/2012 17:15:39
+* Compiled At: 11/14/2012 11:33:45
 ***********************************************/
 
 (function(window, undefined){
@@ -590,18 +590,18 @@ ngGridServices.factory('SortService', function () {
 
 ng.defaultGridTemplate = function () {
     var b = new ng.utils.StringBuilder();
-    b.append('<div class="ui-widget">');
-    b.append('	 <div class="ngTopPanel ui-widget-header ui-corner-top" ng-style="headerSize()">');
+    b.append('<div ng-class="{\'ui-widget\': jqueryUITheme}">');
+    b.append('	 <div class="ngTopPanel" ng-class="{\'ui-widget-header\':jqueryUITheme, \'ui-corner-top\': jqueryUITheme}" ng-style="headerSize()">');
     b.append('      <div class="ngHeaderContainer" ng-style="headerSize()">');
     b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerSize()" ng-header-row></div>');
     b.append('    	</div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngViewport ui-widget-content" ng-style="viewportSize()">');
+    b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportSize()">');
     b.append('    	 <div class="ngCanvas" ng-style="canvasHeight()">');
     b.append('           <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append('       </div>');
     b.append('	 </div>');
-    b.append('	 <div class="ngFooterPanel ui-widget-content ui-corner-bottom" ng-style="footerSize()">');
+    b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerSize()">');
     b.append('   	 <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
     b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
@@ -946,6 +946,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
+			jqueryUITheme: false,
             plugins: [],
             keepLastSelected: true
         },
@@ -1221,6 +1222,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
+	$scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;

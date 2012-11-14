@@ -31,6 +31,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             afterSelectionChange: function () { return true;},
             rowTemplate: undefined,
             headerRowTemplate: undefined,
+			jqueryUITheme: false,
             plugins: [],
             keepLastSelected: true
         },
@@ -306,6 +307,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
+	$scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
