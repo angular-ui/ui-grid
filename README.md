@@ -16,10 +16,19 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
+version 1.0
 
-##Disclaimer##
+***
+##Roadmap##
 
-ng-grid is in beta release currently. We are going to be adding more features here as we head to a 1.0 release.
+ng-grid is version 1.0 release.
+
+We are going to be adding more features here as we head to a 1.1 release, including:
+
+* Ability to hide-show columns on the fly
+* Builtin filtering support
+* Virtualized column scrolling
+* Anything else the rest of the community wants to contribute that isn't a terrible idea. :)
 
 ***
 _The bare bones_:
@@ -56,4 +65,5 @@ Examples are found [here](http://timothyswt.github.com/ng-grid/examples)
 ##Examples##
 Coming soon...
 
-##Change Log##
+##Change Log##\
+* __2012-11-14__ - Version 1.0.0 Release
