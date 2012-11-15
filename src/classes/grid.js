@@ -270,26 +270,23 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             self.$headerContainer.scrollLeft(scrollLeft);
         }
     };
-    self.resizeOnData = function (col, override) {
-        if (col.longest) { // check for cache so we don't calculate again
-            col.width = col.longest;
-        } else {// we calculate the longest data.
-            var road = override || self.config.resizeOnAllData;
-            var longest = col.minWidth;
-            var arr = road ? self.sortedData : $scope.renderedRows;
-            angular.forEach(arr, function (data) {
-                var i = ng.utils.visualLength(data[col.field]);
-                if (i > longest) {
-                    longest = i;
-                }
-            });
-            longest += 10; //add 10 px for decent padding if resizing on data.
-            col.longest = longest > col.maxWidth ? col.maxWidth : longest;
-            col.width = longest;
-        }
-        if (col.widthWatcher) {
-            col.widthWatcher();
-        }
+    self.resizeOnData = function (col) {
+        // we calculate the longest data.
+        var longest = col.minWidth;
+        var arr = ng.utils.getElementsByClassName('col' + col.index);
+        angular.forEach(arr, function (elem, index) {
+            var i;
+            if (index == 0) {
+                var kgHeaderText = $(elem).find('.ngHeaderText');
+                i = ng.utils.visualLength(kgHeaderText) + 10;
+            } else {
+                i = ng.utils.visualLength(elem);
+            }
+            if (i > longest) {
+                longest = i;
+            }
+        });
+        col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         self.cssBuilder.buildStyles();
     };
     self.sortData = function(col, direction) {
@@ -397,18 +394,16 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             // get column width out of the observable
             var t = parseInt(col.width);
             // check if it is a number
-            if (isNaN(t)){
+            if (isNaN(t)) {
+                t = col.width;
                 // figure out if the width is defined or if we need to calculate it
                 if (t == undefined) {
                     // set the width to the length of the header title +30 for sorting icons and padding
                     col.width = (col.displayName.length * ng.domUtility.letterW) + 30;
                 } else if (t == "auto") { // set it for now until we have data and subscribe when it changes so we can set the width.
                     col.width = col.minWidth;
-                    col.widthWatcher = $scope.$watch('renderedRows', function (newArr) {
-                        if (newArr.length > 0) {
-                            self.resizeOnData(col, true);
-                        }
-                    });
+                    var temp = col;
+                    $(document).ready(function () { self.resizeOnData(temp, true); });
                 } else if (t.indexOf("*") != -1){
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0){

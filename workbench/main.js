@@ -14,8 +14,8 @@ function userController($scope) {
         displaySelectionCheckbox: false,
         multiSelect: true,
 		showGroupPanel: true,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
-                     { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 'auto', cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
+                     { field: 'allowance', width: 'auto', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
                      { field: 'birthday', width: '120px', cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
                      { field: 'paid', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
     };
