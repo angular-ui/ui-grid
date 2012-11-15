@@ -7,15 +7,47 @@
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-        grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-        if (grid.config.enableRowRerodering) {
-            grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
-        }
+		if(grid.config.jqueryUIDraggable){
+			grid.$groupPanel.droppable({
+				addClasses: false,
+				drop: function( event, ui ) {
+					self.onGroupDrop(event);
+				}
+			});
+			$(document).ready(self.setDraggables);	
+		} else {
+			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
+			if (grid.config.enableRowRerodering) {
+				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
+			}
+		}
+		$scope.$watch('columns', self.setDraggables, true);	
+		
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
     };	
+	
+	//For JQueryUI
+	self.setDraggables = function(){
+		if(!grid.config.jqueryUIDraggable){	
+			$('.ngHeaderSortColumn').attr('draggable', 'true').on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
+		} else {
+			$('.ngHeaderSortColumn').draggable({
+				helper: "clone",
+				appendTo: 'body',
+				addClasses: false,
+				start: function(event, ui){
+					self.onHeaderMouseDown(event);
+				}
+			}).droppable({
+				drop: function( event, ui ) {
+					self.onHeaderDrop(event);
+				}
+			});
+		}
+	};
     
     self.onGroupDragStart = function () {
         // color the header so we know what we are moving
@@ -38,8 +70,10 @@
 			var groupItemScope = angular.element(groupItem).scope();
 			if (groupItemScope) {
 				// set draggable events
-				groupItem.attr('draggable', 'true');
-				groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+				if(!grid.config.jqueryUIDraggable){
+					groupItem.attr('draggable', 'true');
+					groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+				}
 				// Save the column for later.
 				self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
 			}
@@ -97,9 +131,6 @@
         // Get the scope from the header container
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
-            // set draggable events
-            headerContainer.attr('draggable', 'true');
-            headerContainer.on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }

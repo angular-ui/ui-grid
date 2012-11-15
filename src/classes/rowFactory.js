@@ -15,6 +15,7 @@ ng.RowFactory = function (grid, $scope) {
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
+	var parents = [];
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
@@ -198,6 +199,7 @@ ng.RowFactory = function (grid, $scope) {
             return;
         }
         var rowArr = [];
+		parents = [];
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
             self.parseGroupData(self.groupedData);
@@ -221,7 +223,7 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     //magical recursion. it works. I swear it.
-    var parents = [];
+    
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
