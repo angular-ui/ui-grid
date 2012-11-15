@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 21:28:34
+* Compiled At: 11/14/2012 22:08:35
 ***********************************************/
 
 (function(window, undefined){
@@ -931,10 +931,7 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
             // Splice the columns
             $scope.columns.splice(self.colToMove.col.index, 1);
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
-            // Fix all the indexes on the columns so if we reorder again the columns will line up correctly.
-            angular.forEach($scope.columns, function(col, i) {
-                col.index = i;
-            });
+            grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
             grid.cssBuilder.buildStyles();
             // clear out the colToMove object
@@ -1317,11 +1314,7 @@ ng.RowFactory = function (grid, $scope) {
             item[NG_HIDDEN] = true;
             ptr.values.push(item);
         });
-        //fix column indexes
-        angular.forEach(cols, function (col, i) {
-            col.index = i;
-        });
-        $scope.columns = cols;
+        grid.fixColumnIndexes();
         grid.cssBuilder.buildStyles();
     };
     
@@ -1407,7 +1400,7 @@ ng.RowFactory = function (grid, $scope) {
 * FILE: ..\src\classes\grid.js
 ***********************************************/
 
-ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
+ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -1707,6 +1700,12 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             self.lastSortedColumn.sortDirection = "";
         }
     };
+    self.fixColumnIndexes = function() {
+        //fix column indexes
+        angular.forEach($scope.columns, function(col, i) {
+            col.index = i;
+        });
+    };
     //$scope vars
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
@@ -1778,6 +1777,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
+            self.fixColumnIndexes();
             self.cssBuilder.buildStyles();
         }
     };

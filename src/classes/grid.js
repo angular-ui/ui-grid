@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
+ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -307,6 +307,12 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             self.lastSortedColumn.sortDirection = "";
         }
     };
+    self.fixColumnIndexes = function() {
+        //fix column indexes
+        angular.forEach($scope.columns, function(col, i) {
+            col.index = i;
+        });
+    };
     //$scope vars
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
@@ -378,6 +384,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
+            self.fixColumnIndexes();
             self.cssBuilder.buildStyles();
         }
     };

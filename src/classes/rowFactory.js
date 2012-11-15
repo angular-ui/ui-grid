@@ -188,11 +188,7 @@ ng.RowFactory = function (grid, $scope) {
             item[NG_HIDDEN] = true;
             ptr.values.push(item);
         });
-        //fix column indexes
-        angular.forEach(cols, function (col, i) {
-            col.index = i;
-        });
-        $scope.columns = cols;
+        grid.fixColumnIndexes();
         grid.cssBuilder.buildStyles();
     };
     

@@ -163,10 +163,7 @@
             // Splice the columns
             $scope.columns.splice(self.colToMove.col.index, 1);
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
-            // Fix all the indexes on the columns so if we reorder again the columns will line up correctly.
-            angular.forEach($scope.columns, function(col, i) {
-                col.index = i;
-            });
+            grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
             grid.cssBuilder.buildStyles();
             // clear out the colToMove object
