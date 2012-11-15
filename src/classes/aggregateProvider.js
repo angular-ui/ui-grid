@@ -100,10 +100,6 @@
             // set draggable events
             headerContainer.attr('draggable', 'true');
             headerContainer.on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
-            /*$(headerContainer).draggable({
-				helper: "clone",
-				appendTo: 'body'
-			});*/
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }

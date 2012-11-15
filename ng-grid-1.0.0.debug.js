@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 16:39:58
+* Compiled At: 11/14/2012 16:46:46
 ***********************************************/
 
 (function(window, undefined){
@@ -844,10 +844,6 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
             // set draggable events
             headerContainer.attr('draggable', 'true');
             headerContainer.on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
-            /*$(headerContainer).draggable({
-				helper: "clone",
-				appendTo: 'body'
-			});*/
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }
