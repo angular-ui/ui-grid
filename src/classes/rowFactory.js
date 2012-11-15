@@ -15,7 +15,7 @@ ng.RowFactory = function (grid, $scope) {
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
-	var parents = [];
+	var parents = []; // Used for grouping and is cleared each time groups are calulated.
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
@@ -164,6 +164,9 @@ ng.RowFactory = function (grid, $scope) {
                         headerRowHeight: grid.config.headerRowHeight
                     }));
                 }
+                var col = cols.filter(function(c) {
+                    return c.field == group;
+                })[0];
                 var val = item[group].toString();
                 if (!ptr[val]) {
                     ptr[val] = {};
@@ -173,6 +176,9 @@ ng.RowFactory = function (grid, $scope) {
                 }
                 if (!ptr[NG_DEPTH]) {
                     ptr[NG_DEPTH] = depth;
+                }
+                if (!ptr[NG_COLUMN]) {
+                    ptr[NG_COLUMN] = col;
                 }
                 ptr = ptr[val];
             });
@@ -223,7 +229,6 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     //magical recursion. it works. I swear it.
-    
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
@@ -235,7 +240,7 @@ ng.RowFactory = function (grid, $scope) {
         } else {
             for (var prop in g) {
                 // exclude the meta properties.
-                if (prop == NG_FIELD || prop == NG_DEPTH) {
+                if (prop == NG_FIELD || prop == NG_DEPTH || prop == NG_COLUMN) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     //build the aggregate row
@@ -248,6 +253,7 @@ ng.RowFactory = function (grid, $scope) {
                         children: [],
                         aggChildren: [],
                         aggIndex: self.numberOfAggregates++,
+                        aggLabelFilter: g[NG_COLUMN].aggLabelFilter
                     }, 0);
                     //set the aggregate parent to the parent in the array that is one less deep.
                     agg.parent = parents[agg.depth - 1];

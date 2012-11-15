@@ -146,7 +146,6 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             }
         }
         if (self.initPhase > 0) {
-
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
@@ -195,7 +194,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
                 var column = new ng.Column({
-                    colDef : colDef, 
+                    colDef: colDef, 
                     index: i, 
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData, 

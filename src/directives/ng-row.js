@@ -9,6 +9,11 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                     var html;
                     if ($scope.row.isAggRow) {
                         html = ng.aggregateTemplate();
+                        if ($scope.row.aggLabelFilter) {
+                            html = html.replace(/CUSTOM_FILTERS/g, '| ' + $scope.row.aggLabelFilter);
+                        } else {
+                            html = html.replace(/CUSTOM_FILTERS/g, "");
+                        }
                     } else {
                         html = $scope.$parent.rowTemplate();
                     }

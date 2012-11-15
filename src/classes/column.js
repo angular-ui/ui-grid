@@ -10,6 +10,8 @@
     self.widthWatcher = null;
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
+    self.aggLabelFilter = colDef.aggLabelFilter;
+
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;

@@ -20,6 +20,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.collapsed = true;
     self.isAggRow = true;
     self.offsetleft = aggEntity.gDepth * 25;
+    self.aggLabelFilter = aggEntity.aggLabelFilter;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();

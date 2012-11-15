@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 19:55:47
+* Compiled At: 11/14/2012 21:28:34
 ***********************************************/
 
 (function(window, undefined){
@@ -30,6 +30,7 @@ var DESC = "desc"; // constant for sorting direction
 var NG_FIELD = '_ng_field_';
 var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
+var NG_COLUMN = '_ng_column_';
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -659,7 +660,7 @@ ng.defaultRowTemplate = function () {
 ***********************************************/
 
 ng.aggregateTemplate = function () {
-    return '<div ng-click="row.toggleExpand()" ng-style="{ \'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label}}  ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';
+    return '<div ng-click="row.toggleExpand()" ng-style="{ \'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';
 };
 
 /***********************************************
@@ -706,6 +707,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.collapsed = true;
     self.isAggRow = true;
     self.offsetleft = aggEntity.gDepth * 25;
+    self.aggLabelFilter = aggEntity.aggLabelFilter;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();
@@ -993,6 +995,8 @@ ng.Column = function (config) {
     self.widthWatcher = null;
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
+    self.aggLabelFilter = colDef.aggLabelFilter;
+
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
@@ -1140,7 +1144,7 @@ ng.RowFactory = function (grid, $scope) {
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
-	var parents = [];
+	var parents = []; // Used for grouping and is cleared each time groups are calulated.
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
@@ -1289,6 +1293,9 @@ ng.RowFactory = function (grid, $scope) {
                         headerRowHeight: grid.config.headerRowHeight
                     }));
                 }
+                var col = cols.filter(function(c) {
+                    return c.field == group;
+                })[0];
                 var val = item[group].toString();
                 if (!ptr[val]) {
                     ptr[val] = {};
@@ -1298,6 +1305,9 @@ ng.RowFactory = function (grid, $scope) {
                 }
                 if (!ptr[NG_DEPTH]) {
                     ptr[NG_DEPTH] = depth;
+                }
+                if (!ptr[NG_COLUMN]) {
+                    ptr[NG_COLUMN] = col;
                 }
                 ptr = ptr[val];
             });
@@ -1348,7 +1358,6 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     //magical recursion. it works. I swear it.
-    
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
@@ -1360,7 +1369,7 @@ ng.RowFactory = function (grid, $scope) {
         } else {
             for (var prop in g) {
                 // exclude the meta properties.
-                if (prop == NG_FIELD || prop == NG_DEPTH) {
+                if (prop == NG_FIELD || prop == NG_DEPTH || prop == NG_COLUMN) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     //build the aggregate row
@@ -1373,6 +1382,7 @@ ng.RowFactory = function (grid, $scope) {
                         children: [],
                         aggChildren: [],
                         aggIndex: self.numberOfAggregates++,
+                        aggLabelFilter: g[NG_COLUMN].aggLabelFilter
                     }, 0);
                     //set the aggregate parent to the parent in the array that is one less deep.
                     agg.parent = parents[agg.depth - 1];
@@ -1536,7 +1546,6 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             }
         }
         if (self.initPhase > 0) {
-
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
@@ -1585,7 +1594,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
                 var column = new ng.Column({
-                    colDef : colDef, 
+                    colDef: colDef, 
                     index: i, 
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData, 
@@ -2278,6 +2287,11 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                     var html;
                     if ($scope.row.isAggRow) {
                         html = ng.aggregateTemplate();
+                        if ($scope.row.aggLabelFilter) {
+                            html = html.replace(/CUSTOM_FILTERS/g, '| ' + $scope.row.aggLabelFilter);
+                        } else {
+                            html = html.replace(/CUSTOM_FILTERS/g, "");
+                        }
                     } else {
                         html = $scope.$parent.rowTemplate();
                     }
