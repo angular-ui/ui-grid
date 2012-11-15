@@ -1,9 +1,4 @@
-﻿//Taken from MDC: indexOf is a recent addition to the ECMA-262 standard; as such 
-//it may not be present in all browsers. This algorithm is exactly the one specified 
-//in ECMA-262, 5th edition, assuming Object, TypeError, Number, Math.floor, 
-//Math.abs, and Math.max have their original value.
-
-if (!Array.prototype.indexOf)
+﻿if (!Array.prototype.indexOf)
 {
 	Array.prototype.indexOf = function(elt /*, from*/){
 		var len = this.length >>> 0;
@@ -16,6 +11,31 @@ if (!Array.prototype.indexOf)
 		return -1;
 	};
 }
+
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp */)
+  {
+    "use strict";
+    if (this === void 0 || this === null) throw new TypeError();
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (typeof fun !== "function")throw new TypeError();
+    var res = [];
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in t)
+      {
+        var val = t[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, t))
+          res.push(val);
+      }
+    }
+    return res;
+  };
+}
+
 ng.utils = {
     visualLength: function (string) {
         var elem = document.getElementById('testDataLength');

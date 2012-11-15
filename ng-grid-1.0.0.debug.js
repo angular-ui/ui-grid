@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 16:46:46
+* Compiled At: 11/14/2012 18:05:12
 ***********************************************/
 
 (function(window, undefined){
@@ -93,11 +93,6 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
 /***********************************************
 * FILE: ..\src\utils.js
 ***********************************************/
-//Taken from MDC: indexOf is a recent addition to the ECMA-262 standard; as such 
-//it may not be present in all browsers. This algorithm is exactly the one specified 
-//in ECMA-262, 5th edition, assuming Object, TypeError, Number, Math.floor, 
-//Math.abs, and Math.max have their original value.
-
 if (!Array.prototype.indexOf)
 {
 	Array.prototype.indexOf = function(elt /*, from*/){
@@ -111,6 +106,31 @@ if (!Array.prototype.indexOf)
 		return -1;
 	};
 }
+
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp */)
+  {
+    "use strict";
+    if (this === void 0 || this === null) throw new TypeError();
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (typeof fun !== "function")throw new TypeError();
+    var res = [];
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in t)
+      {
+        var val = t[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, t))
+          res.push(val);
+      }
+    }
+    return res;
+  };
+}
+
 ng.utils = {
     visualLength: function (string) {
         var elem = document.getElementById('testDataLength');
@@ -751,15 +771,47 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-        grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-        if (grid.config.enableRowRerodering) {
-            grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
-        }
+		if(grid.config.jqueryUIDraggable){
+			grid.$groupPanel.droppable({
+				addClasses: false,
+				drop: function( event, ui ) {
+					self.onGroupDrop(event);
+				}
+			});
+			$(document).ready(self.setDraggables);	
+		} else {
+			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
+			if (grid.config.enableRowRerodering) {
+				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
+			}
+		}
+		$scope.$watch('columns', self.setDraggables, true);	
+		
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
     };	
+	
+	//For JQueryUI
+	self.setDraggables = function(){
+		if(!grid.config.jqueryUIDraggable){	
+			$('.ngHeaderSortColumn').attr('draggable', 'true').on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
+		} else {
+			$('.ngHeaderSortColumn').draggable({
+				helper: "clone",
+				appendTo: 'body',
+				addClasses: false,
+				start: function(event, ui){
+					self.onHeaderMouseDown(event);
+				}
+			}).droppable({
+				drop: function( event, ui ) {
+					self.onHeaderDrop(event);
+				}
+			});
+		}
+	};
     
     self.onGroupDragStart = function () {
         // color the header so we know what we are moving
@@ -782,8 +834,10 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
 			var groupItemScope = angular.element(groupItem).scope();
 			if (groupItemScope) {
 				// set draggable events
-				groupItem.attr('draggable', 'true');
-				groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+				if(!grid.config.jqueryUIDraggable){
+					groupItem.attr('draggable', 'true');
+					groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+				}
 				// Save the column for later.
 				self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
 			}
@@ -841,9 +895,6 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
         // Get the scope from the header container
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
-            // set draggable events
-            headerContainer.attr('draggable', 'true');
-            headerContainer.on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }
@@ -1087,6 +1138,7 @@ ng.RowFactory = function (grid, $scope) {
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
+	var parents = [];
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
@@ -1270,6 +1322,7 @@ ng.RowFactory = function (grid, $scope) {
             return;
         }
         var rowArr = [];
+		parents = [];
         if (self.parsedData.needsUpdate) {
             self.parsedData.values.length = 0;
             self.parseGroupData(self.groupedData);
@@ -1293,7 +1346,7 @@ ng.RowFactory = function (grid, $scope) {
     };
     
     //magical recursion. it works. I swear it.
-    var parents = [];
+    
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
@@ -1367,6 +1420,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             rowTemplate: undefined,
             headerRowTemplate: undefined,
 			jqueryUITheme: false,
+			jqueryUIDraggable: false,
             plugins: [],
             keepLastSelected: true,
             groups: [],
