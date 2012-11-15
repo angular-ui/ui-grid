@@ -32,7 +32,7 @@
     };
 
     self.onGroupMouseDown = function(event) {
-        var groupItem = $(event.srcElement);
+        var groupItem = $(event.target);
         // Get the scope from the header container
 		if(groupItem[0].className != 'ngRemoveGroup'){
 			var groupItemScope = angular.element(groupItem).scope();
@@ -53,7 +53,7 @@
         if (self.groupToMove) {
 			self.onGroupDragStop();
             // Get the closest header to where we dropped
-            var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+            var groupContainer = $(event.target).closest('.ngGroupElement');
             // Get the scope from the header.
             if (groupContainer.context.className == 'ngGroupPanel') {
                 $scope.configGroups.splice(self.groupToMove.index, 1);
@@ -73,7 +73,7 @@
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-				var groupContainer = $(event.srcElement).closest('.ngGroupElement');
+				var groupContainer = $(event.target).closest('.ngGroupElement');
 				// Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
 					$scope.configGroups.push(self.colToMove.col);
@@ -93,13 +93,17 @@
     //Header functions
     self.onHeaderMouseDown = function (event) {
         // Get the closest header container from where we clicked.
-        var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
+        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
         // Get the scope from the header container
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
             // set draggable events
             headerContainer.attr('draggable', 'true');
             headerContainer.on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
+            /*$(headerContainer).draggable({
+				helper: "clone",
+				appendTo: 'body'
+			});*/
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }
@@ -123,7 +127,7 @@
         if (!self.colToMove) return;
         self.onHeaderDragStop();
         // Get the closest header to where we dropped
-        var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
+        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
         // Get the scope from the header.
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
@@ -146,7 +150,7 @@
     // Row functions
     self.onRowMouseDown = function (event) {
         // Get the closest row element from where we clicked.
-        var targetRow = $(event.srcElement).closest('.ngRow');
+        var targetRow = $(event.target).closest('.ngRow');
         // Get the scope from the row element
         var rowScope = angular.element(targetRow).scope();
         if (rowScope) {
@@ -159,7 +163,7 @@
 
     self.onRowDrop = function (event) {
         // Get the closest row to where we dropped
-        var targetRow = $(event.srcElement).closest('.ngRow');
+        var targetRow = $(event.target).closest('.ngRow');
         // Get the scope from the row element.
         var rowScope = angular.element(targetRow).scope();
         if (rowScope) {
