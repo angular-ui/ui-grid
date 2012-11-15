@@ -11,7 +11,7 @@ Based on koGrid:
  
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
-Dependencies: jQuery & angular.js
+Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome aggregate feature)
 ***
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
@@ -19,7 +19,7 @@ __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
 ##Disclaimer##
 
-ng-grid is in pre-beta release currently. We are going to be adding more features here as we head to a 1.0 release.
+ng-grid is in beta release currently. We are going to be adding more features here as we head to a 1.0 release.
 
 ***
 _The bare bones_:
