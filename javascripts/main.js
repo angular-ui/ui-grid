@@ -31,7 +31,7 @@ function userController($scope, $filter) {
 		data: 'filteredData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
-        plugins: [new ngGridReorderable()],
+        jqueryUITheme: false, // enable the jqueryUIThemes
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
                      { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
@@ -56,7 +56,6 @@ function userController($scope, $filter) {
                      { field: 'SeasonCode', displayName: 'My SeasonCode', width: 140, cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
                      { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
                      { field: 'UPC', displayName: 'Bar Code', width: "*" }],
-        plugins: [new ngGridReorderable()]
     };
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();

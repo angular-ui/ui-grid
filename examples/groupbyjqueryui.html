@@ -8,9 +8,9 @@
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="http://code.angularjs.org/1.0.2/angular.js"></script>
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/ng-grid-1.0.0.debug.js"></script>
-    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/maingb.js"></script>
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/maingbjq.js"></script>
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/largeLoad.js"></script>
-    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/ng-grid-reorderable.js"></script>
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/jquery-ui-1.9.1.custom.min.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
     </script>
@@ -21,8 +21,7 @@ Try:
         <ul>
             <li>Drag a column header to group by that column.</li>
             <li>Click the x to make the groups disappear.</li>
-            <li>Rearrange the groups to change the grouping order.</li>            
-            <li>Not working correctly in your browser? check out the JQueryUI option for compatibility with non-html5 compliant browsers <a href="http://timothyswt.github.com/ng-grid/examples/groupbyjqueryui.html">here</a>.</li>
+            <li>Rearrange the groups to change the grouping order.</li>
         </ul>
         <div>
             <div style="margin: 10px;  width: 600px; height: 400px; float: left;" ng-grid="gridOptions">
