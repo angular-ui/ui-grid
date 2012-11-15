@@ -9,6 +9,7 @@ function userController($scope) {
     $scope.gridOptions = {
 		data: 'myData',
 		jqueryUITheme: false,
+		jqueryUIDraggable: true,
         selectedItems: $scope.mySelections,
         displaySelectionCheckbox: false,
         multiSelect: true,

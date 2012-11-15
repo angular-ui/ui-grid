@@ -32,6 +32,7 @@ ng.Grid = function ($scope, options, gridDim, SortService, GridService) {
             rowTemplate: undefined,
             headerRowTemplate: undefined,
 			jqueryUITheme: false,
+			jqueryUIDraggable: false,
             plugins: [],
             keepLastSelected: true,
             groups: [],
