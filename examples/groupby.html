@@ -8,8 +8,8 @@
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="http://code.angularjs.org/1.0.2/angular.js"></script>
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/ng-grid-1.0.0.debug.js"></script>
-    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/main.js"></script>
-    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/largeTestData.js"></script>
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/maingb.js"></script>
+    <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/largeLoad.js"></script>
     <script type="text/javascript" src="http://timothyswt.github.com/ng-grid/javascripts/ng-grid-reorderable.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
@@ -19,28 +19,15 @@ Try:
 
     <body ng-app="myApp" ng-controller="userController">
         <ul>
-            <li>Sorting by clicking the header row.</li>
-            <li>Reordering columns and rows. (plugin ng-grid-reorderable)</li>
-            <li>Selecting all (this is a multselect grid)</li>
-            <li>double click the header grips to resize base don the column data.</li>
-            <li>Head on over <a href="http://timothyswt.github.com/ng-grid/examples/overcast.html">here</a> to check out theme support.</li>
-            <li>check out Group Aggregates <a href="http://timothyswt.github.com/ng-grid/examples/groupby.html">here</a>.</li>
-			<li>Search using built-in angularjs filter.</li>
+            <li>Drag a column header to group by that column.</li>
+            <li>Click the x to make the groups disappear.</li>
+            <li>Rearrange the groups to change the grouping order.</li>
         </ul>
         <div>
 			<input placeholder="Search..." ng-model="searchText" />
             <div style="margin: 10px;  width: 600px; height: 400px; float: left;" ng-grid="gridOptions">
             </div>
             <span style="float: right; width: 50%;">mySelections: {{mySelections | json}}</span>
-        </div>
-        <p>Try: 
-        Adding more data..</p>
-        <button ng-click="changeData()">Insert Rows</button>
-        <p>This is a single select. You can navigate your selection with arrow keys! (up/down)</p>
-        <div>
-            <div style="margin: 10px;  width: 600px; height: 400px; float: left;" ng-grid="gridOptions2">
-            </div>
-            <span style="float: right; width: 50%;">mySelections2: {{mySelections2 | json}}</span>
         </div>
     </body>
 </html>
