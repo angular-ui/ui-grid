@@ -1,11 +1,10 @@
 /// <reference path="../plugins/ng-grid-reorderable.js" />
 /// <reference path="../ng-grid-1.0.0.debug.js" />
 
-function userController($scope, $filter) {
-    var self = this;
+function userController($scope) {
     $scope.mySelections = [];
     $scope.mySelections2 = [];
-    self.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , paid: true},
+    $scope.myData = [{ name: "Moroni", allowance: 50, birthday: 1351728000000, paid: true },
                      {name: "Tiancum", allowance: 47, birthday: 1351728000000 , paid: false},
                      {name: "Jacob", allowance: 27, birthday: 1351728000000 , paid: false},
                      {name: "Nephi", allowance: 29, birthday: 1351728000000 , paid: false},
