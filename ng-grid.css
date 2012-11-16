@@ -73,11 +73,12 @@
 }
 
 .ngRemoveGroup {
-	width: 5px;
-	float:right;
-	opacity: 0.4;
-	margin-top: -1px;
-	margin-left: 5px;
+    width: 5px;
+    float: right;
+    -moz-opacity: 0.4;
+    opacity: 0.4;
+    margin-top: -1px;
+    margin-left: 5px;
 }
 .ngRemoveGroup:hover {
     color: black;
@@ -122,10 +123,6 @@
     border-right-style: solid;
     position: absolute;
     cursor: pointer;
-    white-space: nowrap;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
 }
 .ngSortButtonUp {
     position: absolute;
@@ -163,7 +160,13 @@
     z-index: 1000; 
 }
 .ngHeaderText {
-	margin-left: 5px;
+    margin-left: 5px;
+    white-space: nowrap;
+    display: block;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 /******** Viewport ********/

@@ -379,7 +379,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-
+    $scope.headerTextStyle = function($index) {
+        return { "width": $scope.columns[$index].width + "px"};
+    };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
