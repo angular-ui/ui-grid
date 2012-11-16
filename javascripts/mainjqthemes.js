@@ -14,7 +14,7 @@ function userController($scope, $filter) {
                      {name: "Alma", allowance: 43, birthday: 1288323623006 , paid: true},
                      {name: "Jared", allowance: 21, birthday: 1288323623006 , paid: true}];
     $scope.gridOptions = {
-		data: 'filteredData',
+        data: 'myData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
         jqueryUITheme: true, // enable the jqueryUIThemes
