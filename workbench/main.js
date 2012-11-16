@@ -16,8 +16,8 @@ function userController($scope) {
 		showGroupPanel: true,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: '50%', cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
                      { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
-                     { field: 'birthday', width: '120px', aggLabelFilter: 'date', cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
-                     { field: 'paid', width: '*', aggLabelFilter: 'checkmark', cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
+                     { field: 'birthday', width: '120px', cellFilter: 'date' },
+                     { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },

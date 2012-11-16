@@ -10,8 +10,8 @@
     self.widthWatcher = null;
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
-    self.aggLabelFilter = colDef.aggLabelFilter;
-
+    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
@@ -38,11 +38,12 @@
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field]}}</div>';
+        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
     self.cellClass = colDef.cellClass;
+    self.cellFilter = colDef.cellFilter ? "|" + colDef.cellFilter : "";
     self.headerClass = colDef.headerClass;
 
     self.headerCellTemplate = function() {

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/16/2012 13:28:09
+* Compiled At: 11/16/2012 13:38:03
 ***********************************************/
 
 (function(window, undefined){
@@ -31,6 +31,7 @@ var NG_FIELD = '_ng_field_';
 var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
+var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -993,8 +994,8 @@ ng.Column = function (config) {
     self.widthWatcher = null;
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
-    self.aggLabelFilter = colDef.aggLabelFilter;
-
+    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
@@ -1021,11 +1022,12 @@ ng.Column = function (config) {
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field]}}</div>';
+        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
     self.cellClass = colDef.cellClass;
+    self.cellFilter = colDef.cellFilter ? "|" + colDef.cellFilter : "";
     self.headerClass = colDef.headerClass;
 
     self.headerCellTemplate = function() {
@@ -2295,9 +2297,9 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                     if ($scope.row.isAggRow) {
                         html = ng.aggregateTemplate();
                         if ($scope.row.aggLabelFilter) {
-                            html = html.replace(/CUSTOM_FILTERS/g, '| ' + $scope.row.aggLabelFilter);
+                            html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
-                            html = html.replace(/CUSTOM_FILTERS/g, "");
+                            html = html.replace(CUSTOM_FILTERS, "");
                         }
                     } else {
                         html = $scope.$parent.rowTemplate();
