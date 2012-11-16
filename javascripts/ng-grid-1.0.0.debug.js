@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 22:08:35
+* Compiled At: 11/15/2012 21:53:11
 ***********************************************/
 
 (function(window, undefined){
@@ -668,7 +668,7 @@ ng.aggregateTemplate = function () {
 ***********************************************/
 
 ng.defaultHeaderRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-style="headerCellSize(col)" ng-header-cell><div>';
+    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-header-cell><div>';
 };
 
 /***********************************************
@@ -679,7 +679,7 @@ ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div>');
     b.append('  <div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append('      <span class="ngHeaderText">{{col.displayName}}</span>');
+    b.append('      <span ng-style="headerTextStyle($index)"class="ngHeaderText">{{col.displayName}}</span>');
     b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('  </div>');
@@ -1026,7 +1026,6 @@ ng.Column = function (config) {
 
     self.cellClass = colDef.cellClass;
     self.headerClass = colDef.headerClass;
-
     self.headerCellTemplate = function() {
         return colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     };
@@ -1283,7 +1282,7 @@ ng.RowFactory = function (grid, $scope) {
                             width: 25,
                             sortable: false,
                             resizable: false,
-                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
                         },
                         isAggCol: true,
                         index: item.gDepth,
@@ -1772,7 +1771,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-
+    $scope.headerTextStyle = function($index) {
+        return { "width": $scope.columns[$index].width + "px"};
+    };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
