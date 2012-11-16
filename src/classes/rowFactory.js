@@ -157,7 +157,7 @@ ng.RowFactory = function (grid, $scope) {
                             width: 25,
                             sortable: false,
                             resizable: false,
-                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
                         },
                         isAggCol: true,
                         index: item.gDepth,

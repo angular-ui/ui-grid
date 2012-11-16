@@ -11,7 +11,7 @@ function userController($scope) {
 		jqueryUITheme: false,
 		jqueryUIDraggable: false,
         selectedItems: $scope.mySelections,
-        displaySelectionCheckbox: false,
+        displaySelectionCheckbox: true,
         multiSelect: true,
 		showGroupPanel: true,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},

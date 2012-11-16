@@ -1,14 +1,18 @@
-﻿.ng-scope {
-	margin: 0;
-	padding: 0;
-}
-
+﻿
 /******** Grid Global ********/
 .nglabel {
     display: block;
     float: left;
     font-weight: bold;
     padding-right: 5px;
+}
+.ngNoSelect{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 /******** Grid ********/
 
@@ -37,8 +41,8 @@
 
 .ngGroupList {
 	list-style-type: none;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
 
 .ngGroupItem {
@@ -49,17 +53,19 @@
 	float: left;
 	height: 100%; 
 	width: 100%;
-}	
+}
 
-.ngGroupName{
-	background-color: rgb(247,247,247);
-	border: 1px solid rgb(212,212,212);
-	padding: 3px 10px;
-	float: left;
-	margin-left: 0px;
-	margin-top: 2px;
-	border-radius: 3px;
-	font-weight:bold;
+.ngGroupName {
+    background-color: rgb(247,247,247);
+    border: 1px solid rgb(212,212,212);
+    padding: 3px 10px;
+    float: left;
+    margin-left: 0;
+    margin-top: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    font-weight: bold;
 }
 
 .ngGroupItem:first-child{
@@ -74,10 +80,11 @@
 	margin-left: 5px;
 }
 .ngRemoveGroup:hover {
-	color: black;
-	text-decoration: none;
-	cursor: pointer;
-	opacity: 0.7;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    -moz-opacity: 0.7;
+    opacity: 0.7;
 }
 .ngGroupArrow {
 	width: 0; 
@@ -110,31 +117,54 @@
     overflow: hidden;
 }
 
-.ngHeaderCell {
+.ngHeaderCell{
+	border-right: 1px solid rgb(212,212,212);
+    border-right-style: solid;
     position: absolute;
-    padding: 0 0 0 0;
     cursor: pointer;
     white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
-
+.ngSortButtonUp {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 0 5px 5px 5px;
+	height: 0;
+	width: 0;
+}
+.ngSortButtonDown {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 5px 5px 0 5px;
+    height: 0;
+	width: 0;
+}
+.ngHeaderGrip { 
+    cursor: col-resize; 
+    width: 10px; 
+	right: -5px;
+    top: 0; 
+    height: 100%; 
+    position: absolute; 
+    z-index: 1000; 
+}
 .ngHeaderText {
 	margin-left: 5px;
 }
-
-div.ngHeaderCell{
-	border-left: 1px solid rgb(212,212,212);
-	border-right: 1px solid rgb(212,212,212);
-}
-
-div.ngHeaderCell:first-child{
-	border-left: 0px;
-}
-
-div.ngHeaderCell:last-child{
-	border-right: 1px solid rgb(212,212,212);
-}
-
 
 /******** Viewport ********/
 .ngViewport{
@@ -159,7 +189,7 @@ div.ngHeaderCell:last-child{
     background-color: rgb(253, 253, 253);
 }
 .ngRow.selected {
-    background-color: rgb(255, 255, 204);
+    background-color: rgb(189, 208, 203);
 }
 .ngRow.canSelect {
     cursor: pointer;
@@ -167,49 +197,34 @@ div.ngHeaderCell:last-child{
 
 /******** Cells ********/
 .ngCell {
-    overflow: hidden; 
+    overflow: hidden;
     position: absolute;
-    padding: 0;
     display: inline;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    border-right: 1px ;
+    border-right-style: inset;
 }
-.ngRowIndexCell{ 
-    text-align: center;
+.ngCellText {
+	position: absolute;
+	top: 6px;
+	left: 6px;
 }
-
 .ngSelectionHeader {
 	position: absolute;
     top: 11px; 
     left: 6px;
 }
-
 input[type="checkbox"] {
 	margin: 0;
 	padding: 0;
 }
-
 input {
 	vertical-align:top;
 }
-
 .ngSelectionCell{
 	margin-top: 9px;
 	margin-left: 6px;
 }
-
-.ngCellText {
-	position: absolute;
-	top: 5px;
-	left: 4px;
-}
-
-/******** Header Sorting ********/
-.ngSortImg{
-    height: 9px;
-    width: 7px;
-}
-
 .ngNoSort {
     cursor:default;
 }
@@ -233,107 +248,45 @@ input {
 	padding: 2px;
 }
 .ngFooterTotalItems.ngnoMultiSelect {
-    padding: 0px !important;
+    padding: 0 !important;
 }
 
-.ngHeaderDisplayNameContainer{
-}
-
-.ngHeaderDisplayName{
-    
-}
-.ngSortButtonUp {
+/* Aggregates */
+.ngAggHeader {
     position: absolute;
-    top: 3px;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-	border-color: gray transparent;
-	border-style: solid;
-	border-width: 0px 5px 5px 5px;
-	height: 0px;
-	width: 0px;
+    border: none;
 }
-.ngSortButtonDown {
-    position: absolute;
-    top: 3px;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-	border-color: gray transparent;
-	border-style: solid;
-	border-width: 5px 5px 0px 5px;
-    height: 0px;
-	width: 0px;
-}
-.ngHeaderGrip { 
-    cursor: col-resize; 
-    width: 5px; 
-	right: -1px;
-	margin-right: -2px;
-	margin-left: 3px;
-    top: 0; 
-    height: 100%; 
-    position: absolute; 
-    z-index: 1000; 
-}
-.ngHeaderGrip:hover { 
-	background-color:darkgray;
-    cursor: col-resize; 
-    width: 5px; 
-    right: -1px;
-    margin-right: -2px;
-    margin-left: 3px;
-    top: 0; 
-    height: 100%; 
-    position: absolute; 
-    z-index: 1000; 
-}
-
-.ngNoSelect{
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 .ngAggregate {
     position: absolute;
-    background-color: rgb(95,168,184);
-    top: 1px;
-    bottom: 1px;
-    right: 0;
+    background-color: rgb(179, 191, 188);
+    border-bottom: 1px solid beige;
+    top: 0;
+    bottom: 0;
+    right: -1px;
 	left: 0;
-    padding-top: 3px;
 }
-
 .ngAggregateText {
     position: absolute;
     left: 27px;
-	top:3px;
+	top: 5px;
+    line-height: 20px;
 }
-
 .ngAggArrowExpanded {
     position: absolute;
     left: 8px;
     bottom: 10px;
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     border-style: solid;
     border-width: 0 0 9px 9px;
     border-color: transparent transparent #000000 transparent;
 }
-
 .ngAggArrowCollapsed {
     position: absolute;
     left: 8px;
     bottom: 10px;
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     border-style: solid;
     border-width: 5px 0 5px 8.7px;
     border-color: transparent transparent transparent #000000;

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/14/2012 22:08:35
+* Compiled At: 11/15/2012 17:40:23
 ***********************************************/
 
 (function(window, undefined){
@@ -1283,7 +1283,7 @@ ng.RowFactory = function (grid, $scope) {
                             width: 25,
                             sortable: false,
                             resizable: false,
-                            headerCellTemplate: '<div style="width: 100%; height 100%;"></div>',
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
                         },
                         isAggCol: true,
                         index: item.gDepth,
