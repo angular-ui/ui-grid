@@ -18,8 +18,8 @@ function userController($scope) {
         multiSelect: true,
         jqueryUITheme: true, // enable the jqueryUIThemes
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },
-                     { field: 'allowance', width: 100, cellTemplate: 'currency'},
-                     { field: 'birthday', width: 100, cellTemplate: 'date' },
+                     { field: 'allowance', width: 100, cellFilter: 'currency' },
+                     { field: 'birthday', width: 100, cellFilter: 'date' },
                      { field: 'paid', width: 100, cellFilter: 'checkmark' }]
     };
 };
