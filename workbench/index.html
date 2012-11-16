@@ -24,7 +24,6 @@
     <script type="text/javascript" src="../lib/jquery-ui-1.9.1.custom.min.js"></script>
     <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="../ng-grid-1.0.0.debug.js"></script>
-    <script type="text/javascript" src="../plugins/ng-grid-reorderable.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
@@ -32,7 +31,7 @@
 </head>
     <body ng-app="myApp" ng-controller="userController">
 
-        <div style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px;" ng-grid="gridOptions">
+        <div style="margin: 10px;  width: 600px; height: 800px;" ng-grid="gridOptions">
         </div>
         <button ng-click="changeData()">Insert Rows</button>
         <span>mySelections: {{mySelections | json}}</span>

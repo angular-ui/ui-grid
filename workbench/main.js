@@ -14,10 +14,10 @@ function userController($scope) {
         displaySelectionCheckbox: true,
         multiSelect: true,
 		showGroupPanel: true,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
-                     { field: 'allowance', width: 100, aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: '50%', cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
+                     { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
                      { field: 'birthday', width: '120px', aggLabelFilter: 'date', cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
-                     { field: 'paid', width: 100, aggLabelFilter: 'checkmark', cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
+                     { field: 'paid', width: '*', aggLabelFilter: 'checkmark', cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
@@ -37,8 +37,7 @@ function userController($scope) {
                      { field: 'Vendor', displayName: 'Supplier', width: '120px' },
                      { field: 'SeasonCode', displayName: 'My SeasonCode', width: 140, cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
                      { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
-                     { field: 'UPC', displayName: 'Bar Code', width: "*" }],
-        plugins: [new ngGridReorderable()]
+                     { field: 'UPC', displayName: 'Bar Code', width: "*" }]
     };
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();

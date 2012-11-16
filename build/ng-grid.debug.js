@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/15/2012 21:53:11
+* Compiled At: 11/16/2012 13:28:09
 ***********************************************/
 
 (function(window, undefined){
@@ -172,6 +172,7 @@ ng.utils = {
         }
     },
     endsWith: function (str, suffix) {
+        if (!str || !suffix || typeof str != "string") return false;
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
     isNullOrUndefined: function (obj){
@@ -1026,6 +1027,7 @@ ng.Column = function (config) {
 
     self.cellClass = colDef.cellClass;
     self.headerClass = colDef.headerClass;
+
     self.headerCellTemplate = function() {
         return colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     };
@@ -1669,9 +1671,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             var i;
             if (index == 0) {
                 var kgHeaderText = $(elem).find('.ngHeaderText');
-                i = ng.utils.visualLength(kgHeaderText) + 10;
+                i = ng.utils.visualLength(kgHeaderText) + 10;// +10 some margin
             } else {
-                i = ng.utils.visualLength(elem);
+                var ngCellText = $(elem).find('.ngCellText');
+                i = ng.utils.visualLength(ngCellText) + 10; // +10 some margin
             }
             if (i > longest) {
                 longest = i;
@@ -1793,6 +1796,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
             var t = parseInt(col.width);
+            var isPercent = isNaN(t) ? ng.utils.endsWith(t, "%") : false;
+            t = isPercent ? t : parseInt(t);
             // check if it is a number
             if (isNaN(t)) {
                 t = col.width;
@@ -1804,6 +1809,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                     col.width = col.minWidth;
                     var temp = col;
                     $(document).ready(function () { self.resizeOnData(temp, true); });
+                    return;
                 } else if (t.indexOf("*") != -1){
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0){
@@ -1813,7 +1819,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                         asterisksArray.push(col);
                         return;
                     }
-                } else if (ng.utils.endsWith(t, "%")){ // If the width is a percentage, save it until the very last.
+                } else if (isPercent) { // If the width is a percentage, save it until the very last.
                     percentArray.push(col);
                     return;
                 } else { // we can't parse the width so lets throw an error.
@@ -1821,7 +1827,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 }
             }
             // add the caluclated or pre-defined width the total width
-            totalWidth += col.width = t;
+            totalWidth += col.width = parseInt(col.width);
             // set the flag as the width is configured so the subscribers can be added
             col.widthIsConfigured = true;
         });
