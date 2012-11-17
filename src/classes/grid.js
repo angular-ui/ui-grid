@@ -11,7 +11,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
-            headerRowHeight: 32,
+            headerRowHeight: 30,
             footerRowHeight: 55,
             footerVisible: true,
             canSelectRows: true,
@@ -366,7 +366,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
     $scope.headerScrollerStyle = function() {
-        return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
+        return { "width": ($scope.totalRowWidth() + ng.domUtility.scrollH  + 2)+ "px", "height": self.config.headerRowHeight + "px" };
     };
 	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };

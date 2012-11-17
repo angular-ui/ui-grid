@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/16/2012 13:38:03
+* Compiled At: 11/16/2012 17:05:10
 ***********************************************/
 
 (function(window, undefined){
@@ -679,14 +679,12 @@ ng.defaultHeaderRowTemplate = function () {
 
 ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
-    b.append('<div>');
-    b.append('  <div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append('      <span ng-style="headerTextStyle($index)"class="ngHeaderText">{{col.displayName}}</span>');
-    b.append('      <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
-    b.append('      <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
-    b.append('  </div>');
-    b.append('  <div ng-show="col.allowResize" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>');
+    b.append('<div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
+    b.append('   <div ng-style="headerTextStyle($index)"class="ngHeaderText">{{col.displayName}}</div>');
+    b.append('   <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
+    b.append('   <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('</div>');
+    b.append('<div ng-show="col.allowResize" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>');
     return b.toString();
 };
 
@@ -1407,7 +1405,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
-            headerRowHeight: 32,
+            headerRowHeight: 30,
             footerRowHeight: 55,
             footerVisible: true,
             canSelectRows: true,
@@ -1762,7 +1760,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
     $scope.headerScrollerStyle = function() {
-        return { "width": $scope.totalRowWidth() + ng.domUtility.scrollH + "px", "height": self.config.headerRowHeight + "px" };
+        return { "width": ($scope.totalRowWidth() + ng.domUtility.scrollH  + 2)+ "px", "height": self.config.headerRowHeight + "px" };
     };
 	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
