@@ -31,11 +31,10 @@ function userController($scope, $filter) {
 		data: 'filteredData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
-        jqueryUITheme: false, // enable the jqueryUIThemes
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200, cellTemplate: '<input class="ui-widget input" style="width:100%;height:100%;" ng-model="row.entity[col.field]" />'},
-                     { field: 'allowance', width: 100, cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'},
-                     { field: 'birthday', width: 100, cellTemplate: '<div class="ngCellText">{{row.entity[col.field] | date}}</div>' },
-                     { field: 'paid', width: 100, cellTemplate: '<div ng-class="{green: row.entity[col.field], red: !row.entity[col.field] }"><div class="ngCellText">{{row.entity[col.field] | checkmark}}</div></div>' }]
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },
+                     { field: 'allowance', width: 100, cellFilter: 'currency' },
+                     { field: 'birthday', width: 100, cellFilter: 'date' },
+                     { field: 'paid', width: 100, cellFilter: 'checkmark' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
