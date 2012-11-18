@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 17:49:19
+* Compiled At: 11/17/2012 18:00:34
 ***********************************************/
 
 (function(window, undefined){
@@ -933,7 +933,7 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
-            grid.cssBuilder.buildStyles();
+            grid.cssBuilder.buildStyles(true);
             // clear out the colToMove object
             self.colToMove = undefined;
         }
@@ -1074,7 +1074,7 @@ ng.Column = function (config) {
     self.gripOnMouseDown = function (event) {
         if (event.ctrlKey) {
             self.toggleVisible();
-            config.cssBuilder.buildStyles();
+            config.cssBuilder.buildStyles(true);
             return true;
         }
         document.body.style.cursor = 'col-resize';
@@ -1096,6 +1096,7 @@ ng.Column = function (config) {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
+        config.cssBuilder.apply();
         return false;
     };
 };
@@ -1323,7 +1324,6 @@ ng.RowFactory = function (grid, $scope) {
             ptr.values.push(item);
         });
         grid.fixColumnIndexes();
-        grid.cssBuilder.buildStyles();
     };
     
     self.parsedData = { needsUpdate: true, values: [] };
@@ -1537,6 +1537,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //if its not the same, then fire the subscriptions
             $scope.rootDim = dim;
         }
+        self.cssBuilder.buildStyles(true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -1550,7 +1551,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -1642,13 +1642,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 afterSelectionChangeCallback: self.config.afterSelectionChange
             }
         });
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
     };
     self.update = function () {
         var updater = function () {
             self.refreshDomSizes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.buildStyles(true);
             if (self.initPhase > 0 && self.$root) {
                 self.$root.show();
             }
@@ -1688,7 +1688,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             }
         });
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
     };
     self.sortData = function(col, direction) {
         sortInfo = {
@@ -1794,7 +1794,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.apply();
         }
     };
     $scope.totalRowWidth = function () {
@@ -2053,7 +2053,7 @@ ng.SelectionService = function (grid) {
 
 ng.CssBuilder = function ($scope, grid) {
     var self = this;
-    self.buildStyles = function() {
+    self.buildStyles = function(apply) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
@@ -2080,6 +2080,9 @@ ng.CssBuilder = function ($scope, grid) {
             $style[0].appendChild(document.createTextNode(css.toString(" ")));
         }
         grid.$styleSheet = $style;
+        if (apply) self.apply();
+    };
+    self.apply = function() {
         if (!$scope.$$phase) {
             $scope.$digest();
         }

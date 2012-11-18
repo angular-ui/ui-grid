@@ -165,7 +165,7 @@
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
-            grid.cssBuilder.buildStyles();
+            grid.cssBuilder.buildStyles(true);
             // clear out the colToMove object
             self.colToMove = undefined;
         }

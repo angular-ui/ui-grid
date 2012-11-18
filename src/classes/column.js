@@ -92,7 +92,7 @@
     self.gripOnMouseDown = function (event) {
         if (event.ctrlKey) {
             self.toggleVisible();
-            config.cssBuilder.buildStyles();
+            config.cssBuilder.buildStyles(true);
             return true;
         }
         document.body.style.cursor = 'col-resize';
@@ -114,6 +114,7 @@
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
+        config.cssBuilder.apply();
         return false;
     };
 };

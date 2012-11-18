@@ -136,6 +136,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //if its not the same, then fire the subscriptions
             $scope.rootDim = dim;
         }
+        self.cssBuilder.buildStyles(true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -149,7 +150,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -241,13 +241,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 afterSelectionChangeCallback: self.config.afterSelectionChange
             }
         });
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
     };
     self.update = function () {
         var updater = function () {
             self.refreshDomSizes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.buildStyles(true);
             if (self.initPhase > 0 && self.$root) {
                 self.$root.show();
             }
@@ -287,7 +287,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             }
         });
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
     };
     self.sortData = function(col, direction) {
         sortInfo = {
@@ -393,7 +393,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.apply();
         }
     };
     $scope.totalRowWidth = function () {

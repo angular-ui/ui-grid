@@ -8,7 +8,7 @@
 
 ng.CssBuilder = function ($scope, grid) {
     var self = this;
-    self.buildStyles = function() {
+    self.buildStyles = function(apply) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
@@ -35,6 +35,9 @@ ng.CssBuilder = function ($scope, grid) {
             $style[0].appendChild(document.createTextNode(css.toString(" ")));
         }
         grid.$styleSheet = $style;
+        if (apply) self.apply();
+    };
+    self.apply = function() {
         if (!$scope.$$phase) {
             $scope.$digest();
         }
