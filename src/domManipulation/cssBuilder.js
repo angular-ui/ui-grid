@@ -19,12 +19,13 @@ ng.CssBuilder = function ($scope, grid) {
         
         if (!$style) $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('html'));
         $style.empty();
-        if ($scope.totalRowWidth() > $scope.width)
-            css.append(".{0} .ngCanvas { width: {1}px; }", gridId, $scope.totalRowWidth());
-        css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
-        css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
-        css.append(".{0} .ngHeaderScroller { line-height: {1}px; }", gridId, headerRowHeight);
         var trw = $scope.totalRowWidth();
+        css.append(".{0} .ngCanvas { width: {1}px; }", gridId, trw);
+        css.append(".{0} .ngRow { width: {1}px; }", gridId, trw);
+        css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
+        css.append(".{0} .ngCanvas { width: {1}px; }", gridId, trw);
+        css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
+        css.append(".{0} .ngHeaderScroller { line-height: {1}px; width: {2}px}", gridId, headerRowHeight, (trw + ng.domUtility.scrollH + 2));
         angular.forEach(cols, function(col, i) {
             css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, col.width, sumWidth, (trw - sumWidth - col.width), rowHeight);
             sumWidth += col.width;

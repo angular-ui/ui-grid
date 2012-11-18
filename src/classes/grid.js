@@ -365,13 +365,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
-		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
+		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
 	};
 	$scope.canvasStyle = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
     $scope.headerScrollerStyle = function() {
-        return { "width": ($scope.totalRowWidth() + ng.domUtility.scrollH  + 2)+ "px", "height": self.config.headerRowHeight + "px" };
+        return { "height": self.config.headerRowHeight + "px" };
     };
 	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
