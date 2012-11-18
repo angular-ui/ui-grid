@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 18:11:32
+* Compiled At: 11/17/2012 18:20:03
 ***********************************************/
 
 (function(window, undefined){
@@ -680,7 +680,7 @@ ng.defaultHeaderRowTemplate = function () {
 ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append('   <div ng-style="headerTextStyle($index)"class="ngHeaderText">{{col.displayName}}</div>');
+    b.append('   <div class="ngHeaderText colht{{$index}}">{{col.displayName}}</div>');
     b.append('   <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('   <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('</div>');
@@ -1786,9 +1786,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-    $scope.headerTextStyle = function($index) {
-        return { "width": $scope.visibleColumns()[$index].width + "px"};
-    };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
@@ -2073,6 +2070,7 @@ ng.CssBuilder = function ($scope, grid) {
         css.append(".{0} .ngHeaderScroller { line-height: {1}px; width: {2}px}", gridId, headerRowHeight, (trw + ng.domUtility.scrollH + 2));
         angular.forEach(cols, function(col, i) {
             css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, col.width, sumWidth, (trw - sumWidth - col.width), rowHeight);
+            css.append(".{0} .colht{1} { width: {2}px; }", gridId, i, col.width);
             sumWidth += col.width;
         });
         if (ng.utils.isIe) { // IE
