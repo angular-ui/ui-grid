@@ -189,7 +189,6 @@ ng.RowFactory = function (grid, $scope) {
             ptr.values.push(item);
         });
         grid.fixColumnIndexes();
-        grid.cssBuilder.buildStyles();
     };
     
     self.parsedData = { needsUpdate: true, values: [] };

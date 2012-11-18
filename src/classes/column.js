@@ -11,14 +11,16 @@
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    
+    self.visible = colDef.visible == undefined ? true : colDef.visible;
+    self.toggleVisible = function() {
+        self.visible = !self.visible;
+    };
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
     self.index = config.index;
-    self.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -38,7 +40,7 @@
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -88,6 +90,11 @@
     };
 
     self.gripOnMouseDown = function (event) {
+        if (event.ctrlKey) {
+            self.toggleVisible();
+            config.cssBuilder.buildStyles(true);
+            return true;
+        }
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         self.startMousePosition = event.clientX;
@@ -107,6 +114,7 @@
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
+        config.cssBuilder.apply();
         return false;
     };
 };
