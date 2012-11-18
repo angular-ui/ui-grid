@@ -28,7 +28,7 @@ ng.CssBuilder = function ($scope, grid) {
         css.append(".{0} .ngHeaderScroller { line-height: {1}px; width: {2}px}", gridId, headerRowHeight, (trw + ng.domUtility.scrollH + 2));
         angular.forEach(cols, function(col, i) {
             css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, col.width, sumWidth, (trw - sumWidth - col.width), rowHeight);
-            css.append(".{0} .colht{1} { width: {2}px; }", gridId, i, col.width);
+            css.append(".{0} .colt{1} { width: {2}px; }", gridId, i, col.width);
             sumWidth += col.width;
         });
         if (ng.utils.isIe) { // IE

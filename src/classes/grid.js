@@ -221,6 +221,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
         }, true);
+        $scope.$watch('showMenu', function () {
+            self.cssBuilder.buildStyles(true);
+        });
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
@@ -332,6 +335,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.showMenu = false;
+    $scope.toggleShowMenu = function() {
+        $scope.showMenu = !$scope.showMenu;
+    };
     $scope.configGroups = self.config.groups;
     //scope funcs
     $scope.toggleSelectAll = function (a) {
@@ -377,7 +384,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": ($scope.rootDim.outerWidth - 17)+ "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
