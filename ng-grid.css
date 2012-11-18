@@ -210,9 +210,6 @@
 .ngCell {
     overflow: hidden; 
     position: absolute;
-    display: inline;
-    white-space: nowrap;
-    /*text-overflow: ellipsis;*/
 	border-left: 1px solid rgb(212,212,212);
 }
 
@@ -225,9 +222,13 @@
 }
 
 .ngCellText {
-	position: absolute;
-	top: 6px;
-	left: 6px;
+    margin-left: 5px;
+    margin-top: 5px;
+    white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .ngSelectionHeader {
 	position: absolute;

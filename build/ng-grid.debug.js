@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 18:20:03
+* Compiled At: 11/17/2012 19:13:20
 ***********************************************/
 
 (function(window, undefined){
@@ -680,7 +680,7 @@ ng.defaultHeaderRowTemplate = function () {
 ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append('   <div class="ngHeaderText colht{{$index}}">{{col.displayName}}</div>');
+    b.append('   <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>');
     b.append('   <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('   <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('</div>');
@@ -1022,7 +1022,7 @@ ng.Column = function (config) {
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -1778,7 +1778,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": ($scope.rootDim.outerWidth - 17) + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };

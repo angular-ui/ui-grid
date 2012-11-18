@@ -377,7 +377,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": ($scope.rootDim.outerWidth - 17) + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
