@@ -2,6 +2,7 @@
 ..\src\constants.js
 ..\src\navigation.js
 ..\src\utils.js
+..\src\filters\ngColumns.js
 ..\src\filters\checkmark.js
 ..\src\services\GridService.js
 ..\src\services\SortService.js

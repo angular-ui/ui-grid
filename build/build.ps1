@@ -2,7 +2,7 @@
 $CurrentDir = (Get-Location).Path;
 $OutPutFile = $CurrentDir + "\ng-grid.debug.js";
 $TempFile = $OutPutFile + ".temp";
-$FinalFile = "..\ng-grid-1.0.0.debug.js";
+$FinalFile = "..\ng-grid-1.1.0.debug.js";
 $BuildOrder = $CurrentDir + "\build-order.txt";
 
 Write-Host "JSBuild Starting...";

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/16/2012 17:05:10
+* Compiled At: 11/17/2012 21:44:41
 ***********************************************/
 
 (function(window, undefined){
@@ -255,6 +255,17 @@ $.extend(ng.utils, {
         return ng.utils.ieVersion !== undefined; 
     })()
 }); 
+
+/***********************************************
+* FILE: ..\src\filters\ngColumns.js
+***********************************************/
+ngGridFilters.filter('ngColumns', function () {
+    return function (input) {
+        return input.filter(function(col) {
+            return !col.isAggCol;
+        });
+    };
+});
 
 /***********************************************
 * FILE: ..\src\filters\checkmark.js
@@ -628,9 +639,12 @@ ng.defaultGridTemplate = function () {
 	b.append('	 	</div>');
 	b.append('      <div class="ngHeaderContainer" ng-style="headerStyle()">');
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
-    b.append('    	</div>');
-    b.append('	 </div>');
-    b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
+	b.append('    	</div>');
+	b.append('      <div class="ngHeaderButton" ng-show="showColumnMenu" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
+	b.append('         <span ng-show="showMenu" class="ngColMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
+	b.append('	    </div>');
+	b.append('	 </div>');
+	b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
     b.append('    	 <div class="ngCanvas" ng-style="canvasStyle()">');
     b.append('           <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>');
     b.append('       </div>');
@@ -654,7 +668,7 @@ ng.defaultGridTemplate = function () {
 ***********************************************/
 
 ng.defaultRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';
+    return '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';
 };
 
 /***********************************************
@@ -670,7 +684,7 @@ ng.aggregateTemplate = function () {
 ***********************************************/
 
 ng.defaultHeaderRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-header-cell><div>';
+    return '<div ng-repeat="col in visibleColumns()" class="ngHeaderCell col{{$index}}" ng-header-cell><div>';
 };
 
 /***********************************************
@@ -680,7 +694,7 @@ ng.defaultHeaderRowTemplate = function () {
 ng.defaultHeaderCellTemplate = function () {
     var b = new ng.utils.StringBuilder();
     b.append('<div ng-click="col.sort()" class="ngHeaderSortColumn" ng-class="{ \'ngSorted\': !noSortVisible }">');
-    b.append('   <div ng-style="headerTextStyle($index)"class="ngHeaderText">{{col.displayName}}</div>');
+    b.append('   <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>');
     b.append('   <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>');
     b.append('   <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>');
     b.append('</div>');
@@ -933,7 +947,7 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
-            grid.cssBuilder.buildStyles();
+            grid.cssBuilder.buildStyles(true);
             // clear out the colToMove object
             self.colToMove = undefined;
         }
@@ -993,14 +1007,16 @@ ng.Column = function (config) {
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    
+    self.visible = colDef.visible == undefined ? true : colDef.visible;
+    self.toggleVisible = function() {
+        self.visible = !self.visible;
+    };
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
     self.index = config.index;
-    self.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -1020,7 +1036,7 @@ ng.Column = function (config) {
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -1070,6 +1086,11 @@ ng.Column = function (config) {
     };
 
     self.gripOnMouseDown = function (event) {
+        if (event.ctrlKey) {
+            self.toggleVisible();
+            config.cssBuilder.buildStyles(true);
+            return true;
+        }
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         self.startMousePosition = event.clientX;
@@ -1089,6 +1110,7 @@ ng.Column = function (config) {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
+        config.cssBuilder.apply();
         return false;
     };
 };
@@ -1316,7 +1338,6 @@ ng.RowFactory = function (grid, $scope) {
             ptr.values.push(item);
         });
         grid.fixColumnIndexes();
-        grid.cssBuilder.buildStyles();
     };
     
     self.parsedData = { needsUpdate: true, values: [] };
@@ -1431,7 +1452,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             keepLastSelected: true,
             groups: [],
             showGroupPanel: false,
-            enableRowReordering: false
+            enableRowReordering: false,
+            showColumnMenu: true
         },
         self = this,
         isSorting = false,
@@ -1530,6 +1552,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //if its not the same, then fire the subscriptions
             $scope.rootDim = dim;
         }
+        self.cssBuilder.buildStyles(true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -1543,7 +1566,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             //don't shrink the grid if we sorting
             if (!isSorting) {
                 self.refreshDomSizes();
-                self.cssBuilder.buildStyles();
                 if (self.initPhase > 0 && self.$root) {
                     self.$root.show();
                 }
@@ -1577,7 +1599,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
         if (self.config.displaySelectionCheckbox) {
             columnDefs.splice(0, 0, {
-                field: '',
+                field: '\u2714',
                 width: self.elementDims.rowSelectedCellW,
                 sortable: false,
                 resizable: false,
@@ -1615,6 +1637,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
         }, true);
+        $scope.$watch('showMenu', function () {
+            self.cssBuilder.buildStyles(true);
+        });
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({
@@ -1635,13 +1660,13 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 afterSelectionChangeCallback: self.config.afterSelectionChange
             }
         });
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
     };
     self.update = function () {
         var updater = function () {
             self.refreshDomSizes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.buildStyles(true);
             if (self.initPhase > 0 && self.$root) {
                 self.$root.show();
             }
@@ -1681,7 +1706,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             }
         });
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
-        self.cssBuilder.buildStyles();
+        self.cssBuilder.buildStyles(true);
     };
     self.sortData = function(col, direction) {
         sortInfo = {
@@ -1712,6 +1737,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
+    $scope.visibleColumns = function () {
+        return $scope.columns.filter(function (col) {
+            return col.visible;
+        });
+    };
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
@@ -1721,6 +1751,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.showColumnMenu = self.config.showColumnMenu;
+    $scope.showMenu = false;
+    $scope.toggleShowMenu = function() {
+        $scope.showMenu = !$scope.showMenu;
+    };
     $scope.configGroups = self.config.groups;
     //scope funcs
     $scope.toggleSelectAll = function (a) {
@@ -1751,22 +1786,22 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "height": $scope.topPanelHeight() + "px" };
     };
 	$scope.headerCellStyle = function(col){
-		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
+		return { "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
-		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
+		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
 	};
 	$scope.canvasStyle = function(){
 		return { "height": maxCanvasHt.toString() + "px"};
 	};
     $scope.headerScrollerStyle = function() {
-        return { "width": ($scope.totalRowWidth() + ng.domUtility.scrollH  + 2)+ "px", "height": self.config.headerRowHeight + "px" };
+        return { "height": self.config.headerRowHeight + "px" };
     };
 	$scope.topPanelStyle = function() {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": ($scope.rootDim.outerWidth)+ "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -1774,24 +1809,21 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 	$scope.footerStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
-    $scope.headerTextStyle = function($index) {
-        return { "width": $scope.columns[$index].width + "px"};
-    };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
-            self.cssBuilder.buildStyles();
+            self.cssBuilder.apply();
         }
     };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
-            cols = $scope.columns,
-            numOfCols = $scope.columns.length,
             asterisksArray = [],
             percentArray = [],
-            asteriskNum = 0;
+            asteriskNum = 0,
+            cols = $scope.visibleColumns();
+        var numOfCols = cols.length;
             
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
@@ -2041,37 +2073,40 @@ ng.SelectionService = function (grid) {
 
 ng.CssBuilder = function ($scope, grid) {
     var self = this;
-    self.buildStyles = function() {
+    self.buildStyles = function(apply) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
-            i = 0,
-            len = $scope.columns.length,
             css = new ng.utils.StringBuilder(),
-            col,
+            cols = $scope.visibleColumns(),
             sumWidth = 0;
-
+        
         if (!$style) $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('html'));
         $style.empty();
-        if ($scope.totalRowWidth() > $scope.width)
-            css.append(".{0} .ngCanvas { width: {1}px; }", gridId, $scope.totalRowWidth());
+        var trw = $scope.totalRowWidth();
+        css.append(".{0} .ngCanvas { width: {1}px; }", gridId, trw);
+        css.append(".{0} .ngRow { width: {1}px; }", gridId, trw);
         css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
+        css.append(".{0} .ngCanvas { width: {1}px; }", gridId, trw);
         css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
-        css.append(".{0} .ngHeaderScroller { line-height: {1}px; }", gridId, headerRowHeight);
-        for (; i < len; i++) {
-            col = $scope.columns[i];
-            css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, $scope.columns[i].width, sumWidth, ($scope.totalRowWidth() - sumWidth - $scope.columns[i].width), rowHeight);
+        css.append(".{0} .ngHeaderScroller { line-height: {1}px; width: {2}px}", gridId, headerRowHeight, (trw + ng.domUtility.scrollH + 2));
+        angular.forEach(cols, function(col, i) {
+            css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, col.width, sumWidth, (trw - sumWidth - col.width), rowHeight);
+            css.append(".{0} .colt{1} { width: {2}px; }", gridId, i, col.width);
             sumWidth += col.width;
-        }
+        });
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
         } else {
             $style[0].appendChild(document.createTextNode(css.toString(" ")));
         }
         grid.$styleSheet = $style;
+        if (apply) self.apply();
+    };
+    self.apply = function() {
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
     };
 };
