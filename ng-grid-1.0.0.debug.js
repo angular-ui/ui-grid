@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 21:17:42
+* Compiled At: 11/17/2012 21:22:56
 ***********************************************/
 
 (function(window, undefined){
@@ -640,7 +640,7 @@ ng.defaultGridTemplate = function () {
 	b.append('      <div class="ngHeaderContainer" ng-style="headerStyle()">');
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
 	b.append('    	</div>');
-	b.append('      <div class="ngHeaderButton" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
+	b.append('      <div class="ngHeaderButton" ng-show="showColumnMenu" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
 	b.append('         <span ng-show="showMenu" class="ngColMenu">Choose Columns:<ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
 	b.append('	    </div>');
 	b.append('	 </div>');
@@ -1452,7 +1452,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             keepLastSelected: true,
             groups: [],
             showGroupPanel: false,
-            enableRowReordering: false
+            enableRowReordering: false,
+            showColumnMenu: true
         },
         self = this,
         isSorting = false,
@@ -1750,6 +1751,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.multiSelect = self.config.multiSelect;
     $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
+    $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.toggleShowMenu = function() {
         $scope.showMenu = !$scope.showMenu;
@@ -1799,7 +1801,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": ($scope.rootDim.outerWidth - 17)+ "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": ($scope.rootDim.outerWidth)+ "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
