@@ -351,6 +351,11 @@ input {
     box-shadow: 5px 5px 5px #666;
     z-index: 50000;
 }
+.ngMenuText {
+    position: relative;
+    top: 2px;
+    left: 2px;
+}
 .ngColList {
     list-style-type: none;
 }

@@ -61,9 +61,10 @@ function MyCtrl($scope) {
 
 ##Want More?##
 Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/timothyswt/ng-grid/wiki)
-Examples are found [here](http://timothyswt.github.com/ng-grid/examples) 
+
 ##Examples##
-Coming soon...
+[Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
 
 ##Change Log##\
+* __2012-11-17__ - Version 1.1.0 - Added ability to hide/show columns and various bug fixes/performance enhancements.
 * __2012-11-14__ - Version 1.0.0 Release

@@ -19,7 +19,7 @@ ng.defaultGridTemplate = function () {
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
 	b.append('    	</div>');
 	b.append('      <div class="ngHeaderButton" ng-show="showColumnMenu" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
-	b.append('         <span ng-show="showMenu" class="ngColMenu">Choose Columns:<ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
+	b.append('         <span ng-show="showMenu" class="ngColMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
 	b.append('	    </div>');
 	b.append('	 </div>');
 	b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');

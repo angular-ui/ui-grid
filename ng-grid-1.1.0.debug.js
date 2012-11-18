@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 21:22:56
+* Compiled At: 11/17/2012 21:44:41
 ***********************************************/
 
 (function(window, undefined){
@@ -641,7 +641,7 @@ ng.defaultGridTemplate = function () {
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
 	b.append('    	</div>');
 	b.append('      <div class="ngHeaderButton" ng-show="showColumnMenu" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
-	b.append('         <span ng-show="showMenu" class="ngColMenu">Choose Columns:<ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
+	b.append('         <span ng-show="showMenu" class="ngColMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
 	b.append('	    </div>');
 	b.append('	 </div>');
 	b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
