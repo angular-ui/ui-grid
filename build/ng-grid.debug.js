@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/16/2012 17:05:10
+* Compiled At: 11/17/2012 17:49:19
 ***********************************************/
 
 (function(window, undefined){
@@ -654,7 +654,7 @@ ng.defaultGridTemplate = function () {
 ***********************************************/
 
 ng.defaultRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';
+    return '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';
 };
 
 /***********************************************
@@ -670,7 +670,7 @@ ng.aggregateTemplate = function () {
 ***********************************************/
 
 ng.defaultHeaderRowTemplate = function () {
-    return '<div ng-repeat="col in columns" class="ngHeaderCell col{{$index}}" ng-header-cell><div>';
+    return '<div ng-repeat="col in visibleColumns()" class="ngHeaderCell col{{$index}}" ng-header-cell><div>';
 };
 
 /***********************************************
@@ -993,14 +993,16 @@ ng.Column = function (config) {
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    
+    self.visible = colDef.visible == undefined ? true : colDef.visible;
+    self.toggleVisible = function() {
+        self.visible = !self.visible;
+    };
     if (!colDef.displayName) {
         // Allow empty column names -- do not check for empty string
         colDef.displayName = colDef.field;
     }
     self.displayName = colDef.displayName;
     self.index = config.index;
-    self.isVisible = false;
 
     //sorting
     if (colDef.sortable === undefined || colDef.sortable === null) {
@@ -1070,6 +1072,11 @@ ng.Column = function (config) {
     };
 
     self.gripOnMouseDown = function (event) {
+        if (event.ctrlKey) {
+            self.toggleVisible();
+            config.cssBuilder.buildStyles();
+            return true;
+        }
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         self.startMousePosition = event.clientX;
@@ -1712,6 +1719,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
+    $scope.visibleColumns = function () {
+        return $scope.columns.filter(function (col) {
+            return col.visible;
+        });
+    };
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
@@ -1751,7 +1763,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "height": $scope.topPanelHeight() + "px" };
     };
 	$scope.headerCellStyle = function(col){
-		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
+		return { "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
@@ -1766,7 +1778,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": ($scope.rootDim.outerWidth - 17) + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -1775,7 +1787,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
     $scope.headerTextStyle = function($index) {
-        return { "width": $scope.columns[$index].width + "px"};
+        return { "width": $scope.visibleColumns()[$index].width + "px"};
     };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
@@ -1787,11 +1799,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
-            cols = $scope.columns,
-            numOfCols = $scope.columns.length,
             asterisksArray = [],
             percentArray = [],
-            asteriskNum = 0;
+            asteriskNum = 0,
+            cols = $scope.visibleColumns();
+        var numOfCols = cols.length;
             
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
@@ -2046,12 +2058,10 @@ ng.CssBuilder = function ($scope, grid) {
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
-            i = 0,
-            len = $scope.columns.length,
             css = new ng.utils.StringBuilder(),
-            col,
+            cols = $scope.visibleColumns(),
             sumWidth = 0;
-
+        
         if (!$style) $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('html'));
         $style.empty();
         if ($scope.totalRowWidth() > $scope.width)
@@ -2059,11 +2069,11 @@ ng.CssBuilder = function ($scope, grid) {
         css.append(".{0} .ngCell { height: {1}px; }", gridId, rowHeight);
         css.append(".{0} .ngHeaderCell { top: 0; bottom: 0; }", gridId, headerRowHeight);
         css.append(".{0} .ngHeaderScroller { line-height: {1}px; }", gridId, headerRowHeight);
-        for (; i < len; i++) {
-            col = $scope.columns[i];
-            css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, $scope.columns[i].width, sumWidth, ($scope.totalRowWidth() - sumWidth - $scope.columns[i].width), rowHeight);
+        var trw = $scope.totalRowWidth();
+        angular.forEach(cols, function(col, i) {
+            css.append(".{0} .col{1} { width: {2}px; left: {3}px; right: {4}px; height: {5}px }", gridId, i, col.width, sumWidth, (trw - sumWidth - col.width), rowHeight);
             sumWidth += col.width;
-        }
+        });
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
         } else {
@@ -2071,7 +2081,7 @@ ng.CssBuilder = function ($scope, grid) {
         }
         grid.$styleSheet = $style;
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
     };
 };

@@ -318,6 +318,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
+    $scope.visibleColumns = function () {
+        return $scope.columns.filter(function (col) {
+            return col.visible;
+        });
+    };
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
@@ -357,7 +362,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         return { "height": $scope.topPanelHeight() + "px" };
     };
 	$scope.headerCellStyle = function(col){
-		return { "width": col.width + "px", "height": col.headerRowHeight + "px"  };
+		return { "height": col.headerRowHeight + "px"  };
 	};
 	$scope.rowStyle = function(row){
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px", "width": $scope.totalRowWidth() + "px" };
@@ -372,7 +377,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
 	};
 	$scope.headerStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.headerRowHeight + "px" };
+		return { "width": ($scope.rootDim.outerWidth - 17) + "px", "height": self.config.headerRowHeight + "px" };
 	};
 	$scope.viewportStyle = function () {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -381,7 +386,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
 	};
     $scope.headerTextStyle = function($index) {
-        return { "width": $scope.columns[$index].width + "px"};
+        return { "width": $scope.visibleColumns()[$index].width + "px"};
     };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
@@ -393,11 +398,11 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
-            cols = $scope.columns,
-            numOfCols = $scope.columns.length,
             asterisksArray = [],
             percentArray = [],
-            asteriskNum = 0;
+            asteriskNum = 0,
+            cols = $scope.visibleColumns();
+        var numOfCols = cols.length;
             
         angular.forEach(cols, function (col, i) {
             // get column width out of the observable
