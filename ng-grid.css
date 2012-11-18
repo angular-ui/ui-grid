@@ -282,6 +282,7 @@ input {
     position: absolute;
     background-color: rgb(179, 191, 188);
     border-bottom: 1px solid beige;
+    overflow: hidden;
     top: 0;
     bottom: 0;
     right: -1px;
@@ -292,6 +293,7 @@ input {
     left: 27px;
 	top: 5px;
     line-height: 20px;
+    white-space:nowrap;
 }
 .ngAggArrowExpanded {
     position: absolute;
