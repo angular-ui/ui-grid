@@ -343,12 +343,24 @@ input {
     top: 15px;
     background-color: rgb(189, 208, 203);
     position: absolute;
-    width: 80px;
+    display: inline-block;
+    -moz-box-shadow: 5px 5px 5px #666;
+    -webkit-box-shadow: 5px 5px 5px #666;
+    box-shadow: 5px 5px 5px #666;
+    z-index: 50000;
 }
 .ngColList {
     list-style-type: none;
 }
 
 .ngColListItem {
-    
+    position: relative;
+    right: 17px;
+    top: 2px;
+    white-space:nowrap;
+}
+.ngColListCheckbox {
+    position: relative;
+    right: 3px;
+    top: 4px;
 }

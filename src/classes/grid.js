@@ -183,7 +183,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
         if (self.config.displaySelectionCheckbox) {
             columnDefs.splice(0, 0, {
-                field: '',
+                field: '\u2714',
                 width: self.elementDims.rowSelectedCellW,
                 sortable: false,
                 resizable: false,

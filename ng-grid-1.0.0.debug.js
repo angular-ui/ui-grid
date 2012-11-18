@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/17/2012 20:44:35
+* Compiled At: 11/17/2012 21:17:42
 ***********************************************/
 
 (function(window, undefined){
@@ -255,6 +255,17 @@ $.extend(ng.utils, {
         return ng.utils.ieVersion !== undefined; 
     })()
 }); 
+
+/***********************************************
+* FILE: ..\src\filters\ngColumns.js
+***********************************************/
+ngGridFilters.filter('ngColumns', function () {
+    return function (input) {
+        return input.filter(function(col) {
+            return !col.isAggCol;
+        });
+    };
+});
 
 /***********************************************
 * FILE: ..\src\filters\checkmark.js
@@ -630,7 +641,7 @@ ng.defaultGridTemplate = function () {
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
 	b.append('    	</div>');
 	b.append('      <div class="ngHeaderButton" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div>');
-	b.append('         <div ng-show="showMenu" class="ngColMenu"><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | filter:!col.isAggCol"><input type="checkbox" ng-model="col.visible"/>{{col.displayName}}</li></ul></div>');
+	b.append('         <span ng-show="showMenu" class="ngColMenu">Choose Columns:<ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</li></ul></span>');
 	b.append('	    </div>');
 	b.append('	 </div>');
 	b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
@@ -1587,7 +1598,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
         if (self.config.displaySelectionCheckbox) {
             columnDefs.splice(0, 0, {
-                field: '',
+                field: '\u2714',
                 width: self.elementDims.rowSelectedCellW,
                 sortable: false,
                 resizable: false,
