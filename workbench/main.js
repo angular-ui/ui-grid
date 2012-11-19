@@ -12,12 +12,10 @@ function userController($scope) {
         currentPage: 1 //what page they are currently on
     };
     self.getPagedDataAsync = function (pageSize, page) {
-        setTimeout(function () {
-            var data = largeLoad();
-            var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
-            $scope.myData = pagedData;
-            $scope.pagingOptions.totalServerItems = data.length;
-        }, 0);
+        var data = largeLoad();
+        var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
+        $scope.myData = pagedData;
+        $scope.pagingOptions.totalServerItems = data.length;
     };
     $scope.$watch('pagingOptions', function () {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
