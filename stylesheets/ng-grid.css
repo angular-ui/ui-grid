@@ -100,8 +100,8 @@
 }
 
 .ngTopPanel {
+    position: relative;
     background-color: rgb(234, 234, 234);
-    overflow: hidden;
 	border-bottom: 1px solid rgb(212,212,212);
 }
 .ngHeaderContainer {
@@ -114,8 +114,9 @@
 	position:absolute;
 }
 .ngHeaderSortColumn{
-	cursor: pointer;
+	position:absolute;
     overflow: hidden;
+	cursor: pointer;
 }
 
 .ngHeaderCell{
@@ -210,9 +211,6 @@
 .ngCell {
     overflow: hidden; 
     position: absolute;
-    display: inline;
-    white-space: nowrap;
-    /*text-overflow: ellipsis;*/
 	border-left: 1px solid rgb(212,212,212);
 }
 
@@ -225,9 +223,13 @@
 }
 
 .ngCellText {
-	position: absolute;
-	top: 6px;
-	left: 6px;
+    margin-left: 5px;
+    margin-top: 5px;
+    white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .ngSelectionHeader {
 	position: absolute;
@@ -280,6 +282,7 @@ input {
     position: absolute;
     background-color: rgb(179, 191, 188);
     border-bottom: 1px solid beige;
+    overflow: hidden;
     top: 0;
     bottom: 0;
     right: -1px;
@@ -290,6 +293,7 @@ input {
     left: 27px;
 	top: 5px;
     line-height: 20px;
+    white-space:nowrap;
 }
 .ngAggArrowExpanded {
     position: absolute;
@@ -310,4 +314,60 @@ input {
     border-style: solid;
     border-width: 5px 0 5px 8.7px;
     border-color: transparent transparent transparent #000000;
+}
+
+.ngHeaderButton {
+    position: absolute;    
+    right: 2px;
+    top: 8px;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    z-index: 10000;
+    background-color: rgb(179, 191, 188);
+    cursor: pointer;
+    /* width and height can be anything, as long as they're equal */
+}
+.ngHeaderButtonArrow {
+    position: absolute;
+    top: 4px;
+    left: 3px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6.5px 4.5px 0 4.5px;
+    border-color: #000 transparent transparent transparent;
+    /* width and height can be anything, as long as they're equal */
+}
+.ngColMenu {
+	right: 2px;
+	padding: 5px;
+	top: 25px;
+	border-radius: 3px;
+	background-color: #BDD0CB;
+	position: absolute;
+	border: 5px solid rbg(212,212,212);
+	z-index: 50000;
+}
+.ngMenuText {
+    position: relative;
+    top: 2px;
+    left: 2px;
+}
+.ngColList {
+    list-style-type: none;
+}
+
+.ngColListItem {
+    position: relative;
+    right: 17px;
+    top: 2px;
+    white-space:nowrap;
+}
+.ngColListCheckbox {
+    position: relative;
+    right: 3px;
+    top: 4px;
 }
