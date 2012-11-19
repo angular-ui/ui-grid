@@ -16,6 +16,7 @@ function userController($scope) {
         data: 'myData',
         selectedItems: $scope.mySelections,
         multiSelect: true,
+        showColumnMenu: true,
         jqueryUITheme: true, // enable the jqueryUIThemes
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },
                      { field: 'allowance', width: 100, cellFilter: 'currency' },
