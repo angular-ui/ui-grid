@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/18/2012 18:29:31
+* Compiled At: 11/19/2012 13:47:11
 ***********************************************/
 
 (function(window, undefined){
@@ -649,13 +649,28 @@ ng.defaultGridTemplate = function () {
     b.append('       </div>');
     b.append('	 </div>');
     b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()">');
-    b.append('   	 <div class="ngTotalSelectContainer" ng-show="footerVisible">');
+    b.append('       <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
     b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
     b.append('       	 </div>');
     b.append('       	 <div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append('       	    <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append('       	 </div>');
+    b.append('       </div>');
+    b.append('       <div class="ngPagerContainer" style="float: right;" ng-show="footerVisible && enablePaging" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
+    b.append('          <div class="ngRowCountPicker">');
+    b.append('             <span class="ngLabel">Page Size:</span>');
+    b.append('             <select ng-model="pagingOptions.pageSize">');
+    b.append('                <option ng-repeat="size in pagingOptions.pageSizes">{{size}}</option>');
+    b.append('             </select>');
+    b.append('          </div>');
+    b.append('          <div class="kgPagerControl" style="float: left; min-width: 135px;">');
+    b.append('             <input class="ngPagerFirst" type="button" title="First Page"/>');
+    b.append('             <input class="ngPagerPrev" type="button" title="Previous Page"/>');
+    b.append('             <input class="ngPagerCurrent" type="text" ng-model="pagingOptions.currentPage"/>');
+    b.append('             <input class="ngPagerNext" type="button"/>');
+    b.append('             <input class="ngPagerLast" type="button"/>');
+    b.append('          </div>');
     b.append('       </div>');
     b.append('   </div>');
     b.append('</div>');
@@ -1137,13 +1152,47 @@ ng.Dimension = function (options) {
 ng.Footer = function ($scope, grid) {
     $scope.maxRows = null;
 
-    if (!ng.utils.isNullOrUndefined(grid.config.totalServerItems)) {
-        $scope.maxRows = grid.config.totalServerItems;
+    if (!ng.utils.isNullOrUndefined($scope.pagingOptions.totalServerItems)) {
+        $scope.maxRows = $scope.pagingOptions.totalServerItems;
     } else {
         $scope.maxRows = grid.maxRows;
     }
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
+    $scope.maxPages = function () {
+        var maxCnt = self.maxRows || 1;
+        return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
+    };
+
+    $scope.pageForward = function() {
+        var page = $scope.pagingOptions.currentPage;
+        $scope.pagingOptions.currentPage(Math.min(page + 1, $scope.maxPages()));
+    };
+
+    $scope.pageBackward = function () {
+        var page = $scope.pagingOptions.currentPage;
+        $scope.pagingOptions.currentPage(Math.max(page - 1, 1));
+    };
+
+    $scope.pageToFirst = function () {
+        $scope.pagingOptions.currentPage(1);
+    };
+
+    $scope.pageToLast = function () {
+        var maxPages = $scope.maxPages();
+        $scope.pagingOptions.currentPage(maxPages);
+    };
+
+    $scope.canPageForward = function () {
+        var curPage = $scope.pagingOptions.currentPage;
+        var maxPages = $scope.maxPages;
+        return curPage < maxPages;
+    };
+
+    $scope.canPageBackward = function () {
+        var curPage = $scope.pagingOptions.currentPage;
+        return curPage > 1;
+    };
 };
 
 /***********************************************
@@ -1167,13 +1216,13 @@ ng.RowFactory = function (grid, $scope) {
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
-    self.buildEntityRow = function (entity, rowIndex) {
+    self.buildEntityRow = function (entity, rowIndex, pagingOffset) {
         var row = self.rowCache[rowIndex]; // first check to see if we've already built it
         if (!row) {
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
-            row.rowDisplayIndex = row.rowIndex;
+            row.rowDisplayIndex = row.rowIndex + pagingOffset;
             row.offsetTop = self.rowHeight * rowIndex;
             row.selected = entity[SELECTED_PROP];
             // finally cache it for the next round
@@ -1240,10 +1289,11 @@ ng.RowFactory = function (grid, $scope) {
 
     self.renderedChangeNoGroups = function () {
         var rowArr = [];
+        var pagingOffset = ($scope.pagingOptions.pageSize * ($scope.pagingOptions.currentPage - 1));
         var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
 
         angular.forEach(dataArr, function (item, i) {
-            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i);
+            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i, pagingOffset);
             //add the row to our return array
             rowArr.push(row);
         });
@@ -1452,7 +1502,15 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             groups: [],
             showGroupPanel: false,
             enableRowReordering: false,
-            showColumnMenu: true
+            showColumnMenu: true,
+            //Paging 
+            enablePaging: false,
+            pagingOptions: {
+                pageSizes: [250, 500, 1000], //page Sizes
+                pageSize: 250, //Size of Paging data
+                totalServerItems: 0, //ko.observable of how many items are on the server (for paging)
+                currentPage: 1, //ko.observable of what page they are currently on
+            },
         },
         self = this,
         isSorting = false,
@@ -1736,11 +1794,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
-    $scope.visibleColumns = function () {
-        return $scope.columns.filter(function (col) {
-            return col.visible;
-        });
-    };
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
@@ -1752,16 +1805,25 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.footerVisible = self.config.footerVisible;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
-    $scope.toggleShowMenu = function() {
+    $scope.configGroups = self.config.groups;
+    //Paging
+    $scope.enablePaging = self.config.enablePaging;
+    $scope.pagingOptions = self.config.pagingOptions;
+    
+    //scope funcs
+    $scope.visibleColumns = function () {
+        return $scope.columns.filter(function (col) {
+            return col.visible;
+        });
+    };
+    $scope.toggleShowMenu = function () {
         $scope.showMenu = !$scope.showMenu;
     };
-    $scope.configGroups = self.config.groups;
-    //scope funcs
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
     };
     $scope.totalItemsLength = function () {
-        return self.sortedData.length;
+        return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
     };
 	$scope.showGroupPanel = function(){
 		return self.config.showGroupPanel;
@@ -1791,7 +1853,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
 	};
 	$scope.canvasStyle = function(){
-		return { "height": maxCanvasHt.toString() + "px"};
+	    return { "height": maxCanvasHt.toString() + "px" };
 	};
     $scope.headerScrollerStyle = function() {
         return { "height": self.config.headerRowHeight + "px" };

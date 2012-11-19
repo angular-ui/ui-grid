@@ -5,7 +5,26 @@ function userController($scope) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
-    $scope.myData = largeLoad();
+    $scope.pagingOptions = {
+        pageSizes: [250, 500, 1000], //page Sizes
+        pageSize: 250, //Size of Paging data
+        totalServerItems: 0, //how many items are on the server (for paging)
+        currentPage: 1 //what page they are currently on
+    };
+    self.getPagedDataAsync = function (pageSize, page) {
+        setTimeout(function () {
+            var data = largeLoad();
+            var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
+            $scope.myData = pagedData;
+            $scope.pagingOptions.totalServerItems = data.length;
+        }, 0);
+    };
+    $scope.$watch('pagingOptions', function () {
+        self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
+        return null;
+    }, true);
+    
+    $scope.myData = self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.gridOptions = {
 		data: 'myData',
 		jqueryUITheme: false,
@@ -15,11 +34,15 @@ function userController($scope) {
         multiSelect: true,
         showGroupPanel: true,
         showColumnMenu: true,
+        enablePaging: true,
+        pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
                      { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
                      { field: 'birthday', width: '120px', cellFilter: 'date' },
                      { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
     };
+    
+
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
                       { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': '1293', 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
@@ -42,7 +65,6 @@ function userController($scope) {
     };
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();
-        $scope.myData = largeLoad();
      };
     
 };
