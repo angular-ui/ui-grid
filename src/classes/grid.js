@@ -222,9 +222,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             self.config.groups = tempArr;
             self.rowFactory.sortedDataChanged();
         }, true);
-        $scope.$watch('showMenu', function () {
+        $scope.$watch('columns', function () {
             self.cssBuilder.buildStyles(true);
-        });
+        }, true);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
         self.selectionService.Initialize({

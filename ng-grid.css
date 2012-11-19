@@ -342,14 +342,14 @@ input {
     /* width and height can be anything, as long as they're equal */
 }
 .ngColMenu {
-    top: 15px;
-    background-color: rgb(189, 208, 203);
-    position: absolute;
-    display: inline-block;
-    -moz-box-shadow: 5px 5px 5px #666;
-    -webkit-box-shadow: 5px 5px 5px #666;
-    box-shadow: 5px 5px 5px #666;
-    z-index: 50000;
+	right: 2px;
+	padding: 5px;
+	top: 25px;
+	border-radius: 3px;
+	background-color: #BDD0CB;
+	position: absolute;
+	border: 5px solid rbg(212,212,212);
+	z-index: 50000;
 }
 .ngMenuText {
     position: relative;
