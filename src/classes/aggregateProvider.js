@@ -10,7 +10,7 @@
 		if(grid.config.jqueryUIDraggable){
 			grid.$groupPanel.droppable({
 				addClasses: false,
-				drop: function( event, ui ) {
+				drop: function(event) {
 					self.onGroupDrop(event);
 				}
 			});
@@ -38,11 +38,11 @@
 				helper: "clone",
 				appendTo: 'body',
 				addClasses: false,
-				start: function(event, ui){
+				start: function(event){
 					self.onHeaderMouseDown(event);
 				}
 			}).droppable({
-				drop: function( event, ui ) {
+				drop: function(event) {
 					self.onHeaderDrop(event);
 				}
 			});
@@ -84,16 +84,17 @@
 
     self.onGroupDrop = function(event) {
         // clear out the colToMove object
+        var groupContainer;
+        var groupScope;
         if (self.groupToMove) {
 			self.onGroupDragStop();
             // Get the closest header to where we dropped
-            var groupContainer = $(event.target).closest('.ngGroupElement');
-            // Get the scope from the header.
+            groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
             if (groupContainer.context.className == 'ngGroupPanel') {
                 $scope.configGroups.splice(self.groupToMove.index, 1);
                 $scope.configGroups.push(self.groupToMove.groupName);
             } else {
-                var groupScope = angular.element(groupContainer).scope();
+                groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
                     if (self.groupToMove.index != groupScope.$index){
@@ -107,13 +108,12 @@
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-				var groupContainer = $(event.target).closest('.ngGroupElement');
-				// Get the scope from the header.
+                groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
 					$scope.configGroups.push(self.colToMove.col);
 				} else {
-					var groupScope = angular.element(groupContainer).scope();
-					if (groupScope) {
+				    groupScope = angular.element(groupContainer).scope();
+				    if (groupScope) {
 						// Splice the columns
 						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
 					}

@@ -75,6 +75,19 @@ ng.utils = {
             }
         }
     },
+    evalProperty: function (entity, path) {
+        var propPath = path.split('.');
+        var tempProp = entity[propPath[0]];
+
+        for (var j = 1; j < propPath.length; j++) {
+            if (tempProp) {
+                tempProp = tempProp[propPath[j]];
+            } else {
+                break;
+            }
+        }
+        return tempProp;
+    },
     endsWith: function (str, suffix) {
         if (!str || !suffix || typeof str != "string") return false;
         return str.indexOf(suffix, str.length - suffix.length) !== -1;

@@ -40,7 +40,7 @@
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 

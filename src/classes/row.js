@@ -38,9 +38,6 @@ ng.Row = function (entity, config, selectionService) {
         }
         return false;
     };
-
-    self.cells = [];
-    self.cellMap = {};
     self.rowIndex = 0;
     self.offsetTop = 0;
     self.rowKey = ng.utils.newId();
@@ -52,10 +49,8 @@ ng.Row = function (entity, config, selectionService) {
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
-    //during row initialization, let's make all the entities properties first-class properties on the row
-    (function () {
-        ng.utils.forIn(entity, function (prop, propName) {
-            self[propName] = prop;
-        });
-    }());
+    self.propertyCache = {};
+    self.getProperty = function (path) {
+        return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
+    };
 }; 
