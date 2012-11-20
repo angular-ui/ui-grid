@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/19/2012 13:58:32
+* Compiled At: 11/19/2012 17:19:05
 ***********************************************/
 
 (function(window, undefined){
@@ -657,19 +657,19 @@ ng.defaultGridTemplate = function () {
     b.append('       	    <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
     b.append('       	 </div>');
     b.append('       </div>');
-    b.append('       <div class="ngPagerContainer" style="float: right;" ng-show="footerVisible && enablePaging" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
-    b.append('          <div class="ngRowCountPicker">');
-    b.append('             <span class="ngLabel">Page Size:</span>');
-    b.append('             <select ng-model="pagingOptions.pageSize">');
+    b.append('       <div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="footerVisible && enablePaging" ng-class="{\'ngNoMultiSelect\': !multiSelect}">');
+    b.append('          <div style="float:left; margin-right: 10px;" class="ngRowCountPicker">');
+    b.append('             <span style="float: left; margin-top: 3px;" class="ngLabel">Page Size:</span>');
+    b.append('             <select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" >');
     b.append('                <option ng-repeat="size in pagingOptions.pageSizes">{{size}}</option>');
     b.append('             </select>');
     b.append('          </div>');
-    b.append('          <div class="kgPagerControl" style="float: left; min-width: 135px;">');
-    b.append('             <input class="ngPagerFirst" type="button" title="First Page"/>');
-    b.append('             <input class="ngPagerPrev" type="button" title="Previous Page"/>');
-    b.append('             <input class="ngPagerCurrent" type="text" ng-model="pagingOptions.currentPage"/>');
-    b.append('             <input class="ngPagerNext" type="button"/>');
-    b.append('             <input class="ngPagerLast" type="button"/>');
+    b.append('          <div style="float:left; margin-right: 10px; line-height:25px;" class="ngPagerControl" style="float: left; min-width: 135px;">');
+    b.append('             <button class="ngPagerButton" ng-click="pageToFirst()" ng-disabled="cantPageBackward()" title="First Page"><div class="ngPagerFirstTriangle"><div class="ngPagerFirstBar"></div></div></button>');
+    b.append('             <button class="ngPagerButton" ng-click="pageBackward()" ng-disabled="cantPageBackward()" title="Previous Page"><div class="ngPagerFirstTriangle ngPagerPrevTriangle"></div></button>');
+    b.append('             <input class="ngPagerCurrent" type="text" style="width:50px; height: 24px; margin-top: 1px; padding: 0px 4px;" ng-model="pagingOptions.currentPage"/>');
+    b.append('             <button class="ngPagerButton" ng-click="pageForward()" ng-disabled="cantPageForward()" title="Next Page"><div class="ngPagerLastTriangle ngPagerNextTriangle"></div></button>');
+    b.append('             <button class="ngPagerButton" ng-click="pageToLast()" ng-disabled="cantPageForward()" title="Last Page"><div class="ngPagerLastTriangle"><div class="ngPagerLastBar"></div></div></button>');
     b.append('          </div>');
     b.append('       </div>');
     b.append('   </div>');
@@ -1160,39 +1160,43 @@ ng.Footer = function ($scope, grid) {
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = self.maxRows || 1;
-        return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
+        var maxCnt = $scope.maxRows || 1;
+		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
     };
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage(Math.min(page + 1, $scope.maxPages()));
+        $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
     };
 
     $scope.pageBackward = function () {
         var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage(Math.max(page - 1, 1));
+        $scope.pagingOptions.currentPage = Math.max(page - 1, 1);
     };
 
     $scope.pageToFirst = function () {
-        $scope.pagingOptions.currentPage(1);
+        $scope.pagingOptions.currentPage = 1;
     };
 
     $scope.pageToLast = function () {
         var maxPages = $scope.maxPages();
-        $scope.pagingOptions.currentPage(maxPages);
+        $scope.pagingOptions.currentPage = maxPages;
     };
 
-    $scope.canPageForward = function () {
+    $scope.cantPageForward = function () {
         var curPage = $scope.pagingOptions.currentPage;
-        var maxPages = $scope.maxPages;
-        return curPage < maxPages;
+        var maxPages = $scope.maxPages();
+        return !(curPage < maxPages);
     };
 
-    $scope.canPageBackward = function () {
+    $scope.cantPageBackward = function () {
         var curPage = $scope.pagingOptions.currentPage;
-        return curPage > 1;
+        return !(curPage > 1);
     };
+	
+	$scope.testingDisabled = function() {
+		return false;
+	};
 };
 
 /***********************************************

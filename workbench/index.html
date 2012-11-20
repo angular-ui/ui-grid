@@ -4,6 +4,7 @@
     <title>ng-grid workbench</title>
     <link rel="stylesheet" type="text/css" href="../lib/bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="../ng-grid.css" />
+	
     <script type="text/javascript" src="largeLoad.js"></script>
     <script type="text/javascript" src="largeTestData.js"></script>
     <script type="text/javascript" src="../lib/angular.js"></script>
@@ -17,7 +18,6 @@
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
-
         <div style="margin: 10px;  width: 800px; height: 500px;" ng-grid="gridOptions">
         </div>
         <button ng-click="changeData()">Insert Rows</button>
@@ -25,6 +25,5 @@
         <!--        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
                     </div>
             <span>mySelections2: {{mySelections2 | json}}</span>-->
-        
     </body>
 </html>

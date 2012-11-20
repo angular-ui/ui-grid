@@ -9,37 +9,41 @@
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = self.maxRows || 1;
-        return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
+        var maxCnt = $scope.maxRows || 1;
+		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
     };
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage(Math.min(page + 1, $scope.maxPages()));
+        $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
     };
 
     $scope.pageBackward = function () {
         var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage(Math.max(page - 1, 1));
+        $scope.pagingOptions.currentPage = Math.max(page - 1, 1);
     };
 
     $scope.pageToFirst = function () {
-        $scope.pagingOptions.currentPage(1);
+        $scope.pagingOptions.currentPage = 1;
     };
 
     $scope.pageToLast = function () {
         var maxPages = $scope.maxPages();
-        $scope.pagingOptions.currentPage(maxPages);
+        $scope.pagingOptions.currentPage = maxPages;
     };
 
-    $scope.canPageForward = function () {
+    $scope.cantPageForward = function () {
         var curPage = $scope.pagingOptions.currentPage;
-        var maxPages = $scope.maxPages;
-        return curPage < maxPages;
+        var maxPages = $scope.maxPages();
+        return !(curPage < maxPages);
     };
 
-    $scope.canPageBackward = function () {
+    $scope.cantPageBackward = function () {
         var curPage = $scope.pagingOptions.currentPage;
-        return curPage > 1;
+        return !(curPage > 1);
     };
+	
+	$scope.testingDisabled = function() {
+		return false;
+	};
 };
