@@ -15,6 +15,7 @@ function userController($scope) {
         multiSelect: true,
         showColumnMenu: true,
         showGroupPanel: true,
+        groups: ['name', 'allowance'],
 		columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },
                      { field: 'allowance', width: 100, cellFilter: 'currency' },
                      { field: 'birthday', width: 100, cellFilter: 'date' },
