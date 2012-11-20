@@ -42,8 +42,4 @@
         var curPage = $scope.pagingOptions.currentPage;
         return !(curPage > 1);
     };
-	
-	$scope.testingDisabled = function() {
-		return false;
-	};
 };

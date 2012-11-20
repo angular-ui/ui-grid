@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/19/2012 17:23:54
+* Compiled At: 11/19/2012 17:29:27
 ***********************************************/
 
 (function(window, undefined){
@@ -1193,10 +1193,6 @@ ng.Footer = function ($scope, grid) {
         var curPage = $scope.pagingOptions.currentPage;
         return !(curPage > 1);
     };
-	
-	$scope.testingDisabled = function() {
-		return false;
-	};
 };
 
 /***********************************************
