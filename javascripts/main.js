@@ -5,7 +5,7 @@ function userController($scope, $filter) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
-    self.myData = [{name: "Moroni", allowance: 50, birthday: 1351728000000 , paid: true},
+    $scope.myData = [{ name: "Moroni", allowance: 50, birthday: 1351728000000, paid: true },
                      {name: "Tiancum", allowance: 47, birthday: 1351728000000 , paid: false},
                      {name: "Jacob", allowance: 27, birthday: 1351728000000 , paid: false},
                      {name: "Nephi", allowance: 29, birthday: 1351728000000 , paid: false},
@@ -17,7 +17,7 @@ function userController($scope, $filter) {
 	$scope.filteredData = self.myData;
 					 
 	$scope.filterData = function(){
-		$scope.filteredData = $filter('filter')(self.myData, $scope.searchText);
+	    $scope.filteredData = $filter('filter')($scope.myData, $scope.searchText);
 	};
 	
 	$scope.$watch('searchText', function(){
@@ -60,7 +60,7 @@ function userController($scope, $filter) {
     };
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();
-        self.myData = largeLoad();
+        $scope.myData = largeLoad();
      };
     
 };
