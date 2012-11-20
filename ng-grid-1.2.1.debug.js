@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/20/2012 00:55:34
+* Compiled At: 11/20/2012 01:31:27
 ***********************************************/
 
 (function(window, undefined){
@@ -1545,7 +1545,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$viewport = null;
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
-    self.sortedData = $.extend(true,[], $scope.$parent[self.config.data] || self.config.data); // we cannot watch for updates if you don't pass the string name
+    self.sortedData = [];
+    if (typeof self.config.data == "object") {
+        self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
+    }
     //initialized in the init method
     self.rowFactory = new ng.RowFactory(self, $scope);
     self.selectionService = new ng.SelectionService(self);
@@ -1657,7 +1660,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                 field: propName
             });
         });
-
     };
     self.buildColumns = function () {
         var columnDefs = self.config.columnDefs,
@@ -1689,6 +1691,10 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
                     enableResize: self.config.enableColumnResize
                 });
                 cols.push(column);
+                var indx = self.config.groups.indexOf(colDef.field);
+                if (indx != -1) {
+                    $scope.configGroups.splice(indx, 0, column);
+                }
             });
             $scope.columns = cols;
         }
@@ -1818,7 +1824,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.footerVisible = self.config.footerVisible;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
-    $scope.configGroups = self.config.groups;
+    $scope.configGroups = [];
+
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
