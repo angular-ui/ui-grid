@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/20/2012 01:31:27
+* Compiled At: 11/20/2012 11:10:46
 ***********************************************/
 
 (function(window, undefined){
@@ -1225,6 +1225,7 @@ ng.RowFactory = function (grid, $scope) {
     self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
+    self.groupedData = undefined;
 	var parents = []; // Used for grouping and is cleared each time groups are calulated.
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
@@ -1341,7 +1342,7 @@ ng.RowFactory = function (grid, $scope) {
         self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
         // the actual range the user can see in the viewport
         self.renderedRange = self.prevRenderedRange;
-        if (grid.config.groups.length > 0) {
+        if (grid.config.groups.length > 0 && grid.sortedData.length > 0) {
             self.getGrouping(grid.config.groups);
         }
         self.sortedDataChanged();
@@ -1378,7 +1379,7 @@ ng.RowFactory = function (grid, $scope) {
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
-                var val = item[group].toString();
+                var val = ng.utils.evalProperty(item, group).toString();
                 if (!ptr[val]) {
                     ptr[val] = {};
                 }
@@ -1405,7 +1406,7 @@ ng.RowFactory = function (grid, $scope) {
     self.parsedData = { needsUpdate: true, values: [] };
     
     self.renderedChange = function () {
-        if (grid.config.groups.length < 1) {
+        if (!self.groupedData || grid.config.groups.length < 1) {
             self.renderedChangeNoGroups();
             grid.refreshDomSizes();
             return;
