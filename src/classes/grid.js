@@ -38,7 +38,15 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             groups: [],
             showGroupPanel: false,
             enableRowReordering: false,
-            showColumnMenu: true
+            showColumnMenu: true,
+            //Paging 
+            enablePaging: false,
+            pagingOptions: {
+                pageSizes: [250, 500, 1000], //page Sizes
+                pageSize: 250, //Size of Paging data
+                totalServerItems: 0, //ko.observable of how many items are on the server (for paging)
+                currentPage: 1, //ko.observable of what page they are currently on
+            },
         },
         self = this,
         isSorting = false,
@@ -322,11 +330,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.elementsNeedMeasuring = true;
     $scope.width = gridDim.outerWidth;
     $scope.columns = [];
-    $scope.visibleColumns = function () {
-        return $scope.columns.filter(function (col) {
-            return col.visible;
-        });
-    };
     $scope.renderedRows = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
@@ -338,16 +341,25 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     $scope.footerVisible = self.config.footerVisible;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
-    $scope.toggleShowMenu = function() {
+    $scope.configGroups = self.config.groups;
+    //Paging
+    $scope.enablePaging = self.config.enablePaging;
+    $scope.pagingOptions = self.config.pagingOptions;
+    
+    //scope funcs
+    $scope.visibleColumns = function () {
+        return $scope.columns.filter(function (col) {
+            return col.visible;
+        });
+    };
+    $scope.toggleShowMenu = function () {
         $scope.showMenu = !$scope.showMenu;
     };
-    $scope.configGroups = self.config.groups;
-    //scope funcs
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
     };
     $scope.totalItemsLength = function () {
-        return self.sortedData.length;
+        return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
     };
 	$scope.showGroupPanel = function(){
 		return self.config.showGroupPanel;
@@ -377,7 +389,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
 	};
 	$scope.canvasStyle = function(){
-		return { "height": maxCanvasHt.toString() + "px"};
+	    return { "height": maxCanvasHt.toString() + "px" };
 	};
     $scope.headerScrollerStyle = function() {
         return { "height": self.config.headerRowHeight + "px" };

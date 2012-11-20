@@ -371,3 +371,52 @@ input {
     right: 3px;
     top: 4px;
 }
+
+/********Paging Styles **********/
+
+.ngPagerButton{
+	height: 25px;
+	min-width: 26px;
+}
+
+.ngPagerFirstTriangle{
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 5px 8.7px 5px 0;
+	border-color: transparent #000000 transparent transparent;
+	margin-left: 2px;
+}
+
+.ngPagerFirstBar{
+	width: 10px;
+	border-left: 2px solid black;
+	margin-top: -6px;
+	height: 12px;
+	margin-left: -3px;
+}	
+
+.ngPagerLastTriangle{
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 5px 0 5px 8.7px;
+	border-color: transparent transparent transparent #000000;
+	margin-left: -1px;
+}
+
+.ngPagerLastBar{
+	width: 10px;
+	border-left: 2px solid black;
+	margin-top: -6px;
+	height: 12px;
+	margin-left: 1px;
+}	
+
+.ngPagerPrevTriangle{
+	margin-left: 0px;
+}	
+
+.ngPagerNextTriangle{
+	margin-left: 1px;
+}

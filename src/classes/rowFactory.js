@@ -19,13 +19,13 @@ ng.RowFactory = function (grid, $scope) {
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
-    self.buildEntityRow = function (entity, rowIndex) {
+    self.buildEntityRow = function (entity, rowIndex, pagingOffset) {
         var row = self.rowCache[rowIndex]; // first check to see if we've already built it
         if (!row) {
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
-            row.rowDisplayIndex = row.rowIndex;
+            row.rowDisplayIndex = row.rowIndex + pagingOffset;
             row.offsetTop = self.rowHeight * rowIndex;
             row.selected = entity[SELECTED_PROP];
             // finally cache it for the next round
@@ -92,10 +92,11 @@ ng.RowFactory = function (grid, $scope) {
 
     self.renderedChangeNoGroups = function () {
         var rowArr = [];
+        var pagingOffset = ($scope.pagingOptions.pageSize * ($scope.pagingOptions.currentPage - 1));
         var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
 
         angular.forEach(dataArr, function (item, i) {
-            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i);
+            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i, pagingOffset);
             //add the row to our return array
             rowArr.push(row);
         });
