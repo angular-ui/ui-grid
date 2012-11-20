@@ -60,7 +60,7 @@ function userController($scope, $filter) {
     };
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();
-        $scope.myData = largeLoad();
+        self.myData = largeLoad();
      };
     
 };
