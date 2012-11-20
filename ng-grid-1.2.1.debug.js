@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/19/2012 17:29:27
+* Compiled At: 11/20/2012 00:55:34
 ***********************************************/
 
 (function(window, undefined){
@@ -171,6 +171,19 @@ ng.utils = {
                 action(obj[prop], prop);
             }
         }
+    },
+    evalProperty: function (entity, path) {
+        var propPath = path.split('.');
+        var tempProp = entity[propPath[0]];
+
+        for (var j = 1; j < propPath.length; j++) {
+            if (tempProp) {
+                tempProp = tempProp[propPath[j]];
+            } else {
+                break;
+            }
+        }
+        return tempProp;
     },
     endsWith: function (str, suffix) {
         if (!str || !suffix || typeof str != "string") return false;
@@ -806,7 +819,7 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
 		if(grid.config.jqueryUIDraggable){
 			grid.$groupPanel.droppable({
 				addClasses: false,
-				drop: function( event, ui ) {
+				drop: function(event) {
 					self.onGroupDrop(event);
 				}
 			});
@@ -834,11 +847,11 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
 				helper: "clone",
 				appendTo: 'body',
 				addClasses: false,
-				start: function(event, ui){
+				start: function(event){
 					self.onHeaderMouseDown(event);
 				}
 			}).droppable({
-				drop: function( event, ui ) {
+				drop: function(event) {
 					self.onHeaderDrop(event);
 				}
 			});
@@ -880,16 +893,17 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
 
     self.onGroupDrop = function(event) {
         // clear out the colToMove object
+        var groupContainer;
+        var groupScope;
         if (self.groupToMove) {
 			self.onGroupDragStop();
             // Get the closest header to where we dropped
-            var groupContainer = $(event.target).closest('.ngGroupElement');
-            // Get the scope from the header.
+            groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
             if (groupContainer.context.className == 'ngGroupPanel') {
                 $scope.configGroups.splice(self.groupToMove.index, 1);
                 $scope.configGroups.push(self.groupToMove.groupName);
             } else {
-                var groupScope = angular.element(groupContainer).scope();
+                groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
                     if (self.groupToMove.index != groupScope.$index){
@@ -903,13 +917,12 @@ ng.AggregateProvider = function (grid, $scope, gridService) {
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-				var groupContainer = $(event.target).closest('.ngGroupElement');
-				// Get the scope from the header.
+                groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
 					$scope.configGroups.push(self.colToMove.col);
 				} else {
-					var groupScope = angular.element(groupContainer).scope();
-					if (groupScope) {
+				    groupScope = angular.element(groupContainer).scope();
+				    if (groupScope) {
 						// Splice the columns
 						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
 					}
@@ -1050,7 +1063,7 @@ ng.Column = function (config) {
 
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.entity[col.field] CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -1974,7 +1987,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
 ng.HeaderRow = function () {
     this.headerCells = [];
     this.height = null;
-    this.headerCellMap = {};
 };
 
 /***********************************************
@@ -2022,9 +2034,6 @@ ng.Row = function (entity, config, selectionService) {
         }
         return false;
     };
-
-    self.cells = [];
-    self.cellMap = {};
     self.rowIndex = 0;
     self.offsetTop = 0;
     self.rowKey = ng.utils.newId();
@@ -2036,12 +2045,10 @@ ng.Row = function (entity, config, selectionService) {
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
-    //during row initialization, let's make all the entities properties first-class properties on the row
-    (function () {
-        ng.utils.forIn(entity, function (prop, propName) {
-            self[propName] = prop;
-        });
-    }());
+    self.propertyCache = {};
+    self.getProperty = function (path) {
+        return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
+    };
 }; 
 
 /***********************************************
@@ -2337,7 +2344,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 
             return {
                 pre: function ($scope, iElement, iAttrs) {
                     var $element = $(iElement);
-                    var options = $scope[iAttrs.ngGrid];
+                    var options = $scope.$eval(iAttrs.ngGrid);
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, gridDim, SortService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
