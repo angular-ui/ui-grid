@@ -22,9 +22,7 @@ function userController($scope, $filter) {
 	
 	$scope.$watch('searchText', function(){
 		$scope.filterData();
-		if(!$scope.$$phase) {
-			$scope.$apply();
-		}
+	    self.apply();
 	});
 	 
     $scope.gridOptions = {
@@ -61,6 +59,11 @@ function userController($scope, $filter) {
     $scope.changeData = function(){
         $scope.myData2 = window.getTestData();
         $scope.myData = largeLoad();
-     };
-    
+        self.apply();
+    };
+    self.apply = function() {
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    };
 };
