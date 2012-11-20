@@ -16,12 +16,12 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.0
+version 1.2.0
 
 ***
 ##Roadmap##
 
-ng-grid is version 1.0 release.
+ng-grid is version 1.2.0 release.
 
 We are going to be adding more features here as we head to a 1.1 release, including:
 
@@ -66,5 +66,6 @@ Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getti
 [Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
 
 ##Change Log##\
+* __2012-11-19__ - Version 1.2.0 - Added Server-Side Paging support and minor big fixes.
 * __2012-11-17__ - Version 1.1.0 - Added ability to hide/show columns and various bug fixes/performance enhancements.
 * __2012-11-14__ - Version 1.0.0 Release
