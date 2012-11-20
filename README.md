@@ -23,9 +23,8 @@ version 1.2.0
 
 ng-grid is version 1.2.0 release.
 
-We are going to be adding more features here as we head to a 1.1 release, including:
+We are going to be adding more features here as we head to a 1.3 release, including:
 
-* Ability to hide-show columns on the fly
 * Builtin filtering support
 * Virtualized column scrolling
 * Anything else the rest of the community wants to contribute that isn't a terrible idea. :)
@@ -66,6 +65,6 @@ Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getti
 [Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
 
 ##Change Log##\
-* __2012-11-19__ - Version 1.2.0 - Added Server-Side Paging support and minor big fixes.
+* __2012-11-19__ - Version 1.2.0 - Added Server-Side Paging support and minor bug fixes.
 * __2012-11-17__ - Version 1.1.0 - Added ability to hide/show columns and various bug fixes/performance enhancements.
 * __2012-11-14__ - Version 1.0.0 Release
