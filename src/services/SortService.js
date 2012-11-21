@@ -71,7 +71,7 @@ ngGridServices.factory('SortService', function () {
         return a - b;
     };
     sortService.sortNumberStr = function(a, b) {
-        var numA, numB, badA = false, badB = false;
+        var numA, numB, badA, badB;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
         if (isNaN(numA)) badA = true;
         numB = parseFloat(b.replace(/[^0-9.-]/g, ''));

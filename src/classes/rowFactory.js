@@ -53,45 +53,6 @@ ng.RowFactory = function (grid, $scope) {
         return agg;
     };
 
-    // core logic that intelligently figures out the rendered range given all the contraints that we have
-    self.CalcRenderedRange = function () {
-        var rg = self.renderedRange,
-		    minRows = grid.minRowsToRender(),
-		    maxRows = Math.max(grid.sortedData.length + self.numberOfAggregates, grid.minRowsToRender()),
-		    prevMaxRows = self.prevMaxRows,
-		    prevMinRows = self.prevMinRows,
-		    isDif, // flag to help us see if the viewableRange or data has changed "enough" to warrant re-building our rows
-		    newRg = new ng.Range(0, 0); // variable to hold our newly-calc'd rendered range 
-
-        isDif = (rg.bottomRow !== self.prevViewableRange.bottomRow || rg.topRow !== self.prevViewableRange.topRow || self.dataChanged);
-        if (!isDif && prevMaxRows !== maxRows) {
-            isDif = true;
-            rg = new ng.Range(self.prevViewableRange.bottomRow, self.prevViewableRange.topRow);
-        }
-        if (!isDif && prevMinRows !== minRows) {
-            isDif = true;
-            rg = new ng.Range(self.prevViewableRange.bottomRow, self.prevViewableRange.topRow);
-        }
-        if (isDif) {
-            //store it for next rev
-            self.prevViewableRange = rg;
-            // now build the new rendered range
-            newRg = new ng.Range(rg.bottomRow, rg.topRow);
-            // make sure we are within our data constraints (can't render negative rows or rows greater than the # of data items we have)
-            newRg.bottomRow = Math.max(0, rg.bottomRow - EXCESS_ROWS);
-            newRg.topRow = Math.min(maxRows, rg.topRow + EXCESS_ROWS);
-            // store them for later comparison purposes
-            self.prevMaxRows = maxRows;
-            self.prevMinRows = minRows;
-            //one last equality check
-            if (self.prevRenderedRange.topRow !== newRg.topRow || self.prevRenderedRange.bottomRow !== newRg.bottomRow || self.dataChanged) {
-                self.dataChanged = false;
-                self.prevRenderedRange = newRg;
-            }
-        }
-        self.UpdateViewableRange(newRg);
-    };
-
     self.renderedChangeNoGroups = function () {
         var rowArr = [];
         var pagingOffset = ($scope.pagingOptions.pageSize * ($scope.pagingOptions.currentPage - 1));
@@ -106,10 +67,10 @@ ng.RowFactory = function (grid, $scope) {
     };
 
     self.UpdateViewableRange = function (newRange) {
+        self.prevViewableRange = self.renderedRange;
         self.renderedRange = newRange;
         self.renderedChange();
     };
-
     self.sortedDataChanged = function () {
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
@@ -118,7 +79,7 @@ ng.RowFactory = function (grid, $scope) {
             self.getGrouping(grid.config.groups);
             self.parsedData.needsUpdate = true;
         }
-        self.CalcRenderedRange();
+        self.UpdateViewableRange(self.renderedRange);
     };
 
     self.Initialize = function (config) {

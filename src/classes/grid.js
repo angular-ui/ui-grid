@@ -276,11 +276,19 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             hUpdateTimeout = setTimeout(updater, 0);
         }
     };
+    self.prevScrollIndex = 0;
+    self.curScrollTop = 0;
     self.adjustScrollTop = function (scrollTop, force) {
+        self.curScrollTop = self.$viewport.scrollTop();
         if (prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
+        // Have we hit the threshold going down?
+        if (prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) return;
+        //Have we hit the threshold going up?
+        if (prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) return;
         prevScrollTop = scrollTop;
-        self.rowFactory.UpdateViewableRange(new ng.Range(rowIndex, rowIndex + self.minRowsToRender() + EXCESS_ROWS));
+        self.rowFactory.UpdateViewableRange(new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS));
+        self.prevScrollIndex = rowIndex;
     };
     self.adjustScrollLeft = function (scrollLeft) {
         if (self.$headerContainer) {
