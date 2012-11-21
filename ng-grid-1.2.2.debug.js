@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/21/2012 11:40:47
+* Compiled At: 11/21/2012 11:54:43
 ***********************************************/
 
 (function(window, undefined){
@@ -616,7 +616,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()">');
     b.append('       <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>');
+    b.append('          		 <span class="ngLabel">Total Items: {{maxRows}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>');
     b.append('       	 </div>');
     b.append('       	 <div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append('       	    <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
@@ -1115,13 +1115,13 @@ ng.Dimension = function (options) {
 * FILE: ..\src\classes\footer.js
 ***********************************************/
 ng.Footer = function ($scope, grid) {
-    $scope.maxRows = null;
-
+    $scope.maxRows = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
+    
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
-		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
+        $scope.maxRows = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
+        return Math.ceil($scope.maxRows / $scope.pagingOptions.pageSize);
     };
 
     $scope.pageForward = function() {
@@ -1715,9 +1715,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     };
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
-    };
-    $scope.totalItemsLength = function () {
-        return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
     };
     $scope.totalFilteredItemsLength = function () {
         return Math.max(self.filteredData.length);

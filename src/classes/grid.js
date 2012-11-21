@@ -351,9 +351,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
     };
-    $scope.totalItemsLength = function () {
-        return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
-    };
     $scope.totalFilteredItemsLength = function () {
         return Math.max(self.filteredData.length);
     };
