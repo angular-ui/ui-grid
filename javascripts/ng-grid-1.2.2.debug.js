@@ -1120,8 +1120,8 @@ ng.Footer = function ($scope, grid) {
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
-		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
+        $scope.maxRows = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
+        return Math.ceil($scope.maxRows / $scope.pagingOptions.pageSize);
     };
 
     $scope.pageForward = function() {
