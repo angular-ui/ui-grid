@@ -23,6 +23,9 @@ function userController($scope) {
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.myData = pagedData;
             $scope.pagingOptions.totalServerItems = data.length;
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
         }, 100);
     };
     $scope.$watch('pagingOptions', function () {
