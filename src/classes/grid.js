@@ -39,7 +39,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             showGroupPanel: false,
             enableRowReordering: false,
             showColumnMenu: true,
-            showFilter: false,
+            showFilter: true,
             //Paging 
             enablePaging: false,
             pagingOptions: {
@@ -68,6 +68,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     self.sortInfo = self.config.sortInfo;
     self.sortedData = [];
     self.lateBindColumns = false;
+    self.filteredData = [];
     if (typeof self.config.data == "object") {
         self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
     }
@@ -75,7 +76,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     self.calcMaxCanvasHeight = function() {
         return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function (e) {
             return e[NG_HIDDEN] === false;
-        }).length * self.config.rowHeight) : (self.sortedData.length * self.config.rowHeight);
+        }).length * self.config.rowHeight) : (self.filteredData.length * self.config.rowHeight);
     };
     self.elementDims = {
         scrollW: 0,
@@ -214,6 +215,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.selectionService.Initialize(self.rowFactory);
         self.sortService = sortService;
+        self.searchProvider = new ng.SearchProvider($scope, self);
         self.styleProvider = new ng.StyleProvider($scope, self);
         self.cssBuilder = new ng.CssBuilder($scope, self);
         self.buildColumns();
@@ -226,7 +228,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
                 tempArr.push(item.field || item);
             });
             self.config.groups = tempArr;
-            self.rowFactory.sortedDataChanged();
+            self.rowFactory.filteredDataChanged();
         }, true);
         $scope.$watch('columns', function () {
             self.cssBuilder.buildStyles(true);
@@ -296,7 +298,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         self.clearSortingData(col);
         self.sortService.Sort(sortInfo, self.sortedData);
         self.lastSortedColumn = col;
-        self.rowFactory.sortedDataChanged();
+        self.searchProvider.evalFilter();
     };
     self.clearSortingData = function (col) {
         if (!col) {
@@ -348,6 +350,9 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     };
     $scope.totalItemsLength = function () {
         return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
+    };
+    $scope.totalFilteredItemsLength = function () {
+        return Math.max(self.filteredData.length);
     };
 	$scope.showGroupPanel = function(){
 		return self.config.showGroupPanel;

@@ -21,6 +21,7 @@
 ..\src\classes\headerRow.js
 ..\src\classes\range.js
 ..\src\classes\row.js
+..\src\classes\searchProvider.js
 ..\src\classes\selectionService.js
 ..\src\classes\styleProvider.js
 ..\src\domManipulation\cssBuilder.js

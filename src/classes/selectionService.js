@@ -19,8 +19,8 @@ ng.SelectionService = function (grid) {
 	        }
 	    } else if (evt && evt.shiftKey) {
             if (self.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(grid.sortedData, rowItem.entity);
-                var prevIndx = ng.utils.arrayIndexOf(grid.sortedData, self.lastClickedRow.entity);
+                var thisIndx = ng.utils.arrayIndexOf(grid.filteredData, rowItem.entity);
+                var prevIndx = ng.utils.arrayIndexOf(grid.filteredData, self.lastClickedRow.entity);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {
@@ -66,7 +66,7 @@ ng.SelectionService = function (grid) {
         if (selectedlength > 0) {
             self.selectedItems.splice(0, selectedlength);
         }
-        angular.forEach(grid.sortedData, function (item) {
+        angular.forEach(grid.filteredData, function (item) {
             item[SELECTED_PROP] = checkAll;
             if (checkAll) {
                 self.selectedItems.push(item);

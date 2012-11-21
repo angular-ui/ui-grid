@@ -19,7 +19,7 @@ ng.defaultGridTemplate = function () {
 	b.append('         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div>');
 	b.append('    	</div>');
 	b.append('      <div class="ngHeaderButton" ng-show="showColumnMenu" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div></div>');
-	b.append('      <div ng-show="showMenu" class="ngColMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</label></li></ul></div>');	
+	b.append('      <div ng-show="showMenu" class="ngColMenu"><div><input ng-show="showFilter" placeholder="Seach Field:Value" type="text" ng-model="filterText"/></div><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/> {{col.displayName}}</label></li></ul></div>');
 	b.append('	 </div>');
 	b.append('	 <div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()">');
     b.append('    	 <div class="ngCanvas" ng-style="canvasStyle()">');
@@ -29,7 +29,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()">');
     b.append('       <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span>');
+    b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>');
     b.append('       	 </div>');
     b.append('       	 <div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append('       	    <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');

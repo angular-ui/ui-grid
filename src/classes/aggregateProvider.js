@@ -199,7 +199,7 @@
             var j = grid.sortedData.indexOf(rowScope.row.entity);
             grid.sortedData.splice(i, 1);
             grid.sortedData.splice(j, 0, prevRow.scope.row.entity);
-            grid.rowFactory.sortedDataChanged();
+            grid.searchProvider.evalFilter();
             // clear out the rowToMove object
             gridService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one

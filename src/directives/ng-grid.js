@@ -16,8 +16,8 @@
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
                             if (!a) return;
-                            grid.sortedData = $.extend(true,[], a);
-                            grid.rowFactory.sortedDataChanged();
+                            grid.sortedData = $.extend(true, [], a);
+                            grid.searchProvider.evalFilter();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }
