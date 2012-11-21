@@ -17,7 +17,6 @@ if (!Array.prototype.filter)
   Array.prototype.filter = function(fun /*, thisp */)
   {
     "use strict";
-    if (this === void 0 || this === null) throw new TypeError();
     var t = Object(this);
     var len = t.length >>> 0;
     if (typeof fun !== "function")throw new TypeError();
@@ -100,13 +99,11 @@ ng.utils = {
         var strArr = [];
         this.append = function (str, data) {
             var len = arguments.length,
-                intMatch = 0,
+                intMatch,
                 strMatch = '{0}',
                 i = 1;
-
             if (len > 1) { // they provided data
                 while (i < len) {
-
                     //apparently string.replace only works on one match at a time
                     //so, loop through the string and hit all matches
                     while (str.indexOf(strMatch) !== -1) {

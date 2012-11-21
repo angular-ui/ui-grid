@@ -8,15 +8,8 @@
 
 ngGridServices.factory('SortService', function () {
     var sortService = { };
-
-    sortService.colSortFnCache = { }; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
+    sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
-    
-    // utility function for null checking
-    sortService.isEmpty = function(val) {
-        return (val === null || val === undefined || val === '');
-    };
-
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
@@ -28,9 +21,7 @@ ngGridServices.factory('SortService', function () {
             day; // for date parsing
 
         if (item === undefined || item === null || item === '') return null;
-
         itemType = typeof(item);
-
         //check for numbers and booleans
         switch (itemType) {
         case "number":
@@ -40,16 +31,12 @@ ngGridServices.factory('SortService', function () {
             sortFn = sortService.sortBool;
             break;
         }
-
         //if we found one, return it
         if (sortFn) return sortFn;
-
         //check if the item is a valid Date
         if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
-
         // if we aren't left with a string, return a basic sorting function...
         if (itemType !== "string") return sortService.basicSort;
-
         // now lets string check..
         //check if the item data is a valid number
         if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return sortService.sortNumberStr;
@@ -74,17 +61,15 @@ ngGridServices.factory('SortService', function () {
         //finally just sort the normal string...
         return sortService.sortAlpha;
     };
-
-    sortService.basicSort = function(a, b) {
+    //#region Sorting Functions
+    sortService.basicSort = function (a, b) {
         if (a == b) return 0;
         if (a < b) return -1;
         return 1;
     };
-    //#region Sorting Functions
     sortService.sortNumber = function(a, b) {
         return a - b;
     };
-
     sortService.sortNumberStr = function(a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
@@ -97,19 +82,16 @@ ngGridServices.factory('SortService', function () {
         if (badB) return -1;
         return numA - numB;
     };
-
     sortService.sortAlpha = function(a, b) {
-        var strA = a.toUpperCase(),
-            strB = b.toUpperCase();
+        var strA = a.toLowerCase(),
+            strB = b.toLowerCase();
         return strA == strB ? 0 : (strA < strB ? -1 : 1);
     };
-
     sortService.sortDate = function(a, b) {
         var timeA = a.getTime(),
             timeB = b.getTime();
         return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
     };
-
     sortService.sortBool = function(a, b) {
         if (a && b) {
             return 0;
@@ -120,7 +102,6 @@ ngGridServices.factory('SortService', function () {
             return a ? 1 : -1;
         }
     };
-
     sortService.sortDDMMStr = function(a, b) {
         var dateA, dateB, mtch, m, d, y;
         mtch = a.match(sortService.dateRE);
@@ -141,7 +122,6 @@ ngGridServices.factory('SortService', function () {
         if (dateA < dateB) return -1;
         return 1;
     };
-
     sortService.sortMMDDStr = function(a, b) {
         var dateA, dateB, mtch, m, d, y;
         mtch = a.match(sortService.dateRE);
@@ -163,15 +143,12 @@ ngGridServices.factory('SortService', function () {
         return 1;
     };
     //#endregion
-
     // the core sorting logic trigger
     sortService.sortData = function(data /*datasource*/, sortInfo) {
-
         // first make sure we are even supposed to do work
         if (!data || !sortInfo) {
             return;
         }
-
         // grab the metadata for the rest of the logic
         var col = sortInfo.column,
             direction = sortInfo.direction,
@@ -187,7 +164,6 @@ ngGridServices.factory('SortService', function () {
         } else { // try and guess what sort function to use
             item = data[0];
             sortFn = sortService.guessSortFn(item[col.field]);
-
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;
@@ -198,38 +174,18 @@ ngGridServices.factory('SortService', function () {
                 sortFn = sortService.sortAlpha;
             }
         }
-
         //now actually sort the data
         data.sort(function(itemA, itemB) {
-            var propA = itemA,
-                propB = itemB,
-                propAEmpty,
-                propBEmpty,
-                propPath,
-                i;
-
-            propPath = col.field.split(".");
-            for (i = 0; i < propPath.length; i++) {
-                if (propA !== undefined && propA !== null) {
-                    propA = propA[propPath[i]];
-                }
-                if (propB !== undefined && propB !== null) {
-                    propB = propB[propPath[i]];
-                }
-            }
-
-            propAEmpty = sortService.isEmpty(propA);
-            propBEmpty = sortService.isEmpty(propB);
-
+            var propA = ng.utils.evalProperty(itemA, col.field);
+            var propB = ng.utils.evalProperty(itemB, col.field);
             // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-            if (propAEmpty && propBEmpty) {
+            if (!propB && !propA) {
                 return 0;
-            } else if (propAEmpty) {
+            } else if (!propA) {
                 return 1;
-            } else if (propBEmpty) {
+            } else if (!propB) {
                 return -1;
             }
-
             //made it this far, we don't have to worry about null & undefined
             if (direction === ASC) {
                 return sortFn(propA, propB);
@@ -239,7 +195,6 @@ ngGridServices.factory('SortService', function () {
         });
         return;
     };
-    
     sortService.Sort = function (sortInfo, data) {
         if (sortService.isSorting) return;
         sortService.isSorting = true;
