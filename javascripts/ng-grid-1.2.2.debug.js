@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/21/2012 10:53:17
+* Compiled At: 11/21/2012 11:40:47
 ***********************************************/
 
 (function(window, undefined){
@@ -1117,15 +1117,10 @@ ng.Dimension = function (options) {
 ng.Footer = function ($scope, grid) {
     $scope.maxRows = null;
 
-    if (!ng.utils.isNullOrUndefined($scope.pagingOptions.totalServerItems)) {
-        $scope.maxRows = $scope.pagingOptions.totalServerItems;
-    } else {
-        $scope.maxRows = grid.maxRows;
-    }
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = $scope.maxRows || 1;
+        var maxCnt = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
 		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
     };
 
@@ -1419,8 +1414,8 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             pagingOptions: {
                 pageSizes: [250, 500, 1000], //page Sizes
                 pageSize: 250, //Size of Paging data
-                totalServerItems: 0, //ko.observable of how many items are on the server (for paging)
-                currentPage: 1, //ko.observable of what page they are currently on
+                totalServerItems: undefined, //how many items are on the server (for paging)
+                currentPage: 1, //what page they are currently on
             },
         },
         self = this,
@@ -1607,7 +1602,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         $scope.$watch('columns', function () {
             self.cssBuilder.buildStyles(true);
         }, true);
-        $scope.maxRows = $scope.renderedRows.length;
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
@@ -1764,7 +1758,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         var numOfCols = cols.length;
             
         angular.forEach(cols, function (col, i) {
-            // get column width out of the observable
+            // get column width 
             var t = parseInt(col.width);
             var isPercent = isNaN(t) ? ng.utils.endsWith(t, "%") : false;
             t = isPercent ? t : parseInt(t);
@@ -1976,7 +1970,7 @@ ng.SelectionService = function (grid) {
     self.selectedItems = grid.config.selectedItems;
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
-    self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+    self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
 
     self.rowFactory = {};
 	self.Initialize = function (rowFactory) {
