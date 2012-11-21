@@ -5,6 +5,7 @@ function userController($scope) {
     var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
+    $scope.myData = [];
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000], //page Sizes
         pageSize: 250, //Size of Paging data
@@ -12,17 +13,22 @@ function userController($scope) {
         currentPage: 1 //what page they are currently on
     };
     self.getPagedDataAsync = function (pageSize, page) {
-        var data = largeLoad();
-        var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
-        $scope.myData = pagedData;
-        $scope.pagingOptions.totalServerItems = data.length;
+        setTimeout(function() {
+            var data = largeLoad();
+            var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
+            $scope.myData = pagedData;
+            $scope.pagingOptions.totalServerItems = data.length;
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }, 0);
     };
     $scope.$watch('pagingOptions', function () {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
         return null;
     }, true);
     
-    $scope.myData = self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
+    self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.gridOptions = {
 		data: 'myData',
 		jqueryUITheme: false,

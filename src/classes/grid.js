@@ -69,6 +69,7 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     self.$canvas = null;
     self.sortInfo = self.config.sortInfo;
     self.sortedData = [];
+    self.lateBindColumns = false;
     if (typeof self.config.data == "object") {
         self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
     }
@@ -173,7 +174,8 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
             self.config.columnDefs = [];
         }
         if (!self.sortedData || !self.sortedData[0]) {
-            throw 'If auto-generating columns, "data" cannot be of null or undefined type!';
+            self.lateBoundColumns = true;
+            return;
         }
         var item;
         item = self.sortedData[0];
