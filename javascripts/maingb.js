@@ -14,6 +14,7 @@ function userController($scope) {
         displaySelectionCheckbox: false,
         multiSelect: true,
         showColumnMenu: true,
+        showFilter: true,
         showGroupPanel: true,
         groups: ['name', 'allowance'],
 		columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },

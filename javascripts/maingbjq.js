@@ -14,6 +14,7 @@ function userController($scope) {
         displaySelectionCheckbox: false,
         multiSelect: true,
         showColumnMenu: true,
+        showFilter: true,
         showGroupPanel: true,
         jqueryUIDraggable: true, // Enables non-HTML5 compliant drag and drop using the jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', width: 200 },
