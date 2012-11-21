@@ -616,7 +616,7 @@ ng.defaultGridTemplate = function () {
     b.append('	 <div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()">');
     b.append('       <div class="ngTotalSelectContainer" ng-show="footerVisible">');
     b.append('           <div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" >');
-    b.append('          		 <span class="ngLabel">Total Items: {{totalItemsLength()}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>');
+    b.append('          		 <span class="ngLabel">Total Items: {{maxRows}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>');
     b.append('       	 </div>');
     b.append('       	 <div class="ngFooterSelectedItems" ng-show="multiSelect">');
     b.append('       	    <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>');
@@ -1715,9 +1715,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     };
     $scope.toggleSelectAll = function (a) {
         self.selectionService.toggleSelectAll(a);
-    };
-    $scope.totalItemsLength = function () {
-        return Math.max(self.sortedData.length, self.config.pagingOptions.totalServerItems);
     };
     $scope.totalFilteredItemsLength = function () {
         return Math.max(self.filteredData.length);
