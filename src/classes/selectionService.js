@@ -1,13 +1,13 @@
 ng.SelectionService = function (grid) {
     var self = this;
-
+    self.isMulti = grid.config.isMultiSelect;
+    self.selectedItems = grid.config.selectedItems;
+    self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
-    
-	self.Initialize = function (options, rowFactory) {
-        self.isMulti = options.isMulti || options.multiSelect;
-        self.selectedItems = options.selectedItems;
-        self.selectedIndex = options.selectedIndex;
+
+    self.rowFactory = {};
+	self.Initialize = function (rowFactory) {
         self.rowFactory = rowFactory;
     };
 		
@@ -59,7 +59,6 @@ ng.SelectionService = function (grid) {
         }
     };
     
-    // writable-computed observable
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {

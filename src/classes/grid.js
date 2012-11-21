@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, SortService) {
+ng.Grid = function ($scope, options, gridDim, sortService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -73,13 +73,9 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
     if (typeof self.config.data == "object") {
         self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
     }
-    //initialized in the init method
-    self.rowFactory = new ng.RowFactory(self, $scope);
-    self.selectionService = new ng.SelectionService(self);
-    self.sortService = SortService;
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
-        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.values.filter(function (e) {
+        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function (e) {
             return e[NG_HIDDEN] === false;
         }).length * self.config.rowHeight) : (self.sortedData.length * self.config.rowHeight);
     };
@@ -225,6 +221,12 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }
     };
     self.init = function () {
+        //factories and services
+        self.selectionService = new ng.SelectionService(self);
+        self.rowFactory = new ng.RowFactory(self, $scope);
+        self.selectionService.Initialize(self.rowFactory);
+        self.sortService = sortService;
+        
         self.cssBuilder = new ng.CssBuilder($scope, self);
         self.buildColumns();
         self.sortService.columns = $scope.columns,
@@ -243,24 +245,6 @@ ng.Grid = function ($scope, options, gridDim, SortService) {
         }, true);
         $scope.maxRows = $scope.renderedRows.length;
         maxCanvasHt = self.calcMaxCanvasHeight();
-        self.selectionService.Initialize({
-            multiSelect: self.config.multiSelect,
-            selectedItems: self.config.selectedItems,
-            selectedIndex: self.config.selectedIndex,
-            isMulti: self.config.multiSelect
-        }, self.rowFactory);
-        self.rowFactory.Initialize({
-            selectionService: self.selectionService,
-            rowHeight: self.config.rowHeight,
-            rowConfig: {
-                canSelectRows: self.config.canSelectRows,
-                rowClasses: self.config.rowClasses,
-                selectedItems: self.config.selectedItems,
-                selectWithCheckboxOnly: self.config.selectWithCheckboxOnly,
-                beforeSelectionChangeCallback: self.config.beforeSelectionChange,
-                afterSelectionChangeCallback: self.config.afterSelectionChange
-            }
-        });
         self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
     };

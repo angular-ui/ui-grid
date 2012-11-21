@@ -7,17 +7,25 @@ ng.RowFactory = function (grid, $scope) {
     // we cache rows when they are built, and then blow the cache away when sorting
     self.rowCache = [];
     self.aggCache = {};
+    self.parentCache = []; // Used for grouping and is cleared each time groups are calulated.
     self.dataChanged = true;
-    self.prevMaxRows = 0; // for comparison purposes when scrolling
-    self.prevMinRows = 0; // for comparison purposes when scrolling
+    self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = undefined;
+    self.selectionService = grid.selectionService;
     self.rowHeight = 30;
-    self.prevRenderedRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
-    self.prevViewableRange = undefined; // for comparison purposes to help throttle re-calcs when scrolling
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
-	var parents = []; // Used for grouping and is cleared each time groups are calulated.
+    self.rowHeight = grid.config.rowHeight;
+    self.rowConfig = {
+        canSelectRows: grid.config.canSelectRows,
+        rowClasses: grid.config.rowClasses,
+        selectedItems: grid.config.selectedItems,
+        selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
+        beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
+        afterSelectionChangeCallback: grid.config.afterSelectionChange
+    };
+
+    self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
     // Builds rows for each data item in the 'sortedData'
     // @entity - the data item
     // @rowIndex - the index of the row
@@ -52,20 +60,6 @@ ng.RowFactory = function (grid, $scope) {
         aggEntity[ROW_KEY] = rowIndex;
         return agg;
     };
-
-    self.renderedChangeNoGroups = function () {
-        var rowArr = [];
-        var pagingOffset = ($scope.pagingOptions.pageSize * ($scope.pagingOptions.currentPage - 1));
-        var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
-
-        angular.forEach(dataArr, function (item, i) {
-            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i, pagingOffset);
-            //add the row to our return array
-            rowArr.push(row);
-        });
-        grid.setRenderedRows(rowArr);
-    };
-
     self.UpdateViewableRange = function (newRange) {
         self.prevViewableRange = self.renderedRange;
         self.renderedRange = newRange;
@@ -83,100 +77,19 @@ ng.RowFactory = function (grid, $scope) {
         self.selectionService.toggleSelectAll(false);
         if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
-            self.parsedData.needsUpdate = true;
         }
         self.UpdateViewableRange(self.renderedRange);
     };
 
-    self.Initialize = function (config) {
-        self.prevMaxRows = 0; // for comparison purposes when scrolling
-        self.prevMinRows = 0; // for comparison purposes when scrolling
-        // height of each row
-        self.rowConfig = config.rowConfig;
-        self.selectionService = config.selectionService;
-        self.rowHeight = config.rowHeight;
-        var i = grid.minRowsToRender();
-        self.prevRenderedRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
-        self.prevViewableRange = new ng.Range(0, i); // for comparison purposes to help throttle re-calcs when scrolling
-        // the actual range the user can see in the viewport
-        self.renderedRange = self.prevRenderedRange;
-        if (grid.config.groups.length > 0 && grid.sortedData.length > 0) {
-            self.getGrouping(grid.config.groups);
-        }
-        self.sortedDataChanged();
-        self.parsedData.needsUpdate = true;
-    };
-    
-    self.getGrouping = function (groups) {
-        self.aggCache = [];
-        self.rowCache = [];
-        self.numberOfAggregates = 0;
-        self.groupedData = { };
-        // Here we set the onmousedown event handler to the header container.
-        var data = grid.sortedData;
-        var maxDepth = groups.length;
-        var cols = $scope.columns;
-
-        angular.forEach(data, function (item) {
-            var ptr = self.groupedData;
-            angular.forEach(groups, function (group, depth) {
-                if (!cols[depth].isAggCol && depth <= maxDepth) {
-                    cols.splice(item.gDepth, 0, new ng.Column({
-                        colDef: {
-                            field: '',
-                            width: 25,
-                            sortable: false,
-                            resizable: false,
-                            headerCellTemplate: '<div class="ngAggHeader"></div>',
-                        },
-                        isAggCol: true,
-                        index: item.gDepth,
-                        headerRowHeight: grid.config.headerRowHeight
-                    }));
-                }
-                var col = cols.filter(function(c) {
-                    return c.field == group;
-                })[0];
-                var val = ng.utils.evalProperty(item, group).toString();
-                if (!ptr[val]) {
-                    ptr[val] = {};
-                }
-                if (!ptr[NG_FIELD]) {
-                    ptr[NG_FIELD] = group;
-                }
-                if (!ptr[NG_DEPTH]) {
-                    ptr[NG_DEPTH] = depth;
-                }
-                if (!ptr[NG_COLUMN]) {
-                    ptr[NG_COLUMN] = col;
-                }
-                ptr = ptr[val];
-            });
-            if (!ptr.values) {
-                ptr.values = [];
-            }
-            item[NG_HIDDEN] = true;
-            ptr.values.push(item);
-        });
-        grid.fixColumnIndexes();
-    };
-    
-    self.parsedData = { needsUpdate: true, values: [] };
-    
     self.renderedChange = function () {
         if (!self.groupedData || grid.config.groups.length < 1) {
             self.renderedChangeNoGroups();
             grid.refreshDomSizes();
             return;
         }
+        self.parentCache = [];
         var rowArr = [];
-		parents = [];
-        if (self.parsedData.needsUpdate) {
-            self.parsedData.values.length = 0;
-            self.parseGroupData(self.groupedData);
-            self.parsedData.needsUpdate = false;
-        }
-        var dataArray = self.parsedData.values.filter(function (e) {
+        var dataArray = self.parsedData.filter(function (e) {
              return e[NG_HIDDEN] === false;
         }).slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
         angular.forEach(dataArray, function (item, indx) {
@@ -192,15 +105,27 @@ ng.RowFactory = function (grid, $scope) {
         grid.setRenderedRows(rowArr);
         grid.refreshDomSizes();
     };
+
+    self.renderedChangeNoGroups = function () {
+        var rowArr = [];
+        var pagingOffset = ($scope.pagingOptions.pageSize * ($scope.pagingOptions.currentPage - 1));
+        var dataArr = grid.sortedData.slice(self.renderedRange.bottomRow, self.renderedRange.topRow);
+        angular.forEach(dataArr, function (item, i) {
+            var row = self.buildEntityRow(item, self.renderedRange.bottomRow + i, pagingOffset);
+            //add the row to our return array
+            rowArr.push(row);
+        });
+        grid.setRenderedRows(rowArr);
+    };
     
-    //magical recursion. it works. I swear it.
+    //magical recursion. it works. I swear it. I figured it out in the shower one day.
     self.parseGroupData = function (g) {
         if (g.values) {
             angular.forEach(g.values, function (item) {
                 // get the last parent in the array because that's where our children want to be
-                parents[parents.length -1].children.push(item);
+                self.parentCache[self.parentCache.length - 1].children.push(item);
                 //add the row to our return array
-                self.parsedData.values.push(item);
+                self.parsedData.push(item);
             });
         } else {
             for (var prop in g) {
@@ -221,20 +146,68 @@ ng.RowFactory = function (grid, $scope) {
                         aggLabelFilter: g[NG_COLUMN].aggLabelFilter
                     }, 0);
                     //set the aggregate parent to the parent in the array that is one less deep.
-                    agg.parent = parents[agg.depth - 1];
+                    agg.parent = self.parentCache[agg.depth - 1];
                     // if we have a parent, set the parent to not be collapsed and append the current agg to its children
                     if (agg.parent) {
                         agg.parent.collapsed = false;
                         agg.parent.aggChildren.push(agg);
                     }
                     // add the aggregate row to the parsed data.
-                    self.parsedData.values.push(agg.entity);
+                    self.parsedData.push(agg.entity);
                     // the current aggregate now the parent of the current depth
-                    parents[agg.depth] = agg;
+                    self.parentCache[agg.depth] = agg;
                     // dig deeper for more aggregates or children.
                     self.parseGroupData(g[prop]);
                 }
             }
         }
     };
+    //Shuffle the data into their respective groupings.
+    self.getGrouping = function (groups) {
+        self.aggCache = [];
+        self.rowCache = [];
+        self.numberOfAggregates = 0;
+        self.groupedData = {};
+        // Here we set the onmousedown event handler to the header container.
+        var data = grid.sortedData;
+        var maxDepth = groups.length;
+        var cols = $scope.columns;
+
+        angular.forEach(data, function (item) {
+            item[NG_HIDDEN] = true;
+            var ptr = self.groupedData;
+            angular.forEach(groups, function (group, depth) {
+                if (!cols[depth].isAggCol && depth <= maxDepth) {
+                    cols.splice(item.gDepth, 0, new ng.Column({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                        },
+                        isAggCol: true,
+                        index: item.gDepth,
+                        headerRowHeight: grid.config.headerRowHeight
+                    }));
+                }
+                var col = cols.filter(function (c) { return c.field == group; })[0];
+                var val = ng.utils.evalProperty(item, group).toString();
+                if (!ptr[val]) ptr[val] = {};
+                if (!ptr[NG_FIELD]) ptr[NG_FIELD] = group;
+                if (!ptr[NG_DEPTH]) ptr[NG_DEPTH] = depth;
+                if (!ptr[NG_COLUMN]) ptr[NG_COLUMN] = col;
+                ptr = ptr[val];
+            });
+            if (!ptr.values) ptr.values = [];
+            ptr.values.push(item);
+        });
+        grid.fixColumnIndexes();
+        self.parsedData.length = 0;
+        self.parseGroupData(self.groupedData);
+    };
+
+    if (grid.config.groups.length > 0 && grid.sortedData.length > 0) {
+        self.getGrouping(grid.config.groups);
+    }
 }
