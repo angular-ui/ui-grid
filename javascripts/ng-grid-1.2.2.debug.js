@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/21/2012 11:40:47
+* Compiled At: 11/21/2012 12:03:53
 ***********************************************/
 
 (function(window, undefined){
@@ -1116,7 +1116,7 @@ ng.Dimension = function (options) {
 ***********************************************/
 ng.Footer = function ($scope, grid) {
     $scope.maxRows = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
-
+    
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
@@ -1363,7 +1363,7 @@ ng.RowFactory = function (grid, $scope) {
         self.parseGroupData(self.groupedData);
     };
 
-    if (grid.config.groups.length > 0 && grid.filtered.length > 0) {
+    if (grid.config.groups.length > 0 && grid.filteredData.length > 0) {
         self.getGrouping(grid.config.groups);
     }
 }
