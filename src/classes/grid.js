@@ -40,6 +40,10 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             enableRowReordering: false,
             showColumnMenu: true,
             showFilter: true,
+            filterOptions: {
+                filterText: "",
+                useExternalFilter: false,
+            },
             //Paging 
             enablePaging: false,
             pagingOptions: {

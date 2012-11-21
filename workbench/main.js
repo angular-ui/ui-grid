@@ -6,6 +6,10 @@ function userController($scope) {
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = [];
+    $scope.filterOpts = {
+        filterText: "",
+        useExternalFilter: false,
+    };
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000], //page Sizes
         pageSize: 250, //Size of Paging data
@@ -39,6 +43,7 @@ function userController($scope) {
         showGroupPanel: true,
         showColumnMenu: false,
         enablePaging: true,
+		filterOptions: $scope.filterOpts,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
                      { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
@@ -65,8 +70,8 @@ function userController($scope) {
                      { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
                      { field: 'UPC', displayName: 'Bar Code', width: "*" }]
     };
-    $scope.changeData = function(){
-        $scope.myData2 = window.getTestData();
-     };
+    $scope.changeData = function() {
+        alert($scope.filterOpts.filterText);
+    };
     
 };

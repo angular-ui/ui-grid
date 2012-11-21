@@ -2,8 +2,10 @@
     var self = this;
     self.field = "";
     self.value = "";
+    self.extFilter = grid.config.filterOptions.useExternalFilter;
     $scope.showFilter = grid.config.showFilter;
-    $scope.filterText = "";
+    $scope.filterText = grid.config.filterOptions.filterText;
+    
     self.fieldMap = {};
     
     self.evalFilter = function () {
@@ -24,6 +26,8 @@
         grid.rowFactory.filteredDataChanged();
     };
     $scope.$watch('filterText', function (a) {
+        grid.config.filterOptions.filterText = a;
+        if (self.extFilter) return;
         self.premise = a.split(':');
         if (self.premise.length > 1) {
             self.field = self.premise[0].toLowerCase().replace(' ', '_');
@@ -34,9 +38,11 @@
         }
         self.evalFilter();
     });
-    $scope.$watch('columns', function(a) {
-        angular.forEach(a, function(col) {
-            self.fieldMap[col.displayName.toLowerCase().replace(' ', '_')] = col.field;
+    if (!self.extFilter) {
+        $scope.$watch('columns', function (a) {
+            angular.forEach(a, function (col) {
+                self.fieldMap[col.displayName.toLowerCase().replace(' ', '_')] = col.field;
+            });
         });
-    });
+    }
 }
