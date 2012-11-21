@@ -1115,7 +1115,7 @@ ng.Dimension = function (options) {
 * FILE: ..\src\classes\footer.js
 ***********************************************/
 ng.Footer = function ($scope, grid) {
-    $scope.maxRows = null;
+    $scope.maxRows = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
 
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
