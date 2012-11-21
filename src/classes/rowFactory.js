@@ -207,7 +207,7 @@ ng.RowFactory = function (grid, $scope) {
         self.parseGroupData(self.groupedData);
     };
 
-    if (grid.config.groups.length > 0 && grid.filtered.length > 0) {
+    if (grid.config.groups.length > 0 && grid.filteredData.length > 0) {
         self.getGrouping(grid.config.groups);
     }
 }

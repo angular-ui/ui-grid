@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/21/2012 11:54:43
+* Compiled At: 11/21/2012 12:03:53
 ***********************************************/
 
 (function(window, undefined){
@@ -1363,7 +1363,7 @@ ng.RowFactory = function (grid, $scope) {
         self.parseGroupData(self.groupedData);
     };
 
-    if (grid.config.groups.length > 0 && grid.filtered.length > 0) {
+    if (grid.config.groups.length > 0 && grid.filteredData.length > 0) {
         self.getGrouping(grid.config.groups);
     }
 }
