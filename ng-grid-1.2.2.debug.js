@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/21/2012 12:03:53
+* Compiled At: 11/21/2012 12:38:16
 ***********************************************/
 
 (function(window, undefined){
@@ -1963,7 +1963,7 @@ ng.SearchProvider = function ($scope, grid) {
 ***********************************************/
 ng.SelectionService = function (grid) {
     var self = this;
-    self.isMulti = grid.config.isMultiSelect;
+    self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
@@ -1976,7 +1976,7 @@ ng.SelectionService = function (grid) {
 		
 	// function to manage the selection action of a data item (entity)
 	self.ChangeSelection = function (rowItem, evt) {
-	    if (!self.isMulti) {
+	    if (!self.multi) {
 	        if (self.lastClickedRow && self.lastClickedRow.selected) {
 	            self.setSelection(self.lastClickedRow, false);
 	        }
@@ -1998,7 +1998,7 @@ ng.SelectionService = function (grid) {
                 return true;
             }
 	    }
-	    if (grid.config.keepLastSelected && !self.isMulti) {
+	    if (grid.config.keepLastSelected && !self.multi) {
 	        self.setSelection(rowItem, true);
 	    } else {
 	        self.setSelection(rowItem, rowItem.selected ? false : true);
