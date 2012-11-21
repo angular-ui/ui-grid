@@ -1,15 +1,10 @@
 ﻿ng.Footer = function ($scope, grid) {
     $scope.maxRows = null;
 
-    if (!ng.utils.isNullOrUndefined($scope.pagingOptions.totalServerItems)) {
-        $scope.maxRows = $scope.pagingOptions.totalServerItems;
-    } else {
-        $scope.maxRows = grid.maxRows;
-    }
     $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
-        var maxCnt = $scope.maxRows || 1;
+        var maxCnt = Math.max($scope.pagingOptions.totalServerItems || grid.sortedData.length, 1);
 		return Math.ceil(maxCnt / $scope.pagingOptions.pageSize);
     };
 

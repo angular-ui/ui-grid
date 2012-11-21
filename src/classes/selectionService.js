@@ -4,7 +4,7 @@ ng.SelectionService = function (grid) {
     self.selectedItems = grid.config.selectedItems;
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
-    self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select observable in sync
+    self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
 
     self.rowFactory = {};
 	self.Initialize = function (rowFactory) {

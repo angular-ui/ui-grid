@@ -49,8 +49,8 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             pagingOptions: {
                 pageSizes: [250, 500, 1000], //page Sizes
                 pageSize: 250, //Size of Paging data
-                totalServerItems: 0, //ko.observable of how many items are on the server (for paging)
-                currentPage: 1, //ko.observable of what page they are currently on
+                totalServerItems: undefined, //how many items are on the server (for paging)
+                currentPage: 1, //what page they are currently on
             },
         },
         self = this,
@@ -237,7 +237,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         $scope.$watch('columns', function () {
             self.cssBuilder.buildStyles(true);
         }, true);
-        $scope.maxRows = $scope.renderedRows.length;
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
@@ -394,7 +393,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         var numOfCols = cols.length;
             
         angular.forEach(cols, function (col, i) {
-            // get column width out of the observable
+            // get column width 
             var t = parseInt(col.width);
             var isPercent = isNaN(t) ? ng.utils.endsWith(t, "%") : false;
             t = isPercent ? t : parseInt(t);

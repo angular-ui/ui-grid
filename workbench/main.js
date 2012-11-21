@@ -6,7 +6,7 @@ function userController($scope) {
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = [];
-    $scope.filterOpts = {
+    $scope.filterOptions = {
         filterText: "",
         useExternalFilter: false,
     };
@@ -16,20 +16,25 @@ function userController($scope) {
         totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };
-    self.getPagedDataAsync = function (pageSize, page) {
-        setTimeout(function() {
-            var data = largeLoad();
+    self.getPagedDataAsync = function (pageSize, page, searchText) {
+        setTimeout(function () {
+            var ft = searchText.toLowerCase();
+            var data = largeLoad().filter(function (item) {
+                return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
+            });
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.myData = pagedData;
             $scope.pagingOptions.totalServerItems = data.length;
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-        }, 0);
+        }, 100);
     };
     $scope.$watch('pagingOptions', function () {
-        self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-        return null;
+        self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
+    }, true);
+    $scope.$watch('filterOptions', function () {
+        self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
@@ -43,7 +48,7 @@ function userController($scope) {
         showGroupPanel: true,
         showColumnMenu: false,
         enablePaging: true,
-		filterOptions: $scope.filterOpts,
+        filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
                      { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
