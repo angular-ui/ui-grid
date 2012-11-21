@@ -37,7 +37,7 @@ function userController($scope) {
         displaySelectionCheckbox: true,
         multiSelect: true,
         showGroupPanel: true,
-        showColumnMenu: true,
+        showColumnMenu: false,
         enablePaging: true,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
