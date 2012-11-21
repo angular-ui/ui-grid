@@ -39,6 +39,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             showGroupPanel: false,
             enableRowReordering: false,
             showColumnMenu: true,
+            showFilter: false,
             //Paging 
             enablePaging: false,
             pagingOptions: {
@@ -49,12 +50,9 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             },
         },
         self = this,
-        isSorting = false,
-        prevScrollTop,
-        prevMinRowsToRender,
-        maxCanvasHt = 0,
         hUpdateTimeout;
     
+    self.maxCanvasHt = 0;
     //self vars
     self.initPhase = 0;
     self.config = $.extend(defaults, options);
@@ -99,7 +97,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         defaults.footerRowHeight = 30;
         self.config.footerRowHeight = 30;
     }
-    //sefl funcs
+    //self funcs
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
@@ -109,8 +107,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
-        prevMinRowsToRender = Math.floor(viewportH / self.config.rowHeight);
-        return prevMinRowsToRender;
+        return Math.floor(viewportH / self.config.rowHeight);
     };
     self.refreshDomSizes = function () {
         var dim = new ng.Dimension(),
@@ -119,10 +116,10 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             rootW,
             canvasH;
 
-        maxCanvasHt = self.calcMaxCanvasHeight();
+        self.maxCanvasHt = self.calcMaxCanvasHeight();
         $scope.elementsNeedMeasuring = true;
         //calculate the POSSIBLE biggest viewport height
-        rootH = maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
+        rootH = self.maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
         //see which viewport height will be allowed to be used
         rootH = Math.min(self.elementDims.rootMaxH, rootH);
         rootH = Math.max(self.elementDims.rootMinH, rootH);
@@ -153,15 +150,6 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
                 window.clearImmediate(hUpdateTimeout);
             } else {
                 window.clearTimeout(hUpdateTimeout);
-            }
-        }
-        if (self.initPhase > 0) {
-            //don't shrink the grid if we sorting
-            if (!isSorting) {
-                self.refreshDomSizes();
-                if (self.initPhase > 0 && self.$root) {
-                    self.$root.show();
-                }
             }
         }
     };
@@ -226,7 +214,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.selectionService.Initialize(self.rowFactory);
         self.sortService = sortService;
-        
+        self.styleProvider = new ng.StyleProvider($scope, self);
         self.cssBuilder = new ng.CssBuilder($scope, self);
         self.buildColumns();
         self.sortService.columns = $scope.columns,
@@ -244,7 +232,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             self.cssBuilder.buildStyles(true);
         }, true);
         $scope.maxRows = $scope.renderedRows.length;
-        maxCanvasHt = self.calcMaxCanvasHeight();
+        self.maxCanvasHt = self.calcMaxCanvasHeight();
         self.cssBuilder.buildStyles(true);
         $scope.initPhase = 1;
     };
@@ -262,17 +250,16 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             hUpdateTimeout = setTimeout(updater, 0);
         }
     };
+    self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
-    self.curScrollTop = 0;
     self.adjustScrollTop = function (scrollTop, force) {
-        self.curScrollTop = self.$viewport.scrollTop();
-        if (prevScrollTop === scrollTop && !force) { return; }
+        if (self.prevScrollTop === scrollTop && !force) { return; }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
         // Have we hit the threshold going down?
-        if (prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) return;
+        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) return;
         //Have we hit the threshold going up?
-        if (prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) return;
-        prevScrollTop = scrollTop;
+        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) return;
+        self.prevScrollTop = scrollTop;
         self.rowFactory.UpdateViewableRange(new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS));
         self.prevScrollIndex = rowIndex;
     };
@@ -369,7 +356,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
 	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
     $scope.maxCanvasHeight = function () {
-        return maxCanvasHt || 0;
+        return self.maxCanvasHt;
     };
     $scope.rowTemplate = function() {
         return self.config.rowTemplate || ng.defaultRowTemplate();
@@ -380,33 +367,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     $scope.viewportDimHeight = function () {
         return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
-    $scope.topPanelStyle = function() {
-        return { "height": $scope.topPanelHeight() + "px" };
-    };
-	$scope.headerCellStyle = function(col){
-		return { "height": col.headerRowHeight + "px"  };
-	};
-	$scope.rowStyle = function(row){
-		return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
-	};
-	$scope.canvasStyle = function(){
-	    return { "height": maxCanvasHt.toString() + "px" };
-	};
-    $scope.headerScrollerStyle = function() {
-        return { "height": self.config.headerRowHeight + "px" };
-    };
-	$scope.topPanelStyle = function() {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
-	};
-	$scope.headerStyle = function () {
-		return { "width": ($scope.rootDim.outerWidth)+ "px", "height": self.config.headerRowHeight + "px" };
-	};
-	$scope.viewportStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
-	};
-	$scope.footerStyle = function () {
-		return { "width": $scope.rootDim.outerWidth + "px", "height": self.config.footerRowHeight + "px" };
-	};
+
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
