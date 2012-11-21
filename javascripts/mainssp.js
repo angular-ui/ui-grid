@@ -15,11 +15,16 @@ function userController($scope) {
         currentPage: 1 //what page they are currently on
     };
     self.getPagedDataAsync = function (pageSize, page, searchText) {
-        setTimeout(function() {
-            var ft = searchText.toLowerCase();
-            var data = largeLoad().filter(function(item) {
-                return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
-            });
+        setTimeout(function () {
+            var data;
+            if (searchText) {
+                var ft = searchText.toLowerCase();
+                data = largeLoad().filter(function(item) {
+                    return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
+                });
+            } else {
+                data = largeLoad();
+            }
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.myData = pagedData;
             $scope.pagingOptions.totalServerItems = data.length;
