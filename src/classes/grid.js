@@ -372,7 +372,11 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
     $scope.viewportDimHeight = function () {
         return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
-
+    $scope.groupBy = function(col) {
+        if ($scope.configGroups.indexOf(col) == -1) {
+            $scope.configGroups.push(col);
+        }
+    };
     $scope.removeGroup = function(index) {
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);

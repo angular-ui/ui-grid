@@ -51,7 +51,7 @@ function userController($scope) {
         displaySelectionCheckbox: true,
         multiSelect: true,
         showGroupPanel: true,
-        showColumnMenu: false,
+        showColumnMenu: true,
         enablePaging: true,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
