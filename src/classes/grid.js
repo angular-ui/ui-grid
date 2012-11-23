@@ -373,8 +373,12 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
-        if ($scope.configGroups.indexOf(col) == -1) {
+        var indx = $scope.configGroups.indexOf(col);
+        if (indx == -1) {
             $scope.configGroups.push(col);
+        } else {
+            $scope.configGroups.splice(indx, 1);
+            $scope.columns.splice(indx, 1);
         }
     };
     $scope.removeGroup = function(index) {
