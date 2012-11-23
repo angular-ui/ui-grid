@@ -6,22 +6,22 @@ ng-grid Team:
 * [Tim Sweet](http://ornerydevelopment.blogspot.com/)
 * [Jonathon Ricaurte](https://github.com/xcrico)
 
-Based on koGrid:
+Based originally on koGrid:
 * [Eric M. Barnard](https://github.com/ericmbarnard/KoGrid)
  
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
-Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome aggregate feature)
+Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome Drag-N-Drop aggregate feature. However, you can still groupby without draggability)
 ***
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.2.2
+version 1.3.0
 
 ***
 ##Roadmap##
 
-ng-grid is version 1.2.2 release.
+ng-grid is version 1.3.0 release.
 
 We are going to be adding more features here as we head to a 1.3 release, including:
 
@@ -65,6 +65,7 @@ Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getti
 [Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
 
 ##Change Log##
+* __2012-11-21__ - Version 1.3.0 - Major code refactoring, can now group-by using column menu, changes to build
 * __2012-11-21__ - Version 1.2.2 - Builting filtering support, numerous perfomance enhancements and minor code refactoring
 * __2012-11-20__ - Version 1.2.1 - Added ability to specify property "paths" as fields and for grid options.
 * __2012-11-19__ - Version 1.2.0 - Added Server-Side Paging support and minor bug fixes.
