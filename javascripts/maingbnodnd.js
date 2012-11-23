@@ -2,6 +2,7 @@
 /// <reference path="../ng-grid-1.0.0.debug.js" />
 
 function userController($scope) {
+    var self = this;
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = largeLoad();
