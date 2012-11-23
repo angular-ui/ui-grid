@@ -18,10 +18,15 @@ function userController($scope) {
     };
     self.getPagedDataAsync = function (pageSize, page, searchText) {
         setTimeout(function () {
-            var ft = searchText.toLowerCase();
-            var data = largeLoad().filter(function (item) {
-                return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
-            });
+            var data;
+            if (searchText) {
+                var ft = searchText.toLowerCase();
+                data = largeLoad().filter(function (item) {
+                    return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
+                });
+            } else {
+                data = largeLoad();
+            }
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.myData = pagedData;
             $scope.pagingOptions.totalServerItems = data.length;
@@ -45,8 +50,8 @@ function userController($scope) {
         selectedItems: $scope.mySelections,
         displaySelectionCheckbox: true,
         multiSelect: true,
-        showGroupPanel: true,
-        showColumnMenu: false,
+        showGroupPanel: false,
+        showColumnMenu: true,
         enablePaging: true,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,

@@ -1,4 +1,4 @@
-﻿ng.Range = function (bottom, top) {
+﻿ng.Range = function (top, bottom) {
     this.topRow = top;
     this.bottomRow = bottom;
 };
