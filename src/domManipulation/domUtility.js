@@ -9,7 +9,6 @@
 ng.domUtility = (new function () {
     var $testContainer = $('<div></div>'),
         self = this;
-
     var parsePixelString = function(pixelStr){
         if(!pixelStr){
             return 0;
@@ -18,7 +17,6 @@ ng.domUtility = (new function () {
         var num = parseInt(numStr, 10);
         return isNaN(num) ? 0 : num;
     };
-
     this.assignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
@@ -34,7 +32,6 @@ ng.domUtility = (new function () {
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
     };
-
     this.measureElementMaxDims = function ($container) {
         var dims = {};
         var $test = $("<div style='height: 20000px; width: 20000px;'></div>");
@@ -63,7 +60,7 @@ ng.domUtility = (new function () {
 
     this.measureElementMinDims = function ($container) {
         var dims = { };
-        var $testContainer = $container.clone();
+        $testContainer = $container.clone();
         $testContainer.appendTo($container.parent().first());
         dims.minWidth = 0;
         dims.minHeight = 0;
@@ -108,7 +105,6 @@ ng.domUtility = (new function () {
             $cell,
             isDummyRow,
             isDummyCell;
-
         $row = $canvas.children().first();
         if ($row.length === 0) {
             //add a dummy row
@@ -116,7 +112,6 @@ ng.domUtility = (new function () {
             $row = $canvas.children().first();
             isDummyRow = true;
         }
-
         $cell = $row.children().first();
         if ($cell.length === 0) {
             //add a dummy cell
@@ -124,7 +119,6 @@ ng.domUtility = (new function () {
             $cell = $row.children().first();
             isDummyCell = true;
         }
-
         grid.elementDims.rowWdiff = $row.outerWidth() - $row.width();
         grid.elementDims.rowHdiff = $row.outerHeight() - $row.height();
         grid.elementDims.cellWdiff = $cell.outerWidth() - $cell.width();

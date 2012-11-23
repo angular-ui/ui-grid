@@ -62,39 +62,28 @@ ngGridServices.factory('GridService', function () {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function () {
+            // first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
+            if (grid.$root.parents(":hidden").length > 0) {
+                return;
+            }
             var prevSizes = {
                 rootMaxH: grid.elementDims.rootMaxH,
                 rootMaxW: grid.elementDims.rootMaxW,
                 rootMinH: grid.elementDims.rootMinH,
                 rootMinW: grid.elementDims.rootMinW
-            },
-            scrollTop,
-            isDifferent;
-            // first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
-            var $hiddens = grid.$root.parents(":hidden");
-            if ($hiddens.length > 0) {
-                return;
-            }
+            };
             //catch this so we can return the viewer to their original scroll after the resize!
-            scrollTop = grid.$viewport.scrollTop();
+            var scrollTop = grid.$viewport.scrollTop();
             ng.domUtility.measureGrid(grid.$root, grid);
             //check to see if anything has changed
-            if (prevSizes.rootMaxH !== grid.elementDims.rootMaxH && grid.elementDims.rootMaxH !== 0) { // if display: none is set, then these come back as zeros
-                isDifferent = true;
-            } else if (prevSizes.rootMaxW !== grid.elementDims.rootMaxW && grid.elementDims.rootMaxW !== 0) {
-                isDifferent = true;
-            } else if (prevSizes.rootMinH !== grid.elementDims.rootMinH) {
-                isDifferent = true;
-            } else if (prevSizes.rootMinW !== grid.elementDims.rootMinW) {
-                isDifferent = true;
+            if ((prevSizes.rootMaxH !== grid.elementDims.rootMaxH && grid.elementDims.rootMaxH !== 0) ||  // if display: none is set, then these come back as zeros
+                (prevSizes.rootMaxW !== grid.elementDims.rootMaxW && grid.elementDims.rootMaxW !== 0) || 
+                 prevSizes.rootMinH !== grid.elementDims.rootMinH ||
+                 prevSizes.rootMinW !== grid.elementDims.rootMinW) {
+                grid.refreshDomSizes();
+                grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
             } else {
                 return;
-            }
-            if (isDifferent) {
-                
-                grid.refreshDomSizes();
-                
-                grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
             }
         });
     };
