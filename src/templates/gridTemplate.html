@@ -28,8 +28,8 @@
                 <span class="ngMenuText">Choose Columns:</span>
                 <ul class="ngColList">
                     <li class="ngColListItem" ng-repeat="col in columns | ngColumns">
-                        <label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
-                        <button ng-hide="col.field == '\u2714'" class="ngColListCheckbox" ng-click="groupBy(col)">{}</button>
+                        <label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}} <a title="Group By" style="position: relative; bottom: 2px;" ng-hide="col.field == '\u2714'" ng-click="groupBy(col)">{}</a></label>
+                        
                     </li>
                 </ul>
             </div>
