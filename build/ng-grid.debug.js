@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/22/2012 18:47:12
+* Compiled At: 11/22/2012 18:54:26
 ***********************************************/
 
 (function(window, undefined){
@@ -43,15 +43,13 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
     if (grid === null || grid === undefined) return true;
     if (grid.config.selectedItems === undefined) return true;
     var charCode = (evt.which) ? evt.which : event.keyCode;
-    
     // detect which direction for arrow keys to navigate the grid
     var offset = (charCode == 38 ? -1 : (charCode == 40 ? 1 : null));
     if (!offset) return true;
-
     var items = $scope.renderedRows;
     var index = items.indexOf(grid.selectionService.lastClickedRow) + offset;
     if (index == -1) return true;
-    $scope.renderedRows[index].toggleSelected(evt);
+    grid.selectionService.ChangeSelection($scope.renderedRows[index], evt);
     if (!$scope.$$phase) {
         $scope.$apply();
     }
