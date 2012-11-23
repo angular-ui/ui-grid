@@ -1,17 +1,17 @@
-﻿ng.SearchProvider = function ($scope, grid) {
+﻿ng.SearchProvider = function($scope, grid) {
     var self = this;
     self.field = "";
     self.value = "";
     self.extFilter = grid.config.filterOptions.useExternalFilter;
     $scope.showFilter = grid.config.showFilter;
     $scope.filterText = grid.config.filterOptions.filterText;
-    
+
     self.fieldMap = {};
-    
-    self.evalFilter = function () {
+
+    self.evalFilter = function() {
         var ft = $scope.filterText.toLowerCase();
         var v = self.value;
-        grid.filteredData = grid.sortedData.filter(function (item) {
+        grid.filteredData = grid.sortedData.filter(function(item) {
             if (!$scope.filterText) {
                 return true;
             } else if (!self.field) {
@@ -25,7 +25,7 @@
         });
         grid.rowFactory.filteredDataChanged();
     };
-    $scope.$watch('filterText', function (a) {
+    $scope.$watch('filterText', function(a) {
         grid.config.filterOptions.filterText = a;
         if (self.extFilter) return;
         self.premise = a.split(':');
@@ -39,10 +39,10 @@
         self.evalFilter();
     });
     if (!self.extFilter) {
-        $scope.$watch('columns', function (a) {
-            angular.forEach(a, function (col) {
+        $scope.$watch('columns', function(a) {
+            angular.forEach(a, function(col) {
                 self.fieldMap[col.displayName.toLowerCase().replace(' ', '_')] = col.field;
             });
         });
     }
-}
+};

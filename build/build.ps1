@@ -4,6 +4,8 @@ $OutPutFile = $CurrentDir + "\ng-grid.debug.js";
 $TempFile = $OutPutFile + ".temp";
 $FinalFile = "..\ng-grid-1.2.2.debug.js";
 $BuildOrder = $CurrentDir + "\build-order.txt";
+$commentStart = "<!--";
+$commentEnd = "-->";
 
 Write-Host "JSBuild Starting...";
 $files = Get-Content $BuildOrder;
@@ -20,7 +22,17 @@ Foreach ($file in $files){
 	# Wrap each file output in a new line
 	Write-Host "Building... $file";
 	Add-Content $TempFile "`n/***********************************************`n* FILE: $file`n***********************************************/";
-	Get-Content $file | where {!$_.StartsWith("///")} | Add-Content $TempFile;
+	$fileContents = Get-Content $file | where {!$_.StartsWith("///")};
+	if ($fileContents[0].StartsWith("<!--")){
+	    $compiledContent = $fileContents[0].TrimStart($commentStart).TrimEnd($commentEnd).Trim() + " = function(){ return '";
+	    for ($indx = 1; $indx -lt $fileContents.Length; $indx++){
+		    $compiledContent += $fileContents[$indx].Trim();
+		}
+	    $compiledContent += "';};";
+		Add-Content $TempFile $compiledContent; 
+	} else {
+	    Add-Content $TempFile $fileContents;
+	}
 }
 Add-Content $TempFile "}(window));";
 Get-Content $TempFile | Set-Content $OutputFile;

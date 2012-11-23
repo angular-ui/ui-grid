@@ -1,4 +1,5 @@
-﻿if (!Array.prototype.indexOf)
+﻿/// <reference path="../lib/angular.js" />
+if (!Array.prototype.indexOf)
 {
 	Array.prototype.indexOf = function(elt /*, from*/){
 		var len = this.length >>> 0;
@@ -11,7 +12,6 @@
 		return -1;
 	};
 }
-
 if (!Array.prototype.filter)
 {
   Array.prototype.filter = function(fun /*, thisp */)
@@ -34,7 +34,6 @@ if (!Array.prototype.filter)
     return res;
   };
 }
-
 ng.utils = {
     visualLength: function (node) {
         var elem = document.getElementById('testDataLength');
@@ -44,46 +43,22 @@ ng.utils = {
             elem.style.visibility = "hidden";
             document.body.appendChild(elem);
         }
-        var font = $(node).css('font');
-        $(elem).css('font', font);
+        $(elem).css('font', $(node).css('font'));
         elem.innerHTML = $(node).text();
         return elem.offsetWidth;
     },
-    arrayIndexOf: function (array, item) {
-        if (typeof Array.prototype.indexOf == "function")
-            return Array.prototype.indexOf.call(array, item);
-        for (var i = 0, j = array.length; i < j; i++)
-            if (array[i] === item)
-                return i;
-        return -1;
-    },
-    arrayFilter: function (array, predicate) {
-        array = array || [];
-        var result = [];
-        for (var i = 0, j = array.length; i < j; i++)
-        if (predicate(array[i]))
-        result.push(array[i]);
-        return result;
-    },
     forIn: function (obj, action) {
-        var prop;
-
-        for (prop in obj) {
+         for (var prop in obj) {
             if(obj.hasOwnProperty(prop)){
                 action(obj[prop], prop);
             }
         }
     },
     evalProperty: function (entity, path) {
-        var propPath = path.split('.');
-        var tempProp = entity[propPath[0]];
-
-        for (var j = 1; j < propPath.length; j++) {
-            if (tempProp) {
-                tempProp = tempProp[propPath[j]];
-            } else {
-                break;
-            }
+        var propPath = path.split('.'), i = 0;
+        var tempProp = entity[propPath[i++]], links = propPath.length;
+        while (tempProp && i < links) {
+            tempProp = tempProp[propPath[i++]];
         }
         return tempProp;
     },
@@ -91,39 +66,9 @@ ng.utils = {
         if (!str || !suffix || typeof str != "string") return false;
         return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
-    isNullOrUndefined: function (obj){
-        if (obj == null || obj == undefined) return true;
+    isNullOrUndefined: function (obj) {
+        if (obj === undefined || obj === null) return true;
         return false;
-    },
-    StringBuilder: function () {
-        var strArr = [];
-        this.append = function (str, data) {
-            var len = arguments.length,
-                intMatch,
-                strMatch = '{0}',
-                i = 1;
-            if (len > 1) { // they provided data
-                while (i < len) {
-                    //apparently string.replace only works on one match at a time
-                    //so, loop through the string and hit all matches
-                    while (str.indexOf(strMatch) !== -1) {
-                        str = str.replace(strMatch, arguments[i]);
-                    }
-                    i++;
-                    intMatch = i - 1;
-                    strMatch = "{" + intMatch.toString() + "}";
-                }
-            }
-            strArr.push(str);
-        };
-        this.toString = function () {
-            var separator = arguments[0];
-            if (separator !== null && separator !== undefined) {
-                return strArr.join(separator);
-            } else {
-                return strArr.join("");
-            }
-        };
     },
     getElementsByClassName: function(cl) {
         var retnode = [];
@@ -137,7 +82,6 @@ ng.utils = {
     },
     newId: (function () {
         var seedId = new Date().getTime();
-
         return function () {
             return seedId += 1;
         };
