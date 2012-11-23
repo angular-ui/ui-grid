@@ -26,7 +26,7 @@ Foreach ($file in $files){
 	if ($fileContents[0].StartsWith("<!--")){
 	    $compiledContent = $fileContents[0].TrimStart($commentStart).TrimEnd($commentEnd).Trim() + " = function(){ return '";
 	    for ($indx = 1; $indx -lt $fileContents.Length; $indx++){
-		    $compiledContent += $fileContents[$indx].Trim();
+		    $compiledContent += $fileContents[$indx].Trim().Replace("'", "\'");
 		}
 	    $compiledContent += "';};";
 		Add-Content $TempFile $compiledContent; 
