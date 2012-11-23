@@ -18,7 +18,6 @@ ng.Row = function (entity, config, selectionService) {
         self.entity[SELECTED_PROP] = false;
     }
     self.selected = false;
-
     self.toggleSelected = function (event) {
         if (!canSelectRows) {
             return true;
@@ -40,7 +39,6 @@ ng.Row = function (entity, config, selectionService) {
     };
     self.rowIndex = 0;
     self.offsetTop = 0;
-    self.rowKey = ng.utils.newId();
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
         if (self.rowIndex % 2 == 0)

@@ -19,8 +19,8 @@ ng.SelectionService = function (grid) {
 	        }
 	    } else if (evt && evt.shiftKey) {
             if (self.lastClickedRow) {
-                var thisIndx = ng.utils.arrayIndexOf(grid.filteredData, rowItem.entity);
-                var prevIndx = ng.utils.arrayIndexOf(grid.filteredData, self.lastClickedRow.entity);
+                var thisIndx = grid.filteredData.indexOf(rowItem.entity);
+                var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
                 if (thisIndx == prevIndx) return false;
                 prevIndx++;
                 if (thisIndx < prevIndx) {

@@ -6,11 +6,11 @@
 ..\src\filters\checkmark.js
 ..\src\services\GridService.js
 ..\src\services\SortService.js
-..\src\templates\gridTemplate.js
-..\src\templates\rowTemplate.js
-..\src\templates\aggregateTemplate.js
-..\src\templates\headerRowTemplate.js
-..\src\templates\headerCellTemplate.js
+..\src\templates\gridTemplate.html
+..\src\templates\rowTemplate.html
+..\src\templates\aggregateTemplate.html
+..\src\templates\headerRowTemplate.html
+..\src\templates\headerCellTemplate.html
 ..\src\classes\aggregate.js
 ..\src\classes\aggregateProvider.js
 ..\src\classes\column.js
@@ -18,7 +18,6 @@
 ..\src\classes\footer.js
 ..\src\classes\rowFactory.js
 ..\src\classes\grid.js
-..\src\classes\headerRow.js
 ..\src\classes\range.js
 ..\src\classes\row.js
 ..\src\classes\searchProvider.js
