@@ -350,7 +350,7 @@ input {
     border-radius: 3px;
     background-color: #BDD0CB;
     position: absolute;
-    border: 5px solid rgb(212,212,212);
+    border: 2px solid rgb(212,212,212);
     z-index: 50000;
 }
 .ngMenuText {

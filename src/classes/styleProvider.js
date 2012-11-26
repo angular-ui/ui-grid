@@ -1,4 +1,4 @@
-﻿ng.StyleProvider = function($scope, grid) {
+﻿ng.StyleProvider = function($scope, grid, domUtilityService) {
     $scope.topPanelStyle = function() {
         return { "height": $scope.topPanelHeight() + "px" };
     };
@@ -18,7 +18,7 @@
         return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": ($scope.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": ($scope.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.viewportStyle = function() {
         return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };

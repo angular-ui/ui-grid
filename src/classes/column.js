@@ -1,7 +1,6 @@
-﻿ng.Column = function (config) {
+﻿ng.Column = function (config, $scope, grid, domUtilityService) {
     var self = this,
         colDef = config.colDef;
-    
     self.width = colDef.width;
     self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
@@ -92,7 +91,7 @@
     self.gripOnMouseDown = function (event) {
         if (event.ctrlKey) {
             self.toggleVisible();
-            config.cssBuilder.buildStyles(true);
+            domUtilityService.BuildStyles($scope, grid);
             return true;
         }
         document.body.style.cursor = 'col-resize';
@@ -107,14 +106,14 @@
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
-        config.cssBuilder.buildStyles();
+        domUtilityService.BuildStyles($scope, grid);
         return false;
     };
     self.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
         document.body.style.cursor = 'default';
-        config.cssBuilder.apply();
+        domUtilityService.apply($scope);
         return false;
     };
 };

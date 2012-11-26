@@ -7,7 +7,7 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 
-ng.Grid = function ($scope, options, gridDim, sortService) {
+ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -147,7 +147,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             //if its not the same, then fire the subscriptions
             $scope.rootDim = dim;
         }
-        self.cssBuilder.buildStyles(true);
+        domUtilityService.BuildStyles($scope,self,true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -201,9 +201,8 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData, 
                     resizeOnDataCallback: self.resizeOnData,
-                    cssBuilder: self.cssBuilder,
                     enableResize: self.config.enableColumnResize
-                });
+                }, $scope, self, domUtilityService);
                 cols.push(column);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
@@ -218,13 +217,11 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         self.selectionService = new ng.SelectionService(self);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.selectionService.Initialize(self.rowFactory);
-        self.sortService = sortService;
         self.searchProvider = new ng.SearchProvider($scope, self);
-        self.styleProvider = new ng.StyleProvider($scope, self);
-        self.cssBuilder = new ng.CssBuilder($scope, self);
+        self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         self.buildColumns();
-        self.sortService.columns = $scope.columns,
-        $scope.$watch('sortInfo', self.sortService.updateSortInfo);
+        sortService.columns = $scope.columns,
+        $scope.$watch('sortInfo', sortService.updateSortInfo);
         $scope.$watch('configGroups', function (a) {
             if (!a) return;
             var tempArr = [];
@@ -235,16 +232,16 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             self.rowFactory.filteredDataChanged();
         }, true);
         $scope.$watch('columns', function () {
-            self.cssBuilder.buildStyles(true);
+            domUtilityService.BuildStyles($scope,self,true);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        self.cssBuilder.buildStyles(true);
+        domUtilityService.BuildStyles($scope,self,true);
         $scope.initPhase = 1;
     };
     self.update = function () {
         var updater = function () {
             self.refreshDomSizes();
-            self.cssBuilder.buildStyles(true);
+            domUtilityService.BuildStyles($scope,self,true);
             if (self.initPhase > 0 && self.$root) {
                 self.$root.show();
             }
@@ -291,7 +288,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             }
         });
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
-        self.cssBuilder.buildStyles(true);
+        domUtilityService.BuildStyles($scope,self,true);
     };
     self.sortData = function(col, direction) {
         sortInfo = {
@@ -299,7 +296,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
             direction: direction
         };
         self.clearSortingData(col);
-        self.sortService.Sort(sortInfo, self.sortedData);
+        sortService.Sort(sortInfo, self.sortedData);
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
     };
@@ -386,7 +383,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
-            self.cssBuilder.apply();
+            domUtilityService.apply();
         }
     };
     $scope.totalRowWidth = function () {
@@ -408,7 +405,7 @@ ng.Grid = function ($scope, options, gridDim, sortService) {
                 // figure out if the width is defined or if we need to calculate it
                 if (t == undefined) {
                     // set the width to the length of the header title +30 for sorting icons and padding
-                    col.width = (col.displayName.length * ng.domUtility.letterW) + 30;
+                    col.width = (col.displayName.length * domUtilityService.LetterW) + 30;
                 } else if (t == "auto") { // set it for now until we have data and subscribe when it changes so we can set the width.
                     col.width = col.minWidth;
                     var temp = col;

@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', function ($compile, GridService, SortService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, GridService, SortService, DomUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -7,11 +7,11 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, SortService);
+                    var grid = new ng.Grid($scope, options, gridDim, SortService, DomUtilityService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     GridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
-                    ng.domUtility.measureGrid($element, grid, true);
+                    DomUtilityService.MeasureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
@@ -29,13 +29,13 @@
                     grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
-                    ng.domUtility.assignGridContainers($element, grid);
+                    DomUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     GridService.AssignGridEventHandlers($scope, grid);
-                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), GridService);
+                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), GridService,DomUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
-                        p.init($scope.$new(), grid, { GridService: GridService, SortService: SortService });
+                        p.init($scope.$new(), grid, { GridService: GridService, SortService: SortService, DomUtilityService: DomUtilityService });
                     });
                     grid.update();
                     return null;
