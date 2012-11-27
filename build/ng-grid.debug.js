@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/26/2012 22:58:30
+* Compiled At: 11/26/2012 23:07:39
 ***********************************************/
 
 (function(window, undefined){
@@ -495,6 +495,7 @@ ngGridServices.factory('DomUtilityService', function () {
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
+        domUtilityService.UpdateGridLayout(grid);
     };
 	domUtilityService.UpdateGridLayout = function(grid) {
 		// first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing

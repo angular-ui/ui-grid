@@ -3,13 +3,6 @@
 var plugins = {};
 function userController($scope) {
     var self = this;
-    $('body').layout({
-        applyDemoStyles: true,
-        center__onresize: function (x, ui) {
-            // may be called EITHER from layout-pane.onresize OR tabs.show
-            plugins.ngGridLayoutPlugin.updateGridLayout();
-        }
-    });
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = [];
@@ -48,7 +41,6 @@ function userController($scope) {
     $scope.$watch('filterOptions', function () {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
-    plugins.ngGridLayoutPlugin = new ngGridLayoutPlugin();
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.gridOptions = {
 		data: 'myData',
@@ -60,7 +52,6 @@ function userController($scope) {
         showGroupPanel: false,
         showColumnMenu: true,
         enablePaging: true,
-		plugins: [plugins.ngGridLayoutPlugin],
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false},
