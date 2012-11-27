@@ -166,7 +166,7 @@
     top: 0; 
     height: 100%; 
     position: absolute; 
-    z-index: 1000; 
+    z-index: 5; 
 }
 .ngHeaderText {
     margin-left: 5px;
@@ -326,7 +326,7 @@ input {
     border-radius: 50%;
     width: 14px;
     height: 14px;
-    z-index: 10000;
+    z-index: 5;
     background-color: rgb(179, 191, 188);
     cursor: pointer;
     /* width and height can be anything, as long as they're equal */
@@ -352,7 +352,7 @@ input {
     background-color: #BDD0CB;
     position: absolute;
     border: 2px solid rgb(212,212,212);
-    z-index: 50000;
+    z-index: 5;
 }
 .ngMenuText {
     position: relative;
