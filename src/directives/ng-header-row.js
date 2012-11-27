@@ -5,7 +5,7 @@
             return {
                 pre: function ($scope, iElement) {
                     if (iElement.children().length == 0) {
-                        var html = $scope.headerRowTemplate();
+                        var html = $scope.headerRowTemplate;
                         iElement.append($compile(html)($scope));
                     }
                 }

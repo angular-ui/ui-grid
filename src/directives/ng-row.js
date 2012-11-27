@@ -15,7 +15,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                             html = html.replace(CUSTOM_FILTERS, "");
                         }
                     } else {
-                        html = $scope.$parent.rowTemplate();
+                        html = $scope.$parent.rowTemplate;
                     }
                     iElement.append($compile(html)($scope));
                 }

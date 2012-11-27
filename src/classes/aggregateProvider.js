@@ -1,8 +1,6 @@
-﻿ng.AggregateProvider = function (grid, $scope, gridService) {
-
+﻿ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
     var self = this;
     // The init method gets called during the ng-grid directive execution.
-
     self.colToMove = undefined;
 	self.groupToMove = undefined;
     self.assignEvents = function () {
@@ -165,7 +163,7 @@
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
             // Finally, rebuild the CSS styles.
-            grid.cssBuilder.buildStyles(true);
+            domUtilityService.BuildStyles($scope,grid,true);
             // clear out the colToMove object
             self.colToMove = undefined;
         }

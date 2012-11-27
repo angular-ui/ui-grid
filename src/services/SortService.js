@@ -5,7 +5,6 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
-
 ngGridServices.factory('SortService', function () {
     var sortService = { };
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
