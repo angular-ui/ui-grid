@@ -4,7 +4,7 @@
         compile: function () {
             return {
                 pre: function ($scope, iElement) {
-                    var html = $scope.col.headerCellTemplate();
+                    var html = $scope.col.headerCellTemplate;
                     iElement.html(html);
                     $compile(iElement.children())($scope);
                 }

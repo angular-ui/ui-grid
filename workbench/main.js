@@ -1,6 +1,5 @@
 /// <reference path="../plugins/ng-grid-reorderable.js" />
 /// <reference path="../ng-grid-1.0.0.debug.js" />
-
 function userController($scope) {
     var self = this;
     $scope.mySelections = [];
@@ -41,7 +40,6 @@ function userController($scope) {
     $scope.$watch('filterOptions', function () {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
-    
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.gridOptions = {
 		data: 'myData',
@@ -55,9 +53,9 @@ function userController($scope) {
         enablePaging: true,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
-                     { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
-                     { field: 'birthday', width: '120px', cellFilter: 'date' },
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
+                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
+                     { field: 'birthday', width: '120px', cellFilter: 'date', resizable: false },
                      { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },

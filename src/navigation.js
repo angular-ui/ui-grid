@@ -3,7 +3,6 @@
 /// <reference path="../src/constants.js"/>
 /// <reference path="../src/namespace.js" />
 /// <reference path="../src/utils.jsjs"/>
-
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function ($scope, grid, evt) {
     // null checks 

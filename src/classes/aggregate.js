@@ -4,7 +4,6 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
-
 ng.Aggregate = function (aggEntity, rowFactory) {
     var self = this;
     self.index = 0;
