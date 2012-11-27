@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 14:13:39
+* Compiled At: 11/27/2012 14:47:37
 ***********************************************/
 
 (function(window, undefined){
@@ -143,13 +143,11 @@ ng.utils = {
         return retnode;
     },
     getTemplates: function (t, callback) {
-        if (URI_REGEXP.test(t)) {
-            var p = ng.$http.get(t).success(function (template) {
-                callback(template);
-            }).error(function () {
-                throw "unable to retrieve template";
-            });
-        }
+        ng.$http.get(t).success(function(template) {
+            callback(template);
+        }).error(function() {
+            throw "unable to retrieve template";
+        });
     },
     newId: (function () {
         var seedId = new Date().getTime();
@@ -909,20 +907,17 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
-    self.cellTemplate = undefined;
-    if (colDef.cellTemplate) {
-        ng.utils.getTemplates(colDef.cellTemplate, function(template) {
-            self.cellTemplate = template;
+    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
+    self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
+    if (colDef.cellTemplate && URI_REGEXP.test(colDef.cellTemplate)) {
+        ng.utils.getTemplates(colDef.cellTemplate, function(t) {
+            self.cellTemplate = t;
         });
-    } else {
-        self.cellTemplate = ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
-    }
-    if (colDef.headerCellTemplate) {
-        self.headerCellTemplate = ng.utils.getTemplates(colDef.headerCellTemplate, function (template) {
-            self.headerCellTemplate = template;
+    } 
+    if (colDef.headerCellTemplate && URI_REGEXP.test(colDef.headerCellTemplate)) {
+        self.headerCellTemplate = ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
+            self.headerCellTemplate = t;
         });
-    } else {
-        self.headerCellTemplate = ng.defaultHeaderCellTemplate();
     }
     self.toggleVisible = function () {
         self.visible = !self.visible;
