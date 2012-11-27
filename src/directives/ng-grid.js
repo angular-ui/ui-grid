@@ -32,6 +32,7 @@
                     domUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
+                    domUtilityService.BuildStyles($scope, grid, true);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {

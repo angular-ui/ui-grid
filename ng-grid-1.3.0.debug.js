@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/26/2012 17:33:31
+* Compiled At: 11/26/2012 18:01:27
 ***********************************************/
 
 (function(window, undefined){
@@ -1585,7 +1585,6 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
             domUtilityService.BuildStyles($scope,self,true);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        domUtilityService.BuildStyles($scope,self,true);
         $scope.initPhase = 1;
     };
     self.update = function () {
@@ -1665,9 +1664,11 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
             col.index = i;
         });
     };
+    self.width = function () {
+        return self.$root ? self.$root.width() : 0;
+    };
     //$scope vars
     $scope.elementsNeedMeasuring = true;
-    $scope.width = gridDim.outerWidth;
     $scope.columns = [];
     $scope.renderedRows = [];
     $scope.headerRow = null;
@@ -1764,7 +1765,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
                 } else if (t.indexOf("*") != -1){
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0){
-                        col.width = $scope.width - totalWidth;
+                        col.width = self.width() - totalWidth;
                     } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
                         asteriskNum += t.length;
                         asterisksArray.push(col);
@@ -1785,7 +1786,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0){
             // get the remaining width
-            var remainigWidth = $scope.width - totalWidth;
+            var remainigWidth = self.width() - totalWidth;
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainigWidth / asteriskNum);
             // set the width of each column based on the number of stars
@@ -1801,7 +1802,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
             // do the math
             angular.forEach(percentArray, function (col) {
                 var t = col.width;
-                col.width = Math.floor($scope.width * (parseInt(t.slice(0, - 1)) / 100));
+                col.width = Math.floor(self.width() * (parseInt(t.slice(0, -1)) / 100));
                 totalWidth += col.width;
                 col.widthIsConfigured = true;
             });
@@ -2090,6 +2091,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 
                     domUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
+                    domUtilityService.BuildStyles($scope, grid, true);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {

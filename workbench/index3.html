@@ -17,13 +17,6 @@
 	<script type="text/javascript" src="../plugins/ngGridLayoutPlugin.js"></script>
     <script>
 		$(document).ready(function () {
-			$('body').layout({ 
-				applyDemoStyles: true,
-				center__onresize:   function (x, ui) {
-										// may be called EITHER from layout-pane.onresize OR tabs.show
-										plugins.ngGridLayoutPlugin.updateGridLayout();
-									}
-			});
 			plugins.ngGridLayoutPlugin.updateGridLayout();
 		});
         angular.module('myApp',['ngGrid']);

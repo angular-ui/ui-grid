@@ -3,6 +3,13 @@
 var plugins = {};
 function userController($scope) {
     var self = this;
+    $('body').layout({
+        applyDemoStyles: true,
+        center__onresize: function (x, ui) {
+            // may be called EITHER from layout-pane.onresize OR tabs.show
+            plugins.ngGridLayoutPlugin.updateGridLayout();
+        }
+    });
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = [];
