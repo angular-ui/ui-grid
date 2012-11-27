@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="../ng-grid-1.3.0.debug.js"></script>
     <script type="text/javascript" src="main.js"></script>
-	<script type="text/javascript" src="../plugins/ng-grid-jqueryLayout.js"></script>
+	<script type="text/javascript" src="../plugins/ngGridLayoutPlugin.js"></script>
     <script>
 		$(document).ready(function () {
 			$('body').layout({ 
@@ -24,13 +24,14 @@
 										plugins.ngGridLayoutPlugin.updateGridLayout();
 									}
 			});
+			plugins.ngGridLayoutPlugin.updateGridLayout();
 		});
         angular.module('myApp',['ngGrid']);
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
 		<div class="ui-layout-center">Center	
-			<div style="position: absolute;  left: 0; right: 0; top: 0; bottom: 0;" ng-grid="gridOptions">
+			<div style="position: absolute;  left: 0; right: 0; top: 0; bottom: 0; overflow: hidden" ng-grid="gridOptions">
 			</div>
 		</div>
 		<div class="ui-layout-north">North</div>

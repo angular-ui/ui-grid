@@ -56,9 +56,9 @@ function userController($scope) {
 		plugins: [plugins.ngGridLayoutPlugin],
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title'},
-                     { field: 'allowance', width: 'auto', aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
-                     { field: 'birthday', width: '120px', cellFilter: 'date' },
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false},
+                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
+                     { field: 'birthday', width: '120px', cellFilter: 'date', resizable: false },
                      { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },

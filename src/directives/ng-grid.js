@@ -7,11 +7,11 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, SortService, DomUtilityService);
+                    var grid = new ng.Grid($scope, options, gridDim, sortService, domUtilityService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
-                    GridService.StoreGrid($element, grid);
+                    gridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
-                    DomUtilityService.MeasureGrid($element, grid, true);
+                    domUtilityService.MeasureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
@@ -29,9 +29,9 @@
                     grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
-                    DomUtilityService.AssignGridContainers($element, grid);
+                    domUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
-                    GridService.AssignGridEventHandlers($scope, grid);
+                    gridService.AssignGridEventHandlers($scope, grid);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
