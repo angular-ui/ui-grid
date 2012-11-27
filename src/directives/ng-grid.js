@@ -6,12 +6,11 @@
                 pre: function ($scope, iElement, iAttrs) {
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, sortService, domUtilityService);
+                    options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
-                    domUtilityService.MeasureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {

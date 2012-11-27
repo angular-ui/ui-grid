@@ -15,15 +15,15 @@
         return { "height": grid.config.headerRowHeight + "px" };
     };
     $scope.topPanelStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": ($scope.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.viewportStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
     };
     $scope.footerStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": grid.config.footerRowHeight + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": grid.config.footerRowHeight + "px" };
     };
 };

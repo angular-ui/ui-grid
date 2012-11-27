@@ -6,7 +6,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
-ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
+ng.Grid = function ($scope, options, sortService, domUtilityService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -68,6 +68,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     self.$headers = null;
     self.$viewport = null;
     self.$canvas = null;
+    self.rootDim = self.config.gridDim;
     self.sortInfo = self.config.sortInfo;
     self.sortedData = [];
     self.lateBindColumns = false;
@@ -114,39 +115,11 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
         return Math.floor(viewportH / self.config.rowHeight);
     };
     self.refreshDomSizes = function () {
-        var dim = new ng.Dimension(),
-            oldDim = $scope.rootDim,
-            rootH,
-            rootW,
-            canvasH;
-
-        self.maxCanvasHt = self.calcMaxCanvasHeight();
-        $scope.elementsNeedMeasuring = true;
-        //calculate the POSSIBLE biggest viewport height
-        rootH = self.maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
-        //see which viewport height will be allowed to be used
-        rootH = Math.min(self.elementDims.rootMaxH, rootH);
-        rootH = Math.max(self.elementDims.rootMinH, rootH);
-        //now calc the canvas height of what is going to be used in rendering
-        canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
-        //get the max row Width for rendering
-        rootW = $scope.totalRowWidth() + self.elementDims.rowWdiff;
-        //now see if we are going to have a vertical scroll bar present
-        if ($scope.maxCanvasHeight() > canvasH) {
-            //if we are, then add that width to the max width 
-            rootW += self.elementDims.scrollW || 0;
-        }
-        //now see if we are constrained by any width Dimensions
-        dim.outerWidth = Math.min(self.elementDims.rootMaxW, rootW);
-        dim.outerWidth = Math.max(self.elementDims.rootMinW, dim.outerWidth);
-        dim.outerHeight = rootH;
-
-        //finally don't fire the subscriptions if we aren't changing anything!
-        if (dim.outerHeight !== oldDim.outerHeight || dim.outerWidth !== oldDim.outerWidth) {
-            //if its not the same, then fire the subscriptions
-            $scope.rootDim = dim;
-        }
-        domUtilityService.BuildStyles($scope,self,true);
+        var dim = new ng.Dimension();
+        dim.outerWidth = self.elementDims.rootMaxW;
+        dim.outerHeight = self.elementDims.rootMaxH;
+        self.rootDim = dim;
+        domUtilityService.BuildStyles($scope, self, true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -326,7 +299,6 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
-    $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
@@ -367,7 +339,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
         var indx = $scope.configGroups.indexOf(col);

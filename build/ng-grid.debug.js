@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/26/2012 18:01:27
+* Compiled At: 11/26/2012 22:58:30
 ***********************************************/
 
 (function(window, undefined){
@@ -464,14 +464,22 @@ ngGridServices.factory('SortService', function () {
 ***********************************************/
 ngGridServices.factory('DomUtilityService', function () {
     var domUtilityService = {};
-    var $testContainer = $('<div></div>');
-    var parsePixelString = function(pixelStr){
-        if(!pixelStr){
-            return 0;
-        }
-        var numStr = pixelStr.replace("/px/gi", "");
-        var num = parseInt(numStr, 10);
-        return isNaN(num) ? 0 : num;
+    var getWidths = function () {
+        var $testContainer = $('<div></div>');
+        $testContainer.appendTo('body');
+        // 1. Run all the following measurements on startup!
+        //measure Scroll Bars
+        $testContainer.height(100).width(100).css("position", "absolute").css("overflow", "scroll");
+        $testContainer.append('<div style="height: 400px; width: 400px;"></div>');
+        domUtilityService.ScrollH = ($testContainer.height() - $testContainer[0].clientHeight);
+        domUtilityService.ScrollW = ($testContainer.width() - $testContainer[0].clientWidth);
+        $testContainer.empty();
+        //clear styles
+        $testContainer.attr('style', '');
+        //measure letter sizes using a pretty typical font size and fat font-family
+        $testContainer.append('<span style="font-family: Verdana, Helvetica, Sans-Serif; font-size: 14px;"><strong>M</strong></span>');
+        domUtilityService.LetterW = $testContainer.children().first().width();
+        $testContainer.remove();
     };
     domUtilityService.AssignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
@@ -488,132 +496,19 @@ ngGridServices.factory('DomUtilityService', function () {
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
     };
-    domUtilityService.MeasureElementMaxDims = function ($container) {
-        var dims = {};
-        var $test = $("<div style='height: 20000px; width: 20000px;'></div>");
-        $container.append($test);
-        dims.maxWidth = $container.width();
-        dims.maxHeight = $container.height();
-        var pixelStr;
-        if (!dims.maxWidth) {
-            pixelStr = $container.css("max-width");
-            dims.maxWidth = parsePixelString(pixelStr);
-        }
-        if (!dims.maxHeight) {
-            pixelStr = $container.css("max-height");
-            dims.maxHeight = parsePixelString(pixelStr);
-        }
-        //if they are zero, see what the parent's size is
-        if (dims.maxWidth === 0) {
-            dims.maxWidth = $container.parent().width();
-        }
-        if (dims.maxHeight === 0) {
-            dims.maxHeight = $container.parent().height();
-        }
-        $test.remove();
-        return dims;
-    };
-
-    domUtilityService.MeasureElementMinDims = function ($container) {
-        var dims = { };
-        $testContainer = $container.clone();
-        $testContainer.appendTo($container.parent().first());
-        dims.minWidth = 0;
-        dims.minHeight = 0;
-        //since its cloned... empty it out
-        $testContainer.empty();
-        var $test = $("<div style='height: 0x; width: 0px;'></div>");
-        $testContainer.append($test);
-        //$testContainer.wrap("<div style='width: 1px; height: 1px;'></div>");
-        dims.minWidth = $testContainer.width();
-        dims.minHeight = $testContainer.height();
-        var pixelStr;
-        if (!dims.minWidth) {
-            pixelStr = $testContainer.css("min-width");
-            dims.minWidth = parsePixelString(pixelStr);
-        }
-        if (!dims.minHeight) {
-            pixelStr = $testContainer.css("min-height");
-            dims.minHeight = parsePixelString(pixelStr);
-        }
-        $testContainer.remove();
-        return dims;
-    };
-
-    domUtilityService.MeasureGrid = function ($container, grid) {
-        //find max sizes
-        var dims = domUtilityService.MeasureElementMaxDims($container);
-        grid.elementDims.rootMaxW = dims.maxWidth;
-        grid.elementDims.rootMaxH = dims.maxHeight;
-        //set scroll measurements
-        grid.elementDims.scrollW = domUtilityService.ScrollW;
-        grid.elementDims.scrollH = domUtilityService.ScrollH;
-        //find min sizes
-        dims = domUtilityService.MeasureElementMinDims($container);
-        grid.elementDims.rootMinW = dims.minWidth;
-        // do a little magic here to ensure we always have a decent viewport
-        dims.minHeight = Math.max(grid.elementDims.rootMaxH, dims.minHeight);
-        grid.elementDims.rootMinH = dims.minHeight;
-    };
-
-    domUtilityService.MeasureRow = function ($canvas, grid) {
-        var $row,
-            $cell,
-            isDummyRow,
-            isDummyCell;
-        $row = $canvas.children().first();
-        if ($row.length === 0) {
-            //add a dummy row
-            $canvas.append('<div class="ngRow"></div>');
-            $row = $canvas.children().first();
-            isDummyRow = true;
-        }
-        $cell = $row.children().first();
-        if ($cell.length === 0) {
-            //add a dummy cell
-            $row.append('<div class="ngCell col0"></div>');
-            $cell = $row.children().first();
-            isDummyCell = true;
-        }
-        grid.elementDims.rowWdiff = $row.outerWidth() - $row.width();
-        grid.elementDims.rowHdiff = $row.outerHeight() - $row.height();
-        grid.elementDims.cellWdiff = $cell.outerWidth() - $cell.width();
-        grid.elementDims.cellHdiff = $cell.outerHeight() - $cell.height();
-        grid.elementsNeedMeasuring = false;
-        if (isDummyRow) {
-            $row.remove();
-        } else if (isDummyCell) {
-            $cell.remove();
-        }
-    };
-	
 	domUtilityService.UpdateGridLayout = function(grid) {
 		// first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
 		if (grid.$root.parents(":hidden").length > 0) {
 			return;
 		}
-		var prevSizes = {
-			rootMaxH: grid.elementDims.rootMaxH,
-			rootMaxW: grid.elementDims.rootMaxW,
-			rootMinH: grid.elementDims.rootMinH,
-			rootMinW: grid.elementDims.rootMinW
-		};
 		//catch this so we can return the viewer to their original scroll after the resize!
 		var scrollTop = grid.$viewport.scrollTop();
-		domUtilityService.MeasureGrid(grid.$root, grid);
+		grid.elementDims.rootMaxW = grid.$root.width();
+		grid.elementDims.rootMaxH = grid.$root.height();
 		//check to see if anything has changed
-		if ((prevSizes.rootMaxH !== grid.elementDims.rootMaxH && grid.elementDims.rootMaxH !== 0) ||  // if display: none is set, then these come back as zeros
-			(prevSizes.rootMaxW !== grid.elementDims.rootMaxW && grid.elementDims.rootMaxW !== 0) || 
-			 prevSizes.rootMinH !== grid.elementDims.rootMinH ||
-			 prevSizes.rootMinW !== grid.elementDims.rootMinW) {
-			grid.refreshDomSizes();
-			grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
-		} else {
-			return;
-		}
+		grid.refreshDomSizes();
+		grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
 	};
-	
-	
     domUtilityService.BuildStyles = function($scope,grid,apply) {
         var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
             headerRowHeight = grid.config.headerRowHeight,
@@ -651,26 +546,10 @@ ngGridServices.factory('DomUtilityService', function () {
             $scope.$apply();
         }
     };
-	
     domUtilityService.ScrollH = 17; // default in IE, Chrome, & most browsers
     domUtilityService.ScrollW = 17; // default in IE, Chrome, & most browsers
     domUtilityService.LetterW = 10;
-    $(function () {
-        $testContainer.appendTo('body');
-        // 1. Run all the following measurements on startup!
-        //measure Scroll Bars
-        $testContainer.height(100).width(100).css("position", "absolute").css("overflow", "scroll");
-        $testContainer.append('<div style="height: 400px; width: 400px;"></div>');
-        domUtilityService.ScrollH = ($testContainer.height() - $testContainer[0].clientHeight);
-        domUtilityService.ScrollW = ($testContainer.width() - $testContainer[0].clientWidth);
-        $testContainer.empty();
-        //clear styles
-        $testContainer.attr('style', '');
-        //measure letter sizes using a pretty typical font size and fat font-family
-        $testContainer.append('<span style="font-family: Verdana, Helvetica, Sans-Serif; font-size: 14px;"><strong>M</strong></span>');
-        domUtilityService.LetterW = $testContainer.children().first().width();
-        $testContainer.remove();
-    });
+    getWidths();
 	return domUtilityService;
 });
 
@@ -1357,7 +1236,7 @@ ng.RowFactory = function(grid, $scope) {
 /***********************************************
 * FILE: ..\src\classes\grid.js
 ***********************************************/
-ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
+ng.Grid = function ($scope, options, sortService, domUtilityService) {
     var defaults = {
             rowHeight: 30,
             columnWidth: 100,
@@ -1419,6 +1298,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     self.$headers = null;
     self.$viewport = null;
     self.$canvas = null;
+    self.rootDim = self.config.gridDim;
     self.sortInfo = self.config.sortInfo;
     self.sortedData = [];
     self.lateBindColumns = false;
@@ -1465,39 +1345,11 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
         return Math.floor(viewportH / self.config.rowHeight);
     };
     self.refreshDomSizes = function () {
-        var dim = new ng.Dimension(),
-            oldDim = $scope.rootDim,
-            rootH,
-            rootW,
-            canvasH;
-
-        self.maxCanvasHt = self.calcMaxCanvasHeight();
-        $scope.elementsNeedMeasuring = true;
-        //calculate the POSSIBLE biggest viewport height
-        rootH = self.maxCanvasHt + self.config.headerRowHeight + self.config.footerRowHeight;
-        //see which viewport height will be allowed to be used
-        rootH = Math.min(self.elementDims.rootMaxH, rootH);
-        rootH = Math.max(self.elementDims.rootMinH, rootH);
-        //now calc the canvas height of what is going to be used in rendering
-        canvasH = rootH - self.config.headerRowHeight - self.config.footerRowHeight;
-        //get the max row Width for rendering
-        rootW = $scope.totalRowWidth() + self.elementDims.rowWdiff;
-        //now see if we are going to have a vertical scroll bar present
-        if ($scope.maxCanvasHeight() > canvasH) {
-            //if we are, then add that width to the max width 
-            rootW += self.elementDims.scrollW || 0;
-        }
-        //now see if we are constrained by any width Dimensions
-        dim.outerWidth = Math.min(self.elementDims.rootMaxW, rootW);
-        dim.outerWidth = Math.max(self.elementDims.rootMinW, dim.outerWidth);
-        dim.outerHeight = rootH;
-
-        //finally don't fire the subscriptions if we aren't changing anything!
-        if (dim.outerHeight !== oldDim.outerHeight || dim.outerWidth !== oldDim.outerWidth) {
-            //if its not the same, then fire the subscriptions
-            $scope.rootDim = dim;
-        }
-        domUtilityService.BuildStyles($scope,self,true);
+        var dim = new ng.Dimension();
+        dim.outerWidth = self.elementDims.rootMaxW;
+        dim.outerHeight = self.elementDims.rootMaxH;
+        self.rootDim = dim;
+        domUtilityService.BuildStyles($scope, self, true);
     };
     self.refreshDomSizesTrigger = function () {
         if (hUpdateTimeout) {
@@ -1677,7 +1529,6 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
-    $scope.rootDim = gridDim;
     $scope.footerVisible = self.config.footerVisible;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
@@ -1718,7 +1569,7 @@ ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
         return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     };
     $scope.viewportDimHeight = function () {
-        return Math.max(0, $scope.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
         var indx = $scope.configGroups.indexOf(col);
@@ -2041,16 +1892,16 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "height": grid.config.headerRowHeight + "px" };
     };
     $scope.topPanelStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": ($scope.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.viewportStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
     };
     $scope.footerStyle = function() {
-        return { "width": $scope.rootDim.outerWidth + "px", "height": grid.config.footerRowHeight + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": grid.config.footerRowHeight + "px" };
     };
 };
 
@@ -2065,12 +1916,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 
                 pre: function ($scope, iElement, iAttrs) {
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    var gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, gridDim, sortService, domUtilityService);
+                    options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService);
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
-                    domUtilityService.MeasureGrid($element, grid, true);
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
