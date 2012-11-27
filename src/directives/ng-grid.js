@@ -1,9 +1,10 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, gridService, sortService, domUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortService', 'DomUtilityService', function ($compile, $http, gridService, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function () {
             return {
                 pre: function ($scope, iElement, iAttrs) {
+                    window.ng.$http = $http;
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });

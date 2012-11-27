@@ -9,7 +9,6 @@
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;
-    self.widthWatcher = null;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
     self.isAggCol = config.isAggCol;
@@ -17,22 +16,30 @@
     self.cellFilter = colDef.cellFilter ? "|" + colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    self.defaultCellTemplate = ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
-    self.toggleVisible = function() {
+    self.cellTemplate = undefined;
+    if (colDef.cellTemplate) {
+        ng.utils.getTemplates(colDef.cellTemplate, function(template) {
+            self.cellTemplate = template;
+        });
+    } else {
+        self.cellTemplate = ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
+    }
+    if (colDef.headerCellTemplate) {
+        self.headerCellTemplate = ng.utils.getTemplates(colDef.headerCellTemplate, function (template) {
+            self.headerCellTemplate = template;
+        });
+    } else {
+        self.headerCellTemplate = ng.defaultHeaderCellTemplate();
+    }
+    self.toggleVisible = function () {
         self.visible = !self.visible;
     };
-    self.cellTemplate = function() {
-        return colDef.cellTemplate || self.defaultCellTemplate;
-    };
-    self.headerCellTemplate = function() {
-        return colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
-    };   
     self.showSortButtonUp = function () {
         return self.sortable ? self.sortDirection === DESC : self.sortable;
     };

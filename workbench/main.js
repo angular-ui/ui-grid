@@ -53,8 +53,8 @@ function userController($scope) {
         enablePaging: true,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false},
-                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
+                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
                      { field: 'birthday', width: '120px', cellFilter: 'date', resizable: false },
                      { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
     };

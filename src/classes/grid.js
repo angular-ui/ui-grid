@@ -308,7 +308,21 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
-    
+    //Templates
+    if (self.config.rowTemplate) {
+        ng.utils.getTemplates(self.config.rowTemplate, function (template) {
+            $scope.rowTemplate = template;
+        });
+    } else {
+        $scope.rowTemplate = ng.defaultRowTemplate();
+    }
+    if (self.config.headerRowTemplate) {
+        ng.utils.getTemplates(self.config.headerRowTemplate, function (template) {
+            $scope.headerRowTemplate = template;
+        });
+    } else {
+        $scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
+    }
     //scope funcs
     $scope.visibleColumns = function () {
         return $scope.columns.filter(function (col) {
@@ -330,12 +344,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 	$scope.topPanelHeight = function(){
 	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
-    $scope.rowTemplate = function() {
-        return self.config.rowTemplate || ng.defaultRowTemplate();
-    };
-    $scope.headerRowTemplate = function() {
-        return self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
-    };
+    
     $scope.viewportDimHeight = function () {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
     };

@@ -1,4 +1,5 @@
-﻿/// <reference path="../lib/angular.js" />
+﻿/// <reference path="constants.js" />
+/// <reference path="../lib/angular.js" />
 if (!Array.prototype.indexOf)
 {
 	Array.prototype.indexOf = function(elt /*, from*/){
@@ -79,6 +80,15 @@ ng.utils = {
             if (myclass.test(classes)) retnode.push(elem[i]);
         }
         return retnode;
+    },
+    getTemplates: function (t, callback) {
+        if (URI_REGEXP.test(t)) {
+            var p = ng.$http.get(t).success(function (template) {
+                callback(template);
+            }).error(function () {
+                throw "unable to retrieve template";
+            });
+        }
     },
     newId: (function () {
         var seedId = new Date().getTime();
