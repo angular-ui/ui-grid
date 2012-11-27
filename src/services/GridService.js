@@ -4,8 +4,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
-
-ngGridServices.factory('GridService', ['DomUtilityService', function (DomUtilityService){
+ngGridServices.factory('GridService', ['DomUtilityService', function (domUtilityService) {
     var gridService = {};
     gridService.gridCache = {};
     gridService.eventStorage = {};
@@ -62,7 +61,7 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (DomUtility
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function(){
-			DomUtilityService.UpdateGridLayout(grid);
+            domUtilityService.UpdateGridLayout(grid);
 		});
     };
 	

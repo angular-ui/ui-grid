@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/26/2012 15:20:57
+* Compiled At: 11/26/2012 17:08:29
 ***********************************************/
 
 (function(window, undefined){
@@ -36,7 +36,6 @@ var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
 /***********************************************
 * FILE: ..\src\navigation.js
 ***********************************************/
-
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function ($scope, grid, evt) {
     // null checks 
@@ -195,8 +194,7 @@ ngGridFilters.filter('checkmark', function () {
 /***********************************************
 * FILE: ..\src\services\GridService.js
 ***********************************************/
-
-ngGridServices.factory('GridService', ['DomUtilityService', function (DomUtilityService){
+ngGridServices.factory('GridService', ['DomUtilityService', function (domUtilityService) {
     var gridService = {};
     gridService.gridCache = {};
     gridService.eventStorage = {};
@@ -253,7 +251,7 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (DomUtility
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function(){
-			DomUtilityService.UpdateGridLayout(grid);
+            domUtilityService.UpdateGridLayout(grid);
 		});
     };
 	
@@ -263,7 +261,6 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (DomUtility
 /***********************************************
 * FILE: ..\src\services\SortService.js
 ***********************************************/
-
 ngGridServices.factory('SortService', function () {
     var sortService = { };
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
@@ -465,11 +462,9 @@ ngGridServices.factory('SortService', function () {
 /***********************************************
 * FILE: ..\src\services\DomUtilityService.js
 ***********************************************/
-
 ngGridServices.factory('DomUtilityService', function () {
     var domUtilityService = {};
-    var $testContainer = $('<div></div>'),
-        self = this;
+    var $testContainer = $('<div></div>');
     var parsePixelString = function(pixelStr){
         if(!pixelStr){
             return 0;
@@ -690,6 +685,11 @@ ng.defaultGridTemplate = function(){ return '<div ng-class="{\'ui-widget\': jque
 ng.defaultRowTemplate = function(){ return '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';};
 
 /***********************************************
+* FILE: ..\src\templates\cellTemplate.html
+***********************************************/
+ng.defaultCellTemplate = function(){ return '\'<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>\'';};
+
+/***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
 ***********************************************/
 ng.aggregateTemplate = function(){ return '<div ng-click="row.toggleExpand()" ng-style="{\'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} items)</span><div class="{{row.aggClass()}}"></div></div>';};
@@ -707,7 +707,6 @@ ng.defaultHeaderCellTemplate = function(){ return '<div ng-click="col.sort()" cl
 /***********************************************
 * FILE: ..\src\classes\aggregate.js
 ***********************************************/
-
 ng.Aggregate = function (aggEntity, rowFactory) {
     var self = this;
     self.index = 0;
@@ -783,7 +782,6 @@ ng.Aggregate = function (aggEntity, rowFactory) {
 * FILE: ..\src\classes\aggregateProvider.js
 ***********************************************/
 ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
-
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
@@ -1007,6 +1005,7 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    self.defaultCellTemplate = ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
     self.visible = colDef.visible == undefined ? true : colDef.visible;
     self.toggleVisible = function() {
         self.visible = !self.visible;
@@ -1033,10 +1032,9 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
     
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
-
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || self.defaultCellTemplate;
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 
@@ -1384,7 +1382,6 @@ ng.RowFactory = function(grid, $scope) {
 /***********************************************
 * FILE: ..\src\classes\grid.js
 ***********************************************/
-
 ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     var defaults = {
             rowHeight: 30,
@@ -1865,7 +1862,6 @@ ng.Range = function (top, bottom) {
 /***********************************************
 * FILE: ..\src\classes\row.js
 ***********************************************/
-
 ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
@@ -2085,7 +2081,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, GridService, SortService, DomUtilityService) {
+ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, gridService, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -2119,10 +2115,10 @@ ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 
                     DomUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     GridService.AssignGridEventHandlers($scope, grid);
-                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), GridService,DomUtilityService);
+                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
-                        p.init($scope.$new(), grid, { GridService: GridService, SortService: SortService, DomUtilityService: DomUtilityService });
+                        p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });
                     });
                     grid.update();
                     return null;

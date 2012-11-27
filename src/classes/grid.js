@@ -6,7 +6,6 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
-
 ng.Grid = function ($scope, options, gridDim, sortService, domUtilityService) {
     var defaults = {
             rowHeight: 30,

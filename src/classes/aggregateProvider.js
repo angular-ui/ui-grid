@@ -1,5 +1,4 @@
 ﻿ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
-
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;

@@ -5,11 +5,9 @@
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
 /// <reference path="../classes/range.js"/>
-
 ngGridServices.factory('DomUtilityService', function () {
     var domUtilityService = {};
-    var $testContainer = $('<div></div>'),
-        self = this;
+    var $testContainer = $('<div></div>');
     var parsePixelString = function(pixelStr){
         if(!pixelStr){
             return 0;

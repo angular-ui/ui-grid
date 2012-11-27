@@ -10,6 +10,7 @@
     self.isAggCol = config.isAggCol;
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    self.defaultCellTemplate = ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
     self.visible = colDef.visible == undefined ? true : colDef.visible;
     self.toggleVisible = function() {
         self.visible = !self.visible;
@@ -36,10 +37,9 @@
     
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
-
     //cell Template
     self.cellTemplate = function() {
-        return colDef.cellTemplate || '<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>'.replace(CUSTOM_FILTERS, self.cellFilter);
+        return colDef.cellTemplate || self.defaultCellTemplate;
     };
     self.hasCellTemplate = (self.cellTemplate ? true : false);
 

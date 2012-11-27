@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, GridService, SortService, DomUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', 'GridService', 'SortService', 'DomUtilityService', function ($compile, gridService, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -32,10 +32,10 @@
                     DomUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     GridService.AssignGridEventHandlers($scope, grid);
-                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), GridService,DomUtilityService);
+                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
-                        p.init($scope.$new(), grid, { GridService: GridService, SortService: SortService, DomUtilityService: DomUtilityService });
+                        p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });
                     });
                     grid.update();
                     return null;

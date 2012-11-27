@@ -9,6 +9,7 @@
 ..\src\services\DomUtilityService.js
 ..\src\templates\gridTemplate.html
 ..\src\templates\rowTemplate.html
+..\src\templates\cellTemplate.html
 ..\src\templates\aggregateTemplate.html
 ..\src\templates\headerRowTemplate.html
 ..\src\templates\headerCellTemplate.html
