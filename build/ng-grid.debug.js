@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 14:47:37
+* Compiled At: 11/27/2012 14:54:15
 ***********************************************/
 
 (function(window, undefined){
@@ -34,7 +34,6 @@ var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
 var URI_REGEXP = /.+\/.+\..+/g;
-var $http = undefined;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -1297,8 +1296,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 currentPage: 1, //what page they are currently on
             },
         },
-        self = this,
-        hUpdateTimeout;
+        self = this;
     
     self.maxCanvasHt = 0;
     //self vars
@@ -1365,16 +1363,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         dim.outerHeight = self.elementDims.rootMaxH;
         self.rootDim = dim;		
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        domUtilityService.BuildStyles($scope, self, true);
-    };
-    self.refreshDomSizesTrigger = function () {
-        if (hUpdateTimeout) {
-            if (window.setImmediate) {
-                window.clearImmediate(hUpdateTimeout);
-            } else {
-                window.clearTimeout(hUpdateTimeout);
-            }
-        }
     };
     self.buildColumnDefsFromData = function () {
         if (!self.config.columnDefs > 0) {
@@ -1454,20 +1442,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         $scope.initPhase = 1;
-    };
-    self.update = function () {
-        var updater = function () {
-            self.refreshDomSizes();
-            domUtilityService.BuildStyles($scope,self,true);
-            if (self.initPhase > 0 && self.$root) {
-                self.$root.show();
-            }
-        };
-        if (window.setImmediate) {
-            hUpdateTimeout = window.setImmediate(updater);
-        } else {
-            hUpdateTimeout = setTimeout(updater, 0);
-        }
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -1627,10 +1601,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             if (isNaN(t)) {
                 t = col.width;
                 // figure out if the width is defined or if we need to calculate it
-                if (t == undefined) {
-                    // set the width to the length of the header title +30 for sorting icons and padding
-                    col.width = (col.displayName.length * domUtilityService.LetterW) + 30;
-                } else if (t == "auto") { // set it for now until we have data and subscribe when it changes so we can set the width.
+                if (t == undefined || t == 'auto') {// set it for now until we have data and subscribe when it changes so we can set the width.
                     col.width = col.minWidth;
                     var temp = col;
                     $(document).ready(function () { self.resizeOnData(temp, true); });
@@ -1964,13 +1935,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     domUtilityService.AssignGridContainers($element, grid);
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
-                    domUtilityService.BuildStyles($scope, grid, true);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });
                     });
-                    grid.update();
                     return null;
                 }
             };
