@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 14:54:15
+* Compiled At: 11/27/2012 15:52:33
 ***********************************************/
 
 (function(window, undefined){
@@ -1594,9 +1594,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             
         angular.forEach(cols, function (col, i) {
             // get column width 
-            var t = parseInt(col.width);
-            var isPercent = isNaN(t) ? ng.utils.endsWith(t, "%") : false;
-            t = isPercent ? t : parseInt(t);
+            var isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
+            var t = isPercent ? col.width : parseInt(col.width);
             // check if it is a number
             if (isNaN(t)) {
                 t = col.width;

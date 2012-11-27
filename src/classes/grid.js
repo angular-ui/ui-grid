@@ -350,9 +350,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             
         angular.forEach(cols, function (col, i) {
             // get column width 
-            var t = parseInt(col.width);
-            var isPercent = isNaN(t) ? ng.utils.endsWith(t, "%") : false;
-            t = isPercent ? t : parseInt(t);
+            var isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
+            var t = isPercent ? col.width : parseInt(col.width);
             // check if it is a number
             if (isNaN(t)) {
                 t = col.width;
