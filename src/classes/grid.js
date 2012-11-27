@@ -118,7 +118,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         var dim = new ng.Dimension();
         dim.outerWidth = self.elementDims.rootMaxW;
         dim.outerHeight = self.elementDims.rootMaxH;
-        self.rootDim = dim;
+        self.rootDim = dim;		
+        self.maxCanvasHt = self.calcMaxCanvasHeight();
         domUtilityService.BuildStyles($scope, self, true);
     };
     self.refreshDomSizesTrigger = function () {
@@ -329,9 +330,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 	$scope.topPanelHeight = function(){
 	    return self.config.showGroupPanel == true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
 	};
-    $scope.maxCanvasHeight = function () {
-        return self.maxCanvasHt;
-    };
     $scope.rowTemplate = function() {
         return self.config.rowTemplate || ng.defaultRowTemplate();
     };
@@ -432,7 +430,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     };
     $scope.headerScrollerDim = function () {
         var viewportH = $scope.viewportDimHeight(),
-            maxHeight = $scope.maxCanvasHeight(),
+            maxHeight = self.maxCanvasHt,
             vScrollBarIsOpen = (maxHeight > viewportH),
             newDim = new ng.Dimension();
 
