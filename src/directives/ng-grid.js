@@ -18,6 +18,7 @@
                             if (!a) return;
                             grid.sortedData = $.extend(true, [], a);
                             grid.searchProvider.evalFilter();
+                            grid.configureColumnWidths();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }
@@ -30,6 +31,7 @@
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($element, grid);
+                    grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);

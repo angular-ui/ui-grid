@@ -16,12 +16,12 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.3.1
+version 1.3.2
 
 ***
 ##Roadmap##
 
-ng-grid is version 1.3.1 release.
+ng-grid is version 1.3.2 release.
 
 We are going to be adding more features here as we head to a 1.4 release, including:
 
@@ -65,6 +65,7 @@ Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getti
 [Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
 
 ##Change Log##
+* __2012-11-27__ - Version 1.3.2 - Changed default width behavior to use *s and added option to maintain column ratios while resizing
 * __2012-11-27__ - Version 1.3.1 - Added layout plugin. Support for uri templates. Performance improvements.
 * __2012-11-23__ - Version 1.3.0 - Major code refactoring, can now group-by using column menu, changes to build
 * __2012-11-21__ - Version 1.2.2 - Built-in filtering support, numerous perfomance enhancements and minor code refactoring

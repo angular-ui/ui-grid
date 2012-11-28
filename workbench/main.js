@@ -51,12 +51,13 @@ function userController($scope) {
         showGroupPanel: false,
         showColumnMenu: true,
         enablePaging: true,
+        maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
-                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
-                     { field: 'birthday', width: '120px', cellFilter: 'date', resizable: false },
-                     { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
+                     { field: 'allowance',  aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
+                     { field: 'birthday', cellFilter: 'date', resizable: false },
+                     { field: 'paid',  cellFilter: 'checkmark' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
@@ -72,11 +73,11 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
-        columnDefs: [{ field: 'Sku', displayName: 'My Sku', width: 'auto'}, 
-                     { field: 'Vendor', displayName: 'Supplier', width: '120px' },
-                     { field: 'SeasonCode', displayName: 'My SeasonCode', width: 140, cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
-                     { field: 'Mfg_Id', displayName: 'Manufacturer ID', width: 180 }, 
-                     { field: 'UPC', displayName: 'Bar Code', width: "*" }]
+        columnDefs: [{ field: 'Sku', displayName: 'My Sku'}, 
+                     { field: 'Vendor', displayName: 'Supplier',},
+                     { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
+                     { field: 'Mfg_Id', displayName: 'Manufacturer ID'}, 
+                     { field: 'UPC', displayName: 'Bar Code' }]
     };
     $scope.changeData = function() {
         alert($scope.filterOpts.filterText);
