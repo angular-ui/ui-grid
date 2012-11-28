@@ -23,13 +23,13 @@
     self.headerClass = colDef.headerClass;
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
-    if (colDef.cellTemplate && URI_REGEXP.test(colDef.cellTemplate)) {
+    if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         ng.utils.getTemplates(colDef.cellTemplate, function(t) {
             self.cellTemplate = t;
         });
     } 
-    if (colDef.headerCellTemplate && URI_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
+    if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
+        ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
             self.headerCellTemplate = t;
         });
     }

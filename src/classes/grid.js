@@ -348,24 +348,21 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
-
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
-    if (self.config.rowTemplate) {
-        ng.utils.getTemplates(self.config.rowTemplate, function (template) {
-            $scope.rowTemplate = template;
+	$scope.rowTemplate = ng.defaultRowTemplate();
+	$scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
+	if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
+        ng.utils.getTemplates(self.config.rowTemplate, function(t) {
+            $scope.rowTemplate = t;
         });
-    } else {
-        $scope.rowTemplate = ng.defaultRowTemplate();
-    }
-    if (self.config.headerRowTemplate) {
-        ng.utils.getTemplates(self.config.headerRowTemplate, function (template) {
-            $scope.headerRowTemplate = template;
+    } 
+    if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
+        ng.utils.getTemplates(self.config.headerRowTemplate, function(t) {
+           $scope.headerRowTemplate = t;
         });
-    } else {
-        $scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
     }
     //scope funcs
     $scope.visibleColumns = function () {

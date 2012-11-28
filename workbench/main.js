@@ -75,7 +75,7 @@ function userController($scope) {
         multiSelect: false,
 		showGroupPanel: true,
         columnDefs: [{ field: 'Sku', displayName: 'My Sku'}, 
-                     { field: 'Vendor', displayName: 'Supplier',},
+                     { field: 'Vendor', displayName: 'Supplier'},
                      { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
                      { field: 'Mfg_Id', displayName: 'Manufacturer ID'}, 
                      { field: 'UPC', displayName: 'Bar Code' }]

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 21:33:05
+* Compiled At: 11/28/2012 11:44:22
 ***********************************************/
 
 (function(window, undefined){
@@ -33,7 +33,7 @@ var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
-var URI_REGEXP = /.+\/.+\..+/g;
+var TEMPLATE_REGEXP = /^<.+>/;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -910,13 +910,13 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
     self.headerClass = colDef.headerClass;
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
-    if (colDef.cellTemplate && URI_REGEXP.test(colDef.cellTemplate)) {
+    if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         ng.utils.getTemplates(colDef.cellTemplate, function(t) {
             self.cellTemplate = t;
         });
     } 
-    if (colDef.headerCellTemplate && URI_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
+    if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
+        ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
             self.headerCellTemplate = t;
         });
     }
@@ -1594,24 +1594,21 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
-
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
-    if (self.config.rowTemplate) {
-        ng.utils.getTemplates(self.config.rowTemplate, function (template) {
-            $scope.rowTemplate = template;
+	$scope.rowTemplate = ng.defaultRowTemplate();
+	$scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
+	if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
+        ng.utils.getTemplates(self.config.rowTemplate, function(t) {
+            $scope.rowTemplate = t;
         });
-    } else {
-        $scope.rowTemplate = ng.defaultRowTemplate();
-    }
-    if (self.config.headerRowTemplate) {
-        ng.utils.getTemplates(self.config.headerRowTemplate, function (template) {
-            $scope.headerRowTemplate = template;
+    } 
+    if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
+        ng.utils.getTemplates(self.config.headerRowTemplate, function(t) {
+           $scope.headerRowTemplate = t;
         });
-    } else {
-        $scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
     }
     //scope funcs
     $scope.visibleColumns = function () {
