@@ -51,6 +51,7 @@ function userController($scope) {
         showGroupPanel: false,
         showColumnMenu: true,
         enablePaging: true,
+        maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },

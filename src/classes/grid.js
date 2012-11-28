@@ -25,7 +25,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             tabIndex: -1,
             disableTextSelection: false,
             enableColumnResize: true,
-            maintainRatios: undefined,
+            maintainColumnRatios: undefined,
             enableSorting: true,
             beforeSelectionChange: function () { return true;},
             afterSelectionChange: function () { return true;},
@@ -224,7 +224,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         });
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
-            self.config.maintainRatios === false ? angular.noop() : self.config.maintainRatios = true;
+            self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
             // get the remaining width
             var remainigWidth = self.rootDim.outerWidth - totalWidth;
             // calculate the weight of each asterisk rounded down

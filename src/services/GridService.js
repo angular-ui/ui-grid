@@ -62,7 +62,7 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (domUtility
         }
         $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
-            if (grid.config.maintainRatios) {
+            if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
 		});

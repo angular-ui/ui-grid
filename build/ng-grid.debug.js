@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 18:28:39
+* Compiled At: 11/27/2012 19:58:08
 ***********************************************/
 
 (function(window, undefined){
@@ -261,7 +261,7 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (domUtility
         }
         $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
-            if (grid.config.maintainRatios) {
+            if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
 		});
@@ -1271,7 +1271,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             tabIndex: -1,
             disableTextSelection: false,
             enableColumnResize: true,
-            maintainRatios: undefined,
+            maintainColumnRatios: undefined,
             enableSorting: true,
             beforeSelectionChange: function () { return true;},
             afterSelectionChange: function () { return true;},
@@ -1470,7 +1470,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         });
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
-            self.config.maintainRatios === false ? angular.noop() : self.config.maintainRatios = true;
+            self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
             // get the remaining width
             var remainigWidth = self.rootDim.outerWidth - totalWidth;
             // calculate the weight of each asterisk rounded down
