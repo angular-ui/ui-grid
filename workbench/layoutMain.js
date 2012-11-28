@@ -59,7 +59,6 @@ function userController($scope) {
         multiSelect: true,
         showGroupPanel: false,
         showColumnMenu: true,
-		maintainRatios: false,
 		plugins: [plugins.ngGridLayoutPlugin],
         enablePaging: true,
         filterOptions: $scope.filterOptions,

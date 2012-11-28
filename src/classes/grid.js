@@ -57,7 +57,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     
     self.maxCanvasHt = 0;
     //self vars
-    self.initPhase = 0;
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
@@ -85,16 +84,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
-        cellHdiff: 0,
-        cellWdiff: 0,
-        rowWdiff: 0,
-        rowHdiff: 0,
         rowIndexCellW: 25,
         rowSelectedCellW: 25,
         rootMaxW: 0,
-        rootMaxH: 0,
-        rootMinW: 0,
-        rootMinH: 0
+        rootMaxH: 0
     };
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -184,6 +177,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             totalWidth = 0;
         
         angular.forEach(cols, function(col, i) {
+			i = i + $scope.configGroups.length;
             var isPercent = false, t = undefined;
             //if width is not defined, set it to a single star
             if (ng.utils.isNullOrUndefined(col.width)) {
@@ -269,7 +263,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             domUtilityService.BuildStyles($scope,self,true);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        $scope.initPhase = 1;
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -395,7 +388,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.configGroups.push(col);
         } else {
             $scope.configGroups.splice(indx, 1);
-            $scope.columns.splice(indx, 1);
+			if($scope.columns[indx].isAggCol){
+				$scope.columns.splice(indx, 1);
+			}
         }
     };
     $scope.removeGroup = function(index) {

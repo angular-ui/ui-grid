@@ -54,7 +54,7 @@ ngGridServices.factory('DomUtilityService', function () {
 		grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
 	};
     domUtilityService.BuildStyles = function($scope,grid,apply) {
-        var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
+        var rowHeight = grid.config.rowHeight,
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,

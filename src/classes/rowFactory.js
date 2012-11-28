@@ -184,7 +184,8 @@ ng.RowFactory = function(grid, $scope) {
                     }));
                 }
                 var col = cols.filter(function(c) { return c.field == group; })[0];
-                var val = ng.utils.evalProperty(item, group).toString();
+                var val = ng.utils.evalProperty(item, group);
+				val = val ? val.toString() : 'null';
                 if (!ptr[val]) ptr[val] = {};
                 if (!ptr[NG_FIELD]) ptr[NG_FIELD] = group;
                 if (!ptr[NG_DEPTH]) ptr[NG_DEPTH] = depth;

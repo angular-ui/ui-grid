@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/28/2012 11:44:22
+* Compiled At: 11/28/2012 13:44:14
 ***********************************************/
 
 (function(window, undefined){
@@ -523,7 +523,7 @@ ngGridServices.factory('DomUtilityService', function () {
 		grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
 	};
     domUtilityService.BuildStyles = function($scope,grid,apply) {
-        var rowHeight = (grid.config.rowHeight - grid.elementDims.rowHdiff),
+        var rowHeight = grid.config.rowHeight,
             headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
@@ -987,16 +987,8 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
 * FILE: ..\src\classes\dimension.js
 ***********************************************/
 ng.Dimension = function (options) {
-    this.innerHeight = null;
-    this.innerWidth = null;
     this.outerHeight = null;
     this.outerWidth = null;
-    this.widthDiff = null;
-    this.heightDiff = null;
-
-    this.autoFitHeight = false; //tells it to just fit to the wrapping container
-    this.autoFitWidth = false;
-
     $.extend(this, options);
 };
 
@@ -1229,7 +1221,8 @@ ng.RowFactory = function(grid, $scope) {
                     }));
                 }
                 var col = cols.filter(function(c) { return c.field == group; })[0];
-                var val = ng.utils.evalProperty(item, group).toString();
+                var val = ng.utils.evalProperty(item, group);
+				val = val ? val.toString() : 'null';
                 if (!ptr[val]) ptr[val] = {};
                 if (!ptr[NG_FIELD]) ptr[NG_FIELD] = group;
                 if (!ptr[NG_DEPTH]) ptr[NG_DEPTH] = depth;
@@ -1303,7 +1296,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     
     self.maxCanvasHt = 0;
     //self vars
-    self.initPhase = 0;
     self.config = $.extend(defaults, options);
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
@@ -1331,16 +1323,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
-        cellHdiff: 0,
-        cellWdiff: 0,
-        rowWdiff: 0,
-        rowHdiff: 0,
         rowIndexCellW: 25,
         rowSelectedCellW: 25,
         rootMaxW: 0,
-        rootMaxH: 0,
-        rootMinW: 0,
-        rootMinH: 0
+        rootMaxH: 0
     };
     // Set new default footer height if not overridden, and multi select is disabled
     if (self.config.footerRowHeight === defaults.footerRowHeight
@@ -1430,6 +1416,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             totalWidth = 0;
         
         angular.forEach(cols, function(col, i) {
+			i = i + $scope.configGroups.length;
             var isPercent = false, t = undefined;
             //if width is not defined, set it to a single star
             if (ng.utils.isNullOrUndefined(col.width)) {
@@ -1515,7 +1502,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             domUtilityService.BuildStyles($scope,self,true);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        $scope.initPhase = 1;
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -1641,7 +1627,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.configGroups.push(col);
         } else {
             $scope.configGroups.splice(indx, 1);
-            $scope.columns.splice(indx, 1);
+			if($scope.columns[indx].isAggCol){
+				$scope.columns.splice(indx, 1);
+			}
         }
     };
     $scope.removeGroup = function(index) {
