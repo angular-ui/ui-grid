@@ -345,8 +345,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
-	$scope.rowTemplate = ng.defaultRowTemplate();
-	$scope.headerRowTemplate = ng.defaultHeaderRowTemplate();
+	$scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
+	$scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
 	if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
         ng.utils.getTemplates(self.config.rowTemplate, function(t) {
             $scope.rowTemplate = t;
