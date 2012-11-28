@@ -18,6 +18,7 @@
                             if (!a) return;
                             grid.sortedData = $.extend(true, [], a);
                             grid.searchProvider.evalFilter();
+                            grid.configureColumnWidths();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }
