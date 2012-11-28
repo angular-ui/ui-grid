@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 20:20:37
+* Compiled At: 11/27/2012 21:33:05
 ***********************************************/
 
 (function(window, undefined){
@@ -1652,7 +1652,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         $scope.configGroups.splice(index, 1);
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
-            domUtilityService.apply();
+            domUtilityService.apply($scope);
         }
     };
     $scope.totalRowWidth = function () {

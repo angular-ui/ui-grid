@@ -73,6 +73,7 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
+		showGroupPanel: true,
         columnDefs: [{ field: 'Sku', displayName: 'My Sku'}, 
                      { field: 'Vendor', displayName: 'Supplier',},
                      { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
