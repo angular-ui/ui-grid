@@ -5,7 +5,6 @@
         clicks = 0,
         timer = null;
     self.width = colDef.width;
-    self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;

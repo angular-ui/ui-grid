@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 15:52:33
+* Compiled At: 11/27/2012 19:58:08
 ***********************************************/
 
 (function(window, undefined){
@@ -259,8 +259,11 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (domUtility
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        $(window).resize(function(){
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
+            if (grid.config.maintainColumnRatios) {
+                grid.configureColumnWidths();
+            }
 		});
     };
 	
@@ -889,7 +892,6 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
         clicks = 0,
         timer = null;
     self.width = colDef.width;
-    self.widthIsConfigured = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;
@@ -1269,6 +1271,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             tabIndex: -1,
             disableTextSelection: false,
             enableColumnResize: true,
+            maintainColumnRatios: undefined,
             enableSorting: true,
             beforeSelectionChange: function () { return true;},
             afterSelectionChange: function () { return true;},
@@ -1418,6 +1421,77 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.columns = cols;
         }
     };
+    self.configureColumnWidths = function() {
+        var cols = self.config.columnDefs;
+        var numOfCols = cols.length,
+            asterisksArray = [],
+            percentArray = [],
+            asteriskNum = 0,
+            totalWidth = 0;
+        
+        angular.forEach(cols, function(col, i) {
+            var isPercent = false, t = undefined;
+            //if width is not defined, set it to a single star
+            if (ng.utils.isNullOrUndefined(col.width)) {
+                col.width = "*";
+            } else { // get column width
+                isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
+                t = isPercent ? col.width : parseInt(col.width);
+            }
+            // check if it is a number
+            if (isNaN(t)) {
+                t = col.width;
+                // figure out if the width is defined or if we need to calculate it
+                if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
+                    $scope.columns[i].width = col.minWidth;
+                    var temp = col;
+                    $(document).ready(function() { self.resizeOnData(temp, true); });
+                    return;
+                } else if (t.indexOf("*") != -1) {
+                    // if it is the last of the columns just configure it to use the remaining space
+                    if (i + 1 == numOfCols && asteriskNum == 0) {
+                        $scope.columns[i].width = (self.rootDim.outerWidth - domUtilityService.scrollW) - totalWidth;
+                    } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
+                        asteriskNum += t.length;
+                        col.index = i;
+                        asterisksArray.push(col);
+                        return;
+                    }
+                } else if (isPercent) { // If the width is a percentage, save it until the very last.
+                    col.index = i;
+                    percentArray.push(col);
+                    return;
+                } else { // we can't parse the width so lets throw an error.
+                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+                }
+            } else {
+                totalWidth += $scope.columns[i].width = parseInt(col.width);
+            }
+        });
+        // check if we saved any asterisk columns for calculating later
+        if (asterisksArray.length > 0) {
+            self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
+            // get the remaining width
+            var remainigWidth = self.rootDim.outerWidth - totalWidth;
+            // calculate the weight of each asterisk rounded down
+            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
+            // set the width of each column based on the number of stars
+            angular.forEach(asterisksArray, function (col) {
+                var t = col.width.length;
+                $scope.columns[col.index].width = asteriskVal * t;
+                if (col.index + 1 == numOfCols && self.maxCanvasHt > $scope.viewportDimHeight()) $scope.columns[col.index].width -= (domUtilityService.ScrollW + 2);
+                totalWidth += $scope.columns[col.index].width;
+            });
+        }
+        // Now we check if we saved any percentage columns for calculating last
+        if (percentArray.length > 0) {
+            // do the math
+            angular.forEach(percentArray, function (col) {
+                var t = col.width;
+                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1)) / 100));
+            });
+        }
+    };
     self.init = function () {
         //factories and services
         self.selectionService = new ng.SelectionService(self);
@@ -1506,9 +1580,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             col.index = i;
         });
     };
-    self.width = function () {
-        return self.$root ? self.$root.width() : 0;
-    };
     //$scope vars
     $scope.elementsNeedMeasuring = true;
     $scope.columns = [];
@@ -1586,70 +1657,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     };
     $scope.totalRowWidth = function () {
         var totalWidth = 0,
-            asterisksArray = [],
-            percentArray = [],
-            asteriskNum = 0,
             cols = $scope.visibleColumns();
-        var numOfCols = cols.length;
-            
-        angular.forEach(cols, function (col, i) {
-            // get column width 
-            var isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
-            var t = isPercent ? col.width : parseInt(col.width);
-            // check if it is a number
-            if (isNaN(t)) {
-                t = col.width;
-                // figure out if the width is defined or if we need to calculate it
-                if (t == undefined || t == 'auto') {// set it for now until we have data and subscribe when it changes so we can set the width.
-                    col.width = col.minWidth;
-                    var temp = col;
-                    $(document).ready(function () { self.resizeOnData(temp, true); });
-                    return;
-                } else if (t.indexOf("*") != -1){
-                    // if it is the last of the columns just configure it to use the remaining space
-                    if (i + 1 == numOfCols && asteriskNum == 0){
-                        col.width = self.width() - totalWidth;
-                    } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
-                        asteriskNum += t.length;
-                        asterisksArray.push(col);
-                        return;
-                    }
-                } else if (isPercent) { // If the width is a percentage, save it until the very last.
-                    percentArray.push(col);
-                    return;
-                } else { // we can't parse the width so lets throw an error.
-                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
-                }
-            }
-            // add the caluclated or pre-defined width the total width
-            totalWidth += col.width = parseInt(col.width);
-            // set the flag as the width is configured so the subscribers can be added
-            col.widthIsConfigured = true;
+        angular.forEach(cols, function (col) {
+            totalWidth += col.width;
         });
-        // check if we saved any asterisk columns for calculating later
-        if (asterisksArray.length > 0){
-            // get the remaining width
-            var remainigWidth = self.width() - totalWidth;
-            // calculate the weight of each asterisk rounded down
-            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
-            // set the width of each column based on the number of stars
-            angular.forEach(asterisksArray, function (col) {
-                var t = col.width.length;
-                col.width = asteriskVal * t;
-                totalWidth += col.width;
-                col.widthIsConfigured = true;
-            });
-        }
-        // Now we check if we saved any percentage columns for calculating last
-        if (percentArray.length > 0){
-            // do the math
-            angular.forEach(percentArray, function (col) {
-                var t = col.width;
-                col.width = Math.floor(self.width() * (parseInt(t.slice(0, -1)) / 100));
-                totalWidth += col.width;
-                col.widthIsConfigured = true;
-            });
-        }
         return totalWidth;
     };
     $scope.headerScrollerDim = function () {
@@ -1920,6 +1931,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                             if (!a) return;
                             grid.sortedData = $.extend(true, [], a);
                             grid.searchProvider.evalFilter();
+                            grid.configureColumnWidths();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }
@@ -1932,6 +1944,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($element, grid);
+                    grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);

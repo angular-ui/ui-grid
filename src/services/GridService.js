@@ -60,8 +60,11 @@ ngGridServices.factory('GridService', ['DomUtilityService', function (domUtility
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        $(window).resize(function(){
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
+            if (grid.config.maintainColumnRatios) {
+                grid.configureColumnWidths();
+            }
 		});
     };
 	
