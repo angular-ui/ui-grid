@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/27/2012 19:58:08
+* Compiled At: 11/27/2012 20:20:37
 ***********************************************/
 
 (function(window, undefined){
@@ -398,7 +398,7 @@ ngGridServices.factory('SortService', function () {
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
-        mtch = b.match(dateRE);
+        mtch = b.match(sortService.dateRE);
         y = mtch[3];
         d = mtch[2];
         m = mtch[1];

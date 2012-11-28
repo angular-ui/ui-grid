@@ -130,7 +130,7 @@ ngGridServices.factory('SortService', function () {
         if (m.length == 1) m = '0' + m;
         if (d.length == 1) d = '0' + d;
         dateA = y + m + d;
-        mtch = b.match(dateRE);
+        mtch = b.match(sortService.dateRE);
         y = mtch[3];
         d = mtch[2];
         m = mtch[1];
