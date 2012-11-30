@@ -1,0 +1,591 @@
+
+::-ms-clear {
+      display: none;
+  }
+
+/* Generic pane rules */
+.rowstyles, .colstyles { overflow: hidden; position: absolute; }
+.rowstyles { left: 0; right: 0; }
+.colstyles { top: 0; bottom: 0; }
+.scroll-x { overflow-x: auto; }
+.scroll-y { overflow-y: auto; }
+
+.headerstyles.rowstyles { height: 40px; top: 0; }
+.body.rowstyles { top: 40px; bottom: 40px; }
+.footerstyles.rowstyles { height: 40px; bottom: 0; }
+
+.container-fluid {
+	padding:0px;
+}
+
+.nav-tabs > li, .nav-pills > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+     zoom:1; /* hasLayout ie7 trigger */
+}
+
+.nav-tabs {
+    text-align:center;
+}
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+.row-fluid > .sidebar-nav {
+    position: relative;
+    top: 0;
+    left:auto;
+    width: 220px;
+	padding: 8px 0px;
+	font-size: 10pt;
+}
+
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.fixed-fluid {
+    margin-left: 240px;
+}
+.fluid-fixed {
+    margin-right: 240px;
+    margin-left:auto !important;
+}
+.fixed-fixed {
+    margin: 0 0 0 240px;
+}
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover { 
+	outline: 0;
+}
+
+.searchBox-container
+{
+    width: 257px;
+}
+
+.searchBox
+{
+    margin-top:5px;
+    padding-right: 20px;
+}
+
+.searchbox-reset-button
+{
+    position:relative; 
+    left: -23px; 
+    height:20px; 
+    top: 10px;
+}
+
+.searchbox-contacts-reset-button
+{
+    position:relative; 
+    left: -23px; 
+    height:20px; 
+    top: 5px;
+}
+
+.close {
+	float: none;
+}
+
+/*
+ * DataTables modifications
+ */
+.dataTables_info {
+	font-weight: bold;
+	font-size: 15pt;
+}
+
+.dataTables_wrapper .ui-toolbar {
+	padding: 15px 15px 0px 15px;
+}
+
+table.dataTable tr.odd {
+	background-color: white;
+	color: black;
+}
+
+table.dataTable tr.odd td.sorting_1 {
+	background-color: rgb(233,233,233);
+}
+
+table.dataTable tr.even {
+	background-color: rgb(244,244,244);
+	color: black;
+}
+
+table.dataTable tr.even td.sorting_1 {
+	background-color: rgb(223,223,223);
+}
+
+
+/*
+ * Contact Page
+ */
+
+.portal-contact-page{
+	margin-left: auto; 
+	margin-right: auto; 
+	margin-top: 20px; 
+	width: 1100px;
+}
+
+.portal-contactPage-header
+{
+    float: left; 
+    width: 1100px; 
+    background-color: #005E8C; 
+    padding-left:20px; 
+    padding-right: 20px; 
+    border-radius: 6px 6px 0px 0px;
+}
+
+.portal-contactPage-title
+{
+	margin-left: 10px;
+	margin-top: 15px;
+    float:left; 
+    color:White;
+}
+
+.portal-contactPage-search
+{
+	margin-top: 20px;
+    float: right;   
+    margin-right: -20px;
+}
+
+.portal-contactPage-KoGrid
+{
+    clear:both;
+    position: absolute; 
+	left: 0px; 
+	right: 0px;
+	top: 66px; 
+	border-style: solid;
+	border-color: #E5E5E5;
+	border-width: 1px 1px 1px 1px;
+	bottom: 0px;
+}
+
+.leftHeader
+{
+    margin-left: 10px;   
+}
+
+.portal-contact-content{
+	position: absolute; 
+	top:0;
+	bottom:0;
+	background-color: white;
+}
+
+/*
+ * Applications Page
+ */
+
+.portal-applications-page {
+	margin: 20px;
+}
+
+.portal-applications-sidebar{
+	position: absolute; 
+	top:0;
+	left:0;
+}
+
+.portal-applications-sidebar-title
+{
+    color: #3A87AD; 
+    margin-top: 5px; 
+    font-size:16px; 
+    text-align:center; 
+    vertical-align: middle;
+}
+
+.portal-applications-sidebar-badgelocation
+{
+    position: absolute; 
+    right: 5px;
+}
+
+.portal-applications-sidebar-bug{
+	width: 17px;
+}
+
+.portal-applications-badges{
+	background-color:#E1DEE7; 
+	color: #0077B2; 
+	position:absolute; 
+	text-align: center; 
+	vertical-align: middle; 
+	right: 4px; 
+	font-size:12.025px;
+	padding: 2px 7px 2px 7px;
+}
+
+.portal-applications-content-template{
+	position: absolute; 
+	top:0;
+	right:0;
+	bottom:0;
+}
+
+/*
+ * Portal Home Tiles
+ */
+
+.portal-home-content{
+	padding:35px 0px 25px 0px; 
+	color: white; 
+	background-color: #005E8C; 
+	text-align:center; 
+	margin-top: -20px; 
+	margin-left: -20px; 
+	margin-right:-20px;
+}
+
+.portal-home-tile-margins 
+{
+    margin-top: -10px;
+    margin-bottom: -10px;   
+}
+
+.portal-home-tiles{
+	width: 377px; 
+	background-color: white; 
+	border-style: solid; 
+	border-radius:5px; 
+	border-color: #BCBCBC; 
+	border-width:1px; 
+	margin-bottom: 10px; 
+	height: 300px;
+	float: left;
+	margin-left:20px;
+}
+
+.portal-home-application-labels{
+	clear:both; 
+	float: left; 
+	line-height: 13px; 
+	height: 13px;
+}
+
+.portal-home-label-align{
+	vertical-align: top;
+	font-size: 11px;
+}
+
+.portal-home-application-bugs{
+	float: right; 
+	margin-top: 0px; 
+	margin-right: 2px;
+}
+
+.portal-home-application-bug-image
+{
+    width: 18px;   
+}
+
+.portal-home-application-application-image
+{
+    width: 300px;
+}
+
+.portal-home-application-info{
+	clear:both;
+}
+
+.portal-home-application-title{
+	text-align: center; 
+}
+
+.portal-home-application-image{
+	width: 300px; 
+	margin: auto;
+	margin-top: 10px; 
+	margin-bottom: 10px;
+}
+
+.portal-home-application-description{
+	text-align: center;
+	font-size: 10pt;
+}
+
+/*
+ * Application Content
+ */
+.portal-application-selected-content{
+	text-align:center; 
+	margin-bottom: 15px;
+}
+
+.portal-application-selected-info{
+	margin: 0px;
+}
+
+
+/*
+ * Application Information Tab
+ */
+.portal-applicationInformation-content{
+	padding-left: 20px; 
+	padding-right: 20px; 
+	position: absolute; 
+	left:19px; 
+	top:112px;
+	right:19px;
+	bottom:20px; 
+	background-color: white;
+	border-style: solid;
+	border-width: 0px 1px 1px 1px;
+	border-color: #DDDDDD;
+}
+
+.portal-applicationInformation-info{
+	margin-left: auto; 
+	margin-right: auto; 
+	margin-top: 25px; 
+	max-width: 800px
+}
+
+.portal-applicationInformation-header{
+	margin-top: 10px;
+}
+
+/*
+ * Feature Requests and Bugs Tab
+ */
+
+.portal-featureRequestsBugs-content{
+	position: absolute; 
+	left:19px; 
+	top:112px;
+	right:19px;
+	bottom:20px; 
+	background-color: white;
+	border-style: solid;
+	border-width: 0px 1px 1px 1px;
+	border-color: #DDDDDD;
+}
+
+.portal-featureRequestsBugs-info{
+	margin-left: auto; 
+	margin-right: auto; 
+	margin-top: 15px;
+}
+
+.portal-featureRequestsBugs-workItemButton{
+	position:absolute; 
+	margin-top: 5px;
+	right:0; 
+	margin-right: 20px;
+}
+
+.portal-featureRequestsBugs-workItemButton-dropdown{
+	margin-left: -107px;
+}
+
+.portal-modalWindow-header-content{
+	width: 528px; 
+	float: left;
+}
+
+.portal-modalWindow-header-image{
+	float: left;
+	margin-right: 10px;
+}
+
+.portal-modalWindow-header-title{
+	float: left; 
+}
+
+.portal-modalWindow-header-closeButton{
+	float:right;
+}
+
+.portal-modalWindow-body-content{
+	clear:both;
+}
+
+.portal-modalWindow-body-title{
+	width: 520px;
+}
+
+.portal-modalWindow-body-description{
+	resize:none; 
+	width: 520px;
+}
+
+.portal-featureRequestsBugs-KoGrid{
+	position: absolute; 
+	left: 20px; 
+	top: 63px; 
+	border-style: solid;
+	border-color: #E5E5E5;
+	border-width: 1px 1px 1px 1px;
+	bottom: 20px;
+	width: 50%; 
+	background-color: #F1F1F1;
+}
+
+.cellImageTemplate 
+{
+    margin-left: 10px;
+}
+
+.cellImage 
+{
+    margin-bottom: 3px;
+    width: 20px;   
+}
+
+.kgFooterPanel
+{
+    position: absolute;
+    bottom: 0px;
+    border: 0px;
+}
+
+.portal-featureRequestsBugs-selectedWorkItem-content{
+	position: absolute; 
+	top: 55px; 
+	right: 20px;
+	width: 46%; 
+}
+
+.portal-featureRequestsBugs-selectedWorkItem-Title
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.portal-featureRequestsBugs-selectedWorkItem-info{
+	margin-left: 5px;
+}
+
+.portal-featureRequestsBugs-voting{
+	float: left;
+	margin-left: 10px;
+}
+
+.portal-featureRequestsBugs-voting-margin{
+	margin-top: 18px;
+}
+
+.portal-featureRequestsBugs-voting-count{
+	width: 100px; 
+	margin-left: 10px; 
+	font-size: 15pt;
+}
+
+.portal-featureRequestsBugs-voteButtonUp {
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 0px 15px 15px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-voteButtonUp:hover {
+	border-color: orange transparent;
+	border-style: solid;
+	border-width: 0px 15px 15px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-voteButtonUp:active {
+	border-color: green transparent;
+	border-style: solid;
+	border-width: 0px 15px 15px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-voteButtonDown {
+	border-color: gray transparent;
+	border-style: solid;
+	border-width: 15px 15px 0px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-voteButtonDown:hover {
+	border-color: orange transparent;
+	border-style: solid;
+	border-width: 15px 15px 0px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-voteButtonDown:active {
+	border-color: red transparent;
+	border-style: solid;
+	border-width: 15px 15px 0px 15px;
+	height: 0px;
+	width: 0px;
+}
+
+.portal-featureRequestsBugs-selectedItem-description{
+	float: left; 
+	width: 90%; 
+	margin-left: 10px;
+}
+
+/*
+ * Release Notes Tab
+ */
+
+.portal-checkins-content{
+	position: absolute; 
+	left:19px; 
+	top:112px;
+	right:19px;
+	bottom:20px;
+	background-color: white;
+	border-style: solid;
+	border-width: 0px 1px 1px 1px;
+	border-color: #DDDDDD;
+}
+
+.portal-checkins-info{
+	margin-left: auto; 
+	margin-right: auto; 
+	margin-top: 15px; 
+	max-width: 800px;
+}
+
+.portal-checkins-notes
+{
+    padding-top: 15px; 
+    padding-bottom: 15px;
+}
+
+.portal-checkins-note 
+{
+    padding: 10px;   
+}
+
+/*
+ * Portal Footer
+ */
+
+.portal-footer-content{
+	background-color: #DBDBDB;
+}
+
+.portal-footer-info{
+	width: 145px; 
+	margin-top: 10px; 
+	margin-left: auto; 
+	margin-right: auto;
+}
