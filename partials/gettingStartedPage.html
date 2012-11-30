@@ -9,14 +9,12 @@
 					<li>Add references to <a href="https://github.com/timothyswt/ng-grid">ngGrid</a>'s javascript and css files.</li>
 					<li>Where you declare your app module, add ngGrid:<br /> <code>angular.module('myApp',['ngGrid']);</code><br />If you use <a target="blank" href="https://github.com/angular/angular-seed">angular seed</a>, it is in your app.js file.</li>
 					<li>In your html file within the controller where you plan to use ng-grid, add:<br /><code>&lt;div class="gridStyle" ng-grid="gridOptions"&gt;&lt;/div&gt;</code><br/>gridOptions is the variable we are going to bind to where we will initialize our grid options.</li>
-					<li>We are going to define a basic style for our grid in the html head:
-					<pre style="margin-top:10px" class="prettyprint linenums">&lt;style&gt;
-    .gridStyle {
-        border: 1px solid rgb(212,212,212);
-        width: 400px; 
-        height: 300px
-    }
-&lt;/style&gt;</pre></li>
+					<li>We are going to define a basic style for our grid in style.css:
+					<pre style="margin-top:10px" class="prettyprint linenums">.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 400px; 
+    height: 300px
+}</pre></li>
 					<li>In your javascript file within the controller where you plan to use<br />ng-grid, lets add data that our grid will use:<br /> </li>
 					<pre style="margin-top:10px" class="prettyprint linenums">$scope.myData = [{name: "Moroni", age: 50},
                  {name: "Tiancum", age: 43},
@@ -32,23 +30,16 @@
 		
 		<div  style="width:580px; float:right">
 		<h3>HTML:</h3>
-		<pre class="prettyprint linenums">&lt;html ng-app="myApp"&gt;
-    &lt;head&gt;
+		<pre class="prettyprint linenums">&lt;html ng-app="myApp"&gt;  
+    &lt;head lang="en"&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;title&gt;Getting Started With ngGrid Example&lt;/title&gt;  
         &lt;link rel="stylesheet" type="text/css" href="ng-grid.css" /&gt;
-        &lt;style&gt;
-            .gridStyle {
-                border: 1px solid rgb(212,212,212);
-                width: 400px; 
-                height: 300px
-            }
-        &lt;/style&gt;
+        &lt;link rel="stylesheet" type="text/css" href="style.css" /&gt;
         &lt;script type="text/javascript" src="jquery-1.8.2.js">&lt;/script&gt;
         &lt;script type="text/javascript" src="angular.js"&gt;&lt;/script&gt;
         &lt;script type="text/javascript" src="ng-grid-1.3.2.js"&gt;&lt;/script&gt;
         &lt;script type="text/javascript" src="main.js"&gt;&lt;/script&gt;
-        &lt;script&gt;
-            angular.module('myApp',['ngGrid']);
-        &lt;/script&gt;
     &lt;/head&gt;
     &lt;body ng-controller="MyCtrl"&gt;
         &lt;div class="gridStyle" ng-grid="gridOptions"&gt;
@@ -56,17 +47,24 @@
     &lt;/body&gt;
 &lt;/html&gt;
 </pre>	
+		<h3>CSS:</h3>
+		<pre style="margin-top:10px" class="prettyprint linenums">/*style.css*/
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 400px; 
+    height: 300px
+}</pre>
 		<h3>Javascript:</h3>
 		<pre class="prettyprint linenums">// main.js
-// Define your own controller somewhere..
-function MyCtrl($scope) {
+var app = angular.module('myApp', ['ngGrid']);
+app.controller('MyCtrl', function($scope) {
     $scope.myData = [{name: "Moroni", age: 50},
                      {name: "Tiancum", age: 43},
                      {name: "Jacob", age: 27},
                      {name: "Nephi", age: 29},
                      {name: "Enos", age: 34}];
     $scope.gridOptions = { data: 'myData' };
-};
+});
 </pre>	
 </div>
 	</div>
