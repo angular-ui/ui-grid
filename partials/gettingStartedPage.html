@@ -10,13 +10,13 @@
 					<li>Where you declare your app module, add ngGrid:<br /> <code>angular.module('myApp',['ngGrid']);</code><br />If you use <a target="blank" href="https://github.com/angular/angular-seed">angular seed</a>, it is in your app.js file.</li>
 					<li>In your html file within the controller where you plan to use ng-grid, add:<br /><code>&lt;div class="gridStyle" ng-grid="gridOptions"&gt;&lt;/div&gt;</code><br/>gridOptions is the variable we are going to bind to where we will initialize our grid options.</li>
 					<li>We are going to define a basic style for our grid in style.css:
-					<pre style="margin-top:10px" class="prettyprint linenums">.gridStyle {
+					<pre style="margin-top:10px" class="prettyprint">.gridStyle {
     border: 1px solid rgb(212,212,212);
     width: 400px; 
     height: 300px
 }</pre></li>
 					<li>In your javascript file within the controller where you plan to use<br />ng-grid, lets add data that our grid will use:<br /> </li>
-					<pre style="margin-top:10px" class="prettyprint linenums">$scope.myData = [{name: "Moroni", age: 50},
+					<pre style="margin-top:10px" class="prettyprint">$scope.myData = [{name: "Moroni", age: 50},
                  {name: "Tiancum", age: 43},
                  {name: "Jacob", age: 27},
                  {name: "Nephi", age: 29},
