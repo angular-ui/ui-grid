@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/28/2012 14:46:25
+* Compiled At: 11/30/2012 17:59:05
 ***********************************************/
 
 (function(window, undefined){
@@ -1437,7 +1437,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 } else if (t.indexOf("*") != -1) {
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0) {
-                        $scope.columns[i].width = (self.rootDim.outerWidth - domUtilityService.scrollW) - totalWidth;
+                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.scrollW) - totalWidth) - 1;
                     } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
                         asteriskNum += t.length;
                         col.index = i;
@@ -1466,7 +1466,16 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             angular.forEach(asterisksArray, function (col) {
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                if (col.index + 1 == numOfCols && self.maxCanvasHt > $scope.viewportDimHeight()) $scope.columns[col.index].width -= (domUtilityService.ScrollW + 2);
+                //check if we are on the last column
+                if (col.index + 1 == numOfCols) {
+                    var offset = 2;
+                    // are we overflowing?
+                    if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+                        //compensate for scrollbar
+                        offset += domUtilityService.ScrollW;
+                    }
+                    $scope.columns[col.index].width -= offset;
+                }
                 totalWidth += $scope.columns[col.index].width;
             });
         }
