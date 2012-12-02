@@ -16,10 +16,6 @@ angular.module('myApp.controllers', [])
 
 	.controller('OverviewPageCtrl', ['$scope', function($scope) {	
 		$scope.switchPage(0);
-		
-		$scope.chooseTemplate = function() {
-			return $scope.selectedApplication == undefined ? "partials/welcome.html" : "partials/application.html";
-		}
 	}])
 
 	.controller('GettingStartedPageCtrl', ['$scope', function($scope) {
@@ -35,4 +31,27 @@ angular.module('myApp.controllers', [])
 
 	.controller('ExamplesPageCtrl', ['$scope', function($scope) {
 		$scope.switchPage(2);
+	}])
+
+	.controller('BasicExampleCtrl', ['$scope', function($scope) {
+		$scope.basicTabs = [{
+				index: 0,
+				link: "partials/exampleDefinitions/basic/basicHTML.html",
+				title: "HTML"
+			},
+			{			
+				index: 1,
+				link: "partials/exampleDefinitions/basic/basicCSS.html",
+				title: "CSS"
+			},
+			{
+				index: 2,
+				link: "partials/exampleDefinitions/basic/basicJS.html",
+				title: "JS"
+			}];
+		$scope.selectedBasicTab = $scope.basicTabs[0];
+		
+		$scope.switchTab = function(tab){
+			$scope.selectedBasicTab = $scope.basicTabs[tab];
+		};
 	}]);
