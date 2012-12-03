@@ -5,9 +5,6 @@ __Contributors:__
 ng-grid Team:
 * [Tim Sweet](http://ornerydevelopment.blogspot.com/)
 * [Jonathon Ricaurte](https://github.com/xcrico)
-
-Based originally on koGrid:
-* [Eric M. Barnard](https://github.com/ericmbarnard/KoGrid)
  
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
@@ -59,10 +56,10 @@ function MyCtrl($scope) {
 ```
 
 ##Want More?##
-Check out the [Getting Started](https://github.com/timothyswt/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/timothyswt/ng-grid/wiki)
+Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/angular-ui/ng-grid/wiki)
 
 ##Examples##
-[Hideous Examples](http://timothyswt.github.com/ng-grid/examples)
+[Examples](http://angular-ui.github.com/ng-grid/#/examples)
 
 ##Change Log##
 * __2012-11-27__ - Version 1.3.2 - Changed default width behavior to use *s and added option to maintain column ratios while resizing
