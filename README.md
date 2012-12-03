@@ -1,4 +1,4 @@
-#ngGrid : An Angular DataGrid#
+#ng-grid : An Angular DataGrid#
 
 __Contributors:__
 
