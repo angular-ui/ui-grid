@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/30/2012 17:59:05
+* Compiled At: 12/02/2012 18:07:16
 ***********************************************/
 
 (function(window, undefined){
@@ -1297,6 +1297,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, options);
+    if (typeof options.columnDefs == "string") {
+        self.config.columnDefs = $scope.$eval(options.columnDefs);
+    }
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
 	self.$groupPanel = null;
@@ -1354,7 +1357,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
     self.buildColumnDefsFromData = function () {
-        if (!self.config.columnDefs > 0) {
+        if (!self.config.columnDefs) {
             self.config.columnDefs = [];
         }
         if (!self.sortedData || !self.sortedData[0]) {
@@ -1365,9 +1368,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            self.config.columnDefs.push({
-                field: propName
-            });
+            if (propName != SELECTED_PROP) {
+                self.config.columnDefs.push({
+                    field: propName
+                });
+            }
         });
     };
     self.buildColumns = function () {
@@ -1378,7 +1383,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
-        if (self.config.displaySelectionCheckbox) {
+        if (self.config.displaySelectionCheckbox && columnDefs[0].field != '\u2714') {
             columnDefs.splice(0, 0, {
                 field: '\u2714',
                 width: self.elementDims.rowSelectedCellW,
@@ -1468,7 +1473,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 $scope.columns[col.index].width = asteriskVal * t;
                 //check if we are on the last column
                 if (col.index + 1 == numOfCols) {
-                    var offset = 2;
+                    var offset = 2; //We're going to remove 2 px so we won't overlflow the viwport by default
                     // are we overflowing?
                     if (self.maxCanvasHt > $scope.viewportDimHeight()) {
                         //compensate for scrollbar
@@ -1912,23 +1917,33 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
             return {
                 pre: function ($scope, iElement, iAttrs) {
                     window.ng.$http = $http;
+                    var initPhase = 0;
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService);
-                    var htmlText = ng.defaultGridTemplate(grid.config);
-                    gridService.StoreGrid($element, grid);
-                    grid.footerController = new ng.Footer($scope, grid);
+                    // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
+                    if (typeof options.columnDefs == "string") {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.columns.length = 0;
+                            grid.config.columnDefs = a;
+                            grid.buildColumns();
+                            grid.configureColumnWidths();
+                            domUtilityService.BuildStyles($scope, grid);
+                        });
+                    }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
-                            if (!a) return;
                             grid.sortedData = $.extend(true, [], a);
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                         }, options.watchDataItems);
                     }
+                    var htmlText = ng.defaultGridTemplate(grid.config);
+                    gridService.StoreGrid($element, grid);
+                    grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
                     $element.addClass("ngGrid")
                         .addClass("ui-widget")
@@ -1942,6 +1957,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
+                   
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });

@@ -58,6 +58,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, options);
+    if (typeof options.columnDefs == "string") {
+        self.config.columnDefs = $scope.$eval(options.columnDefs);
+    }
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
 	self.$groupPanel = null;
@@ -115,7 +118,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
     self.buildColumnDefsFromData = function () {
-        if (!self.config.columnDefs > 0) {
+        if (!self.config.columnDefs) {
             self.config.columnDefs = [];
         }
         if (!self.sortedData || !self.sortedData[0]) {
@@ -126,9 +129,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            self.config.columnDefs.push({
-                field: propName
-            });
+            if (propName != SELECTED_PROP) {
+                self.config.columnDefs.push({
+                    field: propName
+                });
+            }
         });
     };
     self.buildColumns = function () {
@@ -139,7 +144,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
-        if (self.config.displaySelectionCheckbox) {
+        if (self.config.displaySelectionCheckbox && columnDefs[0].field != '\u2714') {
             columnDefs.splice(0, 0, {
                 field: '\u2714',
                 width: self.elementDims.rowSelectedCellW,
