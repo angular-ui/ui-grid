@@ -13,7 +13,7 @@ $compileTime = Get-Date;
 
 Set-Content $TempFile "/***********************************************";
 Add-Content $TempFile "* ng-grid JavaScript Library";
-Add-Content $TempFile "* Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md";
+Add-Content $TempFile "* Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md";
 Add-Content $TempFile "* License: MIT (http://www.opensource.org/licenses/mit-license.php)";
 Add-Content $TempFile "* Compiled At: $compileTime";
 Add-Content $TempFile "***********************************************/`n"

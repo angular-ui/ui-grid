@@ -28,7 +28,7 @@ rm $OutPutFile
 # Wrap the final output in an IIFE
 echo "/***********************************************" >> $OutPutFile
 echo "* ng-grid JavaScript Library" >> $OutPutFile
-echo "* Authors: https://github.com/timothyswt/ng-grid/blob/master/README.md" >> $OutPutFile
+echo "* Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md" >> $OutPutFile
 echo "* License: MIT (http://www.opensource.org/licenses/mit-license.php)" >> $OutPutFile
 echo "* Compiled At: $(date)" >> $OutPutFile
 echo "***********************************************/" >> $OutPutFile

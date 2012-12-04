@@ -25,16 +25,16 @@
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
-    };	
-	
+    };		
 	//For JQueryUI
 	self.setDraggables = function(){
 		if(!grid.config.jqueryUIDraggable){	
-			$('.ngHeaderSortColumn').attr('draggable', 'true').on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
+			grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true').on('dragstart', self.onHeaderDragStart).on('dragend', self.onHeaderDragStop);
 		} else {
-			$('.ngHeaderSortColumn').draggable({
-				helper: "clone",
+			grid.$root.find('.ngHeaderSortColumn').draggable({
+				helper: 'clone',
 				appendTo: 'body',
+				stack: 'div',
 				addClasses: false,
 				start: function(event){
 					self.onHeaderMouseDown(event);
@@ -45,8 +45,7 @@
 				}
 			});
 		}
-	};
-    
+	};  
     self.onGroupDragStart = function () {
         // color the header so we know what we are moving
         if (self.groupToMove) {
@@ -60,7 +59,6 @@
             self.groupToMove.header.css('background-color', 'rgb(247,247,247)');
         }
     };
-
     self.onGroupMouseDown = function(event) {
         var groupItem = $(event.target);
         // Get the scope from the header container
@@ -79,7 +77,6 @@
 			self.groupToMove = undefined;
 		}
     };
-
     self.onGroupDrop = function(event) {
         // clear out the colToMove object
         var groupContainer;
@@ -120,8 +117,7 @@
 			self.colToMove = undefined;
         }
         $scope.$apply();
-    };
-	
+    };	
     //Header functions
     self.onHeaderMouseDown = function (event) {
         // Get the closest header container from where we clicked.
@@ -132,22 +128,19 @@
             // Save the column for later.
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }
-    };
-    
+    }; 
     self.onHeaderDragStart = function () {
         // color the header so we know what we are moving
         if (self.colToMove) {
             self.colToMove.header.css('background-color', 'rgb(255, 255, 204)');
         }
-    };
-    
+    };   
     self.onHeaderDragStop = function () {
         // Set the column to move header color back to normal
         if (self.colToMove) {
             self.colToMove.header.css('background-color', 'rgb(234, 234, 234)');
         }
     };
-
     self.onHeaderDrop = function (event) {
         if (!self.colToMove) return;
         self.onHeaderDragStop();
@@ -167,8 +160,7 @@
             // clear out the colToMove object
             self.colToMove = undefined;
         }
-    };
-    
+    }; 
     // Row functions
     self.onRowMouseDown = function (event) {
         // Get the closest row element from where we clicked.
@@ -182,7 +174,6 @@
             gridService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
         }
     };
-
     self.onRowDrop = function (event) {
         // Get the closest row to where we dropped
         var targetRow = $(event.target).closest('.ngRow');
