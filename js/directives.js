@@ -7,9 +7,15 @@ angular.module('myApp.directives', [])
 					attrs.scrollto = attrs.href;
 				}
 				var t = $(attrs.scrollto);
-				var u = t.offset();
-				var top = u.top - 60;
+				var top = t[0].offsetTop;
 				$('#exampleDefinitions').animate({ scrollTop: top }, 800);
 			});
+		};
+	}])
+	.directive('refreshScrollSpy', [function(){
+		return function(scope, elm, attrs) {
+			//$('[data-spy="scroll"]').each(function () {
+            //    $(this).scrollspy('refresh')
+		    //});
 		};
 	}]);

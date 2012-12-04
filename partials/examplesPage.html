@@ -1,21 +1,22 @@
 <div class="container-fluid body rowstyles" style="width:1200px; margin: auto;">
 	<div class="content rowstyles colstyles" style="position:absolute; top: 20px; bottom: 20px">
-			<div style="position:absolute; width: 250px; top: 0; left: 0" class="bs-docs-sidebar">
-				<ul class="nav nav-list bs-docs-sidenav">
-					<li><a scrollto href="#basic"><i class="icon-chevron-right"></i>Basic</a></li>
-					<li><a scrollto href="#masterdetail"><i class="icon-chevron-right"></i>Master/Detail</a></li>
-				</ul>
-			</div>
-			<div id="exampleDefinitions" style="position:absolute;  left: 280px; top: 0; bottom:0; right: 20px; overflow: auto; padding: 0 20px" data-spy="scroll" data-target=".bs-docs-sidebar">
-				<section id="basic" ng-controller="BasicExampleCtrl" style="height: 900px;">
-					<div ng-include src="'partials/exampleDefinitions/basic/basicExample.html'"></div>
-				</section>
-				<section id="masterdetail" ng-controller="MasterDetailExampleCtrl">
-					<div ng-include src="'partials/exampleDefinitions/masterDetail/masterDetailsExample.html'"></div>
-				</section>
-				<section id="home" style=" float:left;clear:left;margin-top: 30px">
-					<h1>More examples coming soon...</h1>
-				</section>
-			</div>
+		<div style="position:absolute; width: 250px; top: 0; left: 0" class="bs-docs-sidebar">
+			<ul class="nav nav-list bs-docs-sidenav">
+				<li><a scrollto href="#basic"><i class="icon-chevron-right"></i>Basic</a></li>
+				<li><a scrollto href="#grouping"><i class="icon-chevron-right"></i>Grouping</a></li>
+				<li><a scrollto href="#masterdetail"><i class="icon-chevron-right"></i>Master/Detail</a></li>
+			</ul>
+		</div>
+		<div id="exampleDefinitions" style="position:absolute;  left: 280px; top: 0; bottom:0; right: 20px; overflow: auto; padding: 0 20px" data-spy="scroll" data-target=".bs-docs-sidebar" refresh-scroll-spy>
+			<section id="basic" ng-controller="BasicExampleCtrl" style="height: 900px;">
+				<div ng-include src="'partials/exampleDefinitions/basic/basicExample.html'"></div>
+			</section>
+			<section id="grouping" ng-controller="GroupingExampleCtrl" style="height: 1800px;">
+				<div ng-include src="'partials/exampleDefinitions/grouping/groupingExample.html'"></div>
+			</section>
+			<section id="masterdetail" ng-controller="MasterDetailExampleCtrl">
+				<div ng-include src="'partials/exampleDefinitions/masterDetail/masterDetailsExample.html'"></div>
+			</section>
+		</div>
 	</div>
 </div>

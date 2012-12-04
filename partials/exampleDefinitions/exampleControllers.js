@@ -20,15 +20,46 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/basic/basic" + $scope.selectedBasicTab.title + '.html';};
-		$scope.plunker = "http://plnkr.co/edit/T6qaQX";
-		$scope.gridTitle = "Basic Example";
-		$scope.gridDescription = "Below is a basic example on how to use ng-grid:";		
 		$scope.myData = [{name: "Moroni", age: 50},
 						 {name: "Tiancum", age: 43},
 						 {name: "Jacob", age: 27},
 						 {name: "Nephi", age: 29},
 						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { data: 'myData' };
+	}])
+	
+.controller('GroupingExampleCtrl', ['$scope', function($scope) {
+		$scope.basicTabs = tabs;
+		$scope.selectedBasicTab = $scope.basicTabs[0];		
+		$scope.switchTab = function(tab){
+			$scope.selectedBasicTab = $scope.basicTabs[tab];
+		};				
+		$scope.link = function(){ return "partials/exampleDefinitions/grouping/grouping" + $scope.selectedBasicTab.title + '.html';};	
+		$scope.basicTabs2 = tabs;
+		$scope.selectedBasicTab2 = $scope.basicTabs2[0];		
+		$scope.switchTab2 = function(tab){
+			$scope.selectedBasicTab2 = $scope.basicTabs2[tab];
+		};				
+		$scope.link2 = function(){ return "partials/exampleDefinitions/grouping/grouping" + $scope.selectedBasicTab2.title + '2.html';};	
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
+	    $scope.myData2 = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
+		$scope.gridOptions = { 
+			data: 'myData',	
+			showGroupPanel: true
+		};
+		$scope.gridOptions2 = { 
+			data: 'myData2',	
+			showGroupPanel: true,
+			jqueryUIDraggable: true
+		};
 	}])
 	
 .controller('MasterDetailExampleCtrl', ['$scope', function($scope) {
