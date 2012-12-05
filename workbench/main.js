@@ -54,10 +54,10 @@ function userController($scope) {
         maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
-                     { field: 'allowance',  aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
-                     { field: 'birthday', cellFilter: 'date', resizable: false },
-                     { field: 'paid',  cellFilter: 'checkmark' }]
+        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo', width:'auto' },
+                     { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html', width: 'auto' },
+                     { field: 'birthday', cellFilter: 'date', width: 'auto' },
+                     { field: 'paid', cellFilter: 'checkmark', width: 'auto' }]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },

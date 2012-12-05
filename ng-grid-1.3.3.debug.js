@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/04/2012 21:00:06
+* Compiled At: 12/04/2012 21:38:31
 ***********************************************/
 
 (function(window, undefined){
@@ -1439,8 +1439,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
                     $scope.columns[i].width = col.minWidth;
 					totalWidth += $scope.columns[i].width;
-                    var temp = col;
-                    $(document).ready(function() { self.resizeOnData(temp, true); });
+					var temp = $scope.columns[i];
+                    $scope.$evalAsync(function() { self.resizeOnData(temp, true); });
                     return;
                 } else if (t.indexOf("*") != -1) {
                     // if it is the last of the columns just configure it to use the remaining space
