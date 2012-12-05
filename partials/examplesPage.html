@@ -3,6 +3,7 @@
 		<div style="position:absolute; width: 250px; top: 0; left: 0" class="bs-docs-sidebar">
 			<ul class="nav nav-list bs-docs-sidenav">
 				<li><a scrollto href="#basic"><i class="icon-chevron-right"></i>Basic</a></li>
+				<li><a scrollto href="#columnDefs"><i class="icon-chevron-right"></i>Column Definitions</a></li>
 				<li><a scrollto href="#grouping"><i class="icon-chevron-right"></i>Grouping</a></li>
 				<li><a scrollto href="#masterdetail"><i class="icon-chevron-right"></i>Master/Detail</a></li>
 			</ul>
@@ -10,6 +11,9 @@
 		<div id="exampleDefinitions" style="position:absolute;  left: 280px; top: 0; bottom:0; right: 20px; overflow: auto; padding: 0 20px" data-spy="scroll" data-target=".bs-docs-sidebar" refresh-scroll-spy>
 			<section id="basic" ng-controller="BasicExampleCtrl" style="height: 900px;">
 				<div ng-include src="'partials/exampleDefinitions/basic/basicExample.html'"></div>
+			</section>
+			<section id="columnDefs" ng-controller="ColumnDefsExampleCtrl" style="height: 1800px;">
+				<div ng-include src="'partials/exampleDefinitions/columnDefs/columnDefsExample.html'"></div>
 			</section>
 			<section id="grouping" ng-controller="GroupingExampleCtrl" style="height: 1800px;">
 				<div ng-include src="'partials/exampleDefinitions/grouping/groupingExample.html'"></div>

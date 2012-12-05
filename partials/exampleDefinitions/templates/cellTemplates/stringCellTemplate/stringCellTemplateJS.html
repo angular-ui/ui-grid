@@ -6,6 +6,9 @@ app.controller('MyCtrl', function($scope) {
                      {name: "Jacob", age: 27},
                      {name: "Nephi", age: 29},
                      {name: "Enos", age: 34}];
-    $scope.gridOptions = { data: 'myData' };
+    $scope.gridOptions = { 
+        data: 'myData',
+        columnDefs: [{field:'name', displayName:'Name', cellTemplate: '<div>{{row.entity}}</div>'}, {field:'age', displayName:'Age'}]
+    };
 });
 </pre>

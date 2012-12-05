@@ -28,6 +28,24 @@ angular.module('myApp.exampleControllers', [])
 		$scope.gridOptions = { data: 'myData' };
 	}])
 	
+.controller('ColumnDefsExampleCtrl', ['$scope', function($scope) {
+		$scope.basicTabs = tabs;
+		$scope.selectedBasicTab = $scope.basicTabs[0];		
+		$scope.switchTab = function(tab){
+			$scope.selectedBasicTab = $scope.basicTabs[tab];
+		};				
+		$scope.link = function(){ return "partials/exampleDefinitions/columnDefs/columnDefs" + $scope.selectedBasicTab.title + '.html';};
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
+		$scope.gridOptions = { 
+			data: 'myData',
+			columnDefs: [{field: 'name', displayName: 'Name'}, {field:'age', displayName:'Age'}]
+		};
+	}])
+	
 .controller('GroupingExampleCtrl', ['$scope', function($scope) {
 		$scope.basicTabs = tabs;
 		$scope.selectedBasicTab = $scope.basicTabs[0];		
