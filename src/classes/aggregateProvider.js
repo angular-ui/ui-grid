@@ -100,17 +100,18 @@
                 }
             }			
 			self.groupToMove = undefined;
+			grid.fixGroupIndexes();	
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
-					$scope.configGroups.push(self.colToMove.col);
+					$scope.groupBy(self.colToMove.col);
 				} else {
 				    groupScope = angular.element(groupContainer).scope();
 				    if (groupScope) {
 						// Splice the columns
-						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
+						$scope.removeGroup(groupScope.$index);
 					}
 				}	
             }			

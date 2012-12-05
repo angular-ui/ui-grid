@@ -30,11 +30,11 @@
         if (self.extFilter) return;
         self.premise = a.split(':');
         if (self.premise.length > 1) {
-            self.field = self.premise[0].toLowerCase().replace(' ', '_');
-            self.value = self.premise[1].toLowerCase();
+            self.field = self.premise[0].trim().toLowerCase().replace(' ', '_');
+            self.value = self.premise[1].trim().toLowerCase();
         } else {
             self.field = "";
-            self.value = self.premise[0].toLowerCase();
+            self.value = self.premise[0].trim().toLowerCase();
         }
         self.evalFilter();
     });

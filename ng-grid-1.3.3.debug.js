@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/04/2012 10:59:07
+* Compiled At: 12/04/2012 18:50:28
 ***********************************************/
 
 (function(window, undefined){
@@ -60,6 +60,10 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
 /***********************************************
 * FILE: ..\src\utils.js
 ***********************************************/
+if (!String.prototype.trim)
+{
+	String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, '');};
+}
 if (!Array.prototype.indexOf)
 {
 	Array.prototype.indexOf = function(elt /*, from*/){
@@ -569,7 +573,7 @@ ngGridServices.factory('DomUtilityService', function () {
 /***********************************************
 * FILE: ..\src\templates\gridTemplate.html
 ***********************************************/
-ng.defaultGridTemplate = function(){ return '<div ng-class="{\'ui-widget\': jqueryUITheme}"><div class="ngTopPanel" ng-class="{\'ui-widget-header\':jqueryUITheme, \'ui-corner-top\': jqueryUITheme}" ng-style="topPanelStyle()"><div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerStyle()"><div class="ngGroupPanelDescription" ng-show="configGroups.length == 0">Drag a column header here and drop it to group by that column</div><ul ng-show="configGroups.length > 0" class="ngGroupList"><li class="ngGroupItem" ng-repeat="group in configGroups"><span class="ngGroupElement"><span class="ngGroupName">{{group.displayName}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li></ul></div><div class="ngHeaderContainer" ng-style="headerStyle()"><div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div></div><div class="ngHeaderButton" ng-show="showColumnMenu || showFilter" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div></div><div ng-show="showMenu" class="ngColMenu"><div ng-show="showFilter"><input placeholder="Seach Field:Value" type="text" ng-model="filterText"/></div><div ng-show="showColumnMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}} <a title="Group By" class="ngGroupIcon" ng-hide="col.field == \'\u2714\'" ng-click="groupBy(col)"></a></label></li></ul></div></div></div><div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()"><div class="ngCanvas" ng-style="canvasStyle()"><div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div></div></div><div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()"><div class="ngTotalSelectContainer" ng-show="footerVisible"><div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" ><span class="ngLabel">Total Items: {{maxRows}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span></div><div class="ngFooterSelectedItems" ng-show="multiSelect"><span class="ngLabel">Selected Items: {{selectedItems.length}}</span></div></div><div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="footerVisible && enablePaging" ng-class="{\'ngNoMultiSelect\': !multiSelect}"><div style="float:left; margin-right: 10px;" class="ngRowCountPicker"><span style="float: left; margin-top: 3px;" class="ngLabel">Page Size:</span><select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" ><option ng-repeat="size in pagingOptions.pageSizes">{{size}}</option></select></div><div style="float:left; margin-right: 10px; line-height:25px;" class="ngPagerControl" style="float: left; min-width: 135px;"><button class="ngPagerButton" ng-click="pageToFirst()" ng-disabled="cantPageBackward()" title="First Page"><div class="ngPagerFirstTriangle"><div class="ngPagerFirstBar"></div></div></button><button class="ngPagerButton" ng-click="pageBackward()" ng-disabled="cantPageBackward()" title="Previous Page"><div class="ngPagerFirstTriangle ngPagerPrevTriangle"></div></button><input class="ngPagerCurrent" type="text" style="width:50px; height: 24px; margin-top: 1px; padding: 0px 4px;" ng-model="pagingOptions.currentPage"/><button class="ngPagerButton" ng-click="pageForward()" ng-disabled="cantPageForward()" title="Next Page"><div class="ngPagerLastTriangle ngPagerNextTriangle"></div></button><button class="ngPagerButton" ng-click="pageToLast()" ng-disabled="cantPageForward()" title="Last Page"><div class="ngPagerLastTriangle"><div class="ngPagerLastBar"></div></div></button></div></div></div></div>';};
+ng.defaultGridTemplate = function(){ return '<div ng-class="{\'ui-widget\': jqueryUITheme}"><div class="ngTopPanel" ng-class="{\'ui-widget-header\':jqueryUITheme, \'ui-corner-top\': jqueryUITheme}" ng-style="topPanelStyle()"><div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerStyle()"><div class="ngGroupPanelDescription" ng-show="configGroups.length == 0">Drag a column header here and drop it to group by that column</div><ul ng-show="configGroups.length > 0" class="ngGroupList"><li class="ngGroupItem" ng-repeat="group in configGroups"><span class="ngGroupElement"><span class="ngGroupName">{{group.displayName}}<span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span></span><span ng-hide="$last" class="ngGroupArrow"></span></span></li></ul></div><div class="ngHeaderContainer" ng-style="headerStyle()"><div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-header-row></div></div><div class="ngHeaderButton" ng-show="showColumnMenu || showFilter" ng-click="toggleShowMenu()"><div class="ngHeaderButtonArrow" ng-click=""></div></div><div ng-show="showMenu" class="ngColMenu"><div ng-show="showFilter"><input placeholder="Seach Field:Value" type="text" ng-model="filterText"/></div><div ng-show="showColumnMenu"><span class="ngMenuText">Choose Columns:</span><ul class="ngColList"><li class="ngColListItem" ng-repeat="col in columns | ngColumns"><label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label><a title="Group By" ng-class="col.groupedByClass()" ng-hide="col.field == \'\u2714\'" ng-click="groupBy(col)"></a><span class="ngGroupingNumber" ng-show="col.groupIndex > 0">{{col.groupIndex}}</span></li></ul></div></div></div><div class="ngViewport" ng-class="{\'ui-widget-content\': jqueryUITheme}" ng-style="viewportStyle()"><div class="ngCanvas" ng-style="canvasStyle()"><div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{\'selected\': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div></div></div><div class="ngFooterPanel" ng-class="{\'ui-widget-content\': jqueryUITheme, \'ui-corner-bottom\': jqueryUITheme}" ng-style="footerStyle()"><div class="ngTotalSelectContainer" ng-show="footerVisible"><div class="ngFooterTotalItems" ng-class="{\'ngNoMultiSelect\': !multiSelect}" ><span class="ngLabel">Total Items: {{maxRows}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span></div><div class="ngFooterSelectedItems" ng-show="multiSelect"><span class="ngLabel">Selected Items: {{selectedItems.length}}</span></div></div><div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="footerVisible && enablePaging" ng-class="{\'ngNoMultiSelect\': !multiSelect}"><div style="float:left; margin-right: 10px;" class="ngRowCountPicker"><span style="float: left; margin-top: 3px;" class="ngLabel">Page Size:</span><select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" ><option ng-repeat="size in pagingOptions.pageSizes">{{size}}</option></select></div><div style="float:left; margin-right: 10px; line-height:25px;" class="ngPagerControl" style="float: left; min-width: 135px;"><button class="ngPagerButton" ng-click="pageToFirst()" ng-disabled="cantPageBackward()" title="First Page"><div class="ngPagerFirstTriangle"><div class="ngPagerFirstBar"></div></div></button><button class="ngPagerButton" ng-click="pageBackward()" ng-disabled="cantPageBackward()" title="Previous Page"><div class="ngPagerFirstTriangle ngPagerPrevTriangle"></div></button><input class="ngPagerCurrent" type="text" style="width:50px; height: 24px; margin-top: 1px; padding: 0px 4px;" ng-model="pagingOptions.currentPage"/><button class="ngPagerButton" ng-click="pageForward()" ng-disabled="cantPageForward()" title="Next Page"><div class="ngPagerLastTriangle ngPagerNextTriangle"></div></button><button class="ngPagerButton" ng-click="pageToLast()" ng-disabled="cantPageForward()" title="Last Page"><div class="ngPagerLastTriangle"><div class="ngPagerLastBar"></div></div></button></div></div></div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\rowTemplate.html
@@ -775,17 +779,18 @@ ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
                 }
             }			
 			self.groupToMove = undefined;
+			grid.fixGroupIndexes();	
         } else {	
 			self.onHeaderDragStop();
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
-					$scope.configGroups.push(self.colToMove.col);
+					$scope.groupBy(self.colToMove.col);
 				} else {
 				    groupScope = angular.element(groupContainer).scope();
 				    if (groupScope) {
 						// Splice the columns
-						$scope.configGroups.splice(groupScope.$index + 1, 0, self.colToMove.col);
+						$scope.removeGroup(groupScope.$index);
 					}
 				}	
             }			
@@ -883,6 +888,8 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
         clicks = 0,
         timer = null;
     self.width = colDef.width;
+	self.groupIndex = 0;
+	self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;
@@ -910,7 +917,10 @@ ng.Column = function (config, $scope, grid, domUtilityService) {
         ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
             self.headerCellTemplate = t;
         });
-    }
+    }	
+	self.groupedByClass = function(){ 
+		return self.isGroupedBy ? "ngGroupedByIcon":"ngGroupIcon";
+	};
     self.toggleVisible = function () {
         self.visible = !self.visible;
     };
@@ -1243,6 +1253,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             headerRowHeight: 30,
             footerRowHeight: 55,
             footerVisible: true,
+			displayFooter: undefined,
             canSelectRows: true,
             data: [],
             columnDefs: undefined,
@@ -1422,6 +1433,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 // figure out if the width is defined or if we need to calculate it
                 if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
                     $scope.columns[i].width = col.minWidth;
+					totalWidth += $scope.columns[i].width;
                     var temp = col;
                     $(document).ready(function() { self.resizeOnData(temp, true); });
                     return;
@@ -1566,6 +1578,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             col.index = i;
         });
     };
+	self.fixGroupIndexes = function(){		
+		angular.forEach($scope.configGroups, function(item, i){
+			item.groupIndex = i + 1;
+		});
+	};
     //$scope vars
     $scope.elementsNeedMeasuring = true;
     $scope.columns = [];
@@ -1576,7 +1593,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
-    $scope.footerVisible = self.config.footerVisible;
+    $scope.footerVisible = ng.utils.isNullOrUndefined(self.config.displayFooter) ? self.config.footerVisible : self.config.displayFooter;
+	$scope.footerRowHeight = $scope.footerVisible ? self.config.footerRowHeight : 0;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
@@ -1619,22 +1637,27 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 	};
     
     $scope.viewportDimHeight = function () {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
+			col.isGroupedBy = true;
             $scope.configGroups.push(col);
+			col.groupIndex = $scope.configGroups.length;
         } else {
-            $scope.configGroups.splice(indx, 1);
-			if($scope.columns[indx].isAggCol){
-				$scope.columns.splice(indx, 1);
-			}
+			$scope.removeGroup(indx);
         }
     };
     $scope.removeGroup = function(index) {
+		var col = $scope.columns.filter(function(item){ 
+			return item.groupIndex == (index + 1);
+		})[0];
+		col.isGroupedBy = false;
+		col.groupIndex = 0;
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
+		self.fixGroupIndexes();
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
             domUtilityService.apply($scope);
@@ -1760,11 +1783,11 @@ ng.SearchProvider = function($scope, grid) {
         if (self.extFilter) return;
         self.premise = a.split(':');
         if (self.premise.length > 1) {
-            self.field = self.premise[0].toLowerCase().replace(' ', '_');
-            self.value = self.premise[1].toLowerCase();
+            self.field = self.premise[0].trim().toLowerCase().replace(' ', '_');
+            self.value = self.premise[1].trim().toLowerCase();
         } else {
             self.field = "";
-            self.value = self.premise[0].toLowerCase();
+            self.value = self.premise[0].trim().toLowerCase();
         }
         self.evalFilter();
     });
@@ -1864,9 +1887,6 @@ ng.SelectionService = function (grid) {
 * FILE: ..\src\classes\styleProvider.js
 ***********************************************/
 ng.StyleProvider = function($scope, grid, domUtilityService) {
-    $scope.topPanelStyle = function() {
-        return { "height": $scope.topPanelHeight() + "px" };
-    };
     $scope.headerCellStyle = function(col) {
         return { "height": col.headerRowHeight + "px" };
     };
@@ -1889,7 +1909,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
     };
     $scope.footerStyle = function() {
-        return { "width": grid.rootDim.outerWidth + "px", "height": grid.config.footerRowHeight + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
     };
 };
 

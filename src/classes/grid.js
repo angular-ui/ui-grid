@@ -13,6 +13,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             headerRowHeight: 30,
             footerRowHeight: 55,
             footerVisible: true,
+			displayFooter: undefined,
             canSelectRows: true,
             data: [],
             columnDefs: undefined,
@@ -192,6 +193,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 // figure out if the width is defined or if we need to calculate it
                 if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
                     $scope.columns[i].width = col.minWidth;
+					totalWidth += $scope.columns[i].width;
                     var temp = col;
                     $(document).ready(function() { self.resizeOnData(temp, true); });
                     return;
@@ -336,6 +338,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             col.index = i;
         });
     };
+	self.fixGroupIndexes = function(){		
+		angular.forEach($scope.configGroups, function(item, i){
+			item.groupIndex = i + 1;
+		});
+	};
     //$scope vars
     $scope.elementsNeedMeasuring = true;
     $scope.columns = [];
@@ -346,7 +353,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
-    $scope.footerVisible = self.config.footerVisible;
+    $scope.footerVisible = ng.utils.isNullOrUndefined(self.config.displayFooter) ? self.config.footerVisible : self.config.displayFooter;
+	$scope.footerRowHeight = $scope.footerVisible ? self.config.footerRowHeight : 0;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
@@ -389,22 +397,27 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 	};
     
     $scope.viewportDimHeight = function () {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - self.config.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
+			col.isGroupedBy = true;
             $scope.configGroups.push(col);
+			col.groupIndex = $scope.configGroups.length;
         } else {
-            $scope.configGroups.splice(indx, 1);
-			if($scope.columns[indx].isAggCol){
-				$scope.columns.splice(indx, 1);
-			}
+			$scope.removeGroup(indx);
         }
     };
     $scope.removeGroup = function(index) {
+		var col = $scope.columns.filter(function(item){ 
+			return item.groupIndex == (index + 1);
+		})[0];
+		col.isGroupedBy = false;
+		col.groupIndex = 0;
         $scope.columns.splice(index, 1);
         $scope.configGroups.splice(index, 1);
+		self.fixGroupIndexes();
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
             domUtilityService.apply($scope);
