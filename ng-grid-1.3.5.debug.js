@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/06/2012 00:57:37
+* Compiled At: 12/06/2012 01:19:34
 ***********************************************/
 
 (function(window, undefined){
@@ -1428,7 +1428,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             asteriskNum = 0,
             totalWidth = 0;
         var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
-        
+        totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function (col, i) {
             i += indexOffset;
             var isPercent = false, t = undefined;
@@ -1452,7 +1452,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 } else if (t.indexOf("*") != -1) {
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0) {
-                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.scrollW) - totalWidth) - 1;
+                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.ScrollW) - totalWidth) - 1;
                     } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
                         asteriskNum += t.length;
                         col.index = i;
