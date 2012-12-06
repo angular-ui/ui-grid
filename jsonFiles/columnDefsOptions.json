@@ -1,0 +1,86 @@
+[	
+	{	
+		"id": "aggLabelFilter",
+		"defaultValue": "''",
+		"definition": "string name for filter to use on the aggregate label ('currency', 'date', etc..) defaults to cellFilter if not set.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "cellClass",
+		"defaultValue": "''",
+		"definition": "Sets the css class for the column cells.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "cellFilter",
+		"defaultValue": "''",
+		"definition": "string name for filter to use on the cell ('currency', 'date', etc..)",
+		"plunker": "Link"
+	},
+	{	
+		"id": "cellTemplate",
+		"defaultValue": "''",
+		"definition": "Sets the cell template for the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "displayName",
+		"defaultValue": "Pretty Foo",
+		"definition": "Sets the header name of the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "field",
+		"defaultValue": "foo",
+		"definition": "Can also be a property path on your data model. 'foo.bar.myField', 'Name.First', etc..",
+		"plunker": "Link"
+	},
+	{	
+		"id": "headerCellTemplate",
+		"defaultValue": "''",
+		"definition": "Sets the template for the column header cell.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "headerClass",
+		"defaultValue": "''",
+		"definition": "Sets the css class for the column header.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "maxWidth",
+		"defaultValue": "9000",
+		"definition": "Sets the maximum width of the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "minWidth",
+		"defaultValue": "50",
+		"definition": "Sets the minimum width of the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "resizable",
+		"defaultValue": "true",
+		"definition": "Whether or not column is resizable.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "sortable",
+		"defaultValue": "true",
+		"definition": "Whether or not column is sortable.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "sortFn",
+		"defaultValue": "function(a,b){return a > b}",
+		"definition": "Sets the sort function for the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "width",
+		"defaultValue": "60",
+		"definition": "Sets the width of the column.",
+		"plunker": "Link"
+	}
+]

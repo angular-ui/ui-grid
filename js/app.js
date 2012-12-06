@@ -7,5 +7,6 @@ angular.module('myApp', ['myApp.services', 'myApp.controllers','myApp.exampleCon
     $routeProvider.when('/overview', {templateUrl: 'partials/overviewPage.html', controller: 'OverviewPageCtrl'});
     $routeProvider.when('/gettingstarted', {templateUrl: 'partials/gettingStartedPage.html', controller: 'GettingStartedPageCtrl'});
     $routeProvider.when('/examples', {templateUrl: 'partials/examplesPage.html', controller: 'ExamplesPageCtrl'});
+    $routeProvider.when('/api', {templateUrl: 'partials/apiPage.html', controller: 'ApiPageCtrl'});
     $routeProvider.otherwise({redirectTo: '/overview'});
   }]);

@@ -7,12 +7,18 @@
 	}, 
 	{
 		"index": 1,
+		"id" : "api",
+		"title" : "API",
+		"icon" : "icon-table"
+	}, 
+	{
+		"index": 2,
 		"id" : "gettingstarted",
 		"title" : "Getting Started",
 		"icon" : "icon-unlock"
 	}, 
 	{
-		"index": 2,
+		"index": 3,
 		"id" : "examples",
 		"title" : "Examples",
 		"icon" : "icon-tasks"

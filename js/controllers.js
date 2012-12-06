@@ -17,10 +17,21 @@ angular.module('myApp.controllers', [])
 	.controller('OverviewPageCtrl', ['$scope', function($scope) {	
 		$scope.switchPage(0);
 	}])
+	
+	.controller('ApiPageCtrl', ['$scope', 'GridOptionsService', 'ColumnDefsOptionsService', 'HelperMethodsService',  function($scope, GridOptionsService, ColumnDefsOptionsService , HelperMethodsService){
+		HelperMethodsService.serviceDataLoader(GridOptionsService, function(data){
+			$scope.gridOptionsData = data;
+		});
+		HelperMethodsService.serviceDataLoader(ColumnDefsOptionsService, function(data){
+			$scope.columnDefsOptionsData = data;
+		});
+		$scope.test = "testing";
+		$scope.switchPage(1);	
+	}])
 
 	.controller('GettingStartedPageCtrl', ['$scope', function($scope) {
 		prettyPrint();
-		$scope.switchPage(1);
+		$scope.switchPage(2);
 		$scope.myData = [{name: "Moroni", age: 50},
 						 {name: "Tiancum", age: 43},
 						 {name: "Jacob", age: 27},
@@ -30,5 +41,5 @@ angular.module('myApp.controllers', [])
 	}])
 
 	.controller('ExamplesPageCtrl', ['$scope', function($scope) {
-		$scope.switchPage(2);
-	}]);
+		$scope.switchPage(3);
+	}])	;

@@ -40,10 +40,40 @@ angular.module('myApp.services', []).
 		    $http.get('jsonFiles/tabs.json').success(function (data) {
 				list = data;
 				callback(list);
-		    })
+		    });
 	    }
 	    PageNavigationService.size = function() { return HelperMethodsService.size(list); }
-	    PageNavigationService.data = function() { return list };
+	    PageNavigationService.data = function() { return list; };
 
 	    return PageNavigationService;
+	}).
+	
+	factory('GridOptionsService', function($http, HelperMethodsService) {
+	    var GridOptionsService = {};
+	    var list = [];
+	    GridOptionsService.loadData = function(callback) {
+		    $http.get('jsonFiles/gridOptions.json').success(function (data) {
+				list = data;
+				callback(list);
+		    });
+	    }
+	    GridOptionsService.size = function() { return list.length; }
+	    GridOptionsService.data = function() { return list; };
+
+	    return GridOptionsService;
+	}).
+	
+	factory('ColumnDefsOptionsService', function($http, HelperMethodsService) {
+	    var ColumnDefsOptionsService = {};
+	    var list = [];
+	    ColumnDefsOptionsService.loadData = function(callback) {
+		    $http.get('jsonFiles/columnDefsOptions.json').success(function (data) {
+				list = data;
+				callback(list);
+		    });
+	    }
+	    ColumnDefsOptionsService.size = function() { return list.length; }
+	    ColumnDefsOptionsService.data = function() { return list; };
+
+	    return ColumnDefsOptionsService;
 	});

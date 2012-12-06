@@ -1,0 +1,218 @@
+[
+	{	
+		"id": "afterSelectionChange",
+		"defaultValue": "function () {}",
+		"definition": "callback if you want to validate something after selection.",
+		"plunker": "Link"
+	},
+	{
+		"id":"beforeSelectionChange",
+		"defaultValue": "function (rowItem) { return true; }",
+		"definition": "callback if you want to inspect something before selection, return false if you want to cancel the selection. return true otherwise.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "canSelectRows",
+		"defaultValue": "true",
+		"definition": "To be able to have selectable rows in grid.",
+		"plunker": "Link"
+	},
+		{
+		"id":"columnDefs",
+		"defaultValue": "undefined",
+		"definition": "definitions of columns as an array [], if not defines columns are auto-generated.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "columnWidth",
+		"defaultValue": "100",
+		"definition": "Column width of columns in grid.",
+		"plunker": "Link"
+	},
+	{
+		"id": "data",
+		"defaultValue": "[]",
+		"definition": "Data being displayed in the grid.",
+		"plunker": "Link"
+	},
+	{
+		"id":"disableTextSelection",
+		"defaultValue": "false",
+		"definition": "disables text selection in the grid.",
+		"plunker": "Link"
+	},
+	{
+		"id": "displaySelectionCheckbox",
+		"defaultValue": "true",
+		"definition": "toggles whether row selection check boxes appear",
+		"plunker": "Link"
+	},
+	{	
+		"id": "enableColumnResize",
+		"defaultValue": "true",
+		"definition": "enable or disable resizing of columns",
+		"plunker": "Link"
+	},
+	{	
+		"id": "enablePaging",
+		"defaultValue": "false",
+		"definition": "enables the paging feature",
+		"plunker": "Link"
+	},
+	{
+		"id":"enableRowReordering",
+		"defaultValue": "false",
+		"definition": "enable row reordering.",
+		"plunker": "Link"
+	},
+	{
+		"id": "enableSorting",
+		"defaultValue": "true",
+		"definition": "For enabling/disabling sorting in grid.",
+		"plunker": "Link"
+	},
+	{
+		"id": "filterOptions",
+		"defaultValue": "{ filterText: '', useExternalFilter: false}",
+		"definition": "filterText:the actual filter text so you can use external filtering while using the builting search box.useExternalFilter:bypass internal filtering for instance, server side-searching/paging",
+		"plunker": "Link"
+	},
+	{
+		"id": "footerRowHeight",
+		"defaultValue": "55",
+		"definition": "Defining the height of the footer.",
+		"plunker": "Link"
+	},
+	{
+		"id":"footerVisible",
+		"defaultValue": "true",
+		"definition": "Showing the footer is enabled by default",
+		"plunker": "Link"
+	},
+	{
+		"id": "groups",
+		"defaultValue": "[]",
+		"definition": "initial fields to group data by. array of strings. field names, not displayName.",
+		"plunker": "Link"
+	},
+	{
+		"id": "headerRowHeight",
+		"defaultValue": "32",
+		"definition": "Defining the height of the header row.",
+		"plunker": "Link"
+	},
+	{
+		"id": "headerRowTemplate",
+		"defaultValue": "undefined",
+		"definition": "define a header row template for further customization.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "jqueryUIDraggable",
+		"defaultValue": "false",
+		"definition": "Enables non-HTML5 compliant drag and drop using the jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.",
+		"plunker": "Link"
+	},
+	{
+		"id":"jqueryUITheme",
+		"defaultValue": "false",
+		"definition": "enable the jqueryUIThemes",
+		"plunker": "Link"
+	},
+	{
+		"id": "keepLastSelected",
+		"defaultValue": "true",
+		"definition": "prevent unselections when multi is disabled.",
+		"plunker": "Link"
+	},
+	{
+		"id": "maintainColumnRatios",
+		"defaultValue": "undefined",
+		"definition": "defaults to true when using *'s or undefined widths. can be ovverriden by setting to false.",
+		"plunker": "Link"
+	},
+	{
+		"id": "multiSelect",
+		"defaultValue": "true",
+		"definition": "set this to false if you only want one item selected at a time",
+		"plunker": "Link"
+	},
+	{
+		"id": "pagingOptions",
+		"defaultValue": "{pageSizes: [250, 500, 1000], pageSize: 250, totalServerItems: 0, currentPage: 1 }",
+		"definition": " pageSizes: page Sizes, pageSize: Size of Paging data, totalServerItems: how many items are on the server (for paging), currentPage: what page they are currently on",
+		"plunker": "Link"
+	},
+	{
+		"id": "plugins",
+		"defaultValue": "[]",
+		"definition": "array of plugin functions to register.ke",
+		"plunker": "Link"
+	},
+	{
+		"id":"rowHeight",
+		"defaultValue": "30",
+		"definition": "Row height of rows in grid.",
+		"plunker": "Link"
+	},
+	{
+		"id": "rowTemplate",
+		"defaultValue": "undefined",
+		"definition": "Define a row Template to customize output",
+		"plunker": "Link"
+	},
+	{	
+		"id": "selectedItems",
+		"defaultValue": "[]",
+		"definition": "array, if multi turned off will have only one item in array",
+		"plunker": "Link"
+	},
+	{
+		"id": "selectWithCheckboxOnly",
+		"defaultValue": "false",
+		"definition": "set to true if you only want to be able to select with the checkbox only",
+		"plunker": "Link"
+	},
+	{	
+		"id": "showColumnMenu",
+		"defaultValue": "true",
+		"definition": "enables display of the menu to choose which columns to display.",
+		"plunker": "Link"
+	},
+	{
+		"id": "showFilter",
+		"defaultValue": "true",
+		"definition": "enables display of the filterbox in the column menu.",
+		"plunker": "Link"
+	},
+	{
+		"id": "showGroupPanel",
+		"defaultValue": "false",
+		"definition": "whether or not to display the dropzone for grouping columns on the fly",
+		"plunker": "Link"
+	},
+	{	
+		"id": "sortInfo",
+		"defaultValue": "undefined",
+		"definition": "similar to filterInfo",
+		"plunker": "Link"
+	},
+	{
+		"id": "tabIndex",
+		"defaultValue": "-1",
+		"definition": "set the tab index of the grid. ",
+		"plunker": "Link"
+	},
+	{
+		"id":"useExternalSorting",
+		"defaultValue": "false",
+		"definition": "provide your own sorting function",
+		"plunker": "Link"
+	},
+	{
+		"id": "watchDataItems",
+		"defaultValue": "false",
+		"definition": "DANGER: setting this to true will aloow the grid to update individual elements as they change. In large datasets this adversely affects performance. It is disabled by default.",
+		"plunker": "Link"
+	}
+]

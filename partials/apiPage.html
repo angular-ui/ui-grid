@@ -1,0 +1,33 @@
+<div class="container-fluid body rowstyles scroll-y" style="width: 1170px; margin: 20px auto 20px auto;">
+	<h1>API Documentation</h1>
+	<h3>Grid Options</h3>
+	<table border="1">
+		<tr>
+			<th>id</th>
+			<th>default value</th>
+			<th>definition</th>
+			<th>plunker</th>
+		</tr>
+		<tr ng-repeat="data in gridOptionsData">
+			<td style="padding: 5px">{{data.id}}</td>
+			<td style="padding: 5px">{{data.defaultValue}}</td>
+			<td style="padding: 5px">{{data.definition}}</td>
+			<td style="padding: 5px">{{data.plunker}}</td>
+		</tr>
+	</table>
+	<h3>ColumnDefs Options</h3>
+	<table border="1">
+		<tr>
+			<th>id</th>
+			<th>default value</th>
+			<th>definition</th>
+			<th>plunker</th>
+		</tr>
+		<tr ng-repeat="data in columnDefsOptionsData">
+			<td style="padding: 5px">{{data.id}}</td>
+			<td style="padding: 5px">{{data.defaultValue}}</td>
+			<td style="padding: 5px">{{data.definition}}</td>
+			<td style="padding: 5px">{{data.plunker}}</td>
+		</tr>
+	</table>
+</div>
