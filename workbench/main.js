@@ -41,6 +41,15 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
+        { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
+        { field: 'birthday', cellFilter: 'date', resizable: false },
+        { field: 'paid', cellFilter: 'checkmark' }];
+    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
+        { field: 'Vendor', displayName: 'Supplier' },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' },
+        { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
+        { field: 'UPC', displayName: 'Bar Code' }];
     $scope.gridOptions = {
 		data: 'myData',
 		jqueryUITheme: false,
@@ -54,10 +63,7 @@ function userController($scope) {
         maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo', width:'auto' },
-                     { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html', width: 'auto' },
-                     { field: 'birthday', cellFilter: 'date', width: 'auto' },
-                     { field: 'paid', cellFilter: 'checkmark', width: 'auto' }]
+        columnDefs: 'myDefs'
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
@@ -73,15 +79,19 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
-		showGroupPanel: true,
-        columnDefs: [{ field: 'Sku', displayName: 'My Sku'}, 
-                     { field: 'Vendor', displayName: 'Supplier'},
-                     { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' }, 
-                     { field: 'Mfg_Id', displayName: 'Manufacturer ID'}, 
-                     { field: 'UPC', displayName: 'Bar Code' }]
+        showGroupPanel: true,
+        columnDefs: 'myDefs2'
     };
-    $scope.changeData = function() {
-        alert($scope.filterOpts.filterText);
+    $scope.changeData = function () {
+        $scope.myDefs2 = undefined;
     };
+    setTimeout(function () {
+        $scope.myDefs.splice(1, 1);
+        $scope.$apply();
+    }, 3000);
+    setTimeout(function () {
+        $scope.myData[0].name = "FOO";
+        $scope.$apply();
+    }, 5000);
     
 };

@@ -59,6 +59,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, options);
+    if (typeof options.columnDefs == "string") {
+        self.config.columnDefs = $scope.$eval(options.columnDefs);
+    }
     self.gridId = "ng" + ng.utils.newId();
     self.$root = null; //this is the root element that is passed in with the binding handler
 	self.$groupPanel = null;
@@ -116,7 +119,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
     self.buildColumnDefsFromData = function () {
-        if (!self.config.columnDefs > 0) {
+        if (!self.config.columnDefs) {
             self.config.columnDefs = [];
         }
         if (!self.sortedData || !self.sortedData[0]) {
@@ -127,31 +130,43 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function (prop, propName) {
-            self.config.columnDefs.push({
-                field: propName
-            });
+            if (propName != SELECTED_PROP) {
+                self.config.columnDefs.push({
+                    field: propName
+                });
+            }
         });
     };
     self.buildColumns = function () {
         var columnDefs = self.config.columnDefs,
-            cols = [];
+            cols = [],
+            indexOffset = 0;
 
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
         if (self.config.displaySelectionCheckbox) {
-            columnDefs.splice(0, 0, {
-                field: '\u2714',
-                width: self.elementDims.rowSelectedCellW,
-                sortable: false,
-                resizable: false,
-                headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
-            });
+            indexOffset = 1;
+            cols.push(new ng.Column({
+                colDef: {
+                    field: '\u2714',
+                    width: self.elementDims.rowSelectedCellW,
+                    sortable: false,
+                    resizable: false,
+                    headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
+                    cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                },
+                index: 0,
+                headerRowHeight: self.config.headerRowHeight,
+                sortCallback: self.sortData,
+                resizeOnDataCallback: self.resizeOnData,
+                enableResize: self.config.enableColumnResize
+            }, $scope, self, domUtilityService));
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
+                i += indexOffset;
                 var column = new ng.Column({
                     colDef: colDef, 
                     index: i, 
@@ -176,9 +191,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-        
-        angular.forEach(cols, function(col, i) {
-			i = i + $scope.configGroups.length;
+        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
+        totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
+        angular.forEach(cols, function (col, i) {
+            i += indexOffset;
             var isPercent = false, t = undefined;
             //if width is not defined, set it to a single star
             if (ng.utils.isNullOrUndefined(col.width)) {
@@ -200,7 +216,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
                 } else if (t.indexOf("*") != -1) {
                     // if it is the last of the columns just configure it to use the remaining space
                     if (i + 1 == numOfCols && asteriskNum == 0) {
-                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.scrollW) - totalWidth) - 1;
+                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.ScrollW) - totalWidth) - 1;
                     } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
                         asteriskNum += t.length;
                         col.index = i;
@@ -365,14 +381,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 	$scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
 	$scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
 	if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
-        ng.utils.getTemplates(self.config.rowTemplate, function(t) {
-            $scope.rowTemplate = t;
-        });
+	    $scope.rowTemplate = ng.utils.getTemplatePromise(self.config.rowTemplate);
     } 
     if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
-        ng.utils.getTemplates(self.config.headerRowTemplate, function(t) {
-           $scope.headerRowTemplate = t;
-        });
+        $scope.headerRowTemplate = ng.utils.getTemplates(self.config.headerRowTemplate);
     }
     //scope funcs
     $scope.visibleColumns = function () {

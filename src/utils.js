@@ -1,4 +1,5 @@
-﻿/// <reference path="constants.js" />
+﻿/// <reference path="namespace.js" />
+/// <reference path="constants.js" />
 /// <reference path="../lib/angular.js" />
 if (!String.prototype.trim)
 {
@@ -85,12 +86,8 @@ ng.utils = {
         }
         return retnode;
     },
-    getTemplates: function (t, callback) {
-        ng.$http.get(t).success(function(template) {
-            callback(template);
-        }).error(function() {
-            throw "unable to retrieve template";
-        });
+    getTemplatePromise: function (t) {
+        return ng.$http.get(t);
     },
     newId: (function () {
         var seedId = new Date().getTime();
