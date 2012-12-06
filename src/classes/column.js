@@ -26,14 +26,10 @@
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        ng.utils.getTemplates(colDef.cellTemplate, function(t) {
-            self.cellTemplate = t;
-        });
+        self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
     } 
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
-            self.headerCellTemplate = t;
-        });
+        self.headerCellTemplate = ng.utils.getTemplatePromise(colDef.headerCellTemplate);
     }	
 	self.groupedByClass = function(){ 
 		return self.isGroupedBy ? "ngGroupedByIcon":"ngGroupIcon";

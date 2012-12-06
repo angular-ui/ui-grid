@@ -4,8 +4,15 @@
         compile: function () {
             return {
                 pre: function ($scope, iElement) {
-                    var html = $scope.col.cellTemplate;
-                    iElement.append($compile(html)($scope));
+                    if ($scope.col.cellTemplate.then) {
+                        $scope.col.cellTemplate.then(function (resp) {
+                            iElement.html(resp.data);
+                            $compile(iElement.children())($scope);
+                        });
+                    } else {
+                        iElement.html($scope.col.cellTemplate);
+                        $compile(iElement.children())($scope);
+                    }
                 }
             };
         }

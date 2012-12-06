@@ -9,19 +9,29 @@
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService);
-                    var htmlText = ng.defaultGridTemplate(grid.config);
-                    gridService.StoreGrid($element, grid);
-                    grid.footerController = new ng.Footer($scope, grid);
+                    // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
+                    if (typeof options.columnDefs == "string") {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.columns.length = 0;
+                            grid.config.columnDefs = a;
+                            grid.buildColumns();
+                            grid.configureColumnWidths();
+                            domUtilityService.BuildStyles($scope, grid);
+                            grid.aggregateProvider.assignEvents();
+                        }, true);
+                    }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
-                            if (!a) return;
                             grid.sortedData = $.extend(true, [], a);
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
-                        }, options.watchDataItems);
+                        }, true);
                     }
+                    var htmlText = ng.defaultGridTemplate(grid.config);
+                    gridService.StoreGrid($element, grid);
+                    grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
                     $element.addClass("ngGrid")
                         .addClass("ui-widget")
@@ -35,6 +45,7 @@
                     //now use the manager to assign the event handlers
                     gridService.AssignGridEventHandlers($scope, grid);
                     grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
+                   
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });

@@ -5,8 +5,15 @@
             return {
                 pre: function ($scope, iElement) {
                     if (iElement.children().length == 0) {
-                        var html = $scope.headerRowTemplate;
-                        iElement.append($compile(html)($scope));
+                        if ($scope.headerRowTemplate.then) {
+                            $scope.headerRowTemplate.then(function (resp) {
+                                iElement.html(resp.data);
+                                $compile(iElement.children())($scope);
+                            });
+                        } else {
+                            iElement.html($scope.headerRowTemplate);
+                            $compile(iElement.children())($scope);
+                        }
                     }
                 }
             };
