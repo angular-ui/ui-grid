@@ -55,7 +55,6 @@ ngGridServices.factory('DomUtilityService', function () {
 	};
     domUtilityService.BuildStyles = function($scope,grid,apply) {
         var rowHeight = grid.config.rowHeight,
-            headerRowHeight = grid.config.headerRowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
             css,
@@ -70,7 +69,7 @@ ngGridServices.factory('DomUtilityService', function () {
               "." + gridId + " .ngCell { height: " + rowHeight + "px; }"+
               "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
               "." + gridId + " .ngHeaderCell { top: 0; bottom: 0; }" + 
-              "." + gridId + " .ngHeaderScroller { line-height: " + headerRowHeight + "px; width: " + (trw + domUtilityService.scrollH + 2) + "px}";
+              "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.scrollH + 2) + "px}";
         angular.forEach(cols, function(col, i) {
             css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; right: " + (trw - sumWidth - col.width) + "px; height: " + rowHeight + "px }" +
                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";

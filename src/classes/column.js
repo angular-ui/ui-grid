@@ -5,6 +5,8 @@
         clicks = 0,
         timer = null;
     self.width = colDef.width;
+	self.groupIndex = 0;
+	self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;
@@ -32,7 +34,10 @@
         ng.utils.getTemplates(colDef.headerCellTemplate, function(t) {
             self.headerCellTemplate = t;
         });
-    }
+    }	
+	self.groupedByClass = function(){ 
+		return self.isGroupedBy ? "ngGroupedByIcon":"ngGroupIcon";
+	};
     self.toggleVisible = function () {
         self.visible = !self.visible;
     };

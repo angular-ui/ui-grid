@@ -2,7 +2,7 @@
 $CurrentDir = (Get-Location).Path;
 $OutPutFile = $CurrentDir + "\ng-grid.debug.js";
 $TempFile = $OutPutFile + ".temp";
-$FinalFile = "..\ng-grid-1.3.2.debug.js";
+$FinalFile = "..\ng-grid-1.3.4.debug.js";
 $BuildOrder = $CurrentDir + "\build-order.txt";
 $commentStart = "<!--";
 $commentEnd = "-->";
@@ -13,7 +13,7 @@ $compileTime = Get-Date;
 
 Set-Content $TempFile "/***********************************************";
 Add-Content $TempFile "* ng-grid JavaScript Library";
-Add-Content $TempFile "* Authors: https://github.com/Crash8308/ng-grid/blob/master/README.md";
+Add-Content $TempFile "* Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md";
 Add-Content $TempFile "* License: MIT (http://www.opensource.org/licenses/mit-license.php)";
 Add-Content $TempFile "* Compiled At: $compileTime";
 Add-Content $TempFile "***********************************************/`n"
