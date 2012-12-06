@@ -186,12 +186,12 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     };
     self.configureColumnWidths = function() {
         var cols = self.config.columnDefs;
-        var numOfCols = cols.length,
+        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
+        var numOfCols = cols.length + indexOffset,
             asterisksArray = [],
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
         totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function (col, i) {
             i += indexOffset;

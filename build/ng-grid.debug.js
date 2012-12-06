@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/06/2012 01:19:34
+* Compiled At: 12/06/2012 13:41:10
 ***********************************************/
 
 (function(window, undefined){
@@ -1422,12 +1422,12 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     };
     self.configureColumnWidths = function() {
         var cols = self.config.columnDefs;
-        var numOfCols = cols.length,
+        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
+        var numOfCols = cols.length + indexOffset,
             asterisksArray = [],
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
         totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function (col, i) {
             i += indexOffset;
