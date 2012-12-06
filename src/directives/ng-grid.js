@@ -5,7 +5,6 @@
             return {
                 pre: function ($scope, iElement, iAttrs) {
                     window.ng.$http = $http;
-                    var initPhase = 0;
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
@@ -18,7 +17,8 @@
                             grid.buildColumns();
                             grid.configureColumnWidths();
                             domUtilityService.BuildStyles($scope, grid);
-                        });
+                            grid.aggregateProvider.assignEvents();
+                        }, true);
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
@@ -27,7 +27,7 @@
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
-                        }, options.watchDataItems);
+                        }, true);
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);

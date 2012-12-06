@@ -85,5 +85,13 @@ function userController($scope) {
     $scope.changeData = function () {
         $scope.myDefs2 = undefined;
     };
+    setTimeout(function () {
+        $scope.myDefs.splice(1, 1);
+        $scope.$apply();
+    }, 3000);
+    setTimeout(function () {
+        $scope.myData[0].name = "FOO";
+        $scope.$apply();
+    }, 5000);
     
 };
