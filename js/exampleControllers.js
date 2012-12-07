@@ -110,6 +110,8 @@ angular.module('myApp.exampleControllers', [])
 		$scope.switchTab = function(tab){
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
+		$scope.angularBindingsIndex = "{{$index}}";
+		$scope.angularBindingsCellClass = "{{col.cellClass}}";
 		$scope.link = function(){ return "partials/exampleDefinitions/templates/rowTemplates/rowTemplate" + $scope.selectedBasicTab.title + '.html';};
 		$scope.myData = gridData;
 		$scope.gridOptions = { 

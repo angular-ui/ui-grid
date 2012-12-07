@@ -8,8 +8,10 @@ app.controller('MyCtrl', function($scope) {
                     {name: "Enos", age: 34}];
     $scope.gridOptions = { 
         data: 'myData',
+        showColumnMenu: false,
+        rowTemplate: '&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{angularBindingsIndex}} {{angularBindingsCellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(columns[2].field)  < 30}" ng-cell&gt;&lt;/div&gt;',
         columnDefs: [{field: 'name', displayName: 'Name'},
-                     {field:'age', displayName:'Age', rowTemplate: '&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: col[2]  < 30}" ng-cell&gt;&lt;/div&gt;'}]
-        };
+                     {field:'age', displayName:'Age'}]
+    };
 });
 </pre>
