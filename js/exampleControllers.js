@@ -88,6 +88,40 @@ angular.module('myApp.exampleControllers', [])
 						 {field:'age', displayName:'Age', cellTemplate: '<div ng-class="{green: row.getProperty(col.field) > 30}"><div class="ngCellText">{{row.getProperty(col.field)}}</div></div>'}]
 		};
 	}])
+	
+.controller('FileReferencedCellTemplateCtrl', ['$scope', function($scope) {
+		$scope.basicTabs = tabs;
+		$scope.selectedBasicTab = $scope.basicTabs[0];		
+		$scope.switchTab = function(tab){
+			$scope.selectedBasicTab = $scope.basicTabs[tab];
+		};				
+		$scope.link = function(){ return "partials/exampleDefinitions/templates/cellTemplates/fileReferencedCellTemplate/fileReferencedCellTemplate" + $scope.selectedBasicTab.title + '.html';};
+		$scope.myData = gridData;
+		$scope.gridOptions = { 
+			data: 'myData',
+			columnDefs: [{field: 'name', displayName: 'Name'},
+						 {field:'age', displayName:'Age', cellTemplate: 'partials/exampleDefinitions/templates/cellTemplates/fileReferencedCellTemplate/cellTemplate.html'}]
+		};
+	}])
+	
+.controller('RowTemplateCtrl', ['$scope', function($scope) {
+		$scope.basicTabs = tabs;
+		$scope.selectedBasicTab = $scope.basicTabs[0];		
+		$scope.switchTab = function(tab){
+			$scope.selectedBasicTab = $scope.basicTabs[tab];
+		};				
+		$scope.link = function(){ return "partials/exampleDefinitions/templates/rowTemplates/rowTemplate" + $scope.selectedBasicTab.title + '.html';};
+		$scope.myData = gridData;
+		$scope.gridOptions = { 
+			data: 'myData',
+			showColumnMenu: false,
+			rowTemplate: '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(columns[2].field)  < 30}" ng-cell></div>',
+			columnDefs: [{field: 'name', displayName: 'Name'},
+						 {field:'age', displayName:'Age'}]
+		};
+	}])
+	
+	
 
 .controller('PagingExampleCtrl', ['$scope', '$http', function($scope, $http) {
 	$scope.basicTabs = tabs;
