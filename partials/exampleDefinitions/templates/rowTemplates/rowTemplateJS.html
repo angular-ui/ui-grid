@@ -9,7 +9,7 @@ app.controller('MyCtrl', function($scope) {
     $scope.gridOptions = { 
         data: 'myData',
         showColumnMenu: false,
-        rowTemplate: '&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{angularBindingsIndex}} {{angularBindingsCellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(columns[2].field)  < 30}" ng-cell&gt;&lt;/div&gt;',
+        rowTemplate: '&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{angularBindingsIndex}} {{angularBindingsCellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty('age')  < 30}" ng-cell&gt;&lt;/div&gt;',
         columnDefs: [{field: 'name', displayName: 'Name'},
                      {field:'age', displayName:'Age'}]
     };
