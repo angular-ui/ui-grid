@@ -54,8 +54,7 @@ angular.module('myApp.exampleControllers', [])
 		$scope.myData = gridData;
 		$scope.gridOptions = { 
 			data: 'myData',	
-			showGroupPanel: true,
-			jqueryUIDraggable: true
+			showGroupPanel: true
 		};
 	}])
 	
