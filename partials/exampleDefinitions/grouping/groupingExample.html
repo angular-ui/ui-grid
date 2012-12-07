@@ -1,21 +1,3 @@
 <h1 style="margin-top: 0;">Grouping Examples</h1>
-<h3>Grouping Example - HTML5</h3>
-<p>Below is an example using HTML5 drag and drop in ng-grid:</p>
-<ul style="margin-bottom:0px;" class="nav nav-tabs">
-	<li class="nav" ng-repeat="tab in basicTabs" ng-class="{active: selectedBasicTab == tab}">
-		<a ng-click="switchTab(tab.index)">{{tab.title}}</a>
-	</li>
-</ul>
-<div ng-include src="link()"></div>
-<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/kx7C8HfDxtLiAKiXcphz">here</a>.</p>
-<div style="margin-left: auto; margin-right: auto; border: 1px solid rgb(212,212,212); width: 500px; height: 300px; margin-top: 20px;" ng-grid="gridOptions"></div>
-<h3>Grouping Example - jQueryUI</h3>
-<p>Below is an example using jQueryUI drag and drop in ng-grid:</p>
-<ul style="margin-bottom:0px;" class="nav nav-tabs">
-	<li class="nav" ng-repeat="tab in basicTabs2" ng-class="{active: selectedBasicTab2 == tab}">
-		<a ng-click="switchTab2(tab.index)">{{tab.title}}</a>
-	</li>
-</ul>
-<div ng-include src="link2()"></div>
-<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/D26aeTTpFhJEuAr8mihK">here</a>.</p>
-<div style=" margin-left: auto; margin-right: auto; border: 1px solid rgb(212,212,212); width: 500px; height: 300px; margin-top: 20px; " ng-grid="gridOptions2"></div>
+<div ng-include src="'partials/exampleDefinitions/grouping/groupByHTML5/groupByHTML5Example.html'"></div>
+<div ng-include src="'partials/exampleDefinitions/grouping/groupByJQueryUI/groupByJQueryUIExample.html'"></div>

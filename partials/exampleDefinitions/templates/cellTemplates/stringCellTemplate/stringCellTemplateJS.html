@@ -2,13 +2,14 @@
 var app = angular.module('myApp', ['ngGrid']);
 app.controller('MyCtrl', function($scope) {
     $scope.myData = [{name: "Moroni", age: 50},
-                     {name: "Tiancum", age: 43},
-                     {name: "Jacob", age: 27},
-                     {name: "Nephi", age: 29},
-                     {name: "Enos", age: 34}];
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
     $scope.gridOptions = { 
         data: 'myData',
-        columnDefs: [{field:'name', displayName:'Name', cellTemplate: '<div>{{row.entity}}</div>'}, {field:'age', displayName:'Age'}]
-    };
+        columnDefs: [{field: 'name', displayName: 'Name'},
+                     {field:'age', displayName:'Age', cellTemplate: '&lt;div ng-class="{green: row.getProperty(col.field) > 30}"&gt;&lt;div class="ngCellText"&gt;{{angularBindings}}&lt;/div&gt;&lt;/div&gt;'}]
+        };
 });
 </pre>

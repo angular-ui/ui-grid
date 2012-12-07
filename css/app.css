@@ -77,3 +77,8 @@
 	border:  1px solid #E5E5E5;
 	margin-bottom:1px;
 }
+
+.green {
+	background-color: green;
+	color: white;
+}
