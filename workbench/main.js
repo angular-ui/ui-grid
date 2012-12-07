@@ -60,6 +60,7 @@ function userController($scope) {
         showGroupPanel: false,
         showColumnMenu: true,
         enablePaging: true,
+        enableRowReordering: true,
         maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
@@ -79,6 +80,7 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
+        enableRowReordering: true,
         showGroupPanel: true,
         columnDefs: 'myDefs2'
     };

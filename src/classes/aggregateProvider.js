@@ -12,11 +12,11 @@
 					self.onGroupDrop(event);
 				}
 			});
-			$(document).ready(self.setDraggables);	
+		    $scope.$evalAsync(self.setDraggables);
 		} else {
 			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
 			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-			if (grid.config.enableRowRerodering) {
+			if (grid.config.enableRowReordering) {
 				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
 			}
 		}

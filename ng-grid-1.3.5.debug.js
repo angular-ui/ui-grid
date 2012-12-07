@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/06/2012 13:41:10
+* Compiled At: 12/07/2012 10:39:48
 ***********************************************/
 
 (function(window, undefined){
@@ -691,11 +691,11 @@ ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
 					self.onGroupDrop(event);
 				}
 			});
-			$(document).ready(self.setDraggables);	
+		    $scope.$evalAsync(self.setDraggables);
 		} else {
 			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
 			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-			if (grid.config.enableRowRerodering) {
+			if (grid.config.enableRowReordering) {
 				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
 			}
 		}
