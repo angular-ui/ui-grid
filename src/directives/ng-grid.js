@@ -27,6 +27,14 @@
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
+                            if (grid.config.sortInfo) {
+                                if (!grid.config.sortInfo.column) {
+                                    grid.config.sortInfo.column = $scope.columns.filter(function (c) {
+                                        return c.field == grid.config.sortInfo.field;
+                                    })[0];
+                                }
+                                grid.sortData(grid.config.sortInfo.column, grid.config.sortInfo.direction);
+                            }
                         }, true);
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);

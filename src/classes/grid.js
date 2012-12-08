@@ -24,7 +24,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             sortInfo: undefined, // similar to filterInfo
             multiSelect: true,
             tabIndex: -1,
-            disableTextSelection: false,
             enableColumnResize: true,
             maintainColumnRatios: undefined,
             enableSorting: true,
@@ -213,16 +212,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 					var temp = $scope.columns[i];
                     $scope.$evalAsync(function() { self.resizeOnData(temp, true); });
                     return;
-                } else if (t.indexOf("*") != -1) {
-                    // if it is the last of the columns just configure it to use the remaining space
-                    if (i + 1 == numOfCols && asteriskNum == 0) {
-                        $scope.columns[i].width = ((self.rootDim.outerWidth - domUtilityService.ScrollW) - totalWidth) - 1;
-                    } else { // otherwise we need to save it until the end to do the calulations on the remaining width.
-                        asteriskNum += t.length;
-                        col.index = i;
-                        asterisksArray.push(col);
-                        return;
-                    }
+                } else if (t.indexOf("*") != -1) {//  we need to save it until the end to do the calulations on the remaining width.
+                    asteriskNum += t.length;
+                    col.index = i;
+                    asterisksArray.push(col);
+                    return;
                 } else if (isPercent) { // If the width is a percentage, save it until the very last.
                     col.index = i;
                     percentArray.push(col);
@@ -276,7 +270,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         self.buildColumns();
         sortService.columns = $scope.columns,
-        $scope.$watch('sortInfo', sortService.updateSortInfo);
         $scope.$watch('configGroups', function (a) {
             if (!a) return;
             var tempArr = [];
@@ -290,6 +283,12 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             domUtilityService.BuildStyles($scope,self,true);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
+        if (self.config.sortInfo) {
+            self.config.sortInfo.column = $scope.columns.filter(function (c) {
+                return c.field == self.config.sortInfo.field;
+            })[0];
+            self.sortData(self.config.sortInfo.column, self.config.sortInfo.direction.toUpperCase());
+        }
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -330,12 +329,15 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         domUtilityService.BuildStyles($scope,self,true);
     };
     self.sortData = function(col, direction) {
-        sortInfo = {
+        self.config.sortInfo = {
             column: col,
+            field: col.field,
             direction: direction
         };
         self.clearSortingData(col);
-        sortService.Sort(sortInfo, self.sortedData);
+        if (!self.config.useExternalSorting) {
+            sortService.Sort(self.config.sortInfo, self.sortedData);
+        } 
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
     };
