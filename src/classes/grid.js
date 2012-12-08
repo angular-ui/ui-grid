@@ -287,7 +287,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             self.config.sortInfo.column = $scope.columns.filter(function (c) {
                 return c.field == self.config.sortInfo.field;
             })[0];
-            self.sortData(self.config.sortInfo.column, self.config.sortInfo.direction.toUpperCase());
+            self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
+            self.sortData(self.config.sortInfo.column);
         }
     };
     self.prevScrollTop = 0;
@@ -328,11 +329,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         domUtilityService.BuildStyles($scope,self,true);
     };
-    self.sortData = function(col, direction) {
+    self.sortData = function (col) {
         self.config.sortInfo = {
             column: col,
             field: col.field,
-            direction: direction
+            direction: col.sortDirection
         };
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {

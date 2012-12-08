@@ -32,8 +32,10 @@
                                     grid.config.sortInfo.column = $scope.columns.filter(function (c) {
                                         return c.field == grid.config.sortInfo.field;
                                     })[0];
-                                }
-                                grid.sortData(grid.config.sortInfo.column, grid.config.sortInfo.direction);
+                                    if (!grid.config.sortInfo.column) return;
+                                } 
+                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
+                                grid.sortData(grid.config.sortInfo.column);
                             }
                         }, true);
                     }
