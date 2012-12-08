@@ -28,10 +28,21 @@ ng.SelectionService = function (grid) {
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
                 }
+                var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    self.setSelection(self.rowFactory.rowCache[prevIndx], self.lastClickedRow.selected);
+                    rows.push(self.rowFactory.rowCache[prevIndx]);
                 }
-                self.lastClickedRow = rowItem;
+                if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
+                    angular.forEach(rows, function (ri) {
+                        ri.selected = true;
+                        ri.entity[SELECTED_PROP] = true;
+                        if (self.selectedItems.indexOf(ri.entity) === -1) {
+                            self.selectedItems.push(ri.entity);
+                        }
+                    });
+                    rows[rows.length - 1].afterSelectionChange(rows, evt);
+                }
+                self.lastClickedRow = rows[rows.length - 1];
                 return true;
             }
 	    }

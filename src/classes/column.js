@@ -52,7 +52,7 @@
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        config.sortCallback(self, dir);
+        config.sortCallback(self);
     };   
     self.gripClick = function () {
         clicks++;  //count clicks
