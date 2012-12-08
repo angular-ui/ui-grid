@@ -162,6 +162,7 @@ ngGridServices.factory('SortService', function () {
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = data[0];
+            if (!item) return;
             sortFn = sortService.guessSortFn(item[col.field]);
             //cache it
             if (sortFn) {
