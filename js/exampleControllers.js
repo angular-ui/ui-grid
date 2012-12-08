@@ -116,10 +116,7 @@ angular.module('myApp.exampleControllers', [])
 		$scope.myData = gridData;
 		$scope.gridOptions = { 
 			data: 'myData',
-			showColumnMenu: false,
-			rowTemplate: '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(\'age\')  < 30}" ng-cell></div>',
-			columnDefs: [{field: 'name', displayName: 'Name'},
-						 {field:'age', displayName:'Age'}]
+			rowTemplate: '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(\'age\')  < 30}" ng-cell></div>'
 		};
 	}])
 	
