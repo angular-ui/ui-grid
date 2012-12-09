@@ -8,7 +8,7 @@
 	{	
 		"id": "cellClass",
 		"defaultValue": "''",
-		"definition": "Sets the css class for the column cells.",
+		"definition": "Appends a css class for the column cells",
 		"plunker": "Link"
 	},
 	{	
@@ -20,31 +20,31 @@
 	{	
 		"id": "cellTemplate",
 		"defaultValue": "''",
-		"definition": "Sets the cell template for the column.",
+		"definition": "Sets the cell template for the column. See github wiki for more details.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "displayName",
-		"defaultValue": "Pretty Foo",
-		"definition": "Sets the header name of the column.",
+		"defaultValue": "field",
+		"definition": "Sets the pretty display name of the column. default is the field given",
 		"plunker": "Link"
 	},
 	{	
 		"id": "field",
-		"defaultValue": "foo",
-		"definition": "Can also be a property path on your data model. 'foo.bar.myField', 'Name.First', etc..",
+		"defaultValue": "''",
+		"definition": "The string name of the property in your data model you want that column to represent. Can also be a property path on your data model. 'foo.bar.myField', 'Name.First', etc..",
 		"plunker": "Link"
 	},
 	{	
 		"id": "headerCellTemplate",
 		"defaultValue": "''",
-		"definition": "Sets the template for the column header cell.",
+		"definition": "Sets the template for the column header cell. See github wiki for more details.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "headerClass",
 		"defaultValue": "''",
-		"definition": "Sets the css class for the column header.",
+		"definition": "Appends a css class for the column header.",
 		"plunker": "Link"
 	},
 	{	
@@ -73,14 +73,14 @@
 	},
 	{	
 		"id": "sortFn",
-		"defaultValue": "function(a,b){return a > b}",
-		"definition": "Sets the sort function for the column.",
+		"defaultValue": "Based on the detected data type",
+		"definition": "Sets the sort function for the column. Useful when you have data that is formatted in an unusal way or if you want to sort on an underlying data type. Example: function(a,b){return a > b}",
 		"plunker": "Link"
 	},
 	{	
 		"id": "width",
-		"defaultValue": "60",
-		"definition": "Sets the width of the column.",
+		"defaultValue": "'*'",
+		"definition": "Sets the width of the column. Can be a fixed width in pixels as an int (42), string px('42px'), percentage string ('42%'), weighted asterisks (width divided by total number of *'s is all column definition widths)  See github wiki for more details.",
 		"plunker": "Link"
 	}
 ]

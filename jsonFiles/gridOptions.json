@@ -1,14 +1,14 @@
 [
 	{	
 		"id": "afterSelectionChange",
-		"defaultValue": "function () {}",
-		"definition": "callback if you want to validate something after selection.",
+		"defaultValue": "function (rowItem, event) {}",
+		"definition": "Callback for when you want to validate something after selection.",
 		"plunker": "Link"
 	},
 	{
 		"id":"beforeSelectionChange",
-		"defaultValue": "function (rowItem) { return true; }",
-		"definition": "callback if you want to inspect something before selection, return false if you want to cancel the selection. return true otherwise.",
+		"defaultValue": "function (rowItem, event) { return true; }",
+		"definition": "Callback if you want to inspect something before selection, return false if you want to cancel the selection. return true otherwise. If you need to wait for an async call to proceed with selection you can use rowItem.continueSelection(event) method after returning false initially. Note: when shift+ Selecting multiple items in the grid this will only get called once and the rowItem will be an array of items that are queued to be selected.",
 		"plunker": "Link"
 	},
 	{	
@@ -20,7 +20,7 @@
 		{
 		"id":"columnDefs",
 		"defaultValue": "undefined",
-		"definition": "definitions of columns as an array [], if not defines columns are auto-generated.",
+		"definition": "definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.",
 		"plunker": "Link"
 	},
 	{	
@@ -32,121 +32,115 @@
 	{
 		"id": "data",
 		"defaultValue": "[]",
-		"definition": "Data being displayed in the grid.",
-		"plunker": "Link"
-	},
-	{
-		"id":"disableTextSelection",
-		"defaultValue": "false",
-		"definition": "disables text selection in the grid.",
+		"definition": "Data being displayed in the grid. Each item in the array is mapped to a row being displayed.",
 		"plunker": "Link"
 	},
 	{
 		"id": "displaySelectionCheckbox",
 		"defaultValue": "true",
-		"definition": "toggles whether row selection check boxes appear",
+		"definition": "Row selection check boxes appear as the first column.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "enableColumnResize",
 		"defaultValue": "true",
-		"definition": "enable or disable resizing of columns",
+		"definition": "Enable or disable resizing of columns",
 		"plunker": "Link"
 	},
 	{	
 		"id": "enablePaging",
 		"defaultValue": "false",
-		"definition": "enables the paging feature",
+		"definition": "Enables the server-side paging feature",
 		"plunker": "Link"
 	},
 	{
 		"id":"enableRowReordering",
 		"defaultValue": "false",
-		"definition": "enable row reordering.",
+		"definition": "Enable drag and drop row reordering. Only works in HTML5 compliant browsers.",
 		"plunker": "Link"
 	},
 	{
 		"id": "enableSorting",
 		"defaultValue": "true",
-		"definition": "For enabling/disabling sorting in grid.",
+		"definition": "Enables or disables sorting in grid.",
 		"plunker": "Link"
 	},
 	{
 		"id": "filterOptions",
-		"defaultValue": "{ filterText: '', useExternalFilter: false}",
-		"definition": "filterText:the actual filter text so you can use external filtering while using the builting search box.useExternalFilter:bypass internal filtering for instance, server side-searching/paging",
+		"defaultValue": "{ filterText: '', useExternalFilter: false }",
+		"definition": "filterText: The text bound to the built-in search box. useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.",
 		"plunker": "Link"
 	},
 	{
 		"id": "footerRowHeight",
 		"defaultValue": "55",
-		"definition": "Defining the height of the footer.",
+		"definition": "Defining the height of the footer in pixels.",
 		"plunker": "Link"
 	},
 	{
 		"id":"footerVisible",
 		"defaultValue": "true",
-		"definition": "Showing the footer is enabled by default",
+		"definition": "Show or hide the footer alltogether the footer is enabled by default",
 		"plunker": "Link"
 	},
 	{
 		"id": "groups",
 		"defaultValue": "[]",
-		"definition": "initial fields to group data by. array of strings. field names, not displayName.",
+		"definition": "Initial fields to group data by. Array of field names, not displayName.",
 		"plunker": "Link"
 	},
 	{
 		"id": "headerRowHeight",
 		"defaultValue": "32",
-		"definition": "Defining the height of the header row.",
+		"definition": "The height of the header row in pixels.",
 		"plunker": "Link"
 	},
 	{
 		"id": "headerRowTemplate",
 		"defaultValue": "undefined",
-		"definition": "define a header row template for further customization.",
+		"definition": "Define a header row template for further customization. See github wiki for more details.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "jqueryUIDraggable",
 		"defaultValue": "false",
-		"definition": "Enables non-HTML5 compliant drag and drop using the jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.",
+		"definition": "Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled. Useful if you want drag + drop but your users insist on crappy browsers.",
 		"plunker": "Link"
 	},
 	{
 		"id":"jqueryUITheme",
 		"defaultValue": "false",
-		"definition": "enable the jqueryUIThemes",
+		"definition": "Enable the use jqueryUIThemes",
 		"plunker": "Link"
 	},
 	{
 		"id": "keepLastSelected",
 		"defaultValue": "true",
-		"definition": "prevent unselections when multi is disabled.",
+		"definition": "prevent unselections when ini single selection mode.",
 		"plunker": "Link"
 	},
 	{
 		"id": "maintainColumnRatios",
 		"defaultValue": "undefined",
-		"definition": "defaults to true when using *'s or undefined widths. can be ovverriden by setting to false.",
+		"definition": "Maintains the column widths while resizing. Defaults to true when using *'s or undefined widths. Can be ovverriden by setting to false.",
 		"plunker": "Link"
 	},
 	{
 		"id": "multiSelect",
 		"defaultValue": "true",
-		"definition": "set this to false if you only want one item selected at a time",
+		"definition": "Set this to false if you only want one item selected at a time",
 		"plunker": "Link"
 	},
 	{
 		"id": "pagingOptions",
-		"defaultValue": "{pageSizes: [250, 500, 1000], pageSize: 250, totalServerItems: 0, currentPage: 1 }",
-		"definition": " pageSizes: page Sizes, pageSize: Size of Paging data, totalServerItems: how many items are on the server (for paging), currentPage: what page they are currently on",
+		"defaultValue": "{ pageSizes: [250, 500, 1000], pageSize: 250, totalServerItems: 0, currentPage: 1 }",
+		"definition": " pageSizes: list of available page sizes. \n pageSize: currently selected page size. \n totalServerItems: Total items are on the server. \n currentPage: the uhm... current page.",
 		"plunker": "Link"
 	},
 	{
 		"id": "plugins",
 		"defaultValue": "[]",
-		"definition": "array of plugin functions to register.ke",
+		"definition": "Array of plugin functions to register in ng-grid",
 		"plunker": "Link"
 	},
 	{
@@ -158,61 +152,55 @@
 	{
 		"id": "rowTemplate",
 		"defaultValue": "undefined",
-		"definition": "Define a row Template to customize output",
+		"definition": "Define a row Template to customize output. See github wiki for more details.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "selectedItems",
 		"defaultValue": "[]",
-		"definition": "array, if multi turned off will have only one item in array",
+		"definition": "all of the items selected in the grid. In single select mode there will only be one item in the array.",
 		"plunker": "Link"
 	},
 	{
 		"id": "selectWithCheckboxOnly",
 		"defaultValue": "false",
-		"definition": "set to true if you only want to be able to select with the checkbox only",
+		"definition": "Disable row selections by clicking on the row and only when the checkbox is clicked.",
 		"plunker": "Link"
 	},
 	{	
 		"id": "showColumnMenu",
 		"defaultValue": "true",
-		"definition": "enables display of the menu to choose which columns to display.",
+		"definition": "Enables menu to choose which columns to display and group by. If both showColumnMenu and showFilter are false the menu button will not display.",
 		"plunker": "Link"
 	},
 	{
 		"id": "showFilter",
 		"defaultValue": "true",
-		"definition": "enables display of the filterbox in the column menu.",
+		"definition": "Enables display of the filterbox in the column menu. If both showColumnMenu and showFilter are false the menu button will not display.",
 		"plunker": "Link"
 	},
 	{
 		"id": "showGroupPanel",
 		"defaultValue": "false",
-		"definition": "whether or not to display the dropzone for grouping columns on the fly",
+		"definition": "Show the dropzone for drag and drop grouping",
 		"plunker": "Link"
 	},
 	{	
 		"id": "sortInfo",
 		"defaultValue": "undefined",
-		"definition": "similar to filterInfo",
+		"definition": "Define a sortInfo object to specify a default sorting state. You can also observe this variable to utilize server-side sorting (see useExternalSorting). Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}",
 		"plunker": "Link"
 	},
 	{
 		"id": "tabIndex",
-		"defaultValue": "-1",
-		"definition": "set the tab index of the grid. ",
+		"defaultValue": "0",
+		"definition": "Set the tab index of the Vieport.",
 		"plunker": "Link"
 	},
 	{
 		"id":"useExternalSorting",
 		"defaultValue": "false",
-		"definition": "provide your own sorting function",
-		"plunker": "Link"
-	},
-	{
-		"id": "watchDataItems",
-		"defaultValue": "false",
-		"definition": "DANGER: setting this to true will aloow the grid to update individual elements as they change. In large datasets this adversely affects performance. It is disabled by default.",
+		"definition": "Prevents the internal sorting from executing. The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)",
 		"plunker": "Link"
 	}
 ]
