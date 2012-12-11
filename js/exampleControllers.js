@@ -167,7 +167,7 @@ angular.module('myApp.exampleControllers', [])
         }, 100);
     };
 	
-    $scope.myData = $scope.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
+    $scope.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
 	
     $scope.$watch('pagingOptions', function () {
         $scope.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
