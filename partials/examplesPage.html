@@ -6,6 +6,7 @@
 				<li><a scrollto href="#columnDefs"><i class="icon-chevron-right"></i>Column Definitions</a></li>
 				<li><a scrollto href="#grouping"><i class="icon-chevron-right"></i>Grouping</a></li>
 				<li><a scrollto href="#templates"><i class="icon-chevron-right"></i>Templates</a></li>
+				<li><a scrollto href="#themes"><i class="icon-chevron-right"></i>Themes</a></li>
 				<li><a scrollto href="#paging"><i class="icon-chevron-right"></i>Server-Side Paging</a></li>
 				<li><a scrollto href="#masterdetail"><i class="icon-chevron-right"></i>Master/Detail</a></li>
 			</ul>
@@ -22,6 +23,9 @@
 			</section>
 			<section id="templates" style="height: 2700px;">
 				<div ng-include src="'partials/exampleDefinitions/templates/templatesExample.html'"></div>
+			</section>
+			<section id="themes" ng-controller="ThemesExampleCtrl" style="height: 950px;">
+				<div ng-include src="'partials/exampleDefinitions/themes/themesExample.html'"></div>
 			</section>
 			<section id="paging" ng-controller="PagingExampleCtrl" style="height: 950px;">
 				<div ng-include src="'partials/exampleDefinitions/paging/pagingExample.html'"></div>

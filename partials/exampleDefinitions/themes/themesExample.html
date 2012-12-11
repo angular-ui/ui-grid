@@ -1,0 +1,10 @@
+<h1 style="margin-top: 0">Themes Example</h1>
+<p>Below is an example on how to use themes in ng-grid:</p>
+<ul style="margin-bottom:0px;" class="nav nav-tabs">
+	<li class="nav" ng-repeat="tab in basicTabs" ng-class="{active: selectedBasicTab == tab}">
+		<a ng-click="switchTab(tab.index)">{{tab.title}}</a>
+	</li>
+</ul>
+<div ng-include src="link()"></div>
+<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/yuTt8L?p=preview">here</a>.</p>
+<div style=" margin-left: auto; margin-right: auto; width: 400px; height: 300px; margin-top: 20px; " ng-grid="gridOptions"></div>

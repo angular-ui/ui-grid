@@ -183,6 +183,22 @@ angular.module('myApp.exampleControllers', [])
         filterOptions: $scope.filterOptions
     };	
 }])
+
+.controller('ThemesExampleCtrl', ['$scope', function($scope) {
+	$scope.basicTabs = tabs;
+	$scope.selectedBasicTab = $scope.basicTabs[0];		
+	$scope.switchTab = function(tab){
+		$scope.selectedBasicTab = $scope.basicTabs[tab];
+	};				
+	$scope.angularBindings = "{{mySelections}}";
+	$scope.link = function(){ return "partials/exampleDefinitions/themes/themes" + $scope.selectedBasicTab.title + '.html';};	
+    $scope.mySelections = [];
+	$scope.myData = gridData;
+	$scope.gridOptions = { 
+		data: 'myData',	
+		jqueryUITheme: true
+	};
+}])
 	
 .controller('MasterDetailExampleCtrl', ['$scope', function($scope) {
 	$scope.basicTabs = tabs;
