@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/11/2012 15:07:30
+* Compiled At: 12/11/2012 15:13:24
 ***********************************************/
 
 (function(window, undefined){
@@ -549,7 +549,7 @@ ng.defaultGridTemplate = function(){ return '<div ng-class="{\'ui-widget\': jque
 /***********************************************
 * FILE: ..\src\templates\rowTemplate.html
 ***********************************************/
-ng.defaultRowTemplate = function(){ return '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme}" ng-cell></div>';};
+ng.defaultRowTemplate = function(){ return '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
