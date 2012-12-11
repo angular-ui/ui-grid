@@ -8,6 +8,7 @@ ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
+    self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.selectedItems = config.selectedItems;
     self.entity = entity;
@@ -43,9 +44,8 @@ ng.Row = function (entity, config, selectionService) {
     self.offsetTop = 0;
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
-        if (self.rowIndex % 2 == 0)
-            return "even";
-		return "odd";
+        if (self.rowIndex % 2 == 0) return self.jqueryUITheme ? "ui-state-default even" : "even";
+        return self.jqueryUITheme ? "ui-state-active odd" : "odd";
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;

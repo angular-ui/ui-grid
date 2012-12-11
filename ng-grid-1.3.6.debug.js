@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/11/2012 15:13:24
+* Compiled At: 12/11/2012 15:19:46
 ***********************************************/
 
 (function(window, undefined){
@@ -1231,7 +1231,8 @@ ng.RowFactory = function(grid, $scope) {
         selectedItems: grid.config.selectedItems,
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
-        afterSelectionChangeCallback: grid.config.afterSelectionChange
+        afterSelectionChangeCallback: grid.config.afterSelectionChange,
+        jqueryUITheme: grid.config.jqueryUITheme
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -1973,6 +1974,7 @@ ng.Row = function (entity, config, selectionService) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
+    self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.selectedItems = config.selectedItems;
     self.entity = entity;
@@ -2008,9 +2010,8 @@ ng.Row = function (entity, config, selectionService) {
     self.offsetTop = 0;
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
-        if (self.rowIndex % 2 == 0)
-            return "even";
-		return "odd";
+        if (self.rowIndex % 2 == 0) return self.jqueryUITheme ? "ui-state-default even" : "even";
+        return self.jqueryUITheme ? "ui-state-active odd" : "odd";
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
