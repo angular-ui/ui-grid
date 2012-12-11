@@ -17,6 +17,9 @@ version 1.3.6
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
+
+Questions, Comments, Complaints? feel free to email us at nggridteam@gmail.com
+
 ***
 ##Roadmap##
 
