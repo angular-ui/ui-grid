@@ -1,4 +1,4 @@
-﻿ng.AggregateProvider = function (grid, $scope, gridService,domUtilityService) {
+﻿ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
@@ -195,6 +195,35 @@
             // if there isn't an apply already in progress lets start one
         }
     };
+    
+    self.assignGridEventHandlers = function () {
+        grid.$viewport[0].onscroll = function (e) {
+            var scrollLeft = e.target.scrollLeft,
+            scrollTop = e.target.scrollTop;
+            grid.adjustScrollLeft(scrollLeft);
+            grid.adjustScrollTop(scrollTop);
+        };
+        grid.$viewport[0].onkeydown = function (e) {
+            return ng.moveSelectionHandler($scope, grid, e);
+        };
+        //Chrome and firefox both need a tab index so the grid can recieve focus.
+        //need to give the grid a tabindex if it doesn't already have one so
+        //we'll just give it a tab index of the corresponding gridcache index 
+        //that way we'll get the same result every time it is run.
+        //configurable within the options.
+        if (grid.config.tabIndex === -1) {
+            grid.$viewport.attr('tabIndex', gridService.getIndexOfCache(grid.gridId));
+        } else {
+            grid.$viewport.attr('tabIndex', grid.config.tabIndex);
+        }
+        window.onresize = function () {
+            domUtilityService.UpdateGridLayout(grid);
+            if (grid.config.maintainColumnRatios) {
+                grid.configureColumnWidths();
+            }
+        };
+    };
     // In this example we want to assign grid events.
+    self.assignGridEventHandlers();
     self.assignEvents();
 };
