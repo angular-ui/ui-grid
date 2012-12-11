@@ -13,14 +13,14 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                         } else {
                             html = html.replace(CUSTOM_FILTERS, "");
                         }
-                        iElement.html($compile(html)($scope));
+                        iElement.append($compile(html)($scope));
                     } else {
                         if ($scope.rowTemplate.then) {
                             $scope.rowTemplate.then(function (resp) {
-                                iElement.html($compile(resp.data)($scope));
+                                iElement.append($compile(resp.data)($scope));
                             });
                         } else {
-                            iElement.html($compile($scope.rowTemplate)($scope));
+                            iElement.append($compile($scope.rowTemplate)($scope));
                         }
                     }
                 }
