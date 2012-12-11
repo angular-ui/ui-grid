@@ -38,7 +38,7 @@
     </div>
     <div class="ngViewport" ng-class="{'ui-widget-content': jqueryUITheme}" ng-style="viewportStyle()">
         <div class="ngCanvas" ng-style="canvasStyle()">
-            <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{'selected': row.selected}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>
+            <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{'selected': row.selected, 'ui-widget-content': jqueryUITheme}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>
         </div>
     </div>
     <div class="ngFooterPanel" ng-class="{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}" ng-style="footerStyle()">

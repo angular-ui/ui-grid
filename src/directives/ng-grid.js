@@ -17,7 +17,7 @@
                             grid.buildColumns();
                             grid.configureColumnWidths();
                             domUtilityService.BuildStyles($scope, grid);
-                            grid.aggregateProvider.assignEvents();
+                            grid.eventProvider.assignEvents();
                         }, true);
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
@@ -43,9 +43,7 @@
                     gridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
-                    $element.addClass("ngGrid")
-                        .addClass("ui-widget")
-                        .addClass(grid.gridId.toString());
+                    $element.addClass("ngGrid").addClass(grid.gridId.toString());
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
@@ -53,9 +51,7 @@
                     domUtilityService.AssignGridContainers($element, grid);
                     grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
-                    gridService.AssignGridEventHandlers($scope, grid);
-                    grid.aggregateProvider = new ng.AggregateProvider(grid, $scope.$new(), gridService, domUtilityService);
-                   
+                    grid.eventProvider = new ng.EventProvider(grid, $scope, gridService, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         p.init($scope.$new(), grid, { GridService: gridService, SortService: sortService, DomUtilityService: domUtilityService });

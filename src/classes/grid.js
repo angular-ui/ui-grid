@@ -8,52 +8,135 @@
 /// <reference path="../utils.js"/>
 ng.Grid = function ($scope, options, sortService, domUtilityService) {
     var defaults = {
-            rowHeight: 30,
-            columnWidth: 100,
-            headerRowHeight: 30,
-            footerRowHeight: 55,
-            footerVisible: true,
-			displayFooter: undefined,
-            canSelectRows: true,
-            data: [],
-            columnDefs: undefined,
-            selectedItems: [], // array, if multi turned off will have only one item in array
-            displaySelectionCheckbox: true, //toggles whether row selection check boxes appear
-            selectWithCheckboxOnly: false,
-            useExternalSorting: false,
-            sortInfo: undefined, // similar to filterInfo
-            multiSelect: true,
-            tabIndex: -1,
-            enableColumnResize: true,
-            maintainColumnRatios: undefined,
-            enableSorting: true,
-            beforeSelectionChange: function () { return true;},
-            afterSelectionChange: function () { return true;},
-            rowTemplate: undefined,
-            headerRowTemplate: undefined,
-			jqueryUITheme: false,
-			jqueryUIDraggable: false,
-            plugins: [],
-            keepLastSelected: true,
-            groups: [],
-            showGroupPanel: false,
-            enableRowReordering: false,
-            showColumnMenu: true,
-            showFilter: true,
-            filterOptions: {
-                filterText: "",
-                useExternalFilter: false,
-            },
-            //Paging 
-            enablePaging: false,
-            pagingOptions: {
-                pageSizes: [250, 500, 1000], //page Sizes
-                pageSize: 250, //Size of Paging data
-                totalServerItems: undefined, //how many items are on the server (for paging)
-                currentPage: 1, //what page they are currently on
-            },
+        //Callback for when you want to validate something after selection.
+        afterSelectionChange: function () { }, 
+
+        /* Callback if you want to inspect something before selection,
+        return false if you want to cancel the selection. return true otherwise. 
+        If you need to wait for an async call to proceed with selection you can 
+        use rowItem.continueSelection(event) method after returning false initially. 
+        Note: when shift+ Selecting multiple items in the grid this will only get called
+        once and the rowItem will be an array of items that are queued to be selected. */
+        beforeSelectionChange: function () { return true; },
+
+        //To be able to have selectable rows in grid.
+        canSelectRows: true, 
+
+        //definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.
+        columnDefs: undefined,
+
+        //*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
+        data: [],
+
+        //Row selection check boxes appear as the first column.
+        displaySelectionCheckbox: true, 
+
+        //Enable or disable resizing of columns
+        enableColumnResize: true,
+
+        //Enables the server-side paging feature
+        enablePaging: false,
+
+        //Enable drag and drop row reordering. Only works in HTML5 compliant browsers.
+        enableRowReordering: true,
+
+        //Enables or disables sorting in grid.
+        enableSorting: true,
+
+        /* filterOptions -
+        filterText: The text bound to the built-in search box. 
+        useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.
+        */
+        filterOptions: {
+            filterText: "",
+            useExternalFilter: false,
         },
-        self = this;
+        
+        //Defining the height of the footer in pixels.
+        footerRowHeight: 55,
+
+        //Show or hide the footer alltogether the footer is enabled by default
+        displayFooter: undefined,
+        footerVisible: true, // depricated
+
+        //Initial fields to group data by. Array of field names, not displayName.
+        groups: [],
+
+        //The height of the header row in pixels.
+        headerRowHeight: 30,
+
+        //Define a header row template for further customization. See github wiki for more details.
+        headerRowTemplate: undefined,
+
+        /*Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled. 
+        Useful if you want drag + drop but your users insist on crappy browsers. */
+        jqueryUIDraggable: false,
+
+        //Enable the use jqueryUIThemes
+        jqueryUITheme: false,
+
+        //Prevent unselections when in single selection mode.
+        keepLastSelected: true,
+
+        /*Maintains the column widths while resizing. 
+        Defaults to true when using *'s or undefined widths. Can be ovverriden by setting to false.*/
+        maintainColumnRatios: undefined,
+
+        //Set this to false if you only want one item selected at a time
+        multiSelect: true,
+
+        // pagingOptions -
+       
+        pagingOptions: {
+            // pageSizes: list of available page sizes.
+            pageSizes: [250, 500, 1000], 
+            //pageSize: currently selected page size. 
+            pageSize: 250,
+            //totalServerItems: Total items are on the server. 
+            totalServerItems: undefined,
+            //currentPage: the uhm... current page.
+            currentPage: 1,
+        },
+
+        //Array of plugin functions to register in ng-grid
+        plugins: [],
+
+        //Row height of rows in grid.
+        rowHeight: 30,
+        
+        //Define a row Template to customize output. See github wiki for more details.
+        rowTemplate: undefined,
+        
+        //all of the items selected in the grid. In single select mode there will only be one item in the array.
+        selectedItems: [],
+        
+        //Disable row selections by clicking on the row and only when the checkbox is clicked.
+        selectWithCheckboxOnly: false,
+        
+        /*Enables menu to choose which columns to display and group by. 
+        If both showColumnMenu and showFilter are false the menu button will not display.*/
+        showColumnMenu: true,
+
+        /*Enables display of the filterbox in the column menu. 
+        If both showColumnMenu and showFilter are false the menu button will not display.*/
+        showFilter: true,
+
+        //Show the dropzone for drag and drop grouping
+        showGroupPanel: false,
+        
+        /*Define a sortInfo object to specify a default sorting state. 
+        You can also observe this variable to utilize server-side sorting (see useExternalSorting).
+        Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
+        sortInfo: undefined,
+
+        //Set the tab index of the Vieport.
+        tabIndex: -1,
+        /*Prevents the internal sorting from executing. 
+        The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
+        useExternalSorting: false,
+
+    },
+    self = this;
     
     self.maxCanvasHt = 0;
     //self vars

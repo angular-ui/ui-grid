@@ -14,9 +14,10 @@
 ..\src\templates\headerRowTemplate.html
 ..\src\templates\headerCellTemplate.html
 ..\src\classes\aggregate.js
-..\src\classes\aggregateProvider.js
+..\src\classes\eventProvider.js
 ..\src\classes\column.js
 ..\src\classes\dimension.js
+..\src\classes\eventProvider.js
 ..\src\classes\footer.js
 ..\src\classes\rowFactory.js
 ..\src\classes\grid.js
