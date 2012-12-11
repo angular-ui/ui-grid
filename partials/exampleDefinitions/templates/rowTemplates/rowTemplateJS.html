@@ -8,7 +8,7 @@ app.controller('MyCtrl', function($scope) {
                     {name: "Enos", age: 34}];
     $scope.gridOptions = { 
         data: 'myData',
-        rowTemplate: '&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{angularBindingsIndex}} {{angularBindingsCellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty('age')  < 30}" ng-cell&gt;&lt;/div&gt;'
+        rowTemplate: '&lt;div style="height: 100%" ng-class="{green: row.getProperty(\'age\')  < 30}"&gt;&lt;div ng-repeat="col in visibleColumns()" class="ngCell col{{angularBindingsIndex}} {{angularBindingsCellClass}}" ng-cell&gt;&lt;/div&gt;&lt;/div&gt;'
     };
 });
 </pre>

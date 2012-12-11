@@ -116,7 +116,7 @@ angular.module('myApp.exampleControllers', [])
 		$scope.myData = gridData;
 		$scope.gridOptions = { 
 			data: 'myData',
-			rowTemplate: '<div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-class="{\'ui-widget-content\':jqueryUITheme, green: row.getProperty(\'age\')  < 30}" ng-cell></div>'
+			rowTemplate: '<div style="height: 100%" ng-class="{green: row.getProperty(\'age\')  < 30}"><div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div></div>'
 		};
 	}])
 	
