@@ -183,7 +183,6 @@
 
 /******** Viewport ********/
 .ngViewport{
-    background-color: rgb(255, 255, 255);
 	overflow: auto;
     min-height: 20px;
 }

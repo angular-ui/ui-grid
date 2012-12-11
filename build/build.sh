@@ -2,7 +2,7 @@
 
 CurrentDir=$PWD
 OutPutFile=$CurrentDir/ng-grid.debug.js
-FinalFile=../ng-grid-1.3.6.debug.js
+FinalFile=../ng-grid-1.3.7.debug.js
 BuildOrder=$CurrentDir/build-order.txt
 
 echo JSBuild Starting...

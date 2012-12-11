@@ -6,12 +6,10 @@
                 pre: function ($scope, iElement) {
                     if ($scope.col.cellTemplate.then) {
                         $scope.col.cellTemplate.then(function (resp) {
-                            iElement.html(resp.data);
-                            $compile(iElement.children())($scope);
+                            iElement.append($compile(resp.data)($scope));
                         });
                     } else {
-                        iElement.html($scope.col.cellTemplate);
-                        $compile(iElement.children())($scope);
+                        iElement.append($compile($scope.col.cellTemplate)($scope));
                     }
                 }
             };

@@ -7,12 +7,10 @@
                     if (iElement.children().length == 0) {
                         if ($scope.headerRowTemplate.then) {
                             $scope.headerRowTemplate.then(function (resp) {
-                                iElement.html(resp.data);
-                                $compile(iElement.children())($scope);
+                                iElement.append($compile(resp.data)($scope));
                             });
                         } else {
-                            iElement.html($scope.headerRowTemplate);
-                            $compile(iElement.children())($scope);
+                            iElement.append($compile($scope.headerRowTemplate)($scope));
                         }
                     }
                 }
