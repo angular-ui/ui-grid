@@ -14,7 +14,7 @@ ng.moveSelectionHandler = function ($scope, grid, evt) {
     if (!offset) return true;
     var items = $scope.renderedRows;
     var index = items.indexOf(grid.selectionService.lastClickedRow) + offset;
-    if (index < 0 || index > items.length) return true;
+    if (index < 0 || index >= items.length) return true;
     grid.selectionService.ChangeSelection(items[index], evt);
     if (index > items.length - EXCESS_ROWS) {
         grid.$viewport.scrollTop(grid.$viewport.scrollTop() + (grid.config.rowHeight * EXCESS_ROWS));
