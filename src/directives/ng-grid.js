@@ -12,32 +12,32 @@
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function (a) {
-                            $scope.columns.length = 0;
+                            $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
                             grid.configureColumnWidths();
                             domUtilityService.BuildStyles($scope, grid);
                             grid.eventProvider.assignEvents();
-                        }, true);
+                        });
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
-                            grid.sortedData = $.extend(true, [], a);
+                        $scope.$parent.$watch(options.data, function(a) {
+                            grid.sortedData = a;
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
                                 if (!grid.config.sortInfo.column) {
-                                    grid.config.sortInfo.column = $scope.columns.filter(function (c) {
+                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
                                         return c.field == grid.config.sortInfo.field;
                                     })[0];
                                     if (!grid.config.sortInfo.column) return;
-                                } 
+                                }
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                        }, true);
+                        });
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);
