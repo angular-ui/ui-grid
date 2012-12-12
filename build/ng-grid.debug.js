@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/11/2012 23:14:01
+* Compiled At: 12/12/2012 13:21:33
 ***********************************************/
 
 (function(window, undefined){
@@ -486,10 +486,6 @@ ngGridServices.factory('DomUtilityService', function () {
         domUtilityService.UpdateGridLayout(grid);
     };
 	domUtilityService.UpdateGridLayout = function(grid) {
-		// first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
-		if (grid.$root.parents(":hidden").length > 0) {
-			return;
-		}
 		//catch this so we can return the viewer to their original scroll after the resize!
 		var scrollTop = grid.$viewport.scrollTop();
 		grid.elementDims.rootMaxW = grid.$root.width();
@@ -823,15 +819,15 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     
     self.assignGridEventHandlers = function () {
-        grid.$viewport[0].onscroll = function (e) {
+        grid.$viewport.on('scroll', function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
             grid.adjustScrollLeft(scrollLeft);
             grid.adjustScrollTop(scrollTop);
-        };
-        grid.$viewport[0].onkeydown = function (e) {
+        });
+        grid.$viewport.on('keydown', function (e) {
             return ng.moveSelectionHandler($scope, grid, e);
-        };
+        });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
         //we'll just give it a tab index of the corresponding gridcache index 
@@ -842,12 +838,12 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        window.onresize = function () {
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
             if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
-        };
+        });
     };
     // In this example we want to assign grid events.
     self.assignGridEventHandlers();
@@ -1143,15 +1139,15 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     
     self.assignGridEventHandlers = function () {
-        grid.$viewport[0].onscroll = function (e) {
+        grid.$viewport.on('scroll', function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
             grid.adjustScrollLeft(scrollLeft);
             grid.adjustScrollTop(scrollTop);
-        };
-        grid.$viewport[0].onkeydown = function (e) {
+        });
+        grid.$viewport.on('keydown', function (e) {
             return ng.moveSelectionHandler($scope, grid, e);
-        };
+        });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
         //we'll just give it a tab index of the corresponding gridcache index 
@@ -1162,12 +1158,12 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        window.onresize = function () {
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
             if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
-        };
+        });
     };
     // In this example we want to assign grid events.
     self.assignGridEventHandlers();
