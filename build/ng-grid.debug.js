@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/11/2012 16:13:33
+* Compiled At: 12/12/2012 14:06:25
 ***********************************************/
 
 (function(window, undefined){
@@ -33,7 +33,7 @@ var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
-var TEMPLATE_REGEXP = /^<.+>/;
+var TEMPLATE_REGEXP = /<.+>/;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -486,10 +486,6 @@ ngGridServices.factory('DomUtilityService', function () {
         domUtilityService.UpdateGridLayout(grid);
     };
 	domUtilityService.UpdateGridLayout = function(grid) {
-		// first check to see if the grid is hidden... if it is, we will screw a bunch of things up by re-sizing
-		if (grid.$root.parents(":hidden").length > 0) {
-			return;
-		}
 		//catch this so we can return the viewer to their original scroll after the resize!
 		var scrollTop = grid.$viewport.scrollTop();
 		grid.elementDims.rootMaxW = grid.$root.width();
@@ -655,23 +651,25 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		if(grid.config.jqueryUIDraggable){
-			grid.$groupPanel.droppable({
-				addClasses: false,
-				drop: function(event) {
-					self.onGroupDrop(event);
-				}
-			});
-		    $scope.$evalAsync(self.setDraggables);
-		} else {
-			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-			if (grid.config.enableRowReordering) {
+        if (grid.config.jqueryUIDraggable) {
+            grid.$groupPanel.droppable({
+                addClasses: false,
+                drop: function(event) {
+                    self.onGroupDrop(event);
+                }
+            });
+            $scope.$evalAsync(self.setDraggables);
+        } else {
+            grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            if (grid.config.enableColumnReordering) {
+                grid.$headerScroller.on('drop', self.onHeaderDrop);
+            }
+            if (grid.config.enableRowReordering) {
 				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
 			}
 		}
 		$scope.$watch('columns', self.setDraggables, true);	
-		
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
@@ -713,7 +711,8 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
 			self.groupToMove = undefined;
 		}
     };
-    self.onGroupDrop = function(event) {
+    self.onGroupDrop = function (event) {
+        event.stopPropagation();
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -736,7 +735,7 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
             }			
 			self.groupToMove = undefined;
 			grid.fixGroupIndexes();	
-        } else {
+        } else if (self.colToMove) {
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
@@ -751,7 +750,9 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
             }			
 			self.colToMove = undefined;
         }
-        $scope.$apply();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };	
     //Header functions
     self.onHeaderMouseDown = function (event) {
@@ -818,15 +819,15 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     
     self.assignGridEventHandlers = function () {
-        grid.$viewport[0].onscroll = function (e) {
+        grid.$viewport.on('scroll', function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
             grid.adjustScrollLeft(scrollLeft);
             grid.adjustScrollTop(scrollTop);
-        };
-        grid.$viewport[0].onkeydown = function (e) {
+        });
+        grid.$viewport.on('keydown', function (e) {
             return ng.moveSelectionHandler($scope, grid, e);
-        };
+        });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
         //we'll just give it a tab index of the corresponding gridcache index 
@@ -837,12 +838,12 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        window.onresize = function () {
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
             if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
-        };
+        });
     };
     // In this example we want to assign grid events.
     self.assignGridEventHandlers();
@@ -970,23 +971,25 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		if(grid.config.jqueryUIDraggable){
-			grid.$groupPanel.droppable({
-				addClasses: false,
-				drop: function(event) {
-					self.onGroupDrop(event);
-				}
-			});
-		    $scope.$evalAsync(self.setDraggables);
-		} else {
-			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-			if (grid.config.enableRowReordering) {
+        if (grid.config.jqueryUIDraggable) {
+            grid.$groupPanel.droppable({
+                addClasses: false,
+                drop: function(event) {
+                    self.onGroupDrop(event);
+                }
+            });
+            $scope.$evalAsync(self.setDraggables);
+        } else {
+            grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            if (grid.config.enableColumnReordering) {
+                grid.$headerScroller.on('drop', self.onHeaderDrop);
+            }
+            if (grid.config.enableRowReordering) {
 				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
 			}
 		}
 		$scope.$watch('columns', self.setDraggables, true);	
-		
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
@@ -1028,7 +1031,8 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
 			self.groupToMove = undefined;
 		}
     };
-    self.onGroupDrop = function(event) {
+    self.onGroupDrop = function (event) {
+        event.stopPropagation();
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -1051,7 +1055,7 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
             }			
 			self.groupToMove = undefined;
 			grid.fixGroupIndexes();	
-        } else {
+        } else if (self.colToMove) {
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
@@ -1066,7 +1070,9 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
             }			
 			self.colToMove = undefined;
         }
-        $scope.$apply();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };	
     //Header functions
     self.onHeaderMouseDown = function (event) {
@@ -1133,15 +1139,15 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     
     self.assignGridEventHandlers = function () {
-        grid.$viewport[0].onscroll = function (e) {
+        grid.$viewport.on('scroll', function (e) {
             var scrollLeft = e.target.scrollLeft,
             scrollTop = e.target.scrollTop;
             grid.adjustScrollLeft(scrollLeft);
             grid.adjustScrollTop(scrollTop);
-        };
-        grid.$viewport[0].onkeydown = function (e) {
+        });
+        grid.$viewport.on('keydown', function (e) {
             return ng.moveSelectionHandler($scope, grid, e);
-        };
+        });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
         //we'll just give it a tab index of the corresponding gridcache index 
@@ -1152,12 +1158,12 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        window.onresize = function () {
+        $(window).resize(function () {
             domUtilityService.UpdateGridLayout(grid);
             if (grid.config.maintainColumnRatios) {
                 grid.configureColumnWidths();
             }
-        };
+        });
     };
     // In this example we want to assign grid events.
     self.assignGridEventHandlers();
@@ -1446,6 +1452,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         //Enable or disable resizing of columns
         enableColumnResize: true,
 
+        //Enable or disable resizing of columns
+        enableColumnReordering: true,
+        
         //Enables the server-side paging feature
         enablePaging: false,
 
@@ -1571,7 +1580,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.lateBindColumns = false;
     self.filteredData = [];
     if (typeof self.config.data == "object") {
-        self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
+        self.sortedData = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
@@ -1600,6 +1609,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.$apply();
         }
         self.refreshDomSizes();
+        $scope.$emit('ngGridEventRows', newRows);
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -1766,16 +1776,17 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.buildColumns();
         sortService.columns = $scope.columns,
         $scope.$watch('configGroups', function (a) {
-            if (!a) return;
             var tempArr = [];
             angular.forEach(a, function(item) {
                 tempArr.push(item.field || item);
             });
             self.config.groups = tempArr;
             self.rowFactory.filteredDataChanged();
+            $scope.$emit('ngGridEventGroups', a);
         }, true);
-        $scope.$watch('columns', function () {
-            domUtilityService.BuildStyles($scope,self,true);
+        $scope.$watch('columns', function (a) {
+            domUtilityService.BuildStyles($scope, self, true);
+            $scope.$emit('ngGridEventColumns', a);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo) {
@@ -1836,6 +1847,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         } 
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
+        $scope.$emit('ngGridEventSorted', col);
     };
     self.clearSortingData = function (col) {
         if (!col) {
@@ -2214,32 +2226,32 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function (a) {
-                            $scope.columns.length = 0;
+                            $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
                             grid.configureColumnWidths();
                             domUtilityService.BuildStyles($scope, grid);
                             grid.eventProvider.assignEvents();
-                        }, true);
+                        });
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
-                            grid.sortedData = $.extend(true, [], a);
+                        $scope.$parent.$watch(options.data, function(a) {
+                            grid.sortedData = a;
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
                                 if (!grid.config.sortInfo.column) {
-                                    grid.config.sortInfo.column = $scope.columns.filter(function (c) {
+                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
                                         return c.field == grid.config.sortInfo.field;
                                     })[0];
                                     if (!grid.config.sortInfo.column) return;
-                                } 
+                                }
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                        }, true);
+                        });
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);
