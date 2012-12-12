@@ -23,12 +23,6 @@
 		"definition": "definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.",
 		"plunker": "Link"
 	},
-	{	
-		"id": "columnWidth",
-		"defaultValue": "100",
-		"definition": "Column width of columns in grid.",
-		"plunker": "Link"
-	},
 	{
 		"id": "data",
 		"defaultValue": "[]",
