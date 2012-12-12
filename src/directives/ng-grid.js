@@ -21,7 +21,7 @@
                         });
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                    if (typeof options.columnDefs == "string") {
+                    if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function(a) {
                             grid.sortedData = a;
                             grid.searchProvider.evalFilter();

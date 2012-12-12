@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 13:30:14
+* Compiled At: 12/12/2012 13:33:28
 ***********************************************/
 
 (function(window, undefined){
@@ -2231,7 +2231,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                         });
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                    if (typeof options.columnDefs == "string") {
+                    if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function(a) {
                             grid.sortedData = a;
                             grid.searchProvider.evalFilter();
