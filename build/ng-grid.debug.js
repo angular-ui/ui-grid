@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 13:21:33
+* Compiled At: 12/12/2012 13:30:14
 ***********************************************/
 
 (function(window, undefined){
@@ -2220,31 +2220,35 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService);
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
-                    $scope.$parent.$watch(options.columnDefs, function (a) {
-                        $scope.columns = [];
-                        grid.config.columnDefs = a;
-                        grid.buildColumns();
-                        grid.configureColumnWidths();
-                        domUtilityService.BuildStyles($scope, grid);
-                        grid.eventProvider.assignEvents();
-                    });
+                    if (typeof options.columnDefs == "string") {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.columns = [];
+                            grid.config.columnDefs = a;
+                            grid.buildColumns();
+                            grid.configureColumnWidths();
+                            domUtilityService.BuildStyles($scope, grid);
+                            grid.eventProvider.assignEvents();
+                        });
+                    }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                    $scope.$parent.$watch(options.data, function (a) {
-                        grid.sortedData = a;
-                        grid.searchProvider.evalFilter();
-                        grid.configureColumnWidths();
-                        grid.refreshDomSizes();
-                        if (grid.config.sortInfo) {
-                            if (!grid.config.sortInfo.column) {
-                                grid.config.sortInfo.column = $scope.columns.filter(function (c) {
-                                    return c.field == grid.config.sortInfo.field;
-                                })[0];
-                                if (!grid.config.sortInfo.column) return;
-                            } 
-                            grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
-                            grid.sortData(grid.config.sortInfo.column);
-                        }
-                    });
+                    if (typeof options.columnDefs == "string") {
+                        $scope.$parent.$watch(options.data, function(a) {
+                            grid.sortedData = a;
+                            grid.searchProvider.evalFilter();
+                            grid.configureColumnWidths();
+                            grid.refreshDomSizes();
+                            if (grid.config.sortInfo) {
+                                if (!grid.config.sortInfo.column) {
+                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
+                                        return c.field == grid.config.sortInfo.field;
+                                    })[0];
+                                    if (!grid.config.sortInfo.column) return;
+                                }
+                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
+                                grid.sortData(grid.config.sortInfo.column);
+                            }
+                        });
+                    }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     gridService.StoreGrid($element, grid);
                     grid.footerController = new ng.Footer($scope, grid);
