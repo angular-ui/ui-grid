@@ -191,6 +191,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.$apply();
         }
         self.refreshDomSizes();
+        $scope.$emit('ngGridRenderedRowsChanged', newRows);
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -363,9 +364,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             });
             self.config.groups = tempArr;
             self.rowFactory.filteredDataChanged();
+            $scope.$emit('ngGridEventGroups', a);
         }, true);
-        $scope.$watch('columns', function () {
-            domUtilityService.BuildStyles($scope,self,true);
+        $scope.$watch('columns', function (a) {
+            domUtilityService.BuildStyles($scope, self, true);
+            $scope.$emit('ngGridEventColumns', a);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo) {
@@ -426,6 +429,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         } 
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
+        $scope.$emit('ngGridEventSorted', col);
     };
     self.clearSortingData = function (col) {
         if (!col) {

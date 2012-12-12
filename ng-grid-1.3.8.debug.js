@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 13:33:28
+* Compiled At: 12/12/2012 13:54:38
 ***********************************************/
 
 (function(window, undefined){
@@ -33,7 +33,7 @@ var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
-var TEMPLATE_REGEXP = /^<.+>/;
+var TEMPLATE_REGEXP = /<.+>/;
 
 /***********************************************
 * FILE: ..\src\navigation.js
@@ -1609,6 +1609,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.$apply();
         }
         self.refreshDomSizes();
+        $scope.$emit('ngGridRenderedRowsChanged', newRows);
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
@@ -1781,9 +1782,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             });
             self.config.groups = tempArr;
             self.rowFactory.filteredDataChanged();
+            $scope.$emit('ngGridEventGroups', a);
         }, true);
-        $scope.$watch('columns', function () {
-            domUtilityService.BuildStyles($scope,self,true);
+        $scope.$watch('columns', function (a) {
+            domUtilityService.BuildStyles($scope, self, true);
+            $scope.$emit('ngGridEventColumns', a);
         }, true);
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo) {
@@ -1844,6 +1847,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         } 
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
+        $scope.$emit('ngGridEventSorted', col);
     };
     self.clearSortingData = function (col) {
         if (!col) {

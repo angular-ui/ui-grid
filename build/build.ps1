@@ -2,7 +2,7 @@
 $CurrentDir = (Get-Location).Path;
 $OutPutFile = $CurrentDir + "\ng-grid.debug.js";
 $TempFile = $OutPutFile + ".temp";
-$FinalFile = "..\ng-grid-1.3.7.debug.js";
+$FinalFile = "..\ng-grid-1.3.8.debug.js";
 $BuildOrder = $CurrentDir + "\build-order.txt";
 $commentStart = "<!--";
 $commentEnd = "-->";
