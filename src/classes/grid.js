@@ -191,7 +191,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
             $scope.$apply();
         }
         self.refreshDomSizes();
-        $scope.$emit('ngGridRenderedRowsChanged', newRows);
+        $scope.$emit('ngGridEventRows', newRows);
     };
     self.minRowsToRender = function () {
         var viewportH = $scope.viewportDimHeight() || 1;
