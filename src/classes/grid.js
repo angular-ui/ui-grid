@@ -34,6 +34,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         //Enable or disable resizing of columns
         enableColumnResize: true,
 
+        //Enable or disable resizing of columns
+        enableColumnReordering: true,
+        
         //Enables the server-side paging feature
         enablePaging: false,
 
@@ -159,7 +162,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.lateBindColumns = false;
     self.filteredData = [];
     if (typeof self.config.data == "object") {
-        self.sortedData = $.extend(true, [], self.config.data); // we cannot watch for updates if you don't pass the string name
+        self.sortedData = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
@@ -354,7 +357,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.buildColumns();
         sortService.columns = $scope.columns,
         $scope.$watch('configGroups', function (a) {
-            if (!a) return;
             var tempArr = [];
             angular.forEach(a, function(item) {
                 tempArr.push(item.field || item);

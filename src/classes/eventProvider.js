@@ -5,23 +5,25 @@
 	self.groupToMove = undefined;
     self.assignEvents = function () {
         // Here we set the onmousedown event handler to the header container.
-		if(grid.config.jqueryUIDraggable){
-			grid.$groupPanel.droppable({
-				addClasses: false,
-				drop: function(event) {
-					self.onGroupDrop(event);
-				}
-			});
-		    $scope.$evalAsync(self.setDraggables);
-		} else {
-			grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-			grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
-			if (grid.config.enableRowReordering) {
+        if (grid.config.jqueryUIDraggable) {
+            grid.$groupPanel.droppable({
+                addClasses: false,
+                drop: function(event) {
+                    self.onGroupDrop(event);
+                }
+            });
+            $scope.$evalAsync(self.setDraggables);
+        } else {
+            grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            if (grid.config.enableColumnReordering) {
+                grid.$headerScroller.on('drop', self.onHeaderDrop);
+            }
+            if (grid.config.enableRowReordering) {
 				grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
 			}
 		}
 		$scope.$watch('columns', self.setDraggables, true);	
-		
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
@@ -63,7 +65,8 @@
 			self.groupToMove = undefined;
 		}
     };
-    self.onGroupDrop = function(event) {
+    self.onGroupDrop = function (event) {
+        event.stopPropagation();
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -86,7 +89,7 @@
             }			
 			self.groupToMove = undefined;
 			grid.fixGroupIndexes();	
-        } else {
+        } else if (self.colToMove) {
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
 				if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
@@ -101,7 +104,9 @@
             }			
 			self.colToMove = undefined;
         }
-        $scope.$apply();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };	
     //Header functions
     self.onHeaderMouseDown = function (event) {
