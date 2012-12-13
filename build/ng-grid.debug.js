@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 16:38:34
+* Compiled At: 12/12/2012 16:42:11
 ***********************************************/
 
 (function(window, undefined){
@@ -713,6 +713,7 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     self.onGroupDrop = function (event) {
         event.stopPropagation();
+        if (grid.sortedData.length < 0) return;
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -1033,6 +1034,7 @@ ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
     };
     self.onGroupDrop = function (event) {
         event.stopPropagation();
+        if (grid.sortedData.length < 0) return;
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -1921,7 +1923,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     $scope.viewportDimHeight = function () {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
-    $scope.groupBy = function(col) {
+    $scope.groupBy = function (col) {
+        if (self.sortedData.length < 0) return;
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
 			col.isGroupedBy = true;
