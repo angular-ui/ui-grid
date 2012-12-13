@@ -519,9 +519,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 		})[0];
 		col.isGroupedBy = false;
 		col.groupIndex = 0;
-        $scope.columns.splice(index, 1);
-        $scope.configGroups.splice(index, 1);
-		self.fixGroupIndexes();
+		if ($scope.columns[index].isAggCol) {
+		    $scope.columns.splice(index, 1);
+		    $scope.configGroups.splice(index, 1);
+		    self.fixGroupIndexes();
+		}
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
             domUtilityService.apply($scope);
