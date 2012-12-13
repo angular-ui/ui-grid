@@ -4,7 +4,6 @@
 ..\src\utils.js
 ..\src\filters\ngColumns.js
 ..\src\filters\checkmark.js
-..\src\services\GridService.js
 ..\src\services\SortService.js
 ..\src\services\DomUtilityService.js
 ..\src\templates\gridTemplate.html
