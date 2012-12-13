@@ -24,6 +24,7 @@ ngGridServices.factory('DomUtilityService', function () {
         domUtilityService.LetterW = $testContainer.children().first().width();
         $testContainer.remove();
     };
+    domUtilityService.eventStorage = {};
     domUtilityService.AssignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
@@ -49,7 +50,8 @@ ngGridServices.factory('DomUtilityService', function () {
 		grid.refreshDomSizes();
 		grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
 	};
-    domUtilityService.BuildStyles = function($scope,grid,apply) {
+    domUtilityService.numberOfGrids = 0;
+    domUtilityService.BuildStyles = function($scope, grid, apply) {
         var rowHeight = grid.config.rowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
@@ -57,7 +59,12 @@ ngGridServices.factory('DomUtilityService', function () {
             cols = $scope.visibleColumns(),
             sumWidth = 0;
         
-        if (!$style) $style = $("<style type='text/css' rel='stylesheet' />").appendTo($('html'));
+        if (!$style) {
+            $style = $('#' + gridId);
+            if (!$style[0]) {
+                $style = $("<style id='" + gridId + "' type='text/css' rel='stylesheet' />").appendTo(grid.$root);
+            }
+        } 
         $style.empty();
         var trw = $scope.totalRowWidth();
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }"+

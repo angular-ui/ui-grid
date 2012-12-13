@@ -1,4 +1,4 @@
-﻿ng.EventProvider = function (grid, $scope, gridService, domUtilityService) {
+﻿ng.EventProvider = function (grid, $scope, domUtilityService) {
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
@@ -148,7 +148,7 @@
             // set draggable events
             targetRow.attr('draggable', 'true');
             // Save the row for later.
-            gridService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
+            domUtilityService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
         }
     };
     self.onRowDrop = function (event) {
@@ -158,7 +158,7 @@
         var rowScope = angular.element(targetRow).scope();
         if (rowScope) {
             // If we have the same Row, do nothing.
-            var prevRow = gridService.eventStorage.rowToMove;
+            var prevRow = domUtilityService.eventStorage.rowToMove;
             if (prevRow.scope.row == rowScope.row) return;
             // Splice the Rows via the actual datasource
             var i = grid.sortedData.indexOf(prevRow.scope.row.entity);
@@ -167,7 +167,7 @@
             grid.sortedData.splice(j, 0, prevRow.scope.row.entity);
             grid.searchProvider.evalFilter();
             // clear out the rowToMove object
-            gridService.eventStorage.rowToMove = undefined;
+            domUtilityService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one
         }
     };
@@ -188,7 +188,7 @@
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1) {
-            grid.$viewport.attr('tabIndex', gridService.getIndexOfCache(grid.gridId));
+            grid.$viewport.attr('tabIndex', domUtilityService.numberOfGrids++);
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
