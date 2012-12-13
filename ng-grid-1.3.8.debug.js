@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 16:26:36
+* Compiled At: 12/12/2012 16:29:35
 ***********************************************/
 
 (function(window, undefined){
@@ -1585,8 +1585,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     self.filteredData = [];
     if (typeof self.config.data == "object") {
         self.sortedData = self.config.data; // we cannot watch for updates if you don't pass the string name
-    } else {
-        self.sortedData = [];
     }
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
@@ -2245,7 +2243,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function(a) {
-                            grid.sortedData = a;
+                            grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
