@@ -504,7 +504,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function (col) {
-        if (self.sortedData.length < 0) return;
+        if (self.sortedData.length < 1) return;
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
 			col.isGroupedBy = true;
