@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 16:29:35
+* Compiled At: 12/12/2012 16:38:34
 ***********************************************/
 
 (function(window, undefined){
@@ -1386,7 +1386,18 @@ ng.RowFactory = function(grid, $scope) {
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
                 if (!cols[depth].isAggCol && depth <= maxDepth) {
-                    self.addAggColumn();
+                    cols.splice(item.gDepth, 0, new ng.Column({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                        },
+                        isAggCol: true,
+                        index: item.gDepth,
+                        headerRowHeight: grid.config.headerRowHeight
+                    }));
                 }
                 var col = cols.filter(function(c) { return c.field == group; })[0];
                 var val = ng.utils.evalProperty(item, group);
@@ -1403,21 +1414,6 @@ ng.RowFactory = function(grid, $scope) {
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
-    };
-
-    self.addAggColumn = function() {
-        $scope.columns.splice(item.gDepth, 0, new ng.Column({
-            colDef: {
-                field: '',
-                width: 25,
-                sortable: false,
-                resizable: false,
-                headerCellTemplate: '<div class="ngAggHeader"></div>',
-            },
-            isAggCol: true,
-            index: item.gDepth,
-            headerRowHeight: grid.config.headerRowHeight
-        }));
     };
 
     if (grid.config.groups.length > 0 && grid.filteredData.length > 0) {
