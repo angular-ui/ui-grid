@@ -67,7 +67,6 @@
     };
     self.onGroupDrop = function (event) {
         event.stopPropagation();
-        if (grid.sortedData.length < 1) return;
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
