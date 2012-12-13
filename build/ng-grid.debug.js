@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 14:06:25
+* Compiled At: 12/12/2012 16:29:35
 ***********************************************/
 
 (function(window, undefined){
@@ -1386,18 +1386,7 @@ ng.RowFactory = function(grid, $scope) {
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
                 if (!cols[depth].isAggCol && depth <= maxDepth) {
-                    cols.splice(item.gDepth, 0, new ng.Column({
-                        colDef: {
-                            field: '',
-                            width: 25,
-                            sortable: false,
-                            resizable: false,
-                            headerCellTemplate: '<div class="ngAggHeader"></div>',
-                        },
-                        isAggCol: true,
-                        index: item.gDepth,
-                        headerRowHeight: grid.config.headerRowHeight
-                    }));
+                    self.addAggColumn();
                 }
                 var col = cols.filter(function(c) { return c.field == group; })[0];
                 var val = ng.utils.evalProperty(item, group);
@@ -1414,6 +1403,21 @@ ng.RowFactory = function(grid, $scope) {
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
+    };
+
+    self.addAggColumn = function() {
+        $scope.columns.splice(item.gDepth, 0, new ng.Column({
+            colDef: {
+                field: '',
+                width: 25,
+                sortable: false,
+                resizable: false,
+                headerCellTemplate: '<div class="ngAggHeader"></div>',
+            },
+            isAggCol: true,
+            index: item.gDepth,
+            headerRowHeight: grid.config.headerRowHeight
+        }));
     };
 
     if (grid.config.groups.length > 0 && grid.filteredData.length > 0) {
@@ -1937,9 +1941,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
 		})[0];
 		col.isGroupedBy = false;
 		col.groupIndex = 0;
-        $scope.columns.splice(index, 1);
-        $scope.configGroups.splice(index, 1);
-		self.fixGroupIndexes();
+		if ($scope.columns[index].isAggCol) {
+		    $scope.columns.splice(index, 1);
+		    $scope.configGroups.splice(index, 1);
+		    self.fixGroupIndexes();
+		}
         if ($scope.configGroups.length == 0) {
             self.fixColumnIndexes();
             domUtilityService.apply($scope);
@@ -2237,7 +2243,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'GridService', 'SortS
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function(a) {
-                            grid.sortedData = a;
+                            grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
