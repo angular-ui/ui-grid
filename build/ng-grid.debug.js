@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 16:24:51
+* Compiled At: 12/12/2012 16:26:36
 ***********************************************/
 
 (function(window, undefined){
@@ -1586,7 +1586,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
     if (typeof self.config.data == "object") {
         self.sortedData = self.config.data; // we cannot watch for updates if you don't pass the string name
     } else {
-        self.sortData = [];
+        self.sortedData = [];
     }
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
