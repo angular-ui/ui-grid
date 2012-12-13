@@ -178,12 +178,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         rootMaxW: 0,
         rootMaxH: 0
     };
-    // Set new default footer height if not overridden, and multi select is disabled
-    if (self.config.footerRowHeight === defaults.footerRowHeight
-        && !self.config.canSelectRows) {
-        defaults.footerRowHeight = 30;
-        self.config.footerRowHeight = 30;
-    }
     //self funcs
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;

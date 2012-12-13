@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 20:29:25
+* Compiled At: 12/12/2012 20:33:43
 ***********************************************/
 
 (function(window, undefined){
@@ -429,6 +429,7 @@ ngGridServices.factory('DomUtilityService', function () {
         domUtilityService.LetterW = $testContainer.children().first().width();
         $testContainer.remove();
     };
+    domUtilityService.eventStorage = {};
     domUtilityService.AssignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
@@ -679,7 +680,6 @@ ng.EventProvider = function (grid, $scope, domUtilityService) {
     };
     self.onGroupDrop = function (event) {
         event.stopPropagation();
-        if (grid.sortedData.length < 1) return;
         // clear out the colToMove object
         var groupContainer;
         var groupScope;
@@ -1354,12 +1354,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         rootMaxW: 0,
         rootMaxH: 0
     };
-    // Set new default footer height if not overridden, and multi select is disabled
-    if (self.config.footerRowHeight === defaults.footerRowHeight
-        && !self.config.canSelectRows) {
-        defaults.footerRowHeight = 30;
-        self.config.footerRowHeight = 30;
-    }
     //self funcs
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows = newRows;

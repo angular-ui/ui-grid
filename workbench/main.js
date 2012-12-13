@@ -81,6 +81,7 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
+		canSelectRows: false,
         enableRowReordering: true,
         showGroupPanel: true,
         columnDefs: 'myDefs2'

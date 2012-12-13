@@ -24,6 +24,7 @@ ngGridServices.factory('DomUtilityService', function () {
         domUtilityService.LetterW = $testContainer.children().first().width();
         $testContainer.remove();
     };
+    domUtilityService.eventStorage = {};
     domUtilityService.AssignGridContainers = function (rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
