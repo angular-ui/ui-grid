@@ -81,7 +81,7 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
-		canSelectRows: false,
+		canSelectRows: true,
         enableRowReordering: true,
         showGroupPanel: true,
         columnDefs: 'myDefs2'
@@ -99,5 +99,10 @@ function userController($scope) {
         $scope.myData[0].name = "FOO";
         $scope.$digest();
     }, 5000);
+	
+	$scope.modifyData = function(){
+		$scope.myData2[0].Vendor = "HELLO";
+        $scope.$digest();
+	};
     
 };

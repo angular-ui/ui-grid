@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/12/2012 20:33:43
+* Compiled At: 12/13/2012 12:17:44
 ***********************************************/
 
 (function(window, undefined){
@@ -1974,8 +1974,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'SortService', 'DomUt
             return {
                 pre: function ($scope, iElement, iAttrs) {
                     window.ng.$http = $http;
+                    var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    options.gridDim = new ng.Dimension({ outerHeight: iElement.height(), outerWidth: iElement.width() });
+                    options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService);
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
@@ -2014,7 +2015,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'SortService', 'DomUt
                     if (options.jqueryUITheme) iElement.addClass('ui-widget');
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     grid.initPhase = 1;
-                    iElement.html($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
+                    iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers(iElement, grid);
                     grid.configureColumnWidths();

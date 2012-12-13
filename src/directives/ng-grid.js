@@ -5,8 +5,9 @@
             return {
                 pre: function ($scope, iElement, iAttrs) {
                     window.ng.$http = $http;
+                    var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    options.gridDim = new ng.Dimension({ outerHeight: iElement.height(), outerWidth: iElement.width() });
+                    options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService);
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
@@ -45,7 +46,7 @@
                     if (options.jqueryUITheme) iElement.addClass('ui-widget');
                     //call update on the grid, which will refresh the dome measurements asynchronously
                     grid.initPhase = 1;
-                    iElement.html($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
+                    iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers(iElement, grid);
                     grid.configureColumnWidths();
