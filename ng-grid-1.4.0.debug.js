@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/13/2012 17:04:38
+* Compiled At: 12/13/2012 17:23:24
 ***********************************************/
 
 (function(window, undefined){
@@ -1814,7 +1814,7 @@ ng.SearchProvider = function($scope, grid, $filter) {
                             if (item.hasOwnProperty(prop)) {
                                 if (prop == SELECTED_PROP) continue;
                                 var c = self.fieldMap[prop];
-                                var f = c.cellFilter ? $filter(c.cellFilter) : null;
+                                var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
                                 if (pVal && ( condition.regex.test(pVal.toString()) || (f && condition.regex.test(f(pVal).toString()))  )) {
                                     return true;

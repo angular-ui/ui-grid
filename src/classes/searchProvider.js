@@ -21,7 +21,7 @@
                             if (item.hasOwnProperty(prop)) {
                                 if (prop == SELECTED_PROP) continue;
                                 var c = self.fieldMap[prop];
-                                var f = c.cellFilter ? $filter(c.cellFilter) : null;
+                                var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
                                 if (pVal && ( condition.regex.test(pVal.toString()) || (f && condition.regex.test(f(pVal).toString()))  )) {
                                     return true;
