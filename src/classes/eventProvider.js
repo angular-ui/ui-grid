@@ -29,7 +29,7 @@
         evt.preventDefault();
     };		
 	//For JQueryUI
-	self.setDraggables = function(){
+    self.setDraggables = function () {
 		if(!grid.config.jqueryUIDraggable){	
 			grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true');
 		} else {

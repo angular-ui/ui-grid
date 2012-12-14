@@ -22,7 +22,7 @@
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function(a) {
+                        $scope.$parent.$watch(options.data, function (a) {
                             grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -44,8 +44,6 @@
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
                     if (options.jqueryUITheme) iElement.addClass('ui-widget');
-                    //call update on the grid, which will refresh the dome measurements asynchronously
-                    grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers(iElement, grid);

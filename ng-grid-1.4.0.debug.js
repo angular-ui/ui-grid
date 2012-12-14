@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/13/2012 17:23:24
+* Compiled At: 12/13/2012 22:06:21
 ***********************************************/
 
 (function(window, undefined){
@@ -642,7 +642,7 @@ ng.EventProvider = function (grid, $scope, domUtilityService) {
         evt.preventDefault();
     };		
 	//For JQueryUI
-	self.setDraggables = function(){
+    self.setDraggables = function () {
 		if(!grid.config.jqueryUIDraggable){	
 			grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true');
 		} else {
@@ -1041,7 +1041,6 @@ ng.RowFactory = function(grid, $scope) {
         }
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
-        self.selectionService.toggleSelectAll(false);
         if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }
@@ -1316,7 +1315,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
 
     },
     self = this;
-    
+
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, options);
@@ -1743,13 +1742,8 @@ ng.Row = function (entity, config, selectionService) {
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
-    self.selectedItems = config.selectedItems;
     self.entity = entity;
     self.selectionService = selectionService;
-    //selectify the entity
-    if (self.entity[SELECTED_PROP] === undefined) {
-        self.entity[SELECTED_PROP] = false;
-    }
     self.selected = false;
     self.continueSelection = function (event) {
         self.selectionService.ChangeSelection(self, event);
@@ -1786,6 +1780,13 @@ ng.Row = function (entity, config, selectionService) {
     self.getProperty = function (path) {
         return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
     };
+    //selectify the entity
+    if (self.entity[SELECTED_PROP] === undefined) {
+        self.entity[SELECTED_PROP] = false;
+    } else if (self.entity[SELECTED_PROP]) {
+        // or else maintain the selection set by the entity.
+        self.selectionService.setSelection(self, self.entity[SELECTED_PROP]);
+    }
 }; 
 
 /***********************************************
@@ -1876,14 +1877,14 @@ ng.SearchProvider = function($scope, grid, $filter) {
             }
         });
     };
-    $scope.$watch('filterText', function(a) {
+    $scope.$watch('filterText', function (a) {
         if (!self.extFilter) {
             buildSearchConditions(a);
             self.evalFilter();
         }
     });
     if (!self.extFilter) {
-        $scope.$watch('columns', function(a) {
+        $scope.$watch('columns', function (a) {
             angular.forEach(a, function (col) {
                 self.fieldMap[col.field] = col;
                 self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
@@ -2040,7 +2041,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortServi
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function(a) {
+                        $scope.$parent.$watch(options.data, function (a) {
                             grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -2062,8 +2063,6 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortServi
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
                     if (options.jqueryUITheme) iElement.addClass('ui-widget');
-                    //call update on the grid, which will refresh the dome measurements asynchronously
-                    grid.initPhase = 1;
                     iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers(iElement, grid);

@@ -17,6 +17,7 @@ function userController($scope) {
     };
     self.getPagedDataAsync = function (pageSize, page, searchText) {
         setTimeout(function () {
+            self.gettingData = true;
             var data;
             if (searchText) {
                 var ft = searchText.toLowerCase();
@@ -30,14 +31,23 @@ function userController($scope) {
             $scope.myData = pagedData;
             $scope.pagingOptions.totalServerItems = data.length;
             if (!$scope.$$phase) {
-                $scope.$apply();
+                $scope.$digest();
             }
+            self.gettingData = false;
         }, 100);
     };
     $scope.$watch('pagingOptions', function () {
+        if (!self.poInit || self.gettingData) {
+            self.poInit = true;
+            return;
+        } 
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     $scope.$watch('filterOptions', function () {
+        if (!self.foInit || self.gettingData) {
+            self.poInit = true;
+            return;
+        }
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);

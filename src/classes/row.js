@@ -10,13 +10,8 @@ ng.Row = function (entity, config, selectionService) {
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
-    self.selectedItems = config.selectedItems;
     self.entity = entity;
     self.selectionService = selectionService;
-    //selectify the entity
-    if (self.entity[SELECTED_PROP] === undefined) {
-        self.entity[SELECTED_PROP] = false;
-    }
     self.selected = false;
     self.continueSelection = function (event) {
         self.selectionService.ChangeSelection(self, event);
@@ -53,4 +48,11 @@ ng.Row = function (entity, config, selectionService) {
     self.getProperty = function (path) {
         return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
     };
+    //selectify the entity
+    if (self.entity[SELECTED_PROP] === undefined) {
+        self.entity[SELECTED_PROP] = false;
+    } else if (self.entity[SELECTED_PROP]) {
+        // or else maintain the selection set by the entity.
+        self.selectionService.setSelection(self, self.entity[SELECTED_PROP]);
+    }
 }; 

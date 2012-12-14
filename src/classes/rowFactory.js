@@ -68,7 +68,6 @@ ng.RowFactory = function(grid, $scope) {
         }
         self.dataChanged = true;
         self.rowCache = []; //if data source changes, kill this!
-        self.selectionService.toggleSelectAll(false);
         if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }

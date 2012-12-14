@@ -140,7 +140,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
 
     },
     self = this;
-    
+
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, options);

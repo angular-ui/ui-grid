@@ -83,14 +83,14 @@
             }
         });
     };
-    $scope.$watch('filterText', function(a) {
+    $scope.$watch('filterText', function (a) {
         if (!self.extFilter) {
             buildSearchConditions(a);
             self.evalFilter();
         }
     });
     if (!self.extFilter) {
-        $scope.$watch('columns', function(a) {
+        $scope.$watch('columns', function (a) {
             angular.forEach(a, function (col) {
                 self.fieldMap[col.field] = col;
                 self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
