@@ -13,45 +13,42 @@ ng.SelectionService = function (grid) {
 		
 	// function to manage the selection action of a data item (entity)
 	self.ChangeSelection = function (rowItem, evt) {
-	    if (!self.multi) {
-	        if (self.lastClickedRow && self.lastClickedRow.selected) {
+	    if (evt && evt.shiftKey && self.multi) {
+	        if (self.lastClickedRow) {
+	            var thisIndx = grid.filteredData.indexOf(rowItem.entity);
+	            var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
+	            if (thisIndx == prevIndx) return false;
+	            prevIndx++;
+	            if (thisIndx < prevIndx) {
+	                thisIndx = thisIndx ^ prevIndx;
+	                prevIndx = thisIndx ^ prevIndx;
+	                thisIndx = thisIndx ^ prevIndx;
+	            }
+	            var rows = [];
+	            for (; prevIndx <= thisIndx; prevIndx++) {
+	                rows.push(self.rowFactory.rowCache[prevIndx]);
+	            }
+	            if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
+	                $.each(rows, function (i, ri) {
+	                    ri.selected = true;
+	                    ri.entity[SELECTED_PROP] = true;
+	                    if (self.selectedItems.indexOf(ri.entity) === -1) {
+	                        self.selectedItems.push(ri.entity);
+	                    }
+	                });
+	                rows[rows.length - 1].afterSelectionChange(rows, evt);
+	            }
+	            self.lastClickedRow = rows[rows.length - 1];
+	            return true;
+	        }
+	    } else if (!self.multi) {
+	        if (self.lastClickedRow && self.lastClickedRow != rowItem) {
 	            self.setSelection(self.lastClickedRow, false);
 	        }
-	    } else if (evt && evt.shiftKey) {
-            if (self.lastClickedRow) {
-                var thisIndx = grid.filteredData.indexOf(rowItem.entity);
-                var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
-                if (thisIndx == prevIndx) return false;
-                prevIndx++;
-                if (thisIndx < prevIndx) {
-                    thisIndx = thisIndx ^ prevIndx;
-                    prevIndx = thisIndx ^ prevIndx;
-                    thisIndx = thisIndx ^ prevIndx;
-                }
-                var rows = [];
-                for (; prevIndx <= thisIndx; prevIndx++) {
-                    rows.push(self.rowFactory.rowCache[prevIndx]);
-                }
-                if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    angular.forEach(rows, function (ri) {
-                        ri.selected = true;
-                        ri.entity[SELECTED_PROP] = true;
-                        if (self.selectedItems.indexOf(ri.entity) === -1) {
-                            self.selectedItems.push(ri.entity);
-                        }
-                    });
-                    rows[rows.length - 1].afterSelectionChange(rows, evt);
-                }
-                self.lastClickedRow = rows[rows.length - 1];
-                return true;
-            }
-	    }
-	    if (grid.config.keepLastSelected && !self.multi) {
-	        self.setSelection(rowItem, true);
+	        self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
 	    } else {
-	        self.setSelection(rowItem, rowItem.selected ? false : true);
-	    }
-	    
+	        self.setSelection(rowItem, !rowItem.selected);
+	    }    
 	    self.lastClickedRow = rowItem;
         return true;
     };

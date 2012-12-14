@@ -6,7 +6,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js"/>
 /// <reference path="../utils.js"/>
-ng.Grid = function ($scope, options, sortService, domUtilityService) {
+ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
     var defaults = {
         //Callback for when you want to validate something after selection.
         afterSelectionChange: function () { }, 
@@ -347,7 +347,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService) {
         self.selectionService = new ng.SelectionService(self);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.selectionService.Initialize(self.rowFactory);
-        self.searchProvider = new ng.SearchProvider($scope, self);
+        self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         self.buildColumns();
         sortService.columns = $scope.columns,

@@ -13,7 +13,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.3.9
+version 1.4
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
@@ -23,7 +23,7 @@ Questions, Comments, Complaints? feel free to email us at nggridteam@gmail.com
 ***
 ##Roadmap##
 
-We are going to be adding more features here as we head to a 1.4 release, including:
+We are going to be adding more features here as we head to a 2.0 release, including:
 
 * Virtualized column scrolling
 * "Fixed" column option (columns not affected by horizontal scrolling)
@@ -65,6 +65,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 [Examples](http://angular-ui.github.com/ng-grid/#/examples)
 
 ##Change Log##
+* __2012-12-12__ - Version 1.4.0 - Massive improvements to search thanks to [iNeedFat](https://github.com/ineedfat)!
 * __2012-12-12__ - Version 1.3.9 - Refactored and removed unneeded code. Added scope events.
 * __2012-12-12__ - Version 1.3.7 - Improving template compilation and fixing jquery theme support. Improving comments on grid options.
 * __2012-12-06__ - Version 1.3.6 - sortInfo can now be set to default sort the grid. Improvements to the beforeSelectionChange callback mechanism when multi-selecting.

@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$http', 'SortService', 'DomUtilityService', function ($compile, $http, sortService, domUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortService', 'DomUtilityService', function ($compile, $http, $filter, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function () {
@@ -8,7 +8,7 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService);
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function (a) {

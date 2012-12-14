@@ -14,7 +14,7 @@
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
-    self.cellFilter = colDef.cellFilter ? "|" + colDef.cellFilter : "";
+    self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
@@ -24,7 +24,7 @@
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
-    self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter);
+    self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
     } 
