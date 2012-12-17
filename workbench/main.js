@@ -112,7 +112,10 @@ function userController($scope) {
 	
 	$scope.modifyData = function(){
 		$scope.myData2[0].Vendor = "HELLO";
-        $scope.$digest();
+		for(var i = 0; i < 136; i++){
+			$scope.myData2.push({ 'Sku': 'C-2820164', 'Vendor': 'aaaaaaaaaaaaaaNEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' });
+        }
+		$scope.$apply();
 	};
     
 };

@@ -23,6 +23,10 @@
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
+							if (grid.skipDataWatch) { 
+								grid.skipDataWatch = false;
+								return;
+							}
                             grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -37,7 +41,7 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                        });
+                        }, true);
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     grid.footerController = new ng.Footer($scope, grid);

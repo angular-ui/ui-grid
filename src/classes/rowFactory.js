@@ -33,6 +33,7 @@ ng.RowFactory = function(grid, $scope) {
     self.buildEntityRow = function(entity, rowIndex) {
         var row = self.rowCache[rowIndex]; // first check to see if we've already built it
         if (!row) {
+			grid.skipDataWatch = true;
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
