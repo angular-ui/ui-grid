@@ -179,8 +179,15 @@
             grid.adjustScrollLeft(scrollLeft);
             grid.adjustScrollTop(scrollTop);
         });
+		var doingKeyDown = false;
         grid.$viewport.on('keydown', function (e) {
-            return ng.moveSelectionHandler($scope, grid, e);
+            if (!doingKeyDown) {
+                doingKeyDown = true;
+                var ret = ng.moveSelectionHandler($scope, grid, e);
+                doingKeyDown = false;
+                return ret;
+            }
+            return false;
         });
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
