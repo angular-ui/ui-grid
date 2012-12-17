@@ -8,7 +8,6 @@
     self.fieldMap = {};
 
     self.evalFilter = function () {
-        console.log(JSON.stringify(searchConditions));
         if (searchConditions.length === 0)
             grid.filteredData = grid.sortedData;
         else {
