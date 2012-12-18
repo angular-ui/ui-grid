@@ -18,8 +18,8 @@
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
-    self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
-    self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+    self.sortable = config.enableSort ? (ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable) : false;
+    self.resizable = config.enableResize ? (ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable) : false;
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;

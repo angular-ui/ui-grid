@@ -36,7 +36,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
 
         //Enable or disable resizing of columns
         enableColumnReordering: true,
-        
+
         //Enables the server-side paging feature
         enablePaging: false,
 
@@ -241,8 +241,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
                 headerRowHeight: self.config.headerRowHeight,
                 sortCallback: self.sortData,
                 resizeOnDataCallback: self.resizeOnData,
-                enableResize: self.config.enableColumnResize
-            }, $scope, self, domUtilityService));
+                enableResize: self.config.enableColumnResize,
+                enableSort: self.config.enableSorting
+            }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
             angular.forEach(columnDefs, function (colDef, i) {
