@@ -117,13 +117,11 @@
 .ngHeaderSortColumn{
 	position:absolute;
     overflow: hidden;
-	cursor: pointer;
 }
 
 .ngHeaderCell{
 	border-left: 1px solid rgb(212,212,212);
     position: absolute;
-    cursor: pointer;
 }
 
 .ngHeaderCell:first-child{
@@ -195,7 +193,6 @@
 .ngRow {
     position: absolute;
     border-bottom: 1px solid rgb(229, 229, 229);
-    cursor: pointer;
 }
 .ngRow.even {
     background-color: rgb(243, 243, 243);

@@ -13,6 +13,7 @@ ng.Row = function (entity, config, selectionService) {
     self.entity = entity;
     self.selectionService = selectionService;
     self.selected = false;
+    self.cursor = canSelectRows ? 'pointer' : 'default';
     self.continueSelection = function (event) {
         self.selectionService.ChangeSelection(self, event);
     };

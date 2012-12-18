@@ -254,7 +254,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter) {
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData, 
                     resizeOnDataCallback: self.resizeOnData,
-                    enableResize: self.config.enableColumnResize
+                    enableResize: self.config.enableColumnResize,
+                    enableSort: self.config.enableSorting
                 }, $scope, self, domUtilityService);
                 cols.push(column);
                 var indx = self.config.groups.indexOf(colDef.field);

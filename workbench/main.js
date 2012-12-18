@@ -70,7 +70,10 @@ function userController($scope) {
         showGroupPanel: true,
         showColumnMenu: true,
         enablePaging: true,
-		sortInfo: {field: 'birthday', direction: 'asc'},
+        canSelectRows: false,
+        enableSorting: true,
+        sortInfo: { field: 'birthday', direction: 'asc' },
+        enableColumnResize: false,
 		enableRowReordering: true,
         maintainColumnRatios: false,
         filterOptions: $scope.filterOptions,
@@ -103,11 +106,11 @@ function userController($scope) {
         $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
         { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
         { field: 'birthday', cellFilter: 'date', resizable: false }];
-        $scope.$digest();
+        $scope.$apply();
     }, 3000);
     setTimeout(function () {
         $scope.myData[0].name = "FOO";
-        $scope.$digest();
+        $scope.$apply();
     }, 5000);
 	
 	$scope.modifyData = function(){

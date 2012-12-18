@@ -18,12 +18,19 @@
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
-    self.sortable = config.enableSort ? (ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable) : false;
-    self.resizable = config.enableResize ? (ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable) : false;
+    self.sortable = false;
+    self.resizable = false;
+    if (config.enableSort) {
+        self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
+    }
+    if (config.enableResize) {
+        self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+    }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
+    self.cursor = self.sortable ? 'pointer' : 'default';
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
@@ -48,7 +55,7 @@
     };
     self.sort = function () {
         if (!self.sortable) {
-            return; // column sorting is disabled, do nothing
+            return true; // column sorting is disabled, do nothing
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
@@ -73,7 +80,6 @@
             domUtilityService.BuildStyles($scope, grid);
             return true;
         }
-        document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         self.startMousePosition = event.clientX;
         self.origWidth = self.width;
@@ -91,7 +97,7 @@
     self.gripOnMouseUp = function () {
         $(document).off('mousemove');
         $(document).off('mouseup');
-        document.body.style.cursor = 'default';
+        event.target.parentElement.style.cursor = 'default';
         domUtilityService.apply($scope);
         return false;
     };
