@@ -1,12 +1,12 @@
 ﻿/// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
+/// <reference path="../constants.js" />
 /// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-/// <reference path="../classes/range.js"/>
-ngGridServices.factory('SortService', function () {
-    var sortService = { };
+/// <reference path="../navigation.js" />
+/// <reference path="../utils.js" />
+/// <reference path="../classes/range.js" />
+ngGridServices.factory('SortService', function() {
+    var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
     // this takes an piece of data from the cell and tries to determine its type and what sorting
@@ -19,34 +19,47 @@ ngGridServices.factory('SortService', function () {
             month, // for date parsing
             day; // for date parsing
 
-        if (item === undefined || item === null || item === '') return null;
+        if (item === undefined || item === null || item === '') {
+            return null;
+        }
         itemType = typeof(item);
         //check for numbers and booleans
         switch (itemType) {
-        case "number":
-            sortFn = sortService.sortNumber;
-            break;
-        case "boolean":
-            sortFn = sortService.sortBool;
-            break;
+            case "number":
+                sortFn = sortService.sortNumber;
+                break;
+            case "boolean":
+                sortFn = sortService.sortBool;
+                break;
+            default:
+                sortFn = undefined;
+                break;
         }
         //if we found one, return it
-        if (sortFn) return sortFn;
+        if (sortFn) {
+            return sortFn;
+        }
         //check if the item is a valid Date
-        if (Object.prototype.toString.call(item) === '[object Date]') return sortService.sortDate;
+        if (Object.prototype.toString.call(item) === '[object Date]') {
+            return sortService.sortDate;
+        }
         // if we aren't left with a string, return a basic sorting function...
-        if (itemType !== "string") return sortService.basicSort;
+        if (itemType !== "string") {
+            return sortService.basicSort;
+        }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) return sortService.sortNumberStr;
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+            return sortService.sortNumberStr;
+        }
         // check for a date: dd/mm/yyyy or dd/mm/yy
         // can have / or . or - as separator
         // can be mm/dd as well
         dateParts = item.match(sortService.dateRE);
         if (dateParts) {
             // looks like a date
-            month = parseInt(dateParts[1]);
-            day = parseInt(dateParts[2]);
+            month = parseInt(dateParts[1], 10);
+            day = parseInt(dateParts[2], 10);
             if (month > 12) {
                 // definitely dd/mm
                 return sortService.sortDDMMStr;
@@ -61,9 +74,13 @@ ngGridServices.factory('SortService', function () {
         return sortService.sortAlpha;
     };
     //#region Sorting Functions
-    sortService.basicSort = function (a, b) {
-        if (a == b) return 0;
-        if (a < b) return -1;
+    sortService.basicSort = function(a, b) {
+        if (a == b) {
+            return 0;
+        }
+        if (a < b) {
+            return -1;
+        }
         return 1;
     };
     sortService.sortNumber = function(a, b) {
@@ -72,13 +89,23 @@ ngGridServices.factory('SortService', function () {
     sortService.sortNumberStr = function(a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
-        if (isNaN(numA)) badA = true;
+        if (isNaN(numA)) {
+            badA = true;
+        }
         numB = parseFloat(b.replace(/[^0-9.-]/g, ''));
-        if (isNaN(numB)) badB = true;
+        if (isNaN(numB)) {
+            badB = true;
+        }
         // we want bad ones to get pushed to the bottom... which effectively is "greater than"
-        if (badA && badB) return 0;
-        if (badA) return 1;
-        if (badB) return -1;
+        if (badA && badB) {
+            return 0;
+        }
+        if (badA) {
+            return 1;
+        }
+        if (badB) {
+            return -1;
+        }
         return numA - numB;
     };
     sortService.sortAlpha = function(a, b) {
@@ -107,18 +134,30 @@ ngGridServices.factory('SortService', function () {
         y = mtch[3];
         m = mtch[2];
         d = mtch[1];
-        if (m.length == 1) m = '0' + m;
-        if (d.length == 1) d = '0' + d;
+        if (m.length == 1) {
+            m = '0' + m;
+        }
+        if (d.length == 1) {
+            d = '0' + d;
+        }
         dateA = y + m + d;
         mtch = b.match(sortService.dateRE);
         y = mtch[3];
         m = mtch[2];
         d = mtch[1];
-        if (m.length == 1) m = '0' + m;
-        if (d.length == 1) d = '0' + d;
+        if (m.length == 1) {
+            m = '0' + m;
+        }
+        if (d.length == 1) {
+            d = '0' + d;
+        }
         dateB = y + m + d;
-        if (dateA == dateB) return 0;
-        if (dateA < dateB) return -1;
+        if (dateA == dateB) {
+            return 0;
+        }
+        if (dateA < dateB) {
+            return -1;
+        }
         return 1;
     };
     sortService.sortMMDDStr = function(a, b) {
@@ -127,18 +166,30 @@ ngGridServices.factory('SortService', function () {
         y = mtch[3];
         d = mtch[2];
         m = mtch[1];
-        if (m.length == 1) m = '0' + m;
-        if (d.length == 1) d = '0' + d;
+        if (m.length == 1) {
+            m = '0' + m;
+        }
+        if (d.length == 1) {
+            d = '0' + d;
+        }
         dateA = y + m + d;
         mtch = b.match(sortService.dateRE);
         y = mtch[3];
         d = mtch[2];
         m = mtch[1];
-        if (m.length == 1) m = '0' + m;
-        if (d.length == 1) d = '0' + d;
+        if (m.length == 1) {
+            m = '0' + m;
+        }
+        if (d.length == 1) {
+            d = '0' + d;
+        }
         dateB = y + m + d;
-        if (dateA == dateB) return 0;
-        if (dateA < dateB) return -1;
+        if (dateA == dateB) {
+            return 0;
+        }
+        if (dateA < dateB) {
+            return -1;
+        }
         return 1;
     };
     //#endregion
@@ -162,7 +213,9 @@ ngGridServices.factory('SortService', function () {
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
         } else { // try and guess what sort function to use
             item = data[0];
-            if (!item) return;
+            if (!item) {
+                return;
+            }
             sortFn = sortService.guessSortFn(item[col.field]);
             //cache it
             if (sortFn) {
@@ -195,8 +248,10 @@ ngGridServices.factory('SortService', function () {
         });
         return;
     };
-    sortService.Sort = function (sortInfo, data) {
-        if (sortService.isSorting) return;
+    sortService.Sort = function(sortInfo, data) {
+        if (sortService.isSorting) {
+            return;
+        }
         sortService.isSorting = true;
         sortService.sortData(data, sortInfo);
         sortService.isSorting = false;

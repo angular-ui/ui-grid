@@ -1,12 +1,12 @@
-﻿ng.Column = function (config, $scope, grid, domUtilityService) {
+﻿ng.Column = function(config, $scope, grid, domUtilityService) {
     var self = this,
         colDef = config.colDef,
-		delay = 500,
+        delay = 500,
         clicks = 0,
         timer = null;
     self.width = colDef.width;
-	self.groupIndex = 0;
-	self.isGroupedBy = false;
+    self.groupIndex = 0;
+    self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
     self.headerRowHeight = config.headerRowHeight;
@@ -34,47 +34,48 @@
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
-    } 
+    }
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
         self.headerCellTemplate = ng.utils.getTemplatePromise(colDef.headerCellTemplate);
-    }	
-	self.groupedByClass = function(){ 
-		return self.isGroupedBy ? "ngGroupedByIcon":"ngGroupIcon";
-	};
-    self.toggleVisible = function () {
+    }
+    self.groupedByClass = function() {
+        return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
+    };
+    self.toggleVisible = function() {
         self.visible = !self.visible;
     };
-    self.showSortButtonUp = function () {
+    self.showSortButtonUp = function() {
         return self.sortable ? self.sortDirection === DESC : self.sortable;
     };
-    self.showSortButtonDown = function () {
+    self.showSortButtonDown = function() {
         return self.sortable ? self.sortDirection === ASC : self.sortable;
-    };     
-    self.noSortVisible = function () {
+    };
+    self.noSortVisible = function() {
         return !self.sortDirection;
     };
-    self.sort = function () {
+    self.sort = function() {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
         config.sortCallback(self);
-    };   
-    self.gripClick = function () {
-        clicks++;  //count clicks
+        return false;
+    };
+    self.gripClick = function() {
+        clicks++; //count clicks
         if (clicks === 1) {
-            timer = setTimeout(function () {
+            timer = setTimeout(function() {
                 //Here you can add a single click action.
-                clicks = 0;  //after action performed, reset counter
+                clicks = 0; //after action performed, reset counter
             }, delay);
         } else {
-            clearTimeout(timer);  //prevent single-click action
-            config.resizeOnDataCallback(self);  //perform double-click action
-            clicks = 0;  //after action performed, reset counter
+            clearTimeout(timer); //prevent single-click action
+            config.resizeOnDataCallback(self); //perform double-click action
+            clicks = 0; //after action performed, reset counter
         }
     };
-    self.gripOnMouseDown = function (event) {
+    self.gripOnMouseDown = function(event) {
         if (event.ctrlKey) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -87,14 +88,14 @@
         $(document).mouseup(self.gripOnMouseUp);
         return false;
     };
-    self.onMouseMove = function (event) {
+    self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
-    self.gripOnMouseUp = function () {
+    self.gripOnMouseUp = function() {
         $(document).off('mousemove');
         $(document).off('mouseup');
         event.target.parentElement.style.cursor = 'default';

@@ -1,11 +1,11 @@
-﻿ngGridDirectives.directive('ngHeaderCell', ['$compile', function ($compile) {
+﻿ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
     var ngHeaderCell = {
         scope: false,
-        compile: function () {
+        compile: function() {
             return {
-                pre: function ($scope, iElement) {
+                pre: function($scope, iElement) {
                     if ($scope.col.headerCellTemplate.then) {
-                        $scope.col.headerCellTemplate.then(function (resp) {
+                        $scope.col.headerCellTemplate.then(function(resp) {
                             iElement.append($compile(resp.data)($scope));
                         });
                     } else {

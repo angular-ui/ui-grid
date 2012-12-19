@@ -1,9 +1,9 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortService', 'DomUtilityService', function ($compile, $http, $filter, sortService, domUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortService', 'DomUtilityService', function($compile, $http, $filter, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
-        compile: function () {
+        compile: function() {
             return {
-                pre: function ($scope, iElement, iAttrs) {
+                pre: function($scope, iElement, iAttrs) {
                     window.ng.$http = $http;
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
@@ -11,7 +11,7 @@
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
-                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                        $scope.$parent.$watch(options.columnDefs, function(a) {
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
@@ -22,11 +22,11 @@
                     }
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
-							if (grid.skipDataWatch) { 
-								grid.skipDataWatch = false;
-								return;
-							}
+                        $scope.$parent.$watch(options.data, function(a) {
+                            if (grid.skipDataWatch) {
+                                grid.skipDataWatch = false;
+                                return;
+                            }
                             grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -36,7 +36,9 @@
                                     grid.config.sortInfo.column = $scope.columns.filter(function(c) {
                                         return c.field == grid.config.sortInfo.field;
                                     })[0];
-                                    if (!grid.config.sortInfo.column) return;
+                                    if (!grid.config.sortInfo.column) {
+                                        return;
+                                    }
                                 }
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
                                 grid.sortData(grid.config.sortInfo.column);
@@ -47,15 +49,17 @@
                     grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
-                    if (options.jqueryUITheme) iElement.addClass('ui-widget');
-                    iElement.append($compile(htmlText)($scope));// make sure that if any of these change, we re-fire the calc logic
+                    if (options.jqueryUITheme) {
+                        iElement.addClass('ui-widget');
+                    }
+                    iElement.append($compile(htmlText)($scope)); // make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers(iElement, grid);
                     grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ng.EventProvider(grid, $scope, domUtilityService);
                     //initialize plugins.
-                    angular.forEach(options.plugins, function (p) {
+                    angular.forEach(options.plugins, function(p) {
                         p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
                     });
                     return null;

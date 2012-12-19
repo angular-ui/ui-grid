@@ -1,12 +1,12 @@
 ﻿ngGridDirectives.directive('ngHeaderRow', ['$compile', function($compile) {
     var ngHeaderRow = {
         scope: false,
-        compile: function () {
+        compile: function() {
             return {
-                pre: function ($scope, iElement) {
-                    if (iElement.children().length == 0) {
+                pre: function($scope, iElement) {
+                    if (iElement.children().length === 0) {
                         if ($scope.headerRowTemplate.then) {
-                            $scope.headerRowTemplate.then(function (resp) {
+                            $scope.headerRowTemplate.then(function(resp) {
                                 iElement.append($compile(resp.data)($scope));
                             });
                         } else {

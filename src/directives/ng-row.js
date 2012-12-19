@@ -1,13 +1,13 @@
-﻿﻿/// <reference path="../templates/aggregateTemplate.js" />
+﻿/// <reference path="../templates/aggregateTemplate.js" />
 /// <reference path="../namespace.js" />
-ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
     var ngRow = {
         scope: false,
-        compile: function () {
+        compile: function() {
             return {
-                pre: function ($scope, iElement) {
+                pre: function($scope, iElement) {
                     if ($scope.row.isAggRow) {
-                         var html = ng.aggregateTemplate();
+                        var html = ng.aggregateTemplate();
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
@@ -16,7 +16,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function ($compile) {
                         iElement.append($compile(html)($scope));
                     } else {
                         if ($scope.rowTemplate.then) {
-                            $scope.rowTemplate.then(function (resp) {
+                            $scope.rowTemplate.then(function(resp) {
                                 iElement.append($compile(resp.data)($scope));
                             });
                         } else {

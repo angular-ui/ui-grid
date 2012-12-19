@@ -61,23 +61,12 @@ function userController($scope) {
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
         { field: 'UPC', displayName: 'Bar Code' }];
     $scope.gridOptions = {
-		data: 'myData',
-		jqueryUITheme: false,
-		jqueryUIDraggable: false,
-        selectedItems: $scope.mySelections,
-        displaySelectionCheckbox: true,
-        multiSelect: true,
+        data: 'myData',
+        selectedItems: $scope.mySelections2,
+        multiSelect: false,
+        canSelectRows: true,
+        enableRowReordering: true,
         showGroupPanel: true,
-        showColumnMenu: true,
-        enablePaging: true,
-        canSelectRows: false,
-        enableSorting: true,
-        sortInfo: { field: 'birthday', direction: 'asc' },
-        enableColumnResize: false,
-		enableRowReordering: true,
-        maintainColumnRatios: false,
-        filterOptions: $scope.filterOptions,
-        pagingOptions: $scope.pagingOptions,
         columnDefs: 'myDefs'
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
@@ -99,20 +88,12 @@ function userController($scope) {
         showGroupPanel: true,
         columnDefs: 'myDefs2'
     };
-    $scope.changeData = function () {
-        $scope.myDefs2 = undefined;
-    };
-    setTimeout(function () {
+    $scope.changeColumns = function () {
         $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
         { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
-        { field: 'birthday', cellFilter: 'date', resizable: false }];
-        $scope.$apply();
-    }, 3000);
-    setTimeout(function () {
-        $scope.myData[0].name = "FOO";
-        $scope.$apply();
-    }, 5000);
-	
+        { field: 'birthday', cellFilter: 'date', resizable: false }];;
+    };
+
 	$scope.modifyData = function(){
 		$scope.myData2[0].Vendor = "HELLO";
 		for(var i = 0; i < 136; i++){

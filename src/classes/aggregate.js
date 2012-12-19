@@ -1,10 +1,10 @@
 /// <reference path="../../lib/jquery-1.8.2.min" />
 /// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js"/>
+/// <reference path="../constants.js" />
 /// <reference path="../namespace.js" />
-/// <reference path="../navigation.js"/>
-/// <reference path="../utils.js"/>
-ng.Aggregate = function (aggEntity, rowFactory) {
+/// <reference path="../navigation.js" />
+/// <reference path="../utils.js" />
+ng.Aggregate = function(aggEntity, rowFactory) {
     var self = this;
     self.index = 0;
     self.offsetTop = 0;
@@ -24,7 +24,7 @@ ng.Aggregate = function (aggEntity, rowFactory) {
         self.collapsed = self.collapsed ? false : true;
         self.notifyChildren();
     };
-    self.setExpand = function (state) {
+    self.setExpand = function(state) {
         self.collapsed = state;
         self.notifyChildren();
     };
@@ -58,9 +58,9 @@ ng.Aggregate = function (aggEntity, rowFactory) {
     self.totalChildren = function() {
         if (self.aggChildren.length > 0) {
             var i = 0;
-            var recurse = function (cur) {
+            var recurse = function(cur) {
                 if (cur.aggChildren.length > 0) {
-                    angular.forEach(cur.aggChildren, function (a) {
+                    angular.forEach(cur.aggChildren, function(a) {
                         recurse(a);
                     });
                 } else {
@@ -73,4 +73,4 @@ ng.Aggregate = function (aggEntity, rowFactory) {
             return self.children.length;
         }
     };
-}; 
+};

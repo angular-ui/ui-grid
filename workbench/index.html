@@ -17,13 +17,8 @@
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
-        <div style="position: absolute;  left: 0; right: 0; top: 0; bottom: 0;" ng-grid="gridOptions">
+        <div style="width: 800px; height: 600px;"  ng-grid="gridOptions">
         </div>
-        <!--<button ng-click="changeData()">Insert Rows</button>
-        <div>{{filterOpts.filterText}}</div>
-        <span>mySelections: {{mySelections | json}}</span>
-                <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
-                    </div>
-            <span>mySelections2: {{mySelections2 | json}}</span>-->
+        <button ng-click="changeColumns()">Insert Rows</button>
     </body>
 </html>

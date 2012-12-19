@@ -33,7 +33,7 @@ ng.RowFactory = function(grid, $scope) {
     self.buildEntityRow = function(entity, rowIndex) {
         var row = self.rowCache[rowIndex]; // first check to see if we've already built it
         if (!row) {
-			grid.skipDataWatch = true;
+            grid.skipDataWatch = true;
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
@@ -135,9 +135,10 @@ ng.RowFactory = function(grid, $scope) {
                         '_ng_hidden_': false,
                         children: [],
                         aggChildren: [],
-                        aggIndex: self.numberOfAggregates++,
+                        aggIndex: self.numberOfAggregates,
                         aggLabelFilter: g[NG_COLUMN].aggLabelFilter
                     }, 0);
+                    self.numberOfAggregates++;
                     //set the aggregate parent to the parent in the array that is one less deep.
                     agg.parent = self.parentCache[agg.depth - 1];
                     // if we have a parent, set the parent to not be collapsed and append the current agg to its children
@@ -177,23 +178,35 @@ ng.RowFactory = function(grid, $scope) {
                             width: 25,
                             sortable: false,
                             resizable: false,
-                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                            headerCellTemplate: '<div class="ngAggHeader"></div>'
                         },
                         isAggCol: true,
                         index: item.gDepth,
                         headerRowHeight: grid.config.headerRowHeight
                     }));
                 }
-                var col = cols.filter(function(c) { return c.field == group; })[0];
+                var col = cols.filter(function(c) {
+                    return c.field == group;
+                })[0];
                 var val = ng.utils.evalProperty(item, group);
-				val = val ? val.toString() : 'null';
-                if (!ptr[val]) ptr[val] = {};
-                if (!ptr[NG_FIELD]) ptr[NG_FIELD] = group;
-                if (!ptr[NG_DEPTH]) ptr[NG_DEPTH] = depth;
-                if (!ptr[NG_COLUMN]) ptr[NG_COLUMN] = col;
+                val = val ? val.toString() : 'null';
+                if (!ptr[val]) {
+                    ptr[val] = {};
+                }
+                if (!ptr[NG_FIELD]) {
+                    ptr[NG_FIELD] = group;
+                }
+                if (!ptr[NG_DEPTH]) {
+                    ptr[NG_DEPTH] = depth;
+                }
+                if (!ptr[NG_COLUMN]) {
+                    ptr[NG_COLUMN] = col;
+                }
                 ptr = ptr[val];
             });
-            if (!ptr.values) ptr.values = [];
+            if (!ptr.values) {
+                ptr.values = [];
+            }
             ptr.values.push(item);
         });
         grid.fixColumnIndexes();
