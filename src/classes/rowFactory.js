@@ -97,7 +97,6 @@ ng.RowFactory = function(grid, $scope) {
             rowArr.push(row);
         });
         grid.setRenderedRows(rowArr);
-        grid.refreshDomSizes();
     };
 
     self.renderedChangeNoGroups = function() {

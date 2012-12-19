@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/18/2012 18:13:49
+* Compiled At: 12/18/2012 18:34:01
 ***********************************************/
 
 (function(window) {
@@ -570,7 +570,7 @@ ngGridServices.factory('DomUtilityService', function() {
 
     domUtilityService.apply = function($scope) {
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
     };
     domUtilityService.ScrollH = 17; // default in IE, Chrome, & most browsers
@@ -1167,7 +1167,6 @@ ng.RowFactory = function(grid, $scope) {
             rowArr.push(row);
         });
         grid.setRenderedRows(rowArr);
-        grid.refreshDomSizes();
     };
 
     self.renderedChangeNoGroups = function() {
@@ -1470,7 +1469,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function(newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);

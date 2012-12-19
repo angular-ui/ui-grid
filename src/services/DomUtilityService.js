@@ -91,7 +91,7 @@ ngGridServices.factory('DomUtilityService', function() {
 
     domUtilityService.apply = function($scope) {
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
     };
     domUtilityService.ScrollH = 17; // default in IE, Chrome, & most browsers

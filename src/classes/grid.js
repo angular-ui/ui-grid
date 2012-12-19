@@ -184,7 +184,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function(newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);

@@ -2,7 +2,7 @@
 DO NOT USE THIS PLUGIN. IT IS ONLY AN EXAMPLE FOR INSTRUCTIONAL PURPOSES.
 */
 
-ngGridReorderable = function (options) {
+ngGridReorderable = function(options) {
     var defaults = {
         enableHeader: true,
         enableRow: true
@@ -13,7 +13,7 @@ ngGridReorderable = function (options) {
     self.myGrid = null;
 
     // The init method gets called during the ng-grid directive execution.
-    self.init = function (scope, grid, services) {
+    self.init = function(scope, grid, services) {
         // The directive passes in the grid scope and the grid object which we will want to save for manipulation later.
         self.$scope = scope;
         self.myGrid = grid;
@@ -22,11 +22,11 @@ ngGridReorderable = function (options) {
         self.assignEvents();
     };
     self.colToMove = undefined;
-	self.groupToMove = undefined;
-    self.assignEvents = function () {
+    self.groupToMove = undefined;
+    self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
-		self.myGrid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-		
+        self.myGrid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+
         if (self.config.enableHeader) {
             self.myGrid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver).on('drop', self.onHeaderDrop);
         }
@@ -36,16 +36,16 @@ ngGridReorderable = function (options) {
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
-    };	
-    
-    self.onGroupDragStart = function () {
+    };
+
+    self.onGroupDragStart = function() {
         // color the header so we know what we are moving
         if (self.groupToMove) {
             self.groupToMove.header.css('background-color', 'rgb(255, 255, 204)');
         }
-    };	
-    
-    self.onGroupDragStop = function () {
+    };
+
+    self.onGroupDragStop = function() {
         // Set the column to move header color back to normal
         if (self.groupToMove) {
             self.groupToMove.header.css('background-color', 'rgb(247,247,247)');
@@ -55,24 +55,24 @@ ngGridReorderable = function (options) {
     self.onGroupMouseDown = function(event) {
         var groupItem = $(event.srcElement);
         // Get the scope from the header container
-		if(groupItem[0].className != 'ngRemoveGroup'){
-			var groupItemScope = angular.element(groupItem).scope();
-			if (groupItemScope) {
-				// set draggable events
-				groupItem.attr('draggable', 'true');
-				groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
-				// Save the column for later.
-				self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
-			}
-		} else {
-			self.groupToMove = undefined;
-		}
+        if (groupItem[0].className != 'ngRemoveGroup') {
+            var groupItemScope = angular.element(groupItem).scope();
+            if (groupItemScope) {
+                // set draggable events
+                groupItem.attr('draggable', 'true');
+                groupItem.on('dragstart', self.onGroupDragStart).on('dragend', self.onGroupDragStop);
+                // Save the column for later.
+                self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
+            }
+        } else {
+            self.groupToMove = undefined;
+        }
     };
 
     self.onGroupDrop = function(event) {
         // clear out the colToMove object
         if (self.groupToMove) {
-			self.onGroupDragStop();
+            self.onGroupDragStop();
             // Get the closest header to where we dropped
             var groupContainer = $(event.srcElement).closest('.ngGroupElement');
             // Get the scope from the header.
@@ -83,26 +83,26 @@ ngGridReorderable = function (options) {
                 var groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
-                    if (self.groupToMove.index != groupScope.$index){
-						// Splice the columns
-						self.$scope.configGroups.splice(self.groupToMove.index, 1);
-						self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
-					}
+                    if (self.groupToMove.index != groupScope.$index) {
+                        // Splice the columns
+                        self.$scope.configGroups.splice(self.groupToMove.index, 1);
+                        self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+                    }
                 }
-            }			
-			self.groupToMove = undefined;
-        } else {	
-			self.onHeaderDragStop();
+            }
+            self.groupToMove = undefined;
+        } else {
+            self.onHeaderDragStop();
             if (self.$scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 self.$scope.configGroups.push(self.colToMove.col);
-            }			
-			self.colToMove = undefined;
+            }
+            self.colToMove = undefined;
         }
-        self.$scope.$apply();
+        self.$scope.$digest();
     };
-	
+
     //Header functions
-    self.onHeaderMouseDown = function (event) {
+    self.onHeaderMouseDown = function(event) {
         // Get the closest header container from where we clicked.
         var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
         // Get the scope from the header container
@@ -115,23 +115,25 @@ ngGridReorderable = function (options) {
             self.colToMove = { header: headerContainer, col: headerScope.col };
         }
     };
-    
-    self.onHeaderDragStart = function () {
+
+    self.onHeaderDragStart = function() {
         // color the header so we know what we are moving
         if (self.colToMove) {
             self.colToMove.header.css('background-color', 'rgb(255, 255, 204)');
         }
     };
-    
-    self.onHeaderDragStop = function () {
+
+    self.onHeaderDragStop = function() {
         // Set the column to move header color back to normal
         if (self.colToMove) {
             self.colToMove.header.css('background-color', 'rgb(234, 234, 234)');
         }
     };
 
-    self.onHeaderDrop = function (event) {
-        if (!self.colToMove) return;
+    self.onHeaderDrop = function(event) {
+        if (!self.colToMove) {
+            return;
+        }
         self.onHeaderDragStop();
         // Get the closest header to where we dropped
         var headerContainer = $(event.srcElement).closest('.ngHeaderSortColumn');
@@ -139,7 +141,9 @@ ngGridReorderable = function (options) {
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
             // If we have the same column, do nothing.
-            if (self.colToMove.col == headerScope.col) return;
+            if (self.colToMove.col == headerScope.col) {
+                return;
+            }
             // Splice the columns
             self.$scope.columns.splice(self.colToMove.col.index, 1);
             self.$scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
@@ -153,9 +157,9 @@ ngGridReorderable = function (options) {
             self.colToMove = undefined;
         }
     };
-    
+
     // Row functions
-    self.onRowMouseDown = function (event) {
+    self.onRowMouseDown = function(event) {
         // Get the closest row element from where we clicked.
         var targetRow = $(event.srcElement).closest('.ngRow');
         // Get the scope from the row element
@@ -168,7 +172,7 @@ ngGridReorderable = function (options) {
         }
     };
 
-    self.onRowDrop = function (event) {
+    self.onRowDrop = function(event) {
         // Get the closest row to where we dropped
         var targetRow = $(event.srcElement).closest('.ngRow');
         // Get the scope from the row element.
@@ -176,7 +180,9 @@ ngGridReorderable = function (options) {
         if (rowScope) {
             // If we have the same Row, do nothing.
             var prevRow = self.services.GridService.eventStorage.rowToMove;
-            if (prevRow.scope.row == rowScope.row) return;
+            if (prevRow.scope.row == rowScope.row) {
+                return;
+            }
             // Splice the Rows via the actual datasource
             var i = self.myGrid.sortedData.indexOf(prevRow.scope.row.entity);
             var j = self.myGrid.sortedData.indexOf(rowScope.row.entity);

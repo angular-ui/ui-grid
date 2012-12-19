@@ -27,11 +27,11 @@ function userController($scope) {
             } else {
                 data = largeLoad();
             }
-            var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
-            $scope.myData = pagedData;
+            //var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
+            $scope.myData = data;
             $scope.pagingOptions.totalServerItems = data.length;
             if (!$scope.$$phase) {
-                $scope.$digest();
+                $scope.$apply();
             }
             self.gettingData = false;
         }, 100);
