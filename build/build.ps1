@@ -2,7 +2,7 @@
 $CurrentDir = (Get-Location).Path;
 $OutPutFile = $CurrentDir + "\ng-grid.debug.js";
 $TempFile = $OutPutFile + ".temp";
-$FinalFile = "..\ng-grid-1.4.0.debug.js";
+$FinalFile = "..\ng-grid-1.4.1.debug.js";
 $BuildOrder = $CurrentDir + "\build-order.txt";
 $commentStart = "<!--";
 $commentEnd = "-->";
@@ -17,7 +17,8 @@ Add-Content $TempFile "* Authors: https://github.com/angular-ui/ng-grid/blob/mas
 Add-Content $TempFile "* License: MIT (http://www.opensource.org/licenses/mit-license.php)";
 Add-Content $TempFile "* Compiled At: $compileTime";
 Add-Content $TempFile "***********************************************/`n"
-Add-Content $TempFile "(function(window, undefined){";
+Add-Content $TempFile "(function(window) {";
+Add-Content $TempFile "'use strict';";
 Foreach ($file in $files){
 	# Wrap each file output in a new line
 	Write-Host "Building... $file";
