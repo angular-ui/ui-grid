@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/18/2012 18:34:01
+* Compiled At: 12/18/2012 18:41:43
 ***********************************************/
 
 (function(window) {
@@ -1469,7 +1469,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function(newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
-            $scope.$digest();
+            $scope.$apply();
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
