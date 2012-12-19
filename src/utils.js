@@ -97,9 +97,6 @@ ng.utils = {
         }
         return retnode;
     },
-    getTemplatePromise: function(t) {
-        return ng.$http.get(t);
-    },
     newId: (function() {
         var seedId = new Date().getTime();
         return function() {

@@ -15,13 +15,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        if ($scope.rowTemplate.then) {
-                            $scope.rowTemplate.then(function(resp) {
-                                iElement.append($compile(resp.data)($scope));
-                            });
-                        } else {
-                            iElement.append($compile($scope.rowTemplate)($scope));
-                        }
+                        iElement.append($compile($scope.rowTemplate)($scope));
                     }
                 }
             };

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/18/2012 18:41:43
+* Compiled At: 12/18/2012 19:00:19
 ***********************************************/
 
 (function(window) {
@@ -170,9 +170,6 @@ ng.utils = {
             }
         }
         return retnode;
-    },
-    getTemplatePromise: function(t) {
-        return ng.$http.get(t);
     },
     newId: (function() {
         var seedId = new Date().getTime();
@@ -945,10 +942,18 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
+        self.cellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.cellTemplate,
+            async: false
+        }).responseText;
     }
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = ng.utils.getTemplatePromise(colDef.headerCellTemplate);
+        self.headerCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.headerCellTemplate,
+            async: false
+        }).responseText;
     }
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
@@ -1469,7 +1474,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function(newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
@@ -1762,12 +1767,22 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
+
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
-        $scope.rowTemplate = ng.utils.getTemplatePromise(self.config.rowTemplate);
+        $scope.rowTemplate = $.ajax({
+            type: "GET",
+            url: self.config.rowTemplate,
+            async: false
+        }).responseText;
     }
     if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
-        $scope.headerRowTemplate = ng.utils.getTemplates(self.config.headerRowTemplate);
+        $scope.headerRowTemplate = $.ajax({
+            type: "GET",
+            url: self.config.headerRowTemplate,
+            async: false
+        }).responseText;
     }
+
     //scope funcs
     $scope.visibleColumns = function() {
         return $scope.columns.filter(function(col) {
@@ -2150,13 +2165,12 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
 /***********************************************
 * FILE: ..\src\directives\ng-grid.js
 ***********************************************/
-ngGridDirectives.directive('ngGrid', ['$compile', '$http', '$filter', 'SortService', 'DomUtilityService', function($compile, $http, $filter, sortService, domUtilityService) {
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'DomUtilityService', function($compile, $filter, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function() {
             return {
                 pre: function($scope, iElement, iAttrs) {
-                    window.ng.$http = $http;
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
@@ -2240,13 +2254,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        if ($scope.rowTemplate.then) {
-                            $scope.rowTemplate.then(function(resp) {
-                                iElement.append($compile(resp.data)($scope));
-                            });
-                        } else {
-                            iElement.append($compile($scope.rowTemplate)($scope));
-                        }
+                        iElement.append($compile($scope.rowTemplate)($scope));
                     }
                 }
             };
@@ -2264,13 +2272,7 @@ ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    if ($scope.col.cellTemplate.then) {
-                        $scope.col.cellTemplate.then(function(resp) {
-                            iElement.append($compile(resp.data)($scope));
-                        });
-                    } else {
-                        iElement.append($compile($scope.col.cellTemplate)($scope));
-                    }
+                    iElement.append($compile($scope.col.cellTemplate)($scope));
                 }
             };
         }
@@ -2288,13 +2290,7 @@ ngGridDirectives.directive('ngHeaderRow', ['$compile', function($compile) {
             return {
                 pre: function($scope, iElement) {
                     if (iElement.children().length === 0) {
-                        if ($scope.headerRowTemplate.then) {
-                            $scope.headerRowTemplate.then(function(resp) {
-                                iElement.append($compile(resp.data)($scope));
-                            });
-                        } else {
-                            iElement.append($compile($scope.headerRowTemplate)($scope));
-                        }
+                       iElement.append($compile($scope.headerRowTemplate)($scope));
                     }
                 }
             };
@@ -2312,13 +2308,7 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    if ($scope.col.headerCellTemplate.then) {
-                        $scope.col.headerCellTemplate.then(function(resp) {
-                            iElement.append($compile(resp.data)($scope));
-                        });
-                    } else {
-                        iElement.append($compile($scope.col.headerCellTemplate)($scope));
-                    }
+                    iElement.append($compile($scope.col.headerCellTemplate)($scope));
                 }
             };
         }

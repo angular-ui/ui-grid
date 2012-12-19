@@ -33,10 +33,18 @@
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        self.cellTemplate = ng.utils.getTemplatePromise(colDef.cellTemplate);
+        self.cellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.cellTemplate,
+            async: false
+        }).responseText;
     }
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = ng.utils.getTemplatePromise(colDef.headerCellTemplate);
+        self.headerCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.headerCellTemplate,
+            async: false
+        }).responseText;
     }
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";

@@ -184,7 +184,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function(newRows) {
         $scope.renderedRows = newRows;
         if (!$scope.$$phase) {
-            $scope.$apply();
+            $scope.$digest();
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
@@ -477,12 +477,22 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
+
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
-        $scope.rowTemplate = ng.utils.getTemplatePromise(self.config.rowTemplate);
+        $scope.rowTemplate = $.ajax({
+            type: "GET",
+            url: self.config.rowTemplate,
+            async: false
+        }).responseText;
     }
     if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
-        $scope.headerRowTemplate = ng.utils.getTemplates(self.config.headerRowTemplate);
+        $scope.headerRowTemplate = $.ajax({
+            type: "GET",
+            url: self.config.headerRowTemplate,
+            async: false
+        }).responseText;
     }
+
     //scope funcs
     $scope.visibleColumns = function() {
         return $scope.columns.filter(function(col) {
