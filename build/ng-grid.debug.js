@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/20/2012 15:10:56
+* Compiled At: 12/20/2012 15:53:54
 ***********************************************/
 
 (function(window) {
@@ -1107,7 +1107,6 @@ ng.RowFactory = function(grid, $scope) {
     self.buildEntityRow = function(entity, rowIndex) {
         var row = self.rowCache[rowIndex]; // first check to see if we've already built it
         if (!row) {
-            grid.skipDataWatch = true;
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
@@ -2105,7 +2104,6 @@ ng.SelectionService = function(grid) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
-        grid.skipDataWatch = true;
         rowItem.selected = isSelected;
         rowItem.entity[SELECTED_PROP] = isSelected;
         if (!isSelected) {
@@ -2194,10 +2192,6 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function(a) {
-                            if (grid.skipDataWatch) {
-                                grid.skipDataWatch = false;
-                                return;
-                            }
                             grid.sortedData = a || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -2214,7 +2208,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                        }, true);
+                        });
                     }
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     grid.footerController = new ng.Footer($scope, grid);

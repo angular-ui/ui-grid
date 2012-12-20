@@ -57,7 +57,6 @@ ng.SelectionService = function(grid) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
-        grid.skipDataWatch = true;
         rowItem.selected = isSelected;
         rowItem.entity[SELECTED_PROP] = isSelected;
         if (!isSelected) {
