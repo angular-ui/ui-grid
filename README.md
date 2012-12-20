@@ -4,7 +4,7 @@ __Contributors:__
 
 ng-grid Team:
 * [Tim Sweet](http://ornerydevelopment.blogspot.com/)
-* [Jonathon Ricaurte](https://github.com/xcrico)
+* [Jonathon Ricaurte](https://github.com/jonricaurte)
  
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
