@@ -20,6 +20,7 @@
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
+    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.sortable;
     if (config.enableSort) {
         self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }

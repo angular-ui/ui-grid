@@ -236,6 +236,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     width: self.elementDims.rowSelectedCellW,
                     sortable: false,
                     resizable: false,
+                    groupable: false,
                     headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
                     cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
                 },
@@ -519,7 +520,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
-        if (self.sortedData.length < 1) {
+        if (self.sortedData.length < 1 || !col.groupable) {
             return;
         }
         var indx = $scope.configGroups.indexOf(col);

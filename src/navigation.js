@@ -25,9 +25,9 @@ ng.moveSelectionHandler = function($scope, grid, evt) {
     }
     grid.selectionService.ChangeSelection(items[index], evt);
     if (index > items.length - EXCESS_ROWS) {
-        grid.$viewport.scrollTop(grid.$viewport.scrollTop() + (grid.config.rowHeight * EXCESS_ROWS));
+        grid.$viewport.scrollTop(grid.$viewport.scrollTop() + (grid.config.rowHeight * 2));
     } else if (index < EXCESS_ROWS) {
-        grid.$viewport.scrollTop(grid.$viewport.scrollTop() - (grid.config.rowHeight * EXCESS_ROWS));
+        grid.$viewport.scrollTop(grid.$viewport.scrollTop() - (grid.config.rowHeight * 2));
     }
     if (!$scope.$$phase) {
         $scope.$digest();

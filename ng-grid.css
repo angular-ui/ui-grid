@@ -1,4 +1,4 @@
-
+﻿
 /******** Grid Global ********/
 .nglabel {
     display: block;
@@ -122,6 +122,8 @@
 .ngHeaderCell{
 	border-left: 1px solid rgb(212,212,212);
     position: absolute;
+    top: 0; 
+    bottom: 0; 
 }
 
 .ngHeaderCell:first-child{
@@ -213,6 +215,8 @@
     overflow: hidden; 
     position: absolute;
 	border-left: 1px solid rgb(212,212,212);
+    top: 0; 
+    bottom: 0; 
 }
 
 .ngCell:first-child{

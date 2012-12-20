@@ -28,7 +28,7 @@
                 <ul class="ngColList">
                     <li class="ngColListItem" ng-repeat="col in columns | ngColumns">
                         <label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
-						<a title="Group By" ng-class="col.groupedByClass()" ng-hide="col.field == '\u2714'" ng-click="groupBy(col)"></a>
+						<a title="Group By" ng-class="col.groupedByClass()" ng-show="col.groupable" ng-click="groupBy(col)"></a>
 						<span class="ngGroupingNumber" ng-show="col.groupIndex > 0">{{col.groupIndex}}</span>          
                     </li>
                 </ul>
@@ -37,7 +37,7 @@
     </div>
     <div class="ngViewport" ng-class="{'ui-widget-content': jqueryUITheme}" ng-style="viewportStyle()">
         <div class="ngCanvas" ng-style="canvasStyle()">
-            <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="{'selected': row.selected, 'ui-widget-content': jqueryUITheme}" ng-class-odd="row.alternatingRowClass()" ng-class-even="row.alternatingRowClass()" ng-row></div>
+            <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="row.alternatingRowClass()" ng-row></div>
         </div>
     </div>
 <div class="ngFooterPanel" ng-class="{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}" ng-style="footerStyle()">

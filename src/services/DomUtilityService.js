@@ -69,9 +69,7 @@ ngGridServices.factory('DomUtilityService', function() {
         var trw = $scope.totalRowWidth();
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
-            "." + gridId + " .ngCell { height: " + rowHeight + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderCell { top: 0; bottom: 0; }" +
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.scrollH + 2) + "px}";
         angular.forEach(cols, function(col, i) {
             css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; right: " + (trw - sumWidth - col.width) + "px; height: " + rowHeight + "px }" +
