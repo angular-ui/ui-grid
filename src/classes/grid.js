@@ -545,7 +545,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if ($scope.configGroups.length === 0) {
             self.fixColumnIndexes();
-            domUtilityService.apply($scope);
+            domUtilityService.digest($scope);
         }
     };
     $scope.totalRowWidth = function() {

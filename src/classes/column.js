@@ -108,7 +108,7 @@
         $(document).off('mousemove');
         $(document).off('mouseup');
         event.target.parentElement.style.cursor = 'default';
-        domUtilityService.apply($scope);
+        domUtilityService.digest($scope);
         return false;
     };
 };

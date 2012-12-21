@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/20/2012 17:25:17
+* Compiled At: 12/21/2012 07:00:34
 ***********************************************/
 
 (function(window) {
@@ -527,7 +527,7 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
     };
     domUtilityService.numberOfGrids = 0;
-    domUtilityService.BuildStyles = function($scope, grid, apply) {
+    domUtilityService.BuildStyles = function($scope, grid, digest) {
         var rowHeight = grid.config.rowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
@@ -558,12 +558,12 @@ ngGridServices.factory('DomUtilityService', function() {
             $style[0].appendChild(document.createTextNode(css));
         }
         grid.$styleSheet = $style;
-        if (apply) {
-            domUtilityService.apply($scope);
+        if (digest) {
+            domUtilityService.digest($scope);
         }
     };
 
-    domUtilityService.apply = function($scope) {
+    domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {
             $scope.$digest();
         }
@@ -1015,7 +1015,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         $(document).off('mousemove');
         $(document).off('mouseup');
         event.target.parentElement.style.cursor = 'default';
-        domUtilityService.apply($scope);
+        domUtilityService.digest($scope);
         return false;
     };
 };
@@ -1835,7 +1835,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if ($scope.configGroups.length === 0) {
             self.fixColumnIndexes();
-            domUtilityService.apply($scope);
+            domUtilityService.digest($scope);
         }
     };
     $scope.totalRowWidth = function() {
@@ -2191,9 +2191,12 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             grid.eventProvider.assignEvents();
                         });
                     }
+                    
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data + '.length', function () {
+                        var prevlength = 0;
+                        var dataWatcher = function (a) {
+                            prevlength = a.length;
                             grid.sortedData = $scope.$eval(options.data) || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -2209,6 +2212,12 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 }
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
+                            }
+                        };
+                        $scope.$parent.$watch(options.data, dataWatcher);
+                        $scope.$parent.$watch(options.data + '.length', function(a) {
+                            if (a != prevlength) {
+                                dataWatcher($scope.$eval(options.data));
                             }
                         });
                     }

@@ -51,7 +51,7 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
     };
     domUtilityService.numberOfGrids = 0;
-    domUtilityService.BuildStyles = function($scope, grid, apply) {
+    domUtilityService.BuildStyles = function($scope, grid, digest) {
         var rowHeight = grid.config.rowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
@@ -82,12 +82,12 @@ ngGridServices.factory('DomUtilityService', function() {
             $style[0].appendChild(document.createTextNode(css));
         }
         grid.$styleSheet = $style;
-        if (apply) {
-            domUtilityService.apply($scope);
+        if (digest) {
+            domUtilityService.digest($scope);
         }
     };
 
-    domUtilityService.apply = function($scope) {
+    domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {
             $scope.$digest();
         }

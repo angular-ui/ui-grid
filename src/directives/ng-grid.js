@@ -19,9 +19,12 @@
                             grid.eventProvider.assignEvents();
                         });
                     }
+                    
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data + '.length', function () {
+                        var prevlength = 0;
+                        var dataWatcher = function (a) {
+                            prevlength = a.length;
                             grid.sortedData = $scope.$eval(options.data) || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
@@ -37,6 +40,12 @@
                                 }
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
+                            }
+                        };
+                        $scope.$parent.$watch(options.data, dataWatcher);
+                        $scope.$parent.$watch(options.data + '.length', function(a) {
+                            if (a != prevlength) {
+                                dataWatcher($scope.$eval(options.data));
                             }
                         });
                     }
