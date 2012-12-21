@@ -30,6 +30,12 @@
 		"plunker": "Link"
 	},
 	{
+		"id": "displayFooter",
+		"defaultValue": "true",
+		"definition": "Show or hide the footer alltogether the footer is enabled by default",
+		"plunker": "Link"
+	},
+    {
 		"id": "displaySelectionCheckbox",
 		"defaultValue": "true",
 		"definition": "Row selection check boxes appear as the first column.",
@@ -39,6 +45,12 @@
 		"id": "enableColumnResize",
 		"defaultValue": "true",
 		"definition": "Enable or disable resizing of columns",
+		"plunker": "Link"
+	},
+    {	
+		"id": "enableColumnReordering",
+		"defaultValue": "true",
+		"definition": "Enable or disable reordering of columns",
 		"plunker": "Link"
 	},
 	{	
@@ -74,7 +86,7 @@
 	{
 		"id":"footerVisible",
 		"defaultValue": "true",
-		"definition": "Show or hide the footer alltogether the footer is enabled by default",
+		"definition": "DEPRICATED: See displayFooter.",
 		"plunker": "Link"
 	},
 	{

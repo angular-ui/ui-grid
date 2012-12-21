@@ -35,6 +35,12 @@
 		"definition": "The string name of the property in your data model you want that column to represent. Can also be a property path on your data model. 'foo.bar.myField', 'Name.First', etc..",
 		"plunker": "Link"
 	},
+    {	
+		"id": "groupable",
+		"defaultValue": "true",
+		"definition": "wether or not the user is allowed to gruop the column",
+		"plunker": "Link"
+	},
 	{	
 		"id": "headerCellTemplate",
 		"defaultValue": "''",

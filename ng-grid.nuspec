@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ng-grid</id>
+    <version>1.5.0</version>
+    <authors>Tim.Sweet</authors>
+    <owners>Tim.Sweet</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://angular-ui.github.com/ng-grid/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>angular-ui datagrid</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>angularjs angular angular-ui datagrid kogrid ng-grid nggrid</tags>
+    <dependencies>
+      <dependency id="jQuery" version="1.6.3" />
+      <dependency id="angularjs" version="1.0.1" />
+    </dependencies>
+  </metadata>
+</package>
