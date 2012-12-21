@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/20/2012 17:11:54
+* Compiled At: 12/20/2012 17:23:45
 ***********************************************/
 
 (function(window) {
@@ -2207,7 +2207,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                         return;
                                     }
                                 }
-                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
+                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
                         });

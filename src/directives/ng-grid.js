@@ -35,7 +35,7 @@
                                         return;
                                     }
                                 }
-                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toUpperCase();
+                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
                         });
