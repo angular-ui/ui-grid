@@ -30,7 +30,7 @@ ng.moveSelectionHandler = function($scope, grid, evt) {
         grid.$viewport.scrollTop(grid.$viewport.scrollTop() - (grid.config.rowHeight * 2));
     }
     if (!$scope.$$phase) {
-        $scope.$digest();
+        $scope.$parent.$digest();
     }
     return false;
 };

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/21/2012 15:29:37
+* Compiled At: 12/21/2012 15:55:15
 ***********************************************/
 
 (function(window) {
@@ -67,7 +67,7 @@ ng.moveSelectionHandler = function($scope, grid, evt) {
         grid.$viewport.scrollTop(grid.$viewport.scrollTop() - (grid.config.rowHeight * 2));
     }
     if (!$scope.$$phase) {
-        $scope.$digest();
+        $scope.$parent.$digest();
     }
     return false;
 };
