@@ -88,10 +88,8 @@ function userController($scope) {
         showGroupPanel: true,
         columnDefs: 'myDefs2'
     };
-    $scope.changeColumns = function () {
-        $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
-        { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
-        { field: 'birthday', cellFilter: 'date', resizable: false }];;
+    $scope.changeData = function () {
+        $scope.myData2.pop();
     };
 
 	$scope.modifyData = function(){

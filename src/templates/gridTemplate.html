@@ -43,7 +43,7 @@
 <div class="ngFooterPanel" ng-class="{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}" ng-style="footerStyle()">
     <div class="ngTotalSelectContainer" ng-show="footerVisible">
         <div class="ngFooterTotalItems" ng-class="{'ngNoMultiSelect': !multiSelect}" >
-            <span class="ngLabel">Total Items: {{maxRows}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>
+            <span class="ngLabel">Total Items: {{maxRows()}}</span><span ng-show="filterText.length > 0" class="ngLabel">(Showing Items: {{totalFilteredItemsLength()}})</span>
         </div>
         <div class="ngFooterSelectedItems" ng-show="multiSelect">
             <span class="ngLabel">Selected Items: {{selectedItems.length}}</span>

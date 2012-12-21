@@ -99,7 +99,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             //pageSize: currently selected page size. 
             pageSize: 250,
             //totalServerItems: Total items are on the server. 
-            totalServerItems: undefined,
+            totalServerItems: 0,
             //currentPage: the uhm... current page.
             currentPage: 1
         },
@@ -507,7 +507,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.selectionService.toggleSelectAll(a);
     };
     $scope.totalFilteredItemsLength = function() {
-        return Math.max(self.filteredData.length);
+        return self.filteredData.length;
     };
     $scope.showGroupPanel = function() {
         return self.config.showGroupPanel;
