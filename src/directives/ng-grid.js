@@ -24,7 +24,7 @@
                     if (typeof options.data == "string") {
                         var prevlength = 0;
                         var dataWatcher = function (a) {
-                            prevlength = a.length;
+                            prevlength = a ? a.length:0;
                             grid.sortedData = $scope.$eval(options.data) || [];
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
