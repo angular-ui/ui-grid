@@ -60,10 +60,13 @@ function userController($scope) {
         { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
         { field: 'UPC', displayName: 'Bar Code' }];
+    self.selectionchanging = function (a, b) {
+        return true;
+    };
     $scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.mySelections2,
-        multiSelect: false,
+        beforeSelectionChange: self.selectionchanging,
         canSelectRows: true,
         enableRowReordering: true,
         showGroupPanel: true,
@@ -82,6 +85,7 @@ function userController($scope) {
     $scope.gridOptions2 = {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
+        beforeSelectionChange: self.selectionchanging,
         multiSelect: false,
 		canSelectRows: true,
         enableRowReordering: true,
