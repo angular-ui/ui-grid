@@ -62,6 +62,7 @@ function userController($scope) {
         { field: 'UPC', displayName: 'Bar Code' }];
     $scope.gridOptions = {
         data: 'myData',
+        i18n: 'ge',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
         canSelectRows: true,

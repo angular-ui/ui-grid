@@ -103,6 +103,12 @@ ng.utils = {
             return seedId += 1;
         };
     })(),
+    seti18n: function($scope, language) {
+        var $langPack = window.ngGrid.i18n[language];
+        for (var label in $langPack) {
+            $scope.i18n[label] = $langPack[label];
+        }
+    },
     
     // we copy KO's ie detection here bc it isn't exported in the min versions of KO
     // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 

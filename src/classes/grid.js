@@ -139,7 +139,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         tabIndex: -1,
         /*Prevents the internal sorting from executing. 
         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
-        useExternalSorting: false
+        useExternalSorting: false,
+        
+        /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
+        i18n: 'en'
     },
         self = this;
 
@@ -478,6 +481,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
+    //i18n support
+    $scope.i18n = {};
+    ng.utils.seti18n($scope, self.config.i18n);
 
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
         $scope.rowTemplate = $.ajax({
