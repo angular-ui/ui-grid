@@ -62,7 +62,6 @@ function userController($scope) {
         { field: 'UPC', displayName: 'Bar Code' }];
     $scope.gridOptions = {
         data: 'myData',
-        i18n: 'ge',
         selectedItems: $scope.mySelections2,
         multiSelect: false,
         canSelectRows: true,
@@ -91,6 +90,9 @@ function userController($scope) {
     };
     $scope.changeData = function () {
         $scope.myData2.pop();
+    };
+    $scope.changeLang = function () {
+        $scope.gridOptions.i18n = 'ge';
     };
     $scope.spliceData = function () {
         var temp = $scope.myData2;

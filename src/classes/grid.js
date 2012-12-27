@@ -373,6 +373,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             domUtilityService.BuildStyles($scope, self, true);
             $scope.$emit('ngGridEventColumns', a);
         }, true);
+        $scope.$watch(function() {
+            return options.i18n;
+        }, function(newLang) {
+            ng.utils.seti18n($scope, newLang);
+        });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo) {
             self.config.sortInfo.column = $scope.columns.filter(function(c) {
