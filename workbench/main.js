@@ -27,9 +27,9 @@ function userController($scope) {
             } else {
                 data = largeLoad();
             }
-            //var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
-            $scope.myData = data;
+            var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.pagingOptions.totalServerItems = data.length;
+            $scope.myData = pagedData;
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -45,7 +45,7 @@ function userController($scope) {
     }, true);
     $scope.$watch('filterOptions', function () {
         if (!self.foInit || self.gettingData) {
-            self.poInit = true;
+            self.foInit = true;
             return;
         }
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
@@ -67,6 +67,8 @@ function userController($scope) {
         data: 'myData',
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
+        pagingOptions: $scope.pagingOptions,
+        enablePaging: true,
         canSelectRows: true,
         enableRowReordering: true,
         showGroupPanel: true,
