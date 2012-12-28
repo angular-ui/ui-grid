@@ -41,8 +41,16 @@
         } else {
             return grid.sortedData.length < 1;
         }
-    };
 
+    };
+    $scope.cantPageToLast = function() {
+        if ($scope.pagingOptions.totalServerItems > 0) {
+            return $scope.cantPageForward();
+        } else {
+            return true;
+        }
+    };
+    
     $scope.cantPageBackward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         return !(curPage > 1);
