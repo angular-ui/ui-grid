@@ -92,7 +92,7 @@
         } else if (self.colToMove) {
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
-                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
+                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription ng-binding') {
                     $scope.groupBy(self.colToMove.col);
                 } else {
                     groupScope = angular.element(groupContainer).scope();

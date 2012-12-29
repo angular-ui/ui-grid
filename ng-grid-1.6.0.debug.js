@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/28/2012 21:04:03
+* Compiled At: 12/29/2012 09:24:15
 ***********************************************/
 
 (function(window) {
@@ -784,7 +784,7 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
         } else if (self.colToMove) {
             if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
-                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription') {
+                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription ng-binding') {
                     $scope.groupBy(self.colToMove.col);
                 } else {
                     groupScope = angular.element(groupContainer).scope();
