@@ -3,7 +3,7 @@
         searchConditions = [];
     self.extFilter = grid.config.filterOptions.useExternalFilter;
     $scope.showFilter = grid.config.showFilter;
-    $scope.filterText = grid.config.filterOptions.filterText;
+    $scope.filterText = '';
 
     self.fieldMap = {};
 
@@ -86,12 +86,16 @@
             }
         });
     };
-    $scope.$watch('filterText', function(a) {
-        if (!self.extFilter) {
+	$scope.$watch(grid.config.filterOptions.filterText, function(a){
+		$scope.filterText = a;
+	});
+	$scope.$watch('filterText', function(a){
+		if(!self.extFilter){
+			$scope.$emit('filterChanged', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+	});
     if (!self.extFilter) {
         $scope.$watch('columns', function(a) {
             angular.forEach(a, function(col) {

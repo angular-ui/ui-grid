@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/27/2012 16:39:37
+* Compiled At: 12/28/2012 21:04:03
 ***********************************************/
 
 (function(window) {
@@ -1980,7 +1980,7 @@ ng.SearchProvider = function($scope, grid, $filter) {
         searchConditions = [];
     self.extFilter = grid.config.filterOptions.useExternalFilter;
     $scope.showFilter = grid.config.showFilter;
-    $scope.filterText = grid.config.filterOptions.filterText;
+    $scope.filterText = '';
 
     self.fieldMap = {};
 
@@ -2063,12 +2063,16 @@ ng.SearchProvider = function($scope, grid, $filter) {
             }
         });
     };
-    $scope.$watch('filterText', function(a) {
-        if (!self.extFilter) {
+	$scope.$watch(grid.config.filterOptions.filterText, function(a){
+		$scope.filterText = a;
+	});
+	$scope.$watch('filterText', function(a){
+		if(!self.extFilter){
+			$scope.$emit('filterChanged', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+	});
     if (!self.extFilter) {
         $scope.$watch('columns', function(a) {
             angular.forEach(a, function(col) {

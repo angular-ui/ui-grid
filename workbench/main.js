@@ -120,5 +120,16 @@ function userController($scope) {
 	$scope.modifyData = function(){
 		$scope.myData2[0].Vendor = "HELLO";
 	};
-    
+	
+	$scope.filteringText = '';
+    $scope.gridOptions3 = {
+        data: 'myData2',
+        multiSelect: false,
+		filterOptions: {filterText:'filteringText', useExternalFilter: false},
+        columnDefs: 'myDefs2'
+    };
+	
+	$scope.$on('filterChanged', function(evt, text){
+		$scope.filteringText = text;
+	});
 };
