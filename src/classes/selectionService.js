@@ -71,19 +71,25 @@ ng.SelectionService = function(grid) {
 
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    self.toggleSelectAll = function(checkAll) {
-        var selectedlength = self.selectedItems.length;
-        if (selectedlength > 0) {
-            self.selectedItems.splice(0, selectedlength);
-        }
-        angular.forEach(grid.filteredData, function(item) {
-            item[SELECTED_PROP] = checkAll;
-            if (checkAll) {
-                self.selectedItems.push(item);
+    self.toggleSelectAll = function (checkAll) {
+        angular.forEach(grid.filteredData, function(item, i) {
+            grid.rowFactory.buildEntityRow(item, i);
+        });
+        if (grid.config.beforeSelectionChange(grid.rowFactory.rowCache)) {
+            var selectedlength = self.selectedItems.length;
+            if (selectedlength > 0) {
+                self.selectedItems.splice(0, selectedlength);
             }
-        });
-        angular.forEach(self.rowFactory.rowCache, function(row) {
-            row.selected = checkAll;
-        });
+            angular.forEach(grid.filteredData, function (item) {
+                item[SELECTED_PROP] = checkAll;
+                if (checkAll) {
+                    self.selectedItems.push(item);
+                }
+            });
+            angular.forEach(self.rowFactory.rowCache, function (row) {
+                row.selected = checkAll;
+            });
+            grid.config.afterSelectionChange(grid.rowFactory.rowCache);
+        }
     };
 };

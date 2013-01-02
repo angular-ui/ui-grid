@@ -13,7 +13,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.5.0
+version 1.6.0
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
@@ -65,6 +65,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 [Examples](http://angular-ui.github.com/ng-grid/#/examples)
 
 ##Change Log##
+* __2012-12-27__ - Version 1.6.0 - Adding i18n support and support for different angularjs interpolation symbols (requires building from source).
 * __2012-12-20__ - Version 1.5.0 - Modifying the way we watch for array changes. Added groupable column definition option. Bugfixes for #58, #59.
 * __2012-12-18__ - Version 1.4.1 - jslint reformat, minor bugfixes, performance improvements while keydown navigating, adding "use strict" to script.
 * __2012-12-12__ - Version 1.4.0 - Massive improvements to search thanks to [iNeedFat](https://github.com/ineedfat)!

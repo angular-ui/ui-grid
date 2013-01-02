@@ -12,7 +12,11 @@
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
+        if ($scope.pagingOptions.totalServerItems > 0) {
+            $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
+        } else {
+            $scope.pagingOptions.currentPage++;
+        }
     };
 
     $scope.pageBackward = function() {
@@ -32,9 +36,21 @@
     $scope.cantPageForward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         var maxPages = $scope.maxPages();
-        return !(curPage < maxPages);
-    };
+        if ($scope.pagingOptions.totalServerItems > 0) {
+            return !(curPage < maxPages);
+        } else {
+            return grid.sortedData.length < 1;
+        }
 
+    };
+    $scope.cantPageToLast = function() {
+        if ($scope.pagingOptions.totalServerItems > 0) {
+            return $scope.cantPageForward();
+        } else {
+            return true;
+        }
+    };
+    
     $scope.cantPageBackward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         return !(curPage > 1);
