@@ -25,7 +25,8 @@
 								if(pVal != null){ 								
 									var result;
 									if(typeof f == 'function'){
-										 result = condition.regex.test(f(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString()));
+										var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
+										result = condition.regex.test(filterRes);
 									} else {
 										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString())
 									}
@@ -47,7 +48,8 @@
 					if(value == null) return false;
 					var result;
 					if(typeof filter == 'function'){
-						 result = condition.regex.test(filter(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString()));
+						var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
+						result = condition.regex.test(filterResults);
 					} else {
 						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString())
 					}

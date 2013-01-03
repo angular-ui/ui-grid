@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/02/2013 17:05:52
+* Compiled At: 01/02/2013 17:28:59
 ***********************************************/
 
 (function(window) {
@@ -2002,7 +2002,8 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 								if(pVal != null){ 								
 									var result;
 									if(typeof f == 'function'){
-										 result = condition.regex.test(f(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString()));
+										var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
+										result = condition.regex.test(filterRes);
 									} else {
 										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString())
 									}
@@ -2024,7 +2025,8 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 					if(value == null) return false;
 					var result;
 					if(typeof filter == 'function'){
-						 result = condition.regex.test(filter(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString()));
+						var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
+						result = condition.regex.test(filterResults);
 					} else {
 						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString())
 					}
