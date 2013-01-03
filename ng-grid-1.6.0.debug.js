@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/02/2013 14:48:15
+* Compiled At: 01/02/2013 17:05:52
 ***********************************************/
 
 (function(window) {
@@ -1999,9 +1999,17 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                                 if (!c) continue;
                                 var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
-                                if (pVal && (typeof f === 'function' ? condition.regex.test(f(pVal).toString()) : condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString()))) {
-                                    return true;
-                                }
+								if(pVal != null){ 								
+									var result;
+									if(typeof f == 'function'){
+										 result = condition.regex.test(f(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString()));
+									} else {
+										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString())
+									}
+									if (pVal &&  result) {
+										return true;
+									}
+								}
                             }
                         }
                         return false;
@@ -2012,10 +2020,17 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                         return false;
                     }
                     var filter = col.cellFilter ? $filter(col.cellFilter) : null;
-                    var value = item[condition.column] || item[col.field];
-                    if (!value || !(typeof filter == 'function' ? condition.regex.test(filter(value).toString()) : condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString()))) {
-                        return false;
-                    }
+                    var value = item[condition.column] || item[col.field.split('.')[0]];                  
+					if(value == null) return false;
+					var result;
+					if(typeof filter == 'function'){
+						 result = condition.regex.test(filter(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString()));
+					} else {
+						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString())
+					}
+					if (!value || !result) {
+						return false;
+					}				
                 }
                 return true;
             });

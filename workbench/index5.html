@@ -13,7 +13,12 @@
     <script type="text/javascript" src="../build/ng-grid.debug.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script>
-        angular.module('myApp',['ngGrid']);
+        angular.module('myApp',['ngGrid']).filter('branding', function() {
+			return function(input) {
+				return input == 'NIKE' ? 'ADIDAS' : input;
+			};
+		});;
+		
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
