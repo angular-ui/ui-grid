@@ -9,36 +9,69 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
         <script type="text/javascript" src="../ng-grid-1.6.0.debug.js"></script>
         <script type="text/javascript" src="ng-grid-csv-export.js"></script>
+        <script type="text/javascript" src="ng-grid-flexible-height.js"></script>
         <style type="text/css">
-          .gridStyle {
-              border: 1px solid rgb(212,212,212);
-              width: 500px;
-              height: 300px
+          .gridStyle 
+            { border: 1px solid rgb(212,212,212)
+            ; height: 1400px
+            ; width: 80%
           }
         </style>
         <script type="text/javascript">
             // main.js
             var app = angular.module('myApp', ['ngGrid']);
             app.controller('MyCtrl', function($scope) {
-                opts = { columnOverrides: { obj: function(o) { return o.a + '|' +  o.b; } } }
-                $scope.myData = [{hasThing: false,  obj: {a:5, b:6}, name: "Moroni", age: 50, ln: 'sdf'},
-                                 {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfncum", age: 43},
-                                 {hasThing: false,  obj: {a:5, b:7}, name: "Jacob", age: 27},
-                                 {hasThing:  true,  obj: {a:2, b:8}, ln: "Tiasdfsdfncum", age: 43},
-                                 {hasThing:  true,  obj: {a:1, b:8}, ln: "Jacob", age: 27},
-                                 {hasThing: false,  obj: {a:7, b:9}, name: "Tiasdfsdfncum", age: 43},
-                                 {hasThing: false,  obj: {a:5, b:9}, name: "Jacob", age: 27},
-                                 {hasThing:  true,  obj: {a:5, b:7}, name: "Nephi", age: 29},
-                                 {hasThing: false,  obj: {a:5, b:7}, name: "Enos", age: 34}];
-                $scope.gridOptions = {
-                    data: 'myData',
-                    plugins: [new ngGridCsvExportPlugin(opts)],
+                csvOpts = { columnOverrides: { obj: function(o) { return o.a + '|' +  o.b; } } }
+                hgtOpts = { minHeight: 200 }  ;
+                $scope.myDataSmall = [ {hasThing: false,  obj: {a:5, b:6}, name: "Moroni", age: 50, ln: 'sdf'}
+                                     , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                     ]
+                $scope.myDataBig = [ {hasThing: false,  obj: {a:5, b:6}, name: "Moroni", age: 50, ln: 'sdf'}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "asdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iadfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iafsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iafsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iafsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iadfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iadfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "iadfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tisdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing: false,  obj: {a:5, b:7}, name: "Jacob", age: 27}
+                                   , {hasThing:  true,  obj: {a:2, b:8}, ln: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing:  true,  obj: {a:1, b:8}, ln: "Jacob", age: 27}
+                                   , {hasThing: false,  obj: {a:7, b:9}, name: "Tiasdfsdfnd", age: 43}
+                                   , {hasThing: false,  obj: {a:5, b:9}, name: "Jacob", age: 27}
+                                   , {hasThing:  true,  obj: {a:5, b:7}, name: "Nephi", age: 29}
+                                   , {hasThing: false,  obj: {a:5, b:7}, name: "Enos", age: 34}
+                                   ];
+                $scope.gridOptionsBig = {
+                    data: 'myDataBig',
+                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin(hgtOpts)],
+                    showGroupPanel: true
+                };
+                $scope.gridOptionsSmall = {
+                    data: 'myDataSmall',
+                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin()],
                     showGroupPanel: true
                 };
             });
         </script>
     </head>
     <body ng-controller="MyCtrl">
-        <div class="gridStyle" ng-grid="gridOptions"></div>
+        <div class="gridStyle" ng-grid="gridOptionsSmall"></div>
+        <hr>
+        <div class="gridStyle" ng-grid="gridOptionsBig"></div>
     </body>
 </html>

@@ -1,5 +1,3 @@
-// plunker availalbe at http://plnkr.co/edit/oU4YYcmCjgsfDAfTyD3h
-//
 // Todo:
 // 1) Make the button prettier
 // 2) add a config option for IE users which takes a URL.  That URL should accept a POST request with a

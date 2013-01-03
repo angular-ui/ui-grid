@@ -3,6 +3,24 @@ Notes
 
 For anyone else writing plugins, please feel free to add to this readme.
 
+Flexible-Height
+===============
+
+Automatically resize a table to accomodate a varying number of rows.
+
+Usage
+-----
+
+A semi-ugly hack to make tables shrink automatically so you dont have big ugly gray space to worry about .
+
+          plugins: [new ngGridFlexibleHeightPlugin()]
+
+Options
+-------
+
+        opts =
+             { minHeight: <minimum height in px> }
+
 CSV-Export
 ==========
 
