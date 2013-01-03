@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/02/2013 13:10:06
+* Compiled At: 01/02/2013 14:48:15
 ***********************************************/
 
 (function(window) {
@@ -1975,7 +1975,7 @@ ng.Row = function(entity, config, selectionService) {
 /***********************************************
 * FILE: ..\src\classes\searchProvider.js
 ***********************************************/
-ng.SearchProvider = function($scope, grid, $filter) {
+ng.SearchProvider = function ($scope, grid, $filter) {
     var self = this,
         searchConditions = [];
     self.extFilter = grid.config.filterOptions.useExternalFilter;
@@ -1984,24 +1984,22 @@ ng.SearchProvider = function($scope, grid, $filter) {
 
     self.fieldMap = {};
 
-    self.evalFilter = function() {
+    self.evalFilter = function () {
         if (searchConditions.length === 0) {
             grid.filteredData = grid.sortedData;
         } else {
-            grid.filteredData = grid.sortedData.filter(function(item) {
+            grid.filteredData = grid.sortedData.filter(function (item) {
                 for (var i = 0, len = searchConditions.length; i < len; i++) {
                     var condition = searchConditions[i];
                     //Search entire row
                     if (!condition.column) {
                         for (var prop in item) {
                             if (item.hasOwnProperty(prop)) {
-                                if (prop == SELECTED_PROP) {
-                                    continue;
-                                }
                                 var c = self.fieldMap[prop];
+                                if (!c) continue;
                                 var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
-                                if (pVal && (condition.regex.test(pVal.toString()) || (f && condition.regex.test(f(pVal).toString())))) {
+                                if (pVal && (typeof f === 'function' ? condition.regex.test(f(pVal).toString()) : condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString()))) {
                                     return true;
                                 }
                             }
@@ -2015,7 +2013,7 @@ ng.SearchProvider = function($scope, grid, $filter) {
                     }
                     var filter = col.cellFilter ? $filter(col.cellFilter) : null;
                     var value = item[condition.column] || item[col.field];
-                    if ((!value || !condition.regex.test(value.toString())) && !(typeof filter == "function" && condition.regex.test(filter(value)))) {
+                    if (!value || !(typeof filter == 'function' ? condition.regex.test(filter(value).toString()) : condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString()))) {
                         return false;
                     }
                 }
@@ -2024,15 +2022,32 @@ ng.SearchProvider = function($scope, grid, $filter) {
         }
         grid.rowFactory.filteredDataChanged();
     };
-    var getRegExp = function(str, modifiers) {
+
+    //Traversing through the object to find the value that we want. If fail, then return the original object.
+    var evalObject = function (obj, columnName) {
+        if (typeof obj != 'object' || typeof columnName != 'string')
+            return obj;
+        var args = columnName.split('.');
+        var cObj = obj;
+        if (args.length > 1) {
+            for (var i = 1, len = args.length; i < len; i++) {
+                cObj = cObj[args[i]];
+                if (!cObj)
+                    return obj;
+            }
+            return cObj;
+        }
+        return obj;
+    };
+    var getRegExp = function (str, modifiers) {
         try {
             return new RegExp(str, modifiers);
-        } catch(err) {
+        } catch (err) {
             //Escape all RegExp metacharacters.
             return new RegExp(str.replace(/(\^|\$|\(|\)|\<|\>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
         }
     };
-    var buildSearchConditions = function(a) {
+    var buildSearchConditions = function (a) {
         //reset.
         searchConditions = [];
         var qStr = '';
@@ -2040,7 +2055,7 @@ ng.SearchProvider = function($scope, grid, $filter) {
             return;
         }
         var columnFilters = qStr.split(";");
-        $.each(columnFilters, function(i, filter) {
+        $.each(columnFilters, function (i, filter) {
             var args = filter.split(':');
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
@@ -2074,9 +2089,9 @@ ng.SearchProvider = function($scope, grid, $filter) {
         }
 	});
     if (!self.extFilter) {
-        $scope.$watch('columns', function(a) {
-            angular.forEach(a, function(col) {
-                self.fieldMap[col.field] = col;
+        $scope.$watch('columns', function (a) {
+            angular.forEach(a, function (col) {
+                self.fieldMap[col.field.split('.')[0]] = col;
                 self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
             });
         });
