@@ -1,10 +1,3 @@
-// Todo:
-// 1) Make the button prettier
-// 2) add a config option for IE users which takes a URL.  That URL should accept a POST request with a
-//    JSON encoded object in the payload and return a CSV.  This is necessary because IE doesn't let you
-//    download from a data-uri link
-//
-// Notes:  This has not been adequately tested and is very much a proof of concept at this point
 ngGridFlexibleHeightPlugin = function(opts) {
     var self = this;
     self.grid = null;
