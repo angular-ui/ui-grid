@@ -20,7 +20,6 @@ function userController($scope) {
 	
 	$scope.gridOptions = {
         data: 'myData',
-        multiSelect: false,
         selectedItems: $scope.selections,
 		canSelectRows: true,
         enableRowReordering: true,
