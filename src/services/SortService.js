@@ -232,13 +232,16 @@ ngGridServices.factory('SortService', function() {
             var propA = ng.utils.evalProperty(itemA, col.field);
             var propB = ng.utils.evalProperty(itemB, col.field);
             // we want to allow zero values to be evaluated in the sort function
-			if (!propB && !propA) {
-                return 0;
-            } else if (!propA) {
-                return 1;
-            } else if (!propB) {
-                return -1;
-			}
+            if ((!propA && propA != 0) || (!propB && propB != 0)) {
+              // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
+              if (!propB && !propA) {
+                  return 0;
+              } else if (!propA) {
+                  return 1;
+              } else if (!propB) {
+                  return -1;
+              }
+            }
             //made it this far, we don't have to worry about null & undefined
             if (direction === ASC) {
                 return sortFn(propA, propB);
