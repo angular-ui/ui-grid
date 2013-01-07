@@ -432,14 +432,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         domUtilityService.BuildStyles($scope, self, true);
     };
     self.sortData = function(col) {
-        self.config.sortInfo = {
-            column: col,
-            field: col.field,
-            direction: col.sortDirection
-        };
+        var sortInfo = self.config.sortInfo;
+        sortInfo.column = col;
+        sortInfo.field = col.field;
+        sortInfo.direction = col.sortDirection;
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
-            sortService.Sort(self.config.sortInfo, self.sortedData);
+            sortService.Sort(sortInfo, self.sortedData);
         }
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
