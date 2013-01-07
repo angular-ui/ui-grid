@@ -61,14 +61,20 @@ ng.SelectionService = function(grid) {
         rowItem.entity[SELECTED_PROP] = isSelected;
         if (!isSelected) {
             var indx = self.selectedItems.indexOf(rowItem.entity);
-            self.selectedItems.splice(indx, 1);
+			if(indx != -1){
+				self.selectedItems.splice(indx, 1);
+			}
         } else {
             if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-                self.selectedItems.push(rowItem.entity);
+				if(!self.multi && self.selectedItems.length > 0){
+					self.toggleSelectAll(false);
+					rowItem.selected = isSelected;
+					rowItem.entity[SELECTED_PROP] = isSelected;
+				}
+				self.selectedItems.push(rowItem.entity);
             }
         }
     };
-
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {

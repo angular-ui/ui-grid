@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/02/2013 17:28:59
+* Compiled At: 01/07/2013 12:03:48
 ***********************************************/
 
 (function(window) {
@@ -1919,7 +1919,7 @@ ng.Row = function(entity, config, selectionService) {
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
-    self.selected = false;
+	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
     self.continueSelection = function(event) {
         self.selectionService.ChangeSelection(self, event);
@@ -1964,12 +1964,8 @@ ng.Row = function(entity, config, selectionService) {
         return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
     };
     //selectify the entity
-    if (self.entity[SELECTED_PROP] === undefined) {
-        self.entity[SELECTED_PROP] = false;
-    } else if (self.entity[SELECTED_PROP]) {
-        // or else maintain the selection set by the entity.
-        self.selectionService.setSelection(self, self.entity[SELECTED_PROP]);
-    }
+	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
+	self.selectionService.setSelection(self, selected);
 };
 
 /***********************************************
@@ -2181,14 +2177,20 @@ ng.SelectionService = function(grid) {
         rowItem.entity[SELECTED_PROP] = isSelected;
         if (!isSelected) {
             var indx = self.selectedItems.indexOf(rowItem.entity);
-            self.selectedItems.splice(indx, 1);
+			if(indx != -1){
+				self.selectedItems.splice(indx, 1);
+			}
         } else {
             if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-                self.selectedItems.push(rowItem.entity);
+				if(!self.multi && self.selectedItems.length > 0){
+					self.toggleSelectAll(false);
+					rowItem.selected = isSelected;
+					rowItem.entity[SELECTED_PROP] = isSelected;
+				}
+				self.selectedItems.push(rowItem.entity);
             }
         }
     };
-
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {
