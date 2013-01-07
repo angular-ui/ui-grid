@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/02/2013 17:28:59
+* Compiled At: 05/08/2012 00:22:22
 ***********************************************/
 
 (function(window) {
@@ -1746,11 +1746,17 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         domUtilityService.BuildStyles($scope, self, true);
     };
     self.sortData = function(col) {
-        self.config.sortInfo = {
-            column: col,
-            field: col.field,
-            direction: col.sortDirection
-        };
+        if(self.config.sortInfo) {
+            self.config.sortInfo.column    = col;
+            self.config.sortInfo.field     = col.field;
+            self.config.sortInfo.direction = col.sortDirection;
+        } else {
+            self.config.sortInfo = {
+                column: col,
+                field: col.field,
+                direction: col.sortDirection
+            };
+        }
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
             sortService.Sort(self.config.sortInfo, self.sortedData);
