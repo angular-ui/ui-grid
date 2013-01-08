@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/07/2013 14:03:49
+* Compiled At: 01/08/2013 13:37:00
 ***********************************************/
 
 (function(window) {
@@ -1140,7 +1140,6 @@ ng.RowFactory = function(grid, $scope) {
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
             row.offsetTop = self.rowHeight * rowIndex;
-            row.selected = entity[SELECTED_PROP];
             // finally cache it for the next round
             self.rowCache[rowIndex] = row;
         }
@@ -2169,14 +2168,28 @@ ng.SelectionService = function(grid) {
                 return true;
             }
         } else if (!self.multi) {
-            if (self.lastClickedRow && self.lastClickedRow != rowItem) {
-                self.setSelection(self.lastClickedRow, false);
-            }
-            self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            if (self.lastClickedRow) {
+				//sorting builds new row so last clicked row will have different hash 
+				//than new row in rowcache so set lastClickedRow to same row in new rowCache
+				for(var i = 0; i < self.rowFactory.rowCache.length; i++) { 
+					if(self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
+						self.lastClickedRow = self.rowFactory.rowCache[i];
+						break;
+					}
+				}
+				self.setSelection(self.lastClickedRow, false);
+				if(self.lastClickedRow.entity == rowItem.entity){ 
+					self.lastClickedRow = undefined; //deselected row
+					return true;
+				}
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            } else {
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+			}
         } else {
             self.setSelection(rowItem, !rowItem.selected);
         }
-        self.lastClickedRow = rowItem;
+		self.lastClickedRow = rowItem;
         return true;
     };
 

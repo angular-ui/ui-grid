@@ -44,14 +44,28 @@ ng.SelectionService = function(grid) {
                 return true;
             }
         } else if (!self.multi) {
-            if (self.lastClickedRow && self.lastClickedRow != rowItem) {
-                self.setSelection(self.lastClickedRow, false);
-            }
-            self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            if (self.lastClickedRow) {
+				//sorting builds new row so last clicked row will have different hash 
+				//than new row in rowcache so set lastClickedRow to same row in new rowCache
+				for(var i = 0; i < self.rowFactory.rowCache.length; i++) { 
+					if(self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
+						self.lastClickedRow = self.rowFactory.rowCache[i];
+						break;
+					}
+				}
+				self.setSelection(self.lastClickedRow, false);
+				if(self.lastClickedRow.entity == rowItem.entity){ 
+					self.lastClickedRow = undefined; //deselected row
+					return true;
+				}
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            } else {
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+			}
         } else {
             self.setSelection(rowItem, !rowItem.selected);
         }
-        self.lastClickedRow = rowItem;
+		self.lastClickedRow = rowItem;
         return true;
     };
 

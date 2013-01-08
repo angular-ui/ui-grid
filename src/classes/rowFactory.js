@@ -37,7 +37,6 @@ ng.RowFactory = function(grid, $scope) {
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
             row.offsetTop = self.rowHeight * rowIndex;
-            row.selected = entity[SELECTED_PROP];
             // finally cache it for the next round
             self.rowCache[rowIndex] = row;
         }
