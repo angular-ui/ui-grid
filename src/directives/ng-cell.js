@@ -4,7 +4,9 @@
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    iElement.append($compile($scope.col.cellTemplate)($scope));
+                    var html = $scope.col.cellTemplate;
+                    html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
+                    iElement.append($compile(html)($scope));
                 }
             };
         }
