@@ -48,14 +48,14 @@ ng.SelectionService = function(grid) {
 				//sorting builds new row so last clicked row will have different hash 
 				//than new row in rowcache so set lastClickedRow to same row in new rowCache
 				for(var i = 0; i < self.rowFactory.rowCache.length; i++) { 
-					if(self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
+					if(self.rowFactory.rowCache[i] && self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
 						self.lastClickedRow = self.rowFactory.rowCache[i];
 						break;
 					}
 				}
 				self.setSelection(self.lastClickedRow, false);
 				if(self.lastClickedRow.entity == rowItem.entity){ 
-					self.lastClickedRow = undefined; //deselected row
+					self.lastClickedRow = undefined; //deselect row
 					return true;
 				}
 				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
