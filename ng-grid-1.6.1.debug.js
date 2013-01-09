@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/09/2013 10:43:30
+* Compiled At: 01/09/2013 11:13:12
 ***********************************************/
 
 (function(window) {
@@ -2179,7 +2179,7 @@ ng.SelectionService = function(grid) {
 				}
 				self.setSelection(self.lastClickedRow, false);
 				if(self.lastClickedRow.entity == rowItem.entity){ 
-					self.lastClickedRow = undefined; //deselected row
+					self.lastClickedRow = undefined; //deselect row
 					return true;
 				}
 				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
