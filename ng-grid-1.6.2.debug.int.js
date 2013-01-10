@@ -277,7 +277,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[Â£$Â¤]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -2459,17 +2459,17 @@ window.ngGrid.i18n['en'] = {
 ***********************************************/
 window.ngGrid.i18n['fr'] = {
     ngAggregateLabel: 'articles',
-    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngGroupPanelDescription: 'Faites glisser un en-tÃªte de colonne ici et dÃ©posez-le vers un groupe par cette colonne.',
     ngSearchPlaceHolder: 'Recherche...',
     ngMenuText: 'Choisir des colonnes:',
     ngShowingItemsLabel: 'Articles Affichage des:',
     ngTotalItemsLabel: 'Nombre total d\'articles:',
-    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngSelectedItemsLabel: 'Ã‰lÃ©ments Articles:',
     ngPageSizeLabel: 'Taille de page:',
-    ngPagerFirstTitle: 'Première page',
+    ngPagerFirstTitle: 'PremiÃ¨re page',
     ngPagerNextTitle: 'Page Suivante',
-    ngPagerPrevTitle: 'Page précédente',
-    ngPagerLastTitle: 'Dernière page'
+    ngPagerPrevTitle: 'Page prÃ©cÃ©dente',
+    ngPagerLastTitle: 'DerniÃ¨re page'
 };
 
 /***********************************************
@@ -2477,15 +2477,15 @@ window.ngGrid.i18n['fr'] = {
 ***********************************************/
 window.ngGrid.i18n['ge'] = {
     ngAggregateLabel: 'artikel',
-    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngGroupPanelDescription: 'Ziehen Sie eine SpaltenÃ¼berschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
     ngSearchPlaceHolder: 'Suche...',
-    ngMenuText: 'Spalten auswählen:',
+    ngMenuText: 'Spalten auswÃ¤hlen:',
     ngShowingItemsLabel: 'Zeige Artikel:',
     ngTotalItemsLabel: 'Meiste Artikel:',
-    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
-    ngPageSizeLabel: 'Größe Seite:',
+    ngSelectedItemsLabel: 'AusgewÃ¤hlte Artikel:',
+    ngPageSizeLabel: 'GrÃ¶ÃŸe Seite:',
     ngPagerFirstTitle: 'Erste Page',
-    ngPagerNextTitle: 'Nächste Page',
+    ngPagerNextTitle: 'NÃ¤chste Page',
     ngPagerPrevTitle: 'Vorherige Page',
     ngPagerLastTitle: 'Letzte Page'
 };
@@ -2494,17 +2494,17 @@ window.ngGrid.i18n['ge'] = {
 * LANGUAGE: sp.js
 ***********************************************/
 window.ngGrid.i18n['sp'] = {
-    ngAggregateLabel: 'Artículos',
-    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngAggregateLabel: 'ArtÃ­culos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquÃ­ y soltarlo para agrupar por esa columna.',
     ngSearchPlaceHolder: 'Buscar...',
     ngMenuText: 'Elegir columnas:',
-    ngShowingItemsLabel: 'Artículos Mostrando:',
-    ngTotalItemsLabel: 'Artículos Totales:',
-    ngSelectedItemsLabel: 'Artículos Seleccionados:',
-    ngPageSizeLabel: 'Tamaño de Página:',
-    ngPagerFirstTitle: 'Primera Página',
-    ngPagerNextTitle: 'Página Siguiente',
-    ngPagerPrevTitle: 'Página Anterior',
-    ngPagerLastTitle: 'Última Página'
+    ngShowingItemsLabel: 'ArtÃ­culos Mostrando:',
+    ngTotalItemsLabel: 'ArtÃ­culos Totales:',
+    ngSelectedItemsLabel: 'ArtÃ­culos Seleccionados:',
+    ngPageSizeLabel: 'TamaÃ±o de PÃ¡gina:',
+    ngPagerFirstTitle: 'Primera PÃ¡gina',
+    ngPagerNextTitle: 'PÃ¡gina Siguiente',
+    ngPagerPrevTitle: 'PÃ¡gina Anterior',
+    ngPagerLastTitle: 'Ãšltima PÃ¡gina'
 };
 }(window));
