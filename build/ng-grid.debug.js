@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/09/2013 11:13:12
+* Compiled At: 01/09/2013 16:01:33
 ***********************************************/
 
 (function(window) {
@@ -37,6 +37,7 @@ var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
+var COL_FIELD = /COL_FIELD/g;
 var TEMPLATE_REGEXP = /<.+>/;
 
 /***********************************************
@@ -599,7 +600,7 @@ ng.defaultRowTemplate = function(){ return '<div ng-style="{\'cursor\': row.curs
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
 ***********************************************/
-ng.defaultCellTemplate = function(){ return '<div class="ngCellText colt{{$index}}">{{row.getProperty(col.field) CUSTOM_FILTERS}}</div>';};
+ng.defaultCellTemplate = function(){ return '<div class="ngCellText colt{{$index}}">{{COL_FIELD CUSTOM_FILTERS}}</div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -1967,9 +1968,9 @@ ng.Row = function(entity, config, selectionService) {
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
-    self.propertyCache = {};
+
     self.getProperty = function(path) {
-        return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
+        return ng.utils.evalProperty(self.entity, path);
     };
     //selectify the entity
 	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
@@ -2383,7 +2384,9 @@ ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    iElement.append($compile($scope.col.cellTemplate)($scope));
+                    var html = $scope.col.cellTemplate;
+                    html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
+                    iElement.append($compile(html)($scope));
                 }
             };
         }

@@ -52,9 +52,9 @@ ng.Row = function(entity, config, selectionService) {
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
-    self.propertyCache = {};
+
     self.getProperty = function(path) {
-        return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
+        return ng.utils.evalProperty(self.entity, path);
     };
     //selectify the entity
 	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
