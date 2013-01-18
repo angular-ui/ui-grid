@@ -1,4 +1,4 @@
-﻿
+
 /******** Grid Global ********/
 .nglabel {
     display: block;
@@ -6,24 +6,10 @@
     font-weight: bold;
     padding-right: 5px;
 }
-.ngNoSelect{
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
 /******** Grid ********/
 
 .ngGrid{
-    background-color: rgb(253, 253, 253);
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    background-color: rgb(253, 253, 253);  
 }
 
 /******** Header ********/
