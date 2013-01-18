@@ -9,7 +9,7 @@ ngGridLayoutPlugin = function() {
     };
 
     this.updateGridLayout = function() {
-        self.domUtilityService.UpdateGridLayout(self.grid);
+        self.domUtilityService.UpdateGridLayout(self.scope, self.grid);
         self.grid.configureColumnWidths();
         self.domUtilityService.BuildStyles(self.scope, self.grid);
     };

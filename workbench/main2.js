@@ -1,7 +1,7 @@
 function userController($scope) {
 	$scope.myDefs = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
-        { field: 'SeasonCode.test', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected"/>' },
+        { field: 'SeasonCode.test', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
         { field: 'UPC', displayName: 'Bar Code' }];
     
@@ -23,7 +23,7 @@ function userController($scope) {
         selectedItems: $scope.selections,
 		canSelectRows: true,
 		multiSelect: false,
-        enableRowReordering: true,
+        enableRowReordering: false,
         showGroupPanel: true,
         columnDefs: 'myDefs'
     };

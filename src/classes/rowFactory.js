@@ -11,7 +11,7 @@ ng.RowFactory = function(grid, $scope) {
     self.dataChanged = true;
     self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = grid.selectionService;
+    self.selectionService = $scope.selectionService;
     self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
@@ -19,7 +19,7 @@ ng.RowFactory = function(grid, $scope) {
     self.rowConfig = {
         canSelectRows: grid.config.canSelectRows,
         rowClasses: grid.config.rowClasses,
-        selectedItems: grid.config.selectedItems,
+        selectedItems: $scope.selectedItems,
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,

@@ -17,30 +17,36 @@ ng.SelectionService = function(grid) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredData.indexOf(rowItem.entity);
                 var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
+				self.lastClickedRow = self.rowFactory.rowCache[thisIndx];
                 if (thisIndx == prevIndx) {
                     return false;
                 }
-                prevIndx++;
                 if (thisIndx < prevIndx) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-                }
+					thisIndx--;
+                } else {
+					prevIndx++;
+				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(self.rowFactory.rowCache[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
                     $.each(rows, function(i, ri) {
-                        ri.selected = true;
-                        ri.entity[SELECTED_PROP] = true;
-                        if (self.selectedItems.indexOf(ri.entity) === -1) {
+						var selectionState = ri.selected;
+                        ri.selected = !selectionState;
+                        ri.entity[SELECTED_PROP] = !selectionState;
+						var index = self.selectedItems.indexOf(ri.entity);
+                        if (index === -1) {
                             self.selectedItems.push(ri.entity);
-                        }
+                        } else {
+							self.selectedItems.splice(index,1);
+						}
                     });
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
-                self.lastClickedRow = rows[rows.length - 1];
                 return true;
             }
         } else if (!self.multi) {

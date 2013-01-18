@@ -25,7 +25,7 @@ ngGridServices.factory('DomUtilityService', function() {
         $testContainer.remove();
     };
     domUtilityService.eventStorage = {};
-    domUtilityService.AssignGridContainers = function(rootEl, grid) {
+    domUtilityService.AssignGridContainers = function($scope, rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
         grid.$topPanel = grid.$root.find(".ngTopPanel");
@@ -39,16 +39,16 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
-        domUtilityService.UpdateGridLayout(grid);
+        domUtilityService.UpdateGridLayout($scope, grid);
     };
-    domUtilityService.UpdateGridLayout = function(grid) {
+    domUtilityService.UpdateGridLayout = function($scope, grid) {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
         grid.elementDims.rootMaxH = grid.$root.height();
         //check to see if anything has changed
         grid.refreshDomSizes();
-        grid.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
+        $scope.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
     };
     domUtilityService.numberOfGrids = 0;
     domUtilityService.BuildStyles = function($scope, grid, digest) {
