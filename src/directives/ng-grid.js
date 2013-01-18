@@ -8,18 +8,20 @@
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
+                    
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function(a) {
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
-                            grid.configureColumnWidths();
-                            domUtilityService.BuildStyles($scope, grid);
                             grid.eventProvider.assignEvents();
+							domUtilityService.RebuildGrid($scope,grid);
                         });
-                    }
-                    
+                    } else {
+						grid.buildColumns();
+					}
+					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         var prevlength = 0;
@@ -49,6 +51,7 @@
                             }
                         });
                     }
+					
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
@@ -59,7 +62,6 @@
                     iElement.append($compile(htmlText)($scope)); // make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
-                    grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ng.EventProvider(grid, $scope, domUtilityService);
                     //initialize plugins.

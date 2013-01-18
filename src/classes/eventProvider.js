@@ -191,10 +191,7 @@
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function() {
-            domUtilityService.UpdateGridLayout($scope, grid);
-            if (grid.config.maintainColumnRatios) {
-                grid.configureColumnWidths();
-            }
+            domUtilityService.RebuildGrid($scope,grid);
         });
     };
     // In this example we want to assign grid events.

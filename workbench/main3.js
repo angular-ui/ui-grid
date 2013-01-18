@@ -18,7 +18,8 @@ function userController($scope) {
 		multiSelect: true,
         enableRowReordering: false,
         showGroupPanel: true,
-        columnDefs: 'myDefs'
+        columnDefs: 'myDefs',
+		groups: ['Sku']
     };
 	
 }

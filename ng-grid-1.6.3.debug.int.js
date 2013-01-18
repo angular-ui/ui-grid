@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/17/2013 17:13:45
+* Compiled At: 01/18/2013 13:30:54
 ***********************************************/
 
 (function(window) {
@@ -273,7 +273,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[Â£$Â¤]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -570,6 +570,14 @@ ngGridServices.factory('DomUtilityService', function() {
             domUtilityService.digest($scope);
         }
     };
+	
+	domUtilityService.RebuildGrid = function($scope,grid){
+		domUtilityService.UpdateGridLayout($scope, grid);
+		if (grid.config.maintainColumnRatios) {
+			grid.configureColumnWidths();
+		}
+		domUtilityService.BuildStyles($scope, grid, true);
+	};
 
     domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {
@@ -883,10 +891,7 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function() {
-            domUtilityService.UpdateGridLayout($scope, grid);
-            if (grid.config.maintainColumnRatios) {
-                grid.configureColumnWidths();
-            }
+            domUtilityService.RebuildGrid($scope,grid);
         });
     };
     // In this example we want to assign grid events.
@@ -1521,15 +1526,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     self.buildColumns = function() {
         var columnDefs = self.config.columnDefs,
-            cols = [],
-            indexOffset = 0;
-
+            cols = [];
+		var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
         if (self.config.displaySelectionCheckbox) {
-            indexOffset = 1;
             cols.push(new ng.Column({
                 colDef: {
                     field: '\u2714',
@@ -1549,6 +1552,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
+			$scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
                 var column = new ng.Column({
@@ -1560,11 +1564,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting
                 }, $scope, self, domUtilityService);
-                cols.push(column);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
+					column.isGroupedBy = true;
                     $scope.configGroups.splice(indx, 0, column);
+					column.groupIndex = $scope.configGroups.length;
                 }
+                cols.push(column);
             });
             $scope.columns = cols;
         }
@@ -1656,15 +1662,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         $scope.selectionService.Initialize(self.rowFactory);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
-        self.buildColumns();
         $scope.$watch('configGroups', function(a) {
-            var tempArr = [];
-            angular.forEach(a, function(item) {
-                tempArr.push(item.field || item);
-            });
-            self.config.groups = tempArr;
-            self.rowFactory.filteredDataChanged();
-            $scope.$emit('ngGridEventGroups', a);
+			var tempArr = [];
+			angular.forEach(a, function(item) {
+				tempArr.push(item.field || item);
+			});
+			self.config.groups = tempArr;
+			self.rowFactory.filteredDataChanged();
+			$scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {
             domUtilityService.BuildStyles($scope, self, true);
@@ -2269,18 +2274,20 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
+                    
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function(a) {
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
-                            grid.configureColumnWidths();
-                            domUtilityService.BuildStyles($scope, grid);
                             grid.eventProvider.assignEvents();
+							domUtilityService.RebuildGrid($scope,grid);
                         });
-                    }
-                    
+                    } else {
+						grid.buildColumns();
+					}
+					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         var prevlength = 0;
@@ -2310,6 +2317,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             }
                         });
                     }
+					
                     var htmlText = ng.defaultGridTemplate(grid.config);
                     grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
@@ -2320,7 +2328,6 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     iElement.append($compile(htmlText)($scope)); // make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
-                    grid.configureColumnWidths();
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ng.EventProvider(grid, $scope, domUtilityService);
                     //initialize plugins.
@@ -2514,17 +2521,17 @@ window.ngGrid.i18n['en'] = {
 ***********************************************/
 window.ngGrid.i18n['fr'] = {
     ngAggregateLabel: 'articles',
-    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngGroupPanelDescription: 'Faites glisser un en-tÃªte de colonne ici et dÃ©posez-le vers un groupe par cette colonne.',
     ngSearchPlaceHolder: 'Recherche...',
     ngMenuText: 'Choisir des colonnes:',
     ngShowingItemsLabel: 'Articles Affichage des:',
     ngTotalItemsLabel: 'Nombre total d\'articles:',
-    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngSelectedItemsLabel: 'Ã‰lÃ©ments Articles:',
     ngPageSizeLabel: 'Taille de page:',
-    ngPagerFirstTitle: 'Première page',
+    ngPagerFirstTitle: 'PremiÃ¨re page',
     ngPagerNextTitle: 'Page Suivante',
-    ngPagerPrevTitle: 'Page précédente',
-    ngPagerLastTitle: 'Dernière page'
+    ngPagerPrevTitle: 'Page prÃ©cÃ©dente',
+    ngPagerLastTitle: 'DerniÃ¨re page'
 };
 
 /***********************************************
@@ -2532,15 +2539,15 @@ window.ngGrid.i18n['fr'] = {
 ***********************************************/
 window.ngGrid.i18n['ge'] = {
     ngAggregateLabel: 'artikel',
-    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngGroupPanelDescription: 'Ziehen Sie eine SpaltenÃ¼berschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
     ngSearchPlaceHolder: 'Suche...',
-    ngMenuText: 'Spalten auswählen:',
+    ngMenuText: 'Spalten auswÃ¤hlen:',
     ngShowingItemsLabel: 'Zeige Artikel:',
     ngTotalItemsLabel: 'Meiste Artikel:',
-    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
-    ngPageSizeLabel: 'Größe Seite:',
+    ngSelectedItemsLabel: 'AusgewÃ¤hlte Artikel:',
+    ngPageSizeLabel: 'GrÃ¶ÃŸe Seite:',
     ngPagerFirstTitle: 'Erste Page',
-    ngPagerNextTitle: 'Nächste Page',
+    ngPagerNextTitle: 'NÃ¤chste Page',
     ngPagerPrevTitle: 'Vorherige Page',
     ngPagerLastTitle: 'Letzte Page'
 };
@@ -2549,17 +2556,17 @@ window.ngGrid.i18n['ge'] = {
 * LANGUAGE: sp.js
 ***********************************************/
 window.ngGrid.i18n['sp'] = {
-    ngAggregateLabel: 'Artículos',
-    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngAggregateLabel: 'ArtÃ­culos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquÃ­ y soltarlo para agrupar por esa columna.',
     ngSearchPlaceHolder: 'Buscar...',
     ngMenuText: 'Elegir columnas:',
-    ngShowingItemsLabel: 'Artículos Mostrando:',
-    ngTotalItemsLabel: 'Artículos Totales:',
-    ngSelectedItemsLabel: 'Artículos Seleccionados:',
-    ngPageSizeLabel: 'Tamaño de Página:',
-    ngPagerFirstTitle: 'Primera Página',
-    ngPagerNextTitle: 'Página Siguiente',
-    ngPagerPrevTitle: 'Página Anterior',
-    ngPagerLastTitle: 'Última Página'
+    ngShowingItemsLabel: 'ArtÃ­culos Mostrando:',
+    ngTotalItemsLabel: 'ArtÃ­culos Totales:',
+    ngSelectedItemsLabel: 'ArtÃ­culos Seleccionados:',
+    ngPageSizeLabel: 'TamaÃ±o de PÃ¡gina:',
+    ngPagerFirstTitle: 'Primera PÃ¡gina',
+    ngPagerNextTitle: 'PÃ¡gina Siguiente',
+    ngPagerPrevTitle: 'PÃ¡gina Anterior',
+    ngPagerLastTitle: 'Ãšltima PÃ¡gina'
 };
 }(window));

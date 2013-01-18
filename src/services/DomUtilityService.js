@@ -86,6 +86,14 @@ ngGridServices.factory('DomUtilityService', function() {
             domUtilityService.digest($scope);
         }
     };
+	
+	domUtilityService.RebuildGrid = function($scope,grid){
+		domUtilityService.UpdateGridLayout($scope, grid);
+		if (grid.config.maintainColumnRatios) {
+			grid.configureColumnWidths();
+		}
+		domUtilityService.BuildStyles($scope, grid, true);
+	};
 
     domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {

@@ -224,15 +224,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     self.buildColumns = function() {
         var columnDefs = self.config.columnDefs,
-            cols = [],
-            indexOffset = 0;
-
+            cols = [];
+		var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
         if (self.config.displaySelectionCheckbox) {
-            indexOffset = 1;
             cols.push(new ng.Column({
                 colDef: {
                     field: '\u2714',
@@ -252,6 +250,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
+			$scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
                 var column = new ng.Column({
@@ -263,11 +262,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting
                 }, $scope, self, domUtilityService);
-                cols.push(column);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
+					column.isGroupedBy = true;
                     $scope.configGroups.splice(indx, 0, column);
+					column.groupIndex = $scope.configGroups.length;
                 }
+                cols.push(column);
             });
             $scope.columns = cols;
         }
@@ -359,15 +360,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         $scope.selectionService.Initialize(self.rowFactory);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
-        self.buildColumns();
         $scope.$watch('configGroups', function(a) {
-            var tempArr = [];
-            angular.forEach(a, function(item) {
-                tempArr.push(item.field || item);
-            });
-            self.config.groups = tempArr;
-            self.rowFactory.filteredDataChanged();
-            $scope.$emit('ngGridEventGroups', a);
+			var tempArr = [];
+			angular.forEach(a, function(item) {
+				tempArr.push(item.field || item);
+			});
+			self.config.groups = tempArr;
+			self.rowFactory.filteredDataChanged();
+			$scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {
             domUtilityService.BuildStyles($scope, self, true);
