@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/19/2013 04:57:47
+* Compiled At: 01/19/2013 12:50:50
 ***********************************************/
 
 (function(window) {
@@ -732,6 +732,13 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
     self.setDraggables = function() {
         if (!grid.config.jqueryUIDraggable) {
             grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true');
+			if (navigator.userAgent.indexOf("MSIE") != -1){
+         		//call native IE dragDrop() to start dragging
+				grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+					this.dragDrop(); 
+					return false; 
+				});	
+      		}
         } else {
             grid.$root.find('.ngHeaderSortColumn').draggable({
                 helper: 'clone',

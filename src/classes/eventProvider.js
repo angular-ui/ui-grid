@@ -32,6 +32,13 @@
     self.setDraggables = function() {
         if (!grid.config.jqueryUIDraggable) {
             grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true');
+			if (navigator.userAgent.indexOf("MSIE") != -1){
+         		//call native IE dragDrop() to start dragging
+				grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+					this.dragDrop(); 
+					return false; 
+				});	
+      		}
         } else {
             grid.$root.find('.ngHeaderSortColumn').draggable({
                 helper: 'clone',
