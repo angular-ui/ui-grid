@@ -131,8 +131,10 @@
     if (!self.extFilter) {
         $scope.$watch('columns', function (a) {
             angular.forEach(a, function (col) {
-                self.fieldMap[col.field.split('.')[0]] = col;
-                self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+				if(col.field)
+					self.fieldMap[col.field.split('.')[0]] = col;
+				if(col.displayName)
+					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
             });
         });
     }

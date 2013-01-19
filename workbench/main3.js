@@ -1,5 +1,5 @@
 function userController($scope) {
-	$scope.myDefs = [{ field: 'Sku', displayName: 'My Sku' },
+	$scope.myDefs = [{ cellTemplate: '<p>{{row.getProperty(\'Vendor\')}}</p>' },
         { field: 'Vendor', displayName: 'Supplier' },
         { field: 'SeasonCode', displayName: 'My SeasonCode' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
@@ -15,7 +15,7 @@ function userController($scope) {
         enableRowReordering: false,
         showGroupPanel: true,
         columnDefs: 'myDefs',
-		groups: ['Sku', 'SeasonCode', 'Vendor']
+		groups: ['SeasonCode', 'Vendor']
     };
 	
 	$scope.getData = function(){

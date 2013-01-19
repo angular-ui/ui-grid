@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/19/2013 04:31:18
+* Compiled At: 01/19/2013 05:05:21
 ***********************************************/
 
 (function(window) {
@@ -1842,7 +1842,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
-        if (self.sortedData.length < 1 || !col.groupable) {
+        if (self.sortedData.length < 1 || !col.groupable  || !col.field) {
             return;
         }
         var indx = $scope.configGroups.indexOf(col);
@@ -2101,8 +2101,10 @@ ng.SearchProvider = function ($scope, grid, $filter) {
     if (!self.extFilter) {
         $scope.$watch('columns', function (a) {
             angular.forEach(a, function (col) {
-                self.fieldMap[col.field.split('.')[0]] = col;
-                self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+				if(col.field)
+					self.fieldMap[col.field.split('.')[0]] = col;
+				if(col.displayName)
+					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
             });
         });
     }
@@ -2516,5 +2518,59 @@ window.ngGrid.i18n['en'] = {
     ngPagerNextTitle: 'Next Page',
     ngPagerPrevTitle: 'Previous Page',
     ngPagerLastTitle: 'Last Page'
+};
+
+/***********************************************
+* LANGUAGE: fr.js
+***********************************************/
+window.ngGrid.i18n['fr'] = {
+    ngAggregateLabel: 'articles',
+    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngSearchPlaceHolder: 'Recherche...',
+    ngMenuText: 'Choisir des colonnes:',
+    ngShowingItemsLabel: 'Articles Affichage des:',
+    ngTotalItemsLabel: 'Nombre total d\'articles:',
+    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngPageSizeLabel: 'Taille de page:',
+    ngPagerFirstTitle: 'Première page',
+    ngPagerNextTitle: 'Page Suivante',
+    ngPagerPrevTitle: 'Page précédente',
+    ngPagerLastTitle: 'Dernière page'
+};
+
+/***********************************************
+* LANGUAGE: ge.js
+***********************************************/
+window.ngGrid.i18n['ge'] = {
+    ngAggregateLabel: 'artikel',
+    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngSearchPlaceHolder: 'Suche...',
+    ngMenuText: 'Spalten auswählen:',
+    ngShowingItemsLabel: 'Zeige Artikel:',
+    ngTotalItemsLabel: 'Meiste Artikel:',
+    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
+    ngPageSizeLabel: 'Größe Seite:',
+    ngPagerFirstTitle: 'Erste Page',
+    ngPagerNextTitle: 'Nächste Page',
+    ngPagerPrevTitle: 'Vorherige Page',
+    ngPagerLastTitle: 'Letzte Page'
+};
+
+/***********************************************
+* LANGUAGE: sp.js
+***********************************************/
+window.ngGrid.i18n['sp'] = {
+    ngAggregateLabel: 'Artículos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngSearchPlaceHolder: 'Buscar...',
+    ngMenuText: 'Elegir columnas:',
+    ngShowingItemsLabel: 'Artículos Mostrando:',
+    ngTotalItemsLabel: 'Artículos Totales:',
+    ngSelectedItemsLabel: 'Artículos Seleccionados:',
+    ngPageSizeLabel: 'Tamaño de Página:',
+    ngPagerFirstTitle: 'Primera Página',
+    ngPagerNextTitle: 'Página Siguiente',
+    ngPagerPrevTitle: 'Página Anterior',
+    ngPagerLastTitle: 'Última Página'
 };
 }(window));

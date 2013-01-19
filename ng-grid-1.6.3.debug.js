@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/19/2013 04:31:18
+* Compiled At: 01/19/2013 04:57:47
 ***********************************************/
 
 (function(window) {
@@ -1842,7 +1842,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function(col) {
-        if (self.sortedData.length < 1 || !col.groupable) {
+        if (self.sortedData.length < 1 || !col.groupable  || !col.field) {
             return;
         }
         var indx = $scope.configGroups.indexOf(col);
@@ -2101,8 +2101,10 @@ ng.SearchProvider = function ($scope, grid, $filter) {
     if (!self.extFilter) {
         $scope.$watch('columns', function (a) {
             angular.forEach(a, function (col) {
-                self.fieldMap[col.field.split('.')[0]] = col;
-                self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+				if(col.field)
+					self.fieldMap[col.field.split('.')[0]] = col;
+				if(col.displayName)
+					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
             });
         });
     }
