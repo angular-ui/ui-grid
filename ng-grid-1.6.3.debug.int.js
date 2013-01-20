@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/19/2013 05:05:21
+* Compiled At: 01/19/2013 16:27:03
 ***********************************************/
 
 (function(window) {
@@ -725,13 +725,31 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
         }
         $scope.$watch('columns', self.setDraggables, true);
     };
+	self.dragStart = function(evt){		
+		//FireFox requires there to be dataTransfer if you want to drag and drop.
+		evt.dataTransfer.setData('text', ''); //cannot be empty string
+	};
     self.dragOver = function(evt) {
         evt.preventDefault();
     };
     //For JQueryUI
     self.setDraggables = function() {
         if (!grid.config.jqueryUIDraggable) {
-            grid.$root.find('.ngHeaderSortColumn').attr('draggable', 'true');
+			//Fix for FireFox. Instead of using jQuery on('dragstart', function) on find, we have to use addEventListeners for each column.
+            var columns = grid.$root.find('.ngHeaderSortColumn'); //have to iterate if using addEventListener
+			angular.forEach(columns, function(col){
+				col.setAttribute('draggable', 'true');
+				//jQuery 'on' function doesn't have  dataTransfer as part of event in handler unless added to event props, which is not recommended
+				//See more here: http://api.jquery.com/category/events/event-object/
+				col.addEventListener('dragstart', self.dragStart); 
+			});
+			if (navigator.userAgent.indexOf("MSIE") != -1){
+         		//call native IE dragDrop() to start dragging
+				grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+					this.dragDrop(); 
+					return false; 
+				});	
+      		}
         } else {
             grid.$root.find('.ngHeaderSortColumn').draggable({
                 helper: 'clone',
@@ -757,6 +775,14 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
                 // set draggable events
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
+					this.addEventListener('dragstart', self.dragStart); 
+					if (navigator.userAgent.indexOf("MSIE") != -1){
+						//call native IE dragDrop() to start dragging
+						groupItem.bind('selectstart', function () { 
+							this.dragDrop(); 
+							return false; 
+						});	
+					}
                 }
                 // Save the column for later.
                 self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
