@@ -8,6 +8,9 @@
 /// <reference path="../utils.js" />
 ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     var defaults = {
+        //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
+        aggregateTemplate: undefined,
+        
         //Callback for when you want to validate something after selection.
         afterSelectionChange: function() {
         }, 
@@ -110,7 +113,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Row height of rows in grid.
         rowHeight: 30,
         
-        //Define a row Template to customize output. See github wiki for more details.
+        //Define a row template to customize output. See github wiki for more details.
         rowTemplate: undefined,
         
         //all of the items selected in the grid. In single select mode there will only be one item in the array.
@@ -470,6 +473,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
+    $scope.aggregateTemplate = self.config.aggregateTemplate || ng.defaultAggregateTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     //i18n support
     $scope.i18n = {};
@@ -497,10 +501,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.prevScrollIndex = rowIndex;
     };
 
+    // test templates for urls and get the tempaltes via synchronous ajax calls
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
         $scope.rowTemplate = $.ajax({
             type: "GET",
             url: self.config.rowTemplate,
+            async: false
+        }).responseText;
+    }
+    if (self.config.aggregateTemplate && !TEMPLATE_REGEXP.test(self.config.aggregateTemplate)) {
+        $scope.aggregateTemplate = $.ajax({
+            type: "GET",
+            url: self.config.aggregateTemplate,
             async: false
         }).responseText;
     }

@@ -34,7 +34,7 @@ ng.SelectionService = function(grid) {
                     rows.push(self.rowFactory.rowCache[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    $.each(rows, function(i, ri) {
+                    angular.forEach(rows, function(ri) {
 						var selectionState = ri.selected;
                         ri.selected = !selectionState;
                         ri.entity[SELECTED_PROP] = !selectionState;
