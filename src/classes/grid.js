@@ -292,32 +292,34 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
                 t = isPercent ? col.width : parseInt(col.width, 10);
             }
-            // check if it is a number
-            if (isNaN(t)) {
-                t = col.width;
-                // figure out if the width is defined or if we need to calculate it
-                if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
-                    $scope.columns[i].width = col.minWidth;
-                    totalWidth += $scope.columns[i].width;
-                    var temp = $scope.columns[i];
-                    $scope.$evalAsync(function() {
-                        self.resizeOnData(temp, true);
-                    });
-                    return;
-                } else if (t.indexOf("*") != -1) { //  we need to save it until the end to do the calulations on the remaining width.
-                    asteriskNum += t.length;
-                    col.index = i;
-                    asterisksArray.push(col);
-                    return;
-                } else if (isPercent) { // If the width is a percentage, save it until the very last.
-                    col.index = i;
-                    percentArray.push(col);
-                    return;
-                } else { // we can't parse the width so lets throw an error.
-                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+            if (col.visible !== false) {
+                // check if it is a number
+                if (isNaN(t)) {
+                    t = col.width;
+                    // figure out if the width is defined or if we need to calculate it
+                    if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
+                        $scope.columns[i].width = col.minWidth;
+                        totalWidth += $scope.columns[i].width;
+                        var temp = $scope.columns[i];
+                        $scope.$evalAsync(function() {
+                            self.resizeOnData(temp, true);
+                        });
+                        return;
+                    } else if (t.indexOf("*") != -1) { //  we need to save it until the end to do the calulations on the remaining width.
+                        asteriskNum += t.length;
+                        col.index = i;
+                        asterisksArray.push(col);
+                        return;
+                    } else if (isPercent) { // If the width is a percentage, save it until the very last.
+                        col.index = i;
+                        percentArray.push(col);
+                        return;
+                    } else { // we can't parse the width so lets throw an error.
+                        throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+                    }
+                } else {
+                    totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
                 }
-            } else {
-                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
             }
         });
         // check if we saved any asterisk columns for calculating later
