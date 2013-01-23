@@ -11,7 +11,7 @@ ng.RowFactory = function(grid, $scope) {
     self.dataChanged = true;
     self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = grid.selectionService;
+    self.selectionService = $scope.selectionService;
     self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
@@ -19,7 +19,7 @@ ng.RowFactory = function(grid, $scope) {
     self.rowConfig = {
         canSelectRows: grid.config.canSelectRows,
         rowClasses: grid.config.rowClasses,
-        selectedItems: grid.config.selectedItems,
+        selectedItems: $scope.selectedItems,
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
@@ -37,7 +37,6 @@ ng.RowFactory = function(grid, $scope) {
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
             row.offsetTop = self.rowHeight * rowIndex;
-            row.selected = entity[SELECTED_PROP];
             // finally cache it for the next round
             self.rowCache[rowIndex] = row;
         }
@@ -169,20 +168,6 @@ ng.RowFactory = function(grid, $scope) {
             item[NG_HIDDEN] = true;
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
-                if (!cols[depth].isAggCol && depth <= maxDepth) {
-                    cols.splice(item.gDepth, 0, new ng.Column({
-                        colDef: {
-                            field: '',
-                            width: 25,
-                            sortable: false,
-                            resizable: false,
-                            headerCellTemplate: '<div class="ngAggHeader"></div>'
-                        },
-                        isAggCol: true,
-                        index: item.gDepth,
-                        headerRowHeight: grid.config.headerRowHeight
-                    }));
-                }
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
@@ -207,6 +192,22 @@ ng.RowFactory = function(grid, $scope) {
             }
             ptr.values.push(item);
         });
+		//moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
+		angular.forEach(groups, function(group, depth) {
+			if (!cols[depth].isAggCol && depth <= maxDepth) {
+				cols.splice(0, 0, new ng.Column({
+					colDef: {
+						field: '',
+						width: 25,
+						sortable: false,
+						resizable: false,
+						headerCellTemplate: '<div class="ngAggHeader"></div>'
+					},
+					isAggCol: true,
+					headerRowHeight: grid.config.headerRowHeight
+				}));
+			}
+		});
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);

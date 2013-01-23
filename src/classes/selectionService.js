@@ -17,41 +17,61 @@ ng.SelectionService = function(grid) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredData.indexOf(rowItem.entity);
                 var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
+				self.lastClickedRow = self.rowFactory.rowCache[thisIndx];
                 if (thisIndx == prevIndx) {
                     return false;
                 }
-                prevIndx++;
                 if (thisIndx < prevIndx) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-                }
+					thisIndx--;
+                } else {
+					prevIndx++;
+				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(self.rowFactory.rowCache[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    $.each(rows, function(i, ri) {
-                        ri.selected = true;
-                        ri.entity[SELECTED_PROP] = true;
-                        if (self.selectedItems.indexOf(ri.entity) === -1) {
+                    angular.forEach(rows, function(ri) {
+						var selectionState = ri.selected;
+                        ri.selected = !selectionState;
+                        ri.entity[SELECTED_PROP] = !selectionState;
+						var index = self.selectedItems.indexOf(ri.entity);
+                        if (index === -1) {
                             self.selectedItems.push(ri.entity);
-                        }
+                        } else {
+							self.selectedItems.splice(index,1);
+						}
                     });
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
-                self.lastClickedRow = rows[rows.length - 1];
                 return true;
             }
         } else if (!self.multi) {
-            if (self.lastClickedRow && self.lastClickedRow != rowItem) {
-                self.setSelection(self.lastClickedRow, false);
-            }
-            self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            if (self.lastClickedRow) {
+				//sorting builds new row so last clicked row will have different hash 
+				//than new row in rowcache so set lastClickedRow to same row in new rowCache
+				for(var i = 0; i < self.rowFactory.rowCache.length; i++) { 
+					if(self.rowFactory.rowCache[i] && self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
+						self.lastClickedRow = self.rowFactory.rowCache[i];
+						break;
+					}
+				}
+				self.setSelection(self.lastClickedRow, false);
+				if(self.lastClickedRow.entity == rowItem.entity){ 
+					self.lastClickedRow = undefined; //deselect row
+					return true;
+				}
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+            } else {
+				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
+			}
         } else {
             self.setSelection(rowItem, !rowItem.selected);
         }
-        self.lastClickedRow = rowItem;
+		self.lastClickedRow = rowItem;
         return true;
     };
 
@@ -61,14 +81,20 @@ ng.SelectionService = function(grid) {
         rowItem.entity[SELECTED_PROP] = isSelected;
         if (!isSelected) {
             var indx = self.selectedItems.indexOf(rowItem.entity);
-            self.selectedItems.splice(indx, 1);
+			if(indx != -1){
+				self.selectedItems.splice(indx, 1);
+			}
         } else {
             if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-                self.selectedItems.push(rowItem.entity);
+				if(!self.multi && self.selectedItems.length > 0){
+					self.toggleSelectAll(false);
+					rowItem.selected = isSelected;
+					rowItem.entity[SELECTED_PROP] = isSelected;
+				}
+				self.selectedItems.push(rowItem.entity);
             }
         }
     };
-
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {

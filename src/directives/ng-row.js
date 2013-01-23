@@ -7,7 +7,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
             return {
                 pre: function($scope, iElement) {
                     if ($scope.row.isAggRow) {
-                        var html = ng.aggregateTemplate();
+                        var html = $scope.aggregateTemplate;
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {

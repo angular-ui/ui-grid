@@ -12,7 +12,7 @@ ng.Row = function(entity, config, selectionService) {
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
-    self.selected = false;
+	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
     self.continueSelection = function(event) {
         self.selectionService.ChangeSelection(self, event);
@@ -52,15 +52,11 @@ ng.Row = function(entity, config, selectionService) {
     };
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
-    self.propertyCache = {};
+
     self.getProperty = function(path) {
-        return self.propertyCache[path] || ng.utils.evalProperty(self.entity, path);
+        return ng.utils.evalProperty(self.entity, path);
     };
     //selectify the entity
-    if (self.entity[SELECTED_PROP] === undefined) {
-        self.entity[SELECTED_PROP] = false;
-    } else if (self.entity[SELECTED_PROP]) {
-        // or else maintain the selection set by the entity.
-        self.selectionService.setSelection(self, self.entity[SELECTED_PROP]);
-    }
+	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
+	self.selectionService.setSelection(self, selected);
 };
