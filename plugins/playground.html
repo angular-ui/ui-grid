@@ -70,8 +70,12 @@
         </script>
     </head>
     <body ng-controller="MyCtrl">
+        <div> <a ng-click="myDataSmall.push(myDataBig[0])"> add one to small </a></div>
+        <div> <a ng-click="myDataSmall.pop()"> remove one from small </a> </div>
         <div class="gridStyle" ng-grid="gridOptionsSmall"></div>
         <hr>
+        <div> <a ng-click="myDataBig.push(myDataSmall[0])"> add one to big </a> </div>
+        <div> <a ng-click="myDataBig.pop()"> remove one from big </a> </div>
         <div class="gridStyle" ng-grid="gridOptionsBig"></div>
     </body>
 </html>
