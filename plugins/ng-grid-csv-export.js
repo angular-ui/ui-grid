@@ -31,22 +31,35 @@ ngGridCsvExportPlugin = function(opts) {
                 csvData += '"' + csvStringify(keys[k]) + '",';
             }
             csvData = swapLastCommaForNewline(csvData);
-            for (var gridRow in grid.sortedData) {
+            var gridData = grid.sortedData;
+            for (var gridRow in gridData) {
                 for ( k in keys) {
                     var curCellRaw;
                     if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
-                      curCellRaw = opts.columnOverrides[keys[k]](grid.sortedData[gridRow][keys[k]]);
+                      curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
                     } else {
-                      curCellRaw = grid.sortedData[gridRow][keys[k]];
+                      curCellRaw = gridData[gridRow][keys[k]];
                     }
                     csvData += '"' + csvStringify(curCellRaw) + '",';
                 }
                 csvData = swapLastCommaForNewline(csvData);
             }
             var fp = grid.$root.find(".ngFooterPanel");
-            fp.append("<br><a href=\"data:text/csv;charset=UTF-8,"+encodeURIComponent(csvData)+"\">CSV Export</a></br>");
+            var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span'); 
+            if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
+            var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
+            csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
+            csvDataLinkHtml += encodeURIComponent(csvData);
+            csvDataLinkHtml += "\">CSV Export</a></br></span>" ; 
+            fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
+        scope.catHashKeys = function() {
+          hash = '';
+          for (idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
+          return hash;
+        }; 
+        scope.$watch('catHashKeys()', function() {showDs();});
     };
 };
 
