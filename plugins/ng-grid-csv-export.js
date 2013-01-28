@@ -45,12 +45,12 @@ ngGridCsvExportPlugin = function(opts) {
                 csvData = swapLastCommaForNewline(csvData);
             }
             var fp = grid.$root.find(".ngFooterPanel");
-            var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span'); 
+            var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
             if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
             var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
             csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\">CSV Export</a></br></span>" ; 
+            csvDataLinkHtml += "\">CSV Export</a></br></span>" ;
             fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
@@ -58,8 +58,8 @@ ngGridCsvExportPlugin = function(opts) {
           hash = '';
           for (idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
           return hash;
-        }; 
-        scope.$watch('catHashKeys()', function() {showDs();});
+        };
+        scope.$watch('catHashKeys()', showDs);
     };
 };
 
