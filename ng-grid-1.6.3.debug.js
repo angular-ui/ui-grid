@@ -273,7 +273,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[ï¿½$ï¿½]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -491,6 +491,15 @@ ngGridServices.factory('SortService', function() {
 ***********************************************/
 ngGridServices.factory('DomUtilityService', function() {
     var domUtilityService = {};
+    domUtilityService.getRealWidth = function (obj) {
+        var width = 0;
+        var props = { visibility: "hidden", display: "block" };
+        var hiddenParents = obj.parents().andSelf().not(':visible');
+        $.swap(hiddenParents[0], props, function () {
+            width = obj.outerWidth();
+        });
+        return width;
+    };
     var getWidths = function() {
         var $testContainer = $('<div></div>');
         $testContainer.appendTo('body');
@@ -529,6 +538,9 @@ ngGridServices.factory('DomUtilityService', function() {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
+        if (grid.elementDims.rootMaxW == 0) {
+            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
+        }
         grid.elementDims.rootMaxH = grid.$root.height();
         //check to see if anything has changed
         grid.refreshDomSizes();
