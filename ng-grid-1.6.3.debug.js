@@ -538,7 +538,7 @@ ngGridServices.factory('DomUtilityService', function() {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
-        if (!grid.$root.is(':visible')) {
+        if (grid.$root.is(':hidden')) {
             grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
         }
         grid.elementDims.rootMaxH = grid.$root.height();
