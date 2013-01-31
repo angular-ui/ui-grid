@@ -189,7 +189,7 @@
     background-color: rgb(253, 253, 253);
 }
 .ngRow.selected {
-    background-color: rgb(189, 208, 203);
+    background-color: rgb(201, 221, 225);
 }
 .ngRow.canSelect {
     cursor: pointer;
@@ -211,6 +211,11 @@
 
 .ngCell:last-child {
     border-right: 1px solid rgb(212,212,212);
+}
+
+.focusedCellElement:focus {
+	outline: 0;
+    background-color: rgb(179, 196, 199);
 }
 
 .ngCellText {
@@ -273,7 +278,7 @@ input {
 }
 .ngAggregate {
     position: absolute;
-    background-color: rgb(179, 191, 188);
+    background-color: rgb(201, 221, 225);
     border-bottom: 1px solid beige;
     overflow: hidden;
     top: 0;

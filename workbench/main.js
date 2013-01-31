@@ -57,7 +57,7 @@ function userController($scope) {
         { field: 'paid', cellFilter: 'checkmark' }];
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
-        { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
         { field: 'UPC', displayName: 'Bar Code' }];
     self.selectionchanging = function (a, b) {
@@ -68,8 +68,10 @@ function userController($scope) {
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
+		enableCellSelection: true,
         enablePaging: true,
         canSelectRows: true,
+		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: true,
         columnDefs: 'myDefs'

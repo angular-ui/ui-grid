@@ -36,6 +36,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: true, 
+		
+        //Enables cell selection.
+        enableCellSelection: false,
 
         //Enable or disable resizing of columns
         enableColumnResize: true,
@@ -242,7 +245,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizable: false,
                     groupable: false,
                     headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                    cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                    cellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -460,6 +463,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
+	$scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
+	$scope.enableCellSelection = self.config.enableCellSelection;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;

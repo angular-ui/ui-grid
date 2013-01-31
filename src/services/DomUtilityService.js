@@ -94,6 +94,15 @@ ngGridServices.factory('DomUtilityService', function() {
 		}
 		domUtilityService.BuildStyles($scope, grid, true);
 	};
+	
+	domUtilityService.focusCellElement = function($scope){	
+		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[$scope.col.index];
+		nextFocusedCellElement.children[0].focus();
+		var node = nextFocusedCellElement.nodeName.toLowerCase();
+		if(node == 'input' || node == 'textarea' || node == 'select'){
+			nextFocusedCellElement.select();
+		}
+	};
 
     domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {

@@ -19,6 +19,7 @@ function userController($scope, $timeout) {
 		canSelectRows: true,
 		multiSelect: false,
         enableRowReordering: false,
+		enableCellSelection: true,
         showGroupPanel: true,
         columnDefs: 'myDefs'
     };
