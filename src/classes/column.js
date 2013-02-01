@@ -105,8 +105,8 @@
         return false;
     };
     self.gripOnMouseUp = function() {
-        $(document).off('mousemove');
-        $(document).off('mouseup');
+        $(document).off('mousemove', self.onMouseMove);
+        $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         domUtilityService.digest($scope);
         return false;
