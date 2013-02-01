@@ -41,10 +41,22 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
         domUtilityService.UpdateGridLayout($scope, grid);
     };
+    domUtilityService.getRealWidth = function (obj) {
+        var width = 0;
+        var props = { visibility: "hidden", display: "block" };
+        var hiddenParents = obj.parents().andSelf().not(':visible');
+        $.swap(hiddenParents[0], props, function () {
+            width = obj.outerWidth();
+        });
+        return width;
+    };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
+        if (grid.$root.is(':hidden')) {
+            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
+        }
         grid.elementDims.rootMaxH = grid.$root.height();
         //check to see if anything has changed
         grid.refreshDomSizes();
