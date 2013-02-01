@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/30/2013 23:25:50
+* Compiled At: 01/31/2013 15:45:27
 ***********************************************/
 
 (function(window) {
@@ -44,21 +44,33 @@ var TEMPLATE_REGEXP = /<.+>/;
 * FILE: ..\src\navigation.js
 ***********************************************/
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt) {
+ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
     var charCode = evt.which || evt.keyCode;
-	var offset = 0;
-	var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-	var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
-	if(charCode == 9){ //tab key
-		if(!evt.shiftKey && focusedOnLastColumn//tabing on last column
-			|| evt.shiftKey && focusedOnFirstColumn){  //tabbing on first column
-			evt.preventDefault();
+	
+	var newColumnIndex;
+	if($scope.enableCellSelection){
+		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
+		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
+		if(charCode == 9){ //tab key
+			if(!evt.shiftKey && focusedOnLastColumn//tabing on last column
+				|| evt.shiftKey && focusedOnFirstColumn){  //tabbing on first column
+				evt.preventDefault();
+			}
+			return true;
 		}
-		return true;
-	} else if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
+		newColumnIndex = $scope.col.index;
+		if(charCode == 37 && !focusedOnFirstColumn){
+			newColumnIndex -= 1;
+		} else if(charCode == 39 && !focusedOnLastColumn){			
+			newColumnIndex += 1;
+		}
+	}
+		
+	var offset = 0;
+	if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
 		offset = -1;
 	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
 		offset = 1;
@@ -75,26 +87,16 @@ ng.moveSelectionHandler = function($scope, elm, evt) {
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
-	if($scope.enableCellSelection){
-		var columnIndex = $scope.col.index;
-		if(charCode == 37 && !focusedOnFirstColumn){
-			columnIndex -= 1;
-		} else if(charCode == 39 && !focusedOnLastColumn){			
-			columnIndex += 1;
-		}
-		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[columnIndex];
-		nextFocusedCellElement.children[0].focus();
-		var node = nextFocusedCellElement.nodeName.toLowerCase();
-		if(node == 'input' || node == 'textarea' || node == 'select'){
-			nextFocusedCellElement.select();
+	if($scope.enableCellSelection){ 
+		domUtilityService.focusCellElement($scope, newColumnIndex);
+	} else {	
+		if (index > items.length - EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
+		} else if (index < EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
 		}
 	}
 	
-    /*if (index > items.length - EXCESS_ROWS) {
-        elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
-    } else if (index < EXCESS_ROWS) {
-        elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
-    }*/
     if (!$scope.$$phase) {
         $scope.$parent.$parent.$digest();
     }
@@ -609,13 +611,51 @@ ngGridServices.factory('DomUtilityService', function() {
 		domUtilityService.BuildStyles($scope, grid, true);
 	};
 	
-	domUtilityService.focusCellElement = function($scope){	
-		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[$scope.col.index];
+	var previousColumn;
+	domUtilityService.focusCellElement = function($scope, index){	
+		var columnIndex = index ? index : previousColumn;
+		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[columnIndex];
 		nextFocusedCellElement.children[0].focus();
 		var node = nextFocusedCellElement.nodeName.toLowerCase();
 		if(node == 'input' || node == 'textarea' || node == 'select'){
 			nextFocusedCellElement.select();
 		}
+		previousColumn = columnIndex;
+	};
+	
+	var changeUserSelect = function(elm, value) {
+		elm.css({
+			'-webkit-touch-callout': value,
+			'-webkit-user-select': value,
+			'-khtml-user-select': value,
+			'-moz-user-select': value == 'none'
+				? '-moz-none'
+				: value,
+			'-ms-user-select': value,
+			'user-select': value
+		});
+	};
+	
+	domUtilityService.selectionHandlers = function($scope, elm){
+		var doingKeyDown = false;
+		elm.bind('keydown', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'none', evt);
+				return true;
+			} else if (!doingKeyDown) {
+				doingKeyDown = true;
+				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				doingKeyDown = false;
+				return ret;
+			}
+			return false;
+		});
+		elm.bind('keyup', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'text', evt);
+			}
+			return true;
+		});
 	};
 
     domUtilityService.digest = function($scope) {
@@ -2463,18 +2503,6 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
 * FILE: ..\src\directives\ng-cell.js
 ***********************************************/
 ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
-	var changeUserSelect = function(elem, value) {
-		elem.css({
-			'-webkit-touch-callout': value,
-			'-webkit-user-select': value,
-			'-khtml-user-select': value,
-			'-moz-user-select': value == 'none'
-				? '-moz-none'
-				: value,
-			'-ms-user-select': value,
-			'user-select': value
-		});
-	};
     var ngCell = {
         scope: false,
         compile: function() {
@@ -2485,30 +2513,14 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
 					var cellElement = $compile(html)($scope);
 					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
 						cellElement[0].setAttribute('tabindex', 0);
-						cellElement.addClass('focusedCellElement');
+						cellElement.addClass('ngCellElement');
 					}
                     iElement.append(cellElement);
                 },
-				post: function($scope, iElement){				
-					var doingKeyDown = false;
-					iElement.bind('keydown', function(evt) {
-						if (evt.keyCode == 16) { //shift key
-							changeUserSelect(iElement, 'none', evt);
-							return true;
-						} else if (!doingKeyDown) {
-							doingKeyDown = true;
-							var ret = ng.moveSelectionHandler($scope, iElement, evt, domUtilityService);
-							doingKeyDown = false;
-							return ret;
-						}
-						return false;
-					});
-					iElement.bind('keyup', function(evt) {
-						if (evt.keyCode == 16) { //shift key
-							changeUserSelect(iElement, 'text', evt);
-						}
-						return true;
-					});
+				post: function($scope, iElement){	
+					if($scope.enableCellSelection){
+						domUtilityService.selectionHandlers($scope, iElement);
+					}
 				}
             };
         }
@@ -2556,17 +2568,20 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 * FILE: ..\src\directives\ng-viewport.js
 ***********************************************/
 ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtilityService) {
-    return function(scope, elm) {
+    return function($scope, elm) {
         elm.bind('scroll', function(evt) {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
-            scope.adjustScrollLeft(scrollLeft);
-            scope.adjustScrollTop(scrollTop);
-			if(scope.enableCellSelection){
-				domUtilityService.focusCellElement(scope);
-			}
+            $scope.adjustScrollLeft(scrollLeft);
+            $scope.adjustScrollTop(scrollTop);
+			if($scope.enableCellSelection){
+				domUtilityService.focusCellElement($scope);
+			} 
             return true;
         });
+		if(!$scope.enableCellSelection){
+			domUtilityService.selectionHandlers($scope, elm);
+		}
     };
 }]);
 
