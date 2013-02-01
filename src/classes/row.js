@@ -59,4 +59,5 @@ ng.Row = function(entity, config, selectionService) {
     //selectify the entity
 	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
 	self.selectionService.setSelection(self, selected);
+	entity["__ngGridRow__"] = self;
 };
