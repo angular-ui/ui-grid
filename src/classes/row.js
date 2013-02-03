@@ -18,7 +18,7 @@ ng.Row = function(entity, config, selectionService) {
         self.selectionService.ChangeSelection(self, event);
     };
     self.toggleSelected = function(event) {
-        if (!canSelectRows) {
+        if (!canSelectRows && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;

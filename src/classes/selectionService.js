@@ -77,23 +77,25 @@ ng.SelectionService = function(grid) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
-        rowItem.selected = isSelected;
-        rowItem.entity[SELECTED_PROP] = isSelected;
-        if (!isSelected) {
-            var indx = self.selectedItems.indexOf(rowItem.entity);
-			if(indx != -1){
-				self.selectedItems.splice(indx, 1);
-			}
-        } else {
-            if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-				if(!self.multi && self.selectedItems.length > 0){
-					self.toggleSelectAll(false);
-					rowItem.selected = isSelected;
-					rowItem.entity[SELECTED_PROP] = isSelected;
+		if(grid.config.canSelectRows){
+			rowItem.selected = isSelected;
+			rowItem.entity[SELECTED_PROP] = isSelected;
+			if (!isSelected) {
+				var indx = self.selectedItems.indexOf(rowItem.entity);
+				if(indx != -1){
+					self.selectedItems.splice(indx, 1);
 				}
-				self.selectedItems.push(rowItem.entity);
-            }
-        }
+			} else {
+				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+					if(!self.multi && self.selectedItems.length > 0){
+						self.toggleSelectAll(false);
+						rowItem.selected = isSelected;
+						rowItem.entity[SELECTED_PROP] = isSelected;
+					}
+					self.selectedItems.push(rowItem.entity);
+				}
+			}
+		}
     };
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all

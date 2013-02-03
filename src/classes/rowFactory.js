@@ -23,7 +23,8 @@ ng.RowFactory = function(grid, $scope) {
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
-        jqueryUITheme: grid.config.jqueryUITheme
+        jqueryUITheme: grid.config.jqueryUITheme,
+		enableCellSelection: grid.config.enableCellSelection
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);

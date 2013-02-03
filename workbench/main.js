@@ -70,7 +70,7 @@ function userController($scope) {
         pagingOptions: $scope.pagingOptions,
 		enableCellSelection: true,
         enablePaging: true,
-        canSelectRows: true,
+        canSelectRows: false,
 		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: true,

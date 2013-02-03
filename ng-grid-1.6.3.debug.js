@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/31/2013 15:45:27
+* Compiled At: 02/03/2013 14:19:20
 ***********************************************/
 
 (function(window) {
@@ -52,19 +52,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 	
 	var newColumnIndex;
 	if($scope.enableCellSelection){
-		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
 		if(charCode == 9){ //tab key
-			if(!evt.shiftKey && focusedOnLastColumn//tabing on last column
-				|| evt.shiftKey && focusedOnFirstColumn){  //tabbing on first column
-				evt.preventDefault();
-			}
-			return true;
+			evt.preventDefault();
 		}
+		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
+		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;	
 		newColumnIndex = $scope.col.index;
-		if(charCode == 37 && !focusedOnFirstColumn){
+		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
 			newColumnIndex -= 1;
-		} else if(charCode == 39 && !focusedOnLastColumn){			
+		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
 			newColumnIndex += 1;
 		}
 	}
@@ -74,7 +70,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 		offset = -1;
 	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
 		offset = 1;
-	} else if(charCode != 37 && charCode != 39){
+	} else if(charCode != 37 && charCode != 39 && charCode != 9){
 		return true;
 	}	
 	
@@ -83,7 +79,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if (index < 0 || index >= items.length) {
         return true;
     }
-	if(charCode != 37 && charCode != 39){
+	if(charCode != 37 && charCode != 39 && charCode != 9){
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
@@ -96,7 +92,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
 		}
 	}
-	
     if (!$scope.$$phase) {
         $scope.$parent.$parent.$digest();
     }
@@ -614,13 +609,16 @@ ngGridServices.factory('DomUtilityService', function() {
 	var previousColumn;
 	domUtilityService.focusCellElement = function($scope, index){	
 		var columnIndex = index ? index : previousColumn;
-		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[columnIndex];
-		nextFocusedCellElement.children[0].focus();
-		var node = nextFocusedCellElement.nodeName.toLowerCase();
-		if(node == 'input' || node == 'textarea' || node == 'select'){
-			nextFocusedCellElement.select();
+		if(columnIndex){
+			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
+			var nextFocusedCellElement = columns[columnIndex];
+			nextFocusedCellElement.children[0].focus();
+			var node = nextFocusedCellElement.nodeName.toLowerCase();
+			if(node == 'input' || node == 'textarea' || node == 'select'){
+				nextFocusedCellElement.select();
+			}
+			previousColumn = columnIndex;
 		}
-		previousColumn = columnIndex;
 	};
 	
 	var changeUserSelect = function(elm, value) {
@@ -683,7 +681,12 @@ ng.defaultRowTemplate = function(){ return '<div ng-style="{\'cursor\': row.curs
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
 ***********************************************/
-ng.defaultCellTemplate = function(){ return '<div ng-class="\'ngCellText colt\' + $index"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>';};
+ng.defaultCellTemplate = function(){ return '<div ng-cell-has-focus><div class="ngCellText" ng-class="\'colt\' + $index" ui-if="!isFocused"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div><input ng-cell-input  ng-class="\'colt\' + $index" ui-if="isFocused" ng-model="COL_FIELD" /></div>';};
+
+/***********************************************
+* FILE: ..\src\templates\editableCellTemplate.html
+***********************************************/
+ng.editableCellTemplate = function(){ return '<div ng-cell-has-focus><div class="ngCellText" ng-class="\'colt\' + $index" ui-if="!isFocused"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div><input ng-cell-input  ng-class="\'colt\' + $index" ui-if="isFocused" ng-model="COL_FIELD" /></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -820,7 +823,9 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
 				col.setAttribute('draggable', 'true');
 				//jQuery 'on' function doesn't have  dataTransfer as part of event in handler unless added to event props, which is not recommended
 				//See more here: http://api.jquery.com/category/events/event-object/
-				col.addEventListener('dragstart', self.dragStart); 
+				if (col.addEventListener) { //IE8 doesn't have drag drop or event listeners
+					col.addEventListener('dragstart', self.dragStart);
+				}
 			});
 			if (navigator.userAgent.indexOf("MSIE") != -1){
          		//call native IE dragDrop() to start dragging
@@ -854,7 +859,9 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
                 // set draggable events
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
-					this.addEventListener('dragstart', self.dragStart); 
+					if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
+						this.addEventListener('dragstart', self.dragStart); 
+					}
 					if (navigator.userAgent.indexOf("MSIE") != -1){
 						//call native IE dragDrop() to start dragging
 						groupItem.bind('selectstart', function () { 
@@ -1217,7 +1224,8 @@ ng.RowFactory = function(grid, $scope) {
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
-        jqueryUITheme: grid.config.jqueryUITheme
+        jqueryUITheme: grid.config.jqueryUITheme,
+		enableCellSelection: grid.config.enableCellSelection
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -2044,7 +2052,7 @@ ng.Row = function(entity, config, selectionService) {
         self.selectionService.ChangeSelection(self, event);
     };
     self.toggleSelected = function(event) {
-        if (!canSelectRows) {
+        if (!canSelectRows && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;
@@ -2313,23 +2321,25 @@ ng.SelectionService = function(grid) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
-        rowItem.selected = isSelected;
-        rowItem.entity[SELECTED_PROP] = isSelected;
-        if (!isSelected) {
-            var indx = self.selectedItems.indexOf(rowItem.entity);
-			if(indx != -1){
-				self.selectedItems.splice(indx, 1);
-			}
-        } else {
-            if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-				if(!self.multi && self.selectedItems.length > 0){
-					self.toggleSelectAll(false);
-					rowItem.selected = isSelected;
-					rowItem.entity[SELECTED_PROP] = isSelected;
+		if(grid.config.canSelectRows){
+			rowItem.selected = isSelected;
+			rowItem.entity[SELECTED_PROP] = isSelected;
+			if (!isSelected) {
+				var indx = self.selectedItems.indexOf(rowItem.entity);
+				if(indx != -1){
+					self.selectedItems.splice(indx, 1);
 				}
-				self.selectedItems.push(rowItem.entity);
-            }
-        }
+			} else {
+				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+					if(!self.multi && self.selectedItems.length > 0){
+						self.toggleSelectAll(false);
+						rowItem.selected = isSelected;
+						rowItem.entity[SELECTED_PROP] = isSelected;
+					}
+					self.selectedItems.push(rowItem.entity);
+				}
+			}
+		}
     };
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
@@ -2569,16 +2579,22 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 ***********************************************/
 ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtilityService) {
     return function($scope, elm) {
+		var isMouseWheelActive = false;
         elm.bind('scroll', function(evt) {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
-			if($scope.enableCellSelection){
+			if($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive){
 				domUtilityService.focusCellElement($scope);
 			} 
+			isMouseWheelActive = false;
             return true;
         });
+		elm.bind("mousewheel DOMMouseScroll", function(evt) {
+			isMouseWheelActive = true;
+			return true;
+		});
 		if(!$scope.enableCellSelection){
 			domUtilityService.selectionHandlers($scope, elm);
 		}
@@ -2605,6 +2621,105 @@ ngGridDirectives.directive('ngCellText',
           });
       };
   });
+
+/***********************************************
+* FILE: ..\src\directives\ng-cell-has-focus.js
+***********************************************/
+ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService', '$timeout',
+	function (domUtilityService, $timeout) {
+		var focusOnInputElement = function($scope, elm){
+			$scope.isFocused = true;
+			domUtilityService.digest($scope);	
+			var inputElement = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			if(inputElement.length > 0){
+				angular.element(inputElement[0]).focus();
+				angular.element(inputElement[0]).bind('blur', function(evt){	
+					$scope.isFocused = false;	
+					domUtilityService.digest($scope);
+					return true;
+				});	
+			}
+		};
+		return function($scope, elm) {
+			$scope.isFocused = false;
+			elm.bind('mousedown', function(evt){
+				evt.preventDefault();
+				$scope.$parent.row.toggleSelected(evt);
+				domUtilityService.digest($scope.$parent.$parent);
+				focusOnInputElement($scope, elm);
+				return true;
+			});			
+			elm.bind('focus', function(evt){
+				focusOnInputElement($scope, elm);
+				return true;
+			});
+		};
+	}]);
+
+/***********************************************
+* FILE: ..\src\directives\ng-cell-input.js
+***********************************************/
+ngGridDirectives.directive('ngCellInput',
+	function () {
+		return function($scope, elm) {
+			elm.bind('keydown', function(evt){
+				switch(evt.keyCode){
+					case 37:
+					case 38:
+					case 39:
+					case 40:
+						evt.stopPropagation();
+						break;
+					default:
+						break;
+				}
+				return true;
+			});
+		};
+	});
+
+/***********************************************
+* FILE: ..\src\directives\ui-if.js
+***********************************************/
+/*
+ * Defines the ui-if tag. This removes/adds an element from the dom depending on a condition
+ * Originally created by @tigbro, for the @jquery-mobile-angular-adapter
+ * https://github.com/tigbro/jquery-mobile-angular-adapter
+ */
+ngGridDirectives.directive('uiIf', [function () {
+  return {
+    transclude: 'element',
+    priority: 1000,
+    terminal: true,
+    restrict: 'A',
+    compile: function (element, attr, transclude) {
+      return function (scope, element, attr) {
+
+        var childElement;
+        var childScope;
+ 
+        scope.$watch(attr['uiIf'], function (newValue) {
+          if (childElement) {
+            childElement.remove();
+            childElement = undefined;
+          }
+          if (childScope) {
+            childScope.$destroy();
+            childScope = undefined;
+          }
+
+          if (newValue) {
+            childScope = scope.$new();
+            transclude(childScope, function (clone) {
+              childElement = clone;
+              element.after(clone);
+            });
+          }
+        });
+      };
+    }
+  };
+}]);
 
 /***********************************************
 * FILE: ..\src\init.js

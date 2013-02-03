@@ -12,19 +12,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 	
 	var newColumnIndex;
 	if($scope.enableCellSelection){
-		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
 		if(charCode == 9){ //tab key
-			if(!evt.shiftKey && focusedOnLastColumn//tabing on last column
-				|| evt.shiftKey && focusedOnFirstColumn){  //tabbing on first column
-				evt.preventDefault();
-			}
-			return true;
+			evt.preventDefault();
 		}
+		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
+		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;	
 		newColumnIndex = $scope.col.index;
-		if(charCode == 37 && !focusedOnFirstColumn){
+		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
 			newColumnIndex -= 1;
-		} else if(charCode == 39 && !focusedOnLastColumn){			
+		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
 			newColumnIndex += 1;
 		}
 	}
@@ -34,7 +30,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 		offset = -1;
 	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
 		offset = 1;
-	} else if(charCode != 37 && charCode != 39){
+	} else if(charCode != 37 && charCode != 39 && charCode != 9){
 		return true;
 	}	
 	
@@ -43,7 +39,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if (index < 0 || index >= items.length) {
         return true;
     }
-	if(charCode != 37 && charCode != 39){
+	if(charCode != 37 && charCode != 39 && charCode != 9){
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
@@ -56,7 +52,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
 		}
 	}
-	
     if (!$scope.$$phase) {
         $scope.$parent.$parent.$digest();
     }

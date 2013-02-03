@@ -98,13 +98,16 @@ ngGridServices.factory('DomUtilityService', function() {
 	var previousColumn;
 	domUtilityService.focusCellElement = function($scope, index){	
 		var columnIndex = index ? index : previousColumn;
-		var nextFocusedCellElement = $scope.selectionService.lastClickedRow.elm[0].children[columnIndex];
-		nextFocusedCellElement.children[0].focus();
-		var node = nextFocusedCellElement.nodeName.toLowerCase();
-		if(node == 'input' || node == 'textarea' || node == 'select'){
-			nextFocusedCellElement.select();
+		if(columnIndex){
+			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
+			var nextFocusedCellElement = columns[columnIndex];
+			nextFocusedCellElement.children[0].focus();
+			var node = nextFocusedCellElement.nodeName.toLowerCase();
+			if(node == 'input' || node == 'textarea' || node == 'select'){
+				nextFocusedCellElement.select();
+			}
+			previousColumn = columnIndex;
 		}
-		previousColumn = columnIndex;
 	};
 	
 	var changeUserSelect = function(elm, value) {
