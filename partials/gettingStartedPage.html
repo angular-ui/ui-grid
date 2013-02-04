@@ -1,12 +1,13 @@
-<div class="container-fluid body rowstyles portal-contact-page" style=" overflow: auto">
-	<div class="content rowstyles portal-contact-content" style=" padding: 0 20px;">	
+<section id="gettingStarted" class="portal-contact-page">
+<div ng-controller="GettingStartedPageCtrl" style="height: 1100px">
+	<div class="portal-contact-content">	
 		<h1 style="margin:0">Getting Started</h1>
 		<div style="float: left; width:500px">		
 			<div style="margin-top: 20px">
 				<p><strong>Steps for getting started (example on right):</strong></p>
 				<ol>
-					<li>Add references to <a href="http://code.jquery.com/jquery-1.8.3.min.js">jQuery</a> and <a href="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js">AngularJS</a>.</li>
-					<li>Add references to <a href="https://github.com/timothyswt/ng-grid">ngGrid</a>'s javascript and css files.</li>
+					<li>Add references to <a href="http://code.jquery.com/">jQuery</a> and <a href="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js">AngularJS</a>.</li>
+					<li>Add references to <a href="https://github.com/angular-ui/ng-grid">ngGrid</a>'s javascript and css files.</li>
 					<li>Where you declare your app module, add ngGrid:<br /> <code>angular.module('myApp',['ngGrid']);</code><br />If you use <a target="blank" href="https://github.com/angular/angular-seed">angular seed</a>, it is in your app.js file.</li>
 					<li>In your html file within the controller where you plan to use ng-grid, add:<br /><code>&lt;div class="gridStyle" ng-grid="gridOptions"&gt;&lt;/div&gt;</code><br/>gridOptions is the variable we are going to bind to where we will initialize our grid options.</li>
 					<li>We are going to define a basic style for our grid in style.css:
@@ -70,3 +71,4 @@ app.controller('MyCtrl', function($scope) {
 		</div>
 	</div>
 </div>
+</section>

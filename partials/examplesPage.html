@@ -1,36 +1,29 @@
-<div class="container-fluid body rowstyles" style="width:1200px; margin: auto;">
-	<div class="content rowstyles colstyles" style="position:absolute; top: 20px; bottom: 20px">
-		<div style="position:absolute; width: 250px; top: 0; left: 0" class="bs-docs-sidebar">
+<div style="width:1200px; margin: auto;">
+	<div >
+		<div class="bs-docs-sidebar">
 			<ul class="nav nav-list bs-docs-sidenav">
-				<li><a scrollto href="#basic"><i class="icon-chevron-right"></i>Basic</a></li>
-				<li><a scrollto href="#columnDefs"><i class="icon-chevron-right"></i>Column Definitions</a></li>
-				<li><a scrollto href="#grouping"><i class="icon-chevron-right"></i>Grouping</a></li>
-				<li><a scrollto href="#templates"><i class="icon-chevron-right"></i>Templates</a></li>
-				<li><a scrollto href="#themes"><i class="icon-chevron-right"></i>Themes</a></li>
-				<li><a scrollto href="#paging"><i class="icon-chevron-right"></i>Server-Side Paging</a></li>
-				<li><a scrollto href="#masterdetail"><i class="icon-chevron-right"></i>Master/Detail</a></li>
 			</ul>
 		</div>
-		<div id="exampleDefinitions" style="position:absolute;  left: 280px; top: 0; bottom:0; right: 20px; overflow: auto; padding: 0 20px" data-spy="scroll" data-target=".bs-docs-sidebar" refresh-scroll-spy>
-			<section id="basic" ng-controller="BasicExampleCtrl" style="height: 900px;">
+		<div>
+			<section id="basic" ng-controller="BasicExampleCtrl" style="height: 500px;">
 				<div ng-include src="'partials/exampleDefinitions/basic/basicExample.html'"></div>
 			</section>
-			<section id="columnDefs" ng-controller="ColumnDefsExampleCtrl" style="height: 950px;">
+			<section id="columnDefs" ng-controller="ColumnDefsExampleCtrl" style="height: 550px;">
 				<div ng-include src="'partials/exampleDefinitions/columnDefs/columnDefsExample.html'"></div>
 			</section>
-			<section id="grouping" style="height: 1800px;">
+			<section id="grouping" style="height: 1100px;">
 				<div ng-include src="'partials/exampleDefinitions/grouping/groupingExample.html'"></div>
 			</section>
-			<section id="templates" style="height: 2700px;">
+			<section id="templates" style="height: 1600px;">
 				<div ng-include src="'partials/exampleDefinitions/templates/templatesExample.html'"></div>
 			</section>
-			<section id="themes" ng-controller="ThemesExampleCtrl" style="height: 950px;">
+			<section id="themes" ng-controller="ThemesExampleCtrl" style="height: 550px;">
 				<div ng-include src="'partials/exampleDefinitions/themes/themesExample.html'"></div>
 			</section>
-			<section id="paging" ng-controller="PagingExampleCtrl" style="height: 950px;">
+			<section id="paging" ng-controller="PagingExampleCtrl" style="height: 550px;">
 				<div ng-include src="'partials/exampleDefinitions/paging/pagingExample.html'"></div>
 			</section>
-			<section id="masterdetail" ng-controller="MasterDetailExampleCtrl" style="height: 950px;">
+			<section id="masterdetail" ng-controller="MasterDetailExampleCtrl" style="height: 550px;">
 				<div ng-include src="'partials/exampleDefinitions/masterDetail/masterDetailsExample.html'"></div>
 			</section>
 		</div>

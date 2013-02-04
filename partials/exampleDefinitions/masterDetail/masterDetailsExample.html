@@ -1,4 +1,5 @@
 <h1 style="margin-top: 0;">Master/Details Example</h1>
+<div style="float: left; width: 600px">
 <p>Below is an example on how to make a master/details view using ng-grid:
 <ul style="margin-bottom:0px;" class="nav nav-tabs">
 	<li class="nav" ng-repeat="tab in basicTabs" ng-class="{active: selectedBasicTab == tab}">
@@ -6,13 +7,16 @@
 	</li>
 </ul>
 <div ng-include src="link()"></div>
-<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/CncDWCktXTuBQdDVfuVv">here</a>.</p>
-<div>
-    <div style="float:left; border: 1px solid rgb(212,212,212); width: 400px; height: 300px; margin-top: 12px; " ng-grid="gridOptions"></div>
-    <div ng-show="mySelections[0] != null" style="float:left; margin-left: 20px; margin-top: 10px; height: 300px; width: 400px;">
-        <ul>
-            <li>{{mySelections[0].age}}</li>
-            <li>{{mySelections[0].name}}</li>
-        </ul>
-    </div>
+</div>
+<div style="float: right;">
+	<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/CncDWCktXTuBQdDVfuVv">here</a>.</p>
+	<div>
+		<div style="border: 1px solid rgb(212,212,212); width: 400px; height: 300px; margin-top: 12px; " ng-grid="gridOptions"></div>
+		<div ng-show="mySelections[0] != null" style="margin-top: 10px; height: 300px; width: 400px;">
+			<ul>
+				<li>{{mySelections[0].age}}</li>
+				<li>{{mySelections[0].name}}</li>
+			</ul>
+		</div>
+	</div>
 </div>

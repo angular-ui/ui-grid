@@ -6,16 +6,8 @@ angular.module('myApp.directives', [])
 				if (attrs.href) {
 					attrs.scrollto = attrs.href;
 				}
-				var t = $(attrs.scrollto);
-				var top = t[0].offsetTop;
-				$('#exampleDefinitions').animate({ scrollTop: top }, 800);
+				var top = $(attrs.scrollto).offset().top - 25;
+				$('body').animate({ scrollTop: top }, 800);
 			});
-		};
-	}])
-	.directive('refreshScrollSpy', [function(){
-		return function(scope, elm, attrs) {
-			//$('[data-spy="scroll"]').each(function () {
-            //    $(this).scrollspy('refresh')
-		    //});
 		};
 	}]);

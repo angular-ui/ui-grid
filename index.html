@@ -25,28 +25,103 @@
 	<script type="text/javascript" src="js/exampleControllers.js"></script>
 </head>
 
-<body ng-controller="PageNavigationCtrl">
-	<div id="header" class="navbar navbar-inverse navbar-fixed-top headerstyles rowstyles"> 
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="brand" href="#"  ng-click="switchPage('applications')">ng-grid</a>
-				<ul class="nav">
-					<li class="nav" ng-repeat="page in pageTabs" ng-class="{active: selectedPage == page}">
-						<a ng-click="switchPage(page.index)" ng-href="#/{{page.id}}"><i ng-class="page.icon" class="icon-white"></i> {{page.title}}</a>
-					</li>
-				</ul>
-                <div style="float: right;">
-                    <a href="https://github.com/angular-ui/ng-grid" class="btn primary"><i style="margin-right: 5px; margin-top: 3px" class="icon-white icon-github"></i> View on Github</a>
-                </div>
-            </div>
-        </div>
-    </div>
-	<div ng-view></div>
-    <div class="footerstyles rowstyles portal-footer-content">
-        <div class="portal-footer-info">
-            <p>ng-grid</p>    		
-        </div>
-    </div>
+<body>
+	<header class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<div class="dropdown pull-left">
+					<a class="brand dropdown-toggle" role="button" data-toggle="dropdown" href="#"> 
+						ng-grid
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li><a href="https://github.com/angular-ui/"><strong>Related Projects:</strong></a></li>
+						<li class="divider"></li>
+						<li><a href="http://angular-ui.github.com/">AngularUI</a></li>
+						<li><a href="http://angular-ui.github.com/bootstrap/">Bootstrap</a></li>
+						<li><a href="https://github.com/angular-ui/AngularJs.tmbundle">AngularJS.tmbundle</a></li>
+						<li><a href="http://angular-ui.github.com/router/">Router <span class="label label-success">New!</span></a></li>
+						<li><a href="http://angular-ui.github.com/Tips-n-Tricks/">Tips-n-Tricks <span class="label">WIP</span></a></li>
+					</ul>
+				</div>
+				<div class="nav-collapse">
+					<ul class="nav bs-docs-sidebar">
+						<li>
+							<a scrollto="" href="#top">Home</a>
+						</li>	
+						<li>
+							<a scrollto="" href="#gettingStarted">Getting Started</a>
+						</li>					
+						<li class="dropdown">
+							<a class="dropdown-toggle" href="#" data-toggle="dropdown">
+								Examples
+								<b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu">									
+								<li><a scrollto href="#basic">Basic</a></li>
+								<li><a scrollto href="#columnDefs">Column Definitions</a></li>
+								<li><a scrollto href="#grouping">Grouping</a></li>
+								<li><a scrollto href="#templates">Templates</a></li>
+								<li><a scrollto href="#themes">Themes</a></li>
+								<li><a scrollto href="#paging">Server-Side Paging</a></li>
+								<li><a scrollto href="#masterdetail">Master/Detail</a></li>
+							</ul>
+						</li>		
+						<li>
+							<a scrollto="" href="#api">API</a>
+						</li>			
+					</ul>
+					<ul class="pull-right nav">
+						<li><a href="https://github.com/angular-ui/ng-grid/graphs/contributors">Contributors</a></li>
+						<li class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+								Need Help?
+								<b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="https://github.com/angular-ui/ng-grid/issues?sort=updated&amp;state=open">ng-grid broken or want a new feature?</a></li>
+								<li><a href="https://github.com/angular-ui/ng-grid.github.com/issues?sort=updated&amp;state=open">Demo page broken or missing demos?</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</header>
+	<div style="margin: 32px;" id="top"></div>
+	<div data-spy="scroll" data-target=".bs-docs-sidebar">
+		<header class="hero-unit" id="overview">
+			<div class="container">
+				<h1>
+					ng-grid
+				</h1>
+
+				<p>Angular Data Grid written in <strong><a href="http://angularjs.org">AngularJS</a></strong> and <strong><a href="http://jquery.com">jQuery</a></strong> by the <strong><a href="http://angular-ui.github.com">AngularUI Team</a></strong></p>
+
+				<p class="btn-group">
+					<a class="btn btn-primary" href="https://github.com/angular-ui/ng-grid/zipball/master"><i class="icon-white icon-download-alt"></i> Download ZIP</a>
+					<a class="btn" href="https://github.com/angular-ui/ng-grid"><i class="icon-github"></i> Code on Github</a>
+					<a class="btn btn-primary" href="https://github.com/angular-ui/ng-grid/tarball/master"><i class="icon-white icon-download-alt"></i> Download TAR</a>
+				</p>
+			</div>
+			<div class="bs-docs-social">
+				<div class="container">
+					<ul class="bs-docs-social-buttons">
+						<li>
+							<iframe src="http://ghbtns.com/github-btn.html?user=angular-ui&amp;repo=ng-grid&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+						</li>
+						<li>
+							<iframe src="http://ghbtns.com/github-btn.html?user=angular-ui&amp;repo=ng-grid&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="95" height="20"></iframe>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</header>
+		<div ng-include="'partials/gettingStartedPage.html'"></div>
+		<div ng-include="'partials/examplesPage.html'"></div>
+		<div ng-include="'partials/apiPage.html'" style="clear: both"></div>
+		<div style="margin: 32px;"></div>
+	</div>
     <script type="text/javascript">
 
   var _gaq = _gaq || [];
