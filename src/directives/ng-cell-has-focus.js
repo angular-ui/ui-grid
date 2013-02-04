@@ -1,12 +1,14 @@
-ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService', '$timeout',
-	function (domUtilityService, $timeout) {
+ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
+	function (domUtilityService) {
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
-			var inputElement = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var elementWithoutComments = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
 			if(inputElement.length > 0){
-				angular.element(inputElement[0]).focus();
-				angular.element(inputElement[0]).bind('blur', function(evt){	
+				angular.element(inputElement).focus();
+				angular.element(inputElement).select();
+				angular.element(inputElement).bind('blur', function(evt){	
 					$scope.isFocused = false;	
 					domUtilityService.digest($scope);
 					return true;

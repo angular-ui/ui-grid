@@ -10,6 +10,7 @@
 ..\src\templates\rowTemplate.html
 ..\src\templates\cellTemplate.html
 ..\src\templates\editableCellTemplate.html
+..\src\templates\focusedCellEditTemplate.html
 ..\src\templates\aggregateTemplate.html
 ..\src\templates\headerRowTemplate.html
 ..\src\templates\headerCellTemplate.html

@@ -52,7 +52,7 @@ function userController($scope) {
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
-        { field: 'allowance', aggLabelFilter: 'currency', cellTemplate: 'partials/cellTemplate.html' },
+        { field: 'allowance', aggLabelFilter: 'currency', enableFocusedCellEdit: true},
         { field: 'birthday', cellFilter: 'date', resizable: false },
         { field: 'paid', cellFilter: 'checkmark' }];
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },

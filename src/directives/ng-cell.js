@@ -4,7 +4,14 @@
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    var html = $scope.col.cellTemplate;
+					var html;
+					if($scope.col.enableFocusedCellEdit){
+						html =  $scope.col.focusedCellEditTemplate;
+						html = html.replace(DISPLAY_CELL_TEMPLATE, $scope.col.cellTemplate);
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate);
+					} else {
+						html = $scope.col.cellTemplate;
+					}
                     html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
 					var cellElement = $compile(html)($scope);
 					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){

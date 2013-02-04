@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/03/2013 14:19:20
+* Compiled At: 02/04/2013 13:28:52
 ***********************************************/
 
 (function(window) {
@@ -38,6 +38,8 @@ var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
 var COL_FIELD = /COL_FIELD/g;
+var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
+var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var TEMPLATE_REGEXP = /<.+>/;
 
 /***********************************************
@@ -681,12 +683,17 @@ ng.defaultRowTemplate = function(){ return '<div ng-style="{\'cursor\': row.curs
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
 ***********************************************/
-ng.defaultCellTemplate = function(){ return '<div ng-cell-has-focus><div class="ngCellText" ng-class="\'colt\' + $index" ui-if="!isFocused"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div><input ng-cell-input  ng-class="\'colt\' + $index" ui-if="isFocused" ng-model="COL_FIELD" /></div>';};
+ng.defaultCellTemplate = function(){ return '<div ng-class="\'ngCellText colt\' + $index"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\editableCellTemplate.html
 ***********************************************/
-ng.editableCellTemplate = function(){ return '<div ng-cell-has-focus><div class="ngCellText" ng-class="\'colt\' + $index" ui-if="!isFocused"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div><input ng-cell-input  ng-class="\'colt\' + $index" ui-if="isFocused" ng-model="COL_FIELD" /></div>';};
+ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'colt\' + $index" ng-model="COL_FIELD" />';};
+
+/***********************************************
+* FILE: ..\src\templates\focusedCellEditTemplate.html
+***********************************************/
+ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus><div ui-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ui-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -1025,6 +1032,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+	self.enableFocusedCellEdit = colDef.enableFocusedCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -1046,13 +1054,24 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
-    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cursor = self.sortable ? 'pointer' : 'default';
+    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+	if(self.enableFocusedCellEdit){
+		self.focusedCellEditTemplate = ng.focusedCellEditTemplate()
+		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
+	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
             type: "GET",
             url: colDef.cellTemplate,
+            async: false
+        }).responseText;
+    }
+	if (self.enableFocusedCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
+        self.editableCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.editableCellTemplate,
             async: false
         }).responseText;
     }
@@ -2518,7 +2537,14 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    var html = $scope.col.cellTemplate;
+					var html;
+					if($scope.col.enableFocusedCellEdit){
+						html =  $scope.col.focusedCellEditTemplate;
+						html = html.replace(DISPLAY_CELL_TEMPLATE, $scope.col.cellTemplate);
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate);
+					} else {
+						html = $scope.col.cellTemplate;
+					}
                     html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
 					var cellElement = $compile(html)($scope);
 					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
@@ -2625,15 +2651,17 @@ ngGridDirectives.directive('ngCellText',
 /***********************************************
 * FILE: ..\src\directives\ng-cell-has-focus.js
 ***********************************************/
-ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService', '$timeout',
-	function (domUtilityService, $timeout) {
+ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
+	function (domUtilityService) {
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
-			var inputElement = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var elementWithoutComments = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
 			if(inputElement.length > 0){
-				angular.element(inputElement[0]).focus();
-				angular.element(inputElement[0]).bind('blur', function(evt){	
+				angular.element(inputElement).focus();
+				angular.element(inputElement).select();
+				angular.element(inputElement).bind('blur', function(evt){	
 					$scope.isFocused = false;	
 					domUtilityService.digest($scope);
 					return true;

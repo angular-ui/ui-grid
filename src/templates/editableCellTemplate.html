@@ -1,5 +1,2 @@
 <!--ng.editableCellTemplate-->
-<div ng-cell-has-focus>
-	<div class="ngCellText" ng-class="'colt' + $index" ui-if="!isFocused"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>
-	<input ng-cell-input  ng-class="'colt' + $index" ui-if="isFocused" ng-model="COL_FIELD" />
-</div>
+<input ng-cell-input ng-class="'colt' + $index" ng-model="COL_FIELD" />
