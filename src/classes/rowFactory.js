@@ -35,11 +35,11 @@ ng.RowFactory = function(grid, $scope) {
         if (!row) {
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
-            row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
-            row.offsetTop = self.rowHeight * rowIndex;
             // finally cache it for the next round
             entity[NG_GRID_ROW] = row;
         }
+        row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
+        row.offsetTop = self.rowHeight * rowIndex;
         return row;
     };
 

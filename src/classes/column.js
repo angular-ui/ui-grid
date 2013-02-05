@@ -34,8 +34,8 @@
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-	if(self.enableFocusedCellEdit){
-		self.focusedCellEditTemplate = ng.focusedCellEditTemplate()
+	if(self.enableFocusedCellEdit) {
+	    self.focusedCellEditTemplate = ng.focusedCellEditTemplate();
 		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
 	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
