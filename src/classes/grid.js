@@ -151,7 +151,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
     self.maxCanvasHt = 0;
     //self vars
-    self.config = $.extend(defaults, options);
+    self.config = $.extend(defaults, window.ngGrid.config, options);
     if (typeof options.columnDefs == "string") {
         self.config.columnDefs = $scope.$eval(options.columnDefs);
     }
