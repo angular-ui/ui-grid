@@ -62,7 +62,7 @@ function MyCtrl($scope) {
 Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/angular-ui/ng-grid/wiki)
 
 ##Examples##
-[Examples](http://angular-ui.github.com/ng-grid/#/examples)
+[Examples](http://angular-ui.github.com/ng-grid/)
 
 ##Change Log##
 * __2013-01-17__ - Version 1.6.3 - Can now highlight/copy text in grid. Fixed multiple issues when using multiselect along with shift key. Refactored key events so now they are all in the same directive for viewport. Hovering over highlightable text will change cursors in viewport. Fixed #93.
