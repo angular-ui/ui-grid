@@ -52,25 +52,30 @@ function userController($scope) {
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'allowance', aggLabelFilter: 'currency', enableFocusedCellEdit: true},
-        { field: 'birthday', cellFilter: 'date', resizable: false },
-        { field: 'paid', cellFilter: 'checkmark', enableFocusedCellEdit: true }];
-    self.myplugin = {
+        { field: 'allowance', aggLabelFilter: 'currency', enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
+        { field: 'birthday', cellFilter: 'date', resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
+        { field: 'paid', cellFilter: 'checkmark', enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' }];
+    var myplugin = {
         init: function(scope, grid) {
-            self.myplugin.scope = scope;
-            self.myplugin.grid = grid;
+            myplugin.scope = scope;
+            myplugin.grid = grid;
+            $scope.$watch(function () {
+                var searchQuery = "";
+                angular.forEach(myplugin.scope.visibleColumns(), function (col, i) {
+                    if (col.filterText) {
+                        searchQuery += col.field + ": " + col.filterText + "; ";
+                    }
+                });
+                return searchQuery;
+            }, function (searchQuery) {
+                myplugin.scope.$parent.filterText = searchQuery;
+                myplugin.grid.searchProvider.evalFilter();
+            });
         },
         scope: undefined,
         grid: undefined,
     };
-    $scope.$watch(function () {
-        var searchQuery = "";
-        angular.forEach(self.myplugin.scope.visibleColumns(), function(col, i) {
-            searchQuery += col.field + ": " + col.filterText + ";";
-        });
-    }, function() {
-
-    });
+    
 
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
@@ -93,7 +98,7 @@ function userController($scope) {
         enableRowReordering: true,
         showGroupPanel: false,
         columnDefs: 'myDefs',
-        plugins: [self.myplugin]
+        plugins: [myplugin]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
