@@ -28,6 +28,9 @@
                         var dataWatcher = function (a) {
                             prevlength = a ? a.length:0;
                             grid.sortedData = $scope.$eval(options.data) || [];
+                            angular.forEach(grid.sortData, function(item, i) {
+                                grid.rowFactory.buildEntityRow(item, i);
+                            });
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();

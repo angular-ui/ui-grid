@@ -221,7 +221,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function(prop, propName) {
-            if (propName != SELECTED_PROP) {
+            if (propName != NG_GRID_ROW) {
                 self.config.columnDefs.push({
                     field: propName
                 });
@@ -363,7 +363,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
         self.rowFactory = new ng.RowFactory(self, $scope);
-        $scope.selectionService.Initialize(self.rowFactory);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {

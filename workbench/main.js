@@ -72,7 +72,7 @@ function userController($scope) {
 		enableCellSelection: true,
         enablePaging: true,
         canSelectRows: true,
-		multiSelect: false,
+		multiSelect: true,
         enableRowReordering: true,
         showGroupPanel: false,
         columnDefs: 'myDefs'
@@ -91,7 +91,7 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
-        multiSelect: false,
+        multiSelect: true,
 		canSelectRows: true,
         enableRowReordering: true,
         showGroupPanel: true,

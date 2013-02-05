@@ -5,7 +5,6 @@
 ng.RowFactory = function(grid, $scope) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
-    self.rowCache = [];
     self.aggCache = {};
     self.parentCache = []; // Used for grouping and is cleared each time groups are calulated.
     self.dataChanged = true;
@@ -32,14 +31,14 @@ ng.RowFactory = function(grid, $scope) {
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
-        var row = self.rowCache[rowIndex]; // first check to see if we've already built it
+        var row = entity[NG_GRID_ROW]; // first check to see if we've already built it
         if (!row) {
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
             row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
             row.offsetTop = self.rowHeight * rowIndex;
             // finally cache it for the next round
-            self.rowCache[rowIndex] = row;
+            entity[NG_GRID_ROW] = row;
         }
         return row;
     };
@@ -67,7 +66,6 @@ ng.RowFactory = function(grid, $scope) {
             grid.lateBoundColumns = false;
         }
         self.dataChanged = true;
-        self.rowCache = []; //if data source changes, kill this!
         if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }
@@ -157,7 +155,6 @@ ng.RowFactory = function(grid, $scope) {
     //Shuffle the data into their respective groupings.
     self.getGrouping = function(groups) {
         self.aggCache = [];
-        self.rowCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = {};
         // Here we set the onmousedown event handler to the header container.
