@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/04/2013 13:28:52
+* Compiled At: 02/04/2013 16:20:50
 ***********************************************/
 
 (function(window) {
@@ -86,17 +86,16 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 	}
 	
 	if($scope.enableCellSelection){ 
-		domUtilityService.focusCellElement($scope, newColumnIndex);
+		domUtilityService.focusCellElement($scope, newColumnIndex);	
+		domUtilityService.digest($scope.$parent.$parent.$parent);
 	} else {	
 		if (index > items.length - EXCESS_ROWS) {
 			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
 		} else if (index < EXCESS_ROWS) {
 			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
-		}
+		}	
+		domUtilityService.digest($scope.$parent);
 	}
-    if (!$scope.$$phase) {
-        $scope.$parent.$parent.$digest();
-    }
     return false;
 };
 

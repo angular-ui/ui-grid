@@ -54,7 +54,7 @@ function userController($scope) {
     $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo' },
         { field: 'allowance', aggLabelFilter: 'currency', enableFocusedCellEdit: true},
         { field: 'birthday', cellFilter: 'date', resizable: false },
-        { field: 'paid', cellFilter: 'checkmark' }];
+        { field: 'paid', cellFilter: 'checkmark', enableFocusedCellEdit: true }];
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
         { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
@@ -70,7 +70,7 @@ function userController($scope) {
         pagingOptions: $scope.pagingOptions,
 		enableCellSelection: true,
         enablePaging: true,
-        canSelectRows: false,
+        canSelectRows: true,
 		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: true,
