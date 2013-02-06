@@ -46,6 +46,7 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
+							$scope.$emit("ngGridEventData",grid.sortData);
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
                         $scope.$parent.$watch(options.data + '.length', function(a) {

@@ -18,7 +18,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         /* Callback if you want to inspect something before selection,
         return false if you want to cancel the selection. return true otherwise. 
         If you need to wait for an async call to proceed with selection you can 
-        use rowItem.continueSelection(event) method after returning false initially. 
+        use rowItem.changeSelection(event) method after returning false initially. 
         Note: when shift+ Selecting multiple items in the grid this will only get called
         once and the rowItem will be an array of items that are queued to be selected. */
         beforeSelectionChange: function() {

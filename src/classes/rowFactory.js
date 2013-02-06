@@ -38,7 +38,7 @@ ng.RowFactory = function(grid, $scope) {
             // finally cache it for the next round
             entity[NG_GRID_ROW] = row;
         }
-        row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
+        row.rowIndex = rowIndex;
         row.offsetTop = self.rowHeight * rowIndex;
         return row;
     };
@@ -50,7 +50,7 @@ ng.RowFactory = function(grid, $scope) {
             agg = new ng.Aggregate(aggEntity, self);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = rowIndex + 1; //not a zero-based rowIndex
+        agg.index = rowIndex;
         agg.offsetTop = self.rowHeight * rowIndex;
         return agg;
     };
