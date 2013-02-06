@@ -61,7 +61,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         // Enables row virtualization to improve scrolling with large datasets. false by default. 
         // However, virtualization is forced when the potential viewable rows is > 250. This is for performance considerations.
-        enableVirtualization: false,
+        enableVirtualization: true,
 
         /* filterOptions -
         filterText: The text bound to the built-in search box. 
@@ -370,6 +370,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
+		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -521,7 +522,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
 	    var newRange;
-	    if (self.config.enableVirtualization || self.filteredData.length > 250) {
+	    if (self.config.enableVirtualization || self.filteredData.length > 50) {
 	        // Have we hit the threshold going down?
 	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;

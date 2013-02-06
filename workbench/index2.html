@@ -20,6 +20,7 @@
     <body ng-app="myApp" ng-controller="userController">
         <div style="width: 800px; height: 600px;" ng-grid="gridOptions2">
         </div>
+		<div>{{mySelections2[0].Sku}}</div>
         <button ng-click="changeData()">pop</button>
         
         <button ng-click="resetData()">reset</button>

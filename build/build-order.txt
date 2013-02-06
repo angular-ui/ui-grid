@@ -26,6 +26,7 @@
 ..\src\classes\range.js
 ..\src\classes\row.js
 ..\src\classes\searchProvider.js
+..\src\classes\domAccessProvider.js
 ..\src\classes\selectionService.js
 ..\src\classes\styleProvider.js
 ..\src\directives\ng-grid.js
