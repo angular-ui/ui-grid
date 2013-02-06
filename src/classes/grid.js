@@ -156,7 +156,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         useExternalSorting: false,
         
         /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
-        i18n: 'en'
+        i18n: 'en',
+
+        /* Whether or not to resize the grid to fit the data */
+        fixedGridHeight: true
     },
         self = this;
 

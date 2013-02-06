@@ -33,7 +33,7 @@
                             });
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
-                            grid.refreshDomSizes();
+
                             if (grid.config.sortInfo) {
                                 if (!grid.config.sortInfo.column) {
                                     grid.config.sortInfo.column = $scope.columns.filter(function(c) {
@@ -46,7 +46,18 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-							$scope.$emit("ngGridEventData",grid.sortData);
+
+              							$scope.$emit("ngGridEventData",grid.sortData);
+
+                            if (!grid.fixedGridHeight) {
+                              grid.elementDims.rootMaxH = grid.$topPanel.height() + grid.calcMaxCanvasHeight() + grid.$footerPanel.height() + 18;
+                              grid.rootDim.outerHeight = grid.elementDims.rootMaxH;
+                              grid.rowFactory.renderedRange = new ng.Range(0, grid.filteredData.length);
+                              grid.rowFactory.filteredDataChanged();
+                            } else {
+                              grid.refreshDomSizes();
+                            }
+
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
                         $scope.$parent.$watch(options.data + '.length', function(a) {
