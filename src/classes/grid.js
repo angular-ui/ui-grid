@@ -28,6 +28,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //To be able to have selectable rows in grid.
         canSelectRows: true, 
 
+        //checkbox templates.
+        checkboxCellTemplate: undefined,
+        checkboxHeaderTemplate: undefined,
+        
         //definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.
         columnDefs: undefined,
 
@@ -54,6 +58,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //Enables or disables sorting in grid.
         enableSorting: true,
+
+        // Enables row virtualization to improve scrolling with large datasets. false by default. 
+        // However, virtualization is forced when the potential viewable rows is > 250. This is for performance considerations.
+        enableVirtualization: true,
 
         /* filterOptions -
         filterText: The text bound to the built-in search box. 
@@ -244,8 +252,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     sortable: false,
                     resizable: false,
                     groupable: false,
-                    headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                    cellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                    headerCellTemplate: $scope.checkboxHeaderTemplate,
+                    cellTemplate: $scope.checkboxCellTemplate
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -362,6 +370,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
+		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -476,9 +485,26 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
-    $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
-    $scope.aggregateTemplate = self.config.aggregateTemplate || ng.defaultAggregateTemplate();
-    $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
+    // test templates for urls and get the tempaltes via synchronous ajax calls
+    var getTemplate = function (key) {
+        var t = self.config[key];
+        if (t && !TEMPLATE_REGEXP.test(t)) {
+            $scope[key] = $.ajax({
+                type: "GET",
+                url: t,
+                async: false
+            }).responseText;
+        } else if (t) {
+            $scope[key] = self.config[key];
+        } else {
+            $scope[key] = ng[key]();
+        }
+    };
+    getTemplate('rowTemplate');
+    getTemplate('aggregateTemplate');
+    getTemplate('headerRowTemplate');
+    getTemplate('checkboxCellTemplate');
+    getTemplate('checkboxHeaderTemplate');
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
@@ -491,42 +517,28 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         if (self.prevScrollTop === scrollTop && !force) {
             return;
         }
+        if (scrollTop > 0 && self.$viewport[0].scrollHeight - scrollTop <= self.$viewport.outerHeight()) {
+            $scope.$emit('ngGridEventScroll');
+        }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
-        // Have we hit the threshold going down?
-        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
-            return;
-        }
-        //Have we hit the threshold going up?
-        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
-            return;
-        }
-        self.prevScrollTop = scrollTop;
-        self.rowFactory.UpdateViewableRange(new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS));
-        self.prevScrollIndex = rowIndex;
+	    var newRange;
+	    if (self.config.enableVirtualization || self.filteredData.length > 50) {
+	        // Have we hit the threshold going down?
+	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+	            return;
+	        }
+	        //Have we hit the threshold going up?
+	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
+	            return;
+	        }
+	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
+	    } else {
+	        newRange = new ng.Range(0, 1000);
+	    }
+	    self.prevScrollTop = scrollTop;
+	    self.rowFactory.UpdateViewableRange(newRange);
+	    self.prevScrollIndex = rowIndex;
     };
-
-    // test templates for urls and get the tempaltes via synchronous ajax calls
-    if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
-        $scope.rowTemplate = $.ajax({
-            type: "GET",
-            url: self.config.rowTemplate,
-            async: false
-        }).responseText;
-    }
-    if (self.config.aggregateTemplate && !TEMPLATE_REGEXP.test(self.config.aggregateTemplate)) {
-        $scope.aggregateTemplate = $.ajax({
-            type: "GET",
-            url: self.config.aggregateTemplate,
-            async: false
-        }).responseText;
-    }
-    if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
-        $scope.headerRowTemplate = $.ajax({
-            type: "GET",
-            url: self.config.headerRowTemplate,
-            async: false
-        }).responseText;
-    }
 
     //scope funcs
     $scope.visibleColumns = function() {
