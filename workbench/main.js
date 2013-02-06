@@ -150,16 +150,7 @@ function userController($scope) {
 		$scope.myData2[0].Vendor = "HELLO";
 	};
 
-    $scope.setSelections = function() {
-        angular.forEach($scope.myData, function(item) {
-            if (item["__ngGridRow__"]) {
-                item["__ngGridRow__"].selected = true;
-            }
-            item["__ng_selected__"] = true;
-            $scope.mySelections.push(item);
-        });
-    };
-	
+
 	$scope.myData3 = [{ 'Sku': 'C-2820164', 'Vendor': {'name':'NIKE'}, 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
 				  { 'Sku': 'J-8555462', 'Vendor': {'name':'NIKE'}, 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
 				  { 'Sku': 'K-5312708', 'Vendor': {'name':'NIKE'}, 'SeasonCode': '1293', 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
