@@ -8,7 +8,7 @@ ng.SelectionService = function(grid) {
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
-        if (evt && evt.shiftKey && self.multi) {
+        if (evt && evt.shiftKey && self.multi && self.canSelectRows) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredData.indexOf(rowItem.entity);
                 var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);

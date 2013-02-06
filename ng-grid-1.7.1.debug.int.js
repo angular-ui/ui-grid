@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/06/2013 11:14:39
+* Compiled At: 02/06/2013 12:14:44
 ***********************************************/
 
 (function(window) {
@@ -2251,8 +2251,8 @@ ng.DomAccessProvider = function(domUtilityService) {
 	};
 	
 	self.focusCellElement = function($scope, index){	
-		var columnIndex = index ? index : previousColumn;
-		if(columnIndex){
+		var columnIndex = index != undefined ? index : previousColumn;
+		if(columnIndex != undefined){
 			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
 			var nextFocusedCellElement = columns[columnIndex];
 			nextFocusedCellElement.children[0].focus();
@@ -2310,7 +2310,7 @@ ng.SelectionService = function(grid) {
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
-        if (evt && evt.shiftKey && self.multi) {
+        if (evt && evt.shiftKey && self.multi && self.canSelectRows) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredData.indexOf(rowItem.entity);
                 var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
