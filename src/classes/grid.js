@@ -156,7 +156,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         useExternalSorting: false,
         
         /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
-        i18n: 'en'
+        i18n: 'en',
+
+        /* Whether or not to resize the grid to fit the data */
+        fixedGridHeight: true
     },
         self = this;
 
@@ -298,40 +301,49 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function(col, i) {
             i += indexOffset;
-            var isPercent = false, t = undefined;
+            var isPercent = false, t = undefined, colWidth = col.widthConfig || col.width;
+
             //if width is not defined, set it to a single star
-            if (ng.utils.isNullOrUndefined(col.width)) {
-                col.width = "*";
+            if (ng.utils.isNullOrUndefined(colWidth)) {
+                colWidth = "*";
+                col.width = colWidth;
             } else { // get column width
-                isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
-                t = isPercent ? col.width : parseInt(col.width, 10);
+                isPercent = isNaN(colWidth) ? ng.utils.endsWith(colWidth, "%") : false;
+                t = isPercent ? colWidth : parseInt(colWidth, 10);
             }
-            // check if it is a number
-            if (isNaN(t)) {
-                t = col.width;
-                // figure out if the width is defined or if we need to calculate it
-                if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
-                    $scope.columns[i].width = col.minWidth;
-                    totalWidth += $scope.columns[i].width;
-                    var temp = $scope.columns[i];
-                    $scope.$evalAsync(function() {
-                        self.resizeOnData(temp, true);
-                    });
-                    return;
-                } else if (t.indexOf("*") != -1) { //  we need to save it until the end to do the calulations on the remaining width.
-                    asteriskNum += t.length;
-                    col.index = i;
-                    asterisksArray.push(col);
-                    return;
-                } else if (isPercent) { // If the width is a percentage, save it until the very last.
-                    col.index = i;
-                    percentArray.push(col);
-                    return;
-                } else { // we can't parse the width so lets throw an error.
-                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+            // test visibility from the scope as this changes through the column menu
+            if ($scope.columns[i].visible !== false) {
+                // check if it is a number
+                if (isNaN(t)) {
+                    t = colWidth;
+                    // lets remember the the width configuration for when we add/remove columns
+                    if (!col.widthConfig) {
+                      col.widthConfig = colWidth;
+                    }
+                    // figure out if the width is defined or if we need to calculate it
+                    if (t == 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
+                        $scope.columns[i].width = col.minWidth;
+                        totalWidth += $scope.columns[i].width;
+                        var temp = $scope.columns[i];
+                        $scope.$evalAsync(function() {
+                            self.resizeOnData(temp, true);
+                        });
+                        return;
+                    } else if (t.indexOf("*") != -1) { //  we need to save it until the end to do the calulations on the remaining width.
+                        asteriskNum += t.length;
+                        col.index = i;
+                        asterisksArray.push(col);
+                        return;
+                    } else if (isPercent) { // If the width is a percentage, save it until the very last.
+                        col.index = i;
+                        percentArray.push(col);
+                        return;
+                    } else { // we can't parse the width so lets throw an error.
+                        throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+                    }
+                } else {
+                    totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
                 }
-            } else {
-                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
             }
         });
         // check if we saved any asterisk columns for calculating later
@@ -384,6 +396,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 			$scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {
+            self.configureColumnWidths();
             domUtilityService.BuildStyles($scope, self, true);
             $scope.$emit('ngGridEventColumns', a);
         }, true);
