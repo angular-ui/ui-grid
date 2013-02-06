@@ -9,6 +9,8 @@
 ..\src\templates\gridTemplate.html
 ..\src\templates\rowTemplate.html
 ..\src\templates\cellTemplate.html
+..\src\templates\checkboxCellTemplate.html
+..\src\templates\checkboxHeaderTemplate.html
 ..\src\templates\editableCellTemplate.html
 ..\src\templates\focusedCellEditTemplate.html
 ..\src\templates\aggregateTemplate.html

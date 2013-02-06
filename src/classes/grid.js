@@ -28,6 +28,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //To be able to have selectable rows in grid.
         canSelectRows: true, 
 
+        //checkbox templates.
+        checkboxCellTemplate: undefined,
+        checkboxHeaderTemplate: undefined,
+        
         //definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.
         columnDefs: undefined,
 
@@ -244,8 +248,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     sortable: false,
                     resizable: false,
                     groupable: false,
-                    headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                    cellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                    headerCellTemplate: $scope.checkboxHeaderTemplate,
+                    cellTemplate: $scope.checkboxCellTemplate
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -476,9 +480,26 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
-    $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
-    $scope.aggregateTemplate = self.config.aggregateTemplate || ng.defaultAggregateTemplate();
-    $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
+    // test templates for urls and get the tempaltes via synchronous ajax calls
+    var getTemplate = function (key) {
+        var t = self.config[key];
+        if (t && !TEMPLATE_REGEXP.test(t)) {
+            $scope[key] = $.ajax({
+                type: "GET",
+                url: t,
+                async: false
+            }).responseText;
+        } else if (t) {
+            $scope[key] = self.config[key];
+        } else {
+            $scope[key] = ng[key]();
+        }
+    };
+    getTemplate('rowTemplate');
+    getTemplate('aggregateTemplate');
+    getTemplate('headerRowTemplate');
+    getTemplate('checkboxCellTemplate');
+    getTemplate('checkboxHeaderTemplate');
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
@@ -504,29 +525,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.rowFactory.UpdateViewableRange(new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS));
         self.prevScrollIndex = rowIndex;
     };
-
-    // test templates for urls and get the tempaltes via synchronous ajax calls
-    if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
-        $scope.rowTemplate = $.ajax({
-            type: "GET",
-            url: self.config.rowTemplate,
-            async: false
-        }).responseText;
-    }
-    if (self.config.aggregateTemplate && !TEMPLATE_REGEXP.test(self.config.aggregateTemplate)) {
-        $scope.aggregateTemplate = $.ajax({
-            type: "GET",
-            url: self.config.aggregateTemplate,
-            async: false
-        }).responseText;
-    }
-    if (self.config.headerRowTemplate && !TEMPLATE_REGEXP.test(self.config.headerRowTemplate)) {
-        $scope.headerRowTemplate = $.ajax({
-            type: "GET",
-            url: self.config.headerRowTemplate,
-            async: false
-        }).responseText;
-    }
 
     //scope funcs
     $scope.visibleColumns = function() {
