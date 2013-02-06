@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/05/2013 20:14:45
+* Compiled At: 02/05/2013 21:51:50
 ***********************************************/
 
 (function(window) {
@@ -1512,6 +1512,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enables or disables sorting in grid.
         enableSorting: true,
 
+        // Enables row virtualization to improve scrolling with large datasets. false by default. 
+        // However, virtualization is forced when the potential viewable rows is > 250. This is for performance considerations.
+        enableVirtualization: false,
+
         /* filterOptions -
         filterText: The text bound to the built-in search box. 
         useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.
@@ -1965,18 +1969,27 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         if (self.prevScrollTop === scrollTop && !force) {
             return;
         }
+        if (scrollTop > 0 && self.$viewport[0].scrollHeight - scrollTop <= self.$viewport.outerHeight()) {
+            $scope.$emit('ngGridEventScroll');
+        }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
-        // Have we hit the threshold going down?
-        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
-            return;
-        }
-        //Have we hit the threshold going up?
-        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
-            return;
-        }
-        self.prevScrollTop = scrollTop;
-        self.rowFactory.UpdateViewableRange(new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS));
-        self.prevScrollIndex = rowIndex;
+	    var newRange;
+	    if (self.config.enableVirtualization || self.filteredData.length > 250) {
+	        // Have we hit the threshold going down?
+	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+	            return;
+	        }
+	        //Have we hit the threshold going up?
+	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
+	            return;
+	        }
+	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
+	    } else {
+	        newRange = new ng.Range(0, 1000);
+	    }
+	    self.prevScrollTop = scrollTop;
+	    self.rowFactory.UpdateViewableRange(newRange);
+	    self.prevScrollIndex = rowIndex;
     };
 
     //scope funcs
