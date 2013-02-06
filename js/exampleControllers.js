@@ -10,12 +10,6 @@ var tabs = [{
 				index: 2,
 				title: "JS"
 			}];
-			
-var gridData = [{name: "Moroni", age: 50},
-						 {name: "Tiancum", age: 43},
-						 {name: "Jacob", age: 27},
-						 {name: "Nephi", age: 29},
-						 {name: "Enos", age: 34}];
 
 angular.module('myApp.exampleControllers', [])
 
@@ -26,7 +20,11 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/basic/basic" + $scope.selectedBasicTab.title + '.html';};
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { data: 'myData' };
 	}])
 	
@@ -37,7 +35,11 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/columnDefs/columnDefs" + $scope.selectedBasicTab.title + '.html';};
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',
 			columnDefs: [{field: 'name', displayName: 'Name'}, {field:'age', displayName:'Age'}]
@@ -51,7 +53,11 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/grouping/groupByHTML5/groupByHTML5" + $scope.selectedBasicTab.title + '.html';};		
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',	
 			showGroupPanel: true
@@ -65,7 +71,11 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/grouping/groupByJQueryUI/groupByJQueryUI" + $scope.selectedBasicTab.title + '.html';};		
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',	
 			showGroupPanel: true,
@@ -81,7 +91,11 @@ angular.module('myApp.exampleControllers', [])
 		};				
 		$scope.angularBindings = "{{row.getProperty(col.field)}}";
 		$scope.link = function(){ return "partials/exampleDefinitions/templates/cellTemplates/stringCellTemplate/stringCellTemplate" + $scope.selectedBasicTab.title + '.html';};
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',
 			columnDefs: [{field: 'name', displayName: 'Name'},
@@ -96,7 +110,11 @@ angular.module('myApp.exampleControllers', [])
 			$scope.selectedBasicTab = $scope.basicTabs[tab];
 		};				
 		$scope.link = function(){ return "partials/exampleDefinitions/templates/cellTemplates/fileReferencedCellTemplate/fileReferencedCellTemplate" + $scope.selectedBasicTab.title + '.html';};
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',
 			columnDefs: [{field: 'name', displayName: 'Name'},
@@ -113,7 +131,11 @@ angular.module('myApp.exampleControllers', [])
 		$scope.angularBindingsIndex = "{{$index}}";
 		$scope.angularBindingsCellClass = "{{col.cellClass}}";
 		$scope.link = function(){ return "partials/exampleDefinitions/templates/rowTemplates/rowTemplate" + $scope.selectedBasicTab.title + '.html';};
-		$scope.myData = gridData;
+		$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',
 			rowTemplate: '<div style="height: 100%" ng-class="{green: row.getProperty(\'age\')  < 30}"><div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div></div>'
@@ -193,7 +215,11 @@ angular.module('myApp.exampleControllers', [])
 	$scope.angularBindings = "{{mySelections}}";
 	$scope.link = function(){ return "partials/exampleDefinitions/themes/themes" + $scope.selectedBasicTab.title + '.html';};	
     $scope.mySelections = [];
-	$scope.myData = gridData;
+	$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 	$scope.gridOptions = { 
 		data: 'myData',	
 		jqueryUITheme: true
@@ -209,10 +235,53 @@ angular.module('myApp.exampleControllers', [])
 	$scope.angularBindings = "{{mySelections}}";
 	$scope.link = function(){ return "partials/exampleDefinitions/masterDetail/masterDetails" + $scope.selectedBasicTab.title + '.html';};	
     $scope.mySelections = [];
-	$scope.myData = gridData;
+	$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
 	$scope.gridOptions = { 
 		data: 'myData',	
         selectedItems: $scope.mySelections,
 		multiSelect: false
+	};
+}])
+	
+.controller('BasicCellSelectionExampleCtrl', ['$scope', function($scope) {
+	$scope.basicTabs = tabs;
+	$scope.selectedBasicTab = $scope.basicTabs[0];		
+	$scope.switchTab = function(tab){
+		$scope.selectedBasicTab = $scope.basicTabs[tab];
+	};				
+	$scope.link = function(){ return "partials/exampleDefinitions/cellSelection/basicCellSelection/basicCellSelection" + $scope.selectedBasicTab.title + '.html';};
+	$scope.myData = [{name: "Moroni", age: 50},
+						 {name: "Tiancum", age: 43},
+						 {name: "Jacob", age: 27},
+						 {name: "Nephi", age: 29},
+						 {name: "Enos", age: 34}];
+	$scope.gridOptions = { 
+		data: 'myData',	
+        enableCellSelection: true,
+	};
+}])
+	
+.controller('EditOnFocusCellSelectionExampleCtrl', ['$scope', function($scope) {
+	$scope.basicTabs = tabs;
+	$scope.selectedBasicTab = $scope.basicTabs[0];		
+	$scope.switchTab = function(tab){
+		$scope.selectedBasicTab = $scope.basicTabs[tab];
+	};				
+	$scope.link = function(){ return "partials/exampleDefinitions/cellSelection/editOnFocusCellSelection/editOnFocusCellSelection" + $scope.selectedBasicTab.title + '.html';};
+	$scope.myData = [{name: "Moroni", age: 50},
+					 {name: "Tiancum", age: 43},
+					 {name: "Jacob", age: 27},
+					 {name: "Nephi", age: 29},
+					 {name: "Enos", age: 34}];
+	$scope.gridOptions = { 
+		data: 'myData',
+		enableCellSelection: true,
+		canSelectRows: false,
+		displaySelectionCheckbox: false,
+		columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, {field:'age', displayName:'Age'}]
 	};
 }]);
