@@ -8,6 +8,9 @@
 /// <reference path="../utils.js" />
 ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     var defaults = {
+        //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
+        aggregateTemplate: undefined,
+        
         //Callback for when you want to validate something after selection.
         afterSelectionChange: function() {
         }, 
@@ -15,7 +18,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         /* Callback if you want to inspect something before selection,
         return false if you want to cancel the selection. return true otherwise. 
         If you need to wait for an async call to proceed with selection you can 
-        use rowItem.continueSelection(event) method after returning false initially. 
+        use rowItem.changeSelection(event) method after returning false initially. 
         Note: when shift+ Selecting multiple items in the grid this will only get called
         once and the rowItem will be an array of items that are queued to be selected. */
         beforeSelectionChange: function() {
@@ -33,6 +36,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: true, 
+		
+        //Enables cell selection.
+        enableCellSelection: false,
 
         //Enable or disable resizing of columns
         enableColumnResize: true,
@@ -110,7 +116,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Row height of rows in grid.
         rowHeight: 30,
         
-        //Define a row Template to customize output. See github wiki for more details.
+        //Define a row template to customize output. See github wiki for more details.
         rowTemplate: undefined,
         
         //all of the items selected in the grid. In single select mode there will only be one item in the array.
@@ -148,7 +154,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
     self.maxCanvasHt = 0;
     //self vars
-    self.config = $.extend(defaults, options);
+    self.config = $.extend(defaults, window.ngGrid.config, options);
     if (typeof options.columnDefs == "string") {
         self.config.columnDefs = $scope.$eval(options.columnDefs);
     }
@@ -215,7 +221,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function(prop, propName) {
-            if (propName != SELECTED_PROP) {
+            if (propName != NG_GRID_ROW) {
                 self.config.columnDefs.push({
                     field: propName
                 });
@@ -239,7 +245,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizable: false,
                     groupable: false,
                     headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                    cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                    cellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -359,7 +365,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
         self.rowFactory = new ng.RowFactory(self, $scope);
-        $scope.selectionService.Initialize(self.rowFactory);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -459,6 +464,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
+	$scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
+	$scope.enableCellSelection = self.config.enableCellSelection;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
@@ -472,6 +479,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
+    $scope.aggregateTemplate = self.config.aggregateTemplate || ng.defaultAggregateTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     //i18n support
     $scope.i18n = {};
@@ -499,10 +507,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.prevScrollIndex = rowIndex;
     };
 
+    // test templates for urls and get the tempaltes via synchronous ajax calls
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
         $scope.rowTemplate = $.ajax({
             type: "GET",
             url: self.config.rowTemplate,
+            async: false
+        }).responseText;
+    }
+    if (self.config.aggregateTemplate && !TEMPLATE_REGEXP.test(self.config.aggregateTemplate)) {
+        $scope.aggregateTemplate = $.ajax({
+            type: "GET",
+            url: self.config.aggregateTemplate,
             async: false
         }).responseText;
     }

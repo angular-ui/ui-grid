@@ -9,6 +9,8 @@
 ..\src\templates\gridTemplate.html
 ..\src\templates\rowTemplate.html
 ..\src\templates\cellTemplate.html
+..\src\templates\editableCellTemplate.html
+..\src\templates\focusedCellEditTemplate.html
 ..\src\templates\aggregateTemplate.html
 ..\src\templates\headerRowTemplate.html
 ..\src\templates\headerCellTemplate.html
@@ -31,4 +33,7 @@
 ..\src\directives\ng-header-cell.js
 ..\src\directives\ng-viewport.js
 ..\src\directives\ng-cell-text.js
+..\src\directives\ng-cell-has-focus.js
+..\src\directives\ng-cell-input.js
+..\src\directives\ui-if.js
 ..\src\init.js

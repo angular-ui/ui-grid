@@ -41,10 +41,22 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
         domUtilityService.UpdateGridLayout($scope, grid);
     };
+    domUtilityService.getRealWidth = function (obj) {
+        var width = 0;
+        var props = { visibility: "hidden", display: "block" };
+        var hiddenParents = obj.parents().andSelf().not(':visible');
+        $.swap(hiddenParents[0], props, function () {
+            width = obj.outerWidth();
+        });
+        return width;
+    };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
+        if (grid.$root.is(':hidden')) {
+            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
+        }
         grid.elementDims.rootMaxH = grid.$root.height();
         //check to see if anything has changed
         grid.refreshDomSizes();
@@ -93,6 +105,56 @@ ngGridServices.factory('DomUtilityService', function() {
 			grid.configureColumnWidths();
 		}
 		domUtilityService.BuildStyles($scope, grid, true);
+	};
+	
+	var previousColumn;
+	domUtilityService.focusCellElement = function($scope, index){	
+		var columnIndex = index ? index : previousColumn;
+		if(columnIndex){
+			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
+			var nextFocusedCellElement = columns[columnIndex];
+			nextFocusedCellElement.children[0].focus();
+			var node = nextFocusedCellElement.nodeName.toLowerCase();
+			if(node == 'input' || node == 'textarea' || node == 'select'){
+				nextFocusedCellElement.select();
+			}
+			previousColumn = columnIndex;
+		}
+	};
+	
+	var changeUserSelect = function(elm, value) {
+		elm.css({
+			'-webkit-touch-callout': value,
+			'-webkit-user-select': value,
+			'-khtml-user-select': value,
+			'-moz-user-select': value == 'none'
+				? '-moz-none'
+				: value,
+			'-ms-user-select': value,
+			'user-select': value
+		});
+	};
+	
+	domUtilityService.selectionHandlers = function($scope, elm){
+		var doingKeyDown = false;
+		elm.bind('keydown', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'none', evt);
+				return true;
+			} else if (!doingKeyDown) {
+				doingKeyDown = true;
+				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				doingKeyDown = false;
+				return ret;
+			}
+			return false;
+		});
+		elm.bind('keyup', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'text', evt);
+			}
+			return true;
+		});
 	};
 
     domUtilityService.digest = function($scope) {

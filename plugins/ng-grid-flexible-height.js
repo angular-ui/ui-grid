@@ -14,8 +14,11 @@ ngGridFlexibleHeightPlugin = function(opts) {
             var canvasSel = '.' + gridId + ' .ngCanvas';
             var viewportSel = '.' + gridId + ' .ngViewport';
             var extraHeight = $(topPanelSel).height() + $(footerPanelSel).height();
-            var naturalHeight = $(canvasSel).height();
-            if ($(viewportSel).height() > naturalHeight ) {
+            var naturalHeight = $(canvasSel).height() + 15;
+            if (scope.baseViewportHeight == null || scope.baseViewportHeight == 0) {
+              scope.baseViewportHeight = $(viewportSel).height();
+            }
+            if (scope.baseViewportHeight > naturalHeight ) {
                 if (opts != null) {
                     if (opts.minHeight != null && (naturalHeight + extraHeight) < opts.minHeight) {
                         naturalHeight = opts.minHeight - extraHeight - 2;
@@ -26,6 +29,12 @@ ngGridFlexibleHeightPlugin = function(opts) {
             }
             self.grid.refreshDomSizes();
         };
+        scope.catHashKeys = function() {
+          hash = '';
+          for (idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
+          return hash;
+        };
+        scope.$watch('catHashKeys()', innerRecalcForData);
         scope.$watch (grid.config.data, recalcHeightForData);
     };
 };

@@ -1,0 +1,11 @@
+{
+  "name": "ng-grid",
+  "title": "ng-grid",
+  "version": "1.7.0",
+  "homepage": "https://github.com/angular-ui/ng-grid/",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.3.8"
+  },
+  "keywords": []
+}

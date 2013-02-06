@@ -15,6 +15,7 @@
                 for (var i = 0, len = searchConditions.length; i < len; i++) {
                     var condition = searchConditions[i];
                     //Search entire row
+                    var result;
                     if (!condition.column) {
                         for (var prop in item) {
                             if (item.hasOwnProperty(prop)) {
@@ -22,14 +23,13 @@
                                 if (!c) continue;
                                 var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
-								if(pVal != null){ 								
-									var result;
-									if(typeof f == 'function'){
+								if(pVal != null){
+								    if(typeof f == 'function'){
 										var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
 										result = condition.regex.test(filterRes);
 									} else {
-										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString())
-									}
+										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
+								    }
 									if (pVal &&  result) {
 										return true;
 									}
@@ -46,13 +46,12 @@
                     var filter = col.cellFilter ? $filter(col.cellFilter) : null;
                     var value = item[condition.column] || item[col.field.split('.')[0]];                  
 					if(value == null) return false;
-					var result;
-					if(typeof filter == 'function'){
+                    if(typeof filter == 'function'){
 						var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
 						result = condition.regex.test(filterResults);
 					} else {
-						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString())
-					}
+						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
+                    }
 					if (!value || !result) {
 						return false;
 					}				
@@ -90,12 +89,12 @@
     var buildSearchConditions = function (a) {
         //reset.
         searchConditions = [];
-        var qStr = '';
+        var qStr;
         if (!(qStr = $.trim(a))) {
             return;
         }
         var columnFilters = qStr.split(";");
-        $.each(columnFilters, function (i, filter) {
+        angular.forEach(columnFilters, function (filter) {
             var args = filter.split(':');
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
@@ -123,7 +122,7 @@
 	});
 	$scope.$watch('filterText', function(a){
 		if(!self.extFilter){
-			$scope.$emit('filterChanged', a);
+			$scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }

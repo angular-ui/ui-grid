@@ -14,11 +14,15 @@ ng.Row = function(entity, config, selectionService) {
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
+	self.setSelection = function(isSelected) {
+		self.selectionService.setSelection(self, isSelected);
+		self.selectionService.lastClickedRow = self;
+	};
     self.continueSelection = function(event) {
         self.selectionService.ChangeSelection(self, event);
     };
     self.toggleSelected = function(event) {
-        if (!canSelectRows) {
+        if (!canSelectRows && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;
@@ -56,7 +60,5 @@ ng.Row = function(entity, config, selectionService) {
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
     };
-    //selectify the entity
-	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
-	self.selectionService.setSelection(self, selected);
+	entity[NG_GRID_ROW] = self;
 };

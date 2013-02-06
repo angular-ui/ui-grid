@@ -11,18 +11,14 @@
     <script type="text/javascript" src="../lib/angular.js"></script>
     <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="../build/ng-grid.debug.js"></script>
-    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="main4.js"></script>
     <script>
         angular.module('myApp',['ngGrid']);
     </script>
 </head>
     <body ng-app="myApp" ng-controller="userController">
-        <div style="width: 800px; height: 600px;"  ng-grid="gridOptions">
-        </div>
-		<div>{{mySelections2}}</div>
-        <button ng-click="resetRows()">Reset Rows</button>
-        <button ng-click="Add()">Insert Rows</button>
-        <button ng-click="changeLang()">change Language</button>
-        <button ng-click="setSelections()">set Selections</button>
+        <div style="width: 500px; height: 500px;"  ng-grid="gridOptions"></div>
+		<button ng-click="getData()">get data</button>
+		<p>{{selections}}</p>
     </body>
 </html>
