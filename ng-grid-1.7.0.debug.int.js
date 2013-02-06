@@ -1,8 +1,8 @@
-/***********************************************
+﻿/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 01/19/2013 16:27:03
+* Compiled At: 02/05/2013 17:59:32
 ***********************************************/
 
 (function(window) {
@@ -24,7 +24,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 /***********************************************
 * FILE: ..\src\constants.js
 ***********************************************/
-var SELECTED_PROP = '__ng_selected__';
+var NG_GRID_ROW = 'ngGridRow';
 // the # of rows we want to add to the top and bottom of the rendered grid rows 
 var EXCESS_ROWS = 8;
 var SCROLL_THRESHOLD = 6;
@@ -38,36 +38,64 @@ var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
 var COL_FIELD = /COL_FIELD/g;
+var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
+var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var TEMPLATE_REGEXP = /<.+>/;
 
 /***********************************************
 * FILE: ..\src\navigation.js
 ***********************************************/
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt) {
+ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
     var charCode = evt.which || evt.keyCode;
-    // detect which direction for arrow keys to navigate the grid
-    var offset = (charCode == 38 ? -1 : (charCode == 40 ? 1 : null));
-    if (!offset) {
-        return true;
-    }
+	
+	var newColumnIndex;
+	if($scope.enableCellSelection){
+		if(charCode == 9){ //tab key
+			evt.preventDefault();
+		}
+		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
+		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;	
+		newColumnIndex = $scope.col.index;
+		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
+			newColumnIndex -= 1;
+		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
+			newColumnIndex += 1;
+		}
+	}
+		
+	var offset = 0;
+	if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
+		offset = -1;
+	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
+		offset = 1;
+	} else if(charCode != 37 && charCode != 39 && charCode != 9){
+		return true;
+	}	
+	
     var items = $scope.renderedRows;
     var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
-    $scope.selectionService.ChangeSelection(items[index], evt);
-    if (index > items.length - EXCESS_ROWS) {
-        elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
-    } else if (index < EXCESS_ROWS) {
-        elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
-    }
-    if (!$scope.$$phase) {
-        $scope.$parent.$digest();
-    }
+	if(charCode != 37 && charCode != 39 && charCode != 9){
+		$scope.selectionService.ChangeSelection(items[index], evt);
+	}
+	
+	if($scope.enableCellSelection){ 
+		domUtilityService.focusCellElement($scope, newColumnIndex);	
+		domUtilityService.digest($scope.$parent.$parent.$parent);
+	} else {	
+		if (index >= items.length - EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
+		} else if (index <= EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
+		}	
+		domUtilityService.digest($scope.$parent);
+	}
     return false;
 };
 
@@ -525,10 +553,22 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
         domUtilityService.UpdateGridLayout($scope, grid);
     };
+    domUtilityService.getRealWidth = function (obj) {
+        var width = 0;
+        var props = { visibility: "hidden", display: "block" };
+        var hiddenParents = obj.parents().andSelf().not(':visible');
+        $.swap(hiddenParents[0], props, function () {
+            width = obj.outerWidth();
+        });
+        return width;
+    };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
+        if (grid.$root.is(':hidden')) {
+            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
+        }
         grid.elementDims.rootMaxH = grid.$root.height();
         //check to see if anything has changed
         grid.refreshDomSizes();
@@ -578,6 +618,56 @@ ngGridServices.factory('DomUtilityService', function() {
 		}
 		domUtilityService.BuildStyles($scope, grid, true);
 	};
+	
+	var previousColumn;
+	domUtilityService.focusCellElement = function($scope, index){	
+		var columnIndex = index ? index : previousColumn;
+		if(columnIndex){
+			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
+			var nextFocusedCellElement = columns[columnIndex];
+			nextFocusedCellElement.children[0].focus();
+			var node = nextFocusedCellElement.nodeName.toLowerCase();
+			if(node == 'input' || node == 'textarea' || node == 'select'){
+				nextFocusedCellElement.select();
+			}
+			previousColumn = columnIndex;
+		}
+	};
+	
+	var changeUserSelect = function(elm, value) {
+		elm.css({
+			'-webkit-touch-callout': value,
+			'-webkit-user-select': value,
+			'-khtml-user-select': value,
+			'-moz-user-select': value == 'none'
+				? '-moz-none'
+				: value,
+			'-ms-user-select': value,
+			'user-select': value
+		});
+	};
+	
+	domUtilityService.selectionHandlers = function($scope, elm){
+		var doingKeyDown = false;
+		elm.bind('keydown', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'none', evt);
+				return true;
+			} else if (!doingKeyDown) {
+				doingKeyDown = true;
+				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				doingKeyDown = false;
+				return ret;
+			}
+			return false;
+		});
+		elm.bind('keyup', function(evt) {
+			if (evt.keyCode == 16) { //shift key
+				changeUserSelect(elm, 'text', evt);
+			}
+			return true;
+		});
+	};
 
     domUtilityService.digest = function($scope) {
         if (!$scope.$$phase) {
@@ -604,12 +694,22 @@ ng.defaultRowTemplate = function(){ return '<div ng-style="{\'cursor\': row.curs
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
 ***********************************************/
-ng.defaultCellTemplate = function(){ return '<div class="ngCellText colt{{$index}}"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>';};
+ng.defaultCellTemplate = function(){ return '<div ng-class="\'ngCellText colt\' + $index"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>';};
+
+/***********************************************
+* FILE: ..\src\templates\editableCellTemplate.html
+***********************************************/
+ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'colt\' + $index" ng-model="COL_FIELD" />';};
+
+/***********************************************
+* FILE: ..\src\templates\focusedCellEditTemplate.html
+***********************************************/
+ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus><div ui-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ui-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
 ***********************************************/
-ng.aggregateTemplate = function(){ return '<div ng-click="row.toggleExpand()" ng-style="{\'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span><div class="{{row.aggClass()}}"></div></div>';};
+ng.defaultAggregateTemplate = function(){ return '<div ng-click="row.toggleExpand()" ng-style="{\'left\': row.offsetleft}" class="ngAggregate"><span class="ngAggregateText">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span><div class="{{row.aggClass()}}"></div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\headerRowTemplate.html
@@ -658,7 +758,6 @@ ng.Aggregate = function(aggEntity, rowFactory) {
         angular.forEach(self.children, function(child) {
             child[NG_HIDDEN] = self.collapsed;
         });
-        rowFactory.rowCache = [];
         var foundMyself = false;
         angular.forEach(rowFactory.aggCache, function(agg, i) {
             if (foundMyself) {
@@ -741,7 +840,9 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
 				col.setAttribute('draggable', 'true');
 				//jQuery 'on' function doesn't have  dataTransfer as part of event in handler unless added to event props, which is not recommended
 				//See more here: http://api.jquery.com/category/events/event-object/
-				col.addEventListener('dragstart', self.dragStart); 
+				if (col.addEventListener) { //IE8 doesn't have drag drop or event listeners
+					col.addEventListener('dragstart', self.dragStart);
+				}
 			});
 			if (navigator.userAgent.indexOf("MSIE") != -1){
          		//call native IE dragDrop() to start dragging
@@ -775,7 +876,9 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
                 // set draggable events
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
-					this.addEventListener('dragstart', self.dragStart); 
+					if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
+						this.addEventListener('dragstart', self.dragStart); 
+					}
 					if (navigator.userAgent.indexOf("MSIE") != -1){
 						//call native IE dragDrop() to start dragging
 						groupItem.bind('selectstart', function () { 
@@ -939,6 +1042,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+	self.enableFocusedCellEdit = colDef.enableFocusedCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -960,13 +1064,24 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
-    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cursor = self.sortable ? 'pointer' : 'default';
+    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+	if(self.enableFocusedCellEdit) {
+	    self.focusedCellEditTemplate = ng.focusedCellEditTemplate();
+		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
+	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
             type: "GET",
             url: colDef.cellTemplate,
+            async: false
+        }).responseText;
+    }
+	if (self.enableFocusedCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
+        self.editableCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.editableCellTemplate,
             async: false
         }).responseText;
     }
@@ -1035,8 +1150,8 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         return false;
     };
     self.gripOnMouseUp = function() {
-        $(document).off('mousemove');
-        $(document).off('mouseup');
+        $(document).off('mousemove', self.onMouseMove);
+        $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         domUtilityService.digest($scope);
         return false;
@@ -1120,7 +1235,6 @@ ng.Footer = function($scope, grid) {
 ng.RowFactory = function(grid, $scope) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
-    self.rowCache = [];
     self.aggCache = {};
     self.parentCache = []; // Used for grouping and is cleared each time groups are calulated.
     self.dataChanged = true;
@@ -1138,7 +1252,8 @@ ng.RowFactory = function(grid, $scope) {
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
-        jqueryUITheme: grid.config.jqueryUITheme
+        jqueryUITheme: grid.config.jqueryUITheme,
+		enableCellSelection: grid.config.enableCellSelection
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -1146,15 +1261,15 @@ ng.RowFactory = function(grid, $scope) {
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
-        var row = self.rowCache[rowIndex]; // first check to see if we've already built it
+        var row = entity[NG_GRID_ROW]; // first check to see if we've already built it
         if (!row) {
             // build the row
             row = new ng.Row(entity, self.rowConfig, self.selectionService);
-            row.rowIndex = rowIndex + 1; //not a zero-based rowIndex
-            row.offsetTop = self.rowHeight * rowIndex;
             // finally cache it for the next round
-            self.rowCache[rowIndex] = row;
+            entity[NG_GRID_ROW] = row;
         }
+        row.rowIndex = rowIndex;
+        row.offsetTop = self.rowHeight * rowIndex;
         return row;
     };
 
@@ -1165,7 +1280,7 @@ ng.RowFactory = function(grid, $scope) {
             agg = new ng.Aggregate(aggEntity, self);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = rowIndex + 1; //not a zero-based rowIndex
+        agg.index = rowIndex;
         agg.offsetTop = self.rowHeight * rowIndex;
         return agg;
     };
@@ -1181,7 +1296,6 @@ ng.RowFactory = function(grid, $scope) {
             grid.lateBoundColumns = false;
         }
         self.dataChanged = true;
-        self.rowCache = []; //if data source changes, kill this!
         if (grid.config.groups.length > 0) {
             self.getGrouping(grid.config.groups);
         }
@@ -1271,7 +1385,6 @@ ng.RowFactory = function(grid, $scope) {
     //Shuffle the data into their respective groupings.
     self.getGrouping = function(groups) {
         self.aggCache = [];
-        self.rowCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = {};
         // Here we set the onmousedown event handler to the header container.
@@ -1338,6 +1451,9 @@ ng.RowFactory = function(grid, $scope) {
 ***********************************************/
 ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     var defaults = {
+        //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
+        aggregateTemplate: undefined,
+        
         //Callback for when you want to validate something after selection.
         afterSelectionChange: function() {
         }, 
@@ -1345,7 +1461,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         /* Callback if you want to inspect something before selection,
         return false if you want to cancel the selection. return true otherwise. 
         If you need to wait for an async call to proceed with selection you can 
-        use rowItem.continueSelection(event) method after returning false initially. 
+        use rowItem.changeSelection(event) method after returning false initially. 
         Note: when shift+ Selecting multiple items in the grid this will only get called
         once and the rowItem will be an array of items that are queued to be selected. */
         beforeSelectionChange: function() {
@@ -1363,6 +1479,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: true, 
+		
+        //Enables cell selection.
+        enableCellSelection: false,
 
         //Enable or disable resizing of columns
         enableColumnResize: true,
@@ -1440,7 +1559,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Row height of rows in grid.
         rowHeight: 30,
         
-        //Define a row Template to customize output. See github wiki for more details.
+        //Define a row template to customize output. See github wiki for more details.
         rowTemplate: undefined,
         
         //all of the items selected in the grid. In single select mode there will only be one item in the array.
@@ -1478,7 +1597,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
     self.maxCanvasHt = 0;
     //self vars
-    self.config = $.extend(defaults, options);
+    self.config = $.extend(defaults, window.ngGrid.config, options);
     if (typeof options.columnDefs == "string") {
         self.config.columnDefs = $scope.$eval(options.columnDefs);
     }
@@ -1545,7 +1664,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         item = self.sortedData[0];
 
         ng.utils.forIn(item, function(prop, propName) {
-            if (propName != SELECTED_PROP) {
+            if (propName != NG_GRID_ROW) {
                 self.config.columnDefs.push({
                     field: propName
                 });
@@ -1569,7 +1688,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizable: false,
                     groupable: false,
                     headerCellTemplate: '<input class="ngSelectionHeader" type="checkbox" ng-show="multiSelect" ng-model="allSelected" ng-change="toggleSelectAll(allSelected)"/>',
-                    cellTemplate: '<div class="ngSelectionCell"><input class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
+                    cellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>'
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -1687,7 +1806,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
         self.rowFactory = new ng.RowFactory(self, $scope);
-        $scope.selectionService.Initialize(self.rowFactory);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -1787,6 +1905,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
+	$scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
+	$scope.enableCellSelection = self.config.enableCellSelection;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
@@ -1800,6 +1920,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.pagingOptions = self.config.pagingOptions;
     //Templates
     $scope.rowTemplate = self.config.rowTemplate || ng.defaultRowTemplate();
+    $scope.aggregateTemplate = self.config.aggregateTemplate || ng.defaultAggregateTemplate();
     $scope.headerRowTemplate = self.config.headerRowTemplate || ng.defaultHeaderRowTemplate();
     //i18n support
     $scope.i18n = {};
@@ -1827,10 +1948,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.prevScrollIndex = rowIndex;
     };
 
+    // test templates for urls and get the tempaltes via synchronous ajax calls
     if (self.config.rowTemplate && !TEMPLATE_REGEXP.test(self.config.rowTemplate)) {
         $scope.rowTemplate = $.ajax({
             type: "GET",
             url: self.config.rowTemplate,
+            async: false
+        }).responseText;
+    }
+    if (self.config.aggregateTemplate && !TEMPLATE_REGEXP.test(self.config.aggregateTemplate)) {
+        $scope.aggregateTemplate = $.ajax({
+            type: "GET",
+            url: self.config.aggregateTemplate,
             async: false
         }).responseText;
     }
@@ -1944,11 +2073,15 @@ ng.Row = function(entity, config, selectionService) {
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
+	self.setSelection = function(isSelected) {
+		self.selectionService.setSelection(self, isSelected);
+		self.selectionService.lastClickedRow = self;
+	};
     self.continueSelection = function(event) {
         self.selectionService.ChangeSelection(self, event);
     };
     self.toggleSelected = function(event) {
-        if (!canSelectRows) {
+        if (!canSelectRows && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;
@@ -1986,9 +2119,7 @@ ng.Row = function(entity, config, selectionService) {
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
     };
-    //selectify the entity
-	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
-	self.selectionService.setSelection(self, selected);
+	entity[NG_GRID_ROW] = self;
 };
 
 /***********************************************
@@ -2011,6 +2142,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                 for (var i = 0, len = searchConditions.length; i < len; i++) {
                     var condition = searchConditions[i];
                     //Search entire row
+                    var result;
                     if (!condition.column) {
                         for (var prop in item) {
                             if (item.hasOwnProperty(prop)) {
@@ -2018,14 +2150,13 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                                 if (!c) continue;
                                 var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
                                 var pVal = item[prop];
-								if(pVal != null){ 								
-									var result;
-									if(typeof f == 'function'){
+								if(pVal != null){
+								    if(typeof f == 'function'){
 										var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
 										result = condition.regex.test(filterRes);
 									} else {
-										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString())
-									}
+										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
+								    }
 									if (pVal &&  result) {
 										return true;
 									}
@@ -2042,13 +2173,12 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                     var filter = col.cellFilter ? $filter(col.cellFilter) : null;
                     var value = item[condition.column] || item[col.field.split('.')[0]];                  
 					if(value == null) return false;
-					var result;
-					if(typeof filter == 'function'){
+                    if(typeof filter == 'function'){
 						var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
 						result = condition.regex.test(filterResults);
 					} else {
-						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString())
-					}
+						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
+                    }
 					if (!value || !result) {
 						return false;
 					}				
@@ -2086,12 +2216,12 @@ ng.SearchProvider = function ($scope, grid, $filter) {
     var buildSearchConditions = function (a) {
         //reset.
         searchConditions = [];
-        var qStr = '';
+        var qStr;
         if (!(qStr = $.trim(a))) {
             return;
         }
         var columnFilters = qStr.split(";");
-        $.each(columnFilters, function (i, filter) {
+        angular.forEach(columnFilters, function (filter) {
             var args = filter.split(':');
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
@@ -2119,7 +2249,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 	});
 	$scope.$watch('filterText', function(a){
 		if(!self.extFilter){
-			$scope.$emit('filterChanged', a);
+			$scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
@@ -2147,18 +2277,13 @@ ng.SelectionService = function(grid) {
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
 
-    self.rowFactory = {};
-    self.Initialize = function(rowFactory) {
-        self.rowFactory = rowFactory;
-    };
-
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
         if (evt && evt.shiftKey && self.multi) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredData.indexOf(rowItem.entity);
                 var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
-				self.lastClickedRow = self.rowFactory.rowCache[thisIndx];
+                self.lastClickedRow = rowItem.entity[NG_GRID_ROW];
                 if (thisIndx == prevIndx) {
                     return false;
                 }
@@ -2172,13 +2297,12 @@ ng.SelectionService = function(grid) {
 				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    rows.push(self.rowFactory.rowCache[prevIndx]);
+                    rows.push(grid.filteredData[prevIndx][NG_GRID_ROW]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    $.each(rows, function(i, ri) {
+                    angular.forEach(rows, function(ri) {
 						var selectionState = ri.selected;
                         ri.selected = !selectionState;
-                        ri.entity[SELECTED_PROP] = !selectionState;
 						var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
@@ -2192,14 +2316,6 @@ ng.SelectionService = function(grid) {
             }
         } else if (!self.multi) {
             if (self.lastClickedRow) {
-				//sorting builds new row so last clicked row will have different hash 
-				//than new row in rowcache so set lastClickedRow to same row in new rowCache
-				for(var i = 0; i < self.rowFactory.rowCache.length; i++) { 
-					if(self.rowFactory.rowCache[i] && self.rowFactory.rowCache[i].entity == self.lastClickedRow.entity){
-						self.lastClickedRow = self.rowFactory.rowCache[i];
-						break;
-					}
-				}
 				self.setSelection(self.lastClickedRow, false);
 				if(self.lastClickedRow.entity == rowItem.entity){ 
 					self.lastClickedRow = undefined; //deselect row
@@ -2218,45 +2334,39 @@ ng.SelectionService = function(grid) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
-        rowItem.selected = isSelected;
-        rowItem.entity[SELECTED_PROP] = isSelected;
-        if (!isSelected) {
-            var indx = self.selectedItems.indexOf(rowItem.entity);
-			if(indx != -1){
-				self.selectedItems.splice(indx, 1);
-			}
-        } else {
-            if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-				if(!self.multi && self.selectedItems.length > 0){
-					self.toggleSelectAll(false);
-					rowItem.selected = isSelected;
-					rowItem.entity[SELECTED_PROP] = isSelected;
+		if(grid.config.canSelectRows){
+			rowItem.selected = isSelected;
+			if (!isSelected) {
+				var indx = self.selectedItems.indexOf(rowItem.entity);
+				if(indx != -1){
+					self.selectedItems.splice(indx, 1);
 				}
-				self.selectedItems.push(rowItem.entity);
-            }
-        }
+			} else {
+				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+					if(!self.multi && self.selectedItems.length > 0){
+						self.toggleSelectAll(false);
+						rowItem.selected = isSelected;
+					}
+					self.selectedItems.push(rowItem.entity);
+				}
+			}
+		}
     };
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {
-        angular.forEach(grid.filteredData, function(item, i) {
-            grid.rowFactory.buildEntityRow(item, i);
-        });
-        if (grid.config.beforeSelectionChange(grid.rowFactory.rowCache)) {
+        if (grid.config.beforeSelectionChange(grid.sortedData)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.splice(0, selectedlength);
             }
             angular.forEach(grid.filteredData, function (item) {
-                item[SELECTED_PROP] = checkAll;
+                item[NG_GRID_ROW] = checkAll;
                 if (checkAll) {
                     self.selectedItems.push(item);
                 }
             });
-            angular.forEach(self.rowFactory.rowCache, function (row) {
-                row.selected = checkAll;
-            });
-            grid.config.afterSelectionChange(grid.rowFactory.rowCache);
+            grid.config.afterSelectionChange(grid.sortedData);
         }
     };
 };
@@ -2324,6 +2434,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                         var dataWatcher = function (a) {
                             prevlength = a ? a.length:0;
                             grid.sortedData = $scope.$eval(options.data) || [];
+                            angular.forEach(grid.sortData, function(item, i) {
+                                grid.rowFactory.buildEntityRow(item, i);
+                            });
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
@@ -2339,6 +2452,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
+							$scope.$emit("ngGridEventData",grid.sortData);
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
                         $scope.$parent.$watch(options.data + '.length', function(a) {
@@ -2361,8 +2475,12 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ng.EventProvider(grid, $scope, domUtilityService);
                     //initialize plugins.
-                    angular.forEach(options.plugins, function(p) {
-                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                    angular.forEach(options.plugins, function (p) {
+                        if (typeof p === 'function') {
+                            p.call(this, []).init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        } else {
+                            p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        }
                     });
                     return null;
                 }
@@ -2381,8 +2499,9 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
         compile: function() {
             return {
                 pre: function($scope, iElement) {
+					$scope.row.elm = iElement;
                     if ($scope.row.isAggRow) {
-                        var html = ng.aggregateTemplate();
+                        var html = $scope.aggregateTemplate;
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
@@ -2402,16 +2521,33 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
 /***********************************************
 * FILE: ..\src\directives\ng-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
+ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-                    var html = $scope.col.cellTemplate;
+					var html;
+					if($scope.col.enableFocusedCellEdit){
+						html =  $scope.col.focusedCellEditTemplate;
+						html = html.replace(DISPLAY_CELL_TEMPLATE, $scope.col.cellTemplate);
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate);
+					} else {
+						html = $scope.col.cellTemplate;
+					}
                     html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
-                    iElement.append($compile(html)($scope));
-                }
+					var cellElement = $compile(html)($scope);
+					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
+						cellElement[0].setAttribute('tabindex', 0);
+						cellElement.addClass('ngCellElement');
+					}
+                    iElement.append(cellElement);
+                },
+				post: function($scope, iElement){	
+					if($scope.enableCellSelection){
+						domUtilityService.selectionHandlers($scope, iElement);
+					}
+				}
             };
         }
     };
@@ -2457,70 +2593,151 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 /***********************************************
 * FILE: ..\src\directives\ng-viewport.js
 ***********************************************/
-ngGridDirectives.directive('ngViewport',['DomUtilityService',
-  function (domUtilityService) {
-	return function (scope, elm, attrs) {
-		var changeUserSelect = function(elm,value,evt){
-			elm.css({
-				'-webkit-touch-callout': value,
-				'-webkit-user-select': value,
-				'-khtml-user-select': value,
-				'-moz-user-select': value == 'none' 
-										   ? '-moz-none' 
-										   : value,
-				'-ms-user-select': value,
-				'user-select': value
-			});
-		};
-		elm.bind('scroll', function(evt) {
-			var scrollLeft = evt.target.scrollLeft,
-				scrollTop = evt.target.scrollTop;
-			scope.adjustScrollLeft(scrollLeft);
-			scope.adjustScrollTop(scrollTop);
+ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtilityService) {
+    return function($scope, elm) {
+		var isMouseWheelActive = false;
+        elm.bind('scroll', function(evt) {
+            var scrollLeft = evt.target.scrollLeft,
+                scrollTop = evt.target.scrollTop;
+            $scope.adjustScrollLeft(scrollLeft);
+            $scope.adjustScrollTop(scrollTop);
+			if($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive){
+				domUtilityService.focusCellElement($scope);
+			} 
+			isMouseWheelActive = false;
+            return true;
+        });
+		elm.bind("mousewheel DOMMouseScroll", function(evt) {
+			isMouseWheelActive = true;
 			return true;
 		});
-		var doingKeyDown = false;
-		elm.bind('keydown', function(evt) {
-			if(evt.keyCode == 16){ //shift key
-				changeUserSelect(elm,'none',evt);
-				return true;
-			} else if (!doingKeyDown) {
-				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler(scope, elm, evt);
-				doingKeyDown = false;
-				return ret;
-			}
-			return false;
-		});
-		elm.bind('keyup', function(evt) {
-			if(evt.keyCode == 16){ //shift key
-				changeUserSelect(elm,'text',evt);
-			}
-			return true;
-		});
-	}
-  }]);
+		if(!$scope.enableCellSelection){
+			domUtilityService.selectionHandlers($scope, elm);
+		}
+    };
+}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-cell-text.js
 ***********************************************/
 ngGridDirectives.directive('ngCellText',
   function () {
-	return function (scope, elm, attrs) {
-		elm.bind('mouseover', function(evt){
-			evt.preventDefault();
-			elm.css({
-				'cursor':'text'
-			});
-		});
-		elm.bind('mouseleave', function(evt){
-			evt.preventDefault();
-			elm.css({
-				'cursor':'default'
-			});
-		});
-    };
+      return function(scope, elm) {
+          elm.bind('mouseover', function(evt) {
+              evt.preventDefault();
+              elm.css({
+                  'cursor': 'text'
+              });
+          });
+          elm.bind('mouseleave', function(evt) {
+              evt.preventDefault();
+              elm.css({
+                  'cursor': 'default'
+              });
+          });
+      };
   });
+
+/***********************************************
+* FILE: ..\src\directives\ng-cell-has-focus.js
+***********************************************/
+ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
+	function (domUtilityService) {
+		var focusOnInputElement = function($scope, elm){
+			$scope.isFocused = true;
+			domUtilityService.digest($scope);	
+			var elementWithoutComments = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
+			if(inputElement.length > 0){
+				angular.element(inputElement).focus();
+				angular.element(inputElement).select();
+				angular.element(inputElement).bind('blur', function(evt){	
+					$scope.isFocused = false;	
+					domUtilityService.digest($scope);
+					return true;
+				});	
+			}
+		};
+		return function($scope, elm) {
+			$scope.isFocused = false;
+			elm.bind('mousedown', function(evt){
+				evt.preventDefault();
+				$scope.$parent.row.toggleSelected(evt);
+				domUtilityService.digest($scope.$parent.$parent);
+				focusOnInputElement($scope, elm);
+				return true;
+			});			
+			elm.bind('focus', function(evt){
+				focusOnInputElement($scope, elm);
+				return true;
+			});
+		};
+	}]);
+
+/***********************************************
+* FILE: ..\src\directives\ng-cell-input.js
+***********************************************/
+ngGridDirectives.directive('ngCellInput',
+	function () {
+		return function($scope, elm) {
+			elm.bind('keydown', function(evt){
+				switch(evt.keyCode){
+					case 37:
+					case 38:
+					case 39:
+					case 40:
+						evt.stopPropagation();
+						break;
+					default:
+						break;
+				}
+				return true;
+			});
+		};
+	});
+
+/***********************************************
+* FILE: ..\src\directives\ui-if.js
+***********************************************/
+/*
+ * Defines the ui-if tag. This removes/adds an element from the dom depending on a condition
+ * Originally created by @tigbro, for the @jquery-mobile-angular-adapter
+ * https://github.com/tigbro/jquery-mobile-angular-adapter
+ */
+ngGridDirectives.directive('uiIf', [function () {
+  return {
+    transclude: 'element',
+    priority: 1000,
+    terminal: true,
+    restrict: 'A',
+    compile: function (element, attr, transclude) {
+      return function (scope, element, attr) {
+
+        var childElement;
+        var childScope;
+ 
+        scope.$watch(attr['uiIf'], function (newValue) {
+          if (childElement) {
+            childElement.remove();
+            childElement = undefined;
+          }
+          if (childScope) {
+            childScope.$destroy();
+            childScope = undefined;
+          }
+
+          if (newValue) {
+            childScope = scope.$new();
+            transclude(childScope, function (clone) {
+              childElement = clone;
+              element.after(clone);
+            });
+          }
+        });
+      };
+    }
+  };
+}]);
 
 /***********************************************
 * FILE: ..\src\init.js
@@ -2598,5 +2815,23 @@ window.ngGrid.i18n['sp'] = {
     ngPagerNextTitle: 'Página Siguiente',
     ngPagerPrevTitle: 'Página Anterior',
     ngPagerLastTitle: 'Última Página'
+};
+
+/***********************************************
+* LANGUAGE: zh-cn.js
+***********************************************/
+window.ngGrid.i18n['zh-cn'] = {
+    ngAggregateLabel: '条目',
+    ngGroupPanelDescription: '拖曳表头到此处以进行分组',
+    ngSearchPlaceHolder: '搜索...',
+    ngMenuText: '数据分组与选择列：',
+    ngShowingItemsLabel: '当前显示条目：',
+    ngTotalItemsLabel: '条目总数：',
+    ngSelectedItemsLabel: '选中条目：',
+    ngPageSizeLabel: '每页显示数：',
+    ngPagerFirstTitle: '回到首页',
+    ngPagerNextTitle: '下一页',
+    ngPagerPrevTitle: '上一页',
+    ngPagerLastTitle: '前往尾页' 
 };
 }(window));

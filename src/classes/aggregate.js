@@ -38,7 +38,6 @@ ng.Aggregate = function(aggEntity, rowFactory) {
         angular.forEach(self.children, function(child) {
             child[NG_HIDDEN] = self.collapsed;
         });
-        rowFactory.rowCache = [];
         var foundMyself = false;
         angular.forEach(rowFactory.aggCache, function(agg, i) {
             if (foundMyself) {

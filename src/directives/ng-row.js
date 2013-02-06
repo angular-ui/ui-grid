@@ -6,6 +6,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
         compile: function() {
             return {
                 pre: function($scope, iElement) {
+					$scope.row.elm = iElement;
                     if ($scope.row.isAggRow) {
                         var html = $scope.aggregateTemplate;
                         if ($scope.row.aggLabelFilter) {

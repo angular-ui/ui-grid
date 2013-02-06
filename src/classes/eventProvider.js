@@ -41,7 +41,9 @@
 				col.setAttribute('draggable', 'true');
 				//jQuery 'on' function doesn't have  dataTransfer as part of event in handler unless added to event props, which is not recommended
 				//See more here: http://api.jquery.com/category/events/event-object/
-				col.addEventListener('dragstart', self.dragStart); 
+				if (col.addEventListener) { //IE8 doesn't have drag drop or event listeners
+					col.addEventListener('dragstart', self.dragStart);
+				}
 			});
 			if (navigator.userAgent.indexOf("MSIE") != -1){
          		//call native IE dragDrop() to start dragging
@@ -75,7 +77,9 @@
                 // set draggable events
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
-					this.addEventListener('dragstart', self.dragStart); 
+					if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
+						this.addEventListener('dragstart', self.dragStart); 
+					}
 					if (navigator.userAgent.indexOf("MSIE") != -1){
 						//call native IE dragDrop() to start dragging
 						groupItem.bind('selectstart', function () { 
