@@ -1,4 +1,4 @@
-ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtilityService) {
+ngGridDirectives.directive('ngViewport', [function () {
     return function($scope, elm) {
 		var isMouseWheelActive = false;
         elm.bind('scroll', function(evt) {
@@ -7,7 +7,7 @@ ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtil
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
 			if($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive){
-				domUtilityService.focusCellElement($scope);
+				$scope.domAccessProvider.focusCellElement($scope);
 			} 
 			isMouseWheelActive = false;
             return true;
@@ -17,7 +17,7 @@ ngGridDirectives.directive('ngViewport', ['DomUtilityService', function (domUtil
 			return true;
 		});
 		if(!$scope.enableCellSelection){
-			domUtilityService.selectionHandlers($scope, elm);
+			$scope.domAccessProvider.selectionHandlers($scope, elm);
 		}
     };
 }]);

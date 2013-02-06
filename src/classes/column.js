@@ -32,8 +32,8 @@
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
     self.cursor = self.sortable ? 'pointer' : 'default';
-    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
-    self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+    self.headerCellTemplate = colDef.headerCellTemplate || ng.headerCellTemplate();
+    self.cellTemplate = colDef.cellTemplate || ng.cellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
 	if(self.enableFocusedCellEdit) {
 	    self.focusedCellEditTemplate = ng.focusedCellEditTemplate();
 		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
@@ -116,7 +116,7 @@
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
-    self.gripOnMouseUp = function() {
+    self.gripOnMouseUp = function (event) {
         $(document).off('mousemove', self.onMouseMove);
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';

@@ -1,10 +1,15 @@
 function userController($scope) {
-	$scope.myDefs = [{ field: 'Vendor', displayName: 'Supplier' },
+	$scope.myDefs = [{ field: 'Vendor', displayName: 'Supplier', cellTemplate: '<button ng-click="switchUser(row.entity)">test</button>' },
         { field: 'SeasonCode', displayName: 'My SeasonCode' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
         { field: 'UPC', displayName: 'Bar Code' }];
 		
 	$scope.selections = [];
+	
+	$scope.switchUser = function(row){
+		console.log(row);
+		row.updated = true;
+	};
 	
 	$scope.gridOptions = {
         data: 'myData',

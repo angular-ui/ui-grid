@@ -9,6 +9,8 @@
 ..\src\templates\gridTemplate.html
 ..\src\templates\rowTemplate.html
 ..\src\templates\cellTemplate.html
+..\src\templates\checkboxCellTemplate.html
+..\src\templates\checkboxHeaderTemplate.html
 ..\src\templates\editableCellTemplate.html
 ..\src\templates\focusedCellEditTemplate.html
 ..\src\templates\aggregateTemplate.html
@@ -24,6 +26,7 @@
 ..\src\classes\range.js
 ..\src\classes\row.js
 ..\src\classes\searchProvider.js
+..\src\classes\domAccessProvider.js
 ..\src\classes\selectionService.js
 ..\src\classes\styleProvider.js
 ..\src\directives\ng-grid.js

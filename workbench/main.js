@@ -10,8 +10,8 @@ function userController($scope) {
         useExternalFilter: false,
     };
     $scope.pagingOptions = {
-        pageSizes: [250, 500, 1000], //page Sizes
-        pageSize: 250, //Size of Paging data
+        pageSizes: [50, 500, 1000], //page Sizes
+        pageSize: 50, //Size of Paging data
         totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };
@@ -75,8 +75,10 @@ function userController($scope) {
         scope: undefined,
         grid: undefined,
     };
-    
 
+    $scope.$on('ngGridEventScroll', function() {
+        alert('hit bottom!');
+    });
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
         { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
@@ -92,7 +94,8 @@ function userController($scope) {
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
 		enableCellSelection: true,
-        enablePaging: true,
+		enablePaging: true,
+        enableVirtualization: false,
         canSelectRows: true,
 		multiSelect: true,
         enableRowReordering: true,
@@ -147,16 +150,7 @@ function userController($scope) {
 		$scope.myData2[0].Vendor = "HELLO";
 	};
 
-    $scope.setSelections = function() {
-        angular.forEach($scope.myData, function(item) {
-            if (item["__ngGridRow__"]) {
-                item["__ngGridRow__"].selected = true;
-            }
-            item["__ng_selected__"] = true;
-            $scope.mySelections.push(item);
-        });
-    };
-	
+
 	$scope.myData3 = [{ 'Sku': 'C-2820164', 'Vendor': {'name':'NIKE'}, 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
 				  { 'Sku': 'J-8555462', 'Vendor': {'name':'NIKE'}, 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
 				  { 'Sku': 'K-5312708', 'Vendor': {'name':'NIKE'}, 'SeasonCode': '1293', 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },

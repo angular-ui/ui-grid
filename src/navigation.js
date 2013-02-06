@@ -44,7 +44,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 	}
 	
 	if($scope.enableCellSelection){ 
-		domUtilityService.focusCellElement($scope, newColumnIndex);	
+		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);	
 		domUtilityService.digest($scope.$parent.$parent.$parent);
 	} else {	
 		if (index >= items.length - EXCESS_ROWS) {

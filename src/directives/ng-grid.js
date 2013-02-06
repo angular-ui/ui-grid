@@ -56,7 +56,7 @@
                         });
                     }
 					
-                    var htmlText = ng.defaultGridTemplate(grid.config);
+                    var htmlText = ng.gridTemplate();
                     grid.footerController = new ng.Footer($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());

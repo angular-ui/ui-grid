@@ -7,7 +7,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
 			if(inputElement.length > 0){
 				angular.element(inputElement).focus();
-				angular.element(inputElement).select();
+				$scope.domAccessProvider.inputSelection(inputElement[0]);
 				angular.element(inputElement).bind('blur', function(evt){	
 					$scope.isFocused = false;	
 					domUtilityService.digest($scope);
