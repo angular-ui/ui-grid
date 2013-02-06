@@ -122,7 +122,7 @@
 	});
 	$scope.$watch('filterText', function(a){
 		if(!self.extFilter){
-			$scope.$emit('filterChanged', a);
+			$scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }

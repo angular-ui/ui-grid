@@ -28,6 +28,9 @@
                         var dataWatcher = function (a) {
                             prevlength = a ? a.length:0;
                             grid.sortedData = $scope.$eval(options.data) || [];
+                            angular.forEach(grid.sortData, function(item, i) {
+                                grid.rowFactory.buildEntityRow(item, i);
+                            });
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
@@ -43,6 +46,7 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
+							$scope.$emit("ngGridEventData",grid.sortData);
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
                         $scope.$parent.$watch(options.data + '.length', function(a) {
