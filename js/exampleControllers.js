@@ -284,4 +284,31 @@ angular.module('myApp.exampleControllers', [])
 		displaySelectionCheckbox: false,
 		columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, {field:'age', displayName:'Age'}]
 	};
+}])
+	
+.controller('RowSelectionExampleCtrl', ['$scope', function($scope) {
+	$scope.basicTabs = tabs;
+	$scope.selectedBasicTab = $scope.basicTabs[0];		
+	$scope.switchTab = function(tab){
+		$scope.selectedBasicTab = $scope.basicTabs[tab];
+	};				
+	$scope.link = function(){ return "partials/exampleDefinitions/rowSelection/rowSelection" + $scope.selectedBasicTab.title + '.html';};
+	$scope.myData = [{name: "Moroni", age: 50},
+					 {name: "Tiancum", age: 43},
+					 {name: "Jacob", age: 27},
+					 {name: "Nephi", age: 29},
+					 {name: "Enos", age: 34}];
+	$scope.gridOptions = { 
+		data: 'myData'
+	};
+	$scope.$on('ngGridEventData', function(){
+		$scope.myData[0].ngGridRow.setSelection(true);
+	});
+	$scope.selectEnosRow = function(){
+		angular.forEach($scope.myData, function(data, index){
+			if(data.name == 'Enos'){
+				$scope.myData[index].ngGridRow.setSelection(true);
+			}
+		});
+	};
 }]);

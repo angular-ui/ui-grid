@@ -1,0 +1,23 @@
+<pre style="background-color: white; height: 325px; border-radius: 0 0 4px 4px; border-top:0px; white-space: pre; word-wrap: normal; overflow: auto" class="prettyprint">
+var app = angular.module('myApp', ['ngGrid']);
+app.controller('MyCtrl', function($scope) {
+    $scope.myData = [{name: "Moroni", age: 50},
+                     {name: "Tiancum", age: 43},
+                     {name: "Jacob", age: 27},
+                     {name: "Nephi", age: 29},
+                     {name: "Enos", age: 34}];
+    $scope.gridOptions = { 
+        data: 'myData'
+    };	
+    $scope.$on('ngGridEventData', function(){
+        $scope.myData[0].ngGridRow.setSelection(true);
+    });
+    $scope.selectEnosRow = function(){
+        angular.forEach($scope.myData, function(data, index){
+            if(data.name == 'Enos'){
+                $scope.myData[index].ngGridRow.setSelection(true);
+            }
+        });
+    };
+});
+</pre>

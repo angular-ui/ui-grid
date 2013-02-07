@@ -1,0 +1,15 @@
+<h1 style="margin-top: 0">Row Selection Example</h1>
+<div style="float: left; width: 600px">
+	<p>Below is a basic example on how to use row selection in ng-grid:</p>
+	<ul style="margin-bottom:0px;" class="nav nav-tabs">
+		<li class="nav" ng-repeat="tab in basicTabs" ng-class="{active: selectedBasicTab == tab}">
+			<a ng-click="switchTab(tab.index)">{{tab.title}}</a>
+		</li>
+	</ul>
+	<div ng-include src="link()"></div>
+</div>
+<div style="float: right">
+	<p>Below is the outcome of the grid. View plunker <a target="blank" href="http://plnkr.co/edit/KemYS9?p=preview">here</a>.</p>
+	<div style=" margin-left: auto; margin-right: auto; border: 1px solid rgb(212,212,212); width: 400px; height: 300px; margin-top: 20px; " ng-grid="gridOptions"></div>
+	<button ng-click="selectEnosRow()">Select Enos Row</button>
+</div>
