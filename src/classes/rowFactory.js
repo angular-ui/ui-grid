@@ -42,10 +42,10 @@ ng.RowFactory = function(grid, $scope) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self);
+            agg = new ng.Aggregate(aggEntity, self, self.rowConfig);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = rowIndex;
+        agg.rowIndex = rowIndex;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {
@@ -82,7 +82,7 @@ ng.RowFactory = function(grid, $scope) {
             if (item.isAggRow) {
                 row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
             } else {
-                row = grid.rowCache[self.renderedRange.topRow + indx]
+                row = grid.rowCache[self.renderedRange.topRow + indx];
             }
             //add the row to our return array
             rowArr.push(row);
@@ -151,7 +151,7 @@ ng.RowFactory = function(grid, $scope) {
         var cols = $scope.columns;
 
         angular.forEach(rows, function (item) {
-            var model = grid.data[item.modelIndex];
+            var model = item.entity;
             model[NG_HIDDEN] = true;
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {

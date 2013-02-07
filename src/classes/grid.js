@@ -376,6 +376,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 				tempArr.push(item.field || item);
 			});
 			self.config.groups = tempArr;
+            self.rowFactory.filteredRowsChanged();
 			$scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {

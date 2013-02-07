@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 14:42:54
+* Compiled At: 02/07/2013 15:37:43
 ***********************************************/
 
 (function(window) {
@@ -677,7 +677,7 @@ ng.headerCellTemplate = function(){ return '<div ng-click="col.sort()" class="ng
 /***********************************************
 * FILE: ..\src\classes\aggregate.js
 ***********************************************/
-ng.Aggregate = function(aggEntity, rowFactory) {
+ng.Aggregate = function (aggEntity, rowFactory, config) {
     var self = this;
     self.rowIndex = 0;
     self.offsetTop = function () {
@@ -1227,10 +1227,10 @@ ng.RowFactory = function(grid, $scope) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self);
+            agg = new ng.Aggregate(aggEntity, self, self.rowConfig);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
-        agg.index = rowIndex;
+        agg.rowIndex = rowIndex;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {
@@ -1267,7 +1267,7 @@ ng.RowFactory = function(grid, $scope) {
             if (item.isAggRow) {
                 row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
             } else {
-                row = grid.rowCache[self.renderedRange.topRow + indx]
+                row = grid.rowCache[self.renderedRange.topRow + indx];
             }
             //add the row to our return array
             rowArr.push(row);
@@ -1336,7 +1336,7 @@ ng.RowFactory = function(grid, $scope) {
         var cols = $scope.columns;
 
         angular.forEach(rows, function (item) {
-            var model = grid.data[item.modelIndex];
+            var model = item.entity;
             model[NG_HIDDEN] = true;
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
@@ -1763,6 +1763,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 				tempArr.push(item.field || item);
 			});
 			self.config.groups = tempArr;
+            self.rowFactory.filteredRowsChanged();
 			$scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {
@@ -2346,7 +2347,7 @@ ng.SelectionService = function(grid) {
 				}
             }
 		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-        } else if(!evt.keyCode){
+        } else if (!evt.keyCode) {
             self.setSelection(rowItem, !rowItem.selected);
         }
 		self.lastClickedRow = rowItem;

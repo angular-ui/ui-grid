@@ -4,7 +4,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
-ng.Aggregate = function(aggEntity, rowFactory) {
+ng.Aggregate = function (aggEntity, rowFactory, config) {
     var self = this;
     self.rowIndex = 0;
     self.offsetTop = function () {
