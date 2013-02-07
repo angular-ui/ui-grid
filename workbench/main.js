@@ -10,8 +10,8 @@ function userController($scope) {
         useExternalFilter: false,
     };
     $scope.pagingOptions = {
-        pageSizes: [50, 500, 1000], //page Sizes
-        pageSize: 50, //Size of Paging data
+        pageSizes: [250, 500, 1000], //page Sizes
+        pageSize: 250, //Size of Paging data
         totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };

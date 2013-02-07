@@ -60,6 +60,9 @@
                 return true;
             });
         }
+        angular.forEach(grid.filteredRows, function (row, i) {
+            row.rowIndex = i;
+        });
         grid.rowFactory.filteredRowsChanged();
     };
 

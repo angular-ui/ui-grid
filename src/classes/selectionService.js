@@ -46,14 +46,12 @@ ng.SelectionService = function(grid) {
         } else if (!self.multi) {
             if (self.lastClickedRow) {
 				self.setSelection(self.lastClickedRow, false);
-				if(self.lastClickedRow.entity == rowItem.entity){ 
+				if(self.lastClickedRow == rowItem){ 
 					self.lastClickedRow = undefined; //deselect row
 					return true;
 				}
-				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-            } else {
-				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-			}
+            }
+		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
         } else {
             self.setSelection(rowItem, !rowItem.selected);
         }
@@ -92,7 +90,7 @@ ng.SelectionService = function(grid) {
             angular.forEach(grid.filteredRows, function (row) {
                 row.selected = checkAll;
                 if (checkAll) {
-                    self.selectedItems.push(row);
+                    self.selectedItems.push(row.entity);
                 }
             });
             grid.config.afterSelectionChange(grid.rowCache);

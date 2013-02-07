@@ -23,7 +23,8 @@ ng.RowFactory = function(grid, $scope) {
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
         jqueryUITheme: grid.config.jqueryUITheme,
-		enableCellSelection: grid.config.enableCellSelection
+        enableCellSelection: grid.config.enableCellSelection,
+        rowHeight: grid.config.rowHeight
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -34,7 +35,6 @@ ng.RowFactory = function(grid, $scope) {
         var row = new ng.Row(entity, self.rowConfig, self.selectionService);
         // finally cache it for the next round
         row.rowIndex = rowIndex;
-        row.offsetTop = self.rowHeight * rowIndex;
         return row;
     };
 
@@ -46,7 +46,6 @@ ng.RowFactory = function(grid, $scope) {
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.index = rowIndex;
-        agg.offsetTop = self.rowHeight * rowIndex;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {

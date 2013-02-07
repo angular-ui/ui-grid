@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/06/2013 21:25:42
+* Compiled At: 02/06/2013 22:31:38
 ***********************************************/
 
 (function(window) {
@@ -685,8 +685,10 @@ ng.headerCellTemplate = function(){ return '<div ng-click="col.sort()" class="ng
 ***********************************************/
 ng.Aggregate = function(aggEntity, rowFactory) {
     var self = this;
-    self.index = 0;
-    self.offsetTop = 0;
+    self.rowIndex = 0;
+    self.offsetTop = function () {
+        return self.rowIndex * config.rowHeight;
+    };
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
@@ -1212,7 +1214,8 @@ ng.RowFactory = function(grid, $scope) {
         beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
         jqueryUITheme: grid.config.jqueryUITheme,
-		enableCellSelection: grid.config.enableCellSelection
+        enableCellSelection: grid.config.enableCellSelection,
+        rowHeight: grid.config.rowHeight
     };
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -1223,7 +1226,6 @@ ng.RowFactory = function(grid, $scope) {
         var row = new ng.Row(entity, self.rowConfig, self.selectionService);
         // finally cache it for the next round
         row.rowIndex = rowIndex;
-        row.offsetTop = self.rowHeight * rowIndex;
         return row;
     };
 
@@ -1235,7 +1237,6 @@ ng.RowFactory = function(grid, $scope) {
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.index = rowIndex;
-        agg.offsetTop = self.rowHeight * rowIndex;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {
@@ -1924,7 +1925,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        newRange = new ng.Range(0, 1000);
+	        newRange = new ng.Range(0, self.config.virtualizationThreshold);
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);
@@ -2030,7 +2031,6 @@ ng.Row = function(entity, config, selectionService) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
-    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
@@ -2061,7 +2061,9 @@ ng.Row = function(entity, config, selectionService) {
         return false;
     };
     self.rowIndex = 0;
-    self.offsetTop = 0;
+    self.offsetTop = function() {
+        return self.rowIndex * config.rowHeight;
+    };
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
@@ -2147,6 +2149,9 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                 return true;
             });
         }
+        angular.forEach(grid.filteredRows, function (row, i) {
+            row.rowIndex = i;
+        });
         grid.rowFactory.filteredRowsChanged();
     };
 
@@ -2337,14 +2342,12 @@ ng.SelectionService = function(grid) {
         } else if (!self.multi) {
             if (self.lastClickedRow) {
 				self.setSelection(self.lastClickedRow, false);
-				if(self.lastClickedRow.entity == rowItem.entity){ 
+				if(self.lastClickedRow == rowItem){ 
 					self.lastClickedRow = undefined; //deselect row
 					return true;
 				}
-				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-            } else {
-				self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-			}
+            }
+		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
         } else {
             self.setSelection(rowItem, !rowItem.selected);
         }
@@ -2383,7 +2386,7 @@ ng.SelectionService = function(grid) {
             angular.forEach(grid.filteredRows, function (row) {
                 row.selected = checkAll;
                 if (checkAll) {
-                    self.selectedItems.push(row);
+                    self.selectedItems.push(row.entity);
                 }
             });
             grid.config.afterSelectionChange(grid.rowCache);
@@ -2399,7 +2402,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "height": col.headerRowHeight + "px" };
     };
     $scope.rowStyle = function(row) {
-        return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+        return { "top": row.offsetTop() + "px", "height": $scope.rowHeight + "px" };
     };
     $scope.canvasStyle = function() {
         return { "height": grid.maxCanvasHt.toString() + "px" };
@@ -2629,17 +2632,19 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 ngGridDirectives.directive('ngViewport', [function () {
     return function($scope, elm) {
 		var isMouseWheelActive = false;
-        elm.bind('scroll', function(evt) {
-            var scrollLeft = evt.target.scrollLeft,
-                scrollTop = evt.target.scrollTop;
-            $scope.adjustScrollLeft(scrollLeft);
-            $scope.adjustScrollTop(scrollTop);
-			if($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive){
-				$scope.domAccessProvider.focusCellElement($scope);
-			} 
-			isMouseWheelActive = false;
-            return true;
-        });
+		elm.bind('scroll', function (evt) {
+		    $scope.$apply(function() {
+		        var scrollLeft = evt.target.scrollLeft,
+		            scrollTop = evt.target.scrollTop;
+		        $scope.adjustScrollLeft(scrollLeft);
+		        $scope.adjustScrollTop(scrollTop);
+		        if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
+		            $scope.domAccessProvider.focusCellElement($scope);
+		        }
+		        isMouseWheelActive = false;
+		        return true;
+		    });
+		});
 		elm.bind("mousewheel DOMMouseScroll", function(evt) {
 			isMouseWheelActive = true;
 			return true;

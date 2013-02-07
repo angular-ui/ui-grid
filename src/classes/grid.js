@@ -532,7 +532,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        newRange = new ng.Range(0, 1000);
+	        newRange = new ng.Range(0, self.config.virtualizationThreshold);
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);
