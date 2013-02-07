@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 12:53:02
+* Compiled At: 02/07/2013 14:42:54
 ***********************************************/
 
 (function(window) {
@@ -44,7 +44,7 @@ var TEMPLATE_REGEXP = /<.+>/;
 * FILE: ..\src\navigation.js
 ***********************************************/
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
+ng.moveSelectionHandler = function($scope, elm, evt, grid, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
@@ -74,25 +74,20 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 		return true;
 	}	
 	
-    var items = $scope.renderedRows;
+    var items = grid.rowCache;
     var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
 	if(charCode != 37 && charCode != 39 && charCode != 9){
-		$scope.selectionService.ChangeSelection(items[index], evt);
+		items[index].toggleSelected(evt);
 	}
 	
 	if($scope.enableCellSelection){ 
-		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);	
-		domUtilityService.digest($scope.$parent.$parent.$parent);
+		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
-		if (index >= items.length - EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
-		} else if (index <= EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
-		}	
-		domUtilityService.digest($scope.$parent);
+		$scope.$emit('ngGridEventDigestGrid');
 	}
     return false;
 };
@@ -662,7 +657,7 @@ ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'c
 /***********************************************
 * FILE: ..\src\templates\focusedCellEditTemplate.html
 ***********************************************/
-ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus><div ui-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ui-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
+ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus><div ng-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ng-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -1758,7 +1753,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
-		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
+		$scope.domAccessProvider = new ng.DomAccessProvider(self, domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -2238,7 +2233,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 /***********************************************
 * FILE: ..\src\classes\domAccessProvider.js
 ***********************************************/
-ng.DomAccessProvider = function(domUtilityService) {	
+ng.DomAccessProvider = function(grid, domUtilityService) {	
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
@@ -2249,7 +2244,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 	
 	self.focusCellElement = function($scope, index){	
 		var columnIndex = index != undefined ? index : previousColumn;
-		if(columnIndex != undefined){
+		if(columnIndex != undefined && $scope.selectionService.lastClickedRow.elm){
 			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
 			var nextFocusedCellElement = columns[columnIndex];
 			nextFocusedCellElement.children[0].focus();
@@ -2279,7 +2274,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				var ret = ng.moveSelectionHandler($scope, elm, evt, grid, domUtilityService);
 				doingKeyDown = false;
 				return ret;
 			}
@@ -2351,7 +2346,7 @@ ng.SelectionService = function(grid) {
 				}
             }
 		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-        } else {
+        } else if(!evt.keyCode){
             self.setSelection(rowItem, !rowItem.selected);
         }
 		self.lastClickedRow = rowItem;
@@ -2520,7 +2515,15 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     // method for user to select the row by data item programatically
                     options.selectItem = function (itemIndex, state) {
                         options.selectRow(grid.rowMap[itemIndex], state);
-                    };
+                    };					
+					
+					$scope.$on('ngGridEventDigestGrid', function(){
+						domUtilityService.digest($scope.$parent);
+					});			
+					
+					$scope.$on('ngGridEventDigestGridParent', function(){
+						domUtilityService.digest($scope.$parent);
+					});
 
                     return null;
                 }
@@ -2533,7 +2536,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
 /***********************************************
 * FILE: ..\src\directives\ng-row.js
 ***********************************************/
-ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
     var ngRow = {
         scope: false,
         compile: function() {
@@ -2551,6 +2554,9 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
                     } else {
                         iElement.append($compile($scope.rowTemplate)($scope));
                     }
+					$scope.$on('ngGridEventDigestRow', function(){
+						domUtilityService.digest($scope);
+					});
                 }
             };
         }
@@ -2561,7 +2567,7 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
 /***********************************************
 * FILE: ..\src\directives\ng-cell.js
 ***********************************************/
-ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
+ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
@@ -2587,6 +2593,10 @@ ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
 					if($scope.enableCellSelection){
 						$scope.domAccessProvider.selectionHandlers($scope, iElement);
 					}
+					
+					$scope.$on('ngGridEventDigestCell', function(){
+						domUtilityService.digest($scope);
+					});
 				}
             };
         }
@@ -2637,17 +2647,17 @@ ngGridDirectives.directive('ngViewport', [function () {
     return function($scope, elm) {
 		var isMouseWheelActive = false;
 		elm.bind('scroll', function (evt) {
-		    $scope.$apply(function() {
+			$scope.$apply(function(){
 		        var scrollLeft = evt.target.scrollLeft,
 		            scrollTop = evt.target.scrollTop;
 		        $scope.adjustScrollLeft(scrollLeft);
 		        $scope.adjustScrollTop(scrollTop);
-		        if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
-		            $scope.domAccessProvider.focusCellElement($scope);
-		        }
-		        isMouseWheelActive = false;
-		        return true;
-		    });
+			});
+			if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
+				$scope.domAccessProvider.focusCellElement($scope);
+			}
+			isMouseWheelActive = false;
+			return true;
 		});
 		elm.bind("mousewheel DOMMouseScroll", function(evt) {
 			isMouseWheelActive = true;
@@ -2739,14 +2749,14 @@ ngGridDirectives.directive('ngCellInput',
 	});
 
 /***********************************************
-* FILE: ..\src\directives\ui-if.js
+* FILE: ..\src\directives\ng-if.js
 ***********************************************/
 /*
  * Defines the ui-if tag. This removes/adds an element from the dom depending on a condition
  * Originally created by @tigbro, for the @jquery-mobile-angular-adapter
  * https://github.com/tigbro/jquery-mobile-angular-adapter
  */
-ngGridDirectives.directive('uiIf', [function () {
+ngGridDirectives.directive('ngIf', [function () {
   return {
     transclude: 'element',
     priority: 1000,
@@ -2758,7 +2768,7 @@ ngGridDirectives.directive('uiIf', [function () {
         var childElement;
         var childScope;
  
-        scope.$watch(attr['uiIf'], function (newValue) {
+        scope.$watch(attr['ngIf'], function (newValue) {
           if (childElement) {
             childElement.remove();
             childElement = undefined;

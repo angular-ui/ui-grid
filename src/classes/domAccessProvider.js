@@ -1,4 +1,4 @@
-ng.DomAccessProvider = function(domUtilityService) {	
+ng.DomAccessProvider = function(grid, domUtilityService) {	
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
@@ -9,7 +9,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 	
 	self.focusCellElement = function($scope, index){	
 		var columnIndex = index != undefined ? index : previousColumn;
-		if(columnIndex != undefined){
+		if(columnIndex != undefined && $scope.selectionService.lastClickedRow.elm){
 			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
 			var nextFocusedCellElement = columns[columnIndex];
 			nextFocusedCellElement.children[0].focus();
@@ -39,7 +39,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				var ret = ng.moveSelectionHandler($scope, elm, evt, grid, domUtilityService);
 				doingKeyDown = false;
 				return ret;
 			}

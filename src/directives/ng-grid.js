@@ -88,7 +88,15 @@
                     // method for user to select the row by data item programatically
                     options.selectItem = function (itemIndex, state) {
                         options.selectRow(grid.rowMap[itemIndex], state);
-                    };
+                    };					
+					
+					$scope.$on('ngGridEventDigestGrid', function(){
+						domUtilityService.digest($scope.$parent);
+					});			
+					
+					$scope.$on('ngGridEventDigestGridParent', function(){
+						domUtilityService.digest($scope.$parent);
+					});
 
                     return null;
                 }

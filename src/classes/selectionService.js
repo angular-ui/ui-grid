@@ -52,7 +52,7 @@ ng.SelectionService = function(grid) {
 				}
             }
 		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
-        } else {
+        } else if (!evt.keyCode) {
             self.setSelection(rowItem, !rowItem.selected);
         }
 		self.lastClickedRow = rowItem;
