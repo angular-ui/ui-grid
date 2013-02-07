@@ -301,7 +301,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[ï¿½$ï¿½]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -2043,7 +2043,7 @@ ng.Row = function(entity, config, selectionService) {
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
-	self.selected = null;
+    self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
 		self.selectionService.setSelection(self, isSelected);
@@ -2064,9 +2064,9 @@ ng.Row = function(entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
             return true;
         } else {
-            if (self.beforeSelectionChange(self)) {
-                self.continueSelection(event);
-                return self.afterSelectionChange();
+            if (self.beforeSelectionChange(self,event)) {
+                self.continueSelection(self,event);
+                return self.afterSelectionChange(self,event);
             }
         }
         return false;
