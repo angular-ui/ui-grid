@@ -39,6 +39,7 @@
                                 if (grid.rowCache[j]) {
                                     grid.rowCache[j].entity = item;
                                 }
+                                grid.rowMap[j] = j;
                             });
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();

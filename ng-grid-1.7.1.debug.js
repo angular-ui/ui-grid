@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/06/2013 22:31:38
+* Compiled At: 02/07/2013 10:57:50
 ***********************************************/
 
 (function(window) {
@@ -1830,7 +1830,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
-            sortService.Sort(self.config.sortInfo, self.data);
+            var tempData = $.extend(true, [], self.data);
+            angular.forEach(tempData, function (item, i) {
+                item.preSortIndex = i;
+            });
+            sortService.Sort(self.config.sortInfo, tempData);
+            angular.forEach(tempData, function(item, i) {
+                self.rowCache[i].entity = item;
+                self.rowMap[i] = item.preSortIndex;
+            });
         }
         self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
@@ -2468,6 +2476,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 if (grid.rowCache[j]) {
                                     grid.rowCache[j].entity = item;
                                 }
+                                grid.rowMap[j] = j;
                             });
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
