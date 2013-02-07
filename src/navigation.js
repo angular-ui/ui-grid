@@ -4,7 +4,7 @@
 /// <reference path="../src/namespace.js" />
 /// <reference path="../src/utils.jsjs" />
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, grid, domUtilityService) {
+ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
@@ -34,19 +34,24 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid, domUtilityService) {
 		return true;
 	}	
 	
-    var items = grid.rowCache;
+    var items = $scope.renderedRows;
     var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
 	if(charCode != 37 && charCode != 39 && charCode != 9){
-		items[index].toggleSelected(evt);
+		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
 	if($scope.enableCellSelection){ 
 		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
+		if (index >= items.length - EXCESS_ROWS - 1) {
+			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
+		} else if (index <= EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
+		}	
 		$scope.$emit('ngGridEventDigestGrid');
 	}
     return false;

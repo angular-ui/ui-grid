@@ -1,4 +1,4 @@
-ng.DomAccessProvider = function(grid, domUtilityService) {	
+ng.DomAccessProvider = function(domUtilityService) {	
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
@@ -39,7 +39,7 @@ ng.DomAccessProvider = function(grid, domUtilityService) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, grid, domUtilityService);
+				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
 				doingKeyDown = false;
 				return ret;
 			}

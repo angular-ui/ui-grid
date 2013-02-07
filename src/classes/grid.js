@@ -366,7 +366,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
-		$scope.domAccessProvider = new ng.DomAccessProvider(self, domUtilityService);
+		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -537,7 +537,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        newRange = new ng.Range(0, self.config.virtualizationThreshold);
+			newRange = new ng.Range(0, Math.max(self.data.length,self.minRowsToRender() + EXCESS_ROWS));
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);

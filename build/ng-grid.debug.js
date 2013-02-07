@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 15:37:43
+* Compiled At: 02/07/2013 15:51:34
 ***********************************************/
 
 (function(window) {
@@ -44,7 +44,7 @@ var TEMPLATE_REGEXP = /<.+>/;
 * FILE: ..\src\navigation.js
 ***********************************************/
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, grid, domUtilityService) {
+ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
@@ -74,19 +74,24 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid, domUtilityService) {
 		return true;
 	}	
 	
-    var items = grid.rowCache;
+    var items = $scope.renderedRows;
     var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
 	if(charCode != 37 && charCode != 39 && charCode != 9){
-		items[index].toggleSelected(evt);
+		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
 	if($scope.enableCellSelection){ 
 		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
+		if (index >= items.length - EXCESS_ROWS - 1) {
+			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
+		} else if (index <= EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
+		}	
 		$scope.$emit('ngGridEventDigestGrid');
 	}
     return false;
@@ -1212,7 +1217,8 @@ ng.RowFactory = function(grid, $scope) {
         rowHeight: grid.config.rowHeight
     };
 
-    self.renderedRange = new ng.Range(0, grid.config.virtualizationThreshold);
+    self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
+
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
@@ -1753,7 +1759,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self);
-		$scope.domAccessProvider = new ng.DomAccessProvider(self, domUtilityService);
+		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -1924,7 +1930,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        newRange = new ng.Range(0, self.config.virtualizationThreshold);
+			newRange = new ng.Range(0, Math.max(self.data.length,self.minRowsToRender() + EXCESS_ROWS));
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);
@@ -2234,7 +2240,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 /***********************************************
 * FILE: ..\src\classes\domAccessProvider.js
 ***********************************************/
-ng.DomAccessProvider = function(grid, domUtilityService) {	
+ng.DomAccessProvider = function(domUtilityService) {	
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
@@ -2275,7 +2281,7 @@ ng.DomAccessProvider = function(grid, domUtilityService) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, grid, domUtilityService);
+				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
 				doingKeyDown = false;
 				return ret;
 			}
