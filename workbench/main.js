@@ -76,9 +76,6 @@ function userController($scope) {
         grid: undefined,
     };
 
-    $scope.$on('ngGridEventScroll', function() {
-        alert('hit bottom!');
-    });
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
         { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },

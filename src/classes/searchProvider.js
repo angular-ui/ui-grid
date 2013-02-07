@@ -9,9 +9,10 @@
 
     self.evalFilter = function () {
         if (searchConditions.length === 0) {
-            grid.filteredData = grid.sortedData;
+            grid.filteredRows = grid.rowCache;
         } else {
-            grid.filteredData = grid.sortedData.filter(function (item) {
+            grid.filteredRows = grid.rowCache.filter(function (row) {
+                var item = row.entity;
                 for (var i = 0, len = searchConditions.length; i < len; i++) {
                     var condition = searchConditions[i];
                     //Search entire row
@@ -59,7 +60,7 @@
                 return true;
             });
         }
-        grid.rowFactory.filteredDataChanged();
+        grid.rowFactory.filteredRowsChanged();
     };
 
     //Traversing through the object to find the value that we want. If fail, then return the original object.

@@ -10,9 +10,9 @@ ng.SelectionService = function(grid) {
     self.ChangeSelection = function(rowItem, evt) {
         if (evt && evt.shiftKey && self.multi && self.canSelectRows) {
             if (self.lastClickedRow) {
-                var thisIndx = grid.filteredData.indexOf(rowItem.entity);
-                var prevIndx = grid.filteredData.indexOf(self.lastClickedRow.entity);
-                self.lastClickedRow = rowItem.entity[NG_GRID_ROW];
+                var thisIndx = grid.filteredRows.indexOf(rowItem);
+                var prevIndx = grid.filteredRows.indexOf(self.lastClickedRow);
+                self.lastClickedRow = rowItem;
                 if (thisIndx == prevIndx) {
                     return false;
                 }
@@ -26,7 +26,7 @@ ng.SelectionService = function(grid) {
 				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    rows.push(grid.filteredData[prevIndx][NG_GRID_ROW]);
+                    rows.push(grid.filteredRows[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
                     angular.forEach(rows, function(ri) {
@@ -84,18 +84,18 @@ ng.SelectionService = function(grid) {
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll) {
-        if (grid.config.beforeSelectionChange(grid.sortedData)) {
+        if (grid.config.beforeSelectionChange(grid.rowCache)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.splice(0, selectedlength);
             }
-            angular.forEach(grid.filteredData, function (item) {
-                item[NG_GRID_ROW] = checkAll;
+            angular.forEach(grid.filteredRows, function (row) {
+                row.selected = checkAll;
                 if (checkAll) {
-                    self.selectedItems.push(item);
+                    self.selectedItems.push(row);
                 }
             });
-            grid.config.afterSelectionChange(grid.sortedData);
+            grid.config.afterSelectionChange(grid.rowCache);
         }
     };
 };

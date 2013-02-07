@@ -1,8 +1,8 @@
-﻿/***********************************************
+/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/06/2013 12:14:44
+* Compiled At: 02/06/2013 17:50:02
 ***********************************************/
 
 (function(window) {
@@ -301,7 +301,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[�$�]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -1559,7 +1559,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         useExternalSorting: false,
         
         /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
-        i18n: 'en'
+        i18n: 'en',
+        
+        //the threshold in rows to force virtualization on
+        virtualizationThreshold: 50
     },
         self = this;
 
@@ -1925,7 +1928,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
 	    var newRange;
-	    if (self.config.enableVirtualization || self.filteredData.length > 50) {
+	    if (self.config.enableVirtualization || self.filteredData.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
 	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;
@@ -2392,7 +2395,7 @@ ng.SelectionService = function(grid) {
                 self.selectedItems.splice(0, selectedlength);
             }
             angular.forEach(grid.filteredData, function (item) {
-                item[NG_GRID_ROW] = checkAll;
+                item[NG_GRID_ROW].selected = checkAll;
                 if (checkAll) {
                     self.selectedItems.push(item);
                 }
@@ -2445,7 +2448,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
-                    
+
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function(a) {
@@ -2513,6 +2516,15 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
                         }
                     });
+                    // add method to get the current data without any ngGridRow property. pass true to get the entire data. otherwise you will only get the filtered data
+                    options.getCleanData = function (all) {
+                        var data = [];
+                        $.extend(true, data, all ? grid.sortedData : grid.filteredData);
+                        angular.forEach(data, function (item) {
+                            delete item[NG_GRID_ROW];
+                        });
+                        return data;
+                    };
                     return null;
                 }
             };
@@ -2799,17 +2811,17 @@ window.ngGrid.i18n['en'] = {
 ***********************************************/
 window.ngGrid.i18n['fr'] = {
     ngAggregateLabel: 'articles',
-    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngGroupPanelDescription: 'Faites glisser un en-t�te de colonne ici et d�posez-le vers un groupe par cette colonne.',
     ngSearchPlaceHolder: 'Recherche...',
     ngMenuText: 'Choisir des colonnes:',
     ngShowingItemsLabel: 'Articles Affichage des:',
     ngTotalItemsLabel: 'Nombre total d\'articles:',
-    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngSelectedItemsLabel: '�l�ments Articles:',
     ngPageSizeLabel: 'Taille de page:',
-    ngPagerFirstTitle: 'Première page',
+    ngPagerFirstTitle: 'Premi�re page',
     ngPagerNextTitle: 'Page Suivante',
-    ngPagerPrevTitle: 'Page précédente',
-    ngPagerLastTitle: 'Dernière page'
+    ngPagerPrevTitle: 'Page pr�c�dente',
+    ngPagerLastTitle: 'Derni�re page'
 };
 
 /***********************************************
@@ -2817,15 +2829,15 @@ window.ngGrid.i18n['fr'] = {
 ***********************************************/
 window.ngGrid.i18n['ge'] = {
     ngAggregateLabel: 'artikel',
-    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngGroupPanelDescription: 'Ziehen Sie eine Spalten�berschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
     ngSearchPlaceHolder: 'Suche...',
-    ngMenuText: 'Spalten auswählen:',
+    ngMenuText: 'Spalten ausw�hlen:',
     ngShowingItemsLabel: 'Zeige Artikel:',
     ngTotalItemsLabel: 'Meiste Artikel:',
-    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
-    ngPageSizeLabel: 'Größe Seite:',
+    ngSelectedItemsLabel: 'Ausgew�hlte Artikel:',
+    ngPageSizeLabel: 'Gr��e Seite:',
     ngPagerFirstTitle: 'Erste Page',
-    ngPagerNextTitle: 'Nächste Page',
+    ngPagerNextTitle: 'N�chste Page',
     ngPagerPrevTitle: 'Vorherige Page',
     ngPagerLastTitle: 'Letzte Page'
 };
@@ -2834,35 +2846,35 @@ window.ngGrid.i18n['ge'] = {
 * LANGUAGE: sp.js
 ***********************************************/
 window.ngGrid.i18n['sp'] = {
-    ngAggregateLabel: 'Artículos',
-    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngAggregateLabel: 'Art�culos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aqu� y soltarlo para agrupar por esa columna.',
     ngSearchPlaceHolder: 'Buscar...',
     ngMenuText: 'Elegir columnas:',
-    ngShowingItemsLabel: 'Artículos Mostrando:',
-    ngTotalItemsLabel: 'Artículos Totales:',
-    ngSelectedItemsLabel: 'Artículos Seleccionados:',
-    ngPageSizeLabel: 'Tamaño de Página:',
-    ngPagerFirstTitle: 'Primera Página',
-    ngPagerNextTitle: 'Página Siguiente',
-    ngPagerPrevTitle: 'Página Anterior',
-    ngPagerLastTitle: 'Última Página'
+    ngShowingItemsLabel: 'Art�culos Mostrando:',
+    ngTotalItemsLabel: 'Art�culos Totales:',
+    ngSelectedItemsLabel: 'Art�culos Seleccionados:',
+    ngPageSizeLabel: 'Tama�o de P�gina:',
+    ngPagerFirstTitle: 'Primera P�gina',
+    ngPagerNextTitle: 'P�gina Siguiente',
+    ngPagerPrevTitle: 'P�gina Anterior',
+    ngPagerLastTitle: '�ltima P�gina'
 };
 
 /***********************************************
 * LANGUAGE: zh-cn.js
 ***********************************************/
 window.ngGrid.i18n['zh-cn'] = {
-    ngAggregateLabel: '条目',
-    ngGroupPanelDescription: '拖曳表头到此处以进行分组',
-    ngSearchPlaceHolder: '搜索...',
-    ngMenuText: '数据分组与选择列：',
-    ngShowingItemsLabel: '当前显示条目：',
-    ngTotalItemsLabel: '条目总数：',
-    ngSelectedItemsLabel: '选中条目：',
-    ngPageSizeLabel: '每页显示数：',
-    ngPagerFirstTitle: '回到首页',
-    ngPagerNextTitle: '下一页',
-    ngPagerPrevTitle: '上一页',
-    ngPagerLastTitle: '前往尾页' 
+    ngAggregateLabel: '??',
+    ngGroupPanelDescription: '????????????',
+    ngSearchPlaceHolder: '??...',
+    ngMenuText: '????????:',
+    ngShowingItemsLabel: '??????:',
+    ngTotalItemsLabel: '????:',
+    ngSelectedItemsLabel: '????:',
+    ngPageSizeLabel: '?????:',
+    ngPagerFirstTitle: '????',
+    ngPagerNextTitle: '???',
+    ngPagerPrevTitle: '???',
+    ngPagerLastTitle: '????' 
 };
 }(window));
