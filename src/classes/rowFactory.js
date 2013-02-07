@@ -27,7 +27,7 @@ ng.RowFactory = function(grid, $scope) {
         rowHeight: grid.config.rowHeight
     };
 
-    self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
+    self.renderedRange = new ng.Range(0, grid.config.virtualizationThreshold);
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {

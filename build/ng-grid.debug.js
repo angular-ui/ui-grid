@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 10:57:50
+* Compiled At: 02/07/2013 12:53:02
 ***********************************************/
 
 (function(window) {
@@ -25,8 +25,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 * FILE: ..\src\constants.js
 ***********************************************/
 // the # of rows we want to add to the top and bottom of the rendered grid rows 
-var EXCESS_ROWS = 8;
-var SCROLL_THRESHOLD = 6;
+var EXCESS_ROWS = 2;
 var ASC = "asc";
 // constant for sorting direction
 var DESC = "desc";
@@ -1218,7 +1217,7 @@ ng.RowFactory = function(grid, $scope) {
         rowHeight: grid.config.rowHeight
     };
 
-    self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
+    self.renderedRange = new ng.Range(0, grid.config.virtualizationThreshold);
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
@@ -1451,10 +1450,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //Enables or disables sorting in grid.
         enableSorting: true,
-
-        // Enables row virtualization to improve scrolling with large datasets. false by default. 
-        // However, virtualization is forced when the potential viewable rows is > 250. This is for performance considerations.
-        enableVirtualization: true,
 
         /* filterOptions -
         filterText: The text bound to the built-in search box. 
@@ -1793,9 +1788,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.sortData(self.config.sortInfo.column);
         }
     };
-    self.prevScrollTop = 0;
-    self.prevScrollIndex = 0;
-    
+   
     self.resizeOnData = function(col) {
         // we calculate the longest data.
         var longest = col.minWidth;
@@ -1913,7 +1906,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.$headerContainer.scrollLeft(scrollLeft);
         }
     };
-	$scope.adjustScrollTop = function(scrollTop, force) {
+    self.prevScrollTop = 0;
+    self.prevScrollIndex = 0;
+    $scope.adjustScrollTop = function(scrollTop, force) {
         if (self.prevScrollTop === scrollTop && !force) {
             return;
         }
@@ -1922,13 +1917,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
 	    var newRange;
-	    if (self.config.enableVirtualization || self.filteredRows.length > self.config.virtualizationThreshold) {
+	    if (self.filteredRows.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
-	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + EXCESS_ROWS) {
 	            return;
 	        }
 	        //Have we hit the threshold going up?
-	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
+	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - EXCESS_ROWS) {
 	            return;
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
