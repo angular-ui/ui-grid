@@ -4,7 +4,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
-ng.Row = function(entity, config, selectionService) {
+ng.Row = function (entity, config, selectionService, rowIndex) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
@@ -41,10 +41,8 @@ ng.Row = function(entity, config, selectionService) {
         }
         return false;
     };
-    self.rowIndex = 0;
-    self.offsetTop = function() {
-        return self.rowIndex * config.rowHeight;
-    };
+    self.rowIndex = rowIndex;
+    self.offsetTop = self.rowIndex * config.rowHeight;
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;

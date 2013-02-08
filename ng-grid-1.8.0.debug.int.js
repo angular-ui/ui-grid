@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 18:20:10
+* Compiled At: 02/08/2013 10:56:05
 ***********************************************/
 
 (function(window) {
@@ -685,9 +685,7 @@ ng.headerCellTemplate = function(){ return '<div ng-click="col.sort()" class="ng
 ng.Aggregate = function (aggEntity, rowFactory, config) {
     var self = this;
     self.rowIndex = 0;
-    self.offsetTop = function () {
-        return self.rowIndex * config.rowHeight;
-    };
+    self.offsetTop = self.rowIndex * config.rowHeight;
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
@@ -1223,20 +1221,18 @@ ng.RowFactory = function(grid, $scope) {
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
         // build the row
-        var row = new ng.Row(entity, self.rowConfig, self.selectionService);
-        // finally cache it for the next round
-        row.rowIndex = rowIndex;
-        return row;
+        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self, self.rowConfig);
+            agg = new ng.Aggregate(aggEntity, self, self.rowConfig, rowIndex);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
+        agg.offsetTop = rowIndex * self.rowConfig.rowHeight;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {
@@ -1263,6 +1259,7 @@ ng.RowFactory = function(grid, $scope) {
             grid.refreshDomSizes();
             return;
         }
+        self.wasGrouped = true;
         self.parentCache = [];
         var rowArr = [];
         var dataArray = self.parsedData.filter(function(e) {
@@ -1273,7 +1270,10 @@ ng.RowFactory = function(grid, $scope) {
             if (item.isAggRow) {
                 row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
             } else {
-                row = grid.rowCache[self.renderedRange.topRow + indx];
+                var i = self.renderedRange.topRow + indx;
+                row = grid.rowCache[i];
+                row.offsetTop = i * self.rowConfig.rowHeight;
+                row.entity = item;
             }
             //add the row to our return array
             rowArr.push(row);
@@ -1283,6 +1283,14 @@ ng.RowFactory = function(grid, $scope) {
 
     self.renderedChangeNoGroups = function() {
         var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        if (self.wasGrouped) {
+            angular.forEach(grid.data, function (item, indx) {
+                var row = grid.rowCache[indx];
+                row.offsetTop = indx * self.rowConfig.rowHeight;
+                row.entity = item;
+            });
+            self.wasGrouped = false;
+        }
         grid.setRenderedRows(rowArr);
     };
 
@@ -2033,7 +2041,7 @@ ng.Range = function(top, bottom) {
 /***********************************************
 * FILE: ..\src\classes\row.js
 ***********************************************/
-ng.Row = function(entity, config, selectionService) {
+ng.Row = function (entity, config, selectionService, rowIndex) {
     var self = this, // constant for the selection property that we add to each data item
         canSelectRows = config.canSelectRows;
 
@@ -2070,10 +2078,8 @@ ng.Row = function(entity, config, selectionService) {
         }
         return false;
     };
-    self.rowIndex = 0;
-    self.offsetTop = function() {
-        return self.rowIndex * config.rowHeight;
-    };
+    self.rowIndex = rowIndex;
+    self.offsetTop = self.rowIndex * config.rowHeight;
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
@@ -2314,7 +2320,7 @@ ng.SelectionService = function(grid) {
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
-        if (evt && evt.shiftKey && self.multi && self.canSelectRows) {
+        if (evt && evt.shiftKey && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredRows.indexOf(rowItem);
                 var prevIndx = grid.filteredRows.indexOf(self.lastClickedRow);
@@ -2412,7 +2418,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "height": col.headerRowHeight + "px" };
     };
     $scope.rowStyle = function(row) {
-        return { "top": row.offsetTop() + "px", "height": $scope.rowHeight + "px" };
+        return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
     };
     $scope.canvasStyle = function() {
         return { "height": grid.maxCanvasHt.toString() + "px" };
@@ -2901,5 +2907,5 @@ window.ngGrid.i18n['zh-cn'] = {
     ngPagerNextTitle: '下一页',
     ngPagerPrevTitle: '上一页',
     ngPagerLastTitle: '前往尾页' 
-};
+};  
 }(window));
