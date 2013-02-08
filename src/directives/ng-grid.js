@@ -38,6 +38,7 @@
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
                                     grid.rowCache[j].entity = item;
+                                    grid.rowCache[j].modelIndex = j;
                                 }
                                 grid.rowMap[j] = j;
                             });

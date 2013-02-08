@@ -11,6 +11,7 @@ ng.Row = function(entity, config, selectionService) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
+    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
@@ -33,9 +34,9 @@ ng.Row = function(entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
             return true;
         } else {
-            if (self.beforeSelectionChange(self)) {
+            if (self.beforeSelectionChange(self, event)) {
                 self.continueSelection(event);
-                return self.afterSelectionChange();
+                return self.afterSelectionChange(self, event);
             }
         }
         return false;
