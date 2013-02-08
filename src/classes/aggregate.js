@@ -4,10 +4,12 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
-ng.Aggregate = function(aggEntity, rowFactory) {
+ng.Aggregate = function (aggEntity, rowFactory, config) {
     var self = this;
-    self.index = 0;
-    self.offsetTop = 0;
+    self.rowIndex = 0;
+    self.offsetTop = function () {
+        return self.rowIndex * config.rowHeight;
+    };
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;

@@ -10,8 +10,8 @@ function userController($scope) {
         useExternalFilter: false,
     };
     $scope.pagingOptions = {
-        pageSizes: [50, 500, 1000], //page Sizes
-        pageSize: 50, //Size of Paging data
+        pageSizes: [250, 500, 1000], //page Sizes
+        pageSize: 250, //Size of Paging data
         totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };
@@ -76,9 +76,6 @@ function userController($scope) {
         grid: undefined,
     };
 
-    $scope.$on('ngGridEventScroll', function() {
-        alert('hit bottom!');
-    });
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
         { field: 'Vendor', displayName: 'Supplier' },
         { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
@@ -93,11 +90,11 @@ function userController($scope) {
         headerRowHeight: '60',
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
-		enableCellSelection: true,
+		enableCellSelection: false,
 		enablePaging: true,
         enableVirtualization: false,
         canSelectRows: true,
-		multiSelect: true,
+		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: false,
         columnDefs: 'myDefs',
@@ -179,4 +176,8 @@ function userController($scope) {
 	$scope.$on('filterChanged', function(evt, text){
 		$scope.filteringText = text;
 	});
+    $scope.setSelection = function() {
+        $scope.gridOptions2.selectItem(0, true);
+        $scope.gridOptions2.selectRow(3, true);
+    };
 };

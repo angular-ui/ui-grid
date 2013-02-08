@@ -1,6 +1,6 @@
 ﻿/// <reference path="../templates/aggregateTemplate.js" />
 /// <reference path="../namespace.js" />
-ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
+ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
     var ngRow = {
         scope: false,
         compile: function() {
@@ -18,6 +18,9 @@ ngGridDirectives.directive('ngRow', ['$compile', function($compile) {
                     } else {
                         iElement.append($compile($scope.rowTemplate)($scope));
                     }
+					$scope.$on('ngGridEventDigestRow', function(){
+						domUtilityService.digest($scope);
+					});
                 }
             };
         }

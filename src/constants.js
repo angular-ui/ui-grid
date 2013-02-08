@@ -1,7 +1,5 @@
-﻿var NG_GRID_ROW = 'ngGridRow';
-// the # of rows we want to add to the top and bottom of the rendered grid rows 
-var EXCESS_ROWS = 8;
-var SCROLL_THRESHOLD = 6;
+﻿// the # of rows we want to add to the top and bottom of the rendered grid rows 
+var EXCESS_ROWS = 2;
 var ASC = "asc";
 // constant for sorting direction
 var DESC = "desc";

@@ -1,7 +1,7 @@
 {
   "name": "ng-grid",
   "title": "ng-grid",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "homepage": "https://github.com/angular-ui/ng-grid/",
   "dependencies": {},
   "devDependencies": {

@@ -44,15 +44,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 	}
 	
 	if($scope.enableCellSelection){ 
-		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);	
-		domUtilityService.digest($scope.$parent.$parent.$parent);
+		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
-		if (index >= items.length - EXCESS_ROWS) {
+		if (index >= items.length - EXCESS_ROWS - 1) {
 			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
 		} else if (index <= EXCESS_ROWS) {
 			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
 		}	
-		domUtilityService.digest($scope.$parent);
+		$scope.$emit('ngGridEventDigestGrid');
 	}
     return false;
 };
