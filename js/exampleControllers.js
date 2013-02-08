@@ -302,12 +302,12 @@ angular.module('myApp.exampleControllers', [])
 		data: 'myData'
 	};
 	$scope.$on('ngGridEventData', function(){
-		$scope.myData[0].ngGridRow.setSelection(true);
+		$scope.gridOptions.selectRow(0, true);
 	});
 	$scope.selectEnosRow = function(){
 		angular.forEach($scope.myData, function(data, index){
 			if(data.name == 'Enos'){
-				$scope.myData[index].ngGridRow.setSelection(true);
+				$scope.gridOptions.selectItem(index, true);
 			}
 		});
 	};
