@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 18:00:26
+* Compiled At: 02/07/2013 18:20:10
 ***********************************************/
 
 (function(window) {
@@ -2484,6 +2484,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                     grid.rowMap[j] = j;
                                 }
                             });
+                            grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
@@ -2498,7 +2499,6 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                            grid.searchProvider.evalFilter();
                             $scope.$emit("ngGridEventData");
                         }, true);
                     }
