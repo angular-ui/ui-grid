@@ -1,8 +1,8 @@
-﻿/***********************************************
+/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/08/2013 10:56:05
+* Compiled At: 02/08/2013 11:41:31
 ***********************************************/
 
 (function(window) {
@@ -2320,7 +2320,7 @@ ng.SelectionService = function(grid) {
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
-        if (evt && evt.shiftKey && self.multi && grid.config.canSelectRows) {
+        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredRows.indexOf(rowItem);
                 var prevIndx = grid.filteredRows.indexOf(self.lastClickedRow);
@@ -2907,5 +2907,5 @@ window.ngGrid.i18n['zh-cn'] = {
     ngPagerNextTitle: '下一页',
     ngPagerPrevTitle: '上一页',
     ngPagerLastTitle: '前往尾页' 
-};  
+};
 }(window));

@@ -1,8 +1,8 @@
-ï»¿/***********************************************
+/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/08/2013 10:58:26
+* Compiled At: 02/08/2013 11:45:49
 ***********************************************/
 
 (function(window) {
@@ -299,7 +299,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[Â£$Â¤]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -2320,7 +2320,7 @@ ng.SelectionService = function(grid) {
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function(rowItem, evt) {
-        if (evt && evt.shiftKey && self.multi && grid.config.canSelectRows) {
+        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
                 var thisIndx = grid.filteredRows.indexOf(rowItem);
                 var prevIndx = grid.filteredRows.indexOf(self.lastClickedRow);
