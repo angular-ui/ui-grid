@@ -7,9 +7,7 @@
 ng.Aggregate = function (aggEntity, rowFactory, config) {
     var self = this;
     self.rowIndex = 0;
-    self.offsetTop = function () {
-        return self.rowIndex * config.rowHeight;
-    };
+    self.offsetTop = self.rowIndex * config.rowHeight;
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;

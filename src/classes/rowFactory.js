@@ -33,20 +33,18 @@ ng.RowFactory = function(grid, $scope) {
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
         // build the row
-        var row = new ng.Row(entity, self.rowConfig, self.selectionService);
-        // finally cache it for the next round
-        row.rowIndex = rowIndex;
-        return row;
+        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self, self.rowConfig);
+            agg = new ng.Aggregate(aggEntity, self, self.rowConfig, rowIndex);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
+        agg.offsetTop = rowIndex * self.rowConfig.rowHeight;
         return agg;
     };
     self.UpdateViewableRange = function(newRange) {
@@ -73,6 +71,7 @@ ng.RowFactory = function(grid, $scope) {
             grid.refreshDomSizes();
             return;
         }
+        self.wasGrouped = true;
         self.parentCache = [];
         var rowArr = [];
         var dataArray = self.parsedData.filter(function(e) {
@@ -83,7 +82,10 @@ ng.RowFactory = function(grid, $scope) {
             if (item.isAggRow) {
                 row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
             } else {
-                row = grid.rowCache[self.renderedRange.topRow + indx];
+                var i = self.renderedRange.topRow + indx;
+                row = grid.rowCache[i];
+                row.offsetTop = i * self.rowConfig.rowHeight;
+                row.entity = item;
             }
             //add the row to our return array
             rowArr.push(row);
@@ -93,6 +95,14 @@ ng.RowFactory = function(grid, $scope) {
 
     self.renderedChangeNoGroups = function() {
         var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        if (self.wasGrouped) {
+            angular.forEach(grid.data, function (item, indx) {
+                var row = grid.rowCache[indx];
+                row.offsetTop = indx * self.rowConfig.rowHeight;
+                row.entity = item;
+            });
+            self.wasGrouped = false;
+        }
         grid.setRenderedRows(rowArr);
     };
 
