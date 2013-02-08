@@ -1,8 +1,8 @@
-/***********************************************
+﻿/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 15:51:34
+* Compiled At: 02/07/2013 18:00:26
 ***********************************************/
 
 (function(window) {
@@ -299,7 +299,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[�$�]?[\d,.]+%?$/)) {
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -1825,14 +1825,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
-            var tempData = $.extend(true, [], self.data);
+            var tempData = self.data.slice(0);
             angular.forEach(tempData, function (item, i) {
+                item.preSortSelected = self.rowCache[self.rowMap[i]].selected;
                 item.preSortIndex = i;
             });
             sortService.Sort(self.config.sortInfo, tempData);
             angular.forEach(tempData, function(item, i) {
                 self.rowCache[i].entity = item;
-                self.rowMap[i] = item.preSortIndex;
+                self.rowCache[i].selected = item.preSortSelected;
+                self.rowMap[item.preSortIndex] = i;
+                delete item.preSortSelected;
+                delete item.preSortIndex;
             });
         }
         self.lastSortedColumn = col;
@@ -2036,6 +2040,7 @@ ng.Row = function(entity, config, selectionService) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
+    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
@@ -2058,9 +2063,9 @@ ng.Row = function(entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
             return true;
         } else {
-            if (self.beforeSelectionChange(self)) {
+            if (self.beforeSelectionChange(self, event)) {
                 self.continueSelection(event);
-                return self.afterSelectionChange();
+                return self.afterSelectionChange(self, event);
             }
         }
         return false;
@@ -2463,7 +2468,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             grid.data = $.extend(true, [], a);
                             var diff = grid.data.length - grid.rowCache.length;
                             if (diff < 0) {
-                                grid.rowCache.length = grid.rowMap.length = data.length;
+                                grid.rowCache.length = grid.rowMap.length = grid.data.length;
                             } else {
                                 for (var i = grid.rowCache.length; i < grid.data.length; i++) {
                                     grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
@@ -2471,9 +2476,13 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             }
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
-                                    grid.rowCache[j].entity = item;
+                                    if (!angular.equals(grid.rowCache[j].entity, item)) {
+                                        grid.rowCache[j].entity = item;
+                                        grid.rowCache[j].modelIndex = j;
+                                        grid.rowCache[j].setSelection(false);
+                                    }
+                                    grid.rowMap[j] = j;
                                 }
-                                grid.rowMap[j] = j;
                             });
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
@@ -2820,5 +2829,77 @@ window.ngGrid.i18n['en'] = {
     ngPagerNextTitle: 'Next Page',
     ngPagerPrevTitle: 'Previous Page',
     ngPagerLastTitle: 'Last Page'
+};
+
+/***********************************************
+* LANGUAGE: fr.js
+***********************************************/
+window.ngGrid.i18n['fr'] = {
+    ngAggregateLabel: 'articles',
+    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngSearchPlaceHolder: 'Recherche...',
+    ngMenuText: 'Choisir des colonnes:',
+    ngShowingItemsLabel: 'Articles Affichage des:',
+    ngTotalItemsLabel: 'Nombre total d\'articles:',
+    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngPageSizeLabel: 'Taille de page:',
+    ngPagerFirstTitle: 'Première page',
+    ngPagerNextTitle: 'Page Suivante',
+    ngPagerPrevTitle: 'Page précédente',
+    ngPagerLastTitle: 'Dernière page'
+};
+
+/***********************************************
+* LANGUAGE: ge.js
+***********************************************/
+window.ngGrid.i18n['ge'] = {
+    ngAggregateLabel: 'artikel',
+    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngSearchPlaceHolder: 'Suche...',
+    ngMenuText: 'Spalten auswählen:',
+    ngShowingItemsLabel: 'Zeige Artikel:',
+    ngTotalItemsLabel: 'Meiste Artikel:',
+    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
+    ngPageSizeLabel: 'Größe Seite:',
+    ngPagerFirstTitle: 'Erste Page',
+    ngPagerNextTitle: 'Nächste Page',
+    ngPagerPrevTitle: 'Vorherige Page',
+    ngPagerLastTitle: 'Letzte Page'
+};
+
+/***********************************************
+* LANGUAGE: sp.js
+***********************************************/
+window.ngGrid.i18n['sp'] = {
+    ngAggregateLabel: 'Artículos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngSearchPlaceHolder: 'Buscar...',
+    ngMenuText: 'Elegir columnas:',
+    ngShowingItemsLabel: 'Artículos Mostrando:',
+    ngTotalItemsLabel: 'Artículos Totales:',
+    ngSelectedItemsLabel: 'Artículos Seleccionados:',
+    ngPageSizeLabel: 'Tamaño de Página:',
+    ngPagerFirstTitle: 'Primera Página',
+    ngPagerNextTitle: 'Página Siguiente',
+    ngPagerPrevTitle: 'Página Anterior',
+    ngPagerLastTitle: 'Última Página'
+};
+
+/***********************************************
+* LANGUAGE: zh-cn.js
+***********************************************/
+window.ngGrid.i18n['zh-cn'] = {
+    ngAggregateLabel: '条目',
+    ngGroupPanelDescription: '拖曳表头到此处以进行分组',
+    ngSearchPlaceHolder: '搜索...',
+    ngMenuText: '数据分组与选择列：',
+    ngShowingItemsLabel: '当前显示条目：',
+    ngTotalItemsLabel: '条目总数：',
+    ngSelectedItemsLabel: '选中条目：',
+    ngPageSizeLabel: '每页显示数：',
+    ngPagerFirstTitle: '回到首页',
+    ngPagerNextTitle: '下一页',
+    ngPagerPrevTitle: '上一页',
+    ngPagerLastTitle: '前往尾页' 
 };
 }(window));
