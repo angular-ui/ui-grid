@@ -45,6 +45,7 @@
                                     grid.rowMap[j] = j;
                                 }
                             });
+                            grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
@@ -59,7 +60,6 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                            grid.searchProvider.evalFilter();
                             $scope.$emit("ngGridEventData");
                         }, true);
                     }
