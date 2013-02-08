@@ -1,5 +1,5 @@
 largeLoad = function () {
-return [{name: "Moroni", allowance: 505050505050505050, birthday: 1351728000000 , paid: true, '__ng_selected__' : true},
+return [{name: "Moroni", allowance: 505050505050505050, birthday: 1351728000000 , paid: true},
 {name: "Tiancum", allowance: 53, birthday: 1351728000000 , paid: false},
 {name: "Jacob", allowance: 27, birthday: 1351728000000 , paid: false},
 {name: "Nephi", allowance: 29, birthday: 1351728000000 , paid: false},

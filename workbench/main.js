@@ -176,4 +176,8 @@ function userController($scope) {
 	$scope.$on('filterChanged', function(evt, text){
 		$scope.filteringText = text;
 	});
+    $scope.setSelection = function() {
+        $scope.gridOptions2.selectItem(0, true);
+        $scope.gridOptions2.selectRow(3, true);
+    };
 };

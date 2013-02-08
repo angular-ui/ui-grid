@@ -432,14 +432,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
-            var tempData = $.extend(true, [], self.data);
+            var tempData = self.data.slice(0);
             angular.forEach(tempData, function (item, i) {
+                item.preSortSelected = self.rowCache[self.rowMap[i]].selected;
                 item.preSortIndex = i;
             });
             sortService.Sort(self.config.sortInfo, tempData);
             angular.forEach(tempData, function(item, i) {
                 self.rowCache[i].entity = item;
-                self.rowMap[i] = item.preSortIndex;
+                self.rowCache[i].selected = item.preSortSelected;
+                self.rowMap[item.preSortIndex] = i;
+                delete item.preSortSelected;
+                delete item.preSortIndex;
             });
         }
         self.lastSortedColumn = col;

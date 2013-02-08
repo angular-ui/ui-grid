@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/07/2013 15:51:34
+* Compiled At: 02/07/2013 17:57:12
 ***********************************************/
 
 (function(window) {
@@ -1825,14 +1825,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
-            var tempData = $.extend(true, [], self.data);
+            var tempData = self.data.slice(0);
             angular.forEach(tempData, function (item, i) {
+                item.preSortSelected = self.rowCache[self.rowMap[i]].selected;
                 item.preSortIndex = i;
             });
             sortService.Sort(self.config.sortInfo, tempData);
             angular.forEach(tempData, function(item, i) {
                 self.rowCache[i].entity = item;
-                self.rowMap[i] = item.preSortIndex;
+                self.rowCache[i].selected = item.preSortSelected;
+                self.rowMap[item.preSortIndex] = i;
+                delete item.preSortSelected;
+                delete item.preSortIndex;
             });
         }
         self.lastSortedColumn = col;
@@ -2036,6 +2040,7 @@ ng.Row = function(entity, config, selectionService) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
+    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
@@ -2058,9 +2063,9 @@ ng.Row = function(entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
             return true;
         } else {
-            if (self.beforeSelectionChange(self)) {
+            if (self.beforeSelectionChange(self, event)) {
                 self.continueSelection(event);
-                return self.afterSelectionChange();
+                return self.afterSelectionChange(self, event);
             }
         }
         return false;
@@ -2463,7 +2468,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             grid.data = $.extend(true, [], a);
                             var diff = grid.data.length - grid.rowCache.length;
                             if (diff < 0) {
-                                grid.rowCache.length = grid.rowMap.length = data.length;
+                                grid.rowCache.length = grid.rowMap.length = grid.data.length;
                             } else {
                                 for (var i = grid.rowCache.length; i < grid.data.length; i++) {
                                     grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
@@ -2471,9 +2476,13 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             }
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
-                                    grid.rowCache[j].entity = item;
+                                    if (!angular.equals(grid.rowCache[j].entity, item)) {
+                                        grid.rowCache[j].entity = item;
+                                        grid.rowCache[j].modelIndex = j;
+                                        grid.rowCache[j].setSelection(false);
+                                    }
+                                    grid.rowMap[j] = j;
                                 }
-                                grid.rowMap[j] = j;
                             });
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();

@@ -20,12 +20,14 @@
     <body ng-app="myApp" ng-controller="userController">
         <div style="width: 800px; height: 600px;" ng-grid="gridOptions2">
         </div>
-		<div>{{mySelections2[0].Sku}}</div>
+		<div>{{mySelections2}}</div>
         <button ng-click="changeData()">pop</button>
         
         <button ng-click="resetData()">reset</button>
         <button ng-click="spliceData()">splice</button>
         <button ng-click="modifyData()">modify</button>
+        <button ng-click="setSelection()">set Selection</button>
+
         <!--        <div style="margin: 10px;  width: 600px; height: 400px;" ng-grid="gridOptions2">
                     </div>
             <span>mySelections2: {{mySelections2 | json}}</span>-->

@@ -29,7 +29,7 @@
                             grid.data = $.extend(true, [], a);
                             var diff = grid.data.length - grid.rowCache.length;
                             if (diff < 0) {
-                                grid.rowCache.length = grid.rowMap.length = data.length;
+                                grid.rowCache.length = grid.rowMap.length = grid.data.length;
                             } else {
                                 for (var i = grid.rowCache.length; i < grid.data.length; i++) {
                                     grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
@@ -37,10 +37,13 @@
                             }
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
-                                    grid.rowCache[j].entity = item;
-                                    grid.rowCache[j].modelIndex = j;
+                                    if (!angular.equals(grid.rowCache[j].entity, item)) {
+                                        grid.rowCache[j].entity = item;
+                                        grid.rowCache[j].modelIndex = j;
+                                        grid.rowCache[j].setSelection(false);
+                                    }
+                                    grid.rowMap[j] = j;
                                 }
-                                grid.rowMap[j] = j;
                             });
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
