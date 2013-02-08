@@ -9,7 +9,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 	
 	self.focusCellElement = function($scope, index){	
 		var columnIndex = index != undefined ? index : previousColumn;
-		if(columnIndex != undefined){
+		if(columnIndex != undefined && $scope.selectionService.lastClickedRow.elm){
 			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
 			var nextFocusedCellElement = columns[columnIndex];
 			nextFocusedCellElement.children[0].focus();

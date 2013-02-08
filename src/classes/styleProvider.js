@@ -3,7 +3,7 @@
         return { "height": col.headerRowHeight + "px" };
     };
     $scope.rowStyle = function(row) {
-        return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+        return { "top": row.offsetTop() + "px", "height": $scope.rowHeight + "px" };
     };
     $scope.canvasStyle = function() {
         return { "height": grid.maxCanvasHt.toString() + "px" };

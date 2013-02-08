@@ -1,6 +1,6 @@
 ﻿ng.Footer = function($scope, grid) {
     $scope.maxRows = function () {
-        var ret = Math.max($scope.pagingOptions.totalServerItems, grid.sortedData.length);
+        var ret = Math.max($scope.pagingOptions.totalServerItems, grid.data.length);
         return ret;
     };
     
@@ -39,7 +39,7 @@
         if ($scope.pagingOptions.totalServerItems > 0) {
             return !(curPage < maxPages);
         } else {
-            return grid.sortedData.length < 1;
+            return grid.data.length < 1;
         }
 
     };

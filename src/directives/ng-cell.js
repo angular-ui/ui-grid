@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngCell', ['$compile', function($compile) {
+﻿ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
@@ -24,6 +24,10 @@
 					if($scope.enableCellSelection){
 						$scope.domAccessProvider.selectionHandlers($scope, iElement);
 					}
+					
+					$scope.$on('ngGridEventDigestCell', function(){
+						domUtilityService.digest($scope);
+					});
 				}
             };
         }

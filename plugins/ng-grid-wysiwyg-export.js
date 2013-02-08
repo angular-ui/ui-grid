@@ -21,7 +21,7 @@
                 ret.columnWidths.push(col.width);
             }
         });
-        angular.forEach(self.grid.filteredData, function (item) {
+        angular.forEach(self.grid.filteredRows, function (item) {
             angular.forEach(self.scope.columns, function (col) {
                 if (col.visible) {
                     var obj = ng.utils.evalProperty(item, col.field);

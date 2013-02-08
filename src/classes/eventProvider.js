@@ -197,10 +197,10 @@
                 return;
             }
             // Splice the Rows via the actual datasource
-            var i = grid.sortedData.indexOf(prevRow.scope.row.entity);
-            var j = grid.sortedData.indexOf(rowScope.row.entity);
-            grid.sortedData.splice(i, 1);
-            grid.sortedData.splice(j, 0, prevRow.scope.row.entity);
+            var i = grid.rowCache.indexOf(prevRow.scope.row);
+            var j = grid.rowCache.indexOf(rowScope.row);
+            grid.rowCache.splice(i, 1);
+            grid.rowCache.splice(j, 0, prevRow.scope.row);
             grid.searchProvider.evalFilter();
             // clear out the rowToMove object
             domUtilityService.eventStorage.rowToMove = undefined;

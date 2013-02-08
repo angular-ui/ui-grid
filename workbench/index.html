@@ -19,8 +19,8 @@
     <body ng-app="myApp" ng-controller="userController">
         <div style="width: 800px; height: 600px;"  ng-grid="gridOptions">
         </div>
-		<div>{{mySelections2[0]}}</div>
-        <button ng-click="resetRows()">Reset Rows</button>
+		<div>{{mySelections | json}}</div>
+        <button ng-click="checkData()">Check Data</button>
         <button ng-click="Add()">Insert Rows</button>
         <button ng-click="changeLang()">change Language</button>
         <button ng-click="setSelections()">set Selections</button>

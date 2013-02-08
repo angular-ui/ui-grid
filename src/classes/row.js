@@ -11,6 +11,7 @@ ng.Row = function(entity, config, selectionService) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
+    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
@@ -33,15 +34,17 @@ ng.Row = function(entity, config, selectionService) {
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
             return true;
         } else {
-            if (self.beforeSelectionChange(self)) {
+            if (self.beforeSelectionChange(self, event)) {
                 self.continueSelection(event);
-                return self.afterSelectionChange();
+                return self.afterSelectionChange(self, event);
             }
         }
         return false;
     };
     self.rowIndex = 0;
-    self.offsetTop = 0;
+    self.offsetTop = function() {
+        return self.rowIndex * config.rowHeight;
+    };
     self.rowDisplayIndex = 0;
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
@@ -60,5 +63,4 @@ ng.Row = function(entity, config, selectionService) {
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
     };
-	entity[NG_GRID_ROW] = self;
 };
