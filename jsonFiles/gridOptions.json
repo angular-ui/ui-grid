@@ -1,5 +1,11 @@
 [
 	{	
+		"id": "aggregateTemplate",
+		"defaultValue": "undefined",
+		"definition": "Define an aggregate template to customize the rows when grouped. See github wiki for more details.",
+		"plunker": "Link"
+	},
+    {	
 		"id": "afterSelectionChange",
 		"defaultValue": "function (rowItem, event) {}",
 		"definition": "Callback for when you want to validate something after selection.",
@@ -9,6 +15,18 @@
 		"id":"beforeSelectionChange",
 		"defaultValue": "function (rowItem, event) { return true; }",
 		"definition": "Callback if you want to inspect something before selection, return false if you want to cancel the selection. return true otherwise. If you need to wait for an async call to proceed with selection you can use rowItem.continueSelection(event) method after returning false initially. Note: when shift+ Selecting multiple items in the grid this will only get called once and the rowItem will be an array of items that are queued to be selected.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "checkboxCellTemplate",
+		"defaultValue": "undefined",
+		"definition": "Checkbox cell template. see wiki for template details",
+		"plunker": "Link"
+	},
+	{	
+		"id": "checkboxHeaderTemplate",
+		"defaultValue": "undefined",
+		"definition": "Checkbox header template. see wiki for template details"",
 		"plunker": "Link"
 	},
 	{	
@@ -39,6 +57,12 @@
 		"id": "displaySelectionCheckbox",
 		"defaultValue": "true",
 		"definition": "Row selection check boxes appear as the first column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "enableCellSelection",
+		"defaultValue": "false",
+		"definition": "Enable or disable cell navigation and selection",
 		"plunker": "Link"
 	},
 	{	
@@ -207,6 +231,24 @@
 		"id":"useExternalSorting",
 		"defaultValue": "false",
 		"definition": "Prevents the internal sorting from executing. The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)",
+		"plunker": "Link"
+	},
+	{
+		"id":"virtualizationThreshold",
+		"defaultValue": "50",
+		"definition": "The threshold in rows at which to force row virtualization on.",
+		"plunker": "Link"
+	},
+	{
+		"id":"selectRow",
+		"defaultValue": "function (rowIndex, state)",
+		"definition": "Function that is appended to the specifiec grid options for users to programatically select the row regardless of the related entity. ",
+		"plunker": "Link"
+	},
+	{
+		"id":"selectItem",
+		"defaultValue": "function (itemIndex, state)",
+		"definition": "Function that is appended to the specifiec grid options for users to programatically select the row based on the index of the enitity in the data array option. ",
 		"plunker": "Link"
 	}
 ]
