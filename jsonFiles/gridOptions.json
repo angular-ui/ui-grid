@@ -1,4 +1,4 @@
-[
+﻿[
 	{	
 		"id": "aggregateTemplate",
 		"defaultValue": "undefined",
@@ -26,7 +26,7 @@
 	{	
 		"id": "checkboxHeaderTemplate",
 		"defaultValue": "undefined",
-		"definition": "Checkbox header template. see wiki for template details"",
+		"definition": "Checkbox header template. see wiki for template details",
 		"plunker": "Link"
 	},
 	{	
@@ -35,7 +35,7 @@
 		"definition": "To be able to have selectable rows in grid.",
 		"plunker": "Link"
 	},
-		{
+    {
 		"id":"columnDefs",
 		"defaultValue": "undefined",
 		"definition": "definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.",
