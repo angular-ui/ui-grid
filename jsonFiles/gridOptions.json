@@ -1,7 +1,7 @@
 ﻿[
 	{	
 		"id": "aggregateTemplate",
-		"defaultValue": "undefined",
+		"defaultValue": "<div ng-click=\"row.toggleExpand()\" ng-style=\"{'left': row.offsetleft}\" class=\"ngAggregate\"><span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span><div class=\"{{row.aggClass()}}\"></div></div>",
 		"definition": "Define an aggregate template to customize the rows when grouped. See github wiki for more details.",
 		"plunker": "Link"
 	},
@@ -19,13 +19,13 @@
 	},
 	{	
 		"id": "checkboxCellTemplate",
-		"defaultValue": "undefined",
+		"defaultValue": "<div class=\"ngSelectionCell\"><input tabindex=\"-1\" class=\"ngSelectionCheckbox\" type=\"checkbox\" ng-checked=\"row.selected\" /></div>",
 		"definition": "Checkbox cell template. see wiki for template details",
 		"plunker": "Link"
 	},
 	{	
 		"id": "checkboxHeaderTemplate",
-		"defaultValue": "undefined",
+		"defaultValue": "<input class=\"ngSelectionHeader\" type=\"checkbox\" ng-show=\"multiSelect\" ng-model=\"allSelected\" ng-change=\"toggleSelectAll(allSelected)\"/>",
 		"definition": "Checkbox header template. see wiki for template details",
 		"plunker": "Link"
 	},
@@ -181,7 +181,7 @@
 	},
 	{
 		"id": "rowTemplate",
-		"defaultValue": "undefined",
+		"defaultValue": "<div ng-style=\"{'cursor': row.cursor}\" ng-repeat=\"col in visibleColumns()\" class=\"ngCell col{{$index}} {{col.cellClass}}\" ng-cell></div>",
 		"definition": "Define a row Template to customize output. See github wiki for more details.",
 		"plunker": "Link"
 	},

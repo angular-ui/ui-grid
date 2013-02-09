@@ -19,7 +19,7 @@
 	},
 	{	
 		"id": "cellTemplate",
-		"defaultValue": "''",
+		"defaultValue": "<div ng-class=\"'ngCellText colt' + $index\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>",
 		"definition": "Sets the cell template for the column. See github wiki for more details.",
 		"plunker": "Link"
 	},
@@ -27,6 +27,18 @@
 		"id": "displayName",
 		"defaultValue": "field",
 		"definition": "Sets the pretty display name of the column. default is the field given",
+		"plunker": "Link"
+	},
+	{	
+		"id": "editableCellTemplate",
+		"defaultValue": "<input ng-cell-input ng-class=\"'colt' + $index\" ng-model=\"COL_FIELD\" />",
+		"definition": "Sets the editableCellTemplate for the column. Displayed when user uses enableFocusedCellEdit and cell is focused.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "enableFocusedCellEdit",
+		"defaultValue": "false",
+		"definition": "Displays cellTemplate when user is not focused on cell. Displays editableCellTemplate when user focuses on cell.",
 		"plunker": "Link"
 	},
 	{	
@@ -38,12 +50,12 @@
     {	
 		"id": "groupable",
 		"defaultValue": "true",
-		"definition": "wether or not the user is allowed to gruop the column",
+		"definition": "Whether or not the user is allowed to group the column",
 		"plunker": "Link"
 	},
 	{	
 		"id": "headerCellTemplate",
-		"defaultValue": "''",
+		"defaultValue": "<div ng-click=\"col.sort()\" class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{'ngSorted': !noSortVisible }\"><div class=\"ngHeaderText colt{{$index}}\">{{col.displayName}}</div><div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div><div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div></div><div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>",
 		"definition": "Sets the template for the column header cell. See github wiki for more details.",
 		"plunker": "Link"
 	},
