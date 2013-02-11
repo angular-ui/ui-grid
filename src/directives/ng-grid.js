@@ -60,7 +60,7 @@
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                            $scope.$emit("ngGridEventData");
+                            $scope.$emit("ngGridEventData", grid.gridId);
                         }, true);
                     }
 					
@@ -92,8 +92,8 @@
                     // method for user to select the row by data item programatically
                     options.selectItem = function (itemIndex, state) {
                         options.selectRow(grid.rowMap[itemIndex], state);
-                    };					
-					
+                    };
+                    options.gridId = grid.gridId;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			

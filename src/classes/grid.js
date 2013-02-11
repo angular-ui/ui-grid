@@ -37,8 +37,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
         data: [],
-
-        //Row selection check boxes appear as the first column.
+        
+        //Data updated callback, fires every time the data is modified from outside the grid.
+        dataUpdated: function() {
+        },
+            //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: true, 
 		
         //Enables cell selection.

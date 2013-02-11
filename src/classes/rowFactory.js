@@ -74,16 +74,23 @@ ng.RowFactory = function(grid, $scope) {
         self.wasGrouped = true;
         self.parentCache = [];
         var rowArr = [];
-        var dataArray = self.parsedData.filter(function(e) {
+        var aggs = 0;
+        var dataArray = self.parsedData.filter(function (e) {
+            if (e.isAggRow && e.isCollapsed) {
+                aggs++;
+            }
             return e[NG_HIDDEN] === false;
-        }).slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        }).slice(Math.max(self.renderedRange.topRow - aggs, 0), self.renderedRange.bottomRow);
+        aggs = 0;
         angular.forEach(dataArray, function(item, indx) {
             var row;
             if (item.isAggRow) {
-                row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
+                var j = item.isCollapsed ? indx + aggs : indx;
+                row = self.buildAggregateRow(item, self.renderedRange.topRow + j);
+                aggs++;
             } else {
                 var i = self.renderedRange.topRow + indx;
-                row = grid.rowCache[i];
+                row = grid.rowCache[i - aggs];
                 row.offsetTop = i * self.rowConfig.rowHeight;
                 row.entity = item;
             }

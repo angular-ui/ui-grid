@@ -1,8 +1,8 @@
-/***********************************************
+﻿/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/08/2013 11:41:31
+* Compiled At: 02/11/2013 11:49:44
 ***********************************************/
 
 (function(window) {
@@ -1262,16 +1262,23 @@ ng.RowFactory = function(grid, $scope) {
         self.wasGrouped = true;
         self.parentCache = [];
         var rowArr = [];
-        var dataArray = self.parsedData.filter(function(e) {
+        var aggs = 0;
+        var dataArray = self.parsedData.filter(function (e) {
+            if (e.isAggRow && e.isCollapsed) {
+                aggs++;
+            }
             return e[NG_HIDDEN] === false;
-        }).slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        }).slice(Math.max(self.renderedRange.topRow - aggs, 0), self.renderedRange.bottomRow);
+        aggs = 0;
         angular.forEach(dataArray, function(item, indx) {
             var row;
             if (item.isAggRow) {
-                row = self.buildAggregateRow(item, self.renderedRange.topRow + indx);
+                var j = item.isCollapsed ? indx + aggs : indx;
+                row = self.buildAggregateRow(item, self.renderedRange.topRow + j);
+                aggs++;
             } else {
                 var i = self.renderedRange.topRow + indx;
-                row = grid.rowCache[i];
+                row = grid.rowCache[i - aggs];
                 row.offsetTop = i * self.rowConfig.rowHeight;
                 row.entity = item;
             }
@@ -1438,8 +1445,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 
         //*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
         data: [],
-
-        //Row selection check boxes appear as the first column.
+        
+        //Data updated callback, fires every time the data is modified from outside the grid.
+        dataUpdated: function() {
+        },
+            //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: true, 
 		
         //Enables cell selection.
@@ -2505,7 +2515,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
                                 grid.sortData(grid.config.sortInfo.column);
                             }
-                            $scope.$emit("ngGridEventData");
+                            $scope.$emit("ngGridEventData", grid.gridId);
                         }, true);
                     }
 					
@@ -2537,8 +2547,8 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                     // method for user to select the row by data item programatically
                     options.selectItem = function (itemIndex, state) {
                         options.selectRow(grid.rowMap[itemIndex], state);
-                    };					
-					
+                    };
+                    options.gridId = grid.gridId;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			
@@ -2907,5 +2917,5 @@ window.ngGrid.i18n['zh-cn'] = {
     ngPagerNextTitle: '下一页',
     ngPagerPrevTitle: '上一页',
     ngPagerLastTitle: '前往尾页' 
-};
+};    
 }(window));
