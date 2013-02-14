@@ -392,7 +392,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             ng.utils.seti18n($scope, newLang);
         });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        if (self.config.sortInfo) {
+        if (self.config.sortInfo && $scope.columns.length) {
             self.config.sortInfo.column = $scope.columns.filter(function(c) {
                 return c.field == self.config.sortInfo.field;
             })[0];
