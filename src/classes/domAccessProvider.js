@@ -2,7 +2,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
-		if(node == 'input' || node == 'textarea' || node == 'select'){
+		if(node == 'input' || node == 'textarea'){
 			elm.select();
 		}
 	};
