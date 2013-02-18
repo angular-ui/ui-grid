@@ -5,7 +5,7 @@
     self.groupToMove = undefined;
     self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
-        if (grid.config.jqueryUIDraggable) {
+        if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
             grid.$groupPanel.droppable({
                 addClasses: false,
                 drop: function(event) {
@@ -16,7 +16,7 @@
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
-            if (grid.config.enableColumnReordering) {
+            if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
             }
             if (grid.config.enableRowReordering) {

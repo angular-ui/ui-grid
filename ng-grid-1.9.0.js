@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 13:42:48
+* Compiled At: 02/18/2013 13:39:10
 ***********************************************/
 (function(window){'use strict';if(!window.ng){window.ng={};}
 window.ngGrid={};window.ngGrid.i18n={};var ngGridServices=angular.module('ngGrid.services',[]);var ngGridDirectives=angular.module('ngGrid.directives',[]);var ngGridFilters=angular.module('ngGrid.filters',[]);var EXCESS_ROWS=2;var ASC="asc";var DESC="desc";var NG_SELECTED='_ng_selected_';var NG_FIELD='_ng_field_';var NG_DEPTH='_ng_depth_';var NG_HIDDEN='_ng_hidden_';var NG_COLUMN='_ng_column_';var CUSTOM_FILTERS=/CUSTOM_FILTERS/g;var COL_FIELD=/COL_FIELD/g;var DISPLAY_CELL_TEMPLATE=/DISPLAY_CELL_TEMPLATE/g;var EDITABLE_CELL_TEMPLATE=/EDITABLE_CELL_TEMPLATE/g;var TEMPLATE_REGEXP=/<.+>/;ng.moveSelectionHandler=function($scope,elm,evt,domUtilityService){if($scope.selectionService.selectedItems===undefined){return true;}

@@ -2,6 +2,7 @@
     <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>
     <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>
     <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>
+    <div class="ngPinner" ng-click="togglePin(col)" ng-show="col.pinnable">{{col.pinned | checkmark}}</div>
     <input type="text" ng-model="col.filterText" style="height: 30px; width:100%;"/>
 </div>
 <div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>

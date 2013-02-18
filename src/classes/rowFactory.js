@@ -2,7 +2,7 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../../lib/angular.js" />
 /// <reference path="../constants.js" />
-ng.RowFactory = function(grid, $scope) {
+ng.RowFactory = function(grid, $scope, domUtilityService) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -204,13 +204,21 @@ ng.RowFactory = function(grid, $scope) {
 						width: 25,
 						sortable: false,
 						resizable: false,
-						headerCellTemplate: '<div class="ngAggHeader"></div>'
+						headerCellTemplate: '<div class="ngAggHeader"></div>',
+						pinned: grid.config.pinSelectionCheckbox
 					},
 					isAggCol: true,
 					headerRowHeight: grid.config.headerRowHeight
 				}));
 			}
 		});
+		domUtilityService.BuildStyles($scope, grid, true);
+		for (var i = 0; i < $scope.columns.length; i++) {
+		    if (!$scope.columns[i].pinned) {
+		        break;
+		    }
+		    $('.col' + i).css('left', "");
+		}
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
