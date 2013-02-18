@@ -101,6 +101,13 @@
                             angular.forEach(arr, $scope.groupBy);
                         }
                     };
+                    // method for user to set the groups programatically
+                    options.sortBy = function (field) {
+                        var col = $scope.columns.filter(function (c) {
+                            return c.field == field;
+                        })[0];
+                        if (col) col.sort();
+                    };
                     options.gridId = grid.gridId;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
