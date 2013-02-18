@@ -241,6 +241,7 @@
 	position: absolute;
     top: 11px; 
     left: 6px;
+    z-index: 5;
 }
 input[type="checkbox"] {
 	margin: 0;
@@ -252,6 +253,7 @@ input {
 .ngSelectionCell{
 	margin-top: 9px;
 	margin-left: 6px;
+    z-index: 5;
 }
 .ngNoSort {
     cursor:default;

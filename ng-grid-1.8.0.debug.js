@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 00:44:44
+* Compiled At: 02/18/2013 07:57:48
 ***********************************************/
 
 (function(window) {
@@ -2043,6 +2043,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
     };
     $scope.togglePin = function (col) {
+        $('.col' + col.index).css('z-index', !col.pinned ? 5 : 0);
         var indexFrom = col.index;
         var indexTo = 0;
         for (var i = 0; i < $scope.columns.length; i++) {
@@ -2055,8 +2056,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
         }
         col.pinned = !col.pinned;
-        $('.col' + col.index).css('z-index', col.pinned ? 5 : 0);
-        if (self.config.displaySelectionCheckbox) $('.col0').css('z-index', 5);
         // Splice the columns
         $scope.columns.splice(indexFrom, 1);
         $scope.columns.splice(indexTo, 0, col);

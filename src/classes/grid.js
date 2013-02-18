@@ -642,7 +642,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         col.pinned = !col.pinned;
         $('.col' + col.index).css('z-index', col.pinned ? 5 : 0);
-        if (self.config.displaySelectionCheckbox) $('.col0').css('z-index', 5);
         // Splice the columns
         $scope.columns.splice(indexFrom, 1);
         $scope.columns.splice(indexTo, 0, col);
