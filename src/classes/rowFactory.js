@@ -205,14 +205,14 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
 						sortable: false,
 						resizable: false,
 						headerCellTemplate: '<div class="ngAggHeader"></div>',
-						pinned: true
+						pinned: grid.config.pinSelectionCheckbox
 					},
 					isAggCol: true,
 					headerRowHeight: grid.config.headerRowHeight
 				}));
 			}
 		});
-		domUtilityService.BuildStyles($scope, grid, true);
+		domUtilityService.BuildStyles($scope, grid);
 		for (var i = 0; i < $scope.columns.length; i++) {
 		    if (!$scope.columns[i].pinned) {
 		        break;

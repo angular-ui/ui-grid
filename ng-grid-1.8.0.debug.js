@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 12:44:58
+* Compiled At: 02/18/2013 12:48:22
 ***********************************************/
 
 (function(window) {
@@ -1403,14 +1403,14 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
 						sortable: false,
 						resizable: false,
 						headerCellTemplate: '<div class="ngAggHeader"></div>',
-						pinned: true
+						pinned: grid.config.pinSelectionCheckbox
 					},
 					isAggCol: true,
 					headerRowHeight: grid.config.headerRowHeight
 				}));
 			}
 		});
-		domUtilityService.BuildStyles($scope, grid, true);
+		domUtilityService.BuildStyles($scope, grid);
 		for (var i = 0; i < $scope.columns.length; i++) {
 		    if (!$scope.columns[i].pinned) {
 		        break;
