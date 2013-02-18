@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 13:42:48
+* Compiled At: 02/18/2013 15:08:40
 ***********************************************/
 
 (function(window) {
@@ -300,7 +300,7 @@ ngGridServices.factory('SortService', function() {
         }
         // now lets string check..
         //check if the item data is a valid number
-        if (item.match(/^-?[äŝ?[\d,.]+%?$/)) {
+        if (item.match(/^-?[£$¤]?[\d,.]+%?$/)) {
             return sortService.sortNumberStr;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy
@@ -1958,7 +1958,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             var totalLeft = 0;
             angular.forEach(pinnedCols, function (col, i) {
                 var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                var elems = $('.col' + col.index);
+                var elems = $("." + self.gridId + ', .col' + col.index);
                 elems.css('left', newLeft);
                 totalLeft += col.width;
             });
@@ -2063,7 +2063,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if (col.pinned) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
-            var elems = $('.col' + col.index);
+            var elems = $("." + self.gridId + ', .col' + col.index);
             elems.css('left', "");
         }
         col.pinned = !col.pinned;
@@ -2078,7 +2078,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             if (!$scope.columns[i].pinned) {
                 break;
             }
-            $('.col' + i).css('left', "");
+            $("." + self.gridId + ', .col' + i).css('left', "");
         }
     };
     $scope.totalRowWidth = function() {
