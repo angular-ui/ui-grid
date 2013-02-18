@@ -73,51 +73,35 @@ ng.RowFactory = function(grid, $scope) {
         }
         self.wasGrouped = true;
         self.parentCache = [];
-        var rowArr = [];
-        var visibleAggs = 0;
         var temp = self.parsedData.filter(function(e) {
-            if (e.isAggRow) {
-                if (e.parent && e.parent.collapsed) {
-                    return false;
-                }
-                visibleAggs++;
-                return true;
-            }
             return !e[NG_HIDDEN];
         });
         self.totalRows = temp.length;
-        var dataArray = temp.slice(self.renderedRange.topRow, self.renderedRange.bottomRow + visibleAggs);
-        angular.forEach(dataArray, function (item, indx) {
-            var row;
-            if (item.isAggRow) {
-                row = self.buildAggregateRow(item.entity, self.renderedRange.topRow + indx);
-            } else {
-                var i = self.renderedRange.topRow + indx;
-                row = grid.rowCache[self.parsedData.indexOf(item)];
-                row.entity = item;
-                row.offsetTop = i * self.rowConfig.rowHeight;
-            }
-            //add the row to our return array
-            rowArr.push(row);
+        angular.forEach(temp, function (row, i) {
+            row.offsetTop = i * grid.config.rowHeight;
         });
+        var rowArr = temp.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
         grid.setRenderedRows(rowArr);
     };
 
     self.renderedChangeNoGroups = function () {
         if (self.wasGrouped) {
             self.wasGrouped = false;
+            angular.forEach(grid.data, function (item, indx) {
+                var row = grid.rowCache[indx];
+                row.offsetTop = indx * self.rowConfig.rowHeight;
+                row.entity = item;
+            });
         }
         var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
-        angular.forEach(grid.data, function (item, indx) {
-            var row = grid.rowCache[indx];
-            row.offsetTop = indx * self.rowConfig.rowHeight;
-            row.entity = item;
+        angular.forEach(rowArr, function(row) {
+            row.offsetTop = grid.filteredRows.indexOf(row) * grid.config.rowHeight;
         });
         grid.setRenderedRows(rowArr);
     };
 
     self.fixRowCache = function () {
-        var newLen = grid.data.length + self.numberOfAggregates;
+        var newLen = grid.data.length;
         var diff = newLen - grid.rowCache.length;
         if (diff < 0) {
             grid.rowCache.length = grid.rowMap.length = newLen;
@@ -187,7 +171,7 @@ ng.RowFactory = function(grid, $scope) {
         angular.forEach(rows, function (item) {
             var model = item.entity;
             if (!model) return;
-            model[NG_HIDDEN] = true;
+            item[NG_HIDDEN] = true;
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
                 var col = cols.filter(function(c) {
@@ -212,7 +196,7 @@ ng.RowFactory = function(grid, $scope) {
             if (!ptr.values) {
                 ptr.values = [];
             }
-            ptr.values.push(model);
+            ptr.values.push(item);
         });
 		//moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
 		angular.forEach(groups, function(group, depth) {

@@ -544,7 +544,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-			newRange = new ng.Range(0, Math.max(self.data.length,self.minRowsToRender() + EXCESS_ROWS));
+	        var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
+	        newRange = new ng.Range(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);

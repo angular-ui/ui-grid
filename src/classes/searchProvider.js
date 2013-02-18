@@ -8,56 +8,60 @@
     self.fieldMap = {};
 
     self.evalFilter = function () {
+        var filterFunc = function(item) {
+            for (var i = 0, len = searchConditions.length; i < len; i++) {
+                var condition = searchConditions[i];
+                //Search entire row
+                var result;
+                if (!condition.column) {
+                    for (var prop in item) {
+                        if (item.hasOwnProperty(prop)) {
+                            var c = self.fieldMap[prop];
+                            if (!c)
+                                continue;
+                            var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
+                            var pVal = item[prop];
+                            if (pVal != null) {
+                                if (typeof f == 'function') {
+                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
+                                    result = condition.regex.test(filterRes);
+                                } else {
+                                    result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
+                                }
+                                if (pVal && result) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                }
+                //Search by column.
+                var col = self.fieldMap[condition.columnDisplay];
+                if (!col) {
+                    return false;
+                }
+                var filter = col.cellFilter ? $filter(col.cellFilter) : null;
+                var value = item[condition.column] || item[col.field.split('.')[0]];
+                if (value == null)
+                    return false;
+                if (typeof filter == 'function') {
+                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
+                    result = condition.regex.test(filterResults);
+                } else {
+                    result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
+                }
+                if (!value || !result) {
+                    return false;
+                }
+            }
+            return true;
+        };
         if (searchConditions.length === 0) {
             grid.filteredRows = grid.rowCache;
         } else {
-            grid.filteredRows = grid.rowCache.filter(function (row) {
-                var item = row.entity;
-                for (var i = 0, len = searchConditions.length; i < len; i++) {
-                    var condition = searchConditions[i];
-                    //Search entire row
-                    var result;
-                    if (!condition.column) {
-                        for (var prop in item) {
-                            if (item.hasOwnProperty(prop)) {
-                                var c = self.fieldMap[prop];
-                                if (!c) continue;
-                                var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
-                                var pVal = item[prop];
-								if(pVal != null){
-								    if(typeof f == 'function'){
-										var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
-										result = condition.regex.test(filterRes);
-									} else {
-										result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
-								    }
-									if (pVal &&  result) {
-										return true;
-									}
-								}
-                            }
-                        }
-                        return false;
-                    }
-                    //Search by column.
-                    var col = self.fieldMap[condition.columnDisplay];
-                    if (!col) {
-                        return false;
-                    }
-                    var filter = col.cellFilter ? $filter(col.cellFilter) : null;
-                    var value = item[condition.column] || item[col.field.split('.')[0]];                  
-					if(value == null) return false;
-                    if(typeof filter == 'function'){
-						var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
-						result = condition.regex.test(filterResults);
-					} else {
-						result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
-                    }
-					if (!value || !result) {
-						return false;
-					}				
-                }
-                return true;
+            grid.filteredRows = grid.rowCache.filter(function(row) {
+                return filterFunc(row.entity);
             });
         }
         angular.forEach(grid.filteredRows, function (row, i) {
