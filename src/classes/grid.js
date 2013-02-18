@@ -533,7 +533,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             var totalLeft = 0;
             angular.forEach(pinnedCols, function (col, i) {
                 var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                var elems = $("." + self.gridId + ', .col' + col.index);
+                var elems = $("." + self.gridId + ' .col' + col.index);
                 elems.css('left', newLeft);
                 totalLeft += col.width;
             });
@@ -638,7 +638,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if (col.pinned) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
-            var elems = $("." + self.gridId + ', .col' + col.index);
+            var elems = $("." + self.gridId + ' .col' + col.index);
             elems.css('left', "");
         }
         col.pinned = !col.pinned;
@@ -653,7 +653,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             if (!$scope.columns[i].pinned) {
                 break;
             }
-            $("." + self.gridId + ', .col' + i).css('left', "");
+            $("." + self.gridId + ' .col' + i).css('left', "");
         }
     };
     $scope.totalRowWidth = function() {
