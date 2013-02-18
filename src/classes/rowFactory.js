@@ -91,14 +91,6 @@ ng.RowFactory = function(grid, $scope) {
     };
 
     self.renderedChangeNoGroups = function () {
-        if (self.wasGrouped) {
-            self.wasGrouped = false;
-            angular.forEach(grid.data, function (item, indx) {
-                var row = grid.rowCache[indx];
-                row.offsetTop = indx * self.rowConfig.rowHeight;
-                row.entity = item;
-            });
-        }
         var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
         angular.forEach(rowArr, function(row) {
             row.offsetTop = grid.filteredRows.indexOf(row) * grid.config.rowHeight;
@@ -168,7 +160,6 @@ ng.RowFactory = function(grid, $scope) {
         self.aggCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = {};
-        self.selectionService.toggleSelectAll(false);
         // Here we set the onmousedown event handler to the header container.
         var rows = grid.filteredRows;
         var maxDepth = groups.length;

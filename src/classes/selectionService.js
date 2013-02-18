@@ -1,4 +1,4 @@
-ng.SelectionService = function(grid) {
+ng.SelectionService = function (grid, $scope) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
@@ -10,8 +10,16 @@ ng.SelectionService = function(grid) {
     self.ChangeSelection = function(rowItem, evt) {
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
-                var thisIndx = grid.filteredRows.indexOf(rowItem);
-                var prevIndx = grid.filteredRows.indexOf(self.lastClickedRow);
+                var rowsArr;
+                if ($scope.configGroups.length > 0) {
+                    rowsArr = grid.rowFactory.parsedData.filter(function(row) {
+                        return !row.isAggRow;
+                    });
+                } else {
+                    rowsArr = grid.filteredRows;
+                }
+                var thisIndx = rowsArr.indexOf(rowItem);
+                var prevIndx = rowsArr.indexOf(self.lastClickedRow);
                 self.lastClickedRow = rowItem;
                 if (thisIndx == prevIndx) {
                     return false;
@@ -26,7 +34,7 @@ ng.SelectionService = function(grid) {
 				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
-                    rows.push(grid.filteredRows[prevIndx]);
+                    rows.push(rowsArr[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
                     angular.forEach(rows, function(ri) {

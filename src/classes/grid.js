@@ -368,7 +368,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     self.init = function() {
         //factories and services
-        $scope.selectionService = new ng.SelectionService(self);
+        $scope.selectionService = new ng.SelectionService(self, $scope);
 		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
         self.rowFactory = new ng.RowFactory(self, $scope);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
