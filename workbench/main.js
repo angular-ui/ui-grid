@@ -116,9 +116,9 @@ function userController($scope) {
         beforeSelectionChange: self.selectionchanging,
         multiSelect: true,
 		canSelectRows: true,
-        enableRowReordering: true,
         showGroupPanel: true,
-        columnDefs: 'myDefs2'
+        columnDefs: 'myDefs2',
+        enablePinning: true,
     };
     $scope.changeData = function () {
         $scope.myData2.pop();
