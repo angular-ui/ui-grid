@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 12:00:56
+* Compiled At: 02/18/2013 12:44:58
 ***********************************************/
 
 (function(window) {
@@ -774,7 +774,7 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
-            if (grid.config.enableColumnReordering) {
+            if (grid.config.enableColumnReordering && !grid.config.enableColumnPinning) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
             }
             if (grid.config.enableRowReordering) {
@@ -1200,7 +1200,7 @@ ng.Footer = function($scope, grid) {
 /***********************************************
 * FILE: ..\src\classes\rowFactory.js
 ***********************************************/
-ng.RowFactory = function(grid, $scope) {
+ng.RowFactory = function(grid, $scope, domUtilityService) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -1402,13 +1402,21 @@ ng.RowFactory = function(grid, $scope) {
 						width: 25,
 						sortable: false,
 						resizable: false,
-						headerCellTemplate: '<div class="ngAggHeader"></div>'
+						headerCellTemplate: '<div class="ngAggHeader"></div>',
+						pinned: true
 					},
 					isAggCol: true,
 					headerRowHeight: grid.config.headerRowHeight
 				}));
 			}
 		});
+		domUtilityService.BuildStyles($scope, grid, true);
+		for (var i = 0; i < $scope.columns.length; i++) {
+		    if (!$scope.columns[i].pinned) {
+		        break;
+		    }
+		    $('.col' + i).css('left', "");
+		}
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
@@ -1795,7 +1803,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self, $scope);
 		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
-        self.rowFactory = new ng.RowFactory(self, $scope);
+		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -1949,11 +1957,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         if (pinnedCols.length > 0) {
             var totalLeft = 0;
             angular.forEach(pinnedCols, function (col, i) {
-                var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft
+                var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
                 var elems = $('.col' + col.index);
                 elems.css('left', newLeft);
                 totalLeft += col.width;
-                elems.css('right', (totalLeft));
             });
         }
 
@@ -2056,6 +2063,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if (col.pinned) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
+            var elems = $('.col' + col.index);
+            elems.css('left', "");
         }
         col.pinned = !col.pinned;
         // Splice the columns
@@ -2064,6 +2073,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.fixColumnIndexes();
         // Finally, rebuild the CSS styles.
         domUtilityService.BuildStyles($scope, self, true);
+        self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if (!$scope.columns[i].pinned) {
+                break;
+            }
+            $('.col' + i).css('left', "");
+        }
     };
     $scope.totalRowWidth = function() {
         var totalWidth = 0,
@@ -2511,6 +2527,9 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
     };
     $scope.footerStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
+    };
+    $scope.columnStyle = function(col) {
+        return { "width": col.width + "px", "left": col.leftPos + "px" };
     };
 };
 

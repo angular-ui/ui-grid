@@ -23,4 +23,7 @@
     $scope.footerStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
     };
+    $scope.columnStyle = function(col) {
+        return { "width": col.width + "px", "left": col.leftPos + "px" };
+    };
 };

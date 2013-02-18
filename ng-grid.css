@@ -108,6 +108,7 @@
 }
 
 .ngHeaderCell{
+	border-right: 1px solid rgb(212,212,212);
 	border-left: 1px solid rgb(212,212,212);
     position: absolute;
     top: 0; 
@@ -117,10 +118,6 @@
 
 .ngHeaderCell:first-child{
     border-left: 0;
-}
-
-.ngHeaderCell:last-child{
-	border-right: 1px solid rgb(212,212,212);
 }
 
 .ngSortButtonUp {
@@ -156,7 +153,7 @@
     top: 0; 
     height: 100%; 
     position: absolute; 
-    z-index: 5; 
+    background-color: transparent;
 }
 .ngHeaderText {
     padding: 5px;
@@ -207,6 +204,7 @@
 .ngCell {
     overflow: hidden; 
     position: absolute;
+	border-right: 1px solid rgb(212,212,212);
 	border-left: 1px solid rgb(212,212,212);
     top: 0; 
     bottom: 0; 
@@ -215,10 +213,6 @@
 
 .ngCell:first-child{
 	border-left: 0;
-}
-
-.ngCell:last-child {
-    border-right: 1px solid rgb(212,212,212);
 }
 
 .ngCellElement:focus {
