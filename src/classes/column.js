@@ -21,12 +21,18 @@
     self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
-    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.sortable;
+    self.pinnable = false;
+    self.pinned = colDef.pinned;
+    self.prePinIndex = self.index;
+    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
         self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
     if (config.enableResize) {
         self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+    }
+    if (config.enablePinning) {
+        self.pinnable = ng.utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;

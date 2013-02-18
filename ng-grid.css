@@ -95,10 +95,12 @@
     position: relative;
     overflow: hidden;
     font-weight: bold;
+    background-color: inherit;
 }
 
 .ngHeaderScroller {
 	position:absolute;
+    background-color: inherit;
 }
 .ngHeaderSortColumn{
 	position:absolute;
@@ -110,6 +112,7 @@
     position: absolute;
     top: 0; 
     bottom: 0; 
+    background-color: inherit;
 }
 
 .ngHeaderCell:first-child{
@@ -166,7 +169,11 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
-
+.ngPinner {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
 /******** Viewport ********/
 .ngViewport{
 	overflow: auto;
@@ -203,6 +210,7 @@
 	border-left: 1px solid rgb(212,212,212);
     top: 0; 
     bottom: 0; 
+    background-color: inherit;
 }
 
 .ngCell:first-child{
