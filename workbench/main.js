@@ -179,5 +179,8 @@ function userController($scope) {
     $scope.setSelection = function() {
         $scope.gridOptions2.selectItem(0, true);
         $scope.gridOptions2.selectRow(3, true);
+        $scope.gridOptions2.groupBy();
+        $scope.gridOptions2.selectAll(false);
+
     };
 };

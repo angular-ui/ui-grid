@@ -27,7 +27,7 @@
                         $scope.$parent.$watch(options.data, function (a) {
                             // make a temporary copy of the data
                             grid.data = $.extend(true, [], a);
-                            grid.rowFactory.fixRowCache(grid.data.length);
+                            grid.rowFactory.fixRowCache();
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
                                     if (!angular.equals(grid.rowCache[j].entity, item)) {
@@ -85,6 +85,21 @@
                     // method for user to select the row by data item programatically
                     options.selectItem = function (itemIndex, state) {
                         options.selectRow(grid.rowMap[itemIndex], state);
+                    };
+                    // method for user to set the select all state.
+                    options.selectAll = function (state) {
+                        $scope.toggleSelectAll(state);
+                    };
+                    // method for user to set the groups programatically
+                    options.groupBy = function (field) {
+                        if (field) {
+                            $scope.groupBy($scope.columns.filter(function(c) {
+                                return c.field == field;
+                            })[0]);
+                        } else {
+                            var arr = $.extend(true, [], $scope.configGroups);
+                            angular.forEach(arr, $scope.groupBy);
+                        }
                     };
                     options.gridId = grid.gridId;
 					$scope.$on('ngGridEventDigestGrid', function(){

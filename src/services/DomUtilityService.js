@@ -108,7 +108,7 @@ ngGridServices.factory('DomUtilityService', function() {
 	};
 
     domUtilityService.digest = function($scope) {
-        if (!$scope.$$phase) {
+        if (!$scope.$root.$$phase) {
             $scope.$digest();
         }
     };
