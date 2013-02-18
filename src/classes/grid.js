@@ -56,8 +56,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enables the server-side paging feature
         enablePaging: false,
 
+        //Enable column pinning
+        enablePinning: true,
+        
         //Enable drag and drop row reordering. Only works in HTML5 compliant browsers.
-        enableRowReordering: true,
+        enableRowReordering: false,
 
         //Enables or disables sorting in grid.
         enableSorting: true,
@@ -116,6 +119,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             //currentPage: the uhm... current page.
             currentPage: 1
         },
+        
+        //Array of plugin functions to register in ng-grid
+        pinSelectionCheckbox: true,
 
         //Array of plugin functions to register in ng-grid
         plugins: [],
@@ -252,7 +258,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizable: false,
                     groupable: false,
                     headerCellTemplate: $scope.checkboxHeaderTemplate,
-                    cellTemplate: $scope.checkboxCellTemplate
+                    cellTemplate: $scope.checkboxCellTemplate,
+                    pinned: self.config.pinSelectionCheckbox
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
@@ -273,7 +280,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     sortCallback: self.sortData,
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
-                    enableSort: self.config.enableSorting
+                    enableSort: self.config.enableSorting,
+                    enablePinning: self.config.enablePinning
                 }, $scope, self, domUtilityService);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
@@ -370,7 +378,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self, $scope);
 		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
-        self.rowFactory = new ng.RowFactory(self, $scope);
+		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -517,7 +525,20 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
-    $scope.adjustScrollLeft = function(scrollLeft) {
+    $scope.adjustScrollLeft = function (scrollLeft) {
+        var pinnedCols = $scope.visibleColumns().filter(function(col) {
+            return col.pinned;
+        });
+        if (pinnedCols.length > 0) {
+            var totalLeft = 0;
+            angular.forEach(pinnedCols, function (col, i) {
+                var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
+                var elems = $('.col' + col.index);
+                elems.css('left', newLeft);
+                totalLeft += col.width;
+            });
+        }
+
         if (self.$headerContainer) {
             self.$headerContainer.scrollLeft(scrollLeft);
         }
@@ -604,6 +625,35 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         if ($scope.configGroups.length === 0) {
             self.fixColumnIndexes();
             domUtilityService.digest($scope);
+        }
+    };
+    $scope.togglePin = function (col) {
+        var indexFrom = col.index;
+        var indexTo = 0;
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if (!$scope.columns[i].pinned) {
+                break;
+            }
+            indexTo++;
+        }
+        if (col.pinned) {
+            indexTo = Math.max(col.originalIndex, indexTo - 1);
+            var elems = $('.col' + col.index);
+            elems.css('left', "");
+        }
+        col.pinned = !col.pinned;
+        // Splice the columns
+        $scope.columns.splice(indexFrom, 1);
+        $scope.columns.splice(indexTo, 0, col);
+        self.fixColumnIndexes();
+        // Finally, rebuild the CSS styles.
+        domUtilityService.BuildStyles($scope, self, true);
+        self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if (!$scope.columns[i].pinned) {
+                break;
+            }
+            $('.col' + i).css('left', "");
         }
     };
     $scope.totalRowWidth = function() {
