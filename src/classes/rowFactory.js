@@ -74,6 +74,12 @@ ng.RowFactory = function(grid, $scope) {
         self.wasGrouped = true;
         self.parentCache = [];
         var temp = self.parsedData.filter(function(e) {
+            if (e.isAggRow) {
+                if (e.parent && e.parent.collapsed) {
+                    return false;
+                }
+                return true;
+            }
             return !e[NG_HIDDEN];
         });
         self.totalRows = temp.length;
