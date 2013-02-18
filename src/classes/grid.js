@@ -630,43 +630,24 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     $scope.togglePin = function (col) {
         var indexFrom = col.index;
-        var indexTo;
-        var findLastPinned = function() {
-            for (var i = 0; i < $scope.columns.length; i++) {
-                if ($scope.columns[i].pinned) {
-                    continue;
-                } else {
-                    return i;
-                }
+        var indexTo = 0;
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if (!$scope.columns[i].pinned) {
+                break;
             }
-        };
-        var lastPinned = findLastPinned();
-        if (!col.pinned) {
-            col.prePinIndex = indexFrom;
-            indexTo = lastPinned;
-        } else {
-            indexTo = col.prePinIndex;
+            indexTo++;
+        }
+        if (col.pinned) {
+            indexTo = Math.max(col.originalIndex, indexTo - 1);
         }
         col.pinned = !col.pinned;
-        $('.col' + col.index).css('z-index', col.pinned ? 10 : 0);
+        $('.col' + col.index).css('z-index', col.pinned ? 5 : 0);
+        if (self.config.displaySelectionCheckbox) $('.col0').css('z-index', 5);
         // Splice the columns
         $scope.columns.splice(indexFrom, 1);
         $scope.columns.splice(indexTo, 0, col);
-        if (indexFrom < lastPinned - 1) {
-            //shift down the last
-            for (var i = indexFrom; indexFrom < lastPinned; indexFrom++) {;
-                var c = $scope.columns[i];
-                if (!c.pinned) {
-                    $scope.columns.splice(i, 1);
-                    $scope.columns.splice(lastPinned - 1, 0, c);
-                    break;
-                }
-            }
-        }
-        
-        
-        // Finally, rebuild the CSS styles.
         self.fixColumnIndexes();
+        // Finally, rebuild the CSS styles.
         domUtilityService.BuildStyles($scope, self, true);
     };
     $scope.totalRowWidth = function() {

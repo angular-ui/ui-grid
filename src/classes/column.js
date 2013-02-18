@@ -23,7 +23,7 @@
     self.resizable = false;
     self.pinnable = false;
     self.pinned = colDef.pinned;
-    self.prePinIndex = self.index;
+    self.originalIndex = self.index;
     self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
         self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
