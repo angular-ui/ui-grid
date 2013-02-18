@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 07:57:48
+* Compiled At: 02/18/2013 12:00:56
 ***********************************************/
 
 (function(window) {
@@ -638,7 +638,7 @@ ng.gridTemplate = function(){ return '<div class="ngTopPanel" ng-class="{\'ui-wi
 /***********************************************
 * FILE: ..\src\templates\rowTemplate.html
 ***********************************************/
-ng.rowTemplate = function(){ return '<div ng-style="{\'cursor\': row.cursor}" ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>';};
+ng.rowTemplate = function(){ return '<div ng-style="{\'cursor\': row.cursor, \'z-index\': col.zIndex() }" ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\cellTemplate.html
@@ -673,7 +673,7 @@ ng.aggregateTemplate = function(){ return '<div ng-click="row.toggleExpand()" ng
 /***********************************************
 * FILE: ..\src\templates\headerRowTemplate.html
 ***********************************************/
-ng.headerRowTemplate = function(){ return '<div ng-repeat="col in visibleColumns()" class="ngHeaderCell col{{$index}}" ng-header-cell></div>';};
+ng.headerRowTemplate = function(){ return '<div ng-style="{\'z-index\': col.zIndex()}" ng-repeat="col in visibleColumns()" class="ngHeaderCell col{{$index}}" ng-header-cell></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\headerCellTemplate.html
@@ -1007,6 +1007,9 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
+    self.zIndex = function() {
+        return self.pinned ? 5 : 0;
+    };
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
@@ -2043,7 +2046,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
     };
     $scope.togglePin = function (col) {
-        $('.col' + col.index).css('z-index', !col.pinned ? 5 : 0);
         var indexFrom = col.index;
         var indexTo = 0;
         for (var i = 0; i < $scope.columns.length; i++) {
