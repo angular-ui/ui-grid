@@ -57,7 +57,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         enablePaging: false,
 
         //Enable column pinning
-        enablePinning: true,
+        enablePinning: false,
         
         //Enable drag and drop row reordering. Only works in HTML5 compliant browsers.
         enableRowReordering: false,
