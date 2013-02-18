@@ -190,7 +190,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
         return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
-            return e[NG_HIDDEN] === false;
+            return !e[NG_HIDDEN];
         }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
     };
     self.elementDims = {

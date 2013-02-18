@@ -4,6 +4,7 @@ var ASC = "asc";
 // constant for sorting direction
 var DESC = "desc";
 // constant for sorting direction
+var NG_SELECTED = '_ng_selected_';
 var NG_FIELD = '_ng_field_';
 var NG_DEPTH = '_ng_depth_';
 var NG_HIDDEN = '_ng_hidden_';

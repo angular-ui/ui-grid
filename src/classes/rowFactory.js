@@ -74,25 +74,28 @@ ng.RowFactory = function(grid, $scope) {
         self.wasGrouped = true;
         self.parentCache = [];
         var rowArr = [];
-        var aggs = 0;
-        var dataArray = self.parsedData.filter(function (e) {
-            if (e.isAggRow && e.isCollapsed) {
-                aggs++;
+        var visibleAggs = 0;
+        var temp = self.parsedData.filter(function(e) {
+            if (e.isAggRow) {
+                if (e.parent && e.parent.collapsed) {
+                    return false;
+                }
+                visibleAggs++;
+                return true;
             }
-            return e[NG_HIDDEN] === false;
-        }).slice(Math.max(self.renderedRange.topRow - aggs, 0), self.renderedRange.bottomRow);
-        aggs = 0;
-        angular.forEach(dataArray, function(item, indx) {
+            return !e[NG_HIDDEN];
+        });
+        self.totalRows = temp.length;
+        var dataArray = temp.slice(self.renderedRange.topRow, self.renderedRange.bottomRow + visibleAggs);
+        angular.forEach(dataArray, function (item, indx) {
             var row;
             if (item.isAggRow) {
-                var j = item.isCollapsed ? indx + aggs : indx;
-                row = self.buildAggregateRow(item, self.renderedRange.topRow + j);
-                aggs++;
+                row = self.buildAggregateRow(item.entity, self.renderedRange.topRow + indx);
             } else {
                 var i = self.renderedRange.topRow + indx;
-                row = grid.rowCache[i - aggs];
-                row.offsetTop = i * self.rowConfig.rowHeight;
+                row = grid.rowCache[self.parsedData.indexOf(item)];
                 row.entity = item;
+                row.offsetTop = i * self.rowConfig.rowHeight;
             }
             //add the row to our return array
             rowArr.push(row);
@@ -100,17 +103,29 @@ ng.RowFactory = function(grid, $scope) {
         grid.setRenderedRows(rowArr);
     };
 
-    self.renderedChangeNoGroups = function() {
-        var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+    self.renderedChangeNoGroups = function () {
         if (self.wasGrouped) {
-            angular.forEach(grid.data, function (item, indx) {
-                var row = grid.rowCache[indx];
-                row.offsetTop = indx * self.rowConfig.rowHeight;
-                row.entity = item;
-            });
             self.wasGrouped = false;
         }
+        var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        angular.forEach(grid.data, function (item, indx) {
+            var row = grid.rowCache[indx];
+            row.offsetTop = indx * self.rowConfig.rowHeight;
+            row.entity = item;
+        });
         grid.setRenderedRows(rowArr);
+    };
+
+    self.fixRowCache = function () {
+        var newLen = grid.data.length + self.numberOfAggregates;
+        var diff = newLen - grid.rowCache.length;
+        if (diff < 0) {
+            grid.rowCache.length = grid.rowMap.length = newLen;
+        } else {
+            for (var i = grid.rowCache.length; i < newLen; i++) {
+                grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
+            }
+        }
     };
 
     //magical recursion. it works. I swear it. I figured it out in the shower one day.
@@ -149,7 +164,7 @@ ng.RowFactory = function(grid, $scope) {
                         agg.parent.aggChildren.push(agg);
                     }
                     // add the aggregate row to the parsed data.
-                    self.parsedData.push(agg.entity);
+                    self.parsedData.push(agg);
                     // the current aggregate now the parent of the current depth
                     self.parentCache[agg.depth] = agg;
                     // dig deeper for more aggregates or children.
@@ -163,6 +178,7 @@ ng.RowFactory = function(grid, $scope) {
         self.aggCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = {};
+        self.selectionService.toggleSelectAll(false);
         // Here we set the onmousedown event handler to the header container.
         var rows = grid.filteredRows;
         var maxDepth = groups.length;
@@ -170,6 +186,7 @@ ng.RowFactory = function(grid, $scope) {
 
         angular.forEach(rows, function (item) {
             var model = item.entity;
+            if (!model) return;
             model[NG_HIDDEN] = true;
             var ptr = self.groupedData;
             angular.forEach(groups, function(group, depth) {
@@ -216,6 +233,7 @@ ng.RowFactory = function(grid, $scope) {
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
+        self.fixRowCache();
     };
 
     if (grid.config.groups.length > 0 && grid.filteredRows.length > 0) {

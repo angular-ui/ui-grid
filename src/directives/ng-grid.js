@@ -27,14 +27,7 @@
                         $scope.$parent.$watch(options.data, function (a) {
                             // make a temporary copy of the data
                             grid.data = $.extend(true, [], a);
-                            var diff = grid.data.length - grid.rowCache.length;
-                            if (diff < 0) {
-                                grid.rowCache.length = grid.rowMap.length = grid.data.length;
-                            } else {
-                                for (var i = grid.rowCache.length; i < grid.data.length; i++) {
-                                    grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
-                                }
-                            }
+                            grid.rowFactory.fixRowCache(grid.data.length);
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
                                     if (!angular.equals(grid.rowCache[j].entity, item)) {
