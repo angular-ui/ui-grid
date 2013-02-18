@@ -3,6 +3,6 @@
     <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>
     <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>
     <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>
-    <div class="ngPinner" ng-click="togglePin(col)" ng-show="col.pinnable">{{col.pinned | checkmark}}</div>
+    <div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div>
 </div>
 <div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>

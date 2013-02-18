@@ -166,11 +166,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.ngPinner {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-}
+
 /******** Viewport ********/
 .ngViewport{
 	overflow: auto;
@@ -445,7 +441,24 @@ input {
     right: -2px;
     top: 2px;
 }
-
+.ngPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAO5JREFUOE+V0rsrxXEcBuDjVsJklhllRlabDC6zRamTIuU/sFgtBovNZLLZDTaLFCmDLDIIud+et446Luf21rP86vN9f99L4Vc6WeOCS6654phZWqmYdmY4IIPvfLLNMM1UTQdbHPLCEws0UTNtrHPKa8kcNVuT7DvNZ2Sw7ua0DrDDLR9k36v0UnGBnOQEOay0vZHDijt2GeTf9LNH+VC5Zzbo5kfyO+Occ8MDac/QI2m+Z58+/qSHLDDNFJvksawwWTJGF1XTwiInjFDXHX8nw0XyLIdoeHiJPJTRfGgkGZ7niIabc+fLVGkuFL4ANuk94p+FD2sAAAAASUVORK5CYII=);
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 15px;
+    width: 15px;
+}
+.ngUnPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAPlJREFUOE+V0s9KAlEYhvEBF5FGtbI78X5yrd5CiyChRYtWQYFLF4K3IQi2cKPLlkFBkGQt0noenAPNNCNnXvjB/DvfOec7k0TmDEPcoemDKjnBGGsMUEdUauhgjmf8wAKFKzjEKY7T63M8YoZvOPgTbiGTFkZYYIp7PGEJB2kFt2APMunhC+HDDfx4m96/oAt7YBMzOcA1PhAKBO9owx6U5gg3yA9+gD3Ymwb6yA+2BzaxNL501ldYwOuwBZvoKRTGGS9hwxzkvVuwBz7zFAqX7Ue3eIMF/i7PJnoKHuO/+KtdwOoWcMboXMGztIArqJQJLBD9s++SJL81X0LbjFt7nQAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    right: 5px;
+    top: 5px;
+}
 .ngGroupingNumber {
     position: absolute;
     right: -10px;

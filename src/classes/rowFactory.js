@@ -212,7 +212,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
 				}));
 			}
 		});
-		domUtilityService.BuildStyles($scope, grid);
+		domUtilityService.BuildStyles($scope, grid, true);
 		for (var i = 0; i < $scope.columns.length; i++) {
 		    if (!$scope.columns[i].pinned) {
 		        break;

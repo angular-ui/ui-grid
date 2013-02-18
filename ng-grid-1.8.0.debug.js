@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/18/2013 12:48:22
+* Compiled At: 02/18/2013 13:12:32
 ***********************************************/
 
 (function(window) {
@@ -678,7 +678,7 @@ ng.headerRowTemplate = function(){ return '<div ng-style="{\'z-index\': col.zInd
 /***********************************************
 * FILE: ..\src\templates\headerCellTemplate.html
 ***********************************************/
-ng.headerCellTemplate = function(){ return '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div><div class="ngPinner" ng-click="togglePin(col)" ng-show="col.pinnable">{{col.pinned | checkmark}}</div></div><div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>';};
+ng.headerCellTemplate = function(){ return '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div><div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div></div><div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>';};
 
 /***********************************************
 * FILE: ..\src\classes\aggregate.js
@@ -763,7 +763,7 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
     self.groupToMove = undefined;
     self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
-        if (grid.config.jqueryUIDraggable) {
+        if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
             grid.$groupPanel.droppable({
                 addClasses: false,
                 drop: function(event) {
@@ -774,7 +774,7 @@ ng.EventProvider = function(grid, $scope, domUtilityService) {
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
-            if (grid.config.enableColumnReordering && !grid.config.enableColumnPinning) {
+            if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
             }
             if (grid.config.enableRowReordering) {
@@ -1410,7 +1410,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
 				}));
 			}
 		});
-		domUtilityService.BuildStyles($scope, grid);
+		domUtilityService.BuildStyles($scope, grid, true);
 		for (var i = 0; i < $scope.columns.length; i++) {
 		    if (!$scope.columns[i].pinned) {
 		        break;
