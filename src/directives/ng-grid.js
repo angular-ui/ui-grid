@@ -29,14 +29,13 @@
                             grid.data = $.extend([], a);
                             grid.rowFactory.fixRowCache();
                             angular.forEach(grid.data, function (item, j) {
-                                if (grid.rowCache[j]) {
-                                    if (grid.rowCache[j].entity != item) {
-                                        grid.rowCache[j].entity = item;
-                                        grid.rowCache[j].modelIndex = j;
-                                        grid.rowCache[j].setSelection(false);
+                                var indx = grid.rowMap[j] || j;
+                                if (grid.rowCache[indx]) {
+                                    if (grid.rowCache[indx].entity != item) {
+                                        grid.rowCache[indx].entity = item;
                                     }
-                                    grid.rowMap[j] = j;
                                 }
+                                grid.rowMap[indx] = j;
                             });
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
