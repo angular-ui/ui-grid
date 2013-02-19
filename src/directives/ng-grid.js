@@ -26,11 +26,11 @@
                     if (typeof options.data == "string") {
                         $scope.$parent.$watch(options.data, function (a) {
                             // make a temporary copy of the data
-                            grid.data = $.extend(true, [], a);
+                            grid.data = $.extend([], a);
                             grid.rowFactory.fixRowCache();
                             angular.forEach(grid.data, function (item, j) {
                                 if (grid.rowCache[j]) {
-                                    if (!angular.equals(grid.rowCache[j].entity, item)) {
+                                    if (grid.rowCache[j].entity != item) {
                                         grid.rowCache[j].entity = item;
                                         grid.rowCache[j].modelIndex = j;
                                         grid.rowCache[j].setSelection(false);
