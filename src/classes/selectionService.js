@@ -85,6 +85,7 @@ ng.SelectionService = function (grid, $scope) {
 					self.selectedItems.push(rowItem.entity);
 				}
 			}
+			rowItem.afterSelectionChange(rowItem);
 		}
     };
     // @return - boolean indicating if all items are selected or not

@@ -35,7 +35,6 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         } else {
             if (self.beforeSelectionChange(self, event)) {
                 self.continueSelection(event);
-                return self.afterSelectionChange(self, event);
             }
         }
         return false;
