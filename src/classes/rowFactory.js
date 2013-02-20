@@ -83,18 +83,26 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
             return !e[NG_HIDDEN];
         });
         self.totalRows = temp.length;
-        angular.forEach(temp, function (row, i) {
-            row.offsetTop = i * grid.config.rowHeight;
-        });
-        var rowArr = temp.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
+        var rowArr = [];
+        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
+            if (temp[i]) {
+                temp[i].index = i;
+                temp[i].offsetTop = i * grid.config.rowHeight;
+                rowArr.push(temp[i]);
+            }
+        }
         grid.setRenderedRows(rowArr);
     };
 
     self.renderedChangeNoGroups = function () {
-        var rowArr = grid.filteredRows.slice(self.renderedRange.topRow, self.renderedRange.bottomRow);
-        angular.forEach(rowArr, function(row) {
-            row.offsetTop = grid.filteredRows.indexOf(row) * grid.config.rowHeight;
-        });
+        var rowArr = [];
+        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
+            if (grid.filteredRows[i]) {
+                grid.filteredRows[i].index = i;
+                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
+                rowArr.push(grid.filteredRows[i]);
+            }
+        }
         grid.setRenderedRows(rowArr);
     };
 

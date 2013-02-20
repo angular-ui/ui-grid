@@ -11,7 +11,6 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
-    self.modelIndex = 0;
     self.selectionService = selectionService;
 	self.selected = null;
     self.cursor = canSelectRows ? 'pointer' : 'default';
