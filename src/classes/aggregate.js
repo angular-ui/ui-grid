@@ -43,7 +43,7 @@ ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
             if (self.children[i]) {
                 self.children[i][NG_HIDDEN] = self.collapsed;
             }
-            if (i > self.aggIndex) {
+            if (i > self.aggIndex && rowFactory.aggCache[i]) {
                 var agg = rowFactory.aggCache[i];
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/21/2013 14:58:48
+* Compiled At: 02/21/2013 15:07:06
 ***********************************************/
 
 (function(window) {
@@ -731,7 +731,7 @@ ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
             if (self.children[i]) {
                 self.children[i][NG_HIDDEN] = self.collapsed;
             }
-            if (i > self.aggIndex) {
+            if (i > self.aggIndex && rowFactory.aggCache[i]) {
                 var agg = rowFactory.aggCache[i];
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
@@ -1648,6 +1648,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     //self funcs
     self.setRenderedRows = function (newRows) {
+        $scope.renderedRows.length = newRows.length;
         for (var i = 0; i < newRows.length; i++) {
             if (!$scope.renderedRows[i] || ((newRows[i].isAggRow || $scope.renderedRows[i].isAggRow) && $scope.renderedRows[i].entity != newRows[i].entity)) {
                 $scope.renderedRows[i] = newRows[i].copy();
