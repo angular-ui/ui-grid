@@ -1,2 +1,2 @@
 <!--ng.rowTemplate-->
-<div ng-style="{'cursor': row.cursor, 'z-index': col.zIndex() }" ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div>
+<div ng-style="{'cursor': row.cursor, 'z-index': col.zIndex() }" ng-repeat="col in renderedColumns" class="ngCell col{{col.index}} {{col.cellClass}}" ng-cell></div>

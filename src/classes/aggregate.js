@@ -4,10 +4,10 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
-ng.Aggregate = function (aggEntity, rowFactory, config) {
+ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
     var self = this;
     self.rowIndex = 0;
-    self.offsetTop = self.rowIndex * config.rowHeight;
+    self.offsetTop = self.rowIndex * rowHeight;
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
@@ -22,6 +22,9 @@ ng.Aggregate = function (aggEntity, rowFactory, config) {
     self.aggLabelFilter = aggEntity.aggLabelFilter;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
+        if (self.orig) {
+            self.orig.collapsed = self.collapsed;
+        }
         self.notifyChildren();
     };
     self.setExpand = function(state) {
@@ -71,5 +74,10 @@ ng.Aggregate = function (aggEntity, rowFactory, config) {
         } else {
             return self.children.length;
         }
+    };
+    self.copy = function () {
+        var ret = new ng.Aggregate(self.entity, rowFactory, rowHeight);
+        ret.orig = self;
+        return ret;
     };
 };

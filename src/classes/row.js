@@ -59,4 +59,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
     };
+    self.copy = function() {
+        return new ng.Row(entity, config, selectionService, rowIndex);
+    };
 };

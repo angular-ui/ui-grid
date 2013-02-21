@@ -208,8 +208,18 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         rootMaxH: 0
     };
     //self funcs
-    self.setRenderedRows = function(newRows) {
-        $scope.renderedRows = newRows;
+    self.setRenderedRows = function (newRows) {
+        for (var i = 0; i < newRows.length; i++) {
+            if (!$scope.renderedRows[i] || ((newRows[i].isAggRow || $scope.renderedRows[i].isAggRow) && $scope.renderedRows[i].entity != newRows[i].entity)) {
+                $scope.renderedRows[i] = newRows[i].copy();
+                $scope.renderedRows[i].collapsed = newRows[i].collapsed;
+            } else {
+                $scope.renderedRows[i].entity = newRows[i].entity;
+                $scope.renderedRows[i].selected = newRows[i].selected;
+            }
+            $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
+            $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+        }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
     };
@@ -407,6 +417,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
             self.sortData(self.config.sortInfo.column);
         }
+        $scope.adjustScrollLeft(0);
     };
    
     self.resizeOnData = function(col) {
@@ -485,6 +496,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.elementsNeedMeasuring = true;
     $scope.columns = [];
     $scope.renderedRows = [];
+    $scope.renderedColumns = [];
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
@@ -525,23 +537,44 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
-    $scope.adjustScrollLeft = function (scrollLeft) {
-        var pinnedCols = $scope.visibleColumns().filter(function(col) {
-            return col.pinned;
-        });
-        if (pinnedCols.length > 0) {
-            var totalLeft = 0;
-            angular.forEach(pinnedCols, function (col, i) {
-                var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                var elems = $("." + self.gridId + ' .col' + col.index);
-                elems.css('left', newLeft);
-                totalLeft += col.width;
-            });
-        }
 
+    self.prevscrollLeft = 0;
+    $scope.adjustScrollLeft = function (scrollLeft) {
         if (self.$headerContainer) {
             self.$headerContainer.scrollLeft(scrollLeft);
         }
+        var colwidths = 0,
+            totalLeft = 0,
+            x = $scope.columns.length;
+        var r = 0;
+        var addCol = function(c) {
+            if (!$scope.renderedColumns[r]) {
+                $scope.renderedColumns[r] = c.copy();
+            } else {
+                $scope.renderedColumns[r].setVars(c);
+            }
+            r++;
+        };
+        for (var i = 0; i < x; i++) {
+            var col = $scope.columns[i];
+            if (col.visible) {
+                var w = col.width + colwidths;
+                if (col.pinned) {
+                    addCol(col);
+                    var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
+                    var elems = $("." + self.gridId + ' .col' + col.index);
+                    elems.css('left', newLeft);
+                    totalLeft += col.width;
+                } else {
+                    if (w > scrollLeft) {
+                        if (colwidths < scrollLeft + self.rootDim.outerWidth) {
+                            addCol(col);
+                        }
+                    }
+                }
+                colwidths += col.width;
+            }
+        } 
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;

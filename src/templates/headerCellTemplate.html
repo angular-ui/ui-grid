@@ -1,6 +1,6 @@
 <!--ng.headerCellTemplate-->
 <div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{'cursor': col.cursor}" ng-class="{ 'ngSorted': !noSortVisible }">
-    <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>
+    <div class="ngHeaderText colt{{col.index}}">{{col.displayName}}</div>
     <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>
     <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>
     <div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div>

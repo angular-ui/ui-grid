@@ -40,7 +40,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self, self.rowConfig, rowIndex);
+            agg = new ng.Aggregate(aggEntity, self, self.rowConfig.rowHeight);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
@@ -86,7 +86,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (temp[i]) {
-                temp[i].index = i;
+                temp[i].rowIndex = i;
                 temp[i].offsetTop = i * grid.config.rowHeight;
                 rowArr.push(temp[i]);
             }
@@ -98,7 +98,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (grid.filteredRows[i]) {
-                grid.filteredRows[i].index = i;
+                grid.filteredRows[i].rowIndex = i;
                 grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
                 rowArr.push(grid.filteredRows[i]);
             }
