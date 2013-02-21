@@ -121,12 +121,12 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
     //magical recursion. it works. I swear it. I figured it out in the shower one day.
     self.parseGroupData = function(g) {
         if (g.values) {
-            angular.forEach(g.values, function(item) {
+            for (var x = 0; x < g.values.length; x++){
                 // get the last parent in the array because that's where our children want to be
-                self.parentCache[self.parentCache.length - 1].children.push(item);
+                self.parentCache[self.parentCache.length - 1].children.push(g.values[x]);
                 //add the row to our return array
-                self.parsedData.push(item);
-            });
+                self.parsedData.push(g.values[x]);
+            }
         } else {
             for (var prop in g) {
                 // exclude the meta properties.
@@ -173,12 +173,27 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var maxDepth = groups.length;
         var cols = $scope.columns;
 
-        angular.forEach(rows, function (item) {
-            var model = item.entity;
+        for (var x = 0; x < rows.length; x++){
+            var model = rows[x].entity;
             if (!model) return;
-            item[NG_HIDDEN] = true;
+            rows[x][NG_HIDDEN] = true;
             var ptr = self.groupedData;
-            angular.forEach(groups, function(group, depth) {
+            for (var y = 0; y < groups.length; y++) {
+                if (!cols[y].isAggCol && y <= maxDepth) {
+                    cols.splice(0, 0, new ng.Column({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                            pinned: grid.config.pinSelectionCheckbox
+                        },
+                        isAggCol: true,
+                        headerRowHeight: grid.config.headerRowHeight
+                    }));
+                }
+                var group = groups[y];
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
@@ -191,42 +206,19 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                     ptr[NG_FIELD] = group;
                 }
                 if (!ptr[NG_DEPTH]) {
-                    ptr[NG_DEPTH] = depth;
+                    ptr[NG_DEPTH] = y;
                 }
                 if (!ptr[NG_COLUMN]) {
                     ptr[NG_COLUMN] = col;
                 }
                 ptr = ptr[val];
-            });
+            }
             if (!ptr.values) {
                 ptr.values = [];
             }
-            ptr.values.push(item);
-        });
-		//moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
-		angular.forEach(groups, function(group, depth) {
-			if (!cols[depth].isAggCol && depth <= maxDepth) {
-				cols.splice(0, 0, new ng.Column({
-					colDef: {
-						field: '',
-						width: 25,
-						sortable: false,
-						resizable: false,
-						headerCellTemplate: '<div class="ngAggHeader"></div>',
-						pinned: grid.config.pinSelectionCheckbox
-					},
-					isAggCol: true,
-					headerRowHeight: grid.config.headerRowHeight
-				}));
-			}
-		});
+            ptr.values.push(rows[x]);
+        };
 		domUtilityService.BuildStyles($scope, grid, true);
-		for (var i = 0; i < $scope.columns.length; i++) {
-		    if (!$scope.columns[i].pinned) {
-		        break;
-		    }
-		    $('.col' + i).css('left', "");
-		}
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);

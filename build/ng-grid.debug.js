@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/21/2013 13:06:57
+* Compiled At: 02/21/2013 14:41:16
 ***********************************************/
 
 (function(window) {
@@ -718,27 +718,24 @@ ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
         self.collapsed = state;
         self.notifyChildren();
     };
-    self.notifyChildren = function() {
-        angular.forEach(self.aggChildren, function(child) {
-            child.entity[NG_HIDDEN] = self.collapsed;
-            if (self.collapsed) {
-                child.setExpand(self.collapsed);
-            }
-        });
-        angular.forEach(self.children, function(child) {
-            child[NG_HIDDEN] = self.collapsed;
-        });
-        var foundMyself = false;
-        angular.forEach(rowFactory.aggCache, function(agg, i) {
-            if (foundMyself) {
-                var offset = (30 * self.children.length);
-                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
-            } else {
-                if (i == self.aggIndex) {
-                    foundMyself = true;
+    self.notifyChildren = function () {
+        var longest = Math.max(rowFactory.aggCache.length, self.children.length);
+        for (var i = 0; i < longest; i++) {
+            if (self.aggChildren[i]) {
+                self.aggChildren[i].entity[NG_HIDDEN] = self.collapsed;
+                if (self.collapsed) {
+                    self.aggChildren[i].setExpand(self.collapsed);
                 }
             }
-        });
+            if (self.children[i]) {
+                self.children[i][NG_HIDDEN] = self.collapsed;
+            }
+            if (i > self.aggIndex) {
+                var agg = rowFactory.aggCache[i];
+                var offset = (30 * self.children.length);
+                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
+            }
+        };
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
@@ -1335,12 +1332,12 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
     //magical recursion. it works. I swear it. I figured it out in the shower one day.
     self.parseGroupData = function(g) {
         if (g.values) {
-            angular.forEach(g.values, function(item) {
+            for (var x = 0; x < g.values.length; x++){
                 // get the last parent in the array because that's where our children want to be
-                self.parentCache[self.parentCache.length - 1].children.push(item);
+                self.parentCache[self.parentCache.length - 1].children.push(g.values[x]);
                 //add the row to our return array
-                self.parsedData.push(item);
-            });
+                self.parsedData.push(g.values[x]);
+            }
         } else {
             for (var prop in g) {
                 // exclude the meta properties.
@@ -1387,12 +1384,27 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var maxDepth = groups.length;
         var cols = $scope.columns;
 
-        angular.forEach(rows, function (item) {
-            var model = item.entity;
+        for (var x = 0; x < rows.length; x++){
+            var model = rows[x].entity;
             if (!model) return;
-            item[NG_HIDDEN] = true;
+            rows[x][NG_HIDDEN] = true;
             var ptr = self.groupedData;
-            angular.forEach(groups, function(group, depth) {
+            for (var y = 0; y < groups.length; y++) {
+                if (!cols[y].isAggCol && y <= maxDepth) {
+                    cols.splice(0, 0, new ng.Column({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                            pinned: grid.config.pinSelectionCheckbox
+                        },
+                        isAggCol: true,
+                        headerRowHeight: grid.config.headerRowHeight
+                    }));
+                }
+                var group = groups[y];
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
@@ -1405,42 +1417,19 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                     ptr[NG_FIELD] = group;
                 }
                 if (!ptr[NG_DEPTH]) {
-                    ptr[NG_DEPTH] = depth;
+                    ptr[NG_DEPTH] = y;
                 }
                 if (!ptr[NG_COLUMN]) {
                     ptr[NG_COLUMN] = col;
                 }
                 ptr = ptr[val];
-            });
+            }
             if (!ptr.values) {
                 ptr.values = [];
             }
-            ptr.values.push(item);
-        });
-		//moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
-		angular.forEach(groups, function(group, depth) {
-			if (!cols[depth].isAggCol && depth <= maxDepth) {
-				cols.splice(0, 0, new ng.Column({
-					colDef: {
-						field: '',
-						width: 25,
-						sortable: false,
-						resizable: false,
-						headerCellTemplate: '<div class="ngAggHeader"></div>',
-						pinned: grid.config.pinSelectionCheckbox
-					},
-					isAggCol: true,
-					headerRowHeight: grid.config.headerRowHeight
-				}));
-			}
-		});
+            ptr.values.push(rows[x]);
+        };
 		domUtilityService.BuildStyles($scope, grid, true);
-		for (var i = 0; i < $scope.columns.length; i++) {
-		    if (!$scope.columns[i].pinned) {
-		        break;
-		    }
-		    $('.col' + i).css('left', "");
-		}
         grid.fixColumnIndexes();
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
@@ -2292,9 +2281,11 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                 return filterFunc(row.entity);
             });
         }
-        angular.forEach(grid.filteredRows, function (row, i) {
-            row.rowIndex = i;
-        });
+        for (var i = 0; i < grid.filteredRows.length; i++)
+        {
+            grid.filteredRows[i].rowIndex = i;
+            
+        }
         grid.rowFactory.filteredRowsChanged();
     };
 
@@ -2330,8 +2321,8 @@ ng.SearchProvider = function ($scope, grid, $filter) {
             return;
         }
         var columnFilters = qStr.split(";");
-        angular.forEach(columnFilters, function (filter) {
-            var args = filter.split(':');
+        for (var i = 0; i < columnFilters.length; i++) {
+            var args = columnFilters[i].split(':');
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
                 var columnValue = $.trim(args[1]);
@@ -2351,7 +2342,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                     });
                 }
             }
-        });
+        };
     };
 	$scope.$watch(grid.config.filterOptions.filterText, function(a){
 		$scope.filterText = a;
@@ -2364,13 +2355,14 @@ ng.SearchProvider = function ($scope, grid, $filter) {
         }
 	});
     if (!self.extFilter) {
-        $scope.$watch('columns', function (a) {
-            angular.forEach(a, function (col) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
 				if(col.field)
 					self.fieldMap[col.field.split('.')[0]] = col;
 				if(col.displayName)
 					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-            });
+            };
         });
     }
 };
@@ -2476,16 +2468,17 @@ ng.SelectionService = function (grid, $scope) {
                     rows.push(rowsArr[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    angular.forEach(rows, function(ri) {
-						var selectionState = ri.selected;
+                    for (var i = 0; i < rows.length; i++) {
+                        var ri = rows[i];
+                        var selectionState = ri.selected;
                         ri.selected = !selectionState;
-						var index = self.selectedItems.indexOf(ri.entity);
+                        var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
                         } else {
-							self.selectedItems.splice(index,1);
-						}
-                    });
+                            self.selectedItems.splice(index, 1);
+                        }
+                    }
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
                 return true;
@@ -2533,14 +2526,14 @@ ng.SelectionService = function (grid, $scope) {
         if (grid.config.beforeSelectionChange(grid.rowCache)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
-                self.selectedItems.splice(0, selectedlength);
+                self.selectedItems.length = 0;
             }
-            angular.forEach(grid.filteredRows, function (row) {
-                row.selected = checkAll;
+            for (var i = 0; i < grid.filteredRows.length; i++) {
+                grid.filteredRows[i].selected = checkAll;
                 if (checkAll) {
-                    self.selectedItems.push(row.entity);
+                    self.selectedItems.push(grid.filteredRows[i].entity);
                 }
-            });
+            }
             grid.config.afterSelectionChange(grid.rowCache);
         }
     };
@@ -2821,33 +2814,36 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 /***********************************************
 * FILE: ..\src\directives\ng-viewport.js
 ***********************************************/
-ngGridDirectives.directive('ngViewport', [function () {
+ngGridDirectives.directive('ngViewport', [function() {
     return function($scope, elm) {
-		var isMouseWheelActive = false;
-		elm.bind('scroll', function (evt) {
-		    var scrollLeft = evt.target.scrollLeft,
+        var isMouseWheelActive = false;
+        var prevScollLeft = 0;
+        var prevScollTop = 0;
+        elm.bind('scroll', function(evt) {
+            var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
-		    if ($scope.$headerContainer) {
-		        $scope.$headerContainer.scrollLeft(scrollLeft);
-		    }
-		    $scope.$apply(function() {
-		        $scope.adjustScrollLeft(scrollLeft);
-		        $scope.adjustScrollTop(scrollTop);
-
-		    });
-			if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
-				$scope.domAccessProvider.focusCellElement($scope);
-			}
-			isMouseWheelActive = false;
-			return true;
-		});
-		elm.bind("mousewheel DOMMouseScroll", function(evt) {
-			isMouseWheelActive = true;
-			return true;
-		});
-		if(!$scope.enableCellSelection){
-			$scope.domAccessProvider.selectionHandlers($scope, elm);
-		}
+            if ($scope.$headerContainer) {
+                $scope.$headerContainer.scrollLeft(scrollLeft);
+            }
+            $scope.$apply(function () {
+                $scope.adjustScrollLeft(scrollLeft);
+                $scope.adjustScrollTop(scrollTop);
+            });
+            if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
+                $scope.domAccessProvider.focusCellElement($scope);
+            }
+            prevScollLeft = scrollLeft;
+            prevScollTop = prevScollTop;
+            isMouseWheelActive = false;
+            return true;
+        });
+        elm.bind("mousewheel DOMMouseScroll", function(evt) {
+            isMouseWheelActive = true;
+            return true;
+        });
+        if (!$scope.enableCellSelection) {
+            $scope.domAccessProvider.selectionHandlers($scope, elm);
+        }
     };
 }]);
 

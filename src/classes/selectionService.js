@@ -37,16 +37,17 @@ ng.SelectionService = function (grid, $scope) {
                     rows.push(rowsArr[prevIndx]);
                 }
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    angular.forEach(rows, function(ri) {
-						var selectionState = ri.selected;
+                    for (var i = 0; i < rows.length; i++) {
+                        var ri = rows[i];
+                        var selectionState = ri.selected;
                         ri.selected = !selectionState;
-						var index = self.selectedItems.indexOf(ri.entity);
+                        var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
                         } else {
-							self.selectedItems.splice(index,1);
-						}
-                    });
+                            self.selectedItems.splice(index, 1);
+                        }
+                    }
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
                 return true;
@@ -94,14 +95,14 @@ ng.SelectionService = function (grid, $scope) {
         if (grid.config.beforeSelectionChange(grid.rowCache)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
-                self.selectedItems.splice(0, selectedlength);
+                self.selectedItems.length = 0;
             }
-            angular.forEach(grid.filteredRows, function (row) {
-                row.selected = checkAll;
+            for (var i = 0; i < grid.filteredRows.length; i++) {
+                grid.filteredRows[i].selected = checkAll;
                 if (checkAll) {
-                    self.selectedItems.push(row.entity);
+                    self.selectedItems.push(grid.filteredRows[i].entity);
                 }
-            });
+            }
             grid.config.afterSelectionChange(grid.rowCache);
         }
     };

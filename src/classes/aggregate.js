@@ -31,27 +31,24 @@ ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
         self.collapsed = state;
         self.notifyChildren();
     };
-    self.notifyChildren = function() {
-        angular.forEach(self.aggChildren, function(child) {
-            child.entity[NG_HIDDEN] = self.collapsed;
-            if (self.collapsed) {
-                child.setExpand(self.collapsed);
-            }
-        });
-        angular.forEach(self.children, function(child) {
-            child[NG_HIDDEN] = self.collapsed;
-        });
-        var foundMyself = false;
-        angular.forEach(rowFactory.aggCache, function(agg, i) {
-            if (foundMyself) {
-                var offset = (30 * self.children.length);
-                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
-            } else {
-                if (i == self.aggIndex) {
-                    foundMyself = true;
+    self.notifyChildren = function () {
+        var longest = Math.max(rowFactory.aggCache.length, self.children.length);
+        for (var i = 0; i < longest; i++) {
+            if (self.aggChildren[i]) {
+                self.aggChildren[i].entity[NG_HIDDEN] = self.collapsed;
+                if (self.collapsed) {
+                    self.aggChildren[i].setExpand(self.collapsed);
                 }
             }
-        });
+            if (self.children[i]) {
+                self.children[i][NG_HIDDEN] = self.collapsed;
+            }
+            if (i > self.aggIndex) {
+                var agg = rowFactory.aggCache[i];
+                var offset = (30 * self.children.length);
+                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
+            }
+        };
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
