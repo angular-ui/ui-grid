@@ -31,6 +31,8 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$topPanel = grid.$root.find(".ngTopPanel");
         grid.$groupPanel = grid.$root.find(".ngGroupPanel");
         grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
+        $scope.$headerContainer = grid.$headerContainer;
+
         grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
         grid.$headers = grid.$headerScroller.children();
         //Viewport
@@ -39,6 +41,12 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
+        
+        $scope.$watch(function () {
+            return grid.$viewport.scrollLeft();
+        }, function (newLeft) {
+            return grid.$headerContainer.scrollLeft(newLeft);
+        });
         domUtilityService.UpdateGridLayout($scope, grid);
     };
     domUtilityService.getRealWidth = function (obj) {

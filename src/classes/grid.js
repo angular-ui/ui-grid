@@ -417,7 +417,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
             self.sortData(self.config.sortInfo.column);
         }
-        $scope.adjustScrollLeft(0);
     };
    
     self.resizeOnData = function(col) {
@@ -537,30 +536,17 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
-
-    self.prevscrollLeft = 0;
     $scope.adjustScrollLeft = function (scrollLeft) {
-        if (self.$headerContainer) {
-            self.$headerContainer.scrollLeft(scrollLeft);
-        }
         var colwidths = 0,
             totalLeft = 0,
-            x = $scope.columns.length;
-        var r = 0;
-        var addCol = function(c) {
-            if (!$scope.renderedColumns[r]) {
-                $scope.renderedColumns[r] = c.copy();
-            } else {
-                $scope.renderedColumns[r].setVars(c);
-            }
-            r++;
-        };
+            x = $scope.columns.length,
+            newCols = [];
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible) {
                 var w = col.width + colwidths;
                 if (col.pinned) {
-                    addCol(col);
+                    newCols.push(col);
                     var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
                     var elems = $("." + self.gridId + ' .col' + col.index);
                     elems.css('left', newLeft);
@@ -568,13 +554,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 } else {
                     if (w > scrollLeft) {
                         if (colwidths < scrollLeft + self.rootDim.outerWidth) {
-                            addCol(col);
+                            newCols.push(col);
                         }
                     }
                 }
                 colwidths += col.width;
             }
-        } 
+        }
+        $scope.renderedColumns = newCols;
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;

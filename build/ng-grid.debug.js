@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/20/2013 21:32:48
+* Compiled At: 02/21/2013 13:06:57
 ***********************************************/
 
 (function(window) {
@@ -542,6 +542,8 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$topPanel = grid.$root.find(".ngTopPanel");
         grid.$groupPanel = grid.$root.find(".ngGroupPanel");
         grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
+        $scope.$headerContainer = grid.$headerContainer;
+
         grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
         grid.$headers = grid.$headerScroller.children();
         //Viewport
@@ -550,6 +552,12 @@ ngGridServices.factory('DomUtilityService', function() {
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
+        
+        $scope.$watch(function () {
+            return grid.$viewport.scrollLeft();
+        }, function (newLeft) {
+            return grid.$headerContainer.scrollLeft(newLeft);
+        });
         domUtilityService.UpdateGridLayout($scope, grid);
     };
     domUtilityService.getRealWidth = function (obj) {
@@ -673,7 +681,7 @@ ng.aggregateTemplate = function(){ return '<div ng-click="row.toggleExpand()" ng
 /***********************************************
 * FILE: ..\src\templates\headerRowTemplate.html
 ***********************************************/
-ng.headerRowTemplate = function(){ return '<div ng-style="{\'z-index\': col.zIndex()}" ng-repeat="col in renderedColumns" class="ngHeaderCell col{{col.index}}" ng-header-cell></div>';};
+ng.headerRowTemplate = function(){ return '<div ng-style="{\'z-index\': col.zIndex(), height: col.headerRowHeight}" ng-repeat="col in renderedColumns" class="ngHeaderCell col{{col.index}}" ng-header-cell></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\headerCellTemplate.html
@@ -1131,33 +1139,6 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         event.target.parentElement.style.cursor = 'default';
         domUtilityService.digest($scope);
         return false;
-    };
-    self.copy = function () {
-        return new ng.Column(config, $scope, grid, domUtilityService);
-    };
-    self.setVars = function(fromCol) {
-        self.width = fromCol.width;
-        self.groupIndex = fromCol.groupIndex;
-        self.isGroupedBy = fromCol.isGroupedBy;
-        self.displayName = fromCol.displayName;
-        self.index = fromCol.index;
-        self.isAggCol = fromCol.isAggCol;
-        self.cellClass = fromCol.cellClass;
-        self.cellFilter = fromCol.cellFilter;
-        self.field = fromCol.field;
-        self.aggLabelFilter = fromCol.aggLabelFilter;
-        self.visible = fromCol.visible;
-        self.sortable = fromCol.sortable;
-        self.resizable = fromCol.resizable;
-        self.pinnable = fromCol.pinnable;
-        self.pinned = fromCol.pinned;
-        self.originalIndex = fromCol.originalIndex;
-        self.sortDirection = fromCol.sortDirection;
-        self.sortingAlgorithm = fromCol.sortingAlgorithm;
-        self.headerClass = fromCol.headerClass;
-        self.headerCellTemplate = fromCol.headerCellTemplate;
-        self.cellTemplate = fromCol.cellTemplate;
-        self.focusedCellEditTemplate = fromCol.focusedCellEditTemplate;
     };
 };
 
@@ -1885,7 +1866,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
             self.sortData(self.config.sortInfo.column);
         }
-        $scope.adjustScrollLeft(0);
     };
    
     self.resizeOnData = function(col) {
@@ -2005,30 +1985,17 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
-
-    self.prevscrollLeft = 0;
     $scope.adjustScrollLeft = function (scrollLeft) {
-        if (self.$headerContainer) {
-            self.$headerContainer.scrollLeft(scrollLeft);
-        }
         var colwidths = 0,
             totalLeft = 0,
-            x = $scope.columns.length;
-        var r = 0;
-        var addCol = function(c) {
-            if (!$scope.renderedColumns[r]) {
-                $scope.renderedColumns[r] = c.copy();
-            } else {
-                $scope.renderedColumns[r].setVars(c);
-            }
-            r++;
-        };
+            x = $scope.columns.length,
+            newCols = [];
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible) {
                 var w = col.width + colwidths;
                 if (col.pinned) {
-                    addCol(col);
+                    newCols.push(col);
                     var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
                     var elems = $("." + self.gridId + ' .col' + col.index);
                     elems.css('left', newLeft);
@@ -2036,13 +2003,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 } else {
                     if (w > scrollLeft) {
                         if (colwidths < scrollLeft + self.rootDim.outerWidth) {
-                            addCol(col);
+                            newCols.push(col);
                         }
                     }
                 }
                 colwidths += col.width;
             }
-        } 
+        }
+        $scope.renderedColumns = newCols;
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -2731,7 +2699,10 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
 					$scope.$on('ngGridEventDigestGridParent', function(){
 						domUtilityService.digest($scope.$parent);
 					});
-
+                    // set up the columns 
+                    $scope.$evalAsync(function() {
+                        $scope.adjustScrollLeft(0);
+                    });
                     return null;
                 }
             };
@@ -2854,12 +2825,16 @@ ngGridDirectives.directive('ngViewport', [function () {
     return function($scope, elm) {
 		var isMouseWheelActive = false;
 		elm.bind('scroll', function (evt) {
-			$scope.$apply(function(){
-		        var scrollLeft = evt.target.scrollLeft,
-		            scrollTop = evt.target.scrollTop;
+		    var scrollLeft = evt.target.scrollLeft,
+                scrollTop = evt.target.scrollTop;
+		    if ($scope.$headerContainer) {
+		        $scope.$headerContainer.scrollLeft(scrollLeft);
+		    }
+		    $scope.$apply(function() {
 		        $scope.adjustScrollLeft(scrollLeft);
 		        $scope.adjustScrollTop(scrollTop);
-			});
+
+		    });
 			if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
 				$scope.domAccessProvider.focusCellElement($scope);
 			}

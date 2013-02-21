@@ -115,7 +115,10 @@
 					$scope.$on('ngGridEventDigestGridParent', function(){
 						domUtilityService.digest($scope.$parent);
 					});
-
+                    // set up the columns 
+                    $scope.$evalAsync(function() {
+                        $scope.adjustScrollLeft(0);
+                    });
                     return null;
                 }
             };
