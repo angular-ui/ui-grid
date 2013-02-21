@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/21/2013 14:41:16
+* Compiled At: 02/21/2013 14:58:48
 ***********************************************/
 
 (function(window) {
@@ -618,11 +618,12 @@ ngGridServices.factory('DomUtilityService', function() {
         }
     };
 	
-	domUtilityService.RebuildGrid = function($scope,grid){
+	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
 		if (grid.config.maintainColumnRatios) {
 			grid.configureColumnWidths();
 		}
+		$scope.adjustScrollLeft(grid.$viewport.scrollLeft());
 		domUtilityService.BuildStyles($scope, grid, true);
 	};
 
@@ -1559,7 +1560,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         },
         
         //Array of plugin functions to register in ng-grid
-        pinSelectionCheckbox: true,
+        pinSelectionCheckbox: false,
 
         //Array of plugin functions to register in ng-grid
         plugins: [],
@@ -2068,6 +2069,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         } else {
             $scope.removeGroup(indx);
         }
+        self.$viewport.scrollTop(0);
     };
     $scope.removeGroup = function(index) {
         var col = $scope.columns.filter(function(item) {

@@ -107,11 +107,12 @@ ngGridServices.factory('DomUtilityService', function() {
         }
     };
 	
-	domUtilityService.RebuildGrid = function($scope,grid){
+	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
 		if (grid.config.maintainColumnRatios) {
 			grid.configureColumnWidths();
 		}
+		$scope.adjustScrollLeft(grid.$viewport.scrollLeft());
 		domUtilityService.BuildStyles($scope, grid, true);
 	};
 

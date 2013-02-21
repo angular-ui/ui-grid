@@ -121,7 +121,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         },
         
         //Array of plugin functions to register in ng-grid
-        pinSelectionCheckbox: true,
+        pinSelectionCheckbox: false,
 
         //Array of plugin functions to register in ng-grid
         plugins: [],
@@ -630,6 +630,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         } else {
             $scope.removeGroup(indx);
         }
+        self.$viewport.scrollTop(0);
     };
     $scope.removeGroup = function(index) {
         var col = $scope.columns.filter(function(item) {
