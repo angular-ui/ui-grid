@@ -7,7 +7,7 @@ angular.module('myApp.directives', [])
 					attrs.scrollto = attrs.href;
 				}
 				var top = $(attrs.scrollto).offset().top - 25;
-				$('body').animate({ scrollTop: top }, 800);
+				$(jQuery.browser.webkit ? 'body': 'html').animate({ scrollTop: top }, 800);
 			});
 		};
 	}]);
