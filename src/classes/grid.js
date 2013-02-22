@@ -53,6 +53,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enable or disable resizing of columns
         enableColumnReordering: true,
 
+        //Enable or disable resizing of columns
+        enableColumnHeavyVirt: false,
+
         //Enables the server-side paging feature
         enablePaging: false,
 
@@ -167,10 +170,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         virtualizationThreshold: 50
     },
         self = this;
-
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, window.ngGrid.config, options);
+
+    // override conflicting settings
+    self.config.displaySelectionCheckbox = self.config.enablePinning = self.config.enableColumnHeavyVirt === false;
+    self.config.selectWithCheckboxOnly = self.config.displaySelectionCheckbox !== true;
+    self.config.pinSelectionCheckbox = self.config.enablePinning;
+
     if (typeof options.columnDefs == "string") {
         self.config.columnDefs = $scope.$eval(options.columnDefs);
     }
@@ -543,17 +551,21 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         var colwidths = 0,
             totalLeft = 0,
             x = $scope.columns.length,
-            newCols = [];
+            newCols = [],
+            dcv = !self.config.enableColumnHeavyVirt;
         var r = 0;
-        var addCol = function(c) {
-            if (!$scope.renderedColumns[r]) {
-                $scope.renderedColumns[r] = c.copy();
+        var addCol = function (c) {
+            if (dcv) {
+                newCols.push(c);
             } else {
-                $scope.renderedColumns[r].setVars(c);
+                if (!$scope.renderedColumns[r]) {
+                    $scope.renderedColumns[r] = c.copy();
+                } else {
+                    $scope.renderedColumns[r].setVars(c);
+                }
+                r++;
             }
-            r++;
         };
-
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible) {
@@ -573,6 +585,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 }
                 colwidths += col.width;
             }
+        }
+        if (dcv) {
+            $scope.renderedColumns = newCols;
         }
     };
     self.prevScrollTop = 0;

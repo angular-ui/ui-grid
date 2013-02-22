@@ -90,7 +90,7 @@ function userController($scope) {
         headerRowHeight: '60',
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
-		enableCellSelection: false,
+		enableCellSelection: true,
 		enablePaging: true,
         enableVirtualization: false,
         canSelectRows: true,

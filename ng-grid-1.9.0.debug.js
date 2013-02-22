@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/21/2013 17:47:17
+* Compiled At: 02/21/2013 22:25:16
 ***********************************************/
 
 (function(window) {
@@ -670,7 +670,7 @@ ng.checkboxHeaderTemplate = function(){ return '<input class="ngSelectionHeader"
 /***********************************************
 * FILE: ..\src\templates\editableCellTemplate.html
 ***********************************************/
-ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'colt\' + col.index" ng-model="COL_FIELD" />';};
+ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'colt\' + col.index" ng-input="COL_FIELD" />';};
 
 /***********************************************
 * FILE: ..\src\templates\focusedCellEditTemplate.html
@@ -1530,6 +1530,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enable or disable resizing of columns
         enableColumnReordering: true,
 
+        //Enable or disable resizing of columns
+        enableColumnHeavyVirt: false,
+
         //Enables the server-side paging feature
         enablePaging: false,
 
@@ -1644,10 +1647,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         virtualizationThreshold: 50
     },
         self = this;
-
     self.maxCanvasHt = 0;
     //self vars
     self.config = $.extend(defaults, window.ngGrid.config, options);
+
+    // override conflicting settings
+    self.config.displaySelectionCheckbox = self.config.enablePinning = self.config.enableColumnHeavyVirt === false;
+    self.config.selectWithCheckboxOnly = self.config.displaySelectionCheckbox !== true;
+    self.config.pinSelectionCheckbox = self.config.enablePinning;
+
     if (typeof options.columnDefs == "string") {
         self.config.columnDefs = $scope.$eval(options.columnDefs);
     }
@@ -2020,17 +2028,21 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         var colwidths = 0,
             totalLeft = 0,
             x = $scope.columns.length,
-            newCols = [];
+            newCols = [],
+            dcv = !self.config.enableColumnHeavyVirt;
         var r = 0;
-        var addCol = function(c) {
-            if (!$scope.renderedColumns[r]) {
-                $scope.renderedColumns[r] = c.copy();
+        var addCol = function (c) {
+            if (dcv) {
+                newCols.push(c);
             } else {
-                $scope.renderedColumns[r].setVars(c);
+                if (!$scope.renderedColumns[r]) {
+                    $scope.renderedColumns[r] = c.copy();
+                } else {
+                    $scope.renderedColumns[r].setVars(c);
+                }
+                r++;
             }
-            r++;
         };
-
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible) {
@@ -2050,6 +2062,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 }
                 colwidths += col.width;
             }
+        }
+        if (dcv) {
+            $scope.renderedColumns = newCols;
         }
     };
     self.prevScrollTop = 0;
@@ -2791,15 +2806,15 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-					var html;
+                    var html;
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
 					if($scope.col.enableFocusedCellEdit){
 						html =  $scope.col.focusedCellEditTemplate;
-						html = html.replace(DISPLAY_CELL_TEMPLATE, $scope.col.cellTemplate);
-						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate);
+						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "'row.entity.' + col.field"));
 					} else {
-						html = $scope.col.cellTemplate;
+					    html = cellTemplate;
 					}
-                    html = html.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
 					var cellElement = $compile(html)($scope);
 					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
 						cellElement[0].setAttribute('tabindex', 0);
@@ -2856,6 +2871,22 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
         }
     };
     return ngHeaderCell;
+}]);
+
+/***********************************************
+* FILE: ..\src\directives\ng-input.js
+***********************************************/
+ngGridDirectives.directive('ngInput',['$parse', function($parse) {
+    return function ($scope, elm, attrs) {
+        var getter = $parse(attrs.ngInput);
+        $scope.$watch(getter, function (newVal) {
+            elm.val($scope.$eval(newVal));
+        });
+        elm.bind('blur', function() {
+            var newVal = elm.val();
+            $scope.$apply(getter($scope) + "= '" + newVal + "'");
+        });
+    };
 }]);
 
 /***********************************************
