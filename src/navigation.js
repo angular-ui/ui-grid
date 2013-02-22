@@ -4,7 +4,7 @@
 /// <reference path="../src/namespace.js" />
 /// <reference path="../src/utils.jsjs" />
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
+ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
@@ -34,8 +34,8 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 		return true;
 	}	
 	
-    var items = $scope.renderedRows;
-    var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
+	var items = grid.filteredRows;
+    var index = $scope.selectionService.lastClickedRow.rowIndex + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }

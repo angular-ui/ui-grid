@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 13:56:38
+* Compiled At: 02/22/2013 15:53:03
 ***********************************************/
 
 (function(window) {
@@ -45,7 +45,7 @@ var TEMPLATE_REGEXP = /<.+>/;
 * FILE: ..\src\navigation.js
 ***********************************************/
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
+ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
@@ -75,8 +75,8 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
 		return true;
 	}	
 	
-    var items = $scope.renderedRows;
-    var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
+	var items = grid.filteredRows;
+    var index = $scope.selectionService.lastClickedRow.rowIndex + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
@@ -1886,7 +1886,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.init = function() {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self, $scope);
-		$scope.domAccessProvider = new ng.DomAccessProvider(domUtilityService);
+		$scope.domAccessProvider = new ng.DomAccessProvider(self);
 		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -2286,10 +2286,10 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         return ng.utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        var ret = new ng.Row(entity, config, selectionService, rowIndex);
-        ret.isClone = true;
-        self.clone = ret;
-        return ret;
+        self.clone = new ng.Row(entity, config, selectionService, rowIndex);
+        self.clone.isClone = true;
+        self.clone.elm = self.elm;
+        return self.clone;
     };
     self.setVars = function (fromRow) {
         fromRow.clone = self;
@@ -2456,7 +2456,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 /***********************************************
 * FILE: ..\src\classes\domAccessProvider.js
 ***********************************************/
-ng.DomAccessProvider = function(domUtilityService) {	
+ng.DomAccessProvider = function(grid) {	
 	var self = this, previousColumn;
 	self.inputSelection = function(elm){
 		var node = elm.nodeName.toLowerCase();
@@ -2466,9 +2466,10 @@ ng.DomAccessProvider = function(domUtilityService) {
 	};
 	
 	self.focusCellElement = function($scope, index){	
-		var columnIndex = index != undefined ? index : previousColumn;
-		if(columnIndex != undefined && $scope.selectionService.lastClickedRow.elm){
-			var columns = angular.element($scope.selectionService.lastClickedRow.elm[0].children).filter(function() { return this.nodeType != 8 }); //Remove html comments for IE8
+	    var columnIndex = index != undefined ? index : previousColumn;
+	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
+	    if (columnIndex != undefined && elm) {
+	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8 }); //Remove html comments for IE8
 			var nextFocusedCellElement = columns[columnIndex];
 			nextFocusedCellElement.children[0].focus();
 			self.inputSelection(nextFocusedCellElement);
@@ -2497,7 +2498,7 @@ ng.DomAccessProvider = function(domUtilityService) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, domUtilityService);
+				var ret = ng.moveSelectionHandler($scope, elm, evt, grid);
 				doingKeyDown = false;
 				return ret;
 			}
@@ -2524,7 +2525,8 @@ ng.SelectionService = function (grid, $scope) {
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
 
     // function to manage the selection action of a data item (entity)
-    self.ChangeSelection = function(rowItem, evt) {
+    self.ChangeSelection = function (r, evt) {
+        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -2575,10 +2577,6 @@ ng.SelectionService = function (grid, $scope) {
         } else if (!self.multi) {
             if (self.lastClickedRow) {
 				self.setSelection(self.lastClickedRow, false);
-				if(self.lastClickedRow == rowItem){ 
-					self.lastClickedRow = undefined; //deselect row
-					return true;
-				}
             }
 		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
         } else if (!evt.keyCode) {
@@ -2589,9 +2587,13 @@ ng.SelectionService = function (grid, $scope) {
     };
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
-    self.setSelection = function(rowItem, isSelected) {
+    self.setSelection = function (r, isSelected) {
+        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
 		if(grid.config.canSelectRows){
-			rowItem.selected = isSelected;
+		    rowItem.selected = isSelected;
+		    if (rowItem.clone) {
+		        rowItem.clone.selected = isSelected;
+		    }
 			if (!isSelected) {
 				var indx = self.selectedItems.indexOf(rowItem.entity);
 				if(indx != -1){
@@ -2602,9 +2604,9 @@ ng.SelectionService = function (grid, $scope) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false);
 						rowItem.selected = isSelected;
-					    if (rowItem.clone) {
-					        rowItem.clone.selected = isSelected;
-					    }
+						if (rowItem.clone) {
+						    rowItem.clone.selected = isSelected;
+						}
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
@@ -2805,7 +2807,10 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-					$scope.row.elm = iElement;
+                    $scope.row.elm = iElement;
+                    if ($scope.row.clone) {
+                        $scope.row.clone.elm = iElement;
+                    }
                     if ($scope.row.isAggRow) {
                         var html = $scope.aggregateTemplate;
                         if ($scope.row.aggLabelFilter) {

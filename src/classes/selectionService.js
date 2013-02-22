@@ -7,7 +7,8 @@ ng.SelectionService = function (grid, $scope) {
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
 
     // function to manage the selection action of a data item (entity)
-    self.ChangeSelection = function(rowItem, evt) {
+    self.ChangeSelection = function (r, evt) {
+        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -58,10 +59,6 @@ ng.SelectionService = function (grid, $scope) {
         } else if (!self.multi) {
             if (self.lastClickedRow) {
 				self.setSelection(self.lastClickedRow, false);
-				if(self.lastClickedRow == rowItem){ 
-					self.lastClickedRow = undefined; //deselect row
-					return true;
-				}
             }
 		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
         } else if (!evt.keyCode) {
@@ -72,9 +69,13 @@ ng.SelectionService = function (grid, $scope) {
     };
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
-    self.setSelection = function(rowItem, isSelected) {
+    self.setSelection = function (r, isSelected) {
+        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
 		if(grid.config.canSelectRows){
-			rowItem.selected = isSelected;
+		    rowItem.selected = isSelected;
+		    if (rowItem.clone) {
+		        rowItem.clone.selected = isSelected;
+		    }
 			if (!isSelected) {
 				var indx = self.selectedItems.indexOf(rowItem.entity);
 				if(indx != -1){
@@ -85,9 +86,9 @@ ng.SelectionService = function (grid, $scope) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false);
 						rowItem.selected = isSelected;
-					    if (rowItem.clone) {
-					        rowItem.clone.selected = isSelected;
-					    }
+						if (rowItem.clone) {
+						    rowItem.clone.selected = isSelected;
+						}
 					}
 					self.selectedItems.push(rowItem.entity);
 				}

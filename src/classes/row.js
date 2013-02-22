@@ -60,10 +60,10 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         return ng.utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        var ret = new ng.Row(entity, config, selectionService, rowIndex);
-        ret.isClone = true;
-        self.clone = ret;
-        return ret;
+        self.clone = new ng.Row(entity, config, selectionService, rowIndex);
+        self.clone.isClone = true;
+        self.clone.elm = self.elm;
+        return self.clone;
     };
     self.setVars = function (fromRow) {
         fromRow.clone = self;

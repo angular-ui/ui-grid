@@ -94,7 +94,7 @@ function userController($scope) {
 		enablePaging: true,
         enableVirtualization: false,
         canSelectRows: true,
-		multiSelect: true,
+		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: false,
         plugins: [myplugin]
