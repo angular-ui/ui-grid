@@ -97,7 +97,7 @@ function userController($scope) {
 		multiSelect: true,
         enableRowReordering: true,
         showGroupPanel: false,
-        columnDefs: 'myDefs',
+        excludeProperties: ['name', 'age'],
         plugins: [myplugin]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },

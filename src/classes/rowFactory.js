@@ -57,6 +57,9 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
             grid.config.columnDefs = undefined;
             grid.buildColumns();
             grid.lateBoundColumns = false;
+            $scope.$evalAsync(function() {
+                $scope.adjustScrollLeft(0);
+            });
         }
         self.dataChanged = true;
         if (grid.config.groups.length > 0) {

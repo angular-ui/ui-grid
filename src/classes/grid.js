@@ -50,10 +50,10 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enable or disable resizing of columns
         enableColumnResize: true,
 
-        //Enable or disable resizing of columns
+        //Enable or disable reordering of columns
         enableColumnReordering: true,
 
-        //Enable or disable resizing of columns
+        //Enable or disable HEAVY column virtualization. This turns off selection checkboxes and column pinning and is designed for spreadsheet-like data.
         enableColumnHeavyVirt: false,
 
         //Enables the server-side paging feature
@@ -68,6 +68,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Enables or disables sorting in grid.
         enableSorting: true,
 
+        // string list of properties to exclude when auto-generating columns.
+        excludeProperties: [],
+        
         /* filterOptions -
         filterText: The text bound to the built-in search box. 
         useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.
@@ -254,10 +257,12 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         var item;
         item = self.data[0];
 
-        ng.utils.forIn(item, function(prop, propName) {
-            self.config.columnDefs.push({
-                field: propName
-            });
+        ng.utils.forIn(item, function (prop, propName) {
+            if (self.config.excludeProperties.indexOf(propName) == -1) {
+                self.config.columnDefs.push({
+                    field: propName
+                });
+            }
         });
     };
     self.buildColumns = function() {
