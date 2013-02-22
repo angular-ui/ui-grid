@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 07:50:02
+* Compiled At: 02/22/2013 13:56:38
 ***********************************************/
 
 (function(window) {
@@ -1147,9 +1147,13 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         return false;
     };
     self.copy = function() {
-        return new ng.Column(config, $scope, grid, domUtilityService);
+        var ret = new ng.Column(config, $scope, grid, domUtilityService);
+        ret.isClone = true;
+        ret.orig = self;
+        return ret;
     };
-    self.setVars = function(fromCol) {
+    self.setVars = function (fromCol) {
+        self.orig = fromCol;
         self.width = fromCol.width;
         self.groupIndex = fromCol.groupIndex;
         self.isGroupedBy = fromCol.isGroupedBy;
@@ -1708,8 +1712,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 $scope.renderedRows[i] = newRows[i].copy();
                 $scope.renderedRows[i].collapsed = newRows[i].collapsed;
             } else {
-                $scope.renderedRows[i].entity = newRows[i].entity;
-                $scope.renderedRows[i].selected = newRows[i].selected;
+                $scope.renderedRows[i].setVars(newRows[i]);
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
@@ -2282,8 +2285,16 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
     };
-    self.copy = function() {
-        return new ng.Row(entity, config, selectionService, rowIndex);
+    self.copy = function () {
+        var ret = new ng.Row(entity, config, selectionService, rowIndex);
+        ret.isClone = true;
+        self.clone = ret;
+        return ret;
+    };
+    self.setVars = function (fromRow) {
+        fromRow.clone = self;
+        self.entity = fromRow.entity;
+        self.selected = fromRow.selected;
     };
 };
 
@@ -2524,8 +2535,8 @@ ng.SelectionService = function (grid, $scope) {
                 } else {
                     rowsArr = grid.filteredRows;
                 }
-                var thisIndx = rowsArr.indexOf(rowItem);
-                var prevIndx = rowsArr.indexOf(self.lastClickedRow);
+                var thisIndx = rowItem.rowIndex;
+                var prevIndx = self.lastClickedRow.rowIndex;
                 self.lastClickedRow = rowItem;
                 if (thisIndx == prevIndx) {
                     return false;
@@ -2547,6 +2558,9 @@ ng.SelectionService = function (grid, $scope) {
                         var ri = rows[i];
                         var selectionState = ri.selected;
                         ri.selected = !selectionState;
+                        if (ri.clone) {
+                            ri.clone.selected = ri.selected;
+                        }
                         var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
@@ -2588,6 +2602,9 @@ ng.SelectionService = function (grid, $scope) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false);
 						rowItem.selected = isSelected;
+					    if (rowItem.clone) {
+					        rowItem.clone.selected = isSelected;
+					    }
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
@@ -2605,6 +2622,9 @@ ng.SelectionService = function (grid, $scope) {
             }
             for (var i = 0; i < grid.filteredRows.length; i++) {
                 grid.filteredRows[i].selected = checkAll;
+                if (grid.filteredRows[i].clone) {
+                    grid.filteredRows[i].clone.selected = checkAll;
+                }
                 if (checkAll) {
                     self.selectedItems.push(grid.filteredRows[i].entity);
                 }

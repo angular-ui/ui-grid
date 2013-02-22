@@ -227,8 +227,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 $scope.renderedRows[i] = newRows[i].copy();
                 $scope.renderedRows[i].collapsed = newRows[i].collapsed;
             } else {
-                $scope.renderedRows[i].entity = newRows[i].entity;
-                $scope.renderedRows[i].selected = newRows[i].selected;
+                $scope.renderedRows[i].setVars(newRows[i]);
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;

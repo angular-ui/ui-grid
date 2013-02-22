@@ -18,8 +18,8 @@ ng.SelectionService = function (grid, $scope) {
                 } else {
                     rowsArr = grid.filteredRows;
                 }
-                var thisIndx = rowsArr.indexOf(rowItem);
-                var prevIndx = rowsArr.indexOf(self.lastClickedRow);
+                var thisIndx = rowItem.rowIndex;
+                var prevIndx = self.lastClickedRow.rowIndex;
                 self.lastClickedRow = rowItem;
                 if (thisIndx == prevIndx) {
                     return false;
@@ -41,6 +41,9 @@ ng.SelectionService = function (grid, $scope) {
                         var ri = rows[i];
                         var selectionState = ri.selected;
                         ri.selected = !selectionState;
+                        if (ri.clone) {
+                            ri.clone.selected = ri.selected;
+                        }
                         var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
@@ -82,6 +85,9 @@ ng.SelectionService = function (grid, $scope) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false);
 						rowItem.selected = isSelected;
+					    if (rowItem.clone) {
+					        rowItem.clone.selected = isSelected;
+					    }
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
@@ -99,6 +105,9 @@ ng.SelectionService = function (grid, $scope) {
             }
             for (var i = 0; i < grid.filteredRows.length; i++) {
                 grid.filteredRows[i].selected = checkAll;
+                if (grid.filteredRows[i].clone) {
+                    grid.filteredRows[i].clone.selected = checkAll;
+                }
                 if (checkAll) {
                     self.selectedItems.push(grid.filteredRows[i].entity);
                 }

@@ -137,9 +137,13 @@
         return false;
     };
     self.copy = function() {
-        return new ng.Column(config, $scope, grid, domUtilityService);
+        var ret = new ng.Column(config, $scope, grid, domUtilityService);
+        ret.isClone = true;
+        ret.orig = self;
+        return ret;
     };
-    self.setVars = function(fromCol) {
+    self.setVars = function (fromCol) {
+        self.orig = fromCol;
         self.width = fromCol.width;
         self.groupIndex = fromCol.groupIndex;
         self.isGroupedBy = fromCol.isGroupedBy;
