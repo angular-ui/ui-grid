@@ -232,11 +232,11 @@
     top: 11px; 
     left: 6px;
 }
-input[type="checkbox"] {
+.ngGrid input[type="checkbox"] {
 	margin: 0;
 	padding: 0;
 }
-input {
+.ngGrid input {
 	vertical-align:top;
 }
 .ngSelectionCell{
