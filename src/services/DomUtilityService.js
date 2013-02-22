@@ -76,7 +76,7 @@ ngGridServices.factory('DomUtilityService', function() {
             $style = grid.$styleSheet,
             gridId = grid.gridId,
             css,
-            cols = $scope.visibleColumns(),
+            cols = $scope.columns,
             sumWidth = 0;
 
         if (!$style) {
@@ -90,12 +90,15 @@ ngGridServices.factory('DomUtilityService', function() {
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.scrollH + 2) + "px}";
-        angular.forEach(cols, function(col, i) {
-            css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
-                "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
-            sumWidth += col.width;
-        });
+            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
+        for (var i = 0; i < cols.length; i++) {
+            var col = cols[i];
+            if (col.visible) {
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                sumWidth += col.width;
+            }
+        };
         if (ng.utils.isIe) { // IE
             $style[0].styleSheet.cssText = css;
         } else {

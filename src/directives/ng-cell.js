@@ -12,7 +12,7 @@
 					} else {
 						html = $scope.col.cellTemplate;
 					}
-                    html = html.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
+                    html = html.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
 					var cellElement = $compile(html)($scope);
 					if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
 						cellElement[0].setAttribute('tabindex', 0);

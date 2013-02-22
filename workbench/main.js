@@ -61,7 +61,7 @@ function userController($scope) {
             myplugin.grid = grid;
             $scope.$watch(function () {
                 var searchQuery = "";
-                angular.forEach(myplugin.scope.visibleColumns(), function (col, i) {
+                angular.forEach(myplugin.scope.columns, function (col) {
                     if (col.filterText) {
                         searchQuery += col.field + ": " + col.filterText + "; ";
                     }

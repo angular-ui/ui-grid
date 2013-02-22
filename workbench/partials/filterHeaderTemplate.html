@@ -1,5 +1,5 @@
-<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{'cursor': col.cursor}" ng-class="{ 'ngSorted': !noSortVisible }">
-    <div class="ngHeaderText colt{{$index}}">{{col.displayName}}</div>
+<div class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{'cursor': col.cursor}" ng-class="{ 'ngSorted': !noSortVisible }">
+    <div ng-click="col.sort()"ng-class="'colt' + col.index" class="ngHeaderText">{{col.displayName}}</div>
     <div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div>
     <div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div>
     <div class="ngPinner" ng-click="togglePin(col)" ng-show="col.pinnable">{{col.pinned | checkmark}}</div>

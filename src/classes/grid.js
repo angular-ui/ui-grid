@@ -483,9 +483,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     self.fixColumnIndexes = function() {
         //fix column indexes
-        angular.forEach($scope.columns, function(col, i) {
-            col.index = i;
-        });
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if ($scope.columns[i].visible) {
+                $scope.columns[i].index = i;
+            }
+        }
     };
     self.fixGroupIndexes = function() {
         angular.forEach($scope.configGroups, function(item, i) {
@@ -542,12 +544,22 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             totalLeft = 0,
             x = $scope.columns.length,
             newCols = [];
+        var r = 0;
+        var addCol = function(c) {
+            if (!$scope.renderedColumns[r]) {
+                $scope.renderedColumns[r] = c.copy();
+            } else {
+                $scope.renderedColumns[r].setVars(c);
+            }
+            r++;
+        };
+
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible) {
                 var w = col.width + colwidths;
                 if (col.pinned) {
-                    newCols.push(col);
+                    addCol(col);
                     var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
                     var elems = $("." + self.gridId + ' .col' + col.index);
                     elems.css('left', newLeft);
@@ -555,14 +567,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 } else {
                     if (w > scrollLeft) {
                         if (colwidths < scrollLeft + self.rootDim.outerWidth) {
-                            newCols.push(col);
+                            addCol(col);
                         }
                     }
                 }
                 colwidths += col.width;
             }
         }
-        $scope.renderedColumns = newCols;
     };
     self.prevScrollTop = 0;
     self.prevScrollIndex = 0;
@@ -595,11 +606,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
 
     //scope funcs
-    $scope.visibleColumns = function() {
-        return $scope.columns.filter(function(col) {
-            return col.visible;
-        });
-    };
     $scope.toggleShowMenu = function() {
         $scope.showMenu = !$scope.showMenu;
     };
@@ -632,6 +638,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             $scope.removeGroup(indx);
         }
         self.$viewport.scrollTop(0);
+        domUtilityService.digest($scope);
     };
     $scope.removeGroup = function(index) {
         var col = $scope.columns.filter(function(item) {
@@ -680,10 +687,12 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     $scope.totalRowWidth = function() {
         var totalWidth = 0,
-            cols = $scope.visibleColumns();
-        angular.forEach(cols, function(col) {
-            totalWidth += col.width;
-        });
+            cols = $scope.columns;
+        for (var i = 0; i < cols.length; i++) {
+            if (cols[i].visible) {
+                totalWidth += cols[i].width;
+            }
+        }
         return totalWidth;
     };
     $scope.headerScrollerDim = function() {

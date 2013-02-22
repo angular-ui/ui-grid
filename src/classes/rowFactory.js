@@ -169,9 +169,9 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         self.numberOfAggregates = 0;
         self.groupedData = {};
         // Here we set the onmousedown event handler to the header container.
-        var rows = grid.filteredRows;
-        var maxDepth = groups.length;
-        var cols = $scope.columns;
+        var rows = grid.filteredRows,
+            maxDepth = groups.length,
+            cols = $scope.columns;
 
         for (var x = 0; x < rows.length; x++){
             var model = rows[x].entity;
@@ -179,20 +179,6 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
             rows[x][NG_HIDDEN] = true;
             var ptr = self.groupedData;
             for (var y = 0; y < groups.length; y++) {
-                if (!cols[y].isAggCol && y <= maxDepth) {
-                    cols.splice(0, 0, new ng.Column({
-                        colDef: {
-                            field: '',
-                            width: 25,
-                            sortable: false,
-                            resizable: false,
-                            headerCellTemplate: '<div class="ngAggHeader"></div>',
-                            pinned: grid.config.pinSelectionCheckbox
-                        },
-                        isAggCol: true,
-                        headerRowHeight: grid.config.headerRowHeight
-                    }));
-                }
                 var group = groups[y];
                 var col = cols.filter(function(c) {
                     return c.field == group;
@@ -218,8 +204,26 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
             }
             ptr.values.push(rows[x]);
         };
+        //moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
+        for (var z = 0; z < groups.length; z++) {
+            if (!cols[z].isAggCol && z <= maxDepth) {
+                cols.splice(0, 0, new ng.Column({
+                    colDef: {
+                        field: '',
+                        width: 25,
+                        sortable: false,
+                        resizable: false,
+                        headerCellTemplate: '<div class="ngAggHeader"></div>',
+                        pinned: grid.config.pinSelectionCheckbox
+                    },
+                    isAggCol: true,
+                    headerRowHeight: grid.config.headerRowHeight
+                }));
+            }
+        }
 		domUtilityService.BuildStyles($scope, grid, true);
-        grid.fixColumnIndexes();
+		grid.fixColumnIndexes();
+        $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
         self.fixRowCache();
