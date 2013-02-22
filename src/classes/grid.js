@@ -178,8 +178,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.config = $.extend(defaults, window.ngGrid.config, options);
 
     // override conflicting settings
-    self.config.displaySelectionCheckbox = self.config.enablePinning = self.config.enableColumnHeavyVirt === false;
-    self.config.selectWithCheckboxOnly = self.config.displaySelectionCheckbox !== true;
+    self.config.displaySelectionCheckbox = (self.config.displaySelectionCheckbox && self.config.enableColumnHeavyVirt === false);
+    self.config.enablePinning = (self.config.enablePinning && self.config.enableColumnHeavyVirt === false);
+    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.displaySelectionCheckbox !== false);
     self.config.pinSelectionCheckbox = self.config.enablePinning;
 
     if (typeof options.columnDefs == "string") {

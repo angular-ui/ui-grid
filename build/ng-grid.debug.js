@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/21/2013 22:37:40
+* Compiled At: 02/21/2013 23:05:15
 ***********************************************/
 
 (function(window) {
@@ -1658,8 +1658,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.config = $.extend(defaults, window.ngGrid.config, options);
 
     // override conflicting settings
-    self.config.displaySelectionCheckbox = self.config.enablePinning = self.config.enableColumnHeavyVirt === false;
-    self.config.selectWithCheckboxOnly = self.config.displaySelectionCheckbox !== true;
+    self.config.displaySelectionCheckbox = (self.config.displaySelectionCheckbox && self.config.enableColumnHeavyVirt === false);
+    self.config.enablePinning = (self.config.enablePinning && self.config.enableColumnHeavyVirt === false);
+    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.displaySelectionCheckbox !== false);
     self.config.pinSelectionCheckbox = self.config.enablePinning;
 
     if (typeof options.columnDefs == "string") {
