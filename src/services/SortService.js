@@ -5,7 +5,7 @@
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
 /// <reference path="../classes/range.js" />
-ngGridServices.factory('SortService', function() {
+ngGridServices.factory('SortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.dateRE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/; // nasty regex for date parsing
@@ -216,7 +216,7 @@ ngGridServices.factory('SortService', function() {
             if (!item) {
                 return;
             }
-            sortFn = sortService.guessSortFn(item[col.field]);
+            sortFn = sortService.guessSortFn($parse(col.field)(item));
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;
@@ -229,8 +229,8 @@ ngGridServices.factory('SortService', function() {
         }
         //now actually sort the data
         data.sort(function(itemA, itemB) {
-            var propA = ng.utils.evalProperty(itemA, col.field);
-            var propB = ng.utils.evalProperty(itemB, col.field);
+            var propA = $parse(col.field)(itemA);
+            var propB = $parse(col.field)(itemB);
             // we want to allow zero values to be evaluated in the sort function
             if ((!propA && propA != 0) || (!propB && propB != 0)) {
               // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
@@ -260,4 +260,4 @@ ngGridServices.factory('SortService', function() {
         sortService.isSorting = false;
     };
     return sortService;
-});
+}]);
