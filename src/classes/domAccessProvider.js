@@ -1,6 +1,6 @@
 ng.DomAccessProvider = function(grid) {	
 	var self = this, previousColumn;
-	self.inputSelection = function(elm){
+	self.selectInputElement = function(elm){
 		var node = elm.nodeName.toLowerCase();
 		if(node == 'input' || node == 'textarea'){
 			elm.select();
@@ -12,10 +12,12 @@ ng.DomAccessProvider = function(grid) {
 	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
 	    if (columnIndex != undefined && elm) {
 	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
-	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, index), 0);
+	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
+			if(grid.config.displaySelectionCheckbox && angular.element(columns[i]).scope().col.index == 0){
+				i = 1; //don't want to focus on checkbox
+			}
 	        if (columns[i]) {
 	            columns[i].children[0].focus();
-	            //self.inputSelection(columns[i]);
 	        }
 			previousColumn = columnIndex;
 		}

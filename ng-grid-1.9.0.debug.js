@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 23:27:30
+* Compiled At: 02/23/2013 00:23:26
 ***********************************************/
 
 (function(window) {
@@ -56,24 +56,28 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
-		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
+		var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? ($scope.col.index == 1) : ($scope.col.index == 0);
 		var focusedOnFirstVisibleColumn = ($scope.$index === 0);
 		var focusedOnLastVisibleColumn = ($scope.$index === ($scope.renderedColumns.length - 1));
 		var focusedOnLastColumn = ($scope.col.index == ($scope.columns.length - 1));
 	    var toScroll;
-	    if (focusedOnLastVisibleColumn) {
-	        toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-	        grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
-	    } else if (focusedOnFirstVisibleColumn) {
-	        toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
-	        grid.$viewport.scrollLeft(Math.max(toScroll, 0));
-	    } 
 	    
-
-	    if ((charCode == 37 || charCode == 9 && evt.shiftKey) && !focusedOnFirstColumn) {
-			newColumnIndex -= 1;
-		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
-			newColumnIndex += 1;
+		if ((charCode == 37 || charCode == 9 && evt.shiftKey)) {
+			if (focusedOnFirstVisibleColumn) {
+				toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
+				grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+			} 
+			if(!focusedOnFirstColumn){
+				newColumnIndex -= 1;
+			}
+		} else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){		
+			if (focusedOnLastVisibleColumn) {
+				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
+				grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+			}
+			if(!focusedOnLastColumn){
+				newColumnIndex += 1;
+			}
 		}
 	}
 		
@@ -86,7 +90,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		return true;
 	}	
 	
-	var items = grid.filteredRows;
+	var items;
+	if ($scope.configGroups.length > 0) {
+	   items = grid.rowFactory.parsedData.filter(function (row) {
+		   return !row.isAggRow;
+	   });
+	} else {
+	   items = grid.filteredRows;
+	}
+	
     var index = $scope.selectionService.lastClickedRow.rowIndex + offset;
     if (index < 0 || index >= items.length) {
         return true;
@@ -1719,7 +1731,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows.length = newRows.length;
         for (var i = 0; i < newRows.length; i++) {
-            if (!$scope.renderedRows[i] || ((newRows[i].isAggRow || $scope.renderedRows[i].isAggRow) && $scope.renderedRows[i].entity != newRows[i].entity)) {
+            if (!$scope.renderedRows[i] || (newRows[i].isAggRow || $scope.renderedRows[i].isAggRow)) {
                 $scope.renderedRows[i] = newRows[i].copy();
                 $scope.renderedRows[i].collapsed = newRows[i].collapsed;
             } else {
@@ -2469,7 +2481,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
 ***********************************************/
 ng.DomAccessProvider = function(grid) {	
 	var self = this, previousColumn;
-	self.inputSelection = function(elm){
+	self.selectInputElement = function(elm){
 		var node = elm.nodeName.toLowerCase();
 		if(node == 'input' || node == 'textarea'){
 			elm.select();
@@ -2481,10 +2493,12 @@ ng.DomAccessProvider = function(grid) {
 	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
 	    if (columnIndex != undefined && elm) {
 	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
-	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, index), 0);
+	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
+			if(grid.config.displaySelectionCheckbox && angular.element(columns[i]).scope().col.index == 0){
+				i = 1; //don't want to focus on checkbox
+			}
 	        if (columns[i]) {
 	            columns[i].children[0].focus();
-	            //self.inputSelection(columns[i]);
 	        }
 			previousColumn = columnIndex;
 		}
@@ -2791,7 +2805,10 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                         })[0];
                         if (col) col.sort();
                     };
-                    options.gridId = grid.gridId;
+                    // the grid Id, entity, scope for convenience
+					options.gridId = grid.gridId;
+					options.ngGrid = grid;
+					options.$gridScope = $scope;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			
@@ -2975,6 +2992,7 @@ ngGridDirectives.directive('ngViewport', [function() {
         });
         elm.bind("mousewheel DOMMouseScroll", function(evt) {
             isMouseWheelActive = true;
+			elm.focus();
             return true;
         });
         if (!$scope.enableCellSelection) {
@@ -3016,7 +3034,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
 			if(inputElement.length > 0){
 				angular.element(inputElement).focus();
-				$scope.domAccessProvider.inputSelection(inputElement[0]);
+				$scope.domAccessProvider.selectInputElement(inputElement[0]);
 				angular.element(inputElement).bind('blur', function(){	
 					$scope.isFocused = false;	
 					domUtilityService.digest($scope);

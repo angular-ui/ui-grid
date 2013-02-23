@@ -223,7 +223,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.setRenderedRows = function (newRows) {
         $scope.renderedRows.length = newRows.length;
         for (var i = 0; i < newRows.length; i++) {
-            if (!$scope.renderedRows[i] || ((newRows[i].isAggRow || $scope.renderedRows[i].isAggRow) && $scope.renderedRows[i].entity != newRows[i].entity)) {
+            if (!$scope.renderedRows[i] || (newRows[i].isAggRow || $scope.renderedRows[i].isAggRow)) {
                 $scope.renderedRows[i] = newRows[i].copy();
                 $scope.renderedRows[i].collapsed = newRows[i].collapsed;
             } else {

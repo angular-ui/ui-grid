@@ -107,7 +107,10 @@
                         })[0];
                         if (col) col.sort();
                     };
-                    options.gridId = grid.gridId;
+                    // the grid Id, entity, scope for convenience
+					options.gridId = grid.gridId;
+					options.ngGrid = grid;
+					options.$gridScope = $scope;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			

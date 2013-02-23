@@ -31,6 +31,7 @@ ngGridDirectives.directive('ngViewport', [function() {
         });
         elm.bind("mousewheel DOMMouseScroll", function(evt) {
             isMouseWheelActive = true;
+			elm.focus();
             return true;
         });
         if (!$scope.enableCellSelection) {
