@@ -4,9 +4,11 @@
         $scope.$watch(getter, function (newVal) {
             elm.val($scope.$eval(newVal));
         });
-        elm.bind('blur', function() {
+        elm.bind('keyup', function() {
             var newVal = elm.val();
-            $scope.$apply(getter($scope) + "= '" + newVal + "'");
+            if (!$scope.$root.$$phase) {
+                $scope.$apply(getter($scope) + "= '" + newVal + "'");
+            }
         });
     };
 }]);

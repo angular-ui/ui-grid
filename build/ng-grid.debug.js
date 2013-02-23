@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 16:16:38
+* Compiled At: 02/22/2013 17:28:33
 ***********************************************/
 
 (function(window) {
@@ -57,8 +57,13 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 			evt.preventDefault();
 		}
 		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;	
-		newColumnIndex = $scope.col.index;
+	    var focusedOnLastVisibleColumn = ($scope.col.index == $scope.renderedColumns[$scope.renderedColumns.length - 1].index);
+	    var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
+	    if (focusedOnLastVisibleColumn && $scope.renderedColumns.length < $scope.columns.length) {
+	        var toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
+	        grid.$viewport.scrollLeft(Math.max(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+	    }
+		newColumnIndex = $scope.$index;
 		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
 			newColumnIndex -= 1;
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
@@ -2470,9 +2475,11 @@ ng.DomAccessProvider = function(grid) {
 	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
 	    if (columnIndex != undefined && elm) {
 	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8 }); //Remove html comments for IE8
-			var nextFocusedCellElement = columns[columnIndex];
-			nextFocusedCellElement.children[0].focus();
-			self.inputSelection(nextFocusedCellElement);
+	        var nextFocusedCellElement = columns[columnIndex];
+	        if (nextFocusedCellElement) {
+	            nextFocusedCellElement.children[0].focus();
+	            self.inputSelection(nextFocusedCellElement);
+	        }
 			previousColumn = columnIndex;
 		}
 	};
@@ -2917,9 +2924,11 @@ ngGridDirectives.directive('ngInput',['$parse', function($parse) {
         $scope.$watch(getter, function (newVal) {
             elm.val($scope.$eval(newVal));
         });
-        elm.bind('blur', function() {
+        elm.bind('keyup', function() {
             var newVal = elm.val();
-            $scope.$apply(getter($scope) + "= '" + newVal + "'");
+            if (!$scope.$root.$$phase) {
+                $scope.$apply(getter($scope) + "= '" + newVal + "'");
+            }
         });
     };
 }]);
@@ -2938,13 +2947,21 @@ ngGridDirectives.directive('ngViewport', [function() {
             if ($scope.$headerContainer) {
                 $scope.$headerContainer.scrollLeft(scrollLeft);
             }
+            var hscroll = prevScollLeft != scrollLeft;
+            var goingRight = prevScollLeft < scrollLeft;
+            var vscroll = prevScollTop != scrollTop;
+            var aeScope = angular.element(document.activeElement.parentElement).scope().$parent;
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
             if (!$scope.$root.$$phase) {
                 $scope.$digest();
             }
             if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
-                $scope.domAccessProvider.focusCellElement($scope);
+                if (vscroll) $scope.domAccessProvider.focusCellElement($scope);
+                if (hscroll && aeScope) {
+                    var index = aeScope.$index + (goingRight ? 1 : -1);
+                    $scope.domAccessProvider.focusCellElement($scope, index);
+                }
             }
             prevScollLeft = scrollLeft;
             prevScollTop = prevScollTop;
@@ -3030,7 +3047,8 @@ ngGridDirectives.directive('ngCellInput',
 					case 38:
 					case 39:
 					case 40:
-						evt.stopPropagation();
+					    evt.stopPropagation();
+					    console.log("stop prop");
 						break;
 					default:
 						break;

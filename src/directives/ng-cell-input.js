@@ -7,7 +7,8 @@ ngGridDirectives.directive('ngCellInput',
 					case 38:
 					case 39:
 					case 40:
-						evt.stopPropagation();
+					    evt.stopPropagation();
+					    console.log("stop prop");
 						break;
 					default:
 						break;
