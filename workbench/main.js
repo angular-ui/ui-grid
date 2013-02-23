@@ -51,15 +51,15 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, sortable: false, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'birthday', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'paid', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, sortable: false, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
+        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, sortable: false, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
+        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
         { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' }];
@@ -84,11 +84,11 @@ function userController($scope) {
         grid: undefined,
     };
 
-    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
-        { field: 'Vendor', displayName: 'Supplier' },
-        { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
-        { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
-        { field: 'UPC', displayName: 'Bar Code' }];
+    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableFocusedCellEdit: true },
+        { field: 'Vendor', displayName: 'Supplier', enableFocusedCellEdit: true },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', enableFocusedCellEdit: true },
+        { field: 'Mfg_Id', displayName: 'Manufacturer ID', enableFocusedCellEdit: true },
+        { field: 'UPC', displayName: 'Bar Code', enableFocusedCellEdit: true }];
     self.selectionchanging = function (a, b) {
         return true;
     };
@@ -100,7 +100,6 @@ function userController($scope) {
         pagingOptions: $scope.pagingOptions,
 		enableCellSelection: true,
 		enablePaging: true,
-        enableVirtualization: false,
         canSelectRows: true,
 		multiSelect: false,
         enableRowReordering: true,
@@ -125,6 +124,7 @@ function userController($scope) {
         multiSelect: true,
 		canSelectRows: true,
         showGroupPanel: true,
+        enableCellSelection: true,
         columnDefs: 'myDefs2',
         enablePinning: true,
     };

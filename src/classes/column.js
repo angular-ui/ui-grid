@@ -15,6 +15,7 @@
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
+    self.sortPriority = undefined;
     self.zIndex = function() {
         return self.pinned ? 5 : 0;
     };
@@ -86,13 +87,13 @@
     self.noSortVisible = function() {
         return !self.sortDirection;
     };
-    self.sort = function() {
+    self.sort = function(evt) {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        config.sortCallback(self);
+        config.sortCallback(self, evt);
         return false;
     };
     self.gripClick = function() {

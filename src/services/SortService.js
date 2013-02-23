@@ -194,17 +194,62 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
     };
     //#endregion
     // the core sorting logic trigger
-    sortService.sortData = function(data /*datasource*/, sortInfo) {
+    sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
         if (!data || !sortInfo) {
             return;
         }
-        // grab the metadata for the rest of the logic
-        var col = sortInfo.column,
-            direction = sortInfo.direction,
-            sortFn,
-            item;
+        var L = sortInfo.fields.length,
+            order = sortInfo.fields,
+            col, 
+            direction,
+            sortFn;
 
+
+        //now actually sort the data
+        data.sort(function (itemA, itemB) {
+            var tem = 0, indx = 0;
+            while (tem == 0 && indx < L) {
+                // grab the metadata for the rest of the logic
+                col = sortInfo.columns[indx];
+                direction = sortInfo.directions[indx],
+                sortFn = sortService.getSortFn(col, data);
+                
+                var propA = $parse(order[indx])(itemA);
+                var propB = $parse(order[indx])(itemB);
+                // we want to allow zero values to be evaluated in the sort function
+                if ((!propA && propA != 0) || (!propB && propB != 0)) {
+                    // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
+                    if (!propB && !propA) {
+                        tem = 0;
+                    } else if (!propA) {
+                        tem = 1;
+                    } else if (!propB) {
+                        tem = -1;
+                    }
+                } else {
+                    tem = sortFn(propA, propB);
+                }
+                indx++;
+            }
+            //made it this far, we don't have to worry about null & undefined
+            if (direction === ASC) {
+                return tem;
+            } else {
+                return 0 - tem;
+            }
+        });
+    };
+    sortService.Sort = function(sortInfo, data) {
+        if (sortService.isSorting) {
+            return;
+        }
+        sortService.isSorting = true;
+        sortService.sortData(sortInfo, data);
+        sortService.isSorting = false;
+    };
+    sortService.getSortFn = function(col, data) {
+        var sortFn = undefined, item;
         //see if we already figured out what to use to sort the column
         if (sortService.colSortFnCache[col.field]) {
             sortFn = sortService.colSortFnCache[col.field];
@@ -214,7 +259,7 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
         } else { // try and guess what sort function to use
             item = data[0];
             if (!item) {
-                return;
+                return sortFn;
             }
             sortFn = sortService.guessSortFn($parse(col.field)(item));
             //cache it
@@ -227,37 +272,7 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
                 sortFn = sortService.sortAlpha;
             }
         }
-        //now actually sort the data
-        data.sort(function(itemA, itemB) {
-            var propA = $parse(col.field)(itemA);
-            var propB = $parse(col.field)(itemB);
-            // we want to allow zero values to be evaluated in the sort function
-            if ((!propA && propA != 0) || (!propB && propB != 0)) {
-              // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-              if (!propB && !propA) {
-                  return 0;
-              } else if (!propA) {
-                  return 1;
-              } else if (!propB) {
-                  return -1;
-              }
-            }
-            //made it this far, we don't have to worry about null & undefined
-            if (direction === ASC) {
-                return sortFn(propA, propB);
-            } else {
-                return 0 - sortFn(propA, propB);
-            }
-        });
-        return;
-    };
-    sortService.Sort = function(sortInfo, data) {
-        if (sortService.isSorting) {
-            return;
-        }
-        sortService.isSorting = true;
-        sortService.sortData(data, sortInfo);
-        sortService.isSorting = false;
+        return sortFn;
     };
     return sortService;
 }]);

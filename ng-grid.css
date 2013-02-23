@@ -146,6 +146,13 @@
     height: 0;
 	width: 0;
 }
+.ngSortPriority {
+    position: absolute;
+    top: -5px;
+    left: 1px;
+    font-size: 6pt;
+    font-weight: bold;
+}
 .ngHeaderGrip { 
     cursor: col-resize; 
     width: 10px; 

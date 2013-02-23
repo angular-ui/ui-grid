@@ -41,16 +41,7 @@
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
-                                if (!grid.config.sortInfo.column) {
-                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
-                                        return c.field == grid.config.sortInfo.field;
-                                    })[0];
-                                    if (!grid.config.sortInfo.column) {
-                                        return;
-                                    }
-                                }
-                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
-                                grid.sortData(grid.config.sortInfo.column);
+                                sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
                         }, true);

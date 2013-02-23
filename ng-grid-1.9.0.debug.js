@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/23/2013 00:23:26
+* Compiled At: 02/23/2013 12:45:37
 ***********************************************/
 
 (function(window) {
@@ -468,17 +468,62 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
     };
     //#endregion
     // the core sorting logic trigger
-    sortService.sortData = function(data /*datasource*/, sortInfo) {
+    sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
         if (!data || !sortInfo) {
             return;
         }
-        // grab the metadata for the rest of the logic
-        var col = sortInfo.column,
-            direction = sortInfo.direction,
-            sortFn,
-            item;
+        var L = sortInfo.fields.length,
+            order = sortInfo.fields,
+            col, 
+            direction,
+            sortFn;
 
+
+        //now actually sort the data
+        data.sort(function (itemA, itemB) {
+            var tem = 0, indx = 0;
+            while (tem == 0 && indx < L) {
+                // grab the metadata for the rest of the logic
+                col = sortInfo.columns[indx];
+                direction = sortInfo.directions[indx],
+                sortFn = sortService.getSortFn(col, data);
+                
+                var propA = $parse(order[indx])(itemA);
+                var propB = $parse(order[indx])(itemB);
+                // we want to allow zero values to be evaluated in the sort function
+                if ((!propA && propA != 0) || (!propB && propB != 0)) {
+                    // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
+                    if (!propB && !propA) {
+                        tem = 0;
+                    } else if (!propA) {
+                        tem = 1;
+                    } else if (!propB) {
+                        tem = -1;
+                    }
+                } else {
+                    tem = sortFn(propA, propB);
+                }
+                indx++;
+            }
+            //made it this far, we don't have to worry about null & undefined
+            if (direction === ASC) {
+                return tem;
+            } else {
+                return 0 - tem;
+            }
+        });
+    };
+    sortService.Sort = function(sortInfo, data) {
+        if (sortService.isSorting) {
+            return;
+        }
+        sortService.isSorting = true;
+        sortService.sortData(sortInfo, data);
+        sortService.isSorting = false;
+    };
+    sortService.getSortFn = function(col, data) {
+        var sortFn = undefined, item;
         //see if we already figured out what to use to sort the column
         if (sortService.colSortFnCache[col.field]) {
             sortFn = sortService.colSortFnCache[col.field];
@@ -488,7 +533,7 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
         } else { // try and guess what sort function to use
             item = data[0];
             if (!item) {
-                return;
+                return sortFn;
             }
             sortFn = sortService.guessSortFn($parse(col.field)(item));
             //cache it
@@ -501,37 +546,7 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
                 sortFn = sortService.sortAlpha;
             }
         }
-        //now actually sort the data
-        data.sort(function(itemA, itemB) {
-            var propA = $parse(col.field)(itemA);
-            var propB = $parse(col.field)(itemB);
-            // we want to allow zero values to be evaluated in the sort function
-            if ((!propA && propA != 0) || (!propB && propB != 0)) {
-              // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-              if (!propB && !propA) {
-                  return 0;
-              } else if (!propA) {
-                  return 1;
-              } else if (!propB) {
-                  return -1;
-              }
-            }
-            //made it this far, we don't have to worry about null & undefined
-            if (direction === ASC) {
-                return sortFn(propA, propB);
-            } else {
-                return 0 - sortFn(propA, propB);
-            }
-        });
-        return;
-    };
-    sortService.Sort = function(sortInfo, data) {
-        if (sortService.isSorting) {
-            return;
-        }
-        sortService.isSorting = true;
-        sortService.sortData(data, sortInfo);
-        sortService.isSorting = false;
+        return sortFn;
     };
     return sortService;
 }]);
@@ -713,7 +728,7 @@ ng.headerRowTemplate = function(){ return '<div ng-style="{\'z-index\': col.zInd
 /***********************************************
 * FILE: ..\src\templates\headerCellTemplate.html
 ***********************************************/
-ng.headerCellTemplate = function(){ return '<div class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div ng-click="col.sort()" ng-class="\'colt\' + col.index" class="ngHeaderText">{{col.displayName}}</div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div><div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div></div><div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>';};
+ng.headerCellTemplate = function(){ return '<div class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div ng-click="col.sort($event)" ng-class="\'colt\' + col.index" class="ngHeaderText">{{col.displayName}}</div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div><div class="ngSortPriority">{{col.sortPriority}}</div><div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div></div><div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>';};
 
 /***********************************************
 * FILE: ..\src\classes\aggregate.js
@@ -1048,6 +1063,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
+    self.sortPriority = undefined;
     self.zIndex = function() {
         return self.pinned ? 5 : 0;
     };
@@ -1119,13 +1135,13 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.noSortVisible = function() {
         return !self.sortDirection;
     };
-    self.sort = function() {
+    self.sort = function(evt) {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        config.sortCallback(self);
+        config.sortCallback(self, evt);
         return false;
     };
     self.gripClick = function() {
@@ -1350,12 +1366,16 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         }
         self.wasGrouped = true;
         self.parentCache = [];
-        var temp = self.parsedData.filter(function(e) {
+        var i = 0;
+        var temp = self.parsedData.filter(function (e, j) {
             if (e.isAggRow) {
                 if (e.parent && e.parent.collapsed) {
                     return false;
                 }
                 return true;
+            }
+            if (!e[NG_HIDDEN]) {
+                e.rowIndex = i++;
             }
             return !e[NG_HIDDEN];
         });
@@ -1363,7 +1383,6 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (temp[i]) {
-                temp[i].rowIndex = i;
                 temp[i].offsetTop = i * grid.config.rowHeight;
                 rowArr.push(temp[i]);
             }
@@ -1665,7 +1684,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         /*Define a sortInfo object to specify a default sorting state. 
         You can also observe this variable to utilize server-side sorting (see useExternalSorting).
-        Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
+        Syntax is sortinfo: { fields: ['fieldName1',' fieldName2'], direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
         sortInfo: undefined,
 
         //Set the tab index of the Vieport.
@@ -1713,7 +1732,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     if (typeof self.config.data == "object") {
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
-    self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
         return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
             return !e[NG_HIDDEN];
@@ -1933,11 +1951,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo && $scope.columns.length) {
-            self.config.sortInfo.column = $scope.columns.filter(function(c) {
-                return c.field == self.config.sortInfo.field;
-            })[0];
+            self.config.sortInfo.columns = $scope.columns.filter(function (c) {
+                if (self.config.sortInfo.field.indexOf(c.field) != -1) {
+                    return true;
+                }
+                return false;
+            });
             self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
-            self.sortData(self.config.sortInfo.column);
+            self.sortData(self.config.sortInfo.columns);
         }
     };
    
@@ -1961,19 +1982,45 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         domUtilityService.BuildStyles($scope, self, true);
     };
-    self.sortData = function(col) {
-        if(self.config.sortInfo) {
-            self.config.sortInfo.column    = col;
-            self.config.sortInfo.field     = col.field;
-            self.config.sortInfo.direction = col.sortDirection;
+    self.lastSortedColumns = [];
+    self.sortData = function (col, evt) {
+        if (evt.shiftKey && self.config.sortInfo) {
+            var indx = self.config.sortInfo.columns.indexOf(col);
+            if (indx === -1) {
+                if (self.config.sortInfo.columns.length == 1) {
+                    self.config.sortInfo.columns[0].sortPriority = 1;
+                }
+                self.config.sortInfo.columns.push(col);
+                col.sortPriority = self.config.sortInfo.columns.length;
+                self.config.sortInfo.fields.push(col.field);
+                self.config.sortInfo.directions.push(col.sortDirection);
+                self.lastSortedColumns.push(col);
+            } else {
+                self.config.sortInfo.directions[indx] = col.sortDirection;
+            }
         } else {
+            var isArr = $.isArray(col);
             self.config.sortInfo = {
-                column: col,
-                field: col.field,
-                direction: col.sortDirection
+                columns: [],
+                fields: [],
+                directions: []
             };
+            var push = function(c) {
+                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.fields.push(c.field);
+                self.config.sortInfo.directions.push(c.sortDirection);
+                self.lastSortedColumns.push(c);
+            };
+            if (isArr) {
+                self.clearSortingData();
+                angular.forEach(col, function (c, i) {
+                    push(c);
+                });
+            } else {
+                self.clearSortingData(col);
+                push(col);
+            }
         }
-        self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
             var tempData = self.data.slice(0);
             angular.forEach(tempData, function (item, i) {
@@ -1989,18 +2036,26 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 delete item.preSortIndex;
             });
         }
-        self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', col);
     };
-    self.clearSortingData = function(col) {
+    self.clearSortingData = function (col) {
         if (!col) {
-            angular.forEach($scope.columns, function(c) {
+            angular.forEach(self.lastSortedColumns, function (c) {
                 c.sortDirection = "";
+                c.sortPriority = null;
             });
-        } else if (self.lastSortedColumn && col != self.lastSortedColumn) {
-            self.lastSortedColumn.sortDirection = "";
-        }
+            self.lastSortedColumns = [];
+        } else {
+            angular.forEach(self.lastSortedColumns, function (c) {
+                if (col.index != c.index) {
+                    c.sortDirection = "";
+                    c.sortPriority = null;
+                }
+            });
+            self.lastSortedColumns[0] = col;
+            self.lastSortedColumns.length = 1;
+        };
     };
     self.fixColumnIndexes = function() {
         //fix column indexes
@@ -2739,16 +2794,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
-                                if (!grid.config.sortInfo.column) {
-                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
-                                        return c.field == grid.config.sortInfo.field;
-                                    })[0];
-                                    if (!grid.config.sortInfo.column) {
-                                        return;
-                                    }
-                                }
-                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
-                                grid.sortData(grid.config.sortInfo.column);
+                                sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
                         }, true);

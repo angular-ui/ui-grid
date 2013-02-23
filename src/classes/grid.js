@@ -157,7 +157,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         /*Define a sortInfo object to specify a default sorting state. 
         You can also observe this variable to utilize server-side sorting (see useExternalSorting).
-        Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
+        Syntax is sortinfo: { fields: ['fieldName1',' fieldName2'], direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
         sortInfo: undefined,
 
         //Set the tab index of the Vieport.
@@ -205,7 +205,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     if (typeof self.config.data == "object") {
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
-    self.lastSortedColumn = undefined;
     self.calcMaxCanvasHeight = function() {
         return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
             return !e[NG_HIDDEN];
@@ -425,11 +424,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo && $scope.columns.length) {
-            self.config.sortInfo.column = $scope.columns.filter(function(c) {
-                return c.field == self.config.sortInfo.field;
-            })[0];
+            self.config.sortInfo.columns = $scope.columns.filter(function (c) {
+                if (self.config.sortInfo.field.indexOf(c.field) != -1) {
+                    return true;
+                }
+                return false;
+            });
             self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
-            self.sortData(self.config.sortInfo.column);
+            self.sortData(self.config.sortInfo.columns);
         }
     };
    
@@ -453,19 +455,45 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         domUtilityService.BuildStyles($scope, self, true);
     };
-    self.sortData = function(col) {
-        if(self.config.sortInfo) {
-            self.config.sortInfo.column    = col;
-            self.config.sortInfo.field     = col.field;
-            self.config.sortInfo.direction = col.sortDirection;
+    self.lastSortedColumns = [];
+    self.sortData = function (col, evt) {
+        if (evt.shiftKey && self.config.sortInfo) {
+            var indx = self.config.sortInfo.columns.indexOf(col);
+            if (indx === -1) {
+                if (self.config.sortInfo.columns.length == 1) {
+                    self.config.sortInfo.columns[0].sortPriority = 1;
+                }
+                self.config.sortInfo.columns.push(col);
+                col.sortPriority = self.config.sortInfo.columns.length;
+                self.config.sortInfo.fields.push(col.field);
+                self.config.sortInfo.directions.push(col.sortDirection);
+                self.lastSortedColumns.push(col);
+            } else {
+                self.config.sortInfo.directions[indx] = col.sortDirection;
+            }
         } else {
+            var isArr = $.isArray(col);
             self.config.sortInfo = {
-                column: col,
-                field: col.field,
-                direction: col.sortDirection
+                columns: [],
+                fields: [],
+                directions: []
             };
+            var push = function(c) {
+                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.fields.push(c.field);
+                self.config.sortInfo.directions.push(c.sortDirection);
+                self.lastSortedColumns.push(c);
+            };
+            if (isArr) {
+                self.clearSortingData();
+                angular.forEach(col, function (c, i) {
+                    push(c);
+                });
+            } else {
+                self.clearSortingData(col);
+                push(col);
+            }
         }
-        self.clearSortingData(col);
         if (!self.config.useExternalSorting) {
             var tempData = self.data.slice(0);
             angular.forEach(tempData, function (item, i) {
@@ -481,18 +509,26 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 delete item.preSortIndex;
             });
         }
-        self.lastSortedColumn = col;
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', col);
     };
-    self.clearSortingData = function(col) {
+    self.clearSortingData = function (col) {
         if (!col) {
-            angular.forEach($scope.columns, function(c) {
+            angular.forEach(self.lastSortedColumns, function (c) {
                 c.sortDirection = "";
+                c.sortPriority = null;
             });
-        } else if (self.lastSortedColumn && col != self.lastSortedColumn) {
-            self.lastSortedColumn.sortDirection = "";
-        }
+            self.lastSortedColumns = [];
+        } else {
+            angular.forEach(self.lastSortedColumns, function (c) {
+                if (col.index != c.index) {
+                    c.sortDirection = "";
+                    c.sortPriority = null;
+                }
+            });
+            self.lastSortedColumns[0] = col;
+            self.lastSortedColumns.length = 1;
+        };
     };
     self.fixColumnIndexes = function() {
         //fix column indexes
