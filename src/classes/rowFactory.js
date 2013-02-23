@@ -76,12 +76,16 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         }
         self.wasGrouped = true;
         self.parentCache = [];
-        var temp = self.parsedData.filter(function(e) {
+        var i = 0;
+        var temp = self.parsedData.filter(function (e, j) {
             if (e.isAggRow) {
                 if (e.parent && e.parent.collapsed) {
                     return false;
                 }
                 return true;
+            }
+            if (!e[NG_HIDDEN]) {
+                e.rowIndex = i++;
             }
             return !e[NG_HIDDEN];
         });
@@ -89,7 +93,6 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (temp[i]) {
-                temp[i].rowIndex = i;
                 temp[i].offsetTop = i * grid.config.rowHeight;
                 rowArr.push(temp[i]);
             }
