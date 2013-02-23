@@ -429,6 +429,14 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         domUtilityService.BuildStyles($scope, self, true);
     };
+    self.changeRowOrder = function(prevRow, targetRow) {
+        // Splice the Rows via the actual datasource
+        var i = self.rowCache.indexOf(prevRow);
+        var j = self.rowCache.indexOf(targetRow);
+        self.rowCache.splice(i, 1);
+        self.rowCache.splice(j, 0, prevRow);
+        $scope.$emit('ngGridEventChangeOrder', self.rowCache);
+    };
     self.sortData = function(col) {
         if(self.config.sortInfo) {
             self.config.sortInfo.column    = col;
