@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 17:28:33
+* Compiled At: 02/22/2013 23:15:14
 ***********************************************/
 
 (function(window) {
@@ -51,20 +51,26 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     }
     var charCode = evt.which || evt.keyCode;
 	
-	var newColumnIndex;
+    var newColumnIndex = $scope.$index;
 	if($scope.enableCellSelection){
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
 		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-	    var focusedOnLastVisibleColumn = ($scope.col.index == $scope.renderedColumns[$scope.renderedColumns.length - 1].index);
-	    var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
-	    if (focusedOnLastVisibleColumn && $scope.renderedColumns.length < $scope.columns.length) {
-	        var toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-	        grid.$viewport.scrollLeft(Math.max(toScroll, grid.$canvas.width() - grid.$viewport.width()));
-	    }
-		newColumnIndex = $scope.$index;
-		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
+		var focusedOnFirstVisibleColumn = ($scope.$index === 0);
+		var focusedOnLastVisibleColumn = ($scope.$index === ($scope.renderedColumns.length - 1));
+		var focusedOnLastColumn = ($scope.col.index == ($scope.columns.length - 1));
+	    var toScroll;
+	    if (focusedOnLastVisibleColumn) {
+	        toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
+	        grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+	    } else if (focusedOnFirstVisibleColumn) {
+	        toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
+	        grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+	    } 
+	    
+
+	    if ((charCode == 37 || charCode == 9 && evt.shiftKey) && !focusedOnFirstColumn) {
 			newColumnIndex -= 1;
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
 			newColumnIndex += 1;
@@ -89,7 +95,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
-	if($scope.enableCellSelection){ 
+	if($scope.enableCellSelection){
 		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
@@ -2474,11 +2480,11 @@ ng.DomAccessProvider = function(grid) {
 	    var columnIndex = index != undefined ? index : previousColumn;
 	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
 	    if (columnIndex != undefined && elm) {
-	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8 }); //Remove html comments for IE8
-	        var nextFocusedCellElement = columns[columnIndex];
-	        if (nextFocusedCellElement) {
-	            nextFocusedCellElement.children[0].focus();
-	            self.inputSelection(nextFocusedCellElement);
+	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
+	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, index), 0);
+	        if (columns[i]) {
+	            columns[i].children[0].focus();
+	            //self.inputSelection(columns[i]);
 	        }
 			previousColumn = columnIndex;
 		}
@@ -2960,7 +2966,7 @@ ngGridDirectives.directive('ngViewport', [function() {
                 if (vscroll) $scope.domAccessProvider.focusCellElement($scope);
                 if (hscroll && aeScope) {
                     var index = aeScope.$index + (goingRight ? 1 : -1);
-                    $scope.domAccessProvider.focusCellElement($scope, index);
+                    //$scope.domAccessProvider.focusCellElement($scope, index);
                 }
             }
             prevScollLeft = scrollLeft;
@@ -3012,7 +3018,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			if(inputElement.length > 0){
 				angular.element(inputElement).focus();
 				$scope.domAccessProvider.inputSelection(inputElement[0]);
-				angular.element(inputElement).bind('blur', function(evt){	
+				angular.element(inputElement).bind('blur', function(){	
 					$scope.isFocused = false;	
 					domUtilityService.digest($scope);
 					return true;

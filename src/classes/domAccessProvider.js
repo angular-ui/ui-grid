@@ -11,11 +11,11 @@ ng.DomAccessProvider = function(grid) {
 	    var columnIndex = index != undefined ? index : previousColumn;
 	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
 	    if (columnIndex != undefined && elm) {
-	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8 }); //Remove html comments for IE8
-	        var nextFocusedCellElement = columns[columnIndex];
-	        if (nextFocusedCellElement) {
-	            nextFocusedCellElement.children[0].focus();
-	            self.inputSelection(nextFocusedCellElement);
+	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
+	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, index), 0);
+	        if (columns[i]) {
+	            columns[i].children[0].focus();
+	            //self.inputSelection(columns[i]);
 	        }
 			previousColumn = columnIndex;
 		}

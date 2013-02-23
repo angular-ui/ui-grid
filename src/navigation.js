@@ -10,20 +10,26 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     }
     var charCode = evt.which || evt.keyCode;
 	
-	var newColumnIndex;
+    var newColumnIndex = $scope.$index;
 	if($scope.enableCellSelection){
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
 		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-	    var focusedOnLastVisibleColumn = ($scope.col.index == $scope.renderedColumns[$scope.renderedColumns.length - 1].index);
-	    var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
-	    if (focusedOnLastVisibleColumn && $scope.renderedColumns.length < $scope.columns.length) {
-	        var toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-	        grid.$viewport.scrollLeft(Math.max(toScroll, grid.$canvas.width() - grid.$viewport.width()));
-	    }
-		newColumnIndex = $scope.$index;
-		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
+		var focusedOnFirstVisibleColumn = ($scope.$index === 0);
+		var focusedOnLastVisibleColumn = ($scope.$index === ($scope.renderedColumns.length - 1));
+		var focusedOnLastColumn = ($scope.col.index == ($scope.columns.length - 1));
+	    var toScroll;
+	    if (focusedOnLastVisibleColumn) {
+	        toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
+	        grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+	    } else if (focusedOnFirstVisibleColumn) {
+	        toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
+	        grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+	    } 
+	    
+
+	    if ((charCode == 37 || charCode == 9 && evt.shiftKey) && !focusedOnFirstColumn) {
 			newColumnIndex -= 1;
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
 			newColumnIndex += 1;
@@ -48,7 +54,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
-	if($scope.enableCellSelection){ 
+	if($scope.enableCellSelection){
 		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
