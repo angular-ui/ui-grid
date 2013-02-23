@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/22/2013 15:53:03
+* Compiled At: 02/22/2013 16:16:38
 ***********************************************/
 
 (function(window) {
@@ -2771,7 +2771,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                             angular.forEach(arr, $scope.groupBy);
                         }
                     };
-                    // method for user to set the groups programatically
+                    // method for user to set the sort field programatically
                     options.sortBy = function (field) {
                         var col = $scope.columns.filter(function (c) {
                             return c.field == field;

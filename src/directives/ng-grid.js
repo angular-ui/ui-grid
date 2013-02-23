@@ -100,7 +100,7 @@
                             angular.forEach(arr, $scope.groupBy);
                         }
                     };
-                    // method for user to set the groups programatically
+                    // method for user to set the sort field programatically
                     options.sortBy = function (field) {
                         var col = $scope.columns.filter(function (c) {
                             return c.field == field;

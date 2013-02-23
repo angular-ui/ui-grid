@@ -97,6 +97,7 @@ function userController($scope) {
 		multiSelect: false,
         enableRowReordering: true,
         showGroupPanel: false,
+        excludeProperties: ['name', 'allowance'],
         plugins: [myplugin]
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
@@ -176,10 +177,7 @@ function userController($scope) {
 		$scope.filteringText = text;
 	});
     $scope.setSelection = function() {
-        $scope.gridOptions2.selectItem(0, true);
-        $scope.gridOptions2.selectRow(3, true);
-        $scope.gridOptions2.groupBy();
-        $scope.gridOptions2.selectAll(false);
-
+        myplugin.grid.config.excludeProperties = [];
+        $scope.gridOptions.rebuildColumnDefs();
     };
 };
