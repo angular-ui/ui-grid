@@ -1,8 +1,3 @@
-/// <reference path="../lib/jquery-1.8.2.min" />
-/// <reference path="../lib/angular.js" />
-/// <reference path="../src/constants.js" />
-/// <reference path="../src/namespace.js" />
-/// <reference path="../src/utils.jsjs" />
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     if ($scope.selectionService.selectedItems === undefined) {
@@ -11,35 +6,48 @@ ng.moveSelectionHandler = function($scope, elm, evt, domUtilityService) {
     var charCode = evt.which || evt.keyCode;
 	
 	var newColumnIndex;
+	
+	var lastInRow = false;
+	var firstInRow = false;
 	if($scope.enableCellSelection){
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
 		var focusedOnFirstColumn = $scope.displaySelectionCheckbox && $scope.col.index == 1 || !$scope.displaySelectionCheckbox && $scope.col.index == 0;
-		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;	
+		var focusedOnLastColumn = $scope.col.index == $scope.columns.length - 1;
 		newColumnIndex = $scope.col.index;
 		if((charCode == 37 || charCode ==  9 && evt.shiftKey) && !focusedOnFirstColumn){
 			newColumnIndex -= 1;
-		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){			
+		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey) && !focusedOnLastColumn){
 			newColumnIndex += 1;
+		} else if((charCode == 9 && !evt.shiftKey) && focusedOnLastColumn){
+			newColumnIndex = 0;	
+			lastInRow = true;
+		} else if((charCode == 9 && evt.shiftKey) && focusedOnFirstColumn){
+			newColumnIndex = $scope.columns.length - 1;
+			firstInRow = true;
 		}
 	}
-		
+	
 	var offset = 0;
-	if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
+	if (charCode == 9 && lastInRow){//Tab Key and Last Item in Row?
+		offset = 1;
+	} else if((charCode == 9 && evt.shiftKey) && firstInRow){ // Same as above. But with Shiftkey pressed.
+		offset = -1;
+	} else if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
 		offset = -1;
 	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
 		offset = 1;
 	} else if(charCode != 37 && charCode != 39 && charCode != 9){
 		return true;
-	}	
+	}
 	
     var items = $scope.renderedRows;
     var index = items.indexOf($scope.selectionService.lastClickedRow) + offset;
     if (index < 0 || index >= items.length) {
         return true;
     }
-	if(charCode != 37 && charCode != 39 && charCode != 9){
+	if(charCode != 37 && charCode != 39){
 		$scope.selectionService.ChangeSelection(items[index], evt);
 	}
 	
