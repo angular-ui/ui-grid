@@ -227,7 +227,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                 }));
             }
         }
-		domUtilityService.BuildStyles($scope, grid, true);
+        domUtilityService.BuildStyles($scope, grid, true);
 		grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;

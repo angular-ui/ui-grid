@@ -616,8 +616,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 if (col.pinned) {
                     addCol(col);
                     var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                    var elems = $("." + self.gridId + ' .col' + col.index);
-                    elems.css('left', newLeft);
+                    domUtilityService.setColLeft(col, newLeft, self);
                     totalLeft += col.width;
                 } else {
                     if (w > scrollLeft) {
@@ -725,8 +724,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if (col.pinned) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
-            var elems = $("." + self.gridId + ' .col' + col.index);
-            elems.css('left', "");
         }
         col.pinned = !col.pinned;
         // Splice the columns
@@ -736,12 +733,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         // Finally, rebuild the CSS styles.
         domUtilityService.BuildStyles($scope, self, true);
         self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
-        for (var i = 0; i < $scope.columns.length; i++) {
-            if (!$scope.columns[i].pinned) {
-                break;
-            }
-            $("." + self.gridId + ' .col' + i).css('left', "");
-        }
     };
     $scope.totalRowWidth = function() {
         var totalWidth = 0,

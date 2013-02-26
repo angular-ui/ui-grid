@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/26/2013 08:57:05
+* Compiled At: 02/26/2013 09:50:49
 ***********************************************/
 
 (function(window) {
@@ -657,7 +657,8 @@ ngGridServices.factory('DomUtilityService', function() {
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
@@ -672,7 +673,16 @@ ngGridServices.factory('DomUtilityService', function() {
             domUtilityService.digest($scope);
         }
     };
-	
+    domUtilityService.setColLeft = function(col, colLeft, grid) {
+        var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
+        var str = grid.$styleSheet.html();
+        var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+        if (ng.utils.isIe) { // IE
+            grid.$styleSheet[0].styleSheet.cssText = css;
+        } else {
+            grid.$styleSheet.html(newStr);
+        }
+    };
 	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
 		if (grid.config.maintainColumnRatios) {
@@ -1531,7 +1541,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                 }));
             }
         }
-		domUtilityService.BuildStyles($scope, grid, true);
+        domUtilityService.BuildStyles($scope, grid, true);
 		grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;
@@ -2157,8 +2167,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 if (col.pinned) {
                     addCol(col);
                     var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                    var elems = $("." + self.gridId + ' .col' + col.index);
-                    elems.css('left', newLeft);
+                    domUtilityService.setColLeft(col, newLeft, self);
                     totalLeft += col.width;
                 } else {
                     if (w > scrollLeft) {
@@ -2266,8 +2275,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         }
         if (col.pinned) {
             indexTo = Math.max(col.originalIndex, indexTo - 1);
-            var elems = $("." + self.gridId + ' .col' + col.index);
-            elems.css('left', "");
         }
         col.pinned = !col.pinned;
         // Splice the columns
@@ -2277,12 +2284,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         // Finally, rebuild the CSS styles.
         domUtilityService.BuildStyles($scope, self, true);
         self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
-        for (var i = 0; i < $scope.columns.length; i++) {
-            if (!$scope.columns[i].pinned) {
-                break;
-            }
-            $("." + self.gridId + ' .col' + i).css('left', "");
-        }
     };
     $scope.totalRowWidth = function() {
         var totalWidth = 0,

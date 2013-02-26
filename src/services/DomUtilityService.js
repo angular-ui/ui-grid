@@ -94,7 +94,8 @@ ngGridServices.factory('DomUtilityService', function() {
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
@@ -109,7 +110,12 @@ ngGridServices.factory('DomUtilityService', function() {
             domUtilityService.digest($scope);
         }
     };
-	
+    domUtilityService.setColLeft = function(col, colLeft, grid) {
+        var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
+        var str = grid.$styleSheet.html();
+        var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+        grid.$styleSheet.html(newStr);
+    };
 	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
 		if (grid.config.maintainColumnRatios) {
