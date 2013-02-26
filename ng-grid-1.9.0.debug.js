@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/26/2013 08:41:28
+* Compiled At: 02/26/2013 08:57:05
 ***********************************************/
 
 (function(window) {
@@ -2794,7 +2794,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
 					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
+                        var dataWatcher = function (a) {
                             // make a temporary copy of the data
                             grid.data = $.extend([], a);
                             grid.rowFactory.fixRowCache();
@@ -2814,7 +2814,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
                                 sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
-                        }, true);
+                        };
+                        $scope.$parent.$watch(options.data, dataWatcher);
+                        $scope.$parent.$watch(options.data + '.length', function() {
+                            dataWatcher($scope.$eval(options.data));
+                        });
                     }
 					
                     grid.footerController = new ng.Footer($scope, grid);

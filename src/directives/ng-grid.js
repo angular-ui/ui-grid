@@ -24,7 +24,7 @@
 					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
+                        var dataWatcher = function (a) {
                             // make a temporary copy of the data
                             grid.data = $.extend([], a);
                             grid.rowFactory.fixRowCache();
@@ -44,7 +44,11 @@
                                 sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
-                        }, true);
+                        };
+                        $scope.$parent.$watch(options.data, dataWatcher);
+                        $scope.$parent.$watch(options.data + '.length', function() {
+                            dataWatcher($scope.$eval(options.data));
+                        });
                     }
 					
                     grid.footerController = new ng.Footer($scope, grid);
