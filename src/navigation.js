@@ -28,7 +28,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 			if(!focusedOnFirstColumn){
 				newColumnIndex -= 1;
 			}
-			newColumnIndex -= 1;
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey)){
             if (focusedOnLastVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
@@ -37,7 +36,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 			if(!focusedOnLastColumn){
 				newColumnIndex += 1;
 			}
-			newColumnIndex += 1;
 		} else if((charCode == 9 && !evt.shiftKey) && focusedOnLastColumn){
 			newColumnIndex = 0;	
 			lastInRow = true;
