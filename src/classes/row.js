@@ -31,6 +31,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
             return true;
         }
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
+            self.selectionService.lastClickedRow = self;
             return true;
         } else {
             if (self.beforeSelectionChange(self, event)) {

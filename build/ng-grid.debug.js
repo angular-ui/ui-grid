@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/26/2013 08:29:55
+* Compiled At: 02/26/2013 08:41:28
 ***********************************************/
 
 (function(window) {
@@ -2351,6 +2351,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
             return true;
         }
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
+            self.selectionService.lastClickedRow = self;
             return true;
         } else {
             if (self.beforeSelectionChange(self, event)) {
