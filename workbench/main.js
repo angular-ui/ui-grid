@@ -51,18 +51,18 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'paid', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' }];
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo' },
+        { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false  },
+        { field: 'paid', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  },
+        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
+        { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false  },
+        { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo'  },
+        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false  },
+        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  }];
     var myplugin = {
         init: function(scope, grid) {
             myplugin.scope = scope;
@@ -103,6 +103,7 @@ function userController($scope) {
         canSelectRows: true,
 		multiSelect: false,
         enableRowReordering: true,
+		enablePinning: true,
         showGroupPanel: false,
         columnDefs: 'myDefs',
         plugins: [myplugin]

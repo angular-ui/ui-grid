@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/26/2013 09:50:49
+* Compiled At: 02/26/2013 17:09:20
 ***********************************************/
 
 (function(window) {
@@ -60,16 +60,22 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
-        var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? ($scope.col.index == 1) : ($scope.col.index == 0);
-        var focusedOnFirstVisibleColumn = ($scope.$index === 0);
-        var focusedOnLastVisibleColumn = ($scope.$index === ($scope.renderedColumns.length - 1));
-        var focusedOnLastColumn = ($scope.col.index == ($scope.columns.length - 1));
+        var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
+        var focusedOnFirstVisibleColumn = $scope.displaySelectionCheckbox && grid.config.enablePinning ? $scope.$index == 1 : $scope.$index == 0;
+        var focusedOnLastVisibleColumn = $scope.$index == ($scope.renderedColumns.length - 1);
+        var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
         var toScroll;
         
 		if((charCode == 37 || charCode ==  9 && evt.shiftKey)){
 			if (focusedOnFirstVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
-				grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+				if(focusedOnFirstColumn){
+					grid.$viewport.scrollLeft(grid.$canvas.width() - grid.$viewport.width());
+					newColumnIndex = $scope.columns.length - 1;
+					firstInRow = true;
+				} else {
+					grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+				}
 			} 
 			if(!focusedOnFirstColumn){
 				newColumnIndex -= 1;
@@ -77,28 +83,24 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey)){
             if (focusedOnLastVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-				grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+				if(focusedOnLastColumn){
+					grid.$viewport.scrollLeft(0);
+					newColumnIndex = $scope.displaySelectionCheckbox ? 1 : 0;	
+					lastInRow = true;
+				} else {
+					grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+				}
 			}
 			if(!focusedOnLastColumn){
 				newColumnIndex += 1;
 			}
-		} else if((charCode == 9 && !evt.shiftKey) && focusedOnLastColumn){
-			newColumnIndex = 0;	
-			lastInRow = true;
-		} else if((charCode == 9 && evt.shiftKey) && focusedOnFirstColumn){
-			newColumnIndex = $scope.columns.length - 1;
-			firstInRow = true;
 		}
 	}
 	
 	var offset = 0;
-	if (charCode == 9 && lastInRow){//Tab Key and Last Item in Row?
-		offset = 1;
-	} else if((charCode == 9 && evt.shiftKey) && firstInRow){ // Same as above. But with Shiftkey pressed.
+	if(charCode == 38 || (charCode == 13 && evt.shiftKey) || (charCode == 9 && evt.shiftKey) && firstInRow){ //arrow key up or shift enter or tab key and first item in row
 		offset = -1;
-	} else if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
-		offset = -1;
-	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
+	} else if(charCode == 40 || charCode == 13 || charCode == 9 && lastInRow){//arrow key down, enter, or tab key and last item in row?
 		offset = 1;
 	} else if(charCode != 37 && charCode != 39 && charCode != 9){
 		return true;
@@ -122,13 +124,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	}
 	
 	if($scope.enableCellSelection){
-		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		$scope.$evalAsync(function(){
+			$scope.domAccessProvider.focusCellElement($scope, newColumnIndex)
+		});
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
-		if (index >= items.length - EXCESS_ROWS - 1) {
-			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
-		} else if (index <= EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
+		if ($scope.selectionService.lastClickedRow.renderedRow >= $scope.renderedRows.length - EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() + $scope.rowHeight);
+		} else if ($scope.selectionService.lastClickedRow.renderedRow <= EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - $scope.rowHeight);
 		}	
 		$scope.$emit('ngGridEventDigestGrid');
 	}
@@ -674,14 +678,12 @@ ngGridServices.factory('DomUtilityService', function() {
         }
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
-        var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
-        var str = grid.$styleSheet.html();
-        var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-        if (ng.utils.isIe) { // IE
-            grid.$styleSheet[0].styleSheet.cssText = css;
-        } else {
-            grid.$styleSheet.html(newStr);
-        }
+		if(grid.$styleSheet){
+			var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
+			var str = grid.$styleSheet.html();
+			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+			grid.$styleSheet.html(newStr);
+		}
     };
 	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
@@ -1781,6 +1783,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+			newRows[i].renderedRow = i;
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
@@ -2562,18 +2565,20 @@ ng.DomAccessProvider = function(grid) {
 	};
 	
 	self.focusCellElement = function($scope, index){	
-	    var columnIndex = index != undefined ? index : previousColumn;
-	    var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
-	    if (columnIndex != undefined && elm) {
-	        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
-	        var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
-			if(grid.config.displaySelectionCheckbox && angular.element(columns[i]).scope().col.index == 0){
-				i = 1; //don't want to focus on checkbox
+		if($scope.selectionService.lastClickedRow){
+			var columnIndex = index != undefined ? index : previousColumn;
+			var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
+			if (columnIndex != undefined && elm) {
+				var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
+				var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
+				if(grid.config.displaySelectionCheckbox && angular.element(columns[i]).scope() && angular.element(columns[i]).scope().col.index == 0){
+					i = 1; //don't want to focus on checkbox
+				}
+				if (columns[i]) {
+					columns[i].children[0].focus();
+				}
+				previousColumn = columnIndex;
 			}
-	        if (columns[i]) {
-	            columns[i].children[0].focus();
-	        }
-			previousColumn = columnIndex;
 		}
 	};
 	

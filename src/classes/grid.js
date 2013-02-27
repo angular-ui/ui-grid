@@ -230,6 +230,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+			newRows[i].renderedRow = i;
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);

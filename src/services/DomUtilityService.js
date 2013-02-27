@@ -111,10 +111,12 @@ ngGridServices.factory('DomUtilityService', function() {
         }
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
-        var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
-        var str = grid.$styleSheet.html();
-        var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-        grid.$styleSheet.html(newStr);
+		if(grid.$styleSheet){
+			var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
+			var str = grid.$styleSheet.html();
+			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+			grid.$styleSheet.html(newStr);
+		}
     };
 	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);

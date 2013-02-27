@@ -14,16 +14,22 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
-        var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? ($scope.col.index == 1) : ($scope.col.index == 0);
-        var focusedOnFirstVisibleColumn = ($scope.$index === 0);
-        var focusedOnLastVisibleColumn = ($scope.$index === ($scope.renderedColumns.length - 1));
-        var focusedOnLastColumn = ($scope.col.index == ($scope.columns.length - 1));
+        var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
+        var focusedOnFirstVisibleColumn = $scope.displaySelectionCheckbox && grid.config.enablePinning ? $scope.$index == 1 : $scope.$index == 0;
+        var focusedOnLastVisibleColumn = $scope.$index == ($scope.renderedColumns.length - 1);
+        var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
         var toScroll;
         
 		if((charCode == 37 || charCode ==  9 && evt.shiftKey)){
 			if (focusedOnFirstVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
-				grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+				if(focusedOnFirstColumn){
+					grid.$viewport.scrollLeft(grid.$canvas.width() - grid.$viewport.width());
+					newColumnIndex = $scope.columns.length - 1;
+					firstInRow = true;
+				} else {
+					grid.$viewport.scrollLeft(Math.max(toScroll, 0));
+				}
 			} 
 			if(!focusedOnFirstColumn){
 				newColumnIndex -= 1;
@@ -31,28 +37,24 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey)){
             if (focusedOnLastVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-				grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+				if(focusedOnLastColumn){
+					grid.$viewport.scrollLeft(0);
+					newColumnIndex = $scope.displaySelectionCheckbox ? 1 : 0;	
+					lastInRow = true;
+				} else {
+					grid.$viewport.scrollLeft(Math.min(toScroll, grid.$canvas.width() - grid.$viewport.width()));
+				}
 			}
 			if(!focusedOnLastColumn){
 				newColumnIndex += 1;
 			}
-		} else if((charCode == 9 && !evt.shiftKey) && focusedOnLastColumn){
-			newColumnIndex = 0;	
-			lastInRow = true;
-		} else if((charCode == 9 && evt.shiftKey) && focusedOnFirstColumn){
-			newColumnIndex = $scope.columns.length - 1;
-			firstInRow = true;
 		}
 	}
 	
 	var offset = 0;
-	if (charCode == 9 && lastInRow){//Tab Key and Last Item in Row?
-		offset = 1;
-	} else if((charCode == 9 && evt.shiftKey) && firstInRow){ // Same as above. But with Shiftkey pressed.
+	if(charCode == 38 || (charCode == 13 && evt.shiftKey) || (charCode == 9 && evt.shiftKey) && firstInRow){ //arrow key up or shift enter or tab key and first item in row
 		offset = -1;
-	} else if(charCode == 38 || (charCode == 13 && evt.shiftKey)){ //arrow key up or shift enter
-		offset = -1;
-	} else if(charCode == 40 || charCode == 13){//arrow key down or enter
+	} else if(charCode == 40 || charCode == 13 || charCode == 9 && lastInRow){//arrow key down, enter, or tab key and last item in row?
 		offset = 1;
 	} else if(charCode != 37 && charCode != 39 && charCode != 9){
 		return true;
@@ -76,13 +78,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	}
 	
 	if($scope.enableCellSelection){
-		$scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		$scope.$evalAsync(function(){
+			$scope.domAccessProvider.focusCellElement($scope, newColumnIndex)
+		});
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
-		if (index >= items.length - EXCESS_ROWS - 1) {
-			elm.scrollTop(elm.scrollTop() + ($scope.rowHeight * 2));
-		} else if (index <= EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() - ($scope.rowHeight * 2));
+		if ($scope.selectionService.lastClickedRow.renderedRow >= $scope.renderedRows.length - EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() + $scope.rowHeight);
+		} else if ($scope.selectionService.lastClickedRow.renderedRow <= EXCESS_ROWS) {
+			elm.scrollTop(elm.scrollTop() - $scope.rowHeight);
 		}	
 		$scope.$emit('ngGridEventDigestGrid');
 	}
