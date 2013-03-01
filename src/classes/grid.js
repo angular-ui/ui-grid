@@ -225,6 +225,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             if (!$scope.renderedRows[i] || (newRows[i].isAggRow || $scope.renderedRows[i].isAggRow)) {
                 $scope.renderedRows[i] = newRows[i].copy();
                 $scope.renderedRows[i].collapsed = newRows[i].collapsed;
+                if (!newRows[i].isAggRow) {
+                    $scope.renderedRows[i].setVars(newRows[i]);
+                }
             } else {
                 $scope.renderedRows[i].setVars(newRows[i]);
             }
@@ -677,13 +680,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         return self.config.showGroupPanel;
     };
     $scope.topPanelHeight = function() {
-        return self.config.showGroupPanel === true ? self.config.headerRowHeight * 2 : self.config.headerRowHeight;
+        return self.config.showGroupPanel === true ? self.config.headerRowHeight + 31 : self.config.headerRowHeight;
     };
 
     $scope.viewportDimHeight = function() {
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
-    $scope.groupBy = function(col) {
+    $scope.groupBy = function (col) {
+        //first sort the column
+        if (!col.sortDirection) col.sort({shiftKey: true});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
