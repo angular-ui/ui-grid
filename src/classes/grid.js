@@ -145,11 +145,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         /*Enables menu to choose which columns to display and group by. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
-        showColumnMenu: true,
+        showColumnMenu: false,
 
         /*Enables display of the filterbox in the column menu. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
-        showFilter: true,
+        showFilter: false,
 
         //Show the dropzone for drag and drop grouping
         showGroupPanel: false,
@@ -622,8 +622,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     domUtilityService.setColLeft(col, newLeft, self);
                     totalLeft += col.width;
                 } else {
-                    if (w > scrollLeft) {
-                        if (colwidths < scrollLeft + self.rootDim.outerWidth) {
+                    if (w >= scrollLeft) {
+                        if (colwidths <= scrollLeft + self.rootDim.outerWidth) {
                             addCol(col);
                         }
                     }
@@ -717,6 +717,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.fixColumnIndexes();
             domUtilityService.digest($scope);
         }
+        $scope.adjustScrollLeft(0);
     };
     $scope.togglePin = function (col) {
         var indexFrom = col.index;
