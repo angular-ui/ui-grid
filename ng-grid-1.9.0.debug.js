@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/01/2013 14:59:48
+* Compiled At: 03/01/2013 15:02:21
 ***********************************************/
 
 (function(window) {
@@ -2139,7 +2139,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     $scope.groupBy = function (col) {
         //first sort the column
-        if (!col.sortDirection) col.sort({shiftKey: true});
+        if (!col.sortDirection) col.sort({shiftKey: false});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }

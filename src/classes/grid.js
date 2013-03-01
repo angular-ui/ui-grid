@@ -42,16 +42,16 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         dataUpdated: function() {
         },
             //Row selection check boxes appear as the first column.
-        displaySelectionCheckbox: true, 
+        displaySelectionCheckbox: false, 
 		
         //Enables cell selection.
         enableCellSelection: false,
 
         //Enable or disable resizing of columns
-        enableColumnResize: true,
+        enableColumnResize: false,
 
         //Enable or disable reordering of columns
-        enableColumnReordering: true,
+        enableColumnReordering: false,
 
         //Enable or disable HEAVY column virtualization. This turns off selection checkboxes and column pinning and is designed for spreadsheet-like data.
         enableColumnHeavyVirt: false,
@@ -84,8 +84,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         footerRowHeight: 55,
 
         //Show or hide the footer alltogether the footer is enabled by default
-        displayFooter: undefined,
-        footerVisible: true, // depricated
+        displayFooter: false,
 
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
@@ -562,8 +561,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
-    $scope.footerVisible = ng.utils.isNullOrUndefined(self.config.displayFooter) ? self.config.footerVisible : self.config.displayFooter;
-    $scope.footerRowHeight = $scope.footerVisible ? self.config.footerRowHeight : 0;
+    $scope.displayFooter = self.config.displayFooter;
+    $scope.footerRowHeight = $scope.displayFooter ? self.config.footerRowHeight : 0;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
@@ -688,7 +687,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     $scope.groupBy = function (col) {
         //first sort the column
-        if (!col.sortDirection) col.sort({shiftKey: true});
+        if (!col.sortDirection) col.sort({shiftKey: false});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
