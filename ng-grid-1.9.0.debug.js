@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/01/2013 17:30:38
+* Compiled At: 03/01/2013 18:00:20
 ***********************************************/
 
 (function(window) {
@@ -638,7 +638,7 @@ ng.editableCellTemplate = function(){ return '<input ng-class="\'colt\' + col.in
 /***********************************************
 * FILE: ..\src\templates\focusedCellEditTemplate.html
 ***********************************************/
-ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus><div ng-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ng-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
+ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus ng-dblclick="editCell()"><div ng-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ng-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -3028,8 +3028,6 @@ ngGridDirectives.directive('ngCellText',
 ***********************************************/
 ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 	function (domUtilityService) {
-		var isFocused = false;
-		var oldCellValue = undefined;
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
@@ -3046,6 +3044,12 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			}
 		};
 		return function($scope, elm) {
+            var isFocused = false;
+            $scope.editCell = function(){             
+                setTimeout(function() {
+                    focusOnInputElement($scope,elm);
+                }, 0);
+            };
 			elm.bind('mousedown', function(evt){
 				elm.focus();
 				return true;

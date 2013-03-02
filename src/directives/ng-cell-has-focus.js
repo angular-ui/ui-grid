@@ -1,7 +1,5 @@
 ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 	function (domUtilityService) {
-		var isFocused = false;
-		var oldCellValue = undefined;
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
@@ -18,6 +16,12 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			}
 		};
 		return function($scope, elm) {
+            var isFocused = false;
+            $scope.editCell = function(){             
+                setTimeout(function() {
+                    focusOnInputElement($scope,elm);
+                }, 0);
+            };
 			elm.bind('mousedown', function(evt){
 				elm.focus();
 				return true;
