@@ -1,5 +1,7 @@
 ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 	function (domUtilityService) {
+		var isFocused = false;
+		var oldCellValue = undefined;
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
@@ -16,16 +18,25 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			}
 		};
 		return function($scope, elm) {
-			$scope.isFocused = false;
 			elm.bind('mousedown', function(evt){
-				evt.preventDefault();
-				$scope.$parent.row.toggleSelected(evt);
-				domUtilityService.digest($scope.$parent.$parent);
-				focusOnInputElement($scope, elm);
+				elm.focus();
 				return true;
 			});			
 			elm.bind('focus', function(evt){
-				focusOnInputElement($scope, elm);
+				isFocused = true;
+				return true;
+			});		
+			elm.bind('blur', function(evt){
+				isFocused = false;
+				return true;
+			});
+			elm.bind('keydown', function(evt){
+				if(isFocused && evt.keyCode != 37 && evt.keyCode != 38 && evt.keyCode != 39 && evt.keyCode != 40 && evt.keyCode != 9 && !evt.shiftKey && evt.keyCode != 13){
+					focusOnInputElement($scope,elm);
+				}
+				if(evt.keyCode == 27){
+					elm.focus();
+				}
 				return true;
 			});
 		};

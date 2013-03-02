@@ -20,10 +20,10 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
         var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
         var toScroll;
         
-		if((charCode == 37 || charCode ==  9 && evt.shiftKey)){
+		if(charCode == 37 || charCode ==  9 && evt.shiftKey){
 			if (focusedOnFirstVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
-				if(focusedOnFirstColumn){
+				if(focusedOnFirstColumn && charCode ==  9 && evt.shiftKey){
 					grid.$viewport.scrollLeft(grid.$canvas.width() - grid.$viewport.width());
 					newColumnIndex = $scope.columns.length - 1;
 					firstInRow = true;
@@ -34,10 +34,10 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 			if(!focusedOnFirstColumn){
 				newColumnIndex -= 1;
 			}
-		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey)){
+		} else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){
             if (focusedOnLastVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-				if(focusedOnLastColumn){
+				if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
 					grid.$viewport.scrollLeft(0);
 					newColumnIndex = $scope.displaySelectionCheckbox ? 1 : 0;	
 					lastInRow = true;
@@ -78,9 +78,9 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	}
 	
 	if($scope.enableCellSelection){
-		$scope.$evalAsync(function(){
-			$scope.domAccessProvider.focusCellElement($scope, newColumnIndex)
-		});
+		setTimeout(function(){
+		    $scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		}, 0)
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
 		if ($scope.selectionService.lastClickedRow.renderedRow >= $scope.renderedRows.length - EXCESS_ROWS) {

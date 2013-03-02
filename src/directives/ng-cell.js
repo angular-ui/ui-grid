@@ -9,7 +9,7 @@
 					if($scope.col.enableFocusedCellEdit){
 						html =  $scope.col.focusedCellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "'row.entity.' + col.field"));
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
 					} else {
 					    html = cellTemplate;
 					}

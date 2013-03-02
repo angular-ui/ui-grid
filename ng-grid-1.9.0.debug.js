@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/01/2013 15:26:42
+* Compiled At: 03/01/2013 17:30:38
 ***********************************************/
 
 (function(window) {
@@ -25,7 +25,8 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 * FILE: ..\src\constants.js
 ***********************************************/
 // the # of rows we want to add to the top and bottom of the rendered grid rows 
-var EXCESS_ROWS = 2;
+var EXCESS_ROWS = 6;
+var SCROLL_THRESHOLD = 4;
 var ASC = "asc";
 // constant for sorting direction
 var DESC = "desc";
@@ -66,10 +67,10 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
         var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
         var toScroll;
         
-		if((charCode == 37 || charCode ==  9 && evt.shiftKey)){
+		if(charCode == 37 || charCode ==  9 && evt.shiftKey){
 			if (focusedOnFirstVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() - $scope.col.width;
-				if(focusedOnFirstColumn){
+				if(focusedOnFirstColumn && charCode ==  9 && evt.shiftKey){
 					grid.$viewport.scrollLeft(grid.$canvas.width() - grid.$viewport.width());
 					newColumnIndex = $scope.columns.length - 1;
 					firstInRow = true;
@@ -80,10 +81,10 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 			if(!focusedOnFirstColumn){
 				newColumnIndex -= 1;
 			}
-		} else if((charCode == 39 || charCode ==  9 && !evt.shiftKey)){
+		} else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){
             if (focusedOnLastVisibleColumn) {
 				toScroll = grid.$viewport.scrollLeft() + $scope.col.width;
-				if(focusedOnLastColumn){
+				if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
 					grid.$viewport.scrollLeft(0);
 					newColumnIndex = $scope.displaySelectionCheckbox ? 1 : 0;	
 					lastInRow = true;
@@ -124,9 +125,9 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	}
 	
 	if($scope.enableCellSelection){
-		$scope.$evalAsync(function(){
-			$scope.domAccessProvider.focusCellElement($scope, newColumnIndex)
-		});
+		setTimeout(function(){
+		    $scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
+		}, 0)
 		$scope.$emit('ngGridEventDigestGridParent');
 	} else {	
 		if ($scope.selectionService.lastClickedRow.renderedRow >= $scope.renderedRows.length - EXCESS_ROWS) {
@@ -632,7 +633,7 @@ ng.checkboxHeaderTemplate = function(){ return '<input class="ngSelectionHeader"
 /***********************************************
 * FILE: ..\src\templates\editableCellTemplate.html
 ***********************************************/
-ng.editableCellTemplate = function(){ return '<input ng-cell-input ng-class="\'colt\' + col.index" ng-input="COL_FIELD" />';};
+ng.editableCellTemplate = function(){ return '<input ng-class="\'colt\' + col.index" ng-input="COL_FIELD" />';};
 
 /***********************************************
 * FILE: ..\src\templates\focusedCellEditTemplate.html
@@ -2099,11 +2100,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	    var newRange;
 	    if (self.filteredRows.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
-	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + EXCESS_ROWS) {
+	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        //Have we hit the threshold going up?
-	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - EXCESS_ROWS) {
+	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
@@ -2855,7 +2856,7 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
 					if($scope.col.enableFocusedCellEdit){
 						html =  $scope.col.focusedCellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "'row.entity.' + col.field"));
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
 					} else {
 					    html = cellTemplate;
 					}
@@ -2922,16 +2923,37 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
 ***********************************************/
 ngGridDirectives.directive('ngInput',['$parse', function($parse) {
     return function ($scope, elm, attrs) {
-        var getter = $parse(attrs.ngInput);
-        $scope.$watch(getter, function (newVal) {
-            elm.val($scope.$eval(newVal));
-        });
+        var getter = $parse($scope.$eval(attrs.ngInput));
+		var setter = getter.assign;
+		var oldCellValue = getter($scope.row.entity);
+		elm.val(oldCellValue);
         elm.bind('keyup', function() {
             var newVal = elm.val();
             if (!$scope.$root.$$phase) {
-                $scope.$apply(getter($scope) + "= '" + newVal + "'");
+                $scope.$apply(function(){setter($scope.row.entity,newVal)});
             }
         });
+		elm.bind('keydown', function(evt){
+			switch(evt.keyCode){
+				case 37:
+				case 38:
+				case 39:
+				case 40:
+					evt.stopPropagation();
+					break;
+				case 27:
+					if (!$scope.$root.$$phase) {
+						$scope.$apply(function(){
+							setter($scope.row.entity,oldCellValue);
+							elm.val(oldCellValue);
+							elm.blur();
+						});
+					}
+				default:
+					break;
+			}
+			return true;
+		});
     };
 }]);
 
@@ -3006,6 +3028,8 @@ ngGridDirectives.directive('ngCellText',
 ***********************************************/
 ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 	function (domUtilityService) {
+		var isFocused = false;
+		var oldCellValue = undefined;
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
@@ -3022,43 +3046,29 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 			}
 		};
 		return function($scope, elm) {
-			$scope.isFocused = false;
 			elm.bind('mousedown', function(evt){
-				evt.preventDefault();
-				$scope.$parent.row.toggleSelected(evt);
-				domUtilityService.digest($scope.$parent.$parent);
-				focusOnInputElement($scope, elm);
+				elm.focus();
 				return true;
 			});			
 			elm.bind('focus', function(evt){
-				focusOnInputElement($scope, elm);
+				isFocused = true;
+				return true;
+			});		
+			elm.bind('blur', function(evt){
+				isFocused = false;
 				return true;
 			});
-		};
-	}]);
-
-/***********************************************
-* FILE: ..\src\directives\ng-cell-input.js
-***********************************************/
-ngGridDirectives.directive('ngCellInput',
-	function () {
-		return function($scope, elm) {
 			elm.bind('keydown', function(evt){
-				switch(evt.keyCode){
-					case 37:
-					case 38:
-					case 39:
-					case 40:
-					    evt.stopPropagation();
-					    console.log("stop prop");
-						break;
-					default:
-						break;
+				if(isFocused && evt.keyCode != 37 && evt.keyCode != 38 && evt.keyCode != 39 && evt.keyCode != 40 && evt.keyCode != 9 && !evt.shiftKey && evt.keyCode != 13){
+					focusOnInputElement($scope,elm);
+				}
+				if(evt.keyCode == 27){
+					elm.focus();
 				}
 				return true;
 			});
 		};
-	});
+	}]);
 
 /***********************************************
 * FILE: ..\src\directives\ng-if.js

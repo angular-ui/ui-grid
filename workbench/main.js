@@ -94,6 +94,7 @@ function userController($scope) {
     };
     $scope.gridOptions = {
         data: 'myData',
+        enableColumnResize: true,
         selectedItems: $scope.mySelections,
         headerRowHeight: '60',
         beforeSelectionChange: self.selectionchanging,

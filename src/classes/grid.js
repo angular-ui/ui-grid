@@ -648,11 +648,11 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
 	    var newRange;
 	    if (self.filteredRows.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
-	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + EXCESS_ROWS) {
+	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        //Have we hit the threshold going up?
-	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - EXCESS_ROWS) {
+	        if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        newRange = new ng.Range(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
