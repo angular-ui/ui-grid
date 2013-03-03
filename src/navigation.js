@@ -9,7 +9,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	var firstInRow = false;
     var rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
     
-    if(charCode != 37 && charCode != 39 && charCode != 9 && charCode != 13){
+    if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
 		return true;
 	}
     

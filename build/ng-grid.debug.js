@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/02/2013 17:40:59
+* Compiled At: 03/02/2013 20:17:51
 ***********************************************/
 
 (function(window) {
@@ -56,7 +56,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	var firstInRow = false;
     var rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
     
-    if(charCode != 37 && charCode != 39 && charCode != 9 && charCode != 13){
+    if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
 		return true;
 	}
     
