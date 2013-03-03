@@ -4,19 +4,22 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
         return true;
     }
     var charCode = evt.which || evt.keyCode;
-	
-    var newColumnIndex = $scope.$index;
-    
+    var newColumnIndex = $scope.col.index;    
 	var lastInRow = false;
 	var firstInRow = false;
+    var rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
+    
+    if(charCode != 37 && charCode != 39 && charCode != 9 && charCode != 13){
+		return true;
+	}
     
 	if($scope.enableCellSelection){
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
         var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
-        var focusedOnFirstVisibleColumn = $scope.displaySelectionCheckbox && grid.config.enablePinning ? $scope.$index == 1 : $scope.$index == 0;
-        var focusedOnLastVisibleColumn = $scope.$index == ($scope.renderedColumns.length - 1);
+        var focusedOnFirstVisibleColumn = $scope.$index == 1 || $scope.$index == 0;
+        var focusedOnLastVisibleColumn = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
         var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
         var toScroll;
         
@@ -51,15 +54,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		}
 	}
 	
-	var offset = 0;
-	if(charCode == 38 || (charCode == 13 && evt.shiftKey) || (charCode == 9 && evt.shiftKey) && firstInRow){ //arrow key up or shift enter or tab key and first item in row
-		offset = -1;
-	} else if(charCode == 40 || charCode == 13 || charCode == 9 && lastInRow){//arrow key down, enter, or tab key and last item in row?
-		offset = 1;
-	} else if(charCode != 37 && charCode != 39 && charCode != 9){
-		return true;
-	}
-	
 	var items;
 	if ($scope.configGroups.length > 0) {
 	   items = grid.rowFactory.parsedData.filter(function (row) {
@@ -69,26 +63,26 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	   items = grid.filteredRows;
 	}
 	
-    var index = $scope.selectionService.lastClickedRow.rowIndex + offset;
-    if (index < 0 || index >= items.length) {
-        return true;
+	var offset = 0;
+	if(rowIndex != 0 && (charCode == 38 || charCode == 13 && evt.shiftKey || charCode == 9 && evt.shiftKey && firstInRow)){ //arrow key up or shift enter or tab key and first item in row
+		offset = -1;
+	} else if(rowIndex != items.length - 1 && (charCode == 40 || charCode == 13 && !evt.shiftKey || charCode == 9 && lastInRow)){//arrow key down, enter, or tab key and last item in row?
+		offset = 1;
+	} 
+    
+	$scope.selectionService.ChangeSelection(items[rowIndex + offset], evt);
+    $scope.$emit('ngGridEventDigestGridParent');
+
+    if ($scope.selectionService.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
+        grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
+    } else if ($scope.selectionService.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
+        grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
+    }	
+    
+    if($scope.enableCellSelection){
+        setTimeout(function(){
+            $scope.domAccessProvider.focusCellElement($scope, $scope.columns[newColumnIndex].renderedColIndex);
+        },3);
     }
-	if(charCode != 37 && charCode != 39){
-		$scope.selectionService.ChangeSelection(items[index], evt);
-	}
-	
-	if($scope.enableCellSelection){
-		setTimeout(function(){
-		    $scope.domAccessProvider.focusCellElement($scope, newColumnIndex);
-		}, 0)
-		$scope.$emit('ngGridEventDigestGridParent');
-	} else {	
-		if ($scope.selectionService.lastClickedRow.renderedRow >= $scope.renderedRows.length - EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() + $scope.rowHeight);
-		} else if ($scope.selectionService.lastClickedRow.renderedRow <= EXCESS_ROWS) {
-			elm.scrollTop(elm.scrollTop() - $scope.rowHeight);
-		}	
-		$scope.$emit('ngGridEventDigestGrid');
-	}
     return false;
 };

@@ -232,7 +232,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
-			newRows[i].renderedRow = i;
+			newRows[i].renderedRowIndex = i;
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);
@@ -602,6 +602,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         var r = 0;
         var addCol = function (c) {
             if (dcv) {
+                c.renderedColIndex = newCols.length;
                 newCols.push(c);
             } else {
                 if (!$scope.renderedColumns[r]) {

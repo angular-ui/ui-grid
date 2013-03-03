@@ -50,7 +50,7 @@ ng.DomAccessProvider = function(grid) {
 				doingKeyDown = false;
 				return ret;
 			}
-			return false;
+			return true;
 		});
 		elm.bind('keyup', function(evt) {
 			if (evt.keyCode == 16) { //shift key

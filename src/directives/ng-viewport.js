@@ -17,13 +17,6 @@ ngGridDirectives.directive('ngViewport', [function() {
             if (!$scope.$root.$$phase) {
                 $scope.$digest();
             }
-            if ($scope.enableCellSelection && (document.activeElement == null || document.activeElement.className.indexOf('ngViewport') == -1) && !isMouseWheelActive) {
-                if (vscroll) $scope.domAccessProvider.focusCellElement($scope);
-                if (hscroll) {
-                    var index = goingRight ? $scope.renderedColumns.length -1 : -1;
-                    $scope.domAccessProvider.focusCellElement($scope, index);
-                }
-            }
             prevScollLeft = scrollLeft;
             prevScollTop = prevScollTop;
             isMouseWheelActive = false;
