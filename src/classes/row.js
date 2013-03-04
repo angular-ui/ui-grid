@@ -12,7 +12,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
-	self.selected = null;
+	self.selected = selectionService.getSelection(entity);
     self.cursor = canSelectRows ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
 		self.selectionService.setSelection(self, isSelected);
@@ -21,6 +21,13 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.continueSelection = function(event) {
         self.selectionService.ChangeSelection(self, event);
     };
+    self.ensureEntity = function(expected) {
+        if (self.entity != expected) {
+            // Update the entity and determine our selected property
+            self.entity = expected;
+            self.selected = self.selectionService.getSelection(self.entity);
+        }
+    }
     self.toggleSelected = function(event) {
         if (!canSelectRows && !config.enableCellSelection) {
             return true;
