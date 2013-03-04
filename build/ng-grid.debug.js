@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/03/2013 22:29:16
+* Compiled At: 03/04/2013 00:28:49
 ***********************************************/
 
 (function(window) {
@@ -632,7 +632,7 @@ ng.editableCellTemplate = function(){ return '<input ng-class="\'colt\' + col.in
 /***********************************************
 * FILE: ..\src\templates\focusedCellEditTemplate.html
 ***********************************************/
-ng.focusedCellEditTemplate = function(){ return '<div ng-cell-has-focus ng-dblclick="editCell()"><div ng-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ng-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
+ng.cellEditTemplate = function(){ return '<div ng-cell-has-focus ng-dblclick="editCell()"><div ng-if="!isFocused">DISPLAY_CELL_TEMPLATE</div><div ng-if="isFocused">EDITABLE_CELL_TEMPLATE</div></div>';};
 
 /***********************************************
 * FILE: ..\src\templates\aggregateTemplate.html
@@ -976,7 +976,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-	self.enableFocusedCellEdit = colDef.enableFocusedCellEdit;
+	self.enableCellEdit = colDef.enableCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -1011,8 +1011,8 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.headerCellTemplate = colDef.headerCellTemplate || ng.headerCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.cellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-	if(self.enableFocusedCellEdit) {
-	    self.focusedCellEditTemplate = ng.focusedCellEditTemplate();
+	if(self.enableCellEdit) {
+	    self.cellEditTemplate = ng.cellEditTemplate();
 		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
 	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
@@ -1022,7 +1022,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
             async: false
         }).responseText;
     }
-	if (self.enableFocusedCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+	if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
         self.editableCellTemplate = $.ajax({
             type: "GET",
             url: colDef.editableCellTemplate,
@@ -1077,7 +1077,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         }
     };
     self.gripOnMouseDown = function(event) {
-        if (event.ctrlKey) {
+        if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
             return true;
@@ -1133,7 +1133,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
         self.headerClass = fromCol.headerClass;
         self.headerCellTemplate = fromCol.headerCellTemplate;
         self.cellTemplate = fromCol.cellTemplate;
-        self.focusedCellEditTemplate = fromCol.focusedCellEditTemplate;
+        self.cellEditTemplate = fromCol.cellEditTemplate;
     };
 };
 
@@ -2852,8 +2852,8 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
                 pre: function($scope, iElement) {
                     var html;
                     var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
-					if($scope.col.enableFocusedCellEdit){
-						html =  $scope.col.focusedCellEditTemplate;
+					if($scope.col.enableCellEdit){
+						html =  $scope.col.cellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
 						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
 					} else {

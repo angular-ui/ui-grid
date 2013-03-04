@@ -6,8 +6,8 @@
                 pre: function($scope, iElement) {
                     var html;
                     var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
-					if($scope.col.enableFocusedCellEdit){
-						html =  $scope.col.focusedCellEditTemplate;
+					if($scope.col.enableCellEdit){
+						html =  $scope.col.cellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
 						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
 					} else {

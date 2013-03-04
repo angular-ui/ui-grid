@@ -52,17 +52,17 @@ function userController($scope) {
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo' },
-        { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
         { field: 'birthday', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'paid', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  },
+        { field: 'paid', cellFilter: 'checkmark', width: 200, enableCellEdit: true  },
         { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
-        { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
         { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableCellEdit: true  },
         { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo'  },
-        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableFocusedCellEdit: true  },
+        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
         { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableFocusedCellEdit: true  }];
+        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableCellEdit: true  }];
     var myplugin = {
         init: function(scope, grid) {
             myplugin.scope = scope;
@@ -84,11 +84,11 @@ function userController($scope) {
         grid: undefined,
     };
 
-    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableFocusedCellEdit: true },
-        { field: 'Vendor', displayName: 'Supplier', enableFocusedCellEdit: true },
-        { field: 'SeasonCode', displayName: 'My SeasonCode', enableFocusedCellEdit: true },
-        { field: 'Mfg_Id', displayName: 'Manufacturer ID', enableFocusedCellEdit: true },
-        { field: 'UPC', displayName: 'Bar Code', enableFocusedCellEdit: true }];
+    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableCellEdit: true },
+        { field: 'Vendor', displayName: 'Supplier', enableCellEdit: true },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', enableCellEdit: true },
+        { field: 'Mfg_Id', displayName: 'Manufacturer ID', enableCellEdit: true },
+        { field: 'UPC', displayName: 'Bar Code', enableCellEdit: true }];
     self.selectionchanging = function (a, b) {
         return true;
     };

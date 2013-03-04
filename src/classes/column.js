@@ -9,7 +9,7 @@
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-	self.enableFocusedCellEdit = colDef.enableFocusedCellEdit;
+	self.enableCellEdit = colDef.enableCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -44,8 +44,8 @@
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.headerCellTemplate = colDef.headerCellTemplate || ng.headerCellTemplate();
     self.cellTemplate = colDef.cellTemplate || ng.cellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-	if(self.enableFocusedCellEdit) {
-	    self.focusedCellEditTemplate = ng.focusedCellEditTemplate();
+	if(self.enableCellEdit) {
+	    self.cellEditTemplate = ng.cellEditTemplate();
 		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
 	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
@@ -55,7 +55,7 @@
             async: false
         }).responseText;
     }
-	if (self.enableFocusedCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+	if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
         self.editableCellTemplate = $.ajax({
             type: "GET",
             url: colDef.editableCellTemplate,
@@ -110,7 +110,7 @@
         }
     };
     self.gripOnMouseDown = function(event) {
-        if (event.ctrlKey) {
+        if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
             return true;
@@ -166,6 +166,6 @@
         self.headerClass = fromCol.headerClass;
         self.headerCellTemplate = fromCol.headerCellTemplate;
         self.cellTemplate = fromCol.cellTemplate;
-        self.focusedCellEditTemplate = fromCol.focusedCellEditTemplate;
+        self.cellEditTemplate = fromCol.cellEditTemplate;
     };
 };
