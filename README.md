@@ -13,7 +13,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 1.9.0
+version 2.0.0
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
@@ -23,9 +23,8 @@ Questions, Comments, Complaints? feel free to email us at nggridteam@gmail.com
 ***
 ##Roadmap##
 
-We are going to be adding more features here as we head to a 2.0 release, including:
+We are going to be adding more features here as we head to a 3.0 release, including:
 
-* Virtualized column scrolling
 * Anything else the rest of the community wants to contribute that isn't a terrible idea. :)
 
 ***
