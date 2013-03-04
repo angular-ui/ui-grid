@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/03/2013 20:58:37
+* Compiled At: 03/03/2013 22:16:21
 ***********************************************/
 
 (function(window) {
@@ -2320,7 +2320,11 @@ ng.SearchProvider = function ($scope, grid, $filter) {
                             var c = self.fieldMap[prop];
                             if (!c)
                                 continue;
-                            var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
+                            var f = null;
+                            if (c && c.cellFilter) {
+                                var s = c.cellFilter.split(':');
+                                f = $filter(s[0]);
+                            }
                             var pVal = item[prop];
                             if (pVal != null) {
                                 if (typeof f == 'function') {

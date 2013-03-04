@@ -19,7 +19,11 @@
                             var c = self.fieldMap[prop];
                             if (!c)
                                 continue;
-                            var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
+                            var f = null;
+                            if (c && c.cellFilter) {
+                                var s = c.cellFilter.split(':');
+                                f = $filter(s[0]);
+                            }
                             var pVal = item[prop];
                             if (pVal != null) {
                                 if (typeof f == 'function') {
