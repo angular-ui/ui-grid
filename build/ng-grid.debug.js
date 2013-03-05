@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/05/2013 00:05:55
+* Compiled At: 03/05/2013 13:35:09
 ***********************************************/
 
 (function(window) {
@@ -988,7 +988,7 @@ ng.Column = function(config, $scope, grid, domUtilityService) {
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-	self.enableCellEdit = colDef.enableCellEdit;
+	self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -1502,6 +1502,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: false, 
+        
+        //Enables cell editing.
+        enableCellEdit: false,
 		
         //Enables cell selection.
         enableCellSelection: false,
@@ -1766,7 +1769,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
-                    enablePinning: self.config.enablePinning
+                    enablePinning: self.config.enablePinning,
+                    enableCellEdit: self.config.enableCellEdit 
                 }, $scope, self, domUtilityService);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {

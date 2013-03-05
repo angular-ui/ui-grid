@@ -51,18 +51,18 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo' },
-        { field: 'allowance', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
-        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'paid', cellFilter: 'checkmark', width: 200, enableCellEdit: true  },
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', enableCellEdit: true },
+        { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
+        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false, enableCellEdit: true  },
+        { field: 'paid', cellFilter: 'checkmark', width: 200  },
         { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
-        { field: 'asdf', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
+        { field: 'asdf', aggLabelFilter: 'currency', width: 200 },
         { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'asgdasga', cellFilter: 'checkmark', width: 200, enableCellEdit: true  },
+        { field: 'asgdasga', cellFilter: 'checkmark', width: 200  },
         { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo'  },
-        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200, enableCellEdit: true  },
+        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200 },
         { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200, enableCellEdit: true  }];
+        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200 }];
     var myplugin = {
         init: function(scope, grid) {
             myplugin.scope = scope;
@@ -103,6 +103,7 @@ function userController($scope) {
 		enablePaging: true,
         canSelectRows: true,
 		multiSelect: false,
+        enableCellEdit: false,
         enableRowReordering: true,
 		enablePinning: true,
         showGroupPanel: false,

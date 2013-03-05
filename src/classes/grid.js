@@ -44,6 +44,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: false, 
+        
+        //Enables cell editing.
+        enableCellEdit: false,
 		
         //Enables cell selection.
         enableCellSelection: false,
@@ -308,7 +311,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
-                    enablePinning: self.config.enablePinning
+                    enablePinning: self.config.enablePinning,
+                    enableCellEdit: self.config.enableCellEdit 
                 }, $scope, self, domUtilityService);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
