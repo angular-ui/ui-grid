@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/05/2013 13:35:09
+* Compiled At: 03/05/2013 14:48:58
 ***********************************************/
 
 (function(window) {
@@ -1710,17 +1710,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.rootDim = dim;
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
-    self.buildColumnDefsFromData = function() {
-        if (!self.config.columnDefs) {
-            self.config.columnDefs = [];
-        }
-        if (!self.data || !self.data[0]) {
+    self.buildColumnDefsFromData = function () {
+        self.config.columnDefs = [];
+        var item = self.data[0];
+        if (!item) {
             self.lateBoundColumns = true;
             return;
         }
-        var item;
-        item = self.data[0];
-
         ng.utils.forIn(item, function (prop, propName) {
             if (self.config.excludeProperties.indexOf(propName) == -1) {
                 self.config.columnDefs.push({
@@ -1732,7 +1728,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.buildColumns = function() {
         var columnDefs = self.config.columnDefs,
             cols = [];
-        var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
@@ -1758,6 +1753,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
+            var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
@@ -2730,12 +2726,18 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'Dom
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
-                        $scope.$parent.$watch(options.columnDefs, function(a) {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            if (!a) {
+                                grid.refreshDomSizes();
+                                grid.buildColumns();
+                                return;
+                            } 
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
+                            grid.configureColumnWidths();
                             grid.eventProvider.assignEvents();
-							domUtilityService.RebuildGrid($scope,grid);
+                            domUtilityService.RebuildGrid($scope, grid);
                         });
                     } else {
 						grid.buildColumns();

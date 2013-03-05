@@ -11,12 +11,18 @@
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
-                        $scope.$parent.$watch(options.columnDefs, function(a) {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            if (!a) {
+                                grid.refreshDomSizes();
+                                grid.buildColumns();
+                                return;
+                            } 
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
+                            grid.configureColumnWidths();
                             grid.eventProvider.assignEvents();
-							domUtilityService.RebuildGrid($scope,grid);
+                            domUtilityService.RebuildGrid($scope, grid);
                         });
                     } else {
 						grid.buildColumns();

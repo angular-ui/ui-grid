@@ -252,17 +252,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.rootDim = dim;
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
-    self.buildColumnDefsFromData = function() {
-        if (!self.config.columnDefs) {
-            self.config.columnDefs = [];
-        }
-        if (!self.data || !self.data[0]) {
+    self.buildColumnDefsFromData = function () {
+        self.config.columnDefs = [];
+        var item = self.data[0];
+        if (!item) {
             self.lateBoundColumns = true;
             return;
         }
-        var item;
-        item = self.data[0];
-
         ng.utils.forIn(item, function (prop, propName) {
             if (self.config.excludeProperties.indexOf(propName) == -1) {
                 self.config.columnDefs.push({
@@ -274,7 +270,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.buildColumns = function() {
         var columnDefs = self.config.columnDefs,
             cols = [];
-        var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
@@ -300,6 +295,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
+            var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
