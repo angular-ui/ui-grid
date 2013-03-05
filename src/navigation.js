@@ -86,7 +86,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     
     if($scope.enableCellSelection){
         setTimeout(function(){
-            $scope.domAccessProvider.focusCellElement($scope, $scope.columns[newColumnIndex].renderedColIndex);
+            $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf($scope.columns[newColumnIndex]));
         },3);
     }
     return false;

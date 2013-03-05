@@ -611,7 +611,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         var r = 0;
         var addCol = function (c) {
             if (dcv) {
-                c.renderedColIndex = newCols.length;
                 newCols.push(c);
             } else {
                 if (!$scope.renderedColumns[r]) {
@@ -619,8 +618,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 } else {
                     $scope.renderedColumns[r].setVars(c);
                 }
-                r++;
             }
+            r++;
         };
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
