@@ -67,6 +67,10 @@ ng.SelectionService = function (grid, $scope) {
         return true;
     };
 
+    self.getSelection = function(entity) {
+        return self.selectedItems.indexOf(entity) !== -1;
+    };
+
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function(rowItem, isSelected) {
 		if(grid.config.canSelectRows){
