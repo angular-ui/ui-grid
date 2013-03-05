@@ -84,7 +84,7 @@ ng.SelectionService = function (grid, $scope) {
 			} else {
 				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
 					if(!self.multi && self.selectedItems.length > 0){
-						self.toggleSelectAll(false);
+						self.toggleSelectAll(false, true);
 						rowItem.selected = isSelected;
 						if (rowItem.clone) {
 						    rowItem.clone.selected = isSelected;
@@ -98,8 +98,8 @@ ng.SelectionService = function (grid, $scope) {
     };
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    self.toggleSelectAll = function (checkAll) {
-        if (grid.config.beforeSelectionChange(grid.rowCache)) {
+    self.toggleSelectAll = function (checkAll, bypass) {
+        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
@@ -113,7 +113,9 @@ ng.SelectionService = function (grid, $scope) {
                     self.selectedItems.push(grid.filteredRows[i].entity);
                 }
             }
-            grid.config.afterSelectionChange(grid.rowCache);
+            if (!bypass) {
+                grid.config.afterSelectionChange(grid.filteredRows);
+            }
         }
     };
 };

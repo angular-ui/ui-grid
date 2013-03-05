@@ -3,12 +3,15 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
     if ($scope.selectionService.selectedItems === undefined) {
         return true;
     }
-    var charCode = evt.which || evt.keyCode;
-    var newColumnIndex = $scope.col.index;    
-	var lastInRow = false;
-	var firstInRow = false;
-    var rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
+    var charCode = evt.which || evt.keyCode,
+        newColumnIndex,
+        lastInRow = false,
+        firstInRow = false,
+        rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
     
+    if ($scope.col) {
+        newColumnIndex = $scope.col.index;
+    }
     if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
 		return true;
 	}
@@ -21,7 +24,6 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
         var focusedOnFirstVisibleColumns = $scope.$index == 1 || $scope.$index == 0;
         var focusedOnLastVisibleColumns = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
         var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
-        var toScroll;
         
 		if(charCode == 37 || charCode ==  9 && evt.shiftKey){
 			if (focusedOnFirstVisibleColumns) {
@@ -68,15 +70,18 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		offset = 1;
 	} 
     
-	if(offset){
-		$scope.selectionService.ChangeSelection(items[rowIndex + offset], evt);
-		$scope.$emit('ngGridEventDigestGridParent');
+	if (offset) {
+	    var r = items[rowIndex + offset];
+	    if (r.beforeSelectionChange(r, evt)) {
+	        r.continueSelection(evt);
+	        $scope.$emit('ngGridEventDigestGridParent');
 
-		if ($scope.selectionService.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
-			grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
-		} else if ($scope.selectionService.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
-			grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
-		}	
+	        if ($scope.selectionService.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
+	            grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
+	        } else if ($scope.selectionService.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
+	            grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
+	        }
+	    }
 	}
     
     if($scope.enableCellSelection){
