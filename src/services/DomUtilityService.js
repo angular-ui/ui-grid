@@ -7,6 +7,7 @@
 /// <reference path="../classes/range.js" />
 ngGridServices.factory('DomUtilityService', function() {
     var domUtilityService = {};
+    var regexCache = {};
     var getWidths = function() {
         var $testContainer = $('<div></div>');
         $testContainer.appendTo('body');
@@ -111,13 +112,23 @@ ngGridServices.factory('DomUtilityService', function() {
         }
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
-		if(grid.$styleSheet){
-			var regex = new RegExp("\.col" + col.index + " \{ width: " + col.width + "px; left: [0-9]*px");
+        if (grid.$styleSheet) {
+            var regex = regexCache[col.index];
+            if (!regex) {
+                regex = regexCache[col.index] = new RegExp("\.col" + col.index + " \{ width: [0-9]+px; left: [0-9]+px");
+            }
 			var str = grid.$styleSheet.html();
 			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-			grid.$styleSheet.html(newStr);
+			if (ng.utils.isIe) { // IE
+			    setTimeout(function() {
+			        grid.$styleSheet.html(newStr);
+			    });
+			} else {
+			    grid.$styleSheet.html(newStr);
+			}
 		}
     };
+    domUtilityService.setColLeft.immediate = 1;
 	domUtilityService.RebuildGrid = function($scope, grid){
 		domUtilityService.UpdateGridLayout($scope, grid);
 		if (grid.config.maintainColumnRatios) {
