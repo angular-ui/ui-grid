@@ -14,7 +14,7 @@ function userController($scope) {
 	$scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.selections,
-		canSelectRows: true,
+		enableRowSelection: true,
 		multiSelect: false,
         enableRowReordering: false,
         showGroupPanel: true,

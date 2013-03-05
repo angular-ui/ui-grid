@@ -16,7 +16,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
     self.groupedData = undefined;
     self.rowHeight = grid.config.rowHeight;
     self.rowConfig = {
-        canSelectRows: grid.config.canSelectRows,
+        enableRowSelection: grid.config.enableRowSelection,
         rowClasses: grid.config.rowClasses,
         selectedItems: $scope.selectedItems,
         selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,

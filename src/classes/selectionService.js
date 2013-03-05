@@ -9,7 +9,7 @@ ng.SelectionService = function (grid, $scope) {
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (r, evt) {
         var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
-        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.canSelectRows) {
+        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
                 if ($scope.configGroups.length > 0) {
@@ -75,7 +75,7 @@ ng.SelectionService = function (grid, $scope) {
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (r, isSelected) {
         var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
-		if(grid.config.canSelectRows){
+		if(grid.config.enableRowSelection){
 		    rowItem.selected = isSelected;
 		    if (rowItem.clone) {
 		        rowItem.clone.selected = isSelected;

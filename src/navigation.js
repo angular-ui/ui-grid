@@ -20,7 +20,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
-        var focusedOnFirstColumn =  $scope.displaySelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
+        var focusedOnFirstColumn =  $scope.showSelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
         var focusedOnFirstVisibleColumns = $scope.$index == 1 || $scope.$index == 0;
         var focusedOnLastVisibleColumns = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
         var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
@@ -42,7 +42,7 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
             if (focusedOnLastVisibleColumns) {
 				if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
 					grid.$viewport.scrollLeft(0);
-					newColumnIndex = $scope.displaySelectionCheckbox ? 1 : 0;	
+					newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;	
 					lastInRow = true;
 				} else {
 					grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() + $scope.col.width);

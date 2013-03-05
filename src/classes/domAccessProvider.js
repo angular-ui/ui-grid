@@ -14,7 +14,7 @@ ng.DomAccessProvider = function(grid) {
 			if (columnIndex != undefined && elm) {
 				var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
 				var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
-				if(grid.config.displaySelectionCheckbox && angular.element(columns[i]).scope() && angular.element(columns[i]).scope().col.index == 0){
+				if(grid.config.showSelectionCheckbox && angular.element(columns[i]).scope() && angular.element(columns[i]).scope().col.index == 0){
 					i = 1; //don't want to focus on checkbox
 				}
 				if (columns[i]) {

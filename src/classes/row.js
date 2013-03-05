@@ -6,14 +6,14 @@
 /// <reference path="../utils.js" />
 ng.Row = function (entity, config, selectionService, rowIndex) {
     var self = this, // constant for the selection property that we add to each data item
-        canSelectRows = config.canSelectRows;
+        enableRowSelection = config.enableRowSelection;
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
 	self.selected = selectionService.getSelection(entity);
-    self.cursor = canSelectRows ? 'pointer' : 'default';
+    self.cursor = enableRowSelection ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
 		self.selectionService.setSelection(self, isSelected);
 		self.selectionService.lastClickedRow = self;
@@ -29,7 +29,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         }
     }
     self.toggleSelected = function(event) {
-        if (!canSelectRows && !config.enableCellSelection) {
+        if (!enableRowSelection && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;

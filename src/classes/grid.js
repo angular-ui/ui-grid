@@ -25,9 +25,6 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             return true;
         },
 
-        //To be able to have selectable rows in grid.
-        canSelectRows: true, 
-
         //checkbox templates.
         checkboxCellTemplate: undefined,
         checkboxHeaderTemplate: undefined,
@@ -41,10 +38,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
-        
-        //Row selection check boxes appear as the first column.
-        displaySelectionCheckbox: false, 
-        
+
         //Enables cell editing.
         enableCellEdit: false,
 		
@@ -68,6 +62,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         //Enable drag and drop row reordering. Only works in HTML5 compliant browsers.
         enableRowReordering: false,
+        
+        //To be able to have selectable rows in grid.
+        enableRowSelection: true,
 
         //Enables or disables sorting in grid.
         enableSorting: true,
@@ -86,10 +83,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         
         //Defining the height of the footer in pixels.
         footerRowHeight: 55,
-
-        //Show or hide the footer alltogether the footer is enabled by default
-        displayFooter: false,
-
+        
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
 
@@ -154,9 +148,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         /*Enables display of the filterbox in the column menu. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showFilter: false,
+        
+        //Show or hide the footer alltogether the footer is enabled by default
+        showFooter: false,
 
         //Show the dropzone for drag and drop grouping
         showGroupPanel: false,
+        
+        //Row selection check boxes appear as the first column.
+        showSelectionCheckbox: false,
         
         /*Define a sortInfo object to specify a default sorting state. 
         You can also observe this variable to utilize server-side sorting (see useExternalSorting).
@@ -181,9 +181,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.config = $.extend(defaults, window.ngGrid.config, options);
 
     // override conflicting settings
-    self.config.displaySelectionCheckbox = (self.config.displaySelectionCheckbox && self.config.enableColumnHeavyVirt === false);
+    self.config.showSelectionCheckbox = (self.config.showSelectionCheckbox && self.config.enableColumnHeavyVirt === false);
     self.config.enablePinning = (self.config.enablePinning && self.config.enableColumnHeavyVirt === false);
-    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.displaySelectionCheckbox !== false);
+    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.showSelectionCheckbox !== false);
     self.config.pinSelectionCheckbox = self.config.enablePinning;
 
     if (typeof options.columnDefs == "string") {
@@ -274,7 +274,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
         }
-        if (self.config.displaySelectionCheckbox) {
+        if (self.config.showSelectionCheckbox) {
             cols.push(new ng.Column({
                 colDef: {
                     field: '\u2714',
@@ -295,7 +295,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
-            var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
+            var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
@@ -323,13 +323,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     };
     self.configureColumnWidths = function() {
         var cols = self.config.columnDefs;
-        var indexOffset = self.config.displaySelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
+        var indexOffset = self.config.showSelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
         var numOfCols = cols.length + indexOffset,
             asterisksArray = [],
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-        totalWidth += self.config.displaySelectionCheckbox ? 25 : 0;
+        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function(col, i) {
             i += indexOffset;
             var isPercent = false, t = undefined;
@@ -565,7 +565,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
-    $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
+    $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
     $scope.enableCellSelection = self.config.enableCellSelection;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
