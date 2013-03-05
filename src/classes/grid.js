@@ -41,7 +41,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
-            //Row selection check boxes appear as the first column.
+        
+        //Row selection check boxes appear as the first column.
         displaySelectionCheckbox: false, 
 		
         //Enables cell selection.
@@ -270,7 +271,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     self.buildColumns = function() {
         var columnDefs = self.config.columnDefs,
             cols = [];
-		var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
+        var indexOffset = self.config.displaySelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;       
         if (!columnDefs) {
             self.buildColumnDefsFromData();
             columnDefs = self.config.columnDefs;
@@ -296,7 +297,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
             }, $scope, self, domUtilityService, $filter));
         }
         if (columnDefs.length > 0) {
-			$scope.configGroups.length = 0;
+            $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += indexOffset;
                 var column = new ng.Column({
@@ -311,9 +312,9 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 }, $scope, self, domUtilityService);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
-					column.isGroupedBy = true;
+                    column.isGroupedBy = true;
                     $scope.configGroups.splice(indx, 0, column);
-					column.groupIndex = $scope.configGroups.length;
+                    column.groupIndex = $scope.configGroups.length;
                 }
                 cols.push(column);
             });
@@ -408,13 +409,13 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
-			var tempArr = [];
-			angular.forEach(a, function(item) {
-				tempArr.push(item.field || item);
-			});
-			self.config.groups = tempArr;
-            self.rowFactory.filteredRowsChanged();
-			$scope.$emit('ngGridEventGroups', a);
+          var tempArr = [];
+          angular.forEach(a, function(item) {
+            tempArr.push(item.field || item);
+          });
+          self.config.groups = tempArr;
+          self.rowFactory.filteredRowsChanged();
+          $scope.$emit('ngGridEventGroups', a);
         }, true);
         $scope.$watch('columns', function(a) {
             domUtilityService.BuildStyles($scope, self, true);
@@ -459,7 +460,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         domUtilityService.BuildStyles($scope, self, true);
     };
     self.lastSortedColumns = [];
-    self.sortData = function (col, evt) {
+    self.changeRowOrder = function(prevRow, targetRow) {
+        // Splice the Rows via the actual datasource
+        var i = self.rowCache.indexOf(prevRow);
+        var j = self.rowCache.indexOf(targetRow);
+        self.rowCache.splice(i, 1);
+        self.rowCache.splice(j, 0, prevRow);
+        $scope.$emit('ngGridEventChangeOrder', self.rowCache);
+    };
+    self.sortData = function(col, evt) {
         if (evt.shiftKey && self.config.sortInfo) {
             var indx = self.config.sortInfo.columns.indexOf(col);
             if (indx === -1) {
@@ -556,8 +565,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     $scope.headerRow = null;
     $scope.rowHeight = self.config.rowHeight;
     $scope.jqueryUITheme = self.config.jqueryUITheme;
-	$scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
-	$scope.enableCellSelection = self.config.enableCellSelection;
+    $scope.displaySelectionCheckbox = self.config.displaySelectionCheckbox;
+    $scope.enableCellSelection = self.config.enableCellSelection;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;

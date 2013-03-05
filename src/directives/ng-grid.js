@@ -31,9 +31,7 @@
                             angular.forEach(grid.data, function (item, j) {
                                 var indx = grid.rowMap[j] || j;
                                 if (grid.rowCache[indx]) {
-                                    if (grid.rowCache[indx].entity != item) {
-                                        grid.rowCache[indx].entity = item;
-                                    }
+                                    grid.rowCache[indx].ensureEntity(item);
                                 }
                                 grid.rowMap[indx] = j;
                             });

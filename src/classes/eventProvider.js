@@ -196,11 +196,7 @@
             if (prevRow.scope.row == rowScope.row) {
                 return;
             }
-            // Splice the Rows via the actual datasource
-            var i = grid.rowCache.indexOf(prevRow.scope.row);
-            var j = grid.rowCache.indexOf(rowScope.row);
-            grid.rowCache.splice(i, 1);
-            grid.rowCache.splice(j, 0, prevRow.scope.row);
+            grid.changeRowOrder(prevRow.scope.row, rowScope.row);
             grid.searchProvider.evalFilter();
             // clear out the rowToMove object
             domUtilityService.eventStorage.rowToMove = undefined;
