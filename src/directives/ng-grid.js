@@ -11,12 +11,18 @@
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
-                        $scope.$parent.$watch(options.columnDefs, function(a) {
+                        $scope.$parent.$watch(options.columnDefs, function (a) {
+                            if (!a) {
+                                grid.refreshDomSizes();
+                                grid.buildColumns();
+                                return;
+                            } 
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
+                            grid.configureColumnWidths();
                             grid.eventProvider.assignEvents();
-							domUtilityService.RebuildGrid($scope,grid);
+                            domUtilityService.RebuildGrid($scope, grid);
                         });
                     } else {
 						grid.buildColumns();
@@ -24,7 +30,7 @@
 					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
-                        $scope.$parent.$watch(options.data, function (a) {
+                        var dataWatcher = function (a) {
                             // make a temporary copy of the data
                             grid.data = $.extend([], a);
                             grid.rowFactory.fixRowCache();
@@ -39,19 +45,14 @@
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo) {
-                                if (!grid.config.sortInfo.column) {
-                                    grid.config.sortInfo.column = $scope.columns.filter(function(c) {
-                                        return c.field == grid.config.sortInfo.field;
-                                    })[0];
-                                    if (!grid.config.sortInfo.column) {
-                                        return;
-                                    }
-                                }
-                                grid.config.sortInfo.column.sortDirection = grid.config.sortInfo.direction.toLowerCase();
-                                grid.sortData(grid.config.sortInfo.column);
+                                sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
-                        }, true);
+                        };
+                        $scope.$parent.$watch(options.data, dataWatcher);
+                        $scope.$parent.$watch(options.data + '.length', function() {
+                            dataWatcher($scope.$eval(options.data));
+                        });
                     }
 					
                     grid.footerController = new ng.Footer($scope, grid);
@@ -98,14 +99,17 @@
                             angular.forEach(arr, $scope.groupBy);
                         }
                     };
-                    // method for user to set the groups programatically
+                    // method for user to set the sort field programatically
                     options.sortBy = function (field) {
                         var col = $scope.columns.filter(function (c) {
                             return c.field == field;
                         })[0];
                         if (col) col.sort();
                     };
-                    options.gridId = grid.gridId;
+                    // the grid Id, entity, scope for convenience
+					options.gridId = grid.gridId;
+					options.ngGrid = grid;
+					options.$gridScope = $scope;
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			
@@ -113,7 +117,10 @@
 					$scope.$on('ngGridEventDigestGridParent', function(){
 						domUtilityService.digest($scope.$parent);
 					});
-
+                    // set up the columns 
+                    $scope.$evalAsync(function() {
+                        $scope.adjustScrollLeft(0);
+                    });
                     return null;
                 }
             };

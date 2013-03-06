@@ -55,7 +55,7 @@ function userController($scope) {
 		jqueryUITheme: false,
 		jqueryUIDraggable: false,
         selectedItems: $scope.mySelections,
-        displaySelectionCheckbox: true,
+        showSelectionCheckbox: true,
         multiSelect: false,
         showGroupPanel: false,
         showColumnMenu: true,

@@ -17,13 +17,13 @@
     $scope.headerStyle = function() {
         return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
+    $scope.groupPanelStyle = function () {
+        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": "30px" };
+    };
     $scope.viewportStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
     };
     $scope.footerStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
-    };
-    $scope.columnStyle = function(col) {
-        return { "width": col.width + "px", "left": col.leftPos + "px" };
     };
 };
