@@ -63,6 +63,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 [Examples](http://angular-ui.github.com/ng-grid/)
 
 ##Change Log##
+* __2013-03-05__ - Version 2.0.0 - Breaking Changes: see documentation (showSelectionBox, enableRowSelection, showFooter). Column Virtualization added. Row virtualization performance improved. Excel-like editing instead of enableFocusedCellEdit.
 * __2013-02-18__ - Version 1.9.0 - Aggregates now display correctly. Added more option methods to select and group data (see wiki), Added column pinning.
 * __2013-02-11__ - Version 1.8.0.hotfix - Fixes for multi-level grouping and adding the gridId to both the grid options and as argument to the "ngGridEventData" so you can identify what grid it came from.
 * __2013-02-07__ - Version 1.8.0 - Major architectural changes which greatly improves performance. virtualizationThreshold now controlls when virtualization is force-enabled and is user-specified in options.
