@@ -169,7 +169,7 @@
 	},
 	{
 		"id": "rowTemplate",
-		"defaultValue": "<div ng-style=\"{'cursor': row.cursor}\" ng-repeat=\"col in visibleColumns()\" class=\"ngCell col{{$index}} {{col.cellClass}}\" ng-cell></div>",
+		"defaultValue": "<div ng-style=\"{'cursor': row.cursor, 'z-index': col.zIndex() }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>",
 		"definition": "Define a row Template to customize output. See github wiki for more details.",
 		"plunker": "Link"
 	},

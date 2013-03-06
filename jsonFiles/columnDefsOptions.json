@@ -19,7 +19,7 @@
 	},
 	{	
 		"id": "cellTemplate",
-		"defaultValue": "<div ng-class=\"'ngCellText colt' + $index\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>",
+		"defaultValue": "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>",
 		"definition": "Sets the cell template for the column. See github wiki for more details.",
 		"plunker": "Link"
 	},
@@ -31,7 +31,7 @@
 	},
 	{	
 		"id": "editableCellTemplate",
-		"defaultValue": "<input ng-cell-input ng-class=\"'colt' + $index\" ng-model=\"COL_FIELD\" />",
+		"defaultValue": "<input ng-class=\"'colt' + col.index\" ng-input=\"COL_FIELD\" />",
 		"definition": "Sets the editableCellTemplate for the column. Displayed when user uses enableFocusedCellEdit and cell is focused.",
 		"plunker": "Link"
 	},
