@@ -201,6 +201,7 @@ angular.module('myApp.exampleControllers', [])
     $scope.gridOptions = {
 		data: 'myData',
         enablePaging: true,
+		showFooter: true,
         pagingOptions: $scope.pagingOptions,
         filterOptions: $scope.filterOptions
     };	
