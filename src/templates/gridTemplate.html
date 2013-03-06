@@ -41,7 +41,7 @@
         </div>
     </div>
 <div class="ngFooterPanel" ng-class="{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}" ng-style="footerStyle()">
-    <div class="ngTotalSelectContainer" ng-show="displayFooter">
+    <div class="ngTotalSelectContainer" ng-show="showFooter">
         <div class="ngFooterTotalItems" ng-class="{'ngNoMultiSelect': !multiSelect}" >
             <span class="ngLabel">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show="filterText.length > 0" class="ngLabel">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>
         </div>
@@ -49,7 +49,7 @@
             <span class="ngLabel">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>
         </div>
     </div>
-    <div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="displayFooter && enablePaging" ng-class="{'ngNoMultiSelect': !multiSelect}">
+    <div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="showFooter && enablePaging" ng-class="{'ngNoMultiSelect': !multiSelect}">
         <div style="float:left; margin-right: 10px;" class="ngRowCountPicker">
             <span style="float: left; margin-top: 3px;" class="ngLabel">{{i18n.ngPageSizeLabel}}</span>
             <select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" >
