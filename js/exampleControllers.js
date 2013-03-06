@@ -138,7 +138,7 @@ angular.module('myApp.exampleControllers', [])
 						 {name: "Enos", age: 34}];
 		$scope.gridOptions = { 
 			data: 'myData',
-			rowTemplate: '<div style="height: 100%" ng-class="{green: row.getProperty(\'age\')  < 30}"><div ng-repeat="col in visibleColumns()" class="ngCell col{{$index}} {{col.cellClass}}" ng-cell></div></div>'
+			rowTemplate:  '<div style="height: 100%" ng-class="{green: row.getProperty(\'age\') < 30}"><div ng-style="{\'cursor\': row.cursor, \'z-index\': col.zIndex() }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}" ng-cell></div><div>'
 		};
 	}])
 	
