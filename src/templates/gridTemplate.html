@@ -1,6 +1,6 @@
 <!--ng.gridTemplate-->
     <div class="ngTopPanel" ng-class="{'ui-widget-header':jqueryUITheme, 'ui-corner-top': jqueryUITheme}" ng-style="topPanelStyle()">
-        <div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="headerStyle()">
+        <div class="ngGroupPanel" ng-show="showGroupPanel()" ng-style="groupPanelStyle()">
             <div class="ngGroupPanelDescription" ng-show="configGroups.length == 0">{{i18n.ngGroupPanelDescription}}</div>
             <ul ng-show="configGroups.length > 0" class="ngGroupList">
                 <li class="ngGroupItem" ng-repeat="group in configGroups">
@@ -27,7 +27,7 @@
                 <span class="ngMenuText">{{i18n.ngMenuText}}</span>
                 <ul class="ngColList">
                     <li class="ngColListItem" ng-repeat="col in columns | ngColumns">
-                        <label><input type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
+                        <label><input ng-disabled="col.pinned" type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
 						<a title="Group By" ng-class="col.groupedByClass()" ng-show="col.groupable && col.visible" ng-click="groupBy(col)"></a>
 						<span class="ngGroupingNumber" ng-show="col.groupIndex > 0">{{col.groupIndex}}</span>          
                     </li>
@@ -41,7 +41,7 @@
         </div>
     </div>
 <div class="ngFooterPanel" ng-class="{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}" ng-style="footerStyle()">
-    <div class="ngTotalSelectContainer" ng-show="footerVisible">
+    <div class="ngTotalSelectContainer" ng-show="displayFooter">
         <div class="ngFooterTotalItems" ng-class="{'ngNoMultiSelect': !multiSelect}" >
             <span class="ngLabel">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show="filterText.length > 0" class="ngLabel">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>
         </div>
@@ -49,7 +49,7 @@
             <span class="ngLabel">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>
         </div>
     </div>
-    <div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="footerVisible && enablePaging" ng-class="{'ngNoMultiSelect': !multiSelect}">
+    <div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="displayFooter && enablePaging" ng-class="{'ngNoMultiSelect': !multiSelect}">
         <div style="float:left; margin-right: 10px;" class="ngRowCountPicker">
             <span style="float: left; margin-top: 3px;" class="ngLabel">{{i18n.ngPageSizeLabel}}</span>
             <select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" >

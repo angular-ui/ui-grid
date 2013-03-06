@@ -1,2 +1,2 @@
 <!--ng.headerRowTemplate-->
-<div ng-style="{'z-index': col.zIndex()}" ng-repeat="col in visibleColumns()" class="ngHeaderCell col{{$index}}" ng-header-cell></div>
+<div ng-style="{'z-index': col.zIndex(), height: col.headerRowHeight}" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngHeaderCell" ng-header-cell></div>

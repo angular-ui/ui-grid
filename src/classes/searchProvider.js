@@ -19,7 +19,11 @@
                             var c = self.fieldMap[prop];
                             if (!c)
                                 continue;
-                            var f = (c && c.cellFilter) ? $filter(c.cellFilter) : null;
+                            var f = null;
+                            if (c && c.cellFilter) {
+                                var s = c.cellFilter.split(':');
+                                f = $filter(s[0]);
+                            }
                             var pVal = item[prop];
                             if (pVal != null) {
                                 if (typeof f == 'function') {
@@ -64,9 +68,11 @@
                 return filterFunc(row.entity);
             });
         }
-        angular.forEach(grid.filteredRows, function (row, i) {
-            row.rowIndex = i;
-        });
+        for (var i = 0; i < grid.filteredRows.length; i++)
+        {
+            grid.filteredRows[i].rowIndex = i;
+            
+        }
         grid.rowFactory.filteredRowsChanged();
     };
 
@@ -102,8 +108,8 @@
             return;
         }
         var columnFilters = qStr.split(";");
-        angular.forEach(columnFilters, function (filter) {
-            var args = filter.split(':');
+        for (var i = 0; i < columnFilters.length; i++) {
+            var args = columnFilters[i].split(':');
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
                 var columnValue = $.trim(args[1]);
@@ -123,7 +129,7 @@
                     });
                 }
             }
-        });
+        };
     };
 	$scope.$watch(grid.config.filterOptions.filterText, function(a){
 		$scope.filterText = a;
@@ -136,13 +142,14 @@
         }
 	});
     if (!self.extFilter) {
-        $scope.$watch('columns', function (a) {
-            angular.forEach(a, function (col) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
 				if(col.field)
 					self.fieldMap[col.field.split('.')[0]] = col;
 				if(col.displayName)
 					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-            });
+            };
         });
     }
 };

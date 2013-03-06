@@ -34,9 +34,9 @@
 ..\src\directives\ng-cell.js
 ..\src\directives\ng-header-row.js
 ..\src\directives\ng-header-cell.js
+..\src\directives\ng-input.js
 ..\src\directives\ng-viewport.js
 ..\src\directives\ng-cell-text.js
 ..\src\directives\ng-cell-has-focus.js
-..\src\directives\ng-cell-input.js
 ..\src\directives\ng-if.js
 ..\src\init.js

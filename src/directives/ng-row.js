@@ -6,7 +6,10 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($
         compile: function() {
             return {
                 pre: function($scope, iElement) {
-					$scope.row.elm = iElement;
+                    $scope.row.elm = iElement;
+                    if ($scope.row.clone) {
+                        $scope.row.clone.elm = iElement;
+                    }
                     if ($scope.row.isAggRow) {
                         var html = $scope.aggregateTemplate;
                         if ($scope.row.aggLabelFilter) {

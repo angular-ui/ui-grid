@@ -4,10 +4,10 @@
 /// <reference path="../namespace.js" />
 /// <reference path="../navigation.js" />
 /// <reference path="../utils.js" />
-ng.Aggregate = function (aggEntity, rowFactory, config) {
+ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
     var self = this;
     self.rowIndex = 0;
-    self.offsetTop = self.rowIndex * config.rowHeight;
+    self.offsetTop = self.rowIndex * rowHeight;
     self.entity = aggEntity;
     self.label = aggEntity.gLabel;
     self.field = aggEntity.gField;
@@ -22,33 +22,33 @@ ng.Aggregate = function (aggEntity, rowFactory, config) {
     self.aggLabelFilter = aggEntity.aggLabelFilter;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
+        if (self.orig) {
+            self.orig.collapsed = self.collapsed;
+        }
         self.notifyChildren();
     };
     self.setExpand = function(state) {
         self.collapsed = state;
         self.notifyChildren();
     };
-    self.notifyChildren = function() {
-        angular.forEach(self.aggChildren, function(child) {
-            child.entity[NG_HIDDEN] = self.collapsed;
-            if (self.collapsed) {
-                child.setExpand(self.collapsed);
-            }
-        });
-        angular.forEach(self.children, function(child) {
-            child[NG_HIDDEN] = self.collapsed;
-        });
-        var foundMyself = false;
-        angular.forEach(rowFactory.aggCache, function(agg, i) {
-            if (foundMyself) {
-                var offset = (30 * self.children.length);
-                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
-            } else {
-                if (i == self.aggIndex) {
-                    foundMyself = true;
+    self.notifyChildren = function () {
+        var longest = Math.max(rowFactory.aggCache.length, self.children.length);
+        for (var i = 0; i < longest; i++) {
+            if (self.aggChildren[i]) {
+                self.aggChildren[i].entity[NG_HIDDEN] = self.collapsed;
+                if (self.collapsed) {
+                    self.aggChildren[i].setExpand(self.collapsed);
                 }
             }
-        });
+            if (self.children[i]) {
+                self.children[i][NG_HIDDEN] = self.collapsed;
+            }
+            if (i > self.aggIndex && rowFactory.aggCache[i]) {
+                var agg = rowFactory.aggCache[i];
+                var offset = (30 * self.children.length);
+                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
+            }
+        };
         rowFactory.renderedChange();
     };
     self.aggClass = function() {
@@ -71,5 +71,10 @@ ng.Aggregate = function (aggEntity, rowFactory, config) {
         } else {
             return self.children.length;
         }
+    };
+    self.copy = function () {
+        var ret = new ng.Aggregate(self.entity, rowFactory, rowHeight);
+        ret.orig = self;
+        return ret;
     };
 };

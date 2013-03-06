@@ -51,17 +51,25 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', sortable: false, headerClass: 'foo', headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'allowance', aggLabelFilter: 'currency', enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'birthday', cellFilter: 'date', resizable: false, headerCellTemplate: 'partials/filterHeaderTemplate.html' },
-        { field: 'paid', cellFilter: 'checkmark', enableFocusedCellEdit: true, headerCellTemplate: 'partials/filterHeaderTemplate.html' }];
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', enableCellEdit: true },
+        { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
+        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false, enableCellEdit: true  },
+        { field: 'paid', cellFilter: 'checkmark', width: 200  },
+        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
+        { field: 'asdf', aggLabelFilter: 'currency', width: 200 },
+        { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false  },
+        { field: 'asgdasga', cellFilter: 'checkmark', width: 200  },
+        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo'  },
+        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200 },
+        { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false  },
+        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200 }];
     var myplugin = {
         init: function(scope, grid) {
             myplugin.scope = scope;
             myplugin.grid = grid;
             $scope.$watch(function () {
                 var searchQuery = "";
-                angular.forEach(myplugin.scope.visibleColumns(), function (col, i) {
+                angular.forEach(myplugin.scope.columns, function (col) {
                     if (col.filterText) {
                         searchQuery += col.field + ": " + col.filterText + "; ";
                     }
@@ -76,27 +84,32 @@ function userController($scope) {
         grid: undefined,
     };
 
-    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku' },
-        { field: 'Vendor', displayName: 'Supplier' },
-        { field: 'SeasonCode', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
-        { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
-        { field: 'UPC', displayName: 'Bar Code' }];
+    $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableCellEdit: true },
+        { field: 'Vendor', displayName: 'Supplier', enableCellEdit: true },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', enableCellEdit: true },
+        { field: 'Mfg_Id', displayName: 'Manufacturer ID', enableCellEdit: true },
+        { field: 'UPC', displayName: 'Bar Code', enableCellEdit: true }];
     self.selectionchanging = function (a, b) {
         return true;
     };
     $scope.gridOptions = {
         data: 'myData',
+        enableColumnResize: true,
         selectedItems: $scope.mySelections,
-        headerRowHeight: '60',
+        headerRowHeight: 40,
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
-		enableCellSelection: false,
+		enableCellSelection: true,
 		enablePaging: true,
-        enableVirtualization: false,
-        canSelectRows: true,
-		multiSelect: true,
-        enableRowReordering: true,
-        showGroupPanel: false,
+        enableRowSelection: false,
+		multiSelect: false,
+        enableCellEdit: true,
+        enableRowReordering: false,
+		enablePinning: true,
+		showGroupPanel: true,
+		showFooter: true,
+		showFilter: true,
+        showColumnMenu: true,
         columnDefs: 'myDefs',
         plugins: [myplugin]
     };
@@ -115,8 +128,9 @@ function userController($scope) {
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
         multiSelect: true,
-		canSelectRows: true,
+		enableRowSelection: true,
         showGroupPanel: true,
+        enableCellSelection: true,
         columnDefs: 'myDefs2',
         enablePinning: true,
     };
@@ -177,10 +191,7 @@ function userController($scope) {
 		$scope.filteringText = text;
 	});
     $scope.setSelection = function() {
-        $scope.gridOptions2.selectItem(0, true);
-        $scope.gridOptions2.selectRow(3, true);
-        $scope.gridOptions2.groupBy();
-        $scope.gridOptions2.selectAll(false);
-
+        myplugin.grid.config.excludeProperties = [];
+        $scope.gridOptions.rebuildColumnDefs();
     };
 };

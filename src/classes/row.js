@@ -6,14 +6,14 @@
 /// <reference path="../utils.js" />
 ng.Row = function (entity, config, selectionService, rowIndex) {
     var self = this, // constant for the selection property that we add to each data item
-        canSelectRows = config.canSelectRows;
+        enableRowSelection = config.enableRowSelection;
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionService = selectionService;
 	self.selected = selectionService.getSelection(entity);
-    self.cursor = canSelectRows ? 'pointer' : 'default';
+    self.cursor = enableRowSelection ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
 		self.selectionService.setSelection(self, isSelected);
 		self.selectionService.lastClickedRow = self;
@@ -29,7 +29,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         }
     }
     self.toggleSelected = function(event) {
-        if (!canSelectRows && !config.enableCellSelection) {
+        if (!enableRowSelection && !config.enableCellSelection) {
             return true;
         }
         var element = event.target || event;
@@ -38,6 +38,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
             return true;
         }
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
+            self.selectionService.lastClickedRow = self;
             return true;
         } else {
             if (self.beforeSelectionChange(self, event)) {
@@ -65,5 +66,16 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
 
     self.getProperty = function(path) {
         return ng.utils.evalProperty(self.entity, path);
+    };
+    self.copy = function () {
+        self.clone = new ng.Row(entity, config, selectionService, rowIndex);
+        self.clone.isClone = true;
+        self.clone.elm = self.elm;
+        return self.clone;
+    };
+    self.setVars = function (fromRow) {
+        fromRow.clone = self;
+        self.entity = fromRow.entity;
+        self.selected = fromRow.selected;
     };
 };

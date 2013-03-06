@@ -16,7 +16,7 @@ function userController($scope, $timeout) {
 	$scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.selections,
-		canSelectRows: true,
+		enableRowSelection: true,
 		multiSelect: false,
         enableRowReordering: false,
 		enableCellSelection: true,

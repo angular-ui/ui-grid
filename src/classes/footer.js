@@ -4,7 +4,7 @@
         return ret;
     };
     
-    $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
+    $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
     $scope.maxPages = function () {
         return Math.ceil($scope.maxRows() / $scope.pagingOptions.pageSize);
