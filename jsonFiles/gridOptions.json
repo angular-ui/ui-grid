@@ -29,12 +29,6 @@
 		"definition": "Checkbox header template. see wiki for template details",
 		"plunker": "Link"
 	},
-	{	
-		"id": "canSelectRows",
-		"defaultValue": "true",
-		"definition": "To be able to have selectable rows in grid.",
-		"plunker": "Link"
-	},
     {
 		"id":"columnDefs",
 		"defaultValue": "undefined",
@@ -47,16 +41,10 @@
 		"definition": "Data being displayed in the grid. Each item in the array is mapped to a row being displayed.",
 		"plunker": "Link"
 	},
-	{
-		"id": "displayFooter",
-		"defaultValue": "true",
-		"definition": "Show or hide the footer alltogether the footer is enabled by default",
-		"plunker": "Link"
-	},
-    {
-		"id": "displaySelectionCheckbox",
-		"defaultValue": "true",
-		"definition": "Row selection check boxes appear as the first column.",
+	{	
+		"id": "enableCellEdit",
+		"defaultValue": "false",
+		"definition": "Globally allows all cells to be editable. use the editableCellTemplate option to override the default text input",
 		"plunker": "Link"
 	},
 	{	
@@ -67,13 +55,13 @@
 	},
 	{	
 		"id": "enableColumnResize",
-		"defaultValue": "true",
+		"defaultValue": "false",
 		"definition": "Enable or disable resizing of columns",
 		"plunker": "Link"
 	},
     {	
 		"id": "enableColumnReordering",
-		"defaultValue": "true",
+		"defaultValue": "false",
 		"definition": "Enable or disable reordering of columns",
 		"plunker": "Link"
 	},
@@ -87,6 +75,12 @@
 		"id":"enableRowReordering",
 		"defaultValue": "false",
 		"definition": "Enable drag and drop row reordering. Only works in HTML5 compliant browsers.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "enableRowSelection",
+		"defaultValue": "true",
+		"definition": "To be able to have selectable rows in grid. (was canSelectRows prior to 2.0)",
 		"plunker": "Link"
 	},
 	{
@@ -105,12 +99,6 @@
 		"id": "footerRowHeight",
 		"defaultValue": "55",
 		"definition": "Defining the height of the footer in pixels.",
-		"plunker": "Link"
-	},
-	{
-		"id":"footerVisible",
-		"defaultValue": "true",
-		"definition": "DEPRICATED: See displayFooter.",
 		"plunker": "Link"
 	},
 	{
@@ -199,14 +187,20 @@
 	},
 	{	
 		"id": "showColumnMenu",
-		"defaultValue": "true",
+		"defaultValue": "false",
 		"definition": "Enables menu to choose which columns to display and group by. If both showColumnMenu and showFilter are false the menu button will not display.",
 		"plunker": "Link"
 	},
 	{
 		"id": "showFilter",
-		"defaultValue": "true",
+		"defaultValue": "false",
 		"definition": "Enables display of the filterbox in the column menu. If both showColumnMenu and showFilter are false the menu button will not display.",
+		"plunker": "Link"
+	},
+	{
+		"id": "showFooter",
+		"defaultValue": "false",
+		"definition": "Show or hide the footer the footer is disabled by default",
 		"plunker": "Link"
 	},
 	{
@@ -219,6 +213,12 @@
 		"id": "sortInfo",
 		"defaultValue": "undefined",
 		"definition": "Define a sortInfo object to specify a default sorting state. You can also observe this variable to utilize server-side sorting (see useExternalSorting). Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}",
+		"plunker": "Link"
+	},
+    {
+		"id": "showSelectionCheckbox",
+		"defaultValue": "false",
+		"definition": "Row selection check boxes appear as the first column. (was displaySelectionCheckbox prior to 2.0)",
 		"plunker": "Link"
 	},
 	{

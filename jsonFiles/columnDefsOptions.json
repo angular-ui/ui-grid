@@ -36,7 +36,7 @@
 		"plunker": "Link"
 	},
 	{	
-		"id": "enableFocusedCellEdit",
+		"id": "enableCellEdit",
 		"defaultValue": "false",
 		"definition": "Displays cellTemplate when user is not focused on cell. Displays editableCellTemplate when user focuses on cell.",
 		"plunker": "Link"
@@ -75,6 +75,12 @@
 		"id": "minWidth",
 		"defaultValue": "50",
 		"definition": "Sets the minimum width of the column.",
+		"plunker": "Link"
+	},
+	{	
+		"id": "pinnable",
+		"defaultValue": "true",
+		"definition": "Whether or not column can be pinned to the left.",
 		"plunker": "Link"
 	},
 	{	
