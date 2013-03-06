@@ -108,6 +108,7 @@ ngGridServices.factory('DomUtilityService', function() {
         }
         grid.$styleSheet = $style;
         if (digest) {
+            $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
             domUtilityService.digest($scope);
         }
     };

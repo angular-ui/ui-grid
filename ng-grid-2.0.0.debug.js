@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/05/2013 17:06:48
+* Compiled At: 03/06/2013 07:20:39
 ***********************************************/
 
 (function(window) {
@@ -571,6 +571,7 @@ ngGridServices.factory('DomUtilityService', function() {
         }
         grid.$styleSheet = $style;
         if (digest) {
+            $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
             domUtilityService.digest($scope);
         }
     };
