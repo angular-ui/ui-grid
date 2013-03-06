@@ -12,9 +12,6 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
     // function to use for it
     // @item - the cell data
     sortService.guessSortFn = function(item) {
-        if (item === undefined || item === null || item === '') {
-            return null;
-        }
         var itemType = typeof(item);
         //check for numbers and booleans
         switch (itemType) {
@@ -99,19 +96,20 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
         }
         var l = sortInfo.fields.length,
             order = sortInfo.fields,
-            col, 
+            col,
             direction,
-            sortFn;
-
-
+            // IE9 HACK.... omg, I can't reference data array within the sort fn below. has to be a separate reference....!!!!
+            d = data.slice(0);
         //now actually sort the data
         data.sort(function (itemA, itemB) {
-            var tem = 0, indx = 0;
+            var tem = 0,
+                indx = 0,
+                sortFn;
             while (tem == 0 && indx < l) {
                 // grab the metadata for the rest of the logic
                 col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx],
-                sortFn = sortService.getSortFn(col, data);
+                sortFn = sortService.getSortFn(col, d);
                 
                 var propA = $parse(order[indx])(itemA);
                 var propB = $parse(order[indx])(itemB);
