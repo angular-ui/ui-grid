@@ -57,10 +57,14 @@ ng.SelectionService = function (grid, $scope) {
                 return true;
             }
         } else if (!self.multi) {
-            if (self.lastClickedRow) {
-				self.setSelection(self.lastClickedRow, false);
+            if (self.lastClickedRow == rowItem) {
+                self.setSelection(self.lastClickedRow, grid.config.keepLastSelected ? true : !rowItem.selected);
+            } else {
+                if (self.lastClickedRow) {
+                    self.setSelection(self.lastClickedRow, false);
+                }
+                self.setSelection(rowItem, !rowItem.selected);
             }
-		    self.setSelection(rowItem, grid.config.keepLastSelected ? true : !rowItem.selected);
         } else if (!evt.keyCode) {
             self.setSelection(rowItem, !rowItem.selected);
         }

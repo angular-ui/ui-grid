@@ -51,9 +51,9 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', enableCellEdit: true },
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo' },
         { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
-        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false, enableCellEdit: true  },
+        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false },
         { field: 'paid', cellFilter: 'checkmark', width: 200  },
         { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
         { field: 'asdf', aggLabelFilter: 'currency', width: 200 },
@@ -99,16 +99,16 @@ function userController($scope) {
         headerRowHeight: 40,
         beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
-		enableCellSelection: true,
 		enablePaging: true,
-        enableRowSelection: false,
+		enableRowSelection: true,
+		keepLastSelected: false,
 		multiSelect: false,
-        enableCellEdit: true,
         enableRowReordering: false,
 		enablePinning: true,
 		showGroupPanel: true,
 		showFooter: true,
 		showFilter: true,
+        showSelectionCheckbox: true,
         showColumnMenu: true,
         columnDefs: 'myDefs',
         plugins: [myplugin]

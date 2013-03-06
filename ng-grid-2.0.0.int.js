@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 07:20:39
+* Compiled At: 03/06/2013 07:53:12
 ***********************************************/
 (function(window){'use strict';if(!window.ng){window.ng={};}
 window.ngGrid={};window.ngGrid.i18n={};var ngGridServices=angular.module('ngGrid.services',[]);var ngGridDirectives=angular.module('ngGrid.directives',[]);var ngGridFilters=angular.module('ngGrid.filters',[]);var EXCESS_ROWS=6;var SCROLL_THRESHOLD=4;var ASC="asc";var DESC="desc";var NG_SELECTED='_ng_selected_';var NG_FIELD='_ng_field_';var NG_DEPTH='_ng_depth_';var NG_HIDDEN='_ng_hidden_';var NG_COLUMN='_ng_column_';var CUSTOM_FILTERS=/CUSTOM_FILTERS/g;var COL_FIELD=/COL_FIELD/g;var DISPLAY_CELL_TEMPLATE=/DISPLAY_CELL_TEMPLATE/g;var EDITABLE_CELL_TEMPLATE=/EDITABLE_CELL_TEMPLATE/g;var TEMPLATE_REGEXP=/<.+>/;ng.moveSelectionHandler=function($scope,elm,evt,grid){if($scope.selectionService.selectedItems===undefined){return true;}
@@ -155,8 +155,8 @@ var rows=[];for(;prevIndx<=thisIndx;prevIndx++){rows.push(rowsArr[prevIndx]);}
 if(rows[rows.length-1].beforeSelectionChange(rows,evt)){for(var i=0;i<rows.length;i++){var ri=rows[i];var selectionState=ri.selected;ri.selected=!selectionState;if(ri.clone){ri.clone.selected=ri.selected;}
 var index=self.selectedItems.indexOf(ri.entity);if(index===-1){self.selectedItems.push(ri.entity);}else{self.selectedItems.splice(index,1);}}
 rows[rows.length-1].afterSelectionChange(rows,evt);}
-return true;}}else if(!self.multi){if(self.lastClickedRow){self.setSelection(self.lastClickedRow,false);}
-self.setSelection(rowItem,grid.config.keepLastSelected?true:!rowItem.selected);}else if(!evt.keyCode){self.setSelection(rowItem,!rowItem.selected);}
+return true;}}else if(!self.multi){if(self.lastClickedRow==rowItem){self.setSelection(self.lastClickedRow,grid.config.keepLastSelected?true:!rowItem.selected);}else{if(self.lastClickedRow){self.setSelection(self.lastClickedRow,false);}
+self.setSelection(rowItem,!rowItem.selected);}}else if(!evt.keyCode){self.setSelection(rowItem,!rowItem.selected);}
 self.lastClickedRow=rowItem;return true;};self.getSelection=function(entity){return self.selectedItems.indexOf(entity)!==-1;};self.setSelection=function(r,isSelected){var rowItem=r.isClone?grid.filteredRows[r.rowIndex]:r;if(grid.config.enableRowSelection){rowItem.selected=isSelected;if(rowItem.clone){rowItem.clone.selected=isSelected;}
 if(!isSelected){var indx=self.selectedItems.indexOf(rowItem.entity);if(indx!=-1){self.selectedItems.splice(indx,1);}}else{if(self.selectedItems.indexOf(rowItem.entity)===-1){if(!self.multi&&self.selectedItems.length>0){self.toggleSelectAll(false,true);rowItem.selected=isSelected;if(rowItem.clone){rowItem.clone.selected=isSelected;}}
 self.selectedItems.push(rowItem.entity);}}
