@@ -75,16 +75,7 @@
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         templates: [
-            'src/templates/gridTemplate.html',
-            'src/templates/rowTemplate.html',
-            'src/templates/cellTemplate.html',
-            'src/templates/checkboxCellTemplate.html',
-            'src/templates/checkboxHeaderTemplate.html',
-            'src/templates/editableCellTemplate.html',
-            'src/templates/focusedCellEditTemplate.html',
-            'src/templates/aggregateTemplate.html',
-            'src/templates/headerRowTemplate.html',
-            'src/templates/headerCellTemplate.html'
+            'src/templates/**.html'
         ],
         srcFiles: [
             'src/*.js',
@@ -127,12 +118,20 @@
             debug: {
                 src: ['<%= srcFiles %>'],
                 dest: 'build/<%= pkg.name %>.debug.js'
+            },
+            version: {
+                src: ['<%= srcFiles %>'],
+                dest: '<%= pkg.name %>-<%= pkg.version %>.debug.js'
             }
         },
         uglify: {
             build: {
                 src: 'build/<%= pkg.name %>.js',
                 dest: 'build/<%= pkg.name %>.min.js'
+            },
+            version: {
+                src: '<%= pkg.name %>-<%= pkg.version %>.debug.js',
+                dest: '<%= pkg.name %>-<%= pkg.version %>.min.js'
             }
         },
         clean: {
@@ -152,5 +151,6 @@
     grunt.registerTask('default', ['ngtemplates', 'concat', 'uglify', 'clean']);
     grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
     grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
+    grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
 
 };

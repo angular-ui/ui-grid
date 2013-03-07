@@ -1,8 +1,8 @@
 {
   "name": "ng-grid",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "__Contributors:__",
-  "main": "ng-grid-2.0.0.js",
+  "main": "ng-grid.min.js",
   "directories": {
     "test": "test"
   },
