@@ -1,4 +1,4 @@
-ng.Row = function (entity, config, selectionService, rowIndex) {
+ng.Row = function (entity, config, selectionService, rowIndex, $utils) {
     var self = this, // constant for the selection property that we add to each data item
         enableRowSelection = config.enableRowSelection;
 
@@ -59,7 +59,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.afterSelectionChange = config.afterSelectionChangeCallback;
 
     self.getProperty = function(path) {
-        return ng.utils.evalProperty(self.entity, path);
+        return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
         self.clone = new ng.Row(entity, config, selectionService, rowIndex);

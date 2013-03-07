@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 17:55
+* Compiled At: 03/07/2013 10:56
 ***********************************************/
 (function(window) {
 'use strict';
@@ -161,91 +161,6 @@ if (!Array.prototype.filter) {
         return res;
     };
 }
-ng.utils = {
-    visualLength: function(node) {
-        var elem = document.getElementById('testDataLength');
-        if (!elem) {
-            elem = document.createElement('SPAN');
-            elem.id = "testDataLength";
-            elem.style.visibility = "hidden";
-            document.body.appendChild(elem);
-        }
-        $(elem).css('font', $(node).css('font'));
-        elem.innerHTML = $(node).text();
-        return elem.offsetWidth;
-    },
-    forIn: function(obj, action) {
-        for (var prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                action(obj[prop], prop);
-            }
-        }
-    },
-    evalProperty: function(entity, path) {
-        var propPath = path.split('.'), i = 0;
-        var tempProp = entity[propPath[i]], links = propPath.length;
-        i++;
-        while (tempProp && i < links) {
-            tempProp = tempProp[propPath[i]];
-            i++;
-        }
-        return tempProp;
-    },
-    endsWith: function(str, suffix) {
-        if (!str || !suffix || typeof str != "string") {
-            return false;
-        }
-        return str.indexOf(suffix, str.length - suffix.length) !== -1;
-    },
-    isNullOrUndefined: function(obj) {
-        if (obj === undefined || obj === null) {
-            return true;
-        }
-        return false;
-    },
-    getElementsByClassName: function(cl) {
-        var retnode = [];
-        var myclass = new RegExp('\\b' + cl + '\\b');
-        var elem = document.getElementsByTagName('*');
-        for (var i = 0; i < elem.length; i++) {
-            var classes = elem[i].className;
-            if (myclass.test(classes)) {
-                retnode.push(elem[i]);
-            }
-        }
-        return retnode;
-    },
-    newId: (function() {
-        var seedId = new Date().getTime();
-        return function() {
-            return seedId += 1;
-        };
-    })(),
-    seti18n: function($scope, language) {
-        var $langPack = window.ngGrid.i18n[language];
-        for (var label in $langPack) {
-            $scope.i18n[label] = $langPack[label];
-        }
-    },
-    ieVersion: (function() {
-        var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
-        while (div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->',
-        iElems[0]);
-        return version > 4 ? version : undefined;
-    })()
-};
-
-$.extend(ng.utils, {
-    isIe6: (function() {
-        return ng.utils.ieVersion === 6;
-    })(),
-    isIe7: (function() {
-        return ng.utils.ieVersion === 7;
-    })(),
-    isIe: (function() {
-        return ng.utils.ieVersion !== undefined;
-    })()
-});
 ngGridFilters.filter('checkmark', function() {
     return function(input) {
         return input ? '\u2714' : '\u2718';
@@ -258,7 +173,7 @@ ngGridFilters.filter('ngColumns', function() {
         });
     };
 });
-ngGridServices.factory('DomUtilityService', function() {
+ngGridServices.factory('DomUtilityService',['$utilityService', function($utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {
@@ -343,7 +258,7 @@ ngGridServices.factory('DomUtilityService', function() {
                 sumWidth += col.width;
             }
         };
-        if (ng.utils.isIe) { 
+        if ($utils.isIe) { 
             $style[0].styleSheet.cssText = css;
         } else {
             $style[0].appendChild(document.createTextNode(css));
@@ -362,7 +277,7 @@ ngGridServices.factory('DomUtilityService', function() {
             }
 			var str = grid.$styleSheet.html();
 			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-			if (ng.utils.isIe) { 
+			if ($utils.isIe) { 
 			    setTimeout(function() {
 			        grid.$styleSheet.html(newStr);
 			    });
@@ -391,7 +306,7 @@ ngGridServices.factory('DomUtilityService', function() {
     domUtilityService.LetterW = 10;
     getWidths();
     return domUtilityService;
-});
+}]);
 ngGridServices.factory('SortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {};
@@ -536,6 +451,81 @@ ngGridServices.factory('SortService', ['$parse', function($parse) {
     return sortService;
 }]);
 
+ngGridServices.factory('$utilityService', ['$parse', function($parse) {
+    var utils = {
+        visualLength: function(node) {
+            var elem = document.getElementById('testDataLength');
+            if (!elem) {
+                elem = document.createElement('SPAN');
+                elem.id = "testDataLength";
+                elem.style.visibility = "hidden";
+                document.body.appendChild(elem);
+            }
+            $(elem).css('font', $(node).css('font'));
+            elem.innerHTML = $(node).text();
+            return elem.offsetWidth;
+        },
+        forIn: function(obj, action) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    action(obj[prop], prop);
+                }
+            }
+        },
+        evalProperty: function (entity, path) {
+            return $parse(path)(entity);
+        },
+        endsWith: function(str, suffix) {
+            if (!str || !suffix || typeof str != "string") {
+                return false;
+            }
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        },
+        isNullOrUndefined: function(obj) {
+            if (obj === undefined || obj === null) {
+                return true;
+            }
+            return false;
+        },
+        getElementsByClassName: function(cl) {
+            var retnode = [];
+            var myclass = new RegExp('\\b' + cl + '\\b');
+            var elem = document.getElementsByTagName('*');
+            for (var i = 0; i < elem.length; i++) {
+                var classes = elem[i].className;
+                if (myclass.test(classes)) {
+                    retnode.push(elem[i]);
+                }
+            }
+            return retnode;
+        },
+        newId: (function() {
+            var seedId = new Date().getTime();
+            return function() {
+                return seedId += 1;
+            };
+        })(),
+        seti18n: function($scope, language) {
+            var $langPack = window.ngGrid.i18n[language];
+            for (var label in $langPack) {
+                $scope.i18n[label] = $langPack[label];
+            }
+        },
+        ieVersion: (function() {
+            var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
+            while (div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->',
+            iElems[0]) ;
+            return version > 4 ? version : undefined;
+        })()
+    };
+
+    $.extend(utils, {
+        isIe: (function() {
+            return utils.ieVersion !== undefined;
+        })()
+    });
+    return utils;
+}]);
 ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
     var self = this;
     self.rowIndex = 0;
@@ -610,7 +600,7 @@ ng.Aggregate = function (aggEntity, rowFactory, rowHeight) {
         return ret;
     };
 };
-ng.Column = function(config, $scope, grid, domUtilityService, $templateCache) {
+ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -634,21 +624,21 @@ ng.Column = function(config, $scope, grid, domUtilityService, $templateCache) {
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
+    self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
     self.pinnable = false;
     self.pinned = colDef.pinned;
     self.originalIndex = self.index;
-    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
+    self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
-        self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
+        self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
     if (config.enableResize) {
-        self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+        self.resizable = $utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
     }
     if (config.enablePinning) {
-        self.pinnable = ng.utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
+        self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
@@ -1087,7 +1077,7 @@ ng.Footer = function($scope, grid) {
     };
 };
 
-ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache) {
+ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils) {
     var defaults = {
         aggregateTemplate: undefined,
         afterSelectionChange: function() {
@@ -1161,7 +1151,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     }
     self.rowCache = [];
     self.rowMap = [];
-    self.gridId = "ng" + ng.utils.newId();
+    self.gridId = "ng" + $utils.newId();
     self.$root = null; 
     self.$groupPanel = null;
     self.$topPanel = null;
@@ -1250,7 +1240,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             self.lateBoundColumns = true;
             return;
         }
-        ng.utils.forIn(item, function (prop, propName) {
+        $utils.forIn(item, function (prop, propName) {
             if (self.config.excludeProperties.indexOf(propName) == -1) {
                 self.config.columnDefs.push({
                     field: propName
@@ -1283,7 +1273,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
                 enableSort: self.config.enableSorting
-            }, $scope, self, domUtilityService, $templateCache));
+            }, $scope, self, domUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {
             var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
@@ -1300,7 +1290,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit 
-                }, $scope, self, domUtilityService, $templateCache);
+                }, $scope, self, domUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
                     column.isGroupedBy = true;
@@ -1324,10 +1314,10 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         angular.forEach(cols, function(col, i) {
             i += indexOffset;
             var isPercent = false, t = undefined;
-            if (ng.utils.isNullOrUndefined(col.width)) {
+            if ($utils.isNullOrUndefined(col.width)) {
                 col.width = "*";
             } else { 
-                isPercent = isNaN(col.width) ? ng.utils.endsWith(col.width, "%") : false;
+                isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
                 t = isPercent ? col.width : parseInt(col.width, 10);
             }
             if (isNaN(t)) {
@@ -1383,7 +1373,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     self.init = function() {
         $scope.selectionService = new ng.SelectionService(self, $scope);
 		$scope.domAccessProvider = new ng.DomAccessProvider(self);
-		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService, $templateCache);
+		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService, $templateCache, $utils);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -1402,7 +1392,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         $scope.$watch(function() {
             return options.i18n;
         }, function(newLang) {
-            ng.utils.seti18n($scope, newLang);
+            $utils.seti18n($scope, newLang);
         });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
         if (self.config.sortInfo && $scope.columns.length) {
@@ -1418,15 +1408,15 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     };
     self.resizeOnData = function(col) {
         var longest = col.minWidth;
-        var arr = ng.utils.getElementsByClassName('col' + col.index);
+        var arr = $utils.getElementsByClassName('col' + col.index);
         angular.forEach(arr, function(elem, index) {
             var i;
             if (index === 0) {
                 var kgHeaderText = $(elem).find('.ngHeaderText');
-                i = ng.utils.visualLength(kgHeaderText) + 10; 
+                i = $utils.visualLength(kgHeaderText) + 10; 
             } else {
                 var ngCellText = $(elem).find('.ngCellText');
-                i = ng.utils.visualLength(ngCellText) + 10; 
+                i = $utils.visualLength(ngCellText) + 10; 
             }
             if (i > longest) {
                 longest = i;
@@ -1552,7 +1542,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
     $scope.i18n = {};
-    ng.utils.seti18n($scope, self.config.i18n);
+    $utils.seti18n($scope, self.config.i18n);
     $scope.adjustScrollLeft = function (scrollLeft) {
         var colwidths = 0,
             totalLeft = 0,
@@ -1725,7 +1715,7 @@ ng.Range = function(top, bottom) {
     this.topRow = top;
     this.bottomRow = bottom;
 };
-ng.Row = function (entity, config, selectionService, rowIndex) {
+ng.Row = function (entity, config, selectionService, rowIndex, $utils) {
     var self = this, 
         enableRowSelection = config.enableRowSelection;
 
@@ -1784,7 +1774,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.afterSelectionChange = config.afterSelectionChangeCallback;
 
     self.getProperty = function(path) {
-        return ng.utils.evalProperty(self.entity, path);
+        return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
         self.clone = new ng.Row(entity, config, selectionService, rowIndex);
@@ -1798,7 +1788,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
         self.selected = fromRow.selected;
     };
 };
-ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
+ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
     var self = this;
     self.aggCache = {};
     self.parentCache = []; 
@@ -1824,7 +1814,7 @@ ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
     self.buildEntityRow = function(entity, rowIndex) {
-        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex);
+        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex, $utils);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
@@ -1965,7 +1955,7 @@ ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
-                var val = ng.utils.evalProperty(model, group);
+                var val = $utils.evalProperty(model, group);
                 val = val ? val.toString() : 'null';
                 if (!ptr[val]) {
                     ptr[val] = {};
@@ -1999,7 +1989,7 @@ ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
                     },
                     isAggCol: true,
                     headerRowHeight: grid.config.headerRowHeight
-                }, $scope, grid, domUtilityService, $templateCache));
+                }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
         domUtilityService.BuildStyles($scope, grid, true);
@@ -2413,7 +2403,7 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
     };
     return ngCell;
 }]);
-ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService) {
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService','$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
     var ngGrid = {
         scope: true,
         compile: function() {
@@ -2422,7 +2412,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache);
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils);
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function (a) {
                             if (!a) {
