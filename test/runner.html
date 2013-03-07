@@ -12,5 +12,19 @@
     <script src="unit/servicesSpec.js"></script>
   </head>
   <body>
+  <script>
+
+// KICK OFF JASMINE
+var jasmineEnv = jasmine.getEnv();
+var trivialReporter = new jasmine.TrivialReporter();
+
+jasmineEnv.addReporter(trivialReporter);
+
+jasmineEnv.specFilter = function(spec) {
+  return trivialReporter.specFilter(spec);
+};
+
+jasmineEnv.execute();
+</script>
   </body>
 </html>
