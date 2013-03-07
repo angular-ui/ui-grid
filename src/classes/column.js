@@ -1,4 +1,4 @@
-﻿ng.Column = function(config, $scope, grid, domUtilityService) {
+﻿ng.Column = function(config, $scope, grid, domUtilityService, $templateCache) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -42,11 +42,11 @@
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
     self.cursor = self.sortable ? 'pointer' : 'default';
-    self.headerCellTemplate = colDef.headerCellTemplate || ng.headerCellTemplate();
-    self.cellTemplate = colDef.cellTemplate || ng.cellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+    self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
+    self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
 	if(self.enableCellEdit) {
-	    self.cellEditTemplate = ng.cellEditTemplate();
-		self.editableCellTemplate = colDef.editableCellTemplate || ng.editableCellTemplate();
+	    self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+	    self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
 	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
@@ -138,7 +138,7 @@
         return false;
     };
     self.copy = function() {
-        var ret = new ng.Column(config, $scope, grid, domUtilityService);
+        var ret = new ng.Column(config, $scope, grid, domUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;
         return ret;

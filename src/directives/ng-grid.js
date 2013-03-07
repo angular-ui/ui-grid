@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', 'SortService', 'DomUtilityService', function($compile, $filter, sortService, domUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService) {
     var ngGrid = {
         scope: true,
         compile: function() {
@@ -7,7 +7,7 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter);
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache);
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
@@ -61,7 +61,7 @@
                     if (options.jqueryUITheme) {
                         iElement.addClass('ui-widget');
                     }
-                    iElement.append($compile(ng.gridTemplate())($scope)); // make sure that if any of these change, we re-fire the calc logic
+                    iElement.append($compile($templateCache.get('gridTemplate.html'))($scope)); // make sure that if any of these change, we re-fire the calc logic
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers

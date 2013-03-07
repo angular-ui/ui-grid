@@ -1,8 +1,4 @@
-﻿/// <reference path="../utils.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-ng.RowFactory = function(grid, $scope, domUtilityService) {
+﻿ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -76,8 +72,8 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
         }
         self.wasGrouped = true;
         self.parentCache = [];
-        var i = 0;
-        var temp = self.parsedData.filter(function (e, j) {
+        var x = 0;
+        var temp = self.parsedData.filter(function (e) {
             if (e.isAggRow) {
                 if (e.parent && e.parent.collapsed) {
                     return false;
@@ -85,7 +81,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                 return true;
             }
             if (!e[NG_HIDDEN]) {
-                e.rowIndex = i++;
+                e.rowIndex = x++;
             }
             return !e[NG_HIDDEN];
         });
@@ -224,7 +220,7 @@ ng.RowFactory = function(grid, $scope, domUtilityService) {
                     },
                     isAggCol: true,
                     headerRowHeight: grid.config.headerRowHeight
-                }));
+                }, $scope, grid, domUtilityService, $templateCache));
             }
         }
         domUtilityService.BuildStyles($scope, grid, true);
