@@ -9,7 +9,7 @@
                         $scope.row.clone.elm = iElement;
                     }
                     if ($scope.row.isAggRow) {
-                        var html = $templateCache.get('aggregateTemplate.html');
+                        var html = $templateCache.get($scope.gridId + 'aggregateTemplate.html');
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
@@ -17,7 +17,7 @@
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($templateCache.get('rowTemplate.html'))($scope));
+                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
                     }
 					$scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);

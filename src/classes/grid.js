@@ -200,6 +200,31 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     self.data = [];
     self.lateBindColumns = false;
     self.filteredRows = [];
+    
+    //Templates
+    // test templates for urls and get the tempaltes via synchronous ajax calls
+    var getTemplate = function (key) {
+        var t = self.config[key];
+        var uKey = key + self.gridId + ".html";
+        if (t && !TEMPLATE_REGEXP.test(t)) {
+            $templateCache.put(uKey, $.ajax({
+                type: "GET",
+                url: t,
+                async: false
+            }).responseText);
+        } else if (t) {
+            $templateCache.put(uKey, t);
+        } else {
+            var dKey = key + ".html";
+            $templateCache.put(uKey, $templateCache.get(dKey));
+        }
+    };
+    getTemplate('rowTemplate');
+    getTemplate('aggregateTemplate');
+    getTemplate('headerRowTemplate');
+    getTemplate('checkboxCellTemplate');
+    getTemplate('checkboxHeaderTemplate');
+
     if (typeof self.config.data == "object") {
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
@@ -277,8 +302,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortable: false,
                     resizable: false,
                     groupable: false,
-                    headerCellTemplate: $templateCache.get('checkboxHeaderTemplate.html'),
-                    cellTemplate: $templateCache.get('checkboxCellTemplate.html'),
+                    headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
+                    cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
                     pinned: self.config.pinSelectionCheckbox
                 },
                 index: 0,
@@ -570,29 +595,11 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
+    $scope.gridId = self.gridId;
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
-    //Templates
-    // test templates for urls and get the tempaltes via synchronous ajax calls
-    var getTemplate = function (key) {
-        var t = self.config[key];
-        var cacheKey = key + ".html";
-        if (t && !TEMPLATE_REGEXP.test(t)) {
-            $templateCache.put(cacheKey, $.ajax({
-                type: "GET",
-                url: t,
-                async: false
-            }).responseText);
-        } else if (t) {
-            $templateCache.put(cacheKey, t);
-        }
-    };
-    getTemplate('rowTemplate');
-    getTemplate('aggregateTemplate');
-    getTemplate('headerRowTemplate');
-    getTemplate('checkboxCellTemplate');
-    getTemplate('checkboxHeaderTemplate');
+
     //i18n support
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);

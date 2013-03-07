@@ -5,7 +5,7 @@
             return {
                 pre: function($scope, iElement) {
                     if (iElement.children().length === 0) {
-                        iElement.append($compile($templateCache.get('headerRowTemplate.html'))($scope));
+                        iElement.append($compile($templateCache.get($scope.gridId + 'headerRowTemplate.html'))($scope));
                     }
                 }
             };

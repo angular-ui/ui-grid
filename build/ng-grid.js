@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 17:02
+* Compiled At: 03/06/2013 17:36
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1175,6 +1175,28 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     self.data = [];
     self.lateBindColumns = false;
     self.filteredRows = [];
+    var getTemplate = function (key) {
+        var t = self.config[key];
+        var uKey = key + self.gridId + ".html";
+        if (t && !TEMPLATE_REGEXP.test(t)) {
+            $templateCache.put(uKey, $.ajax({
+                type: "GET",
+                url: t,
+                async: false
+            }).responseText);
+        } else if (t) {
+            $templateCache.put(uKey, t);
+        } else {
+            var dKey = key + ".html";
+            $templateCache.put(uKey, $templateCache.get(dKey));
+        }
+    };
+    getTemplate('rowTemplate');
+    getTemplate('aggregateTemplate');
+    getTemplate('headerRowTemplate');
+    getTemplate('checkboxCellTemplate');
+    getTemplate('checkboxHeaderTemplate');
+
     if (typeof self.config.data == "object") {
         self.data = self.config.data; 
     }
@@ -1251,8 +1273,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortable: false,
                     resizable: false,
                     groupable: false,
-                    headerCellTemplate: $templateCache.get('checkboxHeaderTemplate.html'),
-                    cellTemplate: $templateCache.get('checkboxCellTemplate.html'),
+                    headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
+                    cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
                     pinned: self.config.pinSelectionCheckbox
                 },
                 index: 0,
@@ -1526,26 +1548,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
+    $scope.gridId = self.gridId;
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
-    var getTemplate = function (key) {
-        var t = self.config[key];
-        var cacheKey = key + ".html";
-        if (t && !TEMPLATE_REGEXP.test(t)) {
-            $templateCache.put(cacheKey, $.ajax({
-                type: "GET",
-                url: t,
-                async: false
-            }).responseText);
-        } else if (t) {
-            $templateCache.put(cacheKey, t);
-        }
-    };
-    getTemplate('rowTemplate');
-    getTemplate('aggregateTemplate');
-    getTemplate('headerRowTemplate');
-    getTemplate('checkboxCellTemplate');
-    getTemplate('checkboxHeaderTemplate');
     $scope.i18n = {};
     ng.utils.seti18n($scope, self.config.i18n);
     $scope.adjustScrollLeft = function (scrollLeft) {
@@ -2540,7 +2545,7 @@ ngGridDirectives.directive('ngHeaderRow', ['$compile', '$templateCache', functio
             return {
                 pre: function($scope, iElement) {
                     if (iElement.children().length === 0) {
-                        iElement.append($compile($templateCache.get('headerRowTemplate.html'))($scope));
+                        iElement.append($compile($templateCache.get($scope.gridId + 'headerRowTemplate.html'))($scope));
                     }
                 }
             };
@@ -2628,7 +2633,7 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', '$template
                         $scope.row.clone.elm = iElement;
                     }
                     if ($scope.row.isAggRow) {
-                        var html = $templateCache.get('aggregateTemplate.html');
+                        var html = $templateCache.get($scope.gridId + 'aggregateTemplate.html');
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
@@ -2636,7 +2641,7 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', '$template
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($templateCache.get('rowTemplate.html'))($scope));
+                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
                     }
 					$scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
