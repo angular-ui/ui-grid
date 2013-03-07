@@ -51,7 +51,7 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' },
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', editableCellTemplate: '<div ng-click="doStuff($event)" style="width:100%;height:100%;" ><select  style="width:100%;height:100%;" class="ui-widget input" type="text" ng-model="row.entity.name"><option ng-repeat="opt in dropDownOpts">{{opt}}</option></select></div>' },
         { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
         { field: 'birthday', cellFilter: 'date', width: 200, resizable: false },
         { field: 'paid', cellFilter: 'checkmark', width: 200  },
@@ -108,10 +108,20 @@ function userController($scope) {
 		showGroupPanel: true,
 		showFooter: true,
 		showFilter: true,
-        showSelectionCheckbox: true,
+		enableCellEdit: true,
+        enableCellSelection: true,
+		showSelectionCheckbox: true,
+        selectWithCheckboxOnly: true,
         showColumnMenu: true,
         columnDefs: 'myDefs',
         plugins: [myplugin]
+    };
+    $scope.doStuff = function (evt) {
+        var elm = angular.element(evt.currentTarget.parentNode);
+        elm.on('change', function() {
+            var scope = elm.scope();
+            scope.$parent.isFocused = false;
+        });
     };
     $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
                       { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
@@ -191,6 +201,7 @@ function userController($scope) {
 		$scope.filteringText = text;
 	});
     $scope.setSelection = function() {
-        $scope.gridOptions.i18n = 'zh-cn'
+        $scope.gridOptions.i18n = 'zh-cn';
     };
+    $scope.dropDownOpts = ['editing', 'is', 'impossibru?'];
 };
