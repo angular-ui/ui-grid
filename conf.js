@@ -10,6 +10,10 @@ basePath = '';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
+  'lib/jquery-1.9.1.js',
+  'lib/angular.js',
+  'test/lib/angular/angular-mocks.js',
+  'build/ng-grid.debug.js',
   'test/unit/*Spec.js'
 ];
 
@@ -18,7 +22,7 @@ exclude = [];
 
 // use dots reporter, as travis terminal does not support escaping sequences
 // possible values: 'dots' || 'progress'
-reporter = 'dots';
+reporter = 'progress';
 
 // these are default values, just to show available options
 

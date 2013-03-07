@@ -3,17 +3,27 @@
 /* jasmine specs for filters go here */
 
 describe('filter', function() {
-  beforeEach(module('myApp.filters'));
-
-
-  describe('interpolate', function() {
-    beforeEach(module(function($provide) {
-      $provide.value('version', 'TEST_VER');
+    var $checkmark;
+    var $columns;
+    beforeEach(module('ngGrid.filters'));
+    beforeEach(inject(function($filter) {
+        $checkmark = $filter('checkmark');
+        $columns = $filter('ngColumns');
     }));
 
 
-    it('should replace VERSION', inject(function(interpolateFilter) {
-      expect(interpolateFilter('before %VERSION% after')).toEqual('before TEST_VER after');
-    }));
-  });
+    describe('checkmark filter', function() {
+        it('returns the appropriate unicode character based on a boolean value', function() {
+            expect($checkmark(true)).toEqual('\u2714');
+            expect($checkmark(false)).toEqual('\u2718');
+        });
+    });
+
+    describe('ngColumns filter', function() {
+        it('returns columns that are not aggregate columns', function() {
+            var columns = [{ isAggCol: true }, { isAggCol: true }, { isAggCol: false }, { isAggCol: false }, { isAggCol: false }];
+            var fCols = $columns(columns);
+            expect(fCols.length).toEqual(3);
+        });
+    });
 });
