@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 17:36
+* Compiled At: 03/06/2013 17:41
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1390,7 +1390,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     // test templates for urls and get the tempaltes via synchronous ajax calls
     var getTemplate = function (key) {
         var t = self.config[key];
-        var uKey = key + self.gridId + ".html";
+        var uKey = self.gridId + key + ".html";
         if (t && !TEMPLATE_REGEXP.test(t)) {
             $templateCache.put(uKey, $.ajax({
                 type: "GET",
