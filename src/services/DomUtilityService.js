@@ -1,11 +1,4 @@
-﻿/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js" />
-/// <reference path="../utils.js" />
-/// <reference path="../classes/range.js" />
-ngGridServices.factory('DomUtilityService', function() {
+﻿ngGridServices.factory('DomUtilityService', function() {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {

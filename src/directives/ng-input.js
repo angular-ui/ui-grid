@@ -7,7 +7,7 @@
         elm.bind('keyup', function() {
             var newVal = elm.val();
             if (!$scope.$root.$$phase) {
-                $scope.$apply(function(){setter($scope.row.entity,newVal)});
+                $scope.$apply(function(){setter($scope.row.entity,newVal); });
             }
         });
 		elm.bind('keydown', function(evt){

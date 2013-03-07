@@ -9,8 +9,8 @@
 
     self.evalFilter = function () {
         var filterFunc = function(item) {
-            for (var i = 0, len = searchConditions.length; i < len; i++) {
-                var condition = searchConditions[i];
+            for (var x = 0, len = searchConditions.length; x < len; x++) {
+                var condition = searchConditions[x];
                 //Search entire row
                 var result;
                 if (!condition.column) {

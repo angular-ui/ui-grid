@@ -51,7 +51,7 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo' },
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="row.entity[col.field]"/>' },
         { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
         { field: 'birthday', cellFilter: 'date', width: 200, resizable: false },
         { field: 'paid', cellFilter: 'checkmark', width: 200  },
@@ -191,7 +191,6 @@ function userController($scope) {
 		$scope.filteringText = text;
 	});
     $scope.setSelection = function() {
-        myplugin.grid.config.excludeProperties = [];
-        $scope.gridOptions.rebuildColumnDefs();
+        $scope.gridOptions.i18n = 'zh-cn'
     };
 };

@@ -3,7 +3,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
 			domUtilityService.digest($scope);	
-			var elementWithoutComments = angular.element(elm[0].children).filter(function() { return this.nodeType != 8 });//Remove html comments for IE8
+			var elementWithoutComments = angular.element(elm[0].children).filter(function () { return this.nodeType != 8; });//Remove html comments for IE8
 			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
 			if(inputElement.length > 0){
 				angular.element(inputElement).focus();
@@ -22,15 +22,15 @@ ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
                     focusOnInputElement($scope,elm);
                 }, 0);
             };
-			elm.bind('mousedown', function(evt){
+			elm.bind('mousedown', function(){
 				elm.focus();
 				return true;
 			});			
-			elm.bind('focus', function(evt){
+			elm.bind('focus', function(){
 				isFocused = true;
 				return true;
 			});		
-			elm.bind('blur', function(evt){
+			elm.bind('blur', function(){
 				isFocused = false;
 				return true;
 			});
