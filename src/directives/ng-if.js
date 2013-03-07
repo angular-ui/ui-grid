@@ -9,7 +9,7 @@ ngGridDirectives.directive('ngIf', [function () {
     priority: 1000,
     terminal: true,
     restrict: 'A',
-    compile: function (element, attr, transclude) {
+    compile: function (e, a, transclude) {
       return function (scope, element, attr) {
 
         var childElement;

@@ -18,7 +18,7 @@
         return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.groupPanelStyle = function () {
-        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": "30px" };
+        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": "32px" };
     };
     $scope.viewportStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };

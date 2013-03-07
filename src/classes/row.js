@@ -1,9 +1,3 @@
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js" />
-/// <reference path="../utils.js" />
 ng.Row = function (entity, config, selectionService, rowIndex) {
     var self = this, // constant for the selection property that we add to each data item
         enableRowSelection = config.enableRowSelection;
@@ -27,7 +21,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
             self.entity = expected;
             self.selected = self.selectionService.getSelection(self.entity);
         }
-    }
+    };
     self.toggleSelected = function(event) {
         if (!enableRowSelection && !config.enableCellSelection) {
             return true;

@@ -1,6 +1,4 @@
-﻿/// <reference path="../templates/aggregateTemplate.js" />
-/// <reference path="../namespace.js" />
-ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
+﻿ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
         compile: function() {
@@ -11,7 +9,7 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($
                         $scope.row.clone.elm = iElement;
                     }
                     if ($scope.row.isAggRow) {
-                        var html = $scope.aggregateTemplate;
+                        var html = $templateCache.get('aggregateTemplate.html');
                         if ($scope.row.aggLabelFilter) {
                             html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
                         } else {
@@ -19,7 +17,7 @@ ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', function($
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($scope.rowTemplate)($scope));
+                        iElement.append($compile($templateCache.get('rowTemplate.html'))($scope));
                     }
 					$scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);

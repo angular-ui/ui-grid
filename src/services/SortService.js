@@ -1,11 +1,4 @@
-﻿/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js" />
-/// <reference path="../utils.js" />
-/// <reference path="../classes/range.js" />
-ngGridServices.factory('SortService', ['$parse', function($parse) {
+﻿ngGridServices.factory('SortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     // this takes an piece of data from the cell and tries to determine its type and what sorting

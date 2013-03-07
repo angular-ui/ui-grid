@@ -1,12 +1,7 @@
 ﻿/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js" />
-/// <reference path="../utils.js" />
-ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
+ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache) {
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
@@ -282,8 +277,8 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     sortable: false,
                     resizable: false,
                     groupable: false,
-                    headerCellTemplate: $scope.checkboxHeaderTemplate,
-                    cellTemplate: $scope.checkboxCellTemplate,
+                    headerCellTemplate: $templateCache.get('checkboxHeaderTemplate.html'),
+                    cellTemplate: $templateCache.get('checkboxCellTemplate.html'),
                     pinned: self.config.pinSelectionCheckbox
                 },
                 index: 0,
@@ -292,7 +287,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
                 enableSort: self.config.enableSorting
-            }, $scope, self, domUtilityService, $filter));
+            }, $scope, self, domUtilityService, $templateCache));
         }
         if (columnDefs.length > 0) {
             var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
@@ -309,7 +304,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit 
-                }, $scope, self, domUtilityService);
+                }, $scope, self, domUtilityService, $templateCache);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx != -1) {
                     column.isGroupedBy = true;
@@ -405,7 +400,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         //factories and services
         $scope.selectionService = new ng.SelectionService(self, $scope);
 		$scope.domAccessProvider = new ng.DomAccessProvider(self);
-		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService);
+		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService, $templateCache);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
         $scope.$watch('configGroups', function(a) {
@@ -582,16 +577,15 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
     // test templates for urls and get the tempaltes via synchronous ajax calls
     var getTemplate = function (key) {
         var t = self.config[key];
+        var cacheKey = key + ".html";
         if (t && !TEMPLATE_REGEXP.test(t)) {
-            $scope[key] = $.ajax({
+            $templateCache.put(cacheKey, $.ajax({
                 type: "GET",
                 url: t,
                 async: false
-            }).responseText;
+            }).responseText);
         } else if (t) {
-            $scope[key] = self.config[key];
-        } else {
-            $scope[key] = ng[key]();
+            $templateCache.put(cacheKey, t);
         }
     };
     getTemplate('rowTemplate');
@@ -688,7 +682,7 @@ ng.Grid = function($scope, options, sortService, domUtilityService, $filter) {
         return self.config.showGroupPanel;
     };
     $scope.topPanelHeight = function() {
-        return self.config.showGroupPanel === true ? self.config.headerRowHeight + 31 : self.config.headerRowHeight;
+        return self.config.showGroupPanel === true ? self.config.headerRowHeight + 32 : self.config.headerRowHeight;
     };
 
     $scope.viewportDimHeight = function() {
