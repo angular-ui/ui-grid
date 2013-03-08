@@ -1,4 +1,4 @@
-﻿ngGridServices.factory('DomUtilityService',['$utilityService', function($utils) {
+﻿ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {

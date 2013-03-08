@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService','$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
     var ngGrid = {
         scope: true,
         compile: function() {

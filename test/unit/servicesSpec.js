@@ -1,31 +1,88 @@
 'use strict';
 
 /* jasmine specs for services go here */
+describe('Dom Utility Service', function () {
+    var $dUtils;
+    var $scope;
+    var $linker;
+    var $cache;
+    beforeEach(module('ngGrid'));
+    beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
+        $scope = $rootScope.$new();
+        $dUtils = $domUtilityService;
+        $linker = $compile;
+        $cache = $templateCache;
+    }));
+
+    // AssignGridContainers
+    describe('AssignGridContainers should find the right elements and assign them in the grid properly', function () {
+        it('should assign the proper containers', function () {
+            var domsizesCalled;
+            var grid = {
+                elementDims: {},
+                refreshDomSizes: function () {
+                    domsizesCalled = true;
+                }
+            };
+            $scope.adjustScrollTop = function(top) {
+                expect(top).toEqual(grid.$canvas.scrollTop());
+            };
+            var root = angular.element('<div class="ng-scope ngGrid"></div>');
+            root.append(angular.element($cache.get('gridTemplate.html')));
+            $dUtils.AssignGridContainers($scope, root, grid);
+            
+            expect(grid.$root.length).toEqual(1);
+            expect(grid.$topPanel.length).toEqual(1);
+            expect(grid.$groupPanel.length).toEqual(1);
+            expect(grid.$headerContainer.length).toEqual(1);
+            expect(grid.$headerScroller.length).toEqual(1);
+            expect(grid.$viewport.length).toEqual(1);
+            expect(grid.$canvas.length).toEqual(1);
+            expect(grid.$footerPanel.length).toEqual(1);
+            expect(grid.elementDims.rootMaxH).toEqual(grid.$root.height());
+            expect(domsizesCalled).toEqual(true);
+        });
+    });
+    // BuildStyles
+    describe('BuildStyles should set the $styleSheet object of the grid to be a stylesheet object with CSS', function () {
+        it('should assign the proper containers', function () {
+           //add work to do here.
+        });
+    });
+});
+
+describe('Sort Service', function () {
+    var $sort;
+    beforeEach(module('ngGrid'));
+    beforeEach(inject(function ($sortService) {
+        $sort = $sortService;
+    }));
+});
 
 describe('Utility Service', function () {
-    var service;
-    beforeEach(module('ngGrid.services'));
+    var $utils;
+    beforeEach(module('ngGrid'));
     beforeEach(inject(function ($utilityService) {
-        service = $utilityService;
+        $utils = $utilityService;
     }));
     // evalProperty
     describe('evalProperty should find the right property given a heirarchy.', function () {
         // foundme
         it('returns foundme', function() {
             var obj = { foo: { bar: { hello: { world: "foundme" } } } };
-            expect(service.evalProperty(obj, "foo.bar.hello.world")).toEqual("foundme");
+            expect($utils.evalProperty(obj, "foo.bar.hello.world")).toEqual("foundme");
         });
         // undefined
         it('returns undefined', function () {
             var obj = { foo: { bar: { hello: { world: "foundme" } } } };
-            expect(service.evalProperty(obj, "foo.bar.omg")).toEqual(undefined);
+            expect($utils.evalProperty(obj, "foo.bar.omg")).toEqual(undefined);
         });
     });
     // visualLength
     describe('visualLength should return the correct visual length of text.', function () {
         it('returns integer', function() {
             var node = angular.element('<div style="width: 30px;">The quick brown fox jumped over the lazy dog.</div>');
-            expect(service.visualLength(node)).toEqual(298);
+            expect($utils.visualLength(node)).toEqual(298);
         });
     });
     // forIn
@@ -38,7 +95,7 @@ describe('Utility Service', function () {
                 world: "world"
             };
 
-            service.forIn(obj, function(val, key) {
+            $utils.forIn(obj, function (val, key) {
                 obj[key] = "foundme";
             });
             expect(obj.foo).toEqual("foundme");
@@ -52,28 +109,28 @@ describe('Utility Service', function () {
         var str = "Peter Piper picked a peck of pickeled peppers";
         it('returns true', function() {
             
-            expect(service.endsWith(str, "peppers")).toEqual(true);
+            expect($utils.endsWith(str, "peppers")).toEqual(true);
         });
         it('returns false', function () {
-            expect(service.endsWith(str, "peter")).toEqual(false);
+            expect($utils.endsWith(str, "peter")).toEqual(false);
         });
     });
     // isNullOrUndefined
     describe('isNullOrUndefined return true or false based on wherer or not a given reference is explucitly null or undefined', function () {
         it('returns true', function () {
             var hello; 
-            expect(service.isNullOrUndefined(hello)).toEqual(true);
+            expect($utils.isNullOrUndefined(hello)).toEqual(true);
             var hello = null;
-            expect(service.isNullOrUndefined(hello)).toEqual(true);
+            expect($utils.isNullOrUndefined(hello)).toEqual(true);
             var hello = undefined;
-            expect(service.isNullOrUndefined(hello)).toEqual(true);
-            expect(service.isNullOrUndefined(null)).toEqual(true);
-            expect(service.isNullOrUndefined(undefined)).toEqual(true);
+            expect($utils.isNullOrUndefined(hello)).toEqual(true);
+            expect($utils.isNullOrUndefined(null)).toEqual(true);
+            expect($utils.isNullOrUndefined(undefined)).toEqual(true);
         });
         it('returns false', function () {
-            expect(service.isNullOrUndefined("foundme")).toEqual(false);
-            expect(service.isNullOrUndefined("")).toEqual(false);
-            expect(service.isNullOrUndefined(0)).toEqual(false);
+            expect($utils.isNullOrUndefined("foundme")).toEqual(false);
+            expect($utils.isNullOrUndefined("")).toEqual(false);
+            expect($utils.isNullOrUndefined(0)).toEqual(false);
         });
     });
 });

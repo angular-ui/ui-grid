@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/07/2013 10:56
+* Compiled At: 03/07/2013 16:14
 ***********************************************/
 (function(window) {
 'use strict';
@@ -173,7 +173,7 @@ ngGridFilters.filter('ngColumns', function() {
         });
     };
 });
-ngGridServices.factory('DomUtilityService',['$utilityService', function($utils) {
+ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {
@@ -307,7 +307,7 @@ ngGridServices.factory('DomUtilityService',['$utilityService', function($utils) 
     getWidths();
     return domUtilityService;
 }]);
-ngGridServices.factory('SortService', ['$parse', function($parse) {
+ngGridServices.factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {};
     sortService.guessSortFn = function(item) {
@@ -2304,7 +2304,7 @@ ng.StyleProvider = function($scope, grid, domUtilityService) {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
     };
 };
-ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
+ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 	function (domUtilityService) {
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;
@@ -2368,7 +2368,7 @@ ngGridDirectives.directive('ngCellText',
           });
       };
   });
-ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function($compile, domUtilityService) {
+ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function ($compile, domUtilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
@@ -2403,7 +2403,7 @@ ngGridDirectives.directive('ngCell', ['$compile', 'DomUtilityService', function(
     };
     return ngCell;
 }]);
-ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService','$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
     var ngGrid = {
         scope: true,
         compile: function() {
@@ -2612,7 +2612,7 @@ ngGridDirectives.directive('ngInput',['$parse', function($parse) {
 		});
     };
 }]);
-ngGridDirectives.directive('ngRow', ['$compile', 'DomUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
+ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
         compile: function() {
