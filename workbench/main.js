@@ -101,7 +101,6 @@ function userController($scope) {
         pagingOptions: $scope.pagingOptions,
 		enablePaging: true,
 		enableRowSelection: true,
-		keepLastSelected: false,
 		multiSelect: false,
         enableRowReordering: false,
 		enablePinning: true,

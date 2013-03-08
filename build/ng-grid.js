@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/07/2013 18:28
+* Compiled At: 03/07/2013 19:42
 ***********************************************/
 (function(window) {
 'use strict';
@@ -785,9 +785,9 @@ ng.DomAccessProvider = function(grid) {
 		}
 	};
 	self.focusCellElement = function($scope, index){	
-		if($scope.selectionService.lastClickedRow){
+		if($scope.selectionProvider.lastClickedRow){
 			var columnIndex = index != undefined ? index : previousColumn;
-			var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
+			var elm = $scope.selectionProvider.lastClickedRow.clone ? $scope.selectionProvider.lastClickedRow.clone.elm : $scope.selectionProvider.lastClickedRow.elm;
 			if (columnIndex != undefined && elm) {
 				var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); 
 				var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
@@ -1372,8 +1372,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         }
     };
     self.init = function() {
-        $scope.selectionService = new ng.SelectionService(self, $scope);
-		$scope.domAccessProvider = new ng.DomAccessProvider(self);
+        $scope.selectionProvider = new ng.selectionProvider(self, $scope);
+        $scope.domAccessProvider = new ng.DomAccessProvider(self);
 		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService, $templateCache, $utils);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -1617,7 +1617,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         $scope.showMenu = !$scope.showMenu;
     };
     $scope.toggleSelectAll = function(a) {
-        $scope.selectionService.toggleSelectAll(a);
+        $scope.selectionProvider.toggleSelectAll(a);
     };
     $scope.totalFilteredItemsLength = function() {
         return self.filteredRows.length;
@@ -1716,27 +1716,27 @@ ng.Range = function(top, bottom) {
     this.topRow = top;
     this.bottomRow = bottom;
 };
-ng.Row = function (entity, config, selectionService, rowIndex, $utils) {
+ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
     var self = this, 
         enableRowSelection = config.enableRowSelection;
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
-    self.selectionService = selectionService;
-	self.selected = selectionService.getSelection(entity);
+    self.selectionProvider = selectionProvider;
+	self.selected = selectionProvider.getSelection(entity);
     self.cursor = enableRowSelection ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
-		self.selectionService.setSelection(self, isSelected);
-		self.selectionService.lastClickedRow = self;
+		self.selectionProvider.setSelection(self, isSelected);
+		self.selectionProvider.lastClickedRow = self;
 	};
     self.continueSelection = function(event) {
-        self.selectionService.ChangeSelection(self, event);
+        self.selectionProvider.ChangeSelection(self, event);
     };
     self.ensureEntity = function(expected) {
         if (self.entity != expected) {
             self.entity = expected;
-            self.selected = self.selectionService.getSelection(self.entity);
+            self.selected = self.selectionProvider.getSelection(self.entity);
         }
     };
     self.toggleSelected = function(event) {
@@ -1748,7 +1748,7 @@ ng.Row = function (entity, config, selectionService, rowIndex, $utils) {
             return true;
         }
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
-            self.selectionService.lastClickedRow = self;
+            self.selectionProvider.lastClickedRow = self;
             return true;
         } else {
             if (self.beforeSelectionChange(self, event)) {
@@ -1778,7 +1778,7 @@ ng.Row = function (entity, config, selectionService, rowIndex, $utils) {
         return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        self.clone = new ng.Row(entity, config, selectionService, rowIndex);
+        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
         return self.clone;
@@ -1796,7 +1796,7 @@ ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache, $util
     self.dataChanged = true;
     self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = $scope.selectionService;
+    self.selectionProvider = $scope.selectionProvider;
     self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
@@ -1815,7 +1815,7 @@ ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache, $util
 
     self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
     self.buildEntityRow = function(entity, rowIndex) {
-        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex, $utils);
+        return new ng.Row(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
@@ -2153,7 +2153,7 @@ ng.SearchProvider = function ($scope, grid, $filter) {
         });
     }
 };
-ng.SelectionService = function (grid, $scope) {
+ng.selectionProvider = function (grid, $scope) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;

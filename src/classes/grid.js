@@ -424,8 +424,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     };
     self.init = function() {
         //factories and services
-        $scope.selectionService = new ng.SelectionService(self, $scope);
-		$scope.domAccessProvider = new ng.DomAccessProvider(self);
+        $scope.selectionProvider = new ng.selectionProvider(self, $scope);
+        $scope.domAccessProvider = new ng.DomAccessProvider(self);
 		self.rowFactory = new ng.RowFactory(self, $scope, domUtilityService, $templateCache, $utils);
         self.searchProvider = new ng.SearchProvider($scope, self, $filter);
         self.styleProvider = new ng.StyleProvider($scope, self, domUtilityService);
@@ -681,7 +681,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         $scope.showMenu = !$scope.showMenu;
     };
     $scope.toggleSelectAll = function(a) {
-        $scope.selectionService.toggleSelectAll(a);
+        $scope.selectionProvider.toggleSelectAll(a);
     };
     $scope.totalFilteredItemsLength = function() {
         return self.filteredRows.length;

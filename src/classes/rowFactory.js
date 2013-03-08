@@ -6,7 +6,7 @@
     self.dataChanged = true;
     self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = $scope.selectionService;
+    self.selectionProvider = $scope.selectionProvider;
     self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
@@ -29,7 +29,7 @@
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
         // build the row
-        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex, $utils);
+        return new ng.Row(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {

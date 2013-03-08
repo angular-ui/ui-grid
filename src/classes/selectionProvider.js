@@ -1,4 +1,4 @@
-ng.SelectionService = function (grid, $scope) {
+ng.selectionProvider = function (grid, $scope) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
