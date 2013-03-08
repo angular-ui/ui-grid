@@ -112,6 +112,7 @@ function userController($scope) {
 		showSelectionCheckbox: true,
         selectWithCheckboxOnly: true,
         showColumnMenu: true,
+        maintainColumnRatios: true,
         columnDefs: 'myDefs',
         plugins: [myplugin]
     };

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 12:48
+* Compiled At: 03/08/2013 15:13
 ***********************************************/
 (function(window) {
 'use strict';
@@ -251,7 +251,7 @@ ngGridServices.factory('$domUtilityService',['$utilityService', function($utils)
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
-            if (col.visible) {
+            if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
                 css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
@@ -1312,7 +1312,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             totalWidth = 0;
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function(col, i) {
-            if (col.visible !== false) {
                 i += indexOffset;
                 var isPercent = false, t = undefined;
                 if ($utils.isNullOrUndefined(col.width)) {
@@ -1321,31 +1320,32 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
                     t = isPercent ? col.width : parseInt(col.width, 10);
                 }
-                if (isNaN(t)) {
-                    t = col.width;
-                    if (t == 'auto') { 
-                        $scope.columns[i].width = col.minWidth;
-                        totalWidth += $scope.columns[i].width;
-                        var temp = $scope.columns[i];
-                        $scope.$evalAsync(function() {
-                            self.resizeOnData(temp, true);
-                        });
-                        return;
-                    } else if (t.indexOf("*") != -1) { 
+            if (isNaN(t)) {
+                t = col.width;
+                if (t == 'auto') { 
+                    $scope.columns[i].width = col.minWidth;
+                    totalWidth += $scope.columns[i].width;
+                    var temp = $scope.columns[i];
+                    $scope.$evalAsync(function() {
+                        self.resizeOnData(temp, true);
+                    });
+                    return;
+                } else if (t.indexOf("*") != -1) { 
+                    if (col.visible !== false) {
                         asteriskNum += t.length;
-                        col.index = i;
-                        asterisksArray.push(col);
-                        return;
-                    } else if (isPercent) { 
-                        col.index = i;
-                        percentArray.push(col);
-                        return;
-                    } else { 
-                        throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                     }
-                } else {
-                    totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
+                    col.index = i;
+                    asterisksArray.push(col);
+                    return;
+                } else if (isPercent) { 
+                    col.index = i;
+                    percentArray.push(col);
+                    return;
+                } else { 
+                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
+            } else if (col.visible !== false) {
+                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
             }
         });
         if (asterisksArray.length > 0) {
@@ -1362,7 +1362,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     }
                     $scope.columns[col.index].width -= offset;
                 }
-                totalWidth += $scope.columns[col.index].width;
+                if (col.visible !== false) {
+                    totalWidth += $scope.columns[col.index].width;
+                }
             });
         }
         if (percentArray.length > 0) {
@@ -1387,7 +1389,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
           self.rowFactory.filteredRowsChanged();
           $scope.$emit('ngGridEventGroups', a);
         }, true);
-        $scope.$watch('columns', function(a) {
+        $scope.$watch('columns', function (a) {
             domUtilityService.BuildStyles($scope, self, true);
             $scope.$emit('ngGridEventColumns', a);
         }, true);
@@ -1513,7 +1515,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     };
     self.fixColumnIndexes = function() {
         for (var i = 0; i < $scope.columns.length; i++) {
-            if ($scope.columns[i].visible) {
+            if ($scope.columns[i].visible !== false) {
                 $scope.columns[i].index = i;
             }
         }
@@ -1566,7 +1568,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         };
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
-            if (col.visible) {
+            if (col.visible !== false) {
                 var w = col.width + colwidths;
                 if (col.pinned) {
                     addCol(col);
@@ -1689,7 +1691,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         var totalWidth = 0,
             cols = $scope.columns;
         for (var i = 0; i < cols.length; i++) {
-            if (cols[i].visible) {
+            if (cols[i].visible !== false) {
                 totalWidth += cols[i].width;
             }
         }

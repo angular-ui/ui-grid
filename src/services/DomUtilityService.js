@@ -87,7 +87,7 @@
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
-            if (col.visible) {
+            if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
                 css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
