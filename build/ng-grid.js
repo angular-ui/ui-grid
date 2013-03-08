@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 15:13
+* Compiled At: 03/08/2013 15:44
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1077,7 +1077,7 @@ ng.Footer = function($scope, grid) {
     };
 };
 
-ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils) {
+ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout) {
     var defaults = {
         aggregateTemplate: undefined,
         afterSelectionChange: function() {
@@ -1326,7 +1326,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     $scope.columns[i].width = col.minWidth;
                     totalWidth += $scope.columns[i].width;
                     var temp = $scope.columns[i];
-                    $scope.$evalAsync(function() {
+                    $timeout(function () {
                         self.resizeOnData(temp, true);
                     });
                     return;
@@ -2409,7 +2409,7 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
     };
     return ngCell;
 }]);
-ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils) {
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout) {
     var ngGrid = {
         scope: true,
         compile: function() {
@@ -2418,7 +2418,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils);
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout);
                     if (typeof options.columnDefs == "string") {
                         $scope.$parent.$watch(options.columnDefs, function (a) {
                             if (!a) {

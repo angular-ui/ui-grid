@@ -1,7 +1,7 @@
 ﻿/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
-ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils) {
+ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout) {
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
@@ -368,7 +368,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     $scope.columns[i].width = col.minWidth;
                     totalWidth += $scope.columns[i].width;
                     var temp = $scope.columns[i];
-                    $scope.$evalAsync(function() {
+                    $timeout(function () {
                         self.resizeOnData(temp, true);
                     });
                     return;
