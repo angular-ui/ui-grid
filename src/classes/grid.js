@@ -351,6 +351,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             totalWidth = 0;
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function(col, i) {
+            if (col.visible === false) return;
             i += indexOffset;
             var isPercent = false, t = undefined;
             //if width is not defined, set it to a single star

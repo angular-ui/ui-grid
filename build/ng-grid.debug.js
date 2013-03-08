@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/07/2013 16:14
+* Compiled At: 03/07/2013 18:28
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1526,6 +1526,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             totalWidth = 0;
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
         angular.forEach(cols, function(col, i) {
+            if (col.visible === false) return;
             i += indexOffset;
             var isPercent = false, t = undefined;
             //if width is not defined, set it to a single star
