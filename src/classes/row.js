@@ -62,7 +62,7 @@ ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
         return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex);
+        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex, $utils);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
         return self.clone;

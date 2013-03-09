@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 16:47
+* Compiled At: 03/08/2013 17:03
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1782,7 +1782,7 @@ ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
         return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex);
+        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex, $utils);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
         return self.clone;
