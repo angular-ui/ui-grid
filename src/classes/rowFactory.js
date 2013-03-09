@@ -1,4 +1,4 @@
-﻿ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache) {
+﻿ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -6,7 +6,7 @@
     self.dataChanged = true;
     self.parsedData = [];
     self.rowConfig = {};
-    self.selectionService = $scope.selectionService;
+    self.selectionProvider = $scope.selectionProvider;
     self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
@@ -29,7 +29,7 @@
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
         // build the row
-        return new ng.Row(entity, self.rowConfig, self.selectionService, rowIndex);
+        return new ng.Row(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
@@ -185,7 +185,7 @@
                 var col = cols.filter(function(c) {
                     return c.field == group;
                 })[0];
-                var val = ng.utils.evalProperty(model, group);
+                var val = $utils.evalProperty(model, group);
                 val = val ? val.toString() : 'null';
                 if (!ptr[val]) {
                     ptr[val] = {};
@@ -220,7 +220,7 @@
                     },
                     isAggCol: true,
                     headerRowHeight: grid.config.headerRowHeight
-                }, $scope, grid, domUtilityService, $templateCache));
+                }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
         domUtilityService.BuildStyles($scope, grid, true);

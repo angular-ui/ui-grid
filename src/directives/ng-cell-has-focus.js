@@ -1,4 +1,4 @@
-ngGridDirectives.directive('ngCellHasFocus', ['DomUtilityService',
+ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 	function (domUtilityService) {
 		var focusOnInputElement = function($scope, elm){
 			$scope.isFocused = true;

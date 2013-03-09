@@ -51,18 +51,18 @@ function userController($scope) {
         self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
-    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', width: 200, headerClass: 'foo', editableCellTemplate: '<div ng-click="doStuff($event)" style="width:100%;height:100%;" ><select  style="width:100%;height:100%;" class="ui-widget input" type="text" ng-model="row.entity.name"><option ng-repeat="opt in dropDownOpts">{{opt}}</option></select></div>' },
-        { field: 'allowance', aggLabelFilter: 'currency', width: 200  },
-        { field: 'birthday', cellFilter: 'date', width: 200, resizable: false },
-        { field: 'paid', cellFilter: 'checkmark', width: 200  },
-        { field: 'sdaf', displayName: 'sadfasdfasdfasd', width: 200, headerClass: 'foo'  },
-        { field: 'asdf', aggLabelFilter: 'currency', width: 200 },
-        { field: 'asdgasg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'asgdasga', cellFilter: 'checkmark', width: 200  },
-        { field: 'asgasgadf', displayName: 'asgasgadf', width: 200, headerClass: 'foo'  },
-        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', width: 200 },
-        { field: 'asdasdgasdg', cellFilter: 'date', width: 200, resizable: false  },
-        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', width: 200 }];
+    $scope.myDefs = [{ field: 'name', displayName: 'Very Long Name Title', headerClass: 'foo', editableCellTemplate: '<div ng-click="doStuff($event)" style="width:100%;height:100%;" ><select  style="width:100%;height:100%;" class="ui-widget input" type="text" ng-model="row.entity.name"><option ng-repeat="opt in dropDownOpts">{{opt}}</option></select></div>' },
+        { field: 'allowance', aggLabelFilter: 'currency' },
+        { field: 'birthday', cellFilter: "date:'yyyy-MM-dd HH:mm:ss'", resizable: false },
+        { field: 'paid', cellFilter: 'checkmark', },
+        { field: 'sdaf', displayName: 'sadfasdfasdfasd', headerClass: 'foo', visible: false },
+        { field: 'asdf', aggLabelFilter: 'currency', },
+        { field: 'asdgasg', cellFilter: 'date', resizable: false, visible: false },
+        { field: 'asgdasga', cellFilter: 'checkmark' },
+        { field: 'asgasgadf', displayName: 'asgasgadf', headerClass: 'foo', visible: false },
+        { field: 'asdgasgasgagsd', aggLabelFilter: 'currency', visible: false },
+        { field: 'asdasdgasdg', cellFilter: 'date', resizable: false, visible: false },
+        { field: 'sadfasdfasdfasd', cellFilter: 'checkmark', }];
     var myplugin = {
         init: function(scope, grid) {
             myplugin.scope = scope;
@@ -101,7 +101,6 @@ function userController($scope) {
         pagingOptions: $scope.pagingOptions,
 		enablePaging: true,
 		enableRowSelection: true,
-		keepLastSelected: false,
 		multiSelect: false,
         enableRowReordering: false,
 		enablePinning: true,
@@ -113,6 +112,7 @@ function userController($scope) {
 		showSelectionCheckbox: true,
         selectWithCheckboxOnly: true,
         showColumnMenu: true,
+        maintainColumnRatios: true,
         columnDefs: 'myDefs',
         plugins: [myplugin]
     };

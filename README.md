@@ -13,7 +13,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 2.0.0
+version 2.0.2
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
@@ -63,6 +63,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 [Examples](http://angular-ui.github.com/ng-grid/)
 
 ##Change Log##
+* __2013-03-08__ - Version 2.0.2 - minor bugfixes, updating some plugins.
 * __2013-03-05__ - Version 2.0.1 - Moved to grunt build system. No more international version; all languages are included by default. Fixed minor grouping display issue. Using $templateCache for templates instead of global namespace.
 * __2013-03-05__ - Version 2.0.0 - Breaking Changes: see documentation (showSelectionBox, enableRowSelection, showFooter). Column Virtualization added. Row virtualization performance improved. Excel-like editing instead of enableFocusedCellEdit.
 * __2013-02-18__ - Version 1.9.0 - Aggregates now display correctly. Added more option methods to select and group data (see wiki), Added column pinning.

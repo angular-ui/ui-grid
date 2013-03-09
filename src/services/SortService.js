@@ -1,4 +1,4 @@
-﻿ngGridServices.factory('SortService', ['$parse', function($parse) {
+﻿ngGridServices.factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     // this takes an piece of data from the cell and tries to determine its type and what sorting

@@ -1,5 +1,5 @@
 {
   "name": "ng-grid",
   "version": "2.0.1",
-  "main": ["./ng-grid.css", "ng-grid.min.js"]
+  "main": ["./ng-grid.css", "./build/ng-grid.min.js"]
 }

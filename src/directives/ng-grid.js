@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', 'SortService', 'DomUtilityService', function ($compile, $filter, $templateCache, sortService, domUtilityService) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout) {
     var ngGrid = {
         scope: true,
         compile: function() {
@@ -7,7 +7,7 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache);
+                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout);
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
@@ -44,7 +44,7 @@
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
-                            if (grid.config.sortInfo) {
+                            if (grid.config.sortInfo.fields.length > 0) {
                                 sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);

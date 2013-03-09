@@ -1,4 +1,4 @@
-﻿ngGridServices.factory('DomUtilityService', function() {
+﻿ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {
@@ -87,14 +87,14 @@
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
-            if (col.visible) {
+            if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
                 css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
         };
-        if (ng.utils.isIe) { // IE
+        if ($utils.isIe) { // IE
             $style[0].styleSheet.cssText = css;
         } else {
             $style[0].appendChild(document.createTextNode(css));
@@ -113,7 +113,7 @@
             }
 			var str = grid.$styleSheet.html();
 			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-			if (ng.utils.isIe) { // IE
+			if ($utils.isIe) { // IE
 			    setTimeout(function() {
 			        grid.$styleSheet.html(newStr);
 			    });
@@ -142,4 +142,4 @@
     domUtilityService.LetterW = 10;
     getWidths();
     return domUtilityService;
-});
+}]);
