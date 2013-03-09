@@ -19,15 +19,16 @@
                             var c = self.fieldMap[prop];
                             if (!c)
                                 continue;
-                            var f = null;
+                            var f = null,
+                                s = null;
                             if (c && c.cellFilter) {
-                                var s = c.cellFilter.split(':');
+                                s = c.cellFilter.split(':');
                                 f = $filter(s[0]);
                             }
                             var pVal = item[prop];
                             if (pVal != null) {
                                 if (typeof f == 'function') {
-                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal).toString();
+                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
                                     result = condition.regex.test(filterRes);
                                 } else {
                                     result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
@@ -45,12 +46,13 @@
                 if (!col) {
                     return false;
                 }
-                var filter = col.cellFilter ? $filter(col.cellFilter) : null;
+                var sp = col.cellFilter.split(':');
+                var filter = col.cellFilter ? $filter(sp[0]) : null;
                 var value = item[condition.column] || item[col.field.split('.')[0]];
                 if (value == null)
                     return false;
                 if (typeof filter == 'function') {
-                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value).toString();
+                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value, sp[1]).toString();
                     result = condition.regex.test(filterResults);
                 } else {
                     result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());

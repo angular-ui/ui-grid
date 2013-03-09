@@ -1,25 +1,25 @@
-ng.Row = function (entity, config, selectionService, rowIndex) {
+ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
     var self = this, // constant for the selection property that we add to each data item
         enableRowSelection = config.enableRowSelection;
 
     self.jqueryUITheme = config.jqueryUITheme;
     self.rowClasses = config.rowClasses;
     self.entity = entity;
-    self.selectionService = selectionService;
-	self.selected = selectionService.getSelection(entity);
+    self.selectionProvider = selectionProvider;
+	self.selected = selectionProvider.getSelection(entity);
     self.cursor = enableRowSelection ? 'pointer' : 'default';
 	self.setSelection = function(isSelected) {
-		self.selectionService.setSelection(self, isSelected);
-		self.selectionService.lastClickedRow = self;
+		self.selectionProvider.setSelection(self, isSelected);
+		self.selectionProvider.lastClickedRow = self;
 	};
     self.continueSelection = function(event) {
-        self.selectionService.ChangeSelection(self, event);
+        self.selectionProvider.ChangeSelection(self, event);
     };
     self.ensureEntity = function(expected) {
         if (self.entity != expected) {
             // Update the entity and determine our selected property
             self.entity = expected;
-            self.selected = self.selectionService.getSelection(self.entity);
+            self.selected = self.selectionProvider.getSelection(self.entity);
         }
     };
     self.toggleSelected = function(event) {
@@ -32,7 +32,7 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
             return true;
         }
         if (config.selectWithCheckboxOnly && element.type != "checkbox") {
-            self.selectionService.lastClickedRow = self;
+            self.selectionProvider.lastClickedRow = self;
             return true;
         } else {
             if (self.beforeSelectionChange(self, event)) {
@@ -59,10 +59,10 @@ ng.Row = function (entity, config, selectionService, rowIndex) {
     self.afterSelectionChange = config.afterSelectionChangeCallback;
 
     self.getProperty = function(path) {
-        return ng.utils.evalProperty(self.entity, path);
+        return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        self.clone = new ng.Row(entity, config, selectionService, rowIndex);
+        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
         return self.clone;

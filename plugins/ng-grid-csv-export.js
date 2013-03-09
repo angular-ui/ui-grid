@@ -31,7 +31,7 @@ ngGridCsvExportPlugin = function(opts) {
                 csvData += '"' + csvStringify(keys[k]) + '",';
             }
             csvData = swapLastCommaForNewline(csvData);
-            var gridData = grid.sortedData;
+            var gridData = grid.data;
             for (var gridRow in gridData) {
                 for ( k in keys) {
                     var curCellRaw;

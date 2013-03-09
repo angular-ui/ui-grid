@@ -1,4 +1,4 @@
-﻿ng.Column = function(config, $scope, grid, domUtilityService, $templateCache) {
+﻿ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -22,21 +22,21 @@
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
+    self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
     self.pinnable = false;
     self.pinned = colDef.pinned;
     self.originalIndex = self.index;
-    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
+    self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
-        self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
+        self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
     if (config.enableResize) {
-        self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+        self.resizable = $utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
     }
     if (config.enablePinning) {
-        self.pinnable = ng.utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
+        self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;

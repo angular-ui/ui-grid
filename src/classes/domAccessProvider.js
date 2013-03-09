@@ -8,9 +8,9 @@ ng.DomAccessProvider = function(grid) {
 	};
 	
 	self.focusCellElement = function($scope, index){	
-		if($scope.selectionService.lastClickedRow){
+		if($scope.selectionProvider.lastClickedRow){
 			var columnIndex = index != undefined ? index : previousColumn;
-			var elm = $scope.selectionService.lastClickedRow.clone ? $scope.selectionService.lastClickedRow.clone.elm : $scope.selectionService.lastClickedRow.elm;
+			var elm = $scope.selectionProvider.lastClickedRow.clone ? $scope.selectionProvider.lastClickedRow.clone.elm : $scope.selectionProvider.lastClickedRow.elm;
 			if (columnIndex != undefined && elm) {
 				var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); //Remove html comments for IE8
 				var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
