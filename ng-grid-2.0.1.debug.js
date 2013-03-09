@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 15:44
+* Compiled At: 03/08/2013 16:28
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1331,7 +1331,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         /*Define a sortInfo object to specify a default sorting state. 
         You can also observe this variable to utilize server-side sorting (see useExternalSorting).
         Syntax is sortinfo: { fields: ['fieldName1',' fieldName2'], direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
-        sortInfo: undefined,
+        sortInfo: {fields: [], columns: [], directions: [] },
 
         //Set the tab index of the Vieport.
         tabIndex: -1,
@@ -1371,7 +1371,6 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
     self.$viewport = null;
     self.$canvas = null;
     self.rootDim = self.config.gridDim;
-    self.sortInfo = self.config.sortInfo;
     self.data = [];
     self.lateBindColumns = false;
     self.filteredRows = [];
@@ -1626,15 +1625,19 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             $utils.seti18n($scope, newLang);
         });
         self.maxCanvasHt = self.calcMaxCanvasHeight();
-        if (self.config.sortInfo && $scope.columns.length) {
-            self.config.sortInfo.columns = $scope.columns.filter(function (c) {
-                if (self.config.sortInfo.field.indexOf(c.field) != -1) {
-                    return true;
+        if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
+            if (self.config.sortInfo.columns) {
+                self.config.sortInfo.columns.length = 0;
+            } else {
+                self.config.sortInfo.columns = [];
+            }
+            angular.forEach($scope.columns, function (c) {
+                if (self.config.sortInfo.fields.indexOf(c.field) != -1) {
+                    self.config.sortInfo.columns.push(c);
                 }
                 return false;
             });
-            self.config.sortInfo.column.sortDirection = self.config.sortInfo.direction.toUpperCase();
-            self.sortData(self.config.sortInfo.columns);
+            self.sortData(self.config.sortInfo.columns, {});
         }
     };
    
@@ -1684,11 +1687,9 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             }
         } else {
             var isArr = $.isArray(col);
-            self.config.sortInfo = {
-                columns: [],
-                fields: [],
-                directions: []
-            };
+            self.config.sortInfo.columns.length = 0;
+            self.config.sortInfo.fields.length = 0;
+            self.config.sortInfo.directions.length = 0;
             var push = function (c) {
                 self.config.sortInfo.columns.push(c);
                 self.config.sortInfo.fields.push(c.field);
@@ -1723,7 +1724,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
             });
         }
         self.searchProvider.evalFilter();
-        $scope.$emit('ngGridEventSorted', col);
+        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
     self.clearSortingData = function (col) {
         if (!col) {
@@ -2735,7 +2736,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
-                            if (grid.config.sortInfo) {
+                            if (grid.config.sortInfo.fields.length > 0) {
                                 sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);

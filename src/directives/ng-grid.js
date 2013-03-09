@@ -44,7 +44,7 @@
                             grid.searchProvider.evalFilter();
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
-                            if (grid.config.sortInfo) {
+                            if (grid.config.sortInfo.fields.length > 0) {
                                 sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
