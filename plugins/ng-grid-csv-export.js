@@ -50,7 +50,7 @@ ngGridCsvExportPlugin = function(opts) {
             var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
             csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\">CSV Export</a></br></span>" ;
+            csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
             fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
@@ -62,4 +62,3 @@ ngGridCsvExportPlugin = function(opts) {
         scope.$watch('catHashKeys()', showDs);
     };
 };
-
