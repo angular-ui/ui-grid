@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/13/2013 15:37
+* Compiled At: 03/13/2013 17:25
 ***********************************************/
 (function(window) {
 'use strict';
@@ -271,25 +271,28 @@ ngGridServices.factory('$domUtilityService',['$utilityService', function($utils)
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
 			
 		if (grid.config.enableColumnAutoFit) {
-			var totalExtraWidth = 0;
 			var visibleCols = 0;
 			for (var i = 0; i < cols.length; i++) {
 				var col = cols[i];
 				if (col.visible !== false) {
-					totalExtraWidth += col.width;
 					visibleCols++;
+				}
+			};
+			
+			var newWidth = Math.floor(grid.$viewport[0].clientWidth / visibleCols);
+			
+			for (var i = 0; i < cols.length; i++) {
+				var col = cols[i];
+				if (col.visible !== false) {
+					col.width = newWidth;
 				}
 			};
 		}
 		
-		var newWidth = Math.floor(grid.$viewport[0].clientWidth / visibleCols);
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-				if (grid.config.enableColumnAutoFit) {
-					col.width = newWidth;
-				}
                 css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
