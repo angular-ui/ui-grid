@@ -33,6 +33,8 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
+		
+		enableColumnAutoFit: false,
 
         //Enables cell editing.
         enableCellEdit: false,
@@ -301,6 +303,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortable: false,
                     resizable: false,
                     groupable: false,
+                    autoFit: false,
                     headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
                     cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
                     pinned: self.config.pinSelectionCheckbox
@@ -310,6 +313,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                 sortCallback: self.sortData,
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
+                enableAutoFit: self.config.enableColumnAutoFit,
                 enableSort: self.config.enableSorting
             }, $scope, self, domUtilityService, $templateCache, $utils));
         }
@@ -325,6 +329,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortCallback: self.sortData,
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
+					enableAutoFit: self.config.enableColumnAutoFit,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit 

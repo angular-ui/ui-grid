@@ -25,6 +25,7 @@
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
+    self.autoFit = false;
     self.pinnable = false;
     self.pinned = colDef.pinned;
     self.originalIndex = self.index;
@@ -37,6 +38,9 @@
     }
     if (config.enablePinning) {
         self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
+    }
+    if (config.enableAutoFit) {
+        self.autoFit = $utils.isNullOrUndefined(colDef.autoFit) || colDef.autoFit;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
@@ -158,6 +162,7 @@
         self.visible = fromCol.visible;
         self.sortable = fromCol.sortable;
         self.resizable = fromCol.resizable;
+        self.autoFit = fromCol.autoFit;
         self.pinnable = fromCol.pinnable;
         self.pinned = fromCol.pinned;
         self.originalIndex = fromCol.originalIndex;

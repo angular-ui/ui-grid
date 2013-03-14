@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 17:03
+* Compiled At: 03/13/2013 17:25
 ***********************************************/
 (function(window) {
 'use strict';
@@ -249,6 +249,22 @@ ngGridServices.factory('$domUtilityService',['$utilityService', function($utils)
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
+		if (grid.config.enableColumnAutoFit) {
+			var visibleCols = 0;
+			for (var i = 0; i < cols.length; i++) {
+				var col = cols[i];
+				if (col.visible !== false) {
+					visibleCols++;
+				}
+			};
+			var newWidth = Math.floor(grid.$viewport[0].clientWidth / visibleCols);
+			for (var i = 0; i < cols.length; i++) {
+				var col = cols[i];
+				if (col.visible !== false) {
+					col.width = newWidth;
+				}
+			};
+		}
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
@@ -627,6 +643,7 @@ ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $u
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
+    self.autoFit = false;
     self.pinnable = false;
     self.pinned = colDef.pinned;
     self.originalIndex = self.index;
@@ -639,6 +656,9 @@ ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $u
     }
     if (config.enablePinning) {
         self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
+    }
+    if (config.enableAutoFit) {
+        self.autoFit = $utils.isNullOrUndefined(colDef.autoFit) || colDef.autoFit;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
@@ -759,6 +779,7 @@ ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $u
         self.visible = fromCol.visible;
         self.sortable = fromCol.sortable;
         self.resizable = fromCol.resizable;
+        self.autoFit = fromCol.autoFit;
         self.pinnable = fromCol.pinnable;
         self.pinned = fromCol.pinned;
         self.originalIndex = fromCol.originalIndex;
@@ -1091,6 +1112,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
         data: [],
         dataUpdated: function() {
         },
+		enableColumnAutoFit: false,
         enableCellEdit: false,
         enableCellSelection: false,
         enableColumnResize: false,
@@ -1262,6 +1284,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortable: false,
                     resizable: false,
                     groupable: false,
+                    autoFit: false,
                     headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
                     cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
                     pinned: self.config.pinSelectionCheckbox
@@ -1271,6 +1294,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                 sortCallback: self.sortData,
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
+                enableAutoFit: self.config.enableColumnAutoFit,
                 enableSort: self.config.enableSorting
             }, $scope, self, domUtilityService, $templateCache, $utils));
         }
@@ -1286,6 +1310,7 @@ ng.Grid = function ($scope, options, sortService, domUtilityService, $filter, $t
                     sortCallback: self.sortData,
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
+					enableAutoFit: self.config.enableColumnAutoFit,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit 

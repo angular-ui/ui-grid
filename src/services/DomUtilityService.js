@@ -85,6 +85,26 @@
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
+			
+		if (grid.config.enableColumnAutoFit) {
+			var visibleCols = 0;
+			for (var i = 0; i < cols.length; i++) {
+				var col = cols[i];
+				if (col.visible !== false) {
+					visibleCols++;
+				}
+			};
+			
+			var newWidth = Math.floor(grid.$viewport[0].clientWidth / visibleCols);
+			
+			for (var i = 0; i < cols.length; i++) {
+				var col = cols[i];
+				if (col.visible !== false) {
+					col.width = newWidth;
+				}
+			};
+		}
+		
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
