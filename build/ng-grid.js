@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 15:48
+* Compiled At: 03/18/2013 16:08
 ***********************************************/
 (function(window) {
 'use strict';
@@ -626,9 +626,6 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
     self.sortPriority = undefined;
-    self.zIndex = function() {
-        return self.pinned ? 5 : 0;
-    };
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
@@ -679,8 +676,10 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
             async: false
         }).responseText;
     }
-    self.colIndex = function() {
-        return "col" + self.index + " colt" + self.index;
+    self.colIndex = function () {
+        var classes = self.pinned ? "pinned " : "";
+        classes += "col" + self.index + " colt" + self.index;
+        return classes;
     };
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
@@ -2879,7 +2878,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("headerRowTemplate.html",
-    "<div ng-style=\"{'z-index': col.zIndex(), height: col.headerRowHeight}\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\" ng-header-cell></div>"
+    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\" ng-header-cell></div>"
   );
 
   $templateCache.put("menuTemplate.html",
@@ -2904,7 +2903,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("rowTemplate.html",
-    "<div ng-style=\"{'cursor': row.cursor, 'z-index': col.zIndex() }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>"
+    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>"
   );
 
 }]);

@@ -16,9 +16,6 @@
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
     self.sortPriority = undefined;
-    self.zIndex = function() {
-        return self.pinned ? 5 : 0;
-    };
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
@@ -69,8 +66,10 @@
             async: false
         }).responseText;
     }
-    self.colIndex = function() {
-        return "col" + self.index + " colt" + self.index;
+    self.colIndex = function () {
+        var classes = self.pinned ? "pinned " : "";
+        classes += "col" + self.index + " colt" + self.index;
+        return classes;
     };
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";

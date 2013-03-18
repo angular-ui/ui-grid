@@ -86,7 +86,7 @@
 
 .ngTopPanel {
     position: relative;	
-	z-index:5;
+	z-index: 1;
     background-color: rgb(234, 234, 234);
 	border-bottom: 1px solid rgb(212,212,212);
 }
@@ -118,7 +118,9 @@
 .ngHeaderCell:first-child{
     border-left: 0;
 }
-
+.ngHeaderCell.pinned {
+    z-index: 1;
+}
 .ngSortButtonUp {
     position: absolute;
     top: 3px;
@@ -217,6 +219,9 @@
 	border-left: 0;
 }
 
+.ngCell.pinned {
+    z-index: 1;
+}
 .ngCellElement:focus {
 	outline: 0;
     background-color: rgb(179, 196, 199);
@@ -331,7 +336,7 @@
     border-radius: 50%;
     width: 14px;
     height: 14px;
-    z-index: 5;
+    z-index: 1;
     background-color: rgb(179, 191, 188);
     cursor: pointer;
     /* width and height can be anything, as long as they're equal */
@@ -357,7 +362,7 @@
     background-color: #BDD0CB;
     position: absolute;
     border: 2px solid rgb(212,212,212);
-    z-index: 5;
+    z-index: 1;
 }
 .ngMenuText {
     position: relative;
