@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 16:08
+* Compiled At: 03/18/2013 16:22
 ***********************************************/
 (function(window) {
 'use strict';
@@ -3119,7 +3119,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("footerTemplate.html",
     "<div class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">" +
-    "    <div class=\"ngTotalSelectContainer\" ng-show=\"showFooter\">" +
+    "    <div class=\"ngTotalSelectContainer\" >" +
     "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >" +
     "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>" +
     "        </div>" +
@@ -3127,7 +3127,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
     "            <span class=\"ngLabel\">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>" +
     "        </div>" +
     "    </div>" +
-    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"showFooter && enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">" +
+    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">" +
     "        <div style=\"float:left; margin-right: 10px;\" class=\"ngRowCountPicker\">" +
     "            <span style=\"float: left; margin-top: 3px;\" class=\"ngLabel\">{{i18n.ngPageSizeLabel}}</span>" +
     "            <select style=\"float: left;height: 27px; width: 100px\" ng-model=\"pagingOptions.pageSize\" >" +
@@ -3137,7 +3137,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
     "        <div style=\"float:left; margin-right: 10px; line-height:25px;\" class=\"ngPagerControl\" style=\"float: left; min-width: 135px;\">" +
     "            <button class=\"ngPagerButton\" ng-click=\"pageToFirst()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerFirstTitle}}\"><div class=\"ngPagerFirstTriangle\"><div class=\"ngPagerFirstBar\"></div></div></button>" +
     "            <button class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>" +
-    "            <input class=\"ngPagerCurrent\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0px 4px;\" ng-model=\"pagingOptions.currentPage\"/>" +
+    "            <input class=\"ngPagerCurrent\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>" +
     "            <button class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>" +
     "            <button class=\"ngPagerButton\" ng-click=\"pageToLast()\" ng-disabled=\"cantPageToLast()\" title=\"{{i18n.ngPagerLastTitle}}\"><div class=\"ngPagerLastTriangle\"><div class=\"ngPagerLastBar\"></div></div></button>" +
     "        </div>" +
@@ -3163,14 +3163,14 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
     "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">" +
     "        <div class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\" ng-include=\"gridId + 'headerRowTemplate.html'\"></div>" +
     "    </div>" +
-    "    <div ng-include=\"gridId + 'menuTemplate.html'\"></div>" +
+    "    <div ng-show=\"showColumnMenu || showFilter\" ng-include=\"gridId + 'menuTemplate.html'\"></div>" +
     "</div>" +
     "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">" +
     "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">" +
     "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" class=\"ngRow\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
     "    </div>" +
     "</div>" +
-    "<div ng-include=\"gridId + 'footerTemplate.html'\"></div>" +
+    "<div ng-show=\"showFooter\" ng-include=\"gridId + 'footerTemplate.html'\"></div>" +
     ""
   );
 
@@ -3190,7 +3190,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("menuTemplate.html",
-    "<div class=\"ngHeaderButton\" ng-show=\"showColumnMenu || showFilter\" ng-click=\"toggleShowMenu()\">" +
+    "<div class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">" +
     "    <div class=\"ngHeaderButtonArrow\"></div>" +
     "</div>" +
     "<div ng-show=\"showMenu\" class=\"ngColMenu\">" +

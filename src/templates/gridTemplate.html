@@ -15,11 +15,11 @@
     <div class="ngHeaderContainer" ng-style="headerStyle()">
         <div class="ngHeaderScroller" ng-style="headerScrollerStyle()" ng-include="gridId + 'headerRowTemplate.html'"></div>
     </div>
-    <div ng-include="gridId + 'menuTemplate.html'"></div>
+    <div ng-show="showColumnMenu || showFilter" ng-include="gridId + 'menuTemplate.html'"></div>
 </div>
 <div class="ngViewport" unselectable="on" ng-viewport ng-class="{'ui-widget-content': jqueryUITheme}" ng-style="viewportStyle()">
     <div class="ngCanvas" ng-style="canvasStyle()">
         <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" class="ngRow" ng-class="row.alternatingRowClass()" ng-row></div>
     </div>
 </div>
-<div ng-include="gridId + 'footerTemplate.html'"></div>
+<div ng-show="showFooter" ng-include="gridId + 'footerTemplate.html'"></div>

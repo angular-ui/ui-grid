@@ -111,7 +111,7 @@ function userController($scope) {
         enableRowReordering: false,
 		enablePinning: true,
 		showGroupPanel: true,
-		showFooter: true,
+		showFooter: false,
 		showFilter: true,
 		enableCellEdit: true,
         enableCellSelection: true,
