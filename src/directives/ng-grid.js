@@ -1,13 +1,13 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout) {
-    var ngGrid = {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse) {
+    var ngGridDirective = {
         scope: true,
         compile: function() {
             return {
                 pre: function($scope, iElement, iAttrs) {
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    options.gridDim = new ng.Dimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-                    var grid = new ng.Grid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout);
+                    options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse);
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                     if (typeof options.columnDefs == "string") {
@@ -45,7 +45,10 @@
                             grid.configureColumnWidths();
                             grid.refreshDomSizes();
                             if (grid.config.sortInfo.fields.length > 0) {
-                                sortService.sortData(grid.config.sortInfo, grid.data.slice(0));
+                                grid.getColsFromFields();
+                                grid.sortActual();
+                                grid.searchProvider.evalFilter();
+                                $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
                             }
                             $scope.$emit("ngGridEventData", grid.gridId);
                         };
@@ -55,7 +58,7 @@
                         });
                     }
 					
-                    grid.footerController = new ng.Footer($scope, grid);
+                    grid.footerController = new ngFooter($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
                     if (options.jqueryUITheme) {
@@ -65,7 +68,7 @@
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers
-                    grid.eventProvider = new ng.EventProvider(grid, $scope, domUtilityService);
+                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         if (typeof p === 'function') {
@@ -126,5 +129,5 @@
             };
         }
     };
-    return ngGrid;
+    return ngGridDirective;
 }]);

@@ -1,13 +1,13 @@
 //set event binding on the grid so we can select using the up/down keys
 ng.moveSelectionHandler = function($scope, elm, evt, grid) {
-    if ($scope.selectionService.selectedItems === undefined) {
+    if ($scope.selectionProvider.selectedItems === undefined) {
         return true;
     }
     var charCode = evt.which || evt.keyCode,
         newColumnIndex,
         lastInRow = false,
         firstInRow = false,
-        rowIndex = $scope.selectionService.lastClickedRow.rowIndex;
+        rowIndex = $scope.selectionProvider.lastClickedRow.rowIndex;
     
     if ($scope.col) {
         newColumnIndex = $scope.col.index;
@@ -76,9 +76,9 @@ ng.moveSelectionHandler = function($scope, elm, evt, grid) {
 	        r.continueSelection(evt);
 	        $scope.$emit('ngGridEventDigestGridParent');
 
-	        if ($scope.selectionService.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
+	        if ($scope.selectionProvider.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
 	            grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
-	        } else if ($scope.selectionService.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
+	        } else if ($scope.selectionProvider.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
 	            grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
 	        }
 	    }

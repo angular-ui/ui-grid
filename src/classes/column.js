@@ -1,4 +1,4 @@
-﻿ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $utils) {
+﻿var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -138,7 +138,7 @@
         return false;
     };
     self.copy = function() {
-        var ret = new ng.Column(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;
         return ret;

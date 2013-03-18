@@ -1,7 +1,4 @@
-﻿if (!window.ng) {
-    window.ng = {};
-}
-window.ngGrid = {};
+﻿window.ngGrid = {};
 window.ngGrid.i18n = {};
 
 // Declare app level module which depends on filters, and services

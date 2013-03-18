@@ -15,17 +15,22 @@ function userController($scope) {
         totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };
+    var testData = [{ name: "Moroni", age: 50, id: 101 },
+             { name: "Tiancum", age: 43, id: 102 },
+             { name: "Jacob", age: 27, id: 103 },
+             { name: "Nephi", age: 29, id: 104 },
+             { name: "Enos", age: 34, id: 105 }];
     self.getPagedDataAsync = function (pageSize, page, searchText) {
         setTimeout(function () {
             self.gettingData = true;
             var data;
             if (searchText) {
                 var ft = searchText.toLowerCase();
-                data = largeLoad().filter(function (item) {
+                data = testData.filter(function (item) {
                     return JSON.stringify(item).toLowerCase().indexOf(ft) != -1;
                 });
             } else {
-                data = largeLoad();
+                data = testData;
             }
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.pagingOptions.totalServerItems = data.length;
@@ -92,12 +97,12 @@ function userController($scope) {
     self.selectionchanging = function (a, b) {
         return true;
     };
+
     $scope.gridOptions = {
         data: 'myData',
         enableColumnResize: true,
         selectedItems: $scope.mySelections,
         headerRowHeight: 40,
-        beforeSelectionChange: self.selectionchanging,
         pagingOptions: $scope.pagingOptions,
 		enablePaging: true,
 		enableRowSelection: true,
@@ -114,7 +119,8 @@ function userController($scope) {
         showColumnMenu: true,
         maintainColumnRatios: true,
         columnDefs: 'myDefs',
-        plugins: [myplugin]
+        primaryKey: 'id',
+        sortInfo: {fields:['name'], directions:['asc'] },
     };
     $scope.doStuff = function (evt) {
         var elm = angular.element(evt.currentTarget.parentNode);

@@ -1,11 +1,11 @@
-ng.selectionProvider = function (grid, $scope) {
+var ngSelectionProvider = function (grid, $scope, $parse) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
-
+    self.pKeyParser = $parse(grid.config.primaryKey); 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (r, evt) {
         var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
@@ -72,8 +72,19 @@ ng.selectionProvider = function (grid, $scope) {
         return true;
     };
 
-    self.getSelection = function(entity) {
-        return self.selectedItems.indexOf(entity) !== -1;
+    self.getSelection = function (entity) {
+        var isSelected = false;
+        if (grid.config.primaryKey) {
+            var val = self.pKeyParser(entity);
+            angular.forEach(self.selectedItems, function (c) {
+                if (val == self.pkeyParser(c)) {
+                    isSelected = true;
+                }
+            });
+        } else {
+            isSelected = self.selectedItems.indexOf(entity) !== -1;
+        }
+        return isSelected;
     };
 
     // just call this func and hand it the rowItem you want to select (or de-select)    

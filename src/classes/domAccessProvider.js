@@ -1,4 +1,4 @@
-ng.DomAccessProvider = function(grid) {	
+var ngDomAccessProvider = function (grid) {
 	var self = this, previousColumn;
 	self.selectInputElement = function(elm){
 		var node = elm.nodeName.toLowerCase();
