@@ -101,6 +101,7 @@ function userController($scope) {
     $scope.gridOptions = {
         data: 'myData',
         enableColumnResize: true,
+        enableColumnReordering: true,
         selectedItems: $scope.mySelections,
         headerRowHeight: 40,
         pagingOptions: $scope.pagingOptions,

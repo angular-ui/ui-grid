@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 15:42
+* Compiled At: 03/18/2013 15:48
 ***********************************************/
 (function(window) {
 'use strict';
@@ -974,7 +974,7 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
         }
     };
     self.onHeaderDrop = function(event) {
-        if (!self.colToMove) {
+        if (!self.colToMove || self.colToMove.col.pinned) {
             return;
         }
         var headerContainer = $(event.target).closest('.ngHeaderSortColumn');

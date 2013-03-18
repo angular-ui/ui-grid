@@ -150,7 +150,7 @@
         }
     };
     self.onHeaderDrop = function(event) {
-        if (!self.colToMove) {
+        if (!self.colToMove || self.colToMove.col.pinned) {
             return;
         }
         // Get the closest header to where we dropped
