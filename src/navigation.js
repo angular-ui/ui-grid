@@ -1,5 +1,5 @@
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, grid) {
+var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     if ($scope.selectionProvider.selectedItems === undefined) {
         return true;
     }

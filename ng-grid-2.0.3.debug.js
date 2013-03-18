@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 13:55
+* Compiled At: 03/18/2013 14:54
 ***********************************************/
 (function(window) {
 'use strict';
@@ -32,7 +32,7 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 // initialization of services into the main module
 angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives', 'ngGrid.filters']);
 //set event binding on the grid so we can select using the up/down keys
-ng.moveSelectionHandler = function($scope, elm, evt, grid) {
+var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     if ($scope.selectionProvider.selectedItems === undefined) {
         return true;
     }
@@ -870,7 +870,7 @@ var ngDomAccessProvider = function (grid) {
 				return true;
 			} else if (!doingKeyDown) {
 				doingKeyDown = true;
-				var ret = ng.moveSelectionHandler($scope, elm, evt, grid);
+				var ret = ngMoveSelectionHandler($scope, elm, evt, grid);
 				doingKeyDown = false;
 				return ret;
 			}
