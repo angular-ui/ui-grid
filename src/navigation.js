@@ -7,10 +7,12 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         newColumnIndex,
         lastInRow = false,
         firstInRow = false,
-        rowIndex = $scope.selectionProvider.lastClickedRow.rowIndex;
-    
+        rowIndex = $scope.selectionProvider.lastClickedRow.rowIndex,
+        visibleCols = $scope.columns.filter(function(c) { return c.visible; }),
+        pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
+
     if ($scope.col) {
-        newColumnIndex = $scope.col.index;
+        newColumnIndex = visibleCols.indexOf($scope.col);
     }
     if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
 		return true;
@@ -20,24 +22,30 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
 		if(charCode == 9){ //tab key
 			evt.preventDefault();
 		}
-        var focusedOnFirstColumn =  $scope.showSelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
+		var focusedOnFirstColumn = $scope.showSelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
         var focusedOnFirstVisibleColumns = $scope.$index == 1 || $scope.$index == 0;
         var focusedOnLastVisibleColumns = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
-        var focusedOnLastColumn = $scope.col.index == ($scope.columns.length - 1);
+        var focusedOnLastColumn = visibleCols.indexOf($scope.col) == (visibleCols.length - 1);
+        var focusedOnLastPinnedColumn = pinnedCols.indexOf($scope.col) == (pinnedCols.length - 1);
         
-		if(charCode == 37 || charCode ==  9 && evt.shiftKey){
+        if (charCode == 37 || charCode == 9 && evt.shiftKey) {
+            var scrollTo = 0;
+            if (!focusedOnFirstColumn) {
+                newColumnIndex -= 1;
+            }
 			if (focusedOnFirstVisibleColumns) {
 				if(focusedOnFirstColumn && charCode ==  9 && evt.shiftKey){
-					grid.$viewport.scrollLeft(grid.$canvas.width());
-					newColumnIndex = $scope.columns.length - 1;
+				    scrollTo = grid.$canvas.width();
+					newColumnIndex = visibleCols.length - 1;
 					firstInRow = true;
 				} else {
-					grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() - $scope.col.width);
+				    scrollTo = grid.$viewport.scrollLeft() - $scope.col.width;
 				}
-			} 
-			if(!focusedOnFirstColumn){
-				newColumnIndex -= 1;
+			} else if (pinnedCols.length > 0) {
+			    scrollTo = grid.$viewport.scrollLeft() - visibleCols[newColumnIndex].width;
 			}
+            grid.$viewport.scrollLeft(scrollTo);
+			
 		} else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){
             if (focusedOnLastVisibleColumns) {
 				if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
@@ -45,9 +53,12 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
 					newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;	
 					lastInRow = true;
 				} else {
-					grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() + $scope.col.width);
+
+				    grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() + $scope.col.width);
 				}
-			}
+            } else if (focusedOnLastPinnedColumn) {
+                grid.$viewport.scrollLeft(0);
+            }
 			if(!focusedOnLastColumn){
 				newColumnIndex += 1;
 			}
@@ -86,7 +97,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     
     if($scope.enableCellSelection){
         setTimeout(function(){
-            $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf($scope.columns[newColumnIndex]));
+            $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf(visibleCols[newColumnIndex]));
         },3);
     }
     return false;
