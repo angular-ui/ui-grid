@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 13:46
+* Compiled At: 03/18/2013 13:55
 ***********************************************/
 (function(window) {
 'use strict';
@@ -22,9 +22,6 @@ var COL_FIELD = /COL_FIELD/g;
 var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
 var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var TEMPLATE_REGEXP = /<.+>/;
-if (!window.ng) {
-    window.ng = {};
-}
 window.ngGrid = {};
 window.ngGrid.i18n = {};
 var ngGridServices = angular.module('ngGrid.services', []);
