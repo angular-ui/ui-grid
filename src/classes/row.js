@@ -47,11 +47,12 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
         var classes = {
+            'ngRow' : true,
             'selected': self.selected,
-            'ui-state-default': self.jqueryUITheme && isEven,
-            'ui-state-active': self.jqueryUITheme && !isEven,
             'even': isEven,
-            'odd': !isEven
+            'odd': !isEven,
+            'ui-state-default': self.jqueryUITheme && isEven,
+            'ui-state-active': self.jqueryUITheme && !isEven
         };
         return classes;
     };

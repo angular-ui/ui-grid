@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 16:22
+* Compiled At: 03/18/2013 17:08
 ***********************************************/
 (function(window) {
 'use strict';
@@ -2039,11 +2039,12 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
         var classes = {
+            'ngRow' : true,
             'selected': self.selected,
-            'ui-state-default': self.jqueryUITheme && isEven,
-            'ui-state-active': self.jqueryUITheme && !isEven,
             'even': isEven,
-            'odd': !isEven
+            'odd': !isEven,
+            'ui-state-default': self.jqueryUITheme && isEven,
+            'ui-state-active': self.jqueryUITheme && !isEven
         };
         return classes;
     };
@@ -3167,7 +3168,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
     "</div>" +
     "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">" +
     "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">" +
-    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" class=\"ngRow\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
+    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
     "    </div>" +
     "</div>" +
     "<div ng-show=\"showFooter\" ng-include=\"gridId + 'footerTemplate.html'\"></div>" +
