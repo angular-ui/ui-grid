@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 17:08
+* Compiled At: 03/18/2013 17:25
 ***********************************************/
 (function(window) {
 'use strict';
@@ -633,7 +633,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.sortable = false;
     self.resizable = false;
     self.pinnable = false;
-    self.pinned = colDef.pinned;
+    self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = self.index;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {

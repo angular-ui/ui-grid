@@ -23,7 +23,7 @@
     self.sortable = false;
     self.resizable = false;
     self.pinnable = false;
-    self.pinned = colDef.pinned;
+    self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = self.index;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
