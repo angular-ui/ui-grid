@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/18/2013 17:25
+* Compiled At: 03/26/2013 12:38
 ***********************************************/
 (function(window) {
 'use strict';
@@ -503,7 +503,8 @@ ngGridServices.factory('$sortService', ['$parse', function($parse) {
     return sortService;
 }]);
 
-ngGridServices.factory('$utilityService', ['$parse', function($parse) {
+ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
+    var funcNameRegex = /function (.{1,})\(/;
     var utils = {
         visualLength: function(node) {
             var elem = document.getElementById('testDataLength');
@@ -563,7 +564,10 @@ ngGridServices.factory('$utilityService', ['$parse', function($parse) {
                 $scope.i18n[label] = $langPack[label];
             }
         },
-
+        getInstanceType: function (o) {
+            var results = (funcNameRegex).exec(o.constructor.toString());
+            return (results && results.length > 1) ? results[1] : "";
+        },
         // we copy KO's ie detection here bc it isn't exported in the min versions of KO
         // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 
         ieVersion: (function() {
@@ -2803,10 +2807,10 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         if (typeof p === 'function') {
-                            p.call(this, []).init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        } else {
-                            p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        }
+                            p = p.call(this);
+                        } 
+                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        options.plugins[$utils.getInstanceType(p)] = p;
                     });
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
@@ -3079,6 +3083,21 @@ window.ngGrid.i18n['zh-cn'] = {
     ngPagerNextTitle: '下一页',
     ngPagerPrevTitle: '上一页',
     ngPagerLastTitle: '前往尾页' 
+};
+
+window.ngGrid.i18n['zh-tw'] = {
+    ngAggregateLabel: '筆',
+    ngGroupPanelDescription: '拖拉表頭到此處以進行分組',
+    ngSearchPlaceHolder: '搜尋...',
+    ngMenuText: '選擇欄位：',
+    ngShowingItemsLabel: '目前顯示筆數：',
+    ngTotalItemsLabel: '總筆數：',
+    ngSelectedItemsLabel: '選取筆數：',
+    ngPageSizeLabel: '每頁顯示：',
+    ngPagerFirstTitle: '第一頁',
+    ngPagerNextTitle: '下一頁',
+    ngPagerPrevTitle: '上一頁',
+    ngPagerLastTitle: '最後頁'
 };
 
 angular.module("ngGrid").run(["$templateCache", function($templateCache) {

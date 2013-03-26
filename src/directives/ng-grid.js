@@ -72,10 +72,10 @@
                     //initialize plugins.
                     angular.forEach(options.plugins, function (p) {
                         if (typeof p === 'function') {
-                            p.call(this, []).init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        } else {
-                            p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        }
+                            p = p.call(this);
+                        } 
+                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        options.plugins[$utils.getInstanceType(p)] = p;
                     });
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
