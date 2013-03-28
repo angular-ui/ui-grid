@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/26/2013 12:38
+* Compiled At: 03/28/2013 13:01
 ***********************************************/
 (function(window) {
 'use strict';
@@ -2751,7 +2751,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 grid.refreshDomSizes();
                                 grid.buildColumns();
                                 return;
-                            } 
+                            }
+                            // we have to set this to false in case we want to autogenerate columns with no initial data.
+                            grid.lateBoundColumns = false;
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();

@@ -16,7 +16,9 @@
                                 grid.refreshDomSizes();
                                 grid.buildColumns();
                                 return;
-                            } 
+                            }
+                            // we have to set this to false in case we want to autogenerate columns with no initial data.
+                            grid.lateBoundColumns = false;
                             $scope.columns = [];
                             grid.config.columnDefs = a;
                             grid.buildColumns();
