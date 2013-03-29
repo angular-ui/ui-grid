@@ -75,6 +75,9 @@
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
                         if (grid.rowCache[rowIndex]) {
+                            if (grid.rowCache[rowIndex].clone) {
+                                grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
+                            } 
                             grid.rowCache[rowIndex].setSelection(state ? true : false);
                         }
                     };

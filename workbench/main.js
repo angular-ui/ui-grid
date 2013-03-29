@@ -207,7 +207,7 @@ function userController($scope) {
 		$scope.filteringText = text;
 	});
     $scope.setSelection = function() {
-        $scope.gridOptions.i18n = 'zh-cn';
+        $scope.gridOptions2.selectRow(0, true);
     };
     $scope.dropDownOpts = ['editing', 'is', 'impossibru?'];
 };

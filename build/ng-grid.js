@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/29/2013 14:07
+* Compiled At: 03/29/2013 14:44
 ***********************************************/
 (function(window) {
 'use strict';
@@ -2199,8 +2199,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; 
     self.pKeyParser = $parse(grid.config.primaryKey);
-    self.ChangeSelection = function (r, evt) {
-        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+    self.ChangeSelection = function (rowItem, evt) {
         if (evt && !evt.ctrlKey && !evt.shiftKey && evt.originalEvent.constructor.name == "MouseEvent") {
             self.toggleSelectAll(false, true);
         }
@@ -2281,8 +2280,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         }
         return isSelected;
     };
-    self.setSelection = function (r, isSelected) {
-        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+    self.setSelection = function (rowItem, isSelected) {
 		if(grid.config.enableRowSelection){
 		    rowItem.selected = isSelected;
 		    if (rowItem.clone) {
@@ -2552,6 +2550,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
                     options.selectRow = function (rowIndex, state) {
                         if (grid.rowCache[rowIndex]) {
+                            if (grid.rowCache[rowIndex].clone) {
+                                grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
+                            } 
                             grid.rowCache[rowIndex].setSelection(state ? true : false);
                         }
                     };

@@ -5,10 +5,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
-    self.pKeyParser = $parse(grid.config.primaryKey); 
+    self.pKeyParser = $parse(grid.config.primaryKey);
     // function to manage the selection action of a data item (entity)
-    self.ChangeSelection = function (r, evt) {
-        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+    self.ChangeSelection = function (rowItem, evt) {
         // ctrl-click + shift-click multi-selections
         if (evt && !evt.ctrlKey && !evt.shiftKey && evt.originalEvent.constructor.name == "MouseEvent") {
             self.toggleSelectAll(false, true);
@@ -92,8 +91,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     };
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
-    self.setSelection = function (r, isSelected) {
-        var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+    self.setSelection = function (rowItem, isSelected) {
 		if(grid.config.enableRowSelection){
 		    rowItem.selected = isSelected;
 		    if (rowItem.clone) {
