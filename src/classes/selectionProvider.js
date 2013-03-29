@@ -9,6 +9,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (r, evt) {
         var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+        // ctrl-click + shift-click multi-selections
+        if (evt && !evt.ctrlKey && !evt.shiftKey && evt.originalEvent.constructor.name == "MouseEvent") {
+            self.toggleSelectAll(false, true);
+        }
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;

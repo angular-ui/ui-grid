@@ -216,9 +216,13 @@
             domUtilityService.numberOfGrids++;
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
-        }
+        }// resize on window resize
         $(window).resize(function() {
             domUtilityService.RebuildGrid($scope,grid);
+        });
+        // resize on parent resize as well.
+        $(grid.$root.parent()).on('resize', function() {
+            domUtilityService.RebuildGrid($scope, grid);
         });
     };
     // In this example we want to assign grid events.

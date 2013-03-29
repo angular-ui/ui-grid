@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/28/2013 13:01
+* Compiled At: 03/29/2013 14:07
 ***********************************************/
 (function(window) {
 'use strict';
@@ -1116,9 +1116,13 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
             domUtilityService.numberOfGrids++;
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
-        }
+        }// resize on window resize
         $(window).resize(function() {
             domUtilityService.RebuildGrid($scope,grid);
+        });
+        // resize on parent resize as well.
+        $(grid.$root.parent()).on('resize', function() {
+            domUtilityService.RebuildGrid($scope, grid);
         });
     };
     // In this example we want to assign grid events.
@@ -2442,7 +2446,9 @@ var ngSearchProvider = function ($scope, grid, $filter) {
             }
         };
     };
-	$scope.$watch(grid.config.filterOptions.filterText, function(a){
+	$scope.$watch(function() {
+	    return grid.config.filterOptions.filterText;
+	}, function(a){
 		$scope.filterText = a;
 	});
 	$scope.$watch('filterText', function(a){
@@ -2475,6 +2481,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (r, evt) {
         var rowItem = r.isClone ? grid.filteredRows[r.rowIndex] : r;
+        // ctrl-click + shift-click multi-selections
+        if (evt && !evt.ctrlKey && !evt.shiftKey && evt.originalEvent.constructor.name == "MouseEvent") {
+            self.toggleSelectAll(false, true);
+        }
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -2733,6 +2743,36 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
     };
     return ngCell;
 }]);
+ngGridDirectives.directive('ngGridFooter', ['$compile', '$templateCache', function ($compile, $templateCache) {
+    var ngGridFooter = {
+        scope: false,
+        compile: function () {
+            return {
+                pre: function ($scope, iElement) {
+                    if (iElement.children().length === 0) {
+                        iElement.append($compile($templateCache.get($scope.gridId + 'footerTemplate.html'))($scope));
+                    }
+                }
+            };
+        }
+    };
+    return ngGridFooter;
+}]);
+ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function ($compile, $templateCache) {
+    var ngGridMenu = {
+        scope: false,
+        compile: function () {
+            return {
+                pre: function ($scope, iElement) {
+                    if (iElement.children().length === 0) {
+                        iElement.append($compile($templateCache.get($scope.gridId + 'menuTemplate.html'))($scope));
+                    }
+                }
+            };
+        }
+    };
+    return ngGridMenu;
+}]);
 ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse) {
     var ngGridDirective = {
         scope: true,
@@ -2806,14 +2846,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
-                    //initialize plugins.
-                    angular.forEach(options.plugins, function (p) {
-                        if (typeof p === 'function') {
-                            p = p.call(this);
-                        } 
-                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        options.plugins[$utils.getInstanceType(p)] = p;
-                    });
+
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
                         if (grid.rowCache[rowIndex]) {
@@ -2861,6 +2894,18 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     $scope.$evalAsync(function() {
                         $scope.adjustScrollLeft(0);
                     });
+                    //initialize plugins.
+                    angular.forEach(options.plugins, function (p) {
+                        if (typeof p === 'function') {
+                            p = p.call(this);
+                        }
+                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        options.plugins[$utils.getInstanceType(p)] = p;
+                    });
+                    //send initi finalize notification.
+                    if (options.init == "function") {
+                        options.init(grid, $scope);
+                    }
                     return null;
                 }
             };
@@ -3105,7 +3150,7 @@ window.ngGrid.i18n['zh-tw'] = {
 angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("aggregateTemplate.html",
-    "<div ng-click=\"row.toggleExpand()\" ng-style=\"{'left': row.offsetleft}\" class=\"ngAggregate\">" +
+    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" ng-style=\"{'left': row.offsetleft}\" class=\"ngAggregate\">" +
     "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>" +
     "    <div class=\"{{row.aggClass()}}\"></div>" +
     "</div>" +
@@ -3140,7 +3185,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("footerTemplate.html",
-    "<div class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">" +
+    "<div ng-show=\"showFooter\" class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">" +
     "    <div class=\"ngTotalSelectContainer\" >" +
     "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >" +
     "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>" +
@@ -3185,14 +3230,14 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
     "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">" +
     "        <div class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\" ng-include=\"gridId + 'headerRowTemplate.html'\"></div>" +
     "    </div>" +
-    "    <div ng-show=\"showColumnMenu || showFilter\" ng-include=\"gridId + 'menuTemplate.html'\"></div>" +
+    "    <div ng-grid-menu></div>" +
     "</div>" +
     "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">" +
     "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">" +
     "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
     "    </div>" +
     "</div>" +
-    "<div ng-show=\"showFooter\" ng-include=\"gridId + 'footerTemplate.html'\"></div>" +
+    "<div ng-grid-footer></div>" +
     ""
   );
 
@@ -3212,7 +3257,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("menuTemplate.html",
-    "<div class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">" +
+    "<div ng-show=\"showColumnMenu || showFilter\"  class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">" +
     "    <div class=\"ngHeaderButtonArrow\"></div>" +
     "</div>" +
     "<div ng-show=\"showMenu\" class=\"ngColMenu\">" +

@@ -71,14 +71,7 @@
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers
                     grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
-                    //initialize plugins.
-                    angular.forEach(options.plugins, function (p) {
-                        if (typeof p === 'function') {
-                            p = p.call(this);
-                        } 
-                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
-                        options.plugins[$utils.getInstanceType(p)] = p;
-                    });
+
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
                         if (grid.rowCache[rowIndex]) {
@@ -126,6 +119,18 @@
                     $scope.$evalAsync(function() {
                         $scope.adjustScrollLeft(0);
                     });
+                    //initialize plugins.
+                    angular.forEach(options.plugins, function (p) {
+                        if (typeof p === 'function') {
+                            p = p.call(this);
+                        }
+                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        options.plugins[$utils.getInstanceType(p)] = p;
+                    });
+                    //send initi finalize notification.
+                    if (options.init == "function") {
+                        options.init(grid, $scope);
+                    }
                     return null;
                 }
             };

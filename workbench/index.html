@@ -31,10 +31,12 @@
         }
     </style>
 </head>
-    <body ng-app="myApp" ng-controller="userController">
-        <div style="width: 1600px; height: 600px;"  ng-grid="gridOptions">
+    <body ng-app="myApp" ng-controller="userController" >
+        <div id="parent" style="position: absolute; top: 0; bottom: 0; left:0; right: 0;">
+            <div style="width: 1600px; height: 600px;"  ng-grid="gridOptions">
+            </div>    
         </div>
-		<div>{{mySelections | json}}</div>
+        <div>{{mySelections | json}}</div>
         <button ng-click="checkData()">Check Data</button>
         <button ng-click="Add()">Insert Rows</button>
         <button ng-click="changeLang()">change Language</button>

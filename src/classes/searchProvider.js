@@ -133,7 +133,9 @@
             }
         };
     };
-	$scope.$watch(grid.config.filterOptions.filterText, function(a){
+	$scope.$watch(function() {
+	    return grid.config.filterOptions.filterText;
+	}, function(a){
 		$scope.filterText = a;
 	});
 	$scope.$watch('filterText', function(a){

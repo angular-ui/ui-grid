@@ -144,10 +144,9 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
-        multiSelect: true,
-		enableRowSelection: true,
         showGroupPanel: true,
-        enableCellSelection: true,
+        showFilter: true,
+        multiSelect: true,
         columnDefs: 'myDefs2',
         enablePinning: true,
     };
