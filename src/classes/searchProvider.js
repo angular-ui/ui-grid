@@ -1,4 +1,4 @@
-﻿ng.SearchProvider = function ($scope, grid, $filter) {
+﻿var ngSearchProvider = function ($scope, grid, $filter) {
     var self = this,
         searchConditions = [];
     self.extFilter = grid.config.filterOptions.useExternalFilter;
@@ -133,7 +133,9 @@
             }
         };
     };
-	$scope.$watch(grid.config.filterOptions.filterText, function(a){
+	$scope.$watch(function() {
+	    return grid.config.filterOptions.filterText;
+	}, function(a){
 		$scope.filterText = a;
 	});
 	$scope.$watch('filterText', function(a){
