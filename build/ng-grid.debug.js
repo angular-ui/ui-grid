@@ -2,9 +2,9 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/29/2013 14:44
+* Compiled At: 03/29/2013 17:16
 ***********************************************/
-(function(window) {
+(function(window, $) {
 'use strict';
 // the # of rows we want to add to the top and bottom of the rendered grid rows 
 var EXCESS_ROWS = 6;
@@ -898,7 +898,7 @@ var ngDomAccessProvider = function (grid) {
 		});
 	};
 };
-var ngEventProvider = function(grid, $scope, domUtilityService) {
+var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
@@ -912,7 +912,6 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
                     self.onGroupDrop(event);
                 }
             });
-            $scope.$evalAsync(self.setDraggables);
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
@@ -923,7 +922,9 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
                 grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
             }
         }
-        $scope.$watch('columns', self.setDraggables, true);
+        $scope.$watch('renderedColumns', function() {
+            $timeout(self.setDraggables);
+        });
     };
     self.dragStart = function(evt){		
       //FireFox requires there to be dataTransfer if you want to drag and drop.
@@ -1254,6 +1255,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Enables or disables sorting in grid.
         enableSorting: true,
 
+        //Enables or disables text highlighting in grid by adding the "unselectable" class (See CSS file)
+        enableHighlighting: false,
+        
         // string list of properties to exclude when auto-generating columns.
         excludeProperties: [],
         
@@ -1314,7 +1318,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             currentPage: 1
         },
         
-        //Array of plugin functions to register in ng-grid
+        //the selection checkbox is pinned to the left side of the viewport or not.
         pinSelectionCheckbox: false,
 
         //Array of plugin functions to register in ng-grid
@@ -1911,11 +1915,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function (col) {
-        //first sort the column
-        if (!col.sortDirection) col.sort({shiftKey: false});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
+        //first sort the column
+        if (!col.sortDirection) col.sort({ shiftKey: false });
+
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
             col.isGroupedBy = true;
@@ -2293,9 +2298,12 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
                         resizable: false,
                         headerCellTemplate: '<div class="ngAggHeader"></div>',
                         pinned: grid.config.pinSelectionCheckbox
+                        
                     },
+                    enablePinning: grid.config.enablePinning,
                     isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight
+                    headerRowHeight: grid.config.headerRowHeight,
+                    
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
@@ -2629,10 +2637,10 @@ var ngStyleProvider = function($scope, grid, domUtilityService) {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.groupPanelStyle = function () {
-        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": "32px" };
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": "32px" };
     };
     $scope.viewportStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -2836,6 +2844,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     grid.footerController = new ngFooter($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
+                    if (!options.enableHighlighting) {
+                        iElement.addClass("unselectable");
+                    }
                     if (options.jqueryUITheme) {
                         iElement.addClass('ui-widget');
                     }
@@ -2843,7 +2854,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers
-                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
+                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
 
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
@@ -3284,4 +3295,4 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
 }]);
 
-}(window));
+}(window, jQuery));

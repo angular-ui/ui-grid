@@ -64,6 +64,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Enables or disables sorting in grid.
         enableSorting: true,
 
+        //Enables or disables text highlighting in grid by adding the "unselectable" class (See CSS file)
+        enableHighlighting: false,
+        
         // string list of properties to exclude when auto-generating columns.
         excludeProperties: [],
         
@@ -124,7 +127,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             currentPage: 1
         },
         
-        //Array of plugin functions to register in ng-grid
+        //the selection checkbox is pinned to the left side of the viewport or not.
         pinSelectionCheckbox: false,
 
         //Array of plugin functions to register in ng-grid
@@ -721,11 +724,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function (col) {
-        //first sort the column
-        if (!col.sortDirection) col.sort({shiftKey: false});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
+        //first sort the column
+        if (!col.sortDirection) col.sort({ shiftKey: false });
+
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
             col.isGroupedBy = true;

@@ -1,4 +1,4 @@
-﻿var ngEventProvider = function(grid, $scope, domUtilityService) {
+﻿var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     var self = this;
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
@@ -12,7 +12,6 @@
                     self.onGroupDrop(event);
                 }
             });
-            $scope.$evalAsync(self.setDraggables);
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
@@ -23,7 +22,9 @@
                 grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
             }
         }
-        $scope.$watch('columns', self.setDraggables, true);
+        $scope.$watch('renderedColumns', function() {
+            $timeout(self.setDraggables);
+        });
     };
     self.dragStart = function(evt){		
       //FireFox requires there to be dataTransfer if you want to drag and drop.

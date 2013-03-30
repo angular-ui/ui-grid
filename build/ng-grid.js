@@ -2,9 +2,9 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/29/2013 14:44
+* Compiled At: 03/29/2013 17:16
 ***********************************************/
-(function(window) {
+(function(window, $) {
 'use strict';
 
 var EXCESS_ROWS = 6;
@@ -847,7 +847,7 @@ var ngDomAccessProvider = function (grid) {
 		});
 	};
 };
-var ngEventProvider = function(grid, $scope, domUtilityService) {
+var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     var self = this;
     self.colToMove = undefined;
     self.groupToMove = undefined;
@@ -859,7 +859,6 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
                     self.onGroupDrop(event);
                 }
             });
-            $scope.$evalAsync(self.setDraggables);
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
@@ -870,7 +869,9 @@ var ngEventProvider = function(grid, $scope, domUtilityService) {
                 grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
             }
         }
-        $scope.$watch('columns', self.setDraggables, true);
+        $scope.$watch('renderedColumns', function() {
+            $timeout(self.setDraggables);
+        });
     };
     self.dragStart = function(evt){
       evt.dataTransfer.setData('text', ''); 
@@ -1116,6 +1117,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         enableRowReordering: false,
         enableRowSelection: true,
         enableSorting: true,
+        enableHighlighting: false,
         excludeProperties: [],
         filterOptions: {
             filterText: "",
@@ -1666,10 +1668,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function (col) {
-        if (!col.sortDirection) col.sort({shiftKey: false});
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
+        if (!col.sortDirection) col.sort({ shiftKey: false });
+
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
             col.isGroupedBy = true;
@@ -2022,8 +2025,9 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
                         headerCellTemplate: '<div class="ngAggHeader"></div>',
                         pinned: grid.config.pinSelectionCheckbox
                     },
+                    enablePinning: grid.config.enablePinning,
                     isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight
+                    headerRowHeight: grid.config.headerRowHeight,
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
@@ -2344,10 +2348,10 @@ var ngStyleProvider = function($scope, grid, domUtilityService) {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.groupPanelStyle = function () {
-        return { "width": (grid.rootDim.outerWidth - domUtilityService.ScrollW) + "px", "height": "32px" };
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": "32px" };
     };
     $scope.viewportStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -2542,12 +2546,15 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     }
                     grid.footerController = new ngFooter($scope, grid);
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
+                    if (!options.enableHighlighting) {
+                        iElement.addClass("unselectable");
+                    }
                     if (options.jqueryUITheme) {
                         iElement.addClass('ui-widget');
                     }
                     iElement.append($compile($templateCache.get('gridTemplate.html'))($scope));
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
-                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
+                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
                     options.selectRow = function (rowIndex, state) {
                         if (grid.rowCache[rowIndex]) {
                             if (grid.rowCache[rowIndex].clone) {
@@ -2972,4 +2979,4 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
 }]);
 
-}(window));
+}(window, jQuery));

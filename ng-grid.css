@@ -11,7 +11,13 @@
 .ngGrid{
     background-color: rgb(253, 253, 253);  
 }
-
+.ngGrid.unselectable {
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none;
+    user-select: none;
+}
 /******** Header ********/
 
 .ngGroupPanel{

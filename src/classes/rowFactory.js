@@ -217,9 +217,12 @@
                         resizable: false,
                         headerCellTemplate: '<div class="ngAggHeader"></div>',
                         pinned: grid.config.pinSelectionCheckbox
+                        
                     },
+                    enablePinning: grid.config.enablePinning,
                     isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight
+                    headerRowHeight: grid.config.headerRowHeight,
+                    
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }

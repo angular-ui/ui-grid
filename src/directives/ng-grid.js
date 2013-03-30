@@ -63,6 +63,9 @@
                     grid.footerController = new ngFooter($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
+                    if (!options.enableHighlighting) {
+                        iElement.addClass("unselectable");
+                    }
                     if (options.jqueryUITheme) {
                         iElement.addClass('ui-widget');
                     }
@@ -70,7 +73,7 @@
                     //walk the element's graph and the correct properties on the grid
                     domUtilityService.AssignGridContainers($scope, iElement, grid);
                     //now use the manager to assign the event handlers
-                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService);
+                    grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
 
                     // method for user to select a specific row programatically
                     options.selectRow = function (rowIndex, state) {
