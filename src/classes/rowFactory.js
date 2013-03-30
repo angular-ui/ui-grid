@@ -1,4 +1,4 @@
-﻿ng.RowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
+﻿var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -23,20 +23,20 @@
         rowHeight: grid.config.rowHeight
     };
 
-    self.renderedRange = new ng.Range(0, grid.minRowsToRender() + EXCESS_ROWS);
+    self.renderedRange = new ngRange(0, grid.minRowsToRender() + EXCESS_ROWS);
 
     // @entity - the data item
     // @rowIndex - the index of the row
     self.buildEntityRow = function(entity, rowIndex) {
         // build the row
-        return new ng.Row(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
+        return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ng.Aggregate(aggEntity, self, self.rowConfig.rowHeight);
+            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
@@ -209,7 +209,7 @@
         //moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
         for (var z = 0; z < groups.length; z++) {
             if (!cols[z].isAggCol && z <= maxDepth) {
-                cols.splice(0, 0, new ng.Column({
+                cols.splice(0, 0, new ngColumn({
                     colDef: {
                         field: '',
                         width: 25,
@@ -217,9 +217,12 @@
                         resizable: false,
                         headerCellTemplate: '<div class="ngAggHeader"></div>',
                         pinned: grid.config.pinSelectionCheckbox
+                        
                     },
+                    enablePinning: grid.config.enablePinning,
                     isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight
+                    headerRowHeight: grid.config.headerRowHeight,
+                    
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }

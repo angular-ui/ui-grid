@@ -1,4 +1,5 @@
-﻿ngGridServices.factory('$utilityService', ['$parse', function($parse) {
+﻿ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
+    var funcNameRegex = /function (.{1,})\(/;
     var utils = {
         visualLength: function(node) {
             var elem = document.getElementById('testDataLength');
@@ -58,7 +59,10 @@
                 $scope.i18n[label] = $langPack[label];
             }
         },
-
+        getInstanceType: function (o) {
+            var results = (funcNameRegex).exec(o.constructor.toString());
+            return (results && results.length > 1) ? results[1] : "";
+        },
         // we copy KO's ie detection here bc it isn't exported in the min versions of KO
         // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 
         ieVersion: (function() {

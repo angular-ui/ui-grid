@@ -82,6 +82,7 @@
             'src/filters/*.js',
             'src/services/*.js',
             'src/classes/*.js',
+            
             'src/directives/*.js',
             'src/i18n/*.js',
             '<%= ngtemplates.ngGrid.dest %>'
@@ -101,9 +102,9 @@
                     '* License: MIT (http://www.opensource.org/licenses/mit-license.php)\n' +
                     '* Compiled At: <%= grunt.template.today("mm/dd/yyyy HH:MM") %>\n' +
                     '***********************************************/\n' +
-                    '(function(window) {\n' +
+                    '(function(window, $) {\n' +
                     '\'use strict\';\n',
-                footer: '\n}(window));'
+                footer: '\n}(window, jQuery));'
             },
             prod: {
                 options: {

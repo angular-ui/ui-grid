@@ -1,4 +1,4 @@
-ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
+var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     var self = this, // constant for the selection property that we add to each data item
         enableRowSelection = config.enableRowSelection;
 
@@ -47,11 +47,12 @@ ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
         var classes = {
+            'ngRow' : true,
             'selected': self.selected,
-            'ui-state-default': self.jqueryUITheme && isEven,
-            'ui-state-active': self.jqueryUITheme && !isEven,
             'even': isEven,
-            'odd': !isEven
+            'odd': !isEven,
+            'ui-state-default': self.jqueryUITheme && isEven,
+            'ui-state-active': self.jqueryUITheme && !isEven
         };
         return classes;
     };
@@ -62,7 +63,7 @@ ng.Row = function (entity, config, selectionProvider, rowIndex, $utils) {
         return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {
-        self.clone = new ng.Row(entity, config, selectionProvider, rowIndex, $utils);
+        self.clone = new ngRow(entity, config, selectionProvider, rowIndex, $utils);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
         return self.clone;

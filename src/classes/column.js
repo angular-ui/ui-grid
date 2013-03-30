@@ -1,4 +1,4 @@
-﻿ng.Column = function(config, $scope, grid, domUtilityService, $templateCache, $utils) {
+﻿var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -16,9 +16,6 @@
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
     self.sortPriority = undefined;
-    self.zIndex = function() {
-        return self.pinned ? 5 : 0;
-    };
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
     self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
@@ -26,7 +23,7 @@
     self.sortable = false;
     self.resizable = false;
     self.pinnable = false;
-    self.pinned = colDef.pinned;
+    self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = self.index;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
@@ -69,8 +66,10 @@
             async: false
         }).responseText;
     }
-    self.colIndex = function() {
-        return "col" + self.index + " colt" + self.index;
+    self.colIndex = function () {
+        var classes = self.pinned ? "pinned " : "";
+        classes += "col" + self.index + " colt" + self.index;
+        return classes;
     };
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
@@ -138,7 +137,7 @@
         return false;
     };
     self.copy = function() {
-        var ret = new ng.Column(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;
         return ret;
