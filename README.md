@@ -63,7 +63,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 [Examples](http://angular-ui.github.com/ng-grid/)
 
 ##Change Log##
-* __2013-03-08__ - Version 2.0.2 - changed default multiSelect behavior, updating some plugins and making some more minor bugfixes.
+* __2013-03-29__ - Version 2.0.3 - changed default multiSelect behavior, updating some plugins and making some more minor bugfixes.
 * __2013-03-08__ - Version 2.0.2 - minor bugfixes, updating some plugins.
 * __2013-03-05__ - Version 2.0.1 - Moved to grunt build system. No more international version; all languages are included by default. Fixed minor grouping display issue. Using $templateCache for templates instead of global namespace.
 * __2013-03-05__ - Version 2.0.0 - Breaking Changes: see documentation (showSelectionBox, enableRowSelection, showFooter). Column Virtualization added. Row virtualization performance improved. Excel-like editing instead of enableFocusedCellEdit.
