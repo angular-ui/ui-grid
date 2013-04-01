@@ -13,7 +13,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ##About##
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 2.0.2
+version 2.0.3
 
 [nuGet](https://nuget.org/packages/ng-grid)
 
