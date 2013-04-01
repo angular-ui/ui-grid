@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/29/2013 17:16
+* Compiled At: 04/01/2013 11:15
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2204,7 +2204,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ignoreSelectedItemChanges = false; 
     self.pKeyParser = $parse(grid.config.primaryKey);
     self.ChangeSelection = function (rowItem, evt) {
-        if (evt && !evt.ctrlKey && !evt.shiftKey && evt.originalEvent.constructor.name == "MouseEvent") {
+        if (evt && !evt.keyCode && !evt.ctrlKey && !evt.shiftKey) {
             self.toggleSelectAll(false, true);
         }
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {

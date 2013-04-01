@@ -17,7 +17,7 @@ function userController($scope, $timeout) {
         data: 'myData',
         selectedItems: $scope.selections,
 		enableRowSelection: true,
-		multiSelect: false,
+		multiSelect: true,
         enableRowReordering: false,
 		enableCellSelection: true,
         showGroupPanel: true,

@@ -56,7 +56,7 @@ function userController($scope) {
 		jqueryUIDraggable: false,
         selectedItems: $scope.mySelections,
         showSelectionCheckbox: true,
-        multiSelect: false,
+        multiSelect: true,
         showGroupPanel: false,
         showColumnMenu: true,
 		plugins: [plugins.ngGridLayoutPlugin],
