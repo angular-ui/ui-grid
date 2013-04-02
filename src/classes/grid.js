@@ -118,14 +118,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         multiSelect: true,
 
         // pagingOptions -
-
         pagingOptions: {
             // pageSizes: list of available page sizes.
             pageSizes: [250, 500, 1000], 
             //pageSize: currently selected page size. 
             pageSize: 250,
-            //totalServerItems: Total items are on the server. 
-            totalServerItems: 0,
             //currentPage: the uhm... current page.
             currentPage: 1
         },
@@ -175,6 +172,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Set the tab index of the Vieport.
         tabIndex: -1,
+		
+		//totalServerItems: Total items are on the server. 
+        totalServerItems: 0,
+			
         /*Prevents the internal sorting from executing. 
         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
         useExternalSorting: false,

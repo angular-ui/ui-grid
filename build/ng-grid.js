@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/02/2013 00:44
+* Compiled At: 04/02/2013 00:57
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1038,7 +1038,7 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
 
 var ngFooter = function ($scope, grid) {
     $scope.maxRows = function () {
-        var ret = Math.max($scope.pagingOptions.totalServerItems, grid.data.length);
+        var ret = Math.max(grid.config.totalServerItems, grid.data.length);
         return ret;
     };
     $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
@@ -1049,7 +1049,7 @@ var ngFooter = function ($scope, grid) {
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
         } else {
             $scope.pagingOptions.currentPage++;
@@ -1073,7 +1073,7 @@ var ngFooter = function ($scope, grid) {
     $scope.cantPageForward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         var maxPages = $scope.maxPages();
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             return !(curPage < maxPages);
         } else {
             return grid.data.length < 1;
@@ -1081,7 +1081,7 @@ var ngFooter = function ($scope, grid) {
 
     };
     $scope.cantPageToLast = function() {
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             return $scope.cantPageForward();
         } else {
             return true;
@@ -1138,7 +1138,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         pagingOptions: {
             pageSizes: [250, 500, 1000],
             pageSize: 250,
-            totalServerItems: 0,
             currentPage: 1
         },
         pinSelectionCheckbox: false,
@@ -1155,6 +1154,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         showSelectionCheckbox: false,
         sortInfo: {fields: [], columns: [], directions: [] },
         tabIndex: -1,
+        totalServerItems: 0,
         useExternalSorting: false,
         i18n: 'en',
         virtualizationThreshold: 50
