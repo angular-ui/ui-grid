@@ -1,9 +1,13 @@
-﻿var ngStyleProvider = function($scope, grid, domUtilityService) {
+﻿var ngStyleProvider = function($scope, grid) {
     $scope.headerCellStyle = function(col) {
         return { "height": col.headerRowHeight + "px" };
     };
-    $scope.rowStyle = function(row) {
-        return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+    $scope.rowStyle = function (row) {
+        var ret = { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+        if (row.isAggRow) {
+            ret.left = row.offsetLeft;
+        }
+        return ret;
     };
     $scope.canvasStyle = function() {
         return { "height": grid.maxCanvasHt.toString() + "px" };

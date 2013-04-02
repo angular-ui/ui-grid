@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/01/2013 11:15
+* Compiled At: 04/01/2013 17:58
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -600,7 +600,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
     self.aggIndex = aggEntity.aggIndex;
     self.collapsed = true;
     self.isAggRow = true;
-    self.offsetleft = aggEntity.gDepth * 25;
+    self.offsetLeft = aggEntity.gDepth * 25;
     self.aggLabelFilter = aggEntity.aggLabelFilter;
     self.toggleExpand = function() {
         self.collapsed = self.collapsed ? false : true;
@@ -1635,7 +1635,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         $scope.domAccessProvider = new ngDomAccessProvider(self);
 		self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
         self.searchProvider = new ngSearchProvider($scope, self, $filter);
-        self.styleProvider = new ngStyleProvider($scope, self, domUtilityService);
+        self.styleProvider = new ngStyleProvider($scope, self);
         $scope.$watch('configGroups', function(a) {
           var tempArr = [];
           angular.forEach(a, function(item) {
@@ -2620,12 +2620,16 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         }
     };
 };
-var ngStyleProvider = function($scope, grid, domUtilityService) {
+var ngStyleProvider = function($scope, grid) {
     $scope.headerCellStyle = function(col) {
         return { "height": col.headerRowHeight + "px" };
     };
-    $scope.rowStyle = function(row) {
-        return { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+    $scope.rowStyle = function (row) {
+        var ret = { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+        if (row.isAggRow) {
+            ret.left = row.offsetLeft;
+        }
+        return ret;
     };
     $scope.canvasStyle = function() {
         return { "height": grid.maxCanvasHt.toString() + "px" };
@@ -3162,7 +3166,7 @@ window.ngGrid.i18n['zh-tw'] = {
 angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("aggregateTemplate.html",
-    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" ng-style=\"{'left': row.offsetleft}\" class=\"ngAggregate\">" +
+    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">" +
     "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>" +
     "    <div class=\"{{row.aggClass()}}\"></div>" +
     "</div>" +
