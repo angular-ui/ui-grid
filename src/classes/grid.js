@@ -414,16 +414,13 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(asterisksArray, function(col) {
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                //check if we are on the last column
-                if (col.index + 1 == numOfCols) {
-                    var offset = 2; //We're going to remove 2 px so we won't overlflow the viwport by default
-                    // are we overflowing?
-                    if (self.maxCanvasHt > $scope.viewportDimHeight()) {
-                        //compensate for scrollbar
-                        offset += domUtilityService.ScrollW;
-                    }
-                    $scope.columns[col.index].width -= offset;
-                }
+                var offset = 1; //We're going to remove 1 px so we won't overlflow the viwport by default
+                // are we overflowing vertically?
+				if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+					//compensate for scrollbar
+					offset += domUtilityService.ScrollW;
+				}
+                $scope.columns[col.index].width -= offset;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }

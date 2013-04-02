@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/01/2013 17:58
+* Compiled At: 04/02/2013 00:18
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -256,7 +256,7 @@ ngGridServices.factory('$domUtilityService',['$utilityService', function($utils)
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
+            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
@@ -1376,13 +1376,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(asterisksArray, function(col) {
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                if (col.index + 1 == numOfCols) {
-                    var offset = 2;
-                    if (self.maxCanvasHt > $scope.viewportDimHeight()) {
-                        offset += domUtilityService.ScrollW;
-                    }
-                    $scope.columns[col.index].width -= offset;
-                }
+                var offset = 1;
+				if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+					offset += domUtilityService.ScrollW;
+				}
+                $scope.columns[col.index].width -= offset;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -2517,7 +2515,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             grid.configureColumnWidths();
                             grid.eventProvider.assignEvents();
                             domUtilityService.RebuildGrid($scope, grid);
-                        });
+                        }, true);
                     } else {
 						grid.buildColumns();
 					}
