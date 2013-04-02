@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/02/2013 00:18
+* Compiled At: 04/02/2013 00:44
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -539,7 +539,7 @@ ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
     });
     return utils;
 }]);
-var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
+var ngAggregate = function (aggEntity, rowFactory, rowHeight, groupInitState) {
     var self = this;
     self.rowIndex = 0;
     self.offsetTop = self.rowIndex * rowHeight;
@@ -551,7 +551,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
     self.aggIndex = aggEntity.aggIndex;
-    self.collapsed = true;
+    self.collapsed = groupInitState;
     self.isAggRow = true;
     self.offsetLeft = aggEntity.gDepth * 25;
     self.aggLabelFilter = aggEntity.aggLabelFilter;
@@ -608,7 +608,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
         }
     };
     self.copy = function () {
-        var ret = new ngAggregate(self.entity, rowFactory, rowHeight);
+        var ret = new ngAggregate(self.entity, rowFactory, rowHeight, groupInitState);
         ret.orig = self;
         return ret;
     };
@@ -1126,6 +1126,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         footerRowHeight: 55,
         footerTemplate: undefined,
         groups: [],
+		groupsCollapedByDefault: true,
         headerRowHeight: 30,
         headerRowTemplate: undefined,
         jqueryUIDraggable: false,
@@ -1669,7 +1670,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         if (self.data.length < 1 || !col.groupable  || !col.field) {
             return;
         }
-        if (!col.sortDirection) col.sort({ shiftKey: false });
+        if (!col.sortDirection) col.sort({ shiftKey: $scope.configGroups.length > 0 ? true : false });
 
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
@@ -1856,7 +1857,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; 
         if (!agg) {
-            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight);
+            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapedByDefault);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
@@ -1984,7 +1985,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
         for (var x = 0; x < rows.length; x++){
             var model = rows[x].entity;
             if (!model) return;
-            rows[x][NG_HIDDEN] = true;
+            rows[x][NG_HIDDEN] = grid.config.groupsCollapedByDefault;
             var ptr = self.groupedData;
             for (var y = 0; y < groups.length; y++) {
                 var group = groups[y];

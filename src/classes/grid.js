@@ -87,7 +87,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
-
+        
+		// set the initial state of aggreagate grouping. "true" means they will be collapsed when grouping changes, "false" means they will be expanded by default.
+		groupsCollapedByDefault: true,
+		
         //The height of the header row in pixels.
         headerRowHeight: 30,
 
@@ -725,7 +728,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return;
         }
         //first sort the column
-        if (!col.sortDirection) col.sort({ shiftKey: false });
+        if (!col.sortDirection) col.sort({ shiftKey: $scope.configGroups.length > 0 ? true : false });
 
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {
