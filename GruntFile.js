@@ -89,13 +89,12 @@
         ],
         testFiles: { //unit & e2e goes here
             karmaConfig: 'test/karma.conf.js',
-            //unit: ['test/unit/**/*.js']
+            //unit: ['test/unit/*.js']
         },
         karma: {
             unit: {
               options: {
-                configFile: '<%= testFiles.karmaConfig %>',
-                'keepalive': true
+                configFile: '<%= testFiles.karmaConfig %>'
               }
             }          
         },
