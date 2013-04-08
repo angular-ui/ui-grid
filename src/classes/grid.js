@@ -501,7 +501,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         $scope.$emit('ngGridEventChangeOrder', self.rowCache);
     };
     self.sortData = function(col, evt) {
-        if (evt.shiftKey && self.config.sortInfo) {
+        if (evt && evt.shiftKey && self.config.sortInfo) {
             var indx = self.config.sortInfo.columns.indexOf(col);
             if (indx === -1) {
                 if (self.config.sortInfo.columns.length == 1) {
