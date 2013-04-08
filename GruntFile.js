@@ -87,6 +87,17 @@
             'src/i18n/*.js',
             '<%= ngtemplates.ngGrid.dest %>'
         ],
+        testFiles: { //unit & e2e goes here
+            karmaConfig: 'test/karma.conf.js',
+            //unit: ['test/unit/*.js']
+        },
+        karma: {
+            unit: {
+              options: {
+                configFile: '<%= testFiles.karmaConfig %>'
+              }
+            }          
+        },
         ngtemplates: {
             ngGrid: {
                 options: { base: 'src/templates' },
@@ -142,6 +153,8 @@
         }
     });
 
+    // Load grunt-karma task plugin
+    grunt.loadNpmTasks('grunt-karma');
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     //grunt.loadNpmTasks('grunt-contrib-concat');
@@ -149,9 +162,10 @@
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
     // Default task(s).
-    grunt.registerTask('default', ['ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('default', ['karma', 'ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('test', ['karma']);
     grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
-    grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
-    grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
+    grunt.registerTask('prod', ['karma', 'ngtemplates', 'concat:prod', 'uglify', 'clean']);
+    grunt.registerTask('version', ['karma', 'ngtemplates', 'concat:version', 'uglify:version', 'clean']);
 
 };
