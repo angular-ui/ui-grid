@@ -25,7 +25,7 @@
                             grid.configureColumnWidths();
                             grid.eventProvider.assignEvents();
                             domUtilityService.RebuildGrid($scope, grid);
-                        });
+                        }, true);
                     } else {
 						grid.buildColumns();
 					}

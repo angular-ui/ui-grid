@@ -87,7 +87,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
-
+        
+		// set the initial state of aggreagate grouping. "true" means they will be collapsed when grouping changes, "false" means they will be expanded by default.
+		groupsCollapedByDefault: true,
+		
         //The height of the header row in pixels.
         headerRowHeight: 30,
 
@@ -115,14 +118,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         multiSelect: true,
 
         // pagingOptions -
-
         pagingOptions: {
             // pageSizes: list of available page sizes.
             pageSizes: [250, 500, 1000], 
             //pageSize: currently selected page size. 
             pageSize: 250,
-            //totalServerItems: Total items are on the server. 
-            totalServerItems: 0,
             //currentPage: the uhm... current page.
             currentPage: 1
         },
@@ -172,6 +172,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Set the tab index of the Vieport.
         tabIndex: -1,
+		
+		//totalServerItems: Total items are on the server. 
+        totalServerItems: 0,
+			
         /*Prevents the internal sorting from executing. 
         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
         useExternalSorting: false,
@@ -269,6 +273,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+            $scope.renderedRows[i].selected = newRows[i].selected;
 			newRows[i].renderedRowIndex = i;
         }
         self.refreshDomSizes();
@@ -414,16 +419,13 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(asterisksArray, function(col) {
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                //check if we are on the last column
-                if (col.index + 1 == numOfCols) {
-                    var offset = 2; //We're going to remove 2 px so we won't overlflow the viwport by default
-                    // are we overflowing?
-                    if (self.maxCanvasHt > $scope.viewportDimHeight()) {
-                        //compensate for scrollbar
-                        offset += domUtilityService.ScrollW;
-                    }
-                    $scope.columns[col.index].width -= offset;
-                }
+                var offset = 1; //We're going to remove 1 px so we won't overlflow the viwport by default
+                // are we overflowing vertically?
+				if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+					//compensate for scrollbar
+					offset += domUtilityService.ScrollW;
+				}
+                $scope.columns[col.index].width -= offset;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -734,7 +736,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return;
         }
         //first sort the column
-        if (!col.sortDirection) col.sort({ shiftKey: false });
+        if (!col.sortDirection) col.sort({ shiftKey: $scope.configGroups.length > 0 ? true : false });
 
         var indx = $scope.configGroups.indexOf(col);
         if (indx == -1) {

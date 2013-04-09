@@ -1,6 +1,6 @@
 ﻿var ngFooter = function ($scope, grid) {
     $scope.maxRows = function () {
-        var ret = Math.max($scope.pagingOptions.totalServerItems, grid.data.length);
+        var ret = Math.max(grid.config.totalServerItems, grid.data.length);
         return ret;
     };
     
@@ -12,7 +12,7 @@
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
         } else {
             $scope.pagingOptions.currentPage++;
@@ -36,7 +36,7 @@
     $scope.cantPageForward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         var maxPages = $scope.maxPages();
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             return !(curPage < maxPages);
         } else {
             return grid.data.length < 1;
@@ -44,7 +44,7 @@
 
     };
     $scope.cantPageToLast = function() {
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if (grid.config.totalServerItems > 0) {
             return $scope.cantPageForward();
         } else {
             return true;
