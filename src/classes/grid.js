@@ -273,6 +273,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+            $scope.renderedRows[i].selected = newRows[i].selected;
 			newRows[i].renderedRowIndex = i;
         }
         self.refreshDomSizes();

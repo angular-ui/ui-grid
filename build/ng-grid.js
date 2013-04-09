@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/02/2013 10:48
+* Compiled At: 04/08/2013 17:12
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1239,6 +1239,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+            $scope.renderedRows[i].selected = newRows[i].selected;
 			newRows[i].renderedRowIndex = i;
         }
         self.refreshDomSizes();
@@ -1452,7 +1453,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         $scope.$emit('ngGridEventChangeOrder', self.rowCache);
     };
     self.sortData = function(col, evt) {
-        if (evt.shiftKey && self.config.sortInfo) {
+        if (evt && evt.shiftKey && self.config.sortInfo) {
             var indx = self.config.sortInfo.columns.indexOf(col);
             if (indx === -1) {
                 if (self.config.sortInfo.columns.length == 1) {
@@ -1512,8 +1513,14 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         if (!self.config.useExternalSorting) {
             var tempData = self.data.slice(0);
             angular.forEach(tempData, function(item, i) {
-                item.preSortSelected = self.rowCache[self.rowMap[i]].selected;
-                item.preSortIndex = i;
+                var e = self.rowMap[i];
+                if (e != undefined) {
+                    var v = self.rowCache[v];
+                    if(v != undefined) {
+                        item.preSortSelected = v.selected;
+                        item.preSortIndex = i;
+                    }
+                }
             });
             sortService.Sort(self.config.sortInfo, tempData);
             angular.forEach(tempData, function(item, i) {
@@ -1817,6 +1824,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
         self.clone = new ngRow(entity, config, selectionProvider, rowIndex, $utils);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
+        self.clone.orig = self;
         return self.clone;
     };
     self.setVars = function (fromRow) {
@@ -2203,7 +2211,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ignoreSelectedItemChanges = false; 
     self.pKeyParser = $parse(grid.config.primaryKey);
     self.ChangeSelection = function (rowItem, evt) {
-        if (evt && !evt.keyCode && !evt.ctrlKey && !evt.shiftKey) {
+		var charCode = evt.which || evt.keyCode;
+		var isUpDownKeyPress = (charCode === 40 || charCode === 38);
+        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
             self.toggleSelectAll(false, true);
         }
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
@@ -2262,7 +2272,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
                 self.setSelection(rowItem, !rowItem.selected);
             }
-        } else if (!evt.keyCode) {
+        } else if (!evt.keyCode || isUpDownKeyPress) {
             self.setSelection(rowItem, !rowItem.selected);
         }
 		self.lastClickedRow = rowItem;
@@ -2285,10 +2295,6 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     };
     self.setSelection = function (rowItem, isSelected) {
 		if(grid.config.enableRowSelection){
-		    rowItem.selected = isSelected;
-		    if (rowItem.clone) {
-		        rowItem.clone.selected = isSelected;
-		    }
 			if (!isSelected) {
 				var indx = self.selectedItems.indexOf(rowItem.entity);
 				if(indx != -1){
@@ -2298,19 +2304,19 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false, true);
-						rowItem.selected = isSelected;
-						if (rowItem.clone) {
-						    rowItem.clone.selected = isSelected;
-						}
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
+			}
+			rowItem.selected = isSelected;
+			if (rowItem.orig) {
+			    rowItem.orig.selected = isSelected;
 			}
 			rowItem.afterSelectionChange(rowItem);
 		}
     };
     self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows)) {
+        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
@@ -2325,7 +2331,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
             }
             if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows);
+                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
             }
         }
     };
