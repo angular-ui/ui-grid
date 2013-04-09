@@ -84,7 +84,7 @@
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH + 2) + "px}";
+            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {

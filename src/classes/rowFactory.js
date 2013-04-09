@@ -36,7 +36,7 @@
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight);
+            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
@@ -178,7 +178,7 @@
         for (var x = 0; x < rows.length; x++){
             var model = rows[x].entity;
             if (!model) return;
-            rows[x][NG_HIDDEN] = true;
+            rows[x][NG_HIDDEN] = grid.config.groupsCollapsedByDefault;
             var ptr = self.groupedData;
             for (var y = 0; y < groups.length; y++) {
                 var group = groups[y];

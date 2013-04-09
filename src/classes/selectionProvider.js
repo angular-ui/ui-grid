@@ -96,10 +96,6 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (rowItem, isSelected) {
 		if(grid.config.enableRowSelection){
-		    rowItem.selected = isSelected;
-		    if (rowItem.clone) {
-		        rowItem.clone.selected = isSelected;
-		    }
 			if (!isSelected) {
 				var indx = self.selectedItems.indexOf(rowItem.entity);
 				if(indx != -1){
@@ -109,13 +105,13 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false, true);
-						rowItem.selected = isSelected;
-						if (rowItem.clone) {
-						    rowItem.clone.selected = isSelected;
-						}
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
+			}
+			rowItem.selected = isSelected;
+			if (rowItem.orig) {
+			    rowItem.orig.selected = isSelected;
 			}
 			rowItem.afterSelectionChange(rowItem);
 		}
@@ -123,7 +119,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows)) {
+        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
@@ -138,7 +134,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
             }
             if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows);
+                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
             }
         }
     };

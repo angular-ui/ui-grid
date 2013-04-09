@@ -1,4 +1,4 @@
-var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
+var ngAggregate = function (aggEntity, rowFactory, rowHeight, groupInitState) {
     var self = this;
     self.rowIndex = 0;
     self.offsetTop = self.rowIndex * rowHeight;
@@ -10,7 +10,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
     self.children = aggEntity.children;
     self.aggChildren = aggEntity.aggChildren;
     self.aggIndex = aggEntity.aggIndex;
-    self.collapsed = true;
+    self.collapsed = groupInitState;
     self.isAggRow = true;
     self.offsetLeft = aggEntity.gDepth * 25;
     self.aggLabelFilter = aggEntity.aggLabelFilter;
@@ -67,7 +67,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
         }
     };
     self.copy = function () {
-        var ret = new ngAggregate(self.entity, rowFactory, rowHeight);
+        var ret = new ngAggregate(self.entity, rowFactory, rowHeight, groupInitState);
         ret.orig = self;
         return ret;
     };

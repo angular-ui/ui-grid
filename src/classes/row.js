@@ -66,6 +66,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
         self.clone = new ngRow(entity, config, selectionProvider, rowIndex, $utils);
         self.clone.isClone = true;
         self.clone.elm = self.elm;
+        self.clone.orig = self;
         return self.clone;
     };
     self.setVars = function (fromRow) {
