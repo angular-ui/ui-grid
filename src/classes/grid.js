@@ -89,7 +89,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         groups: [],
         
 		// set the initial state of aggreagate grouping. "true" means they will be collapsed when grouping changes, "false" means they will be expanded by default.
-		groupsCollapedByDefault: true,
+		groupsCollapsedByDefault: true,
 		
         //The height of the header row in pixels.
         headerRowHeight: 30,

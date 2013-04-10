@@ -4,6 +4,7 @@
         delay = 500,
         clicks = 0,
         timer = null;
+    self.colDef = config.colDef;
     self.width = colDef.width;
     self.groupIndex = 0;
     self.isGroupedBy = false;
