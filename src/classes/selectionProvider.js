@@ -9,7 +9,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (rowItem, evt) {
         // ctrl-click + shift-click multi-selections
-        if (evt && !evt.keyCode && !evt.ctrlKey && !evt.shiftKey) {
+		// up/down key navigation in multi-selections
+		var charCode = evt.which || evt.keyCode;
+		var isUpDownKeyPress = (charCode === 40 || charCode === 38);
+        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
             self.toggleSelectAll(false, true);
         }
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
@@ -68,7 +71,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
                 self.setSelection(rowItem, !rowItem.selected);
             }
-        } else if (!evt.keyCode) {
+        } else if (!evt.keyCode || isUpDownKeyPress) {
             self.setSelection(rowItem, !rowItem.selected);
         }
 		self.lastClickedRow = rowItem;
@@ -80,7 +83,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         if (grid.config.primaryKey) {
             var val = self.pKeyParser(entity);
             angular.forEach(self.selectedItems, function (c) {
-                if (val == self.pKeyParser(c)) {
+                if (val == self.pkeyParser(c)) {
                     isSelected = true;
                 }
             });
@@ -93,10 +96,6 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (rowItem, isSelected) {
 		if(grid.config.enableRowSelection){
-		    rowItem.selected = isSelected;
-		    if (rowItem.clone) {
-		        rowItem.clone.selected = isSelected;
-		    }
 			if (!isSelected) {
 				var indx = self.selectedItems.indexOf(rowItem.entity);
 				if(indx != -1){
@@ -106,13 +105,13 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
 					if(!self.multi && self.selectedItems.length > 0){
 						self.toggleSelectAll(false, true);
-						rowItem.selected = isSelected;
-						if (rowItem.clone) {
-						    rowItem.clone.selected = isSelected;
-						}
 					}
 					self.selectedItems.push(rowItem.entity);
 				}
+			}
+			rowItem.selected = isSelected;
+			if (rowItem.orig) {
+			    rowItem.orig.selected = isSelected;
 			}
 			rowItem.afterSelectionChange(rowItem);
 		}
@@ -120,7 +119,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
     self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows)) {
+        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
@@ -135,7 +134,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
             }
             if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows);
+                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
             }
         }
     };
