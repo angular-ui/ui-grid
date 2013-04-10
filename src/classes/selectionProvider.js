@@ -83,7 +83,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         if (grid.config.primaryKey) {
             var val = self.pKeyParser(entity);
             angular.forEach(self.selectedItems, function (c) {
-                if (val == self.pkeyParser(c)) {
+                if (val == self.pKeyParser(c)) {
                     isSelected = true;
                 }
             });
