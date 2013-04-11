@@ -114,6 +114,7 @@
 					options.gridId = grid.gridId;
 					options.ngGrid = grid;
 					options.$gridScope = $scope;
+                    options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});			
@@ -130,7 +131,7 @@
                         if (typeof p === 'function') {
                             p = p.call(this);
                         }
-                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        p.init($scope.$new(), grid, options.$gridServices);
                         options.plugins[$utils.getInstanceType(p)] = p;
                     });
                     //send initi finalize notification.

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/08/2013 17:19
+* Compiled At: 04/10/2013 18:23
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -619,6 +619,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         delay = 500,
         clicks = 0,
         timer = null;
+    self.colDef = config.colDef;
     self.width = colDef.width;
     self.groupIndex = 0;
     self.isGroupedBy = false;
@@ -684,6 +685,9 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;
+        if (col.cellClass) {
+            classes += " " + self.cellClass;
+        }
         return classes;
     };
     self.groupedByClass = function() {
@@ -1126,7 +1130,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         footerRowHeight: 55,
         footerTemplate: undefined,
         groups: [],
-		groupsCollapedByDefault: true,
+		groupsCollapsedByDefault: true,
         headerRowHeight: 30,
         headerRowTemplate: undefined,
         jqueryUIDraggable: false,
@@ -2284,7 +2288,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         if (grid.config.primaryKey) {
             var val = self.pKeyParser(entity);
             angular.forEach(self.selectedItems, function (c) {
-                if (val == self.pkeyParser(c)) {
+                if (val == self.pKeyParser(c)) {
                     isSelected = true;
                 }
             });
@@ -2597,6 +2601,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
 					options.gridId = grid.gridId;
 					options.ngGrid = grid;
 					options.$gridScope = $scope;
+                    options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
 					$scope.$on('ngGridEventDigestGrid', function(){
 						domUtilityService.digest($scope.$parent);
 					});
@@ -2610,7 +2615,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (typeof p === 'function') {
                             p = p.call(this);
                         }
-                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
+                        p.init($scope.$new(), grid, options.$gridServices);
                         options.plugins[$utils.getInstanceType(p)] = p;
                     });
                     if (options.init == "function") {
