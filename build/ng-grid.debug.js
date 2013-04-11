@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/10/2013 18:23
+* Compiled At: 04/10/2013 18:25
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -732,7 +732,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;
-        if (col.cellClass) {
+        if (self.cellClass) {
             classes += " " + self.cellClass;
         }
         return classes;

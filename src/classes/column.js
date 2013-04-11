@@ -70,7 +70,7 @@
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;
-        if (col.cellClass) {
+        if (self.cellClass) {
             classes += " " + self.cellClass;
         }
         return classes;
