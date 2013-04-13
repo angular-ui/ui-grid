@@ -2380,14 +2380,18 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 			domUtilityService.digest($scope);	
 			var elementWithoutComments = angular.element(elm[0].children).filter(function () { return this.nodeType != 8; });
 			var inputElement = angular.element(elementWithoutComments[0].children[0]); 
+			inputElement.data('originalValue', inputElement.val());
 			if(inputElement.length > 0){
 				angular.element(inputElement).focus();
 				$scope.domAccessProvider.selectInputElement(inputElement[0]);
-				angular.element(inputElement).bind('blur', function(){	
-					$scope.isFocused = false;	
+				angular.element(inputElement).bind('blur', function(){
+                    if(inputElement.val() !== inputElement.data('originalValue'))
+                        $scope.$emit("ngGridEventData", grid.gridId);
+                    inputElement.removeData('originalValue');
+					$scope.isFocused = false;
 					domUtilityService.digest($scope);
 					return true;
-				});	
+				});
 			}
 		};
 		return function($scope, elm) {
