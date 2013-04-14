@@ -23,7 +23,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                 }, 0);
             };
 			elm.bind('mousedown', function(){
-				elm.focus();
+				elm[0].focus();
 				return true;
 			});			
 			elm.bind('focus', function(){
@@ -39,7 +39,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 					focusOnInputElement($scope,elm);
 				}
 				if(evt.keyCode == 27){
-					elm.focus();
+					elm[0].focus();
 				}
 				return true;
 			});
