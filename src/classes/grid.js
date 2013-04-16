@@ -1,7 +1,7 @@
 ﻿/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
-var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse) {
+var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http) {
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
@@ -222,11 +222,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         var t = self.config[key];
         var uKey = self.gridId + key + ".html";
         if (t && !TEMPLATE_REGEXP.test(t)) {
-            $templateCache.put(uKey, $.ajax({
-                type: "GET",
-                url: t,
-                async: false
-            }).responseText);
+            $http.get(t)
+                .success(function(data){
+                    $templateCache.put(uKey, data);
+                });
+            // $templateCache.put(uKey, $.ajax({
+            //     type: "GET",
+            //     url: t,
+            //     async: false
+            // }).responseText);
         } else if (t) {
             $templateCache.put(uKey, t);
         } else {
