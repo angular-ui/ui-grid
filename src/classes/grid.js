@@ -322,14 +322,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     groupable: false,
                     headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
                     cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
-                    pinned: self.config.pinSelectionCheckbox
+                    pinned: self.config.pinSelectionCheckbox,
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
                 sortCallback: self.sortData,
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
-                enableSort: self.config.enableSorting
+                enableSort: self.config.enableSorting,
+                enablePinning: self.config.enablePinning
             }, $scope, self, domUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {

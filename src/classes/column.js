@@ -23,7 +23,7 @@
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
-    self.pinnable = false;
+    self.pinnable = config.enablePinning;
     self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = self.index;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
