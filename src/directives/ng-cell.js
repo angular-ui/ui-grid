@@ -9,7 +9,7 @@
 					if($scope.col.enableCellEdit){
 						html =  $scope.col.cellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)'));
 					} else {
 					    html = cellTemplate;
 					}

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/10/2013 18:25
+* Compiled At: 04/16/2013 14:58
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2316,6 +2316,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 			if (rowItem.orig) {
 			    rowItem.orig.selected = isSelected;
 			}
+			if (rowItem.clone) {
+			    rowItem.clone.selected = isSelected;
+			}
 			rowItem.afterSelectionChange(rowItem);
 		}
     };
@@ -2448,7 +2451,7 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
 					if($scope.col.enableCellEdit){
 						html =  $scope.col.cellEditTemplate;
 						html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, "col.field"));
+						html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)'));
 					} else {
 					    html = cellTemplate;
 					}

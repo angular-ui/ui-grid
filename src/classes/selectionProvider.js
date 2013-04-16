@@ -113,6 +113,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 			if (rowItem.orig) {
 			    rowItem.orig.selected = isSelected;
 			}
+			if (rowItem.clone) {
+			    rowItem.clone.selected = isSelected;
+			}
 			rowItem.afterSelectionChange(rowItem);
 		}
     };
