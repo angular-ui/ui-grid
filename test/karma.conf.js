@@ -1,11 +1,16 @@
 files = [
     JASMINE,
     JASMINE_ADAPTER,
+
+    // 3rd-party code
     '../lib/jquery-1.9.1.js',
     '../lib/angular.js',
     'lib/angular/angular-mocks.js',
+
+    // App code
     '../build/ng-grid.debug.js',
 
+    // Test specs
     'unit/*Spec.js'
 ];
 
