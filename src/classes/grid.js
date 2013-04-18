@@ -222,10 +222,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         var t = self.config[key];
         var uKey = self.gridId + key + ".html";
         if (t && !TEMPLATE_REGEXP.test(t)) {
-            $http.get(t)
-                .success(function(data){
-                    $templateCache.put(uKey, data);
-                });
+            $http.get(t, {
+                cache: $templateCache
+            })
+            .success(function(data){
+                $templateCache.put(uKey, data);
+            });
             // $templateCache.put(uKey, $.ajax({
             //     type: "GET",
             //     url: t,
