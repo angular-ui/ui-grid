@@ -11,7 +11,8 @@ files = [
     '../build/ng-grid.debug.js',
 
     // Test specs
-    'unit/*Spec.js'
+    'unit/*Spec.js',
+    'e2e/scenarios.js'
 ];
 
 // // level of logging
