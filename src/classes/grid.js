@@ -224,14 +224,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             promises.push( self.getTemplate(template) );
         });
 
-        // getTemplate('rowTemplate');
-        // getTemplate('aggregateTemplate');
-        // getTemplate('headerRowTemplate');
-        // getTemplate('checkboxCellTemplate');
-        // getTemplate('checkboxHeaderTemplate');
-        // getTemplate('menuTemplate');
-        // getTemplate('footerTemplate');
-
         return $q.all(promises);
     };
     
@@ -242,11 +234,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         var uKey = self.gridId + key + ".html";
         var p = $q.defer();
         if (t && !TEMPLATE_REGEXP.test(t)) {
-            // $templateCache.put(uKey, $.ajax({
-            //     type: "GET",
-            //     url: t,
-            //     async: false
-            // }).responseText);
             $http.get(t, {
                 cache: $templateCache
             })
@@ -846,11 +833,4 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         return newDim;
     };
-
-    //call init
-    // self.initTemplates();
-    // self.init();
-
-    /** Main execution **/
-    //self.initTemplates().then(self.init);
 };
