@@ -25,6 +25,7 @@
   "author": "ng-grid Team",
   "license": "MIT",
   "devDependencies": {
+    "express": "~3.2.0",
     "grunt": "~0.4.1",
     "grunt-jsdoc": "~0.2.4",
     "grunt-karma": "~0.4.3",
