@@ -16,9 +16,12 @@ describe('Dom Utility Service', function () {
 
     // AssignGridContainers
     describe('AssignGridContainers', function () {
-        it('should should find the correct elements and assign them in the grid properly', function () {
-            var domsizesCalled;
-            var grid = {
+        var domsizesCalled,
+                grid,
+                root;
+
+        beforeEach(function() {
+            grid = {
                 elementDims: {},
                 refreshDomSizes: function () {
                     domsizesCalled = true;
@@ -27,14 +30,20 @@ describe('Dom Utility Service', function () {
             $scope.adjustScrollTop = function(top) {
                 expect(top).toEqual(grid.$canvas.scrollTop());
             };
-            var root = angular.element('<div class="ng-scope ngGrid"></div>');
+
+            root = angular.element('<div class="ng-scope ngGrid"></div>');
             root.append(angular.element($cache.get('gridTemplate.html')));
+        });
+
+        it('should should find the correct elements and assign them in the grid properly', function () {
             $dUtils.AssignGridContainers($scope, root, grid);
             
             expect(grid.$root.is(".ngGrid")).toEqual(true);
             expect(grid.$root.length).toEqual(1);
+
             expect(grid.$topPanel.is(".ngTopPanel")).toEqual(true);
             expect(grid.$topPanel.length).toEqual(1);
+
             expect(grid.$groupPanel.is(".ngGroupPanel")).toEqual(true);
             expect(grid.$groupPanel.length).toEqual(1);
             expect(grid.$headerContainer.is(".ngHeaderContainer")).toEqual(true);
@@ -45,8 +54,9 @@ describe('Dom Utility Service', function () {
             expect(grid.$viewport.length).toEqual(1);
             expect(grid.$canvas.is(".ngCanvas")).toEqual(true);
             expect(grid.$canvas.length).toEqual(1);
-            expect(grid.$footerPanel.is(".ngFooterPanel")).toEqual(true);
-            expect(grid.$footerPanel.length).toEqual(1);
+            
+            // Removed footer tests as it is in its own directive, and not available in the grid template dom
+
             expect(grid.elementDims.rootMaxH).toEqual(grid.$root.height());
             expect(domsizesCalled).toEqual(true);
         });
