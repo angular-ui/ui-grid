@@ -55,7 +55,7 @@ HttpServer.prototype.handleRequest_ = function(req, res) {
   if (req.headers['user-agent']) {
     logEntry += ' ' + req.headers['user-agent'];
   }
-  // util.puts(logEntry);
+  util.puts(logEntry);
   req.url = this.parseUrl_(req.url);
   var handler = this.handlers[req.method];
   if (!handler) {
@@ -82,12 +82,7 @@ StaticServlet.MimeMap = {
   'jpeg': 'image/jpeg',
   'gif': 'image/gif',
   'png': 'image/png',
-  'svg': 'image/svg+xml'
-};
-
-StaticServlet.SleepMap = {
-  // './workbench/templating/external_row_template.html': 0,
-  './workbench/templating/data.json': 2500
+  'svg': 'image/svg+xml'
 };
 
 StaticServlet.prototype.handleRequest = function(req, res) {
@@ -98,12 +93,6 @@ StaticServlet.prototype.handleRequest = function(req, res) {
   var parts = path.split('/');
   if (parts[parts.length-1].charAt(0) === '.')
     return self.sendForbidden_(req, res, path);
-
-  if (StaticServlet.SleepMap[path] !== undefined) {
-    console.log('sleeping', StaticServlet.SleepMap[path]);
-    sleep(StaticServlet.SleepMap[path]);
-  }
-
   fs.stat(path, function(err, stat) {
     if (err)
       return self.sendMissing_(req, res, path);
@@ -253,13 +242,3 @@ StaticServlet.prototype.writeDirectoryIndex_ = function(req, res, path, files) {
 
 // Must be last,
 main(process.argv);
-
-// Sleep for 'ms' milliseconds
-function sleep(ms) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 10000000; i++) {
-    if ((new Date().getTime() - start) > ms){
-      break;
-    }
-  }
-};
