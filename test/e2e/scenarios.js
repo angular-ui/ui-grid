@@ -3,12 +3,15 @@
 /* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
 
 describe('ng-grid', function() {
-  beforeEach(function() {
-    browser().navigateTo('../../workbench/index.html');
-  });
+  
+  // beforeEach(function() {
+  //   browser().navigateTo('../../workbench/index.html');
+  // });
 
   describe('templates', function() {
-    browser().navigateTo('../../workbench/templating/external.html');
+    beforeEach(function() {
+      browser().navigateTo('../../workbench/templating/external.html');
+    });
 
     it('should not cause a $digest or $apply error when fetching the template completes after the data $http request does', function() {
 
