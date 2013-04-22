@@ -71,6 +71,8 @@ The testing setup is based on the [angular-seed project](https://github.com/angu
 
 ### Unit tests
 
+Make sure to set your CHROME_BIN environment variable to the pull path to chrome.exe (not just its directory).
+
 Run unit tests like so:
 
 osx/*nix
