@@ -101,7 +101,7 @@ describe('Dom Utility Service', function () {
             expect(domsizesCalled).toEqual(true);
             expect(scrollLeftCalled).toEqual(true);
             expect(scrollTopCalled).toEqual(true);
-            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 419px}.1 .col0 { width: 100px; left: 0px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
+            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 417px}.1 .col0 { width: 100px; left: 0px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
         });
     });
     // setColLeft
@@ -129,7 +129,7 @@ describe('Dom Utility Service', function () {
             $dUtils.BuildStyles($scope, grid, true);
             $dUtils.setColLeft($scope.columns[0], 300, grid);
             var temp = grid.$styleSheet.html();
-            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 419px}.1 .col0 { width: 100px; left: 300px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
+            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 417px}.1 .col0 { width: 100px; left: 300px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
         });
     });
 });
