@@ -3,7 +3,6 @@ basePath = '../';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  './config/mocha.conf.js',
 
   // 3rd-party code
   'lib/jquery-1.9.1.js',
@@ -20,7 +19,7 @@ files = [
   './test/midway/**/*.js'
 ];
 
-autoWatch = true;
+autoWatch = false;
 
 browsers = ['PhantomJS'];
 
