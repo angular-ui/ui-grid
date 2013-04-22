@@ -88,15 +88,31 @@
             '<%= ngtemplates.ngGrid.dest %>'
         ],
         testFiles: { //unit & e2e goes here
-            karmaConfig: 'test/karma.conf.js',
+            karmaConfig: 'config/karma.conf.js',
             //unit: ['test/unit/*.js']
         },
         karma: {
             unit: {
               options: {
-                configFile: '<%= testFiles.karmaConfig %>'
+                configFile: '<%= testFiles.karmaConfig %>',
+                autoWatch: false,
+                singleRun: true
               }
-            }          
+            },
+            e2e: {
+                options: {
+                    configFile: 'config/karma-e2e.conf.js',
+                    autoWatch: false,
+                    singleRun: true
+                }
+            },
+            midway: {
+                options: {
+                    configFile: 'config/karma-midway.conf.js',
+                    autoWatch: false,
+                    singleRun: true
+                }
+            }
         },
         ngtemplates: {
             ngGrid: {
@@ -163,9 +179,10 @@
     grunt.loadNpmTasks('grunt-contrib-clean');
     // Default task(s).
     grunt.registerTask('default', ['ngtemplates', 'concat', 'uglify', 'clean']);
-    //grunt.registerTask('test', ['karma']);
+
+    grunt.registerTask('test', ['karma:unit']);
+
     grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
     grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
     grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
-
 };

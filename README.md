@@ -1,4 +1,4 @@
-#ng-grid : An Angular DataGrid#
+# ng-grid : An Angular DataGrid
 
 __Contributors:__
 
@@ -9,8 +9,10 @@ ng-grid Team:
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
 Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome Drag-N-Drop aggregate feature. However, you can still groupby without draggability)
+
 ***
-##About##
+
+## About
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
 version 2.0.4
@@ -21,7 +23,8 @@ version 2.0.4
 Questions, Comments, Complaints? feel free to email us at nggridteam@gmail.com
 
 ***
-##Roadmap##
+
+## Roadmap
 
 We are going to be adding more features here as we head to a 3.0 release, including:
 
@@ -56,13 +59,45 @@ function MyCtrl($scope) {
 
 ```
 
-##Want More?##
+## Want More?
 Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/angular-ui/ng-grid/wiki)
 
-##Examples##
+## Examples
 [Examples](http://angular-ui.github.com/ng-grid/)
 
-##Change Log##
+## Testing
+
+The testing setup is based on the [angular-seed project](https://github.com/angular/angular-seed/).
+
+### Unit tests
+
+Run unit tests like so:
+
+osx/*nix
+
+    ./scripts/test.sh
+
+Windows
+
+    /scripts/test.bat
+
+### End-to-end tests
+
+Start the simple webserver included with angular-seed:
+
+    ./scripts/web-server.js
+
+Run the tests:
+
+    ./scripts/e2e-test.sh
+
+Or on Windows:
+
+    ./scripts/e2e-test.bat
+
+
+
+## Change Log
 * __2013-03-29__ - Version 2.0.3 - fixing some more minor bugs.
 * __2013-03-29__ - Version 2.0.3 - changed default multiSelect behavior, updating some plugins and making some more minor bugfixes.
 * __2013-03-08__ - Version 2.0.2 - minor bugfixes, updating some plugins.
