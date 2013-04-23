@@ -116,8 +116,9 @@ describe('directives', function () {
                     it('should allow newly created rows to be selected', function(){
                         // Create a new row
                         var rowIndex = scope.myData.push({ name: 'Bob', age: '8' });
+                        scope.$apply();
                         scope.gridOptions.selectItem(rowIndex-1, true);
-                        $scope.$apply();
+                        scope.$apply();
 
                         var newRow = elm.find('.ngRow:nth-child(' + (rowIndex) + ')');
                         expect(newRow.hasClass('selected')).toBe(true);
