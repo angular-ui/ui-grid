@@ -585,7 +585,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(tempData, function(item, i) {
                 var e = self.rowMap[i];
                 if (e != undefined) {
-                    var v = self.rowCache[v];
+                    var v = self.rowCache[i];
                     if(v != undefined) {
                         item.preSortSelected = v.selected;
                         item.preSortIndex = i;
