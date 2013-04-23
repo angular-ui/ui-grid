@@ -96,8 +96,14 @@
               options: {
                 configFile: '<%= testFiles.karmaConfig %>',
                 autoWatch: false,
-                singleRun: true
+                singleRun: true,
               }
+            },
+            watch: {
+                options: {
+                    configFile: '<%= testFiles.karmaConfig %>',
+                    background: true
+                }
             },
             e2e: {
                 options: {
@@ -112,6 +118,18 @@
                     autoWatch: false,
                     singleRun: true
                 }
+            }
+        },
+        watch: {
+            // Run unit test with karma
+            karma: {
+                files: ['build/ng-grid.debug.js', 'test/unit/**/*.js'],
+                tasks: ['karma:watch:run']
+            },
+            // Auto-build ng-grid.debug.js when source files change
+            debug: {
+                files: ['<%= srcFiles %>'],
+                tasks: ['debug']
             }
         },
         ngtemplates: {
@@ -171,6 +189,10 @@
 
     // Load grunt-karma task plugin
     grunt.loadNpmTasks('grunt-karma');
+
+    // Load the grunt-contrib-watch plugin for doing file watches
+    grunt.loadNpmTasks('grunt-contrib-watch');
+
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     //grunt.loadNpmTasks('grunt-contrib-concat');
