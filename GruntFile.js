@@ -199,11 +199,17 @@
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    
+    // Old default task
+    grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'clean']);
+
     // Default task(s).
-    grunt.registerTask('default', ['ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('default', 'No default task', function() {
+        grunt.log.write('The old default task has been moved to "build" to prevent accidental triggering');
+    });
 
     grunt.registerTask('test', ['karma:unit']);
-
+    
     grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
     grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
     grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
