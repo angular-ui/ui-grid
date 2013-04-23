@@ -110,8 +110,8 @@ There is a task for CI testing with PhantomJS
 
 
 ## Change Log
-* __2013-04-??__ - Version 2.0.5 - Moving to $http for external template fetching. Should fix issues with grid rendering before templates are retrieved, as well as fetching the same template multiple times. Also fixed bug that prevented the grid from maintaining row selections post-sort thanks to [sum4me](https://github.com/sum4me).
-* __2013-03-29__ - Version 2.0.3 - fixing some more minor bugs.
+* __2013-04-23__ - Version 2.0.5 - Moving to $http for external template fetching. Should fix issues with grid rendering before templates are retrieved, as well as fetching the same template multiple times. Also fixed bug that prevented the grid from maintaining row selections post-sort thanks to [sum4me](https://github.com/sum4me).
+* __2013-04-08__ - Version 2.0.4 - fixing some more minor bugs.
 * __2013-03-29__ - Version 2.0.3 - changed default multiSelect behavior, updating some plugins and making some more minor bugfixes.
 * __2013-03-08__ - Version 2.0.2 - minor bugfixes, updating some plugins.
 * __2013-03-05__ - Version 2.0.1 - Moved to grunt build system. No more international version; all languages are included by default. Fixed minor grouping display issue. Using $templateCache for templates instead of global namespace.
