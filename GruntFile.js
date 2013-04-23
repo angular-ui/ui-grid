@@ -88,43 +88,45 @@
             '<%= ngtemplates.ngGrid.dest %>'
         ],
         testFiles: { //unit & e2e goes here
-            karmaConfig: 'config/karma.conf.js',
+            karmaUnit: 'config/karma.conf.js',
             //unit: ['test/unit/*.js']
         },
         karma: {
             unit: {
-              options: {
-                configFile: '<%= testFiles.karmaConfig %>',
-                autoWatch: false,
-                singleRun: true,
-              }
-            },
-            watch: {
                 options: {
-                    configFile: '<%= testFiles.karmaConfig %>',
-                    background: true
-                }
-            },
-            e2e: {
-                options: {
-                    configFile: 'config/karma-e2e.conf.js',
+                    configFile: '<%= testFiles.karmaUnit %>',
                     autoWatch: false,
-                    singleRun: true
-                }
+                    // singleRun: true
+                },
+                background: true
+            },
+            // watch: {
+            //     options: {
+            //         configFile: '<%= testFiles.karmaConfig %>',
+            //         autoWatch: false,
+            //         background: true
+            //     }
+            // },
+            e2e: {
+                configFile: 'config/karma-e2e.conf.js',
+                autoWatch: false,
+                singleRun: true
             },
             midway: {
-                options: {
-                    configFile: 'config/karma-midway.conf.js',
-                    autoWatch: false,
-                    singleRun: true
-                }
+                configFile: 'config/karma-midway.conf.js',
+                autoWatch: false,
+                singleRun: true
+            },
+            continuous: {
+                singleRun: true,
+                browsers: ['PhantomJS']
             }
         },
         watch: {
             // Run unit test with karma
             karma: {
                 files: ['build/ng-grid.debug.js', 'test/unit/**/*.js'],
-                tasks: ['karma:watch:run']
+                tasks: ['karma:unit:run']
             },
             // Auto-build ng-grid.debug.js when source files change
             debug: {
@@ -189,9 +191,17 @@
 
     // Load grunt-karma task plugin
     grunt.loadNpmTasks('grunt-karma');
-
     // Load the grunt-contrib-watch plugin for doing file watches
     grunt.loadNpmTasks('grunt-contrib-watch');
+
+    grunt.registerTask('test', ['karma:unit']);
+
+    // grunt.registerTask('testwatch', 'Watch, build and test', function() {
+    //     grunt.task.run('watch:debug');
+    //     grunt.task.run('karma:unit');
+    // });
+    grunt.registerTask('testwatch', ['karma:unit', 'watch']);
+    
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -199,7 +209,7 @@
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    
+
     // Old default task
     grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'clean']);
 
@@ -208,8 +218,6 @@
         grunt.log.write('The old default task has been moved to "build" to prevent accidental triggering');
     });
 
-    grunt.registerTask('test', ['karma:unit']);
-    
     grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
     grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
     grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
