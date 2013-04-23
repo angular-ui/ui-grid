@@ -107,18 +107,25 @@ describe('directives', function () {
                     //add work here
                 });
             });
-            ddescribe('grid', function () {
+            describe('grid', function () {
                 describe('sortActual', function(){
-                    it('should maintain row selection post-sort', function(){
+                    iit('should maintain row selection post-sort', function(){
+                        scope.gridOptions.selectItem(0, true);
+                        scope.$digest();
+                        scope.gridOptions.sortBy('age');
+                        scope.$digest();
 
+                        var oldRow = elm.find('.ngRow:last');
+                        expect(oldRow.html()).toMatch(/Moroni.+?50/);
+                        expect(oldRow.hasClass('selected')).toBe(true);
                     });
 
                     it('should allow newly created rows to be selected', function(){
                         // Create a new row
                         var rowIndex = scope.myData.push({ name: 'Bob', age: '8' });
-                        scope.$apply();
+                        scope.$digest();
                         scope.gridOptions.selectItem(rowIndex-1, true);
-                        scope.$apply();
+                        scope.$digest();
 
                         var newRow = elm.find('.ngRow:nth-child(' + (rowIndex) + ')');
                         expect(newRow.hasClass('selected')).toBe(true);
