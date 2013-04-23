@@ -69,33 +69,29 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 
 The testing setup is based on the [angular-seed project](https://github.com/angular/angular-seed/).
 
-### Unit tests
-
 Make sure to set your CHROME_BIN environment variable to the pull path to chrome.exe (not just its directory).
 
-Run unit tests like so:
+### Grunt tasks
 
-osx/*nix
+There are a few grunt tasks for running tests:
+    
+    # Run unit tests
+    > grunt karma:unit
 
-    ./scripts/test.sh
+    # Run end-to-end tests (make sure to first start a web server as specified below)
+    > grunt karma:e2e
 
-Windows
+    # Run midway tests
+    > grunt karma:midway
 
-    /scripts/test.bat
+    # Also here's a simple alias for running the karma:unit task:
+    > grunt test
 
 ### End-to-end tests
 
-Start the simple webserver included with angular-seed:
+The e2e tests need a webserver to run on. A simple one from the angular-seed project is included:
 
-    ./scripts/web-server.js
-
-Run the tests:
-
-    ./scripts/e2e-test.sh
-
-Or on Windows:
-
-    ./scripts/e2e-test.bat
+    > ./scripts/web-server.js
 
 
 
