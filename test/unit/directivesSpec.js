@@ -109,7 +109,7 @@ describe('directives', function () {
             });
             describe('grid', function () {
                 describe('sortActual', function(){
-                    iit('should maintain row selection post-sort', function(){
+                    it('should maintain row selection post-sort', function(){
                         scope.gridOptions.selectItem(0, true);
                         scope.$digest();
                         scope.gridOptions.sortBy('age');
