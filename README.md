@@ -110,6 +110,7 @@ There is a task for CI testing with PhantomJS
 
 
 ## Change Log
+* __2013-04-??__ - Version 2.0.5 - Moving to $http for external template fetching. Should fix issues with grid rendering before templates are retrieved, as well as fetching the same template multiple times.
 * __2013-03-29__ - Version 2.0.3 - fixing some more minor bugs.
 * __2013-03-29__ - Version 2.0.3 - changed default multiSelect behavior, updating some plugins and making some more minor bugfixes.
 * __2013-03-08__ - Version 2.0.2 - minor bugfixes, updating some plugins.
