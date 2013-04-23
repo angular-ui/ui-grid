@@ -69,7 +69,7 @@ Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getti
 
 The testing setup is based on the [angular-seed project](https://github.com/angular/angular-seed/).
 
-Make sure to set your CHROME_BIN environment variable to the pull path to chrome.exe (not just its directory).
+Make sure to set your CHROME_BIN environment variable to the full path to chrome.exe (not just its directory).
 
 ### Grunt tasks
 
@@ -77,6 +77,8 @@ There are a few grunt tasks for running tests:
     
     # Run unit tests
     > grunt karma:unit
+    # Or use this alias:
+    > grunt test
 
     # Run end-to-end tests (make sure to first start a web server as specified below)
     > grunt karma:e2e
@@ -84,15 +86,27 @@ There are a few grunt tasks for running tests:
     # Run midway tests
     > grunt karma:midway
 
-    # Also here's a simple alias for running the karma:unit task:
-    > grunt test
-
 ### End-to-end tests
 
-The e2e tests need a webserver to run on. A simple one from the angular-seed project is included:
+The e2e tests need a webserver to run. A simple one from the angular-seed project is included:
 
     > ./scripts/web-server.js
 
+### Automated testing and building
+
+Running this task will automatically rebuild `build/ng-grid.debug.js` when source files change, and run unit tests when `build/ng-grid.debug.js` or unit test files change. Youc an use this for testing during development.
+
+    # Run this in its own window
+    > grunt testwatch
+
+### Integration testing
+
+There is a task for CI testing with PhantomJS
+
+1. Make sure the PHANTOMJS_BIN environment variable  is set properly
+2. PhantomJS with the singleRun option doesn't appear to function properly in Windows. The tests will run but PhantomJS will not automatically close.
+
+    > grunt karma:ci
 
 
 ## Change Log
