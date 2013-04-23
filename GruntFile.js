@@ -96,17 +96,17 @@
                 options: {
                     configFile: '<%= testFiles.karmaUnit %>',
                     autoWatch: false,
+                    singleRun: true
+                },
+            },
+            watch: {
+                options: {
+                    configFile: '<%= testFiles.karmaUnit %>',
+                    autoWatch: false,
                     // singleRun: true
                 },
                 background: true
             },
-            // watch: {
-            //     options: {
-            //         configFile: '<%= testFiles.karmaConfig %>',
-            //         autoWatch: false,
-            //         background: true
-            //     }
-            // },
             e2e: {
                 configFile: 'config/karma-e2e.conf.js',
                 autoWatch: false,
@@ -117,16 +117,20 @@
                 autoWatch: false,
                 singleRun: true
             },
-            continuous: {
-                singleRun: true,
-                browsers: ['PhantomJS']
+            ci: {
+                options: {
+                    configFile: '<%= testFiles.karmaUnit %>',
+                    autoWatch: false,
+                    singleRun: true,
+                    browsers: ['PhantomJS']
+                },
             }
         },
         watch: {
             // Run unit test with karma
             karma: {
                 files: ['build/ng-grid.debug.js', 'test/unit/**/*.js'],
-                tasks: ['karma:unit:run']
+                tasks: ['karma:watch:run']
             },
             // Auto-build ng-grid.debug.js when source files change
             debug: {
@@ -196,12 +200,8 @@
 
     grunt.registerTask('test', ['karma:unit']);
 
-    // grunt.registerTask('testwatch', 'Watch, build and test', function() {
-    //     grunt.task.run('watch:debug');
-    //     grunt.task.run('karma:unit');
-    // });
-    grunt.registerTask('testwatch', ['karma:unit', 'watch']);
-    
+    // Task for development; auto-build ng-grid.debug.js on source file changes, auto-test on ng-grid.debug.js or unit test changes
+    grunt.registerTask('testwatch', ['karma:watch', 'watch']);
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
