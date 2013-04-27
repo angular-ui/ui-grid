@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/16/2013 15:21
+* Compiled At: 04/27/2013 19:50
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -24,6 +24,8 @@ var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var TEMPLATE_REGEXP = /<.+>/;
 window.ngGrid = {};
 window.ngGrid.i18n = {};
+
+
 var ngGridServices = angular.module('ngGrid.services', []);
 var ngGridDirectives = angular.module('ngGrid.directives', []);
 var ngGridFilters = angular.module('ngGrid.filters', []);
@@ -92,6 +94,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
 			}
 		}
 	}
+	
 	var items;
 	if ($scope.configGroups.length > 0) {
 	   items = grid.rowFactory.parsedData.filter(function (row) {
@@ -100,6 +103,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
 	} else {
 	   items = grid.filteredRows;
 	}
+	
 	var offset = 0;
 	if(rowIndex != 0 && (charCode == 38 || charCode == 13 && evt.shiftKey || charCode == 9 && evt.shiftKey && firstInRow)){ 
 		offset = -1;
@@ -800,6 +804,7 @@ var ngDomAccessProvider = function (grid) {
 			elm.select();
 		}
 	};
+	
 	self.focusCellElement = function($scope, index){	
 		if($scope.selectionProvider.lastClickedRow){
 			var columnIndex = index != undefined ? index : previousColumn;
@@ -817,6 +822,7 @@ var ngDomAccessProvider = function (grid) {
 			}
 		}
 	};
+	
 	var changeUserSelect = function(elm, value) {
 		elm.css({
 			'-webkit-touch-callout': value,
@@ -829,6 +835,7 @@ var ngDomAccessProvider = function (grid) {
 			'user-select': value
 		});
 	};
+	
 	self.selectionHandlers = function($scope, elm){
 		var doingKeyDown = false;
 		elm.bind('keydown', function(evt) {
@@ -1096,6 +1103,8 @@ var ngFooter = function ($scope, grid) {
         return !(curPage > 1);
     };
 };
+
+
 
 var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse) {
     var defaults = {
@@ -2218,9 +2227,13 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ChangeSelection = function (rowItem, evt) {
 		var charCode = evt.which || evt.keyCode;
 		var isUpDownKeyPress = (charCode === 40 || charCode === 38);
-        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
+
+        if (!grid.config.selectWithCheckboxOnly){
+          if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
             self.toggleSelectAll(false, true);
+          }
         }
+
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -2241,10 +2254,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-					thisIndx--;
+					          thisIndx--;
                 } else {
-					prevIndx++;
-				}
+					        prevIndx++;
+				        }
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(rowsArr[prevIndx]);
@@ -2404,7 +2417,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 			elm.bind('mousedown', function(){
 				elm.focus();
 				return true;
-			});
+			});			
 			elm.bind('focus', function(){
 				isFocused = true;
 				return true;
@@ -2657,6 +2670,7 @@ ngGridDirectives.directive('ngIf', [function () {
 
         var childElement;
         var childScope;
+ 
         scope.$watch(attr['ngIf'], function (newValue) {
           if (childElement) {
             childElement.remove();
