@@ -28,7 +28,16 @@
                         }, true);
                     } else {
 						grid.buildColumns();
-					}
+                    }
+                    if (typeof options.totalServerItems == "string") {
+                        $scope.$parent.$watch(options.totalServerItems, function (a) {
+                            if (!a) {
+                                scope.totalServerItems = 1;
+                                return;
+                            }
+                            $scope.totalServerItems = a;
+                        });
+                    }
 					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
