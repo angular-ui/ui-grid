@@ -32,10 +32,10 @@
                     if (typeof options.totalServerItems == "string") {
                         $scope.$parent.$watch(options.totalServerItems, function (a) {
                             if (!a) {
-                                scope.totalServerItems = 1;
+                                $scope.totalServerItems = 1;
                                 return;
                             }
-                            $scope.totalServerItems = a;
+                            $scope.totalServerItems = a; 
                         });
                     }
 					
