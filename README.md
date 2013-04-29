@@ -1,5 +1,7 @@
 # ng-grid : An Angular DataGrid
 
+[![Build Status](https://travis-ci.org/angular-ui/ng-grid.png)](https://travis-ci.org/angular-ui/ng-grid)
+
 __Contributors:__
 
 ng-grid Team:
