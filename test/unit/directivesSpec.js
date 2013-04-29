@@ -88,8 +88,38 @@ describe('directives', function () {
                 });
             });
             describe('column', function () {
-                it('should do something', function () {
-                    //add work here
+                beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
+                    $scope = $rootScope.$new();
+                    $dUtils = $domUtilityService;
+                    $linker = $compile;
+                    $cache = $templateCache;
+
+                    elm = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope = $rootScope;
+                    scope.myData = [{name: "Moroni", age: 50},
+                                  {name: "Tiancum", age: 43},
+                                  {name: "Jacob", age: 27},
+                                  {name: "Nephi", age: 29},
+                                  {name: "Enos", age: 34}];
+                    scope.gridOptions = {
+                        data: 'myData',
+                        columnDefs: [
+                            { field : 'name' },
+                            { field : 'age', displayName: '' },
+                        ]
+                    };
+                    $compile(elm)(scope);
+                    scope.$digest();
+                }));
+
+                it('should default to the field name when displayName is undefined', function() {
+                    expect(elm.find('.ngHeaderText:eq(0)').text()).toEqual('name');
+                });
+
+                it('should not default to the column field name when the displayName is an empty string', function () {
+                    expect(elm.find('.ngHeaderText:eq(1)').text()).toEqual('');
                 });
             });
             describe('domAccessProvider', function () {

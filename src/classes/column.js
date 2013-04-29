@@ -12,7 +12,10 @@
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 	self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
     self.headerRowHeight = config.headerRowHeight;
-    self.displayName = colDef.displayName || colDef.field;
+
+    // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
+    self.displayName = (colDef.displayName === undefined) ? colDef.field : colDef.displayName;
+
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
