@@ -10,7 +10,11 @@
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-	self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+
+    // TODO: Use the column's definition for enabling cell editing
+	// self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : config.enableCellEdit;
+
     self.headerRowHeight = config.headerRowHeight;
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name

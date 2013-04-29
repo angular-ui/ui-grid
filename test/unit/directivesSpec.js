@@ -87,41 +87,119 @@ describe('directives', function () {
                     //add work here
                 });
             });
-            describe('column', function () {
-                beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
-                    $scope = $rootScope.$new();
-                    $dUtils = $domUtilityService;
-                    $linker = $compile;
-                    $cache = $templateCache;
 
+            describe('column', function () {
+                it('should allow colDef.enableCellEdit to override config.enableCellEdit', inject(function ($rootScope, $compile) {
                     elm = angular.element(
                         '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
                     );
-                    scope = $rootScope;
-                    scope.myData = [{name: "Moroni", age: 50},
-                                  {name: "Tiancum", age: 43},
-                                  {name: "Jacob", age: 27},
-                                  {name: "Nephi", age: 29},
-                                  {name: "Enos", age: 34}];
-                    scope.gridOptions = {
+
+                    $rootScope.myData = [{name: "Moroni", age: 50},
+                                    {name: "Tiancum", age: 43},
+                                    {name: "Jacob", age: 27},
+                                    {name: "Nephi", age: 29},
+                                    {name: "Enos", age: 34}];
+
+                    $rootScope.gridOptions = {
                         data: 'myData',
+                        enableCellEdit: true,
                         columnDefs: [
-                            { field : 'name' },
-                            { field : 'age', displayName: '' },
+                            {field:'name', enableCellEdit: false },
+                            {field:'age' }
                         ]
                     };
-                    $compile(elm)(scope);
-                    scope.$digest();
-                }));
 
-                it('should default to the field name when displayName is undefined', function() {
-                    expect(elm.find('.ngHeaderText:eq(0)').text()).toEqual('name');
+                    var element = $compile(elm)($rootScope);
+                    $rootScope.$digest();
+
+                    var cell = element.find('.ngRow:eq(0) .ngCell.col0 [ng-dblclick]');
+
+                    // Have to use jasmine's async testing helpers to get around the setTimeout(..., 0) in ng-cell-has-focus.editCell()
+                    runs(function() {
+                        browserTrigger(cell, 'dblclick');
+                    });
+                    waits(200);
+                    runs(function() {
+                        expect(cell.find('input').length).toEqual(0);
+                    });
+                }));
+            });
+            
+            describe('column', function () {
+                describe('enableCellEdit option', function () {
+                    it('should allow colDef.enableCellEdit to override config.enableCellEdit', inject(function ($rootScope, $compile) {
+                        elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+
+                        $rootScope.myData = [{name: "Moroni", age: 50},
+                                        {name: "Tiancum", age: 43},
+                                        {name: "Jacob", age: 27},
+                                        {name: "Nephi", age: 29},
+                                        {name: "Enos", age: 34}];
+
+                        $rootScope.gridOptions = {
+                            data: 'myData',
+                            enableCellEdit: true,
+                            columnDefs: [
+                                {field:'name', enableCellEdit: false },
+                                {field:'age' }
+                            ]
+                        };
+
+                        var element = $compile(elm)($rootScope);
+                        $rootScope.$digest();
+
+                        var cell = element.find('.ngRow:eq(0) .ngCell.col0 [ng-dblclick]');
+
+                        // Have to use jasmine's async testing helpers to get around the setTimeout(..., 0) in ng-cell-has-focus.editCell()
+                        runs(function() {
+                            browserTrigger(cell, 'dblclick');
+                        });
+                        waits(200);
+                        runs(function() {
+                            expect(cell.find('input').length).toEqual(0);
+                        });
+                    }));
                 });
 
-                it('should not default to the column field name when the displayName is an empty string', function () {
-                    expect(elm.find('.ngHeaderText:eq(1)').text()).toEqual('');
+                describe('displayName option', function() {
+                    beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
+                        $scope = $rootScope.$new();
+                        $dUtils = $domUtilityService;
+                        $linker = $compile;
+                        $cache = $templateCache;
+
+                        elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+                        scope = $rootScope;
+                        scope.myData = [{name: "Moroni", age: 50},
+                                      {name: "Tiancum", age: 43},
+                                      {name: "Jacob", age: 27},
+                                      {name: "Nephi", age: 29},
+                                      {name: "Enos", age: 34}];
+                        scope.gridOptions = {
+                            data: 'myData',
+                            columnDefs: [
+                                { field : 'name' },
+                                { field : 'age', displayName: '' },
+                            ]
+                        };
+                        $compile(elm)(scope);
+                        scope.$digest();
+                    }));
+
+                    it('should default to the field name when undefined', function() {
+                        expect(elm.find('.ngHeaderText:eq(0)').text()).toEqual('name');
+                    });
+
+                    it('should not default to the column field name when set to an empty string', function () {
+                        expect(elm.find('.ngHeaderText:eq(1)').text()).toEqual('');
+                    });
                 });
             });
+
             describe('domAccessProvider', function () {
                 it('should do something', function () {
                     //add work here
