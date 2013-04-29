@@ -12,9 +12,13 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 		// up/down key navigation in multi-selections
 		var charCode = evt.which || evt.keyCode;
 		var isUpDownKeyPress = (charCode === 40 || charCode === 38);
-        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
+
+        if (!grid.config.selectWithCheckboxOnly){
+          if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
             self.toggleSelectAll(false, true);
+          }
         }
+
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -35,10 +39,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-					thisIndx--;
+					          thisIndx--;
                 } else {
-					prevIndx++;
-				}
+					        prevIndx++;
+				        }
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(rowsArr[prevIndx]);
