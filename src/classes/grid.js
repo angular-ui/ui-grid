@@ -1,7 +1,7 @@
 ﻿/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
-var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse) {
+var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
@@ -215,32 +215,46 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.data = [];
     self.lateBindColumns = false;
     self.filteredRows = [];
+
+    self.initTemplates = function() {
+        var templates = ['rowTemplate', 'aggregateTemplate', 'headerRowTemplate', 'checkboxCellTemplate', 'checkboxHeaderTemplate', 'menuTemplate', 'footerTemplate'];
+
+        var promises = [];
+        templates.forEach(function(template) {
+            promises.push( self.getTemplate(template) );
+        });
+
+        return $q.all(promises);
+    };
     
     //Templates
     // test templates for urls and get the tempaltes via synchronous ajax calls
-    var getTemplate = function (key) {
+    self.getTemplate = function (key) {
         var t = self.config[key];
         var uKey = self.gridId + key + ".html";
+        var p = $q.defer();
         if (t && !TEMPLATE_REGEXP.test(t)) {
-            $templateCache.put(uKey, $.ajax({
-                type: "GET",
-                url: t,
-                async: false
-            }).responseText);
+            $http.get(t, {
+                cache: $templateCache
+            })
+            .success(function(data){
+                $templateCache.put(uKey, data);
+                p.resolve();
+            })
+            .error(function(err){
+                p.reject("Could not load template: " + t);
+            });
         } else if (t) {
             $templateCache.put(uKey, t);
+            p.resolve();
         } else {
             var dKey = key + ".html";
             $templateCache.put(uKey, $templateCache.get(dKey));
+            p.resolve();
         }
+
+        return p.promise;
     };
-    getTemplate('rowTemplate');
-    getTemplate('aggregateTemplate');
-    getTemplate('headerRowTemplate');
-    getTemplate('checkboxCellTemplate');
-    getTemplate('checkboxHeaderTemplate');
-    getTemplate('menuTemplate');
-    getTemplate('footerTemplate');
 
     if (typeof self.config.data == "object") {
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
@@ -442,35 +456,41 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
     };
     self.init = function() {
-        //factories and services
-        $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
-        $scope.domAccessProvider = new ngDomAccessProvider(self);
-		self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
-        self.searchProvider = new ngSearchProvider($scope, self, $filter);
-        self.styleProvider = new ngStyleProvider($scope, self);
-        $scope.$watch('configGroups', function(a) {
-          var tempArr = [];
-          angular.forEach(a, function(item) {
-            tempArr.push(item.field || item);
-          });
-          self.config.groups = tempArr;
-          self.rowFactory.filteredRowsChanged();
-          $scope.$emit('ngGridEventGroups', a);
-        }, true);
-        $scope.$watch('columns', function (a) {
-            domUtilityService.BuildStyles($scope, self, true);
-            $scope.$emit('ngGridEventColumns', a);
-        }, true);
-        $scope.$watch(function() {
-            return options.i18n;
-        }, function(newLang) {
-            $utils.seti18n($scope, newLang);
+        return self.initTemplates().then(function(){
+            //factories and services
+            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
+            $scope.domAccessProvider = new ngDomAccessProvider(self);
+    		self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
+            self.searchProvider = new ngSearchProvider($scope, self, $filter);
+            self.styleProvider = new ngStyleProvider($scope, self);
+            $scope.$watch('configGroups', function(a) {
+              var tempArr = [];
+              angular.forEach(a, function(item) {
+                tempArr.push(item.field || item);
+              });
+              self.config.groups = tempArr;
+              self.rowFactory.filteredRowsChanged();
+              $scope.$emit('ngGridEventGroups', a);
+            }, true);
+            $scope.$watch('columns', function (a) {
+                domUtilityService.BuildStyles($scope, self, true);
+                $scope.$emit('ngGridEventColumns', a);
+            }, true);
+            $scope.$watch(function() {
+                return options.i18n;
+            }, function(newLang) {
+                $utils.seti18n($scope, newLang);
+            });
+            self.maxCanvasHt = self.calcMaxCanvasHeight();
+            if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
+                self.getColsFromFields();
+                self.sortActual();
+            }
         });
-        self.maxCanvasHt = self.calcMaxCanvasHeight();
-        if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-            self.getColsFromFields();
-            self.sortActual();
-        }
+
+        // var p = $q.defer();
+        // p.resolve();
+        // return p.promise;
     };
    
     self.resizeOnData = function(col) {
@@ -565,7 +585,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(tempData, function(item, i) {
                 var e = self.rowMap[i];
                 if (e != undefined) {
-                    var v = self.rowCache[v];
+                    var v = self.rowCache[i];
                     if(v != undefined) {
                         item.preSortSelected = v.selected;
                         item.preSortIndex = i;
@@ -813,6 +833,4 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         return newDim;
     };
-    //call init
-    self.init();
 };

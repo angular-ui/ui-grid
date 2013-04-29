@@ -7,12 +7,31 @@ describe('directives', function () {
     var $scope;
     var $linker;
     var $cache;
+    var elm, scope;
+
+    // Load the ngGrid module
     beforeEach(module('ngGrid'));
+
     beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
         $scope = $rootScope.$new();
         $dUtils = $domUtilityService;
         $linker = $compile;
         $cache = $templateCache;
+
+        elm = angular.element(
+            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+        );
+
+        scope = $rootScope;
+        scope.myData = [{name: "Moroni", age: 50},
+                      {name: "Tiancum", age: 43},
+                      {name: "Jacob", age: 27},
+                      {name: "Nephi", age: 29},
+                      {name: "Enos", age: 34}];
+        scope.gridOptions = { data: 'myData' };
+
+        $compile(elm)(scope);
+        scope.$digest();
     }));
     
     describe('ng-cell-has-focus', function() {
@@ -89,8 +108,28 @@ describe('directives', function () {
                 });
             });
             describe('grid', function () {
-                it('should do something', function () {
-                    //add work here
+                describe('sortActual', function(){
+                    it('should maintain row selection post-sort', function(){
+                        scope.gridOptions.selectItem(0, true);
+                        scope.$digest();
+                        scope.gridOptions.sortBy('age');
+                        scope.$digest();
+
+                        var oldRow = elm.find('.ngRow:last');
+                        expect(oldRow.html()).toMatch(/Moroni.+?50/);
+                        expect(oldRow.hasClass('selected')).toBe(true);
+                    });
+
+                    it('should allow newly created rows to be selected', function(){
+                        // Create a new row
+                        var rowIndex = scope.myData.push({ name: 'Bob', age: '8' });
+                        scope.$digest();
+                        scope.gridOptions.selectItem(rowIndex-1, true);
+                        scope.$digest();
+
+                        var newRow = elm.find('.ngRow:nth-child(' + (rowIndex) + ')');
+                        expect(newRow.hasClass('selected')).toBe(true);
+                    });
                 });
             });
             describe('row', function () {
