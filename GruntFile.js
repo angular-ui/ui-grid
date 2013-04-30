@@ -203,6 +203,8 @@
     // Task for development; auto-build ng-grid.debug.js on source file changes, auto-test on ng-grid.debug.js or unit test changes
     grunt.registerTask('testwatch', ['karma:watch', 'watch']);
 
+    grunt.registerTask('test-ci', ['debug', 'karma:ci']);
+
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     //grunt.loadNpmTasks('grunt-contrib-concat');

@@ -13,4 +13,4 @@
   - npm install --quiet -g grunt-cli karma
   - npm install
 
- script: grunt karma:ci
+ script: grunt test-ci

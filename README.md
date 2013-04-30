@@ -107,8 +107,9 @@ There is a task for CI testing with PhantomJS
 
 1. Make sure the PHANTOMJS_BIN environment variable  is set properly
 2. PhantomJS with the singleRun option doesn't appear to function properly in Windows. The tests will run but PhantomJS will not automatically close.
+3. This task first builds the debug version of the source files and does not clean them up. If you run it you will have uncommitted changes in your working directory that you probably want to lose. `git checkout build` to lose them.
 
-    > grunt karma:ci
+    > grunt test-ci
 
 
 ## Change Log
