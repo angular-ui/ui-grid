@@ -65,6 +65,12 @@
 		"definition": "Enable or disable reordering of columns",
 		"plunker": "Link"
 	},
+    {
+		"id": "enableHighlighting",
+		"defaultValue": "false",
+		"definition": "Enable or disable cell content selection",
+		"plunker": "Link"
+	},
 	{	
 		"id": "enablePaging",
 		"defaultValue": "false",
