@@ -73,6 +73,11 @@
             cols = $scope.columns,
             sumWidth = 0;
 
+        var groupPadding = 0;
+        if (grid.config.inlineAggregate) {
+            groupPadding = grid.config.groups.length * 125;
+        }
+
         if (!$style) {
             $style = $('#' + gridId);
             if (!$style[0]) {
@@ -82,9 +87,9 @@
         $style.empty();
         var trw = $scope.totalRowWidth();
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngRow { width: " + trw + "px; }" +
+            "." + gridId + " .ngRow { width: " + trw + "px; left: " + groupPadding + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
+            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px; left: " + groupPadding + "px; }";
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {

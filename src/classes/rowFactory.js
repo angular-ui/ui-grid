@@ -73,11 +73,13 @@
         self.wasGrouped = true;
         self.parentCache = [];
         var x = 0;
-        var temp = self.parsedData.filter(function (e) {
+        var aggHeader = 0;
+        var visible = self.parsedData.filter(function (e) {
             if (e.isAggRow) {
                 if (e.parent && e.parent.collapsed) {
                     return false;
                 }
+                ++aggHeader;
                 return true;
             }
             if (!e[NG_HIDDEN]) {
@@ -85,12 +87,17 @@
             }
             return !e[NG_HIDDEN];
         });
-        self.totalRows = temp.length;
+        self.totalRows = visible.length;
         var rowArr = [];
+        var inplace = grid.config.inlineAggregate;
+        var aggCount = 0;
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
-            if (temp[i]) {
-                temp[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(temp[i]);
+            if (visible[i]) {
+                visible[i].offsetTop = (i - aggCount) * grid.config.rowHeight;
+                if (inplace && visible[i].isAggRow && !visible[i].collapsed) {
+                    ++aggCount
+                }
+                rowArr.push(visible[i]);
             }
         }
         grid.setRenderedRows(rowArr);
@@ -212,7 +219,7 @@
                 cols.splice(0, 0, new ngColumn({
                     colDef: {
                         field: '',
-                        width: 25,
+                        width: grid.config.inlineAggregate? 0 : 25,
                         sortable: false,
                         resizable: false,
                         headerCellTemplate: '<div class="ngAggHeader"></div>',
