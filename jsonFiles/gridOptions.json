@@ -114,6 +114,12 @@
 		"plunker": "Link"
 	},
 	{
+		"id": "groupsCollapsedByDefault",
+		"defaultValue": "true",
+		"definition": "Collapse entries When grouping is enabled",
+		"plunker": "Link"
+	},
+	{
 		"id": "headerRowHeight",
 		"defaultValue": "32",
 		"definition": "The height of the header row in pixels.",
