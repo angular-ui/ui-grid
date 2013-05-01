@@ -261,6 +261,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     }
     self.calcMaxCanvasHeight = function() {
         return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
+            if (self.config.inlineAggregate && e.isAggRow && !e.collapsed) {
+                return false;
+            }
             return !e[NG_HIDDEN];
         }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
     };
@@ -427,9 +430,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         if (asterisksArray.length > 0) {
             self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
             // get the remaining width
-            var remainigWidth = self.rootDim.outerWidth - totalWidth;
+            var remainingWidth = self.rootDim.outerWidth - totalWidth;
+            remainingWidth -= self.config.groups.length * (self.config.inlineAggregate ? 125 : 25)
             // calculate the weight of each asterisk rounded down
-            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
+            var asteriskVal = Math.floor(remainingWidth / asteriskNum);
             // set the width of each column based on the number of stars
             angular.forEach(asterisksArray, function(col) {
                 var t = col.width.length;
