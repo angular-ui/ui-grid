@@ -211,8 +211,58 @@ describe('directives', function () {
                 });
             });
             describe('footer', function () {
-                it('should do something', function () {
-                    //add work here
+                var scope,
+                    elm,
+                    element,
+                    comp;
+
+                beforeEach(inject(function ($rootScope, $compile) {
+                    scope = $rootScope;
+                    comp = $compile;
+
+                    elm = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+
+                    scope.myData = [{name: "Moroni", age: 50},
+                                         {name: "Tiancum", age: 43},
+                                         {name: "Jacob", age: 27},
+                                         {name: "Nephi", age: 29},
+                                         {name: "Enos", age: 34}];
+
+                    scope.gridOptions = {
+                        data: 'myData',
+                        totalServerItems: 357
+                    };
+                }));
+
+                it('should show the proper number of total items when it is a number', function(){
+                    // Compile the grid as-is with a stringy totalServerItems
+                    element = comp(elm)(scope);
+                    scope.$digest();
+
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(357);
+                });
+
+                it('should update the total items when totalServerItems is increased', function () {
+                    // Compile the grid with a stringy totalServerItems
+                    scope.serverItems = 357;
+                    scope.gridOptions.totalServerItems = 'serverItems';
+                    element = comp(elm)(scope);
+                    scope.$digest();
+
+                    // The number should be correct of the bat
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(357);
+
+                    // If we update the totalServerItems...
+                    scope.serverItems = 308;
+                    scope.$digest();
+
+                    // ...totalServerItems in the grid's scope should be updated.
+                    expect(element.scope().totalServerItems).toEqual(308);
+
+                    // ...it should be reflected in the default footer template
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(308);
                 });
             });
             describe('grid', function () {
