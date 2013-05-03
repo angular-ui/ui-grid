@@ -27,7 +27,7 @@
 		<tr ng-repeat="data in columnDefsOptionsData">
 			<td style="padding: 5px">{{data.id}}</td>
 			<td style="padding: 5px">{{data.defaultValue}}</td>
-			<td style="padding: 5px">{{data.definition}}</td>
+			<td style="padding: 5px" ng-bind-html-unsafe="data.definition"></td>
 			<td style="padding: 5px">{{data.plunker}}</td>
 		</tr>
 	</table>
