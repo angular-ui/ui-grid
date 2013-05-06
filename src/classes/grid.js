@@ -220,7 +220,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         var templates = ['rowTemplate', 'aggregateTemplate', 'headerRowTemplate', 'checkboxCellTemplate', 'checkboxHeaderTemplate', 'menuTemplate', 'footerTemplate'];
 
         var promises = [];
-        templates.forEach(function(template) {
+        angular.forEach(templates, function(template) {
             promises.push( self.getTemplate(template) );
         });
 

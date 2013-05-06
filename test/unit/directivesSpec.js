@@ -266,6 +266,26 @@ describe('directives', function () {
                 });
             });
             describe('grid', function () {
+                describe('initTemplates', function() {
+                   it('should not call Array.forEach() on the template list (IE8 does not support)', inject(function ($rootScope, $compile) {
+                        var elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+                        $compile(elm)($rootScope);
+
+                        spyOn(angular, 'forEach');
+                        spyOn(Array.prototype, 'forEach');
+
+                        // Manually call the initTemplates() function again
+                        elm.scope().gridOptions.ngGrid.initTemplates();
+
+                        // dump(Array.prototype.forEach.mostRecentCall);
+
+                        expect(angular.forEach).toHaveBeenCalled();
+                        expect(Array.prototype.forEach).not.toHaveBeenCalled();
+                    }));
+                });
+
                 describe('sortActual', function(){
                     it('should maintain row selection post-sort', function(){
                         scope.gridOptions.selectItem(0, true);
