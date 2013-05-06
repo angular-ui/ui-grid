@@ -116,7 +116,7 @@
 	{
 		"id": "groupsCollapsedByDefault",
 		"defaultValue": "true",
-		"definition": "Collapse entries When grouping is enabled",
+		"definition": "Collapse entries when grouping is enabled",
 		"plunker": "Link"
 	},
 	{
