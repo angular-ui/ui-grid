@@ -65,6 +65,12 @@
 		"definition": "Enable or disable reordering of columns",
 		"plunker": "Link"
 	},
+    {
+		"id": "enableHighlighting",
+		"defaultValue": "false",
+		"definition": "Enable or disable cell content selection",
+		"plunker": "Link"
+	},
 	{	
 		"id": "enablePaging",
 		"defaultValue": "false",
@@ -105,6 +111,12 @@
 		"id": "groups",
 		"defaultValue": "[]",
 		"definition": "Initial fields to group data by. Array of field names, not displayName.",
+		"plunker": "Link"
+	},
+	{
+		"id": "groupsCollapsedByDefault",
+		"defaultValue": "true",
+		"definition": "Collapse entries When grouping is enabled",
 		"plunker": "Link"
 	},
 	{
