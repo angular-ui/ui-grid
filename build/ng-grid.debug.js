@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/07/2013 07:44
+* Compiled At: 04/23/2013 14:36
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -351,7 +351,7 @@ ngGridServices.factory('$sortService', ['$parse', function($parse) {
                 return sortService.sortBool;
             case "string":
                 // if number string return number string sort fn. else return the str
-                return item.match(/^[-+]?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
+                return item.match(/^-?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
             default:
                 //check if the item is a valid Date
                 if (Object.prototype.toString.call(item) === '[object Date]') {
