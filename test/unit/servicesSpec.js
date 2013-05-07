@@ -140,6 +140,21 @@ describe('Sort Service', function () {
     beforeEach(inject(function ($sortService) {
         $sort = $sortService;
     }));
+
+    describe('guessing the sort function', function() {
+	      var foo = {};
+	      it('should return the correct function for the type', function () {
+	        expect($sort.guessSortFn(true)).toEqual($sort.sortBool);
+	        expect($sort.guessSortFn(false)).toEqual($sort.sortBool);
+	        expect($sort.guessSortFn(-0.13)).toEqual($sort.sortNumber);
+	        expect($sort.guessSortFn("-0.13")).toEqual($sort.sortNumberStr);
+	        expect($sort.guessSortFn("0.13")).toEqual($sort.sortNumberStr);
+	        expect($sort.guessSortFn("+0.13")).toEqual($sort.sortNumberStr);
+	        expect($sort.guessSortFn(new Date())).toEqual($sort.sortDate);
+	        expect($sort.guessSortFn("foo")).toEqual($sort.sortAlpha);
+	        expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
+	      });
+	  });
 });
 
 describe('Utility Service', function () {
