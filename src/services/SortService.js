@@ -14,7 +14,7 @@
                 return sortService.sortBool;
             case "string":
                 // if number string return number string sort fn. else return the str
-                return item.match(/^-?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
+                return item.match(/^[-+]?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
             default:
                 //check if the item is a valid Date
                 if (Object.prototype.toString.call(item) === '[object Date]') {
