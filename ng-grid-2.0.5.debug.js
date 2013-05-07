@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/23/2013 14:36
+* Compiled At: 05/05/2013 18:23
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1919,7 +1919,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 	        }
 	        newRange = new ngRange(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
+	        var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.filteredRows.length;
 	        newRange = new ngRange(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
 	    }
 	    self.prevScrollTop = scrollTop;
