@@ -223,8 +223,8 @@
 	},
 	{	
 		"id": "sortInfo",
-		"defaultValue": "undefined",
-		"definition": "Define a sortInfo object to specify a default sorting state. You can also observe this variable to utilize server-side sorting (see useExternalSorting). Syntax is sortinfo: { field: 'fieldName', direction: 'ASC'/'asc' || 'desc'/'DESC'}",
+		"defaultValue": "{ fields: [], directions: [] }",
+		"definition": "Define a sortInfo object to specify a default sorting state. You can also observe this variable to utilize server-side sorting (see useExternalSorting). Syntax is sortinfo: { fields: ['fieldName1',' fieldName2'], directions: ['asc', 'desc']}.  Directions are case-insensitive",
 		"plunker": "Link"
 	},
     {
