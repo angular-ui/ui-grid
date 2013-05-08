@@ -127,9 +127,10 @@ describe('directives', function () {
             
             describe('column', function () {
                 describe('cell editing', function () {
-                    var elm, element, $scope;
+                    var elm, element, $scope, $compile;
 
-                    beforeEach(inject(function ($rootScope, $compile) {
+                    beforeEach(inject(function ($rootScope, _$compile_) {
+                        $compile = _$compile_;
                         $scope = $rootScope;
                         elm = angular.element(
                             '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
@@ -180,6 +181,74 @@ describe('directives', function () {
                                 var input = cell.find('input');
                                 input.triggerHandler('keyup');
                             }).not.toThrow();
+                        });
+                    });
+
+                    it('should allow editing of complex properties', function() {
+                        // Update the grid data to use complex properties
+                        elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+
+                        $scope.myData = [
+                            { 
+                                address: '123 Main St',
+                                person: {
+                                    name: 'Bob',
+                                    age: 20
+                                }
+                            },
+                            { 
+                                address: '1600 Pennsylvania Ave.',
+                                person: {
+                                    name: 'Barack',
+                                    age: 51
+                                }
+                            }
+                        ];
+                        $scope.gridOptions.columnDefs =  [
+                            { field: 'person.name' },
+                            { field: 'person.age' },
+                            { field: 'address' }
+                        ];
+
+                        // Recompile the grid
+                        element = $compile(elm)($scope);
+                        $scope.$digest();
+
+                        // Get the first editable cell
+                        var cell = element.find('.ngRow:eq(0) .ngCell.col0 [ng-dblclick]');
+
+                        runs(function() {
+                            // Double-click on the first editable cell
+                            browserTrigger(cell, 'dblclick');
+                        });
+                        waits(200);
+                        runs(function() {
+                            var input = cell.find('input');
+
+                            expect(input.val()).toEqual('Bob');
+
+                            // Change the value to 'Test'
+                            var testName = 'Test Name';
+                            input.val(testName);
+
+                            expect(function(){
+                                // Trigger the input handler
+                                input.triggerHandler('keyup');
+                            }).not.toThrow();
+
+                            // The value of the input should stay 'Test'
+                            expect(input.val()).toEqual(testName);
+
+                            // The change should be reflected in the data array
+                            expect($scope.myData[0].person.name).toEqual(testName);
+
+                            // Blur so the input goes away
+                            input.blur();
+
+                            // 'Test' should be visible in the cell html
+                            expect(element.find('.ngRow:eq(0) .ngCell.col0').text()).toContain(testName);
                         });
                     });
 
