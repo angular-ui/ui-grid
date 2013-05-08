@@ -126,19 +126,22 @@ describe('directives', function () {
             });
             
             describe('column', function () {
-                describe('enableCellEdit option', function () {
-                    it('should allow colDef.enableCellEdit to override config.enableCellEdit', inject(function ($rootScope, $compile) {
+                describe('cell editing', function () {
+                    var elm, element, $scope;
+
+                    beforeEach(inject(function ($rootScope, $compile) {
+                        $scope = $rootScope;
                         elm = angular.element(
                             '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
                         );
 
-                        $rootScope.myData = [{name: "Moroni", age: 50},
+                        $scope.myData = [{name: "Moroni", age: 'test' },
                                         {name: "Tiancum", age: 43},
                                         {name: "Jacob", age: 27},
                                         {name: "Nephi", age: 29},
                                         {name: "Enos", age: 34}];
 
-                        $rootScope.gridOptions = {
+                        $scope.gridOptions = {
                             data: 'myData',
                             enableCellEdit: true,
                             columnDefs: [
@@ -147,9 +150,11 @@ describe('directives', function () {
                             ]
                         };
 
-                        var element = $compile(elm)($rootScope);
-                        $rootScope.$digest();
+                        element = $compile(elm)($scope);
+                        $scope.$digest();
+                    }));
 
+                    it('should allow colDef.enableCellEdit to override config.enableCellEdit', function() {
                         var cell = element.find('.ngRow:eq(0) .ngCell.col0 [ng-dblclick]');
 
                         // Have to use jasmine's async testing helpers to get around the setTimeout(..., 0) in ng-cell-has-focus.editCell()
@@ -160,7 +165,25 @@ describe('directives', function () {
                         runs(function() {
                             expect(cell.find('input').length).toEqual(0);
                         });
-                    }));
+                    });
+
+                    it('should not throw an exception when the column contains a non-string', function() {
+                        var cell = element.find('.ngRow:eq(0) .ngCell.col1 [ng-dblclick]');
+
+                        runs(function() {
+                            browserTrigger(cell, 'dblclick');
+                        });
+                        waits(200);
+                        runs(function() {
+                            expect(function(){
+                                // Trigger the input handler
+                                var input = cell.find('input');
+                                input.triggerHandler('keyup');
+                            }).not.toThrow();
+                        });
+                    });
+
+                    // TODO: add a test for enter key modifying the inputted contents
                 });
 
                 describe('displayName option', function() {
