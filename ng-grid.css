@@ -186,6 +186,9 @@
 	overflow: auto;
     min-height: 20px;
 }
+.ngViewport:focus {
+    outline: none;
+}
 
 .ngCanvas{
     position: relative;
