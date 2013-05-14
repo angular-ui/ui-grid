@@ -220,15 +220,15 @@
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }// resize on window resize
         $(window).resize(function() {
-            window.clearTimeout(self.timeout);
-            self.timeout = window.setTimeout(function(){
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function(){
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
         // resize on parent resize as well.
         $(grid.$root.parent()).on('resize', function() {
-            window.clearTimeout(self.timeout);
-            self.timeout = window.setTimeout(function() {
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function() {
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
