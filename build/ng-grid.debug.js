@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/23/2013 14:36
+* Compiled At: 05/14/2013 21:24
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1910,7 +1910,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 	    var newRange;
 	    if (self.filteredRows.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
-	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+            if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        //Have we hit the threshold going up?
@@ -1919,8 +1919,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 	        }
 	        newRange = new ngRange(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
 	    } else {
-	        var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
-	        newRange = new ngRange(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
+            newRange = new ngRange($scope.configGroups.length > 0 ? 0 : rowIndex, $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.minRowsToRender() + EXCESS_ROWS + rowIndex);
 	    }
 	    self.prevScrollTop = scrollTop;
 	    self.rowFactory.UpdateViewableRange(newRange);
