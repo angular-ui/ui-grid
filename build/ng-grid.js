@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/14/2013 22:18
+* Compiled At: 05/14/2013 22:34
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1038,14 +1038,14 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         $(window).resize(function() {
-            window.clearTimeout(self.timeout);
-            self.timeout = window.setTimeout(function(){
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function(){
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
         $(grid.$root.parent()).on('resize', function() {
-            window.clearTimeout(self.timeout);
-            self.timeout = window.setTimeout(function() {
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function() {
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
