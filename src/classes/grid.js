@@ -1,4 +1,4 @@
-﻿/// <reference path="footer.js" />
+/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
@@ -715,7 +715,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 	    var newRange;
 	    if (self.filteredRows.length > self.config.virtualizationThreshold) {
 	        // Have we hit the threshold going down?
-	        if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+            if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
 	            return;
 	        }
 	        //Have we hit the threshold going up?

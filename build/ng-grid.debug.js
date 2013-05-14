@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/14/2013 22:08
+* Compiled At: 05/14/2013 22:18
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -907,6 +907,7 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
     self.groupToMove = undefined;
+    self.timeout = undefined;
     self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
         if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
@@ -1123,15 +1124,15 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }// resize on window resize
         $(window).resize(function() {
-            window.clearTimeout();
-            window.setTimeout(function(){
+            window.clearTimeout(self.timeout);
+            self.timeout = window.setTimeout(function(){
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
         // resize on parent resize as well.
         $(grid.$root.parent()).on('resize', function() {
-            window.clearTimeout();
-            window.setTimeout(function() {
+            window.clearTimeout(self.timeout);
+            self.timeout = window.setTimeout(function() {
                 domUtilityService.RebuildGrid($scope,grid);
             }, 50)
         });
