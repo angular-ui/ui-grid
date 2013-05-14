@@ -3,6 +3,7 @@
     // The init method gets called during the ng-grid directive execution.
     self.colToMove = undefined;
     self.groupToMove = undefined;
+    self.timeout = undefined;
     self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
         if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
@@ -219,11 +220,17 @@
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }// resize on window resize
         $(window).resize(function() {
-            domUtilityService.RebuildGrid($scope,grid);
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function(){
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 50)
         });
         // resize on parent resize as well.
         $(grid.$root.parent()).on('resize', function() {
-            domUtilityService.RebuildGrid($scope, grid);
+            $timeout.cancel(self.timeout);
+            self.timeout = $timeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 50)
         });
     };
     // In this example we want to assign grid events.
