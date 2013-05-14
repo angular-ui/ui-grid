@@ -134,7 +134,7 @@
     					options.gridId = grid.gridId;
     					options.ngGrid = grid;
     					options.$gridScope = $scope;
-                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
+    					options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
     					$scope.$on('ngGridEventDigestGrid', function(){
     						domUtilityService.digest($scope.$parent);
     					});			
@@ -149,7 +149,7 @@
                         //initialize plugins.
                         angular.forEach(options.plugins, function (p) {
                             if (typeof p === 'function') {
-                                p = p.call(this);
+                                p = new p(); //If p is a function, then we assume it is a class.
                             }
                             p.init($scope.$new(), grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;

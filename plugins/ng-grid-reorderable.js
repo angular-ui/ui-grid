@@ -2,7 +2,7 @@
 DO NOT USE THIS PLUGIN. IT IS ONLY AN EXAMPLE FOR INSTRUCTIONAL PURPOSES.
 */
 
-ngGridReorderable = function(options) {
+function ngGridReorderable (options) {
     var defaults = {
         enableHeader: true,
         enableRow: true

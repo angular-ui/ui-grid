@@ -129,7 +129,7 @@
         watch: {
             // Run unit test with karma
             karma: {
-                files: ['build/ng-grid.debug.js', 'test/unit/**/*.js'],
+                files: ['build/ng-grid.debug.js', 'test/unit/**/*.js', 'plugins/*.js'],
                 tasks: ['karma:watch:run']
             },
             // Auto-build ng-grid.debug.js when source files change

@@ -12,6 +12,9 @@ files = [
 
   // App code
   'build/ng-grid.debug.js',
+    
+  // Plugins
+  'plugins/*.js',
 
   // Test specs
   'test/unit/**/*.js'
