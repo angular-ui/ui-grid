@@ -219,11 +219,17 @@
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }// resize on window resize
         $(window).resize(function() {
-            domUtilityService.RebuildGrid($scope,grid);
+            window.clearTimeout();
+            window.setTimeout(function(){
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 50)
         });
         // resize on parent resize as well.
         $(grid.$root.parent()).on('resize', function() {
-            domUtilityService.RebuildGrid($scope, grid);
+            window.clearTimeout();
+            window.setTimeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 50)
         });
     };
     // In this example we want to assign grid events.
