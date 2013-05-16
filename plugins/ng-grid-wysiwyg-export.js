@@ -10,7 +10,7 @@
         self.services = services;
     };
 
-    self.export = function () {
+    self.exportData = function () {
         var ret = {
             columns: [],
             columnWidths: [],
