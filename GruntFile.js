@@ -136,6 +136,10 @@
             debug: {
                 files: ['<%= srcFiles %>'],
                 tasks: ['debug']
+            },
+            less: {
+                files: ['src/less/**/*.less'],
+                tasks: ['less']
             }
         },
         ngtemplates: {
@@ -190,6 +194,16 @@
             templates: {
                 src: ["<%= ngtemplates.ngGrid.dest %>"]
             }
+        },
+        less: {
+            build: {
+                options: {
+                    // yuicompress: true
+                },
+                files: {
+                    "ng-grid.css": ["src/less/global.less"]
+                }
+            }
         }
     });
 
@@ -207,20 +221,21 @@
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
     //grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
 
     // Old default task
-    grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('build', ['less', 'ngtemplates', 'concat', 'uglify', 'clean']);
 
     // Default task(s).
     grunt.registerTask('default', 'No default task', function() {
         grunt.log.write('The old default task has been moved to "build" to prevent accidental triggering');
     });
 
-    grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
-    grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
+    grunt.registerTask('debug', ['less', 'ngtemplates', 'concat:debug', 'clean']);
+    grunt.registerTask('prod', ['less', 'ngtemplates', 'concat:prod', 'uglify', 'clean']);
     grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
 };
