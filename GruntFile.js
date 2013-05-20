@@ -203,6 +203,14 @@
                 files: {
                     "ng-grid.css": ["src/less/global.less"]
                 }
+            },
+            prod: {
+                options: {
+                    yuicompress: true
+                },
+                files: {
+                    "ng-grid.min.css": ["src/less/global.less"]
+                }
             }
         }
     });
