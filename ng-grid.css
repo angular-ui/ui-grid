@@ -168,6 +168,10 @@
   overflow: hidden;
   border-bottom: 1px solid #d4d4d4;
 }
+.ngGroupPanelDescription {
+  margin-top: 5px;
+  margin-left: 5px;
+}
 .ngGroupList {
   list-style-type: none;
   margin: 0;
@@ -181,6 +185,16 @@
   float: left;
   height: 100%;
   width: 100%;
+}
+.ngGroupIcon {
+  background-image: url(data:image/png;
+    base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAANCAYAAACZ3F9/AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAEFJREFUKFNjoAhISkr+h2J5JDZODNXGwGBsbPwfhIGAA8bGh6HaGBiAGhxAGJmND4M1gQCSM0adCsVQbcPcqQwMALWDGyDvWPefAAAAAElFTkSuQmCC);
+  background-repeat: no-repeat;
+  height: 15px;
+  width: 15px;
+  position: absolute;
+  right: -2px;
+  top: 2px;
 }
 .ngGroupedByIcon {
   background-image: url(data:image/png;
@@ -215,10 +229,6 @@
   margin-right: 5px;
   float: right;
 }
-.ngGroupPanelDescription {
-  margin-top: 5px;
-  margin-left: 5px;
-}
 .ngGroupingNumber {
   position: absolute;
   right: -10px;
@@ -234,18 +244,11 @@
   border-width: 5px 0 5px 8.7px;
   border-color: transparent transparent transparent #000000;
 }
+.ngGroupItem {
+  float: left;
+}
 .ngGroupItem:first-child {
   margin-left: 2px;
-}
-.ngGroupIcon {
-  background-image: url(data:image/png;
-    base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAANCAYAAACZ3F9/AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAEFJREFUKFNjoAhISkr+h2J5JDZODNXGwGBsbPwfhIGAA8bGh6HaGBiAGhxAGJmND4M1gQCSM0adCsVQbcPcqQwMALWDGyDvWPefAAAAAElFTkSuQmCC);
-  background-repeat: no-repeat;
-  height: 15px;
-  width: 15px;
-  position: absolute;
-  right: -2px;
-  top: 2px;
 }
 .ngRemoveGroup {
   width: 5px;
@@ -254,8 +257,12 @@
   margin-top: -1px;
   margin-left: 5px;
 }
-.ngGroupItem {
-  float: left;
+.ngRemoveGroup:hover {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+  -moz-opacity: 0.7;
+  opacity: 0.7;
 }
 .ngAggArrowExpanded {
   position: absolute;
@@ -276,13 +283,6 @@
   bottom: 0;
   right: -1px;
   left: 0;
-}
-.ngRemoveGroup:hover {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-  -moz-opacity: 0.7;
-  opacity: 0.7;
 }
 .ngAggregateText {
   position: absolute;
