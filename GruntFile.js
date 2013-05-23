@@ -174,6 +174,10 @@
             version: {
                 src: ['<%= srcFiles %>'],
                 dest: '<%= pkg.name %>-<%= pkg.version %>.debug.js'
+            },
+            css: {
+                src: ['src/css/*.css'],
+                dest: '<%= pkg.name %>-<%= pkg.version %>.css'
             }
         },
         uglify: {
@@ -190,8 +194,38 @@
             templates: {
                 src: ["<%= ngtemplates.ngGrid.dest %>"]
             }
-        }
-    });
+        },
+        copy: {
+            build: {
+                files: [
+                { 
+                    expand: true,
+                    flatten: true, 
+                    cwd: 'src/css', 
+                    src: ['*.css'], 
+                    dest: 'build/', 
+                    filter: 'isFile' 
+                }
+                ]
+            }
+        },
+        cssmin: {
+            build: {
+                expand: true,
+                cwd: 'src/css',
+                src: ['*.css'],
+                dest: 'build/',
+                ext: '.min.css'
+              },
+            version: {
+                expand: true,
+                cwd: 'src/css',
+                src: ['*.css'],
+                dest: '.',
+                ext: '-<%= pkg.version %>.min.css'                
+                }
+            }
+        });
 
     // Load grunt-karma task plugin
     grunt.loadNpmTasks('grunt-karma');
@@ -209,16 +243,18 @@
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
-
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     // Old default task
-    grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'copy', 'cssmin', 'clean']);
 
     // Default task(s).
     grunt.registerTask('default', 'No default task', function() {
         grunt.log.write('The old default task has been moved to "build" to prevent accidental triggering');
     });
 
-    grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'clean']);
-    grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'uglify', 'clean']);
-    grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
+    grunt.registerTask('debug', ['ngtemplates', 'concat:debug', 'copy', 'clean']);
+    grunt.registerTask('prod', ['ngtemplates', 'concat:prod', 'copy', 'cssmin:build', 'uglify:build', 'clean']);
+    grunt.registerTask('version', ['ngtemplates', 'concat:version', 'concat:css', 'cssmin:version', 'uglify:version', 'clean']);
+
 };
