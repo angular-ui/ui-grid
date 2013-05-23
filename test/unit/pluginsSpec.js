@@ -43,7 +43,7 @@ describe('plugins', function () {
                 beforeEach(initalizeHelper({ plugins: [ngGridWYSIWYGPlugin] }));
 
                 it('should work if the plugin being passed in is a function literal', function() {
-                    testData(scope.gridOptions.plugins['ngGridWYSIWYGPlugin'].export());
+                    testData(scope.gridOptions.plugins['ngGridWYSIWYGPlugin'].exportData());
                 });
             });
 
@@ -51,7 +51,7 @@ describe('plugins', function () {
                 beforeEach(initalizeHelper({ plugins: [new ngGridWYSIWYGPlugin()] }));
 
                 it('should work if the plugin being passed in is an instance', function() {
-                    testData(scope.gridOptions.plugins['ngGridWYSIWYGPlugin'].export());
+                    testData(scope.gridOptions.plugins['ngGridWYSIWYGPlugin'].exportData());
                 });
             });
         });
