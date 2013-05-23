@@ -17,10 +17,19 @@ function ngGridCsvExportPlugin (opts) {
             for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
             var csvData = '';
             function csvStringify(str) {
-                if (str == null) return '';  // we want to catch anything null-ish, hence just == not ===
-                if (typeof(str) === 'number') return '' + str;
-                if (typeof(str) === 'boolean') return (str ? 'TRUE' : 'FALSE') ;
-                if (typeof(str) === 'string') return str.replace(/"/g,'""');
+                if (str == null) { // we want to catch anything null-ish, hence just == not ===
+                    return '';
+                }
+                if (typeof(str) === 'number') {
+                    return '' + str;
+                }
+                if (typeof(str) === 'boolean') {
+                    return (str ? 'TRUE' : 'FALSE') ;
+                }
+                if (typeof(str) === 'string') {
+                    return str.replace(/"/g,'""');
+                }
+
                 return JSON.stringify(str).replace(/"/g,'""');
             }
             function swapLastCommaForNewline(str) {
@@ -56,9 +65,9 @@ function ngGridCsvExportPlugin (opts) {
         setTimeout(showDs, 0);
         scope.catHashKeys = function() {
           hash = '';
-          for (idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
+          for (var idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
           return hash;
         };
         scope.$watch('catHashKeys()', showDs);
     };
-};
+}

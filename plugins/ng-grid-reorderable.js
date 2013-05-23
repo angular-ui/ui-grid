@@ -55,7 +55,7 @@ function ngGridReorderable (options) {
     self.onGroupMouseDown = function(event) {
         var groupItem = $(event.srcElement);
         // Get the scope from the header container
-        if (groupItem[0].className != 'ngRemoveGroup') {
+        if (groupItem[0].className !== 'ngRemoveGroup') {
             var groupItemScope = angular.element(groupItem).scope();
             if (groupItemScope) {
                 // set draggable events
@@ -76,14 +76,14 @@ function ngGridReorderable (options) {
             // Get the closest header to where we dropped
             var groupContainer = $(event.srcElement).closest('.ngGroupElement');
             // Get the scope from the header.
-            if (groupContainer.context.className == 'ngGroupPanel') {
+            if (groupContainer.context.className === 'ngGroupPanel') {
                 self.$scope.configGroups.splice(self.groupToMove.index, 1);
                 self.$scope.configGroups.push(self.groupToMove.groupName);
             } else {
                 var groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
-                    if (self.groupToMove.index != groupScope.$index) {
+                    if (self.groupToMove.index !== groupScope.$index) {
                         // Splice the columns
                         self.$scope.configGroups.splice(self.groupToMove.index, 1);
                         self.$scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
@@ -93,7 +93,7 @@ function ngGridReorderable (options) {
             self.groupToMove = undefined;
         } else {
             self.onHeaderDragStop();
-            if (self.$scope.configGroups.indexOf(self.colToMove.col) == -1) {
+            if (self.$scope.configGroups.indexOf(self.colToMove.col) === -1) {
                 self.$scope.configGroups.push(self.colToMove.col);
             }
             self.colToMove = undefined;
@@ -141,7 +141,7 @@ function ngGridReorderable (options) {
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
             // If we have the same column, do nothing.
-            if (self.colToMove.col == headerScope.col) {
+            if (self.colToMove.col === headerScope.col) {
                 return;
             }
             // Splice the columns
@@ -180,7 +180,7 @@ function ngGridReorderable (options) {
         if (rowScope) {
             // If we have the same Row, do nothing.
             var prevRow = self.services.GridService.eventStorage.rowToMove;
-            if (prevRow.scope.row == rowScope.row) {
+            if (prevRow.scope.row === rowScope.row) {
                 return;
             }
             // Splice the Rows via the actual datasource
@@ -194,4 +194,4 @@ function ngGridReorderable (options) {
             // if there isn't an apply already in progress lets start one
         }
     };
-};
+}
