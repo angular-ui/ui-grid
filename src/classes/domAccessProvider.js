@@ -2,7 +2,7 @@ var ngDomAccessProvider = function () {
 };
 
 //keep a static variable for the previous column
-http://stackoverflow.com/questions/7307243/how-to-declare-a-static-variable-in-javascript
+//http://stackoverflow.com/questions/7307243/how-to-declare-a-static-variable-in-javascript
 ngDomAccessProvider.previousColumn = null;
 
 ngDomAccessProvider.prototype.changeUserSelect = function (elm, value) {
