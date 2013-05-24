@@ -37,7 +37,7 @@
         var curPage = $scope.pagingOptions.currentPage;
         var maxPages = $scope.maxPages();
         if ($scope.totalServerItems > 0) {
-            return !(curPage < maxPages);
+            return curPage >= maxPages;
         } else {
             return grid.data.length < 1;
         }
@@ -53,6 +53,6 @@
     
     $scope.cantPageBackward = function() {
         var curPage = $scope.pagingOptions.currentPage;
-        return !(curPage > 1);
+        return curPage <= 1;
     };
 };
