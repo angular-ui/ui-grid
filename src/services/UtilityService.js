@@ -1,4 +1,4 @@
-﻿ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
+﻿angular.module('ngGrid.services').factory('$utilityService', ['$parse', function ($parse) {
     var funcNameRegex = /function (.{1,})\(/;
     var utils = {
         visualLength: function(node) {
@@ -26,7 +26,7 @@
             return $parse(path)(entity);
         },
         endsWith: function(str, suffix) {
-            if (!str || !suffix || typeof str != "string") {
+            if (!str || !suffix || typeof str !== "string") {
                 return false;
             }
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -69,9 +69,12 @@
         // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 
         ieVersion: (function() {
             var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
+
             // Keep constructing conditional HTML blocks until we hit one that resolves to an empty fragment
-            while (div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->',
-            iElems[0]) ;
+            while (iElems[0]) {
+                div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->';
+            }
+
             return version > 4 ? version : undefined;
         })()
     };
