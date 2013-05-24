@@ -46,7 +46,7 @@
                     col.addEventListener('dragstart', self.dragStart);
                 }
             });
-            if (navigator.userAgent.indexOf("MSIE") != -1){
+            if (navigator.userAgent.indexOf("MSIE") !== -1){
                 //call native IE dragDrop() to start dragging
                 grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
                     this.dragDrop(); 
@@ -72,7 +72,7 @@
     self.onGroupMouseDown = function(event) {
         var groupItem = $(event.target);
         // Get the scope from the header container
-        if (groupItem[0].className != 'ngRemoveGroup') {
+        if (groupItem[0].className !== 'ngRemoveGroup') {
             var groupItemScope = angular.element(groupItem).scope();
             if (groupItemScope) {
                 // set draggable events
@@ -81,7 +81,7 @@
                     if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
                         this.addEventListener('dragstart', self.dragStart); 
                     }
-                    if (navigator.userAgent.indexOf("MSIE") != -1){
+                    if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging
                         groupItem.bind('selectstart', function () { 
                             this.dragDrop(); 
@@ -104,14 +104,14 @@
         if (self.groupToMove) {
             // Get the closest header to where we dropped
             groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
-            if (groupContainer.context.className == 'ngGroupPanel') {
+            if (groupContainer.context.className === 'ngGroupPanel') {
                 $scope.configGroups.splice(self.groupToMove.index, 1);
                 $scope.configGroups.push(self.groupToMove.groupName);
             } else {
                 groupScope = angular.element(groupContainer).scope();
                 if (groupScope) {
                     // If we have the same column, do nothing.
-                    if (self.groupToMove.index != groupScope.$index) {
+                    if (self.groupToMove.index !== groupScope.$index) {
                         // Splice the columns
                         $scope.configGroups.splice(self.groupToMove.index, 1);
                         $scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
@@ -121,9 +121,9 @@
             self.groupToMove = undefined;
             grid.fixGroupIndexes();
         } else if (self.colToMove) {
-            if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
+            if ($scope.configGroups.indexOf(self.colToMove.col) === -1) {
                 groupContainer = $(event.target).closest('.ngGroupElement'); // Get the scope from the header.
-                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription ng-binding') {
+                if (groupContainer.context.className === 'ngGroupPanel' || groupContainer.context.className === 'ngGroupPanelDescription ng-binding') {
                     $scope.groupBy(self.colToMove.col);
                 } else {
                     groupScope = angular.element(groupContainer).scope();
@@ -160,7 +160,7 @@
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
             // If we have the same column, do nothing.
-            if (self.colToMove.col == headerScope.col) {
+            if (self.colToMove.col === headerScope.col) {
                 return;
             }
             // Splice the columns
@@ -194,7 +194,7 @@
         if (rowScope) {
             // If we have the same Row, do nothing.
             var prevRow = domUtilityService.eventStorage.rowToMove;
-            if (prevRow.scope.row == rowScope.row) {
+            if (prevRow.scope.row === rowScope.row) {
                 return;
             }
             grid.changeRowOrder(prevRow.scope.row, rowScope.row);
