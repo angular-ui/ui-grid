@@ -1,6 +1,7 @@
 ﻿var ngSearchProvider = function ($scope, grid, $filter) {
     var self = this,
         searchConditions = [];
+
     self.extFilter = grid.config.filterOptions.useExternalFilter;
     $scope.showFilter = grid.config.showFilter;
     $scope.filterText = '';
@@ -17,8 +18,9 @@
                     for (var prop in item) {
                         if (item.hasOwnProperty(prop)) {
                             var c = self.fieldMap[prop];
-                            if (!c)
+                            if (!c) {
                                 continue;
+                            }
                             var f = null,
                                 s = null;
                             if (c && c.cellFilter) {
@@ -27,7 +29,7 @@
                             }
                             var pVal = item[prop];
                             if (pVal != null) {
-                                if (typeof f == 'function') {
+                                if (typeof f === "function") {
                                     var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
                                     result = condition.regex.test(filterRes);
                                 } else {
@@ -49,13 +51,15 @@
                 var sp = col.cellFilter.split(':');
                 var filter = col.cellFilter ? $filter(sp[0]) : null;
                 var value = item[condition.column] || item[col.field.split('.')[0]];
-                if (value == null)
+                if (value == null) {
                     return false;
-                if (typeof filter == 'function') {
-                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value, sp[1]).toString();
+                }
+                if (typeof filter === "function") {
+                    var filterResults = filter(typeof value === "object" ? evalObject(value, col.field) : value, sp[1]).toString();
                     result = condition.regex.test(filterResults);
-                } else {
-                    result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
+                }
+                else {
+                    result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
                 }
                 if (!value || !result) {
                     return false;
@@ -80,15 +84,17 @@
 
     //Traversing through the object to find the value that we want. If fail, then return the original object.
     var evalObject = function (obj, columnName) {
-        if (typeof obj != 'object' || typeof columnName != 'string')
+        if (typeof obj !== "object" || typeof columnName !== "string") {
             return obj;
+        }
         var args = columnName.split('.');
         var cObj = obj;
         if (args.length > 1) {
             for (var i = 1, len = args.length; i < len; i++) {
                 cObj = cObj[args[i]];
-                if (!cObj)
+                if (!cObj) {
                     return obj;
+                }
             }
             return cObj;
         }
@@ -99,7 +105,7 @@
             return new RegExp(str, modifiers);
         } catch (err) {
             //Escape all RegExp metacharacters.
-            return new RegExp(str.replace(/(\^|\$|\(|\)|\<|\>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
+            return new RegExp(str.replace(/(\^|\$|\(|\)|<|>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
         }
     };
     var buildSearchConditions = function (a) {
@@ -131,29 +137,37 @@
                     });
                 }
             }
-        };
+        }
     };
-	$scope.$watch(function() {
-	    return grid.config.filterOptions.filterText;
-	}, function(a){
-		$scope.filterText = a;
-	});
-	$scope.$watch('filterText', function(a){
-		if(!self.extFilter){
-			$scope.$emit('ngGridEventFilter', a);
+
+    $scope.$watch(
+        function () {
+            return grid.config.filterOptions.filterText;
+        },
+        function (a) {
+            $scope.filterText = a;
+        }
+    );
+
+    $scope.$watch('filterText', function(a){
+        if (!self.extFilter) {
+            $scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-	});
+    });
+
     if (!self.extFilter) {
         $scope.$watch('columns', function (cs) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
-				if(col.field)
-					self.fieldMap[col.field.split('.')[0]] = col;
-				if(col.displayName)
-					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-            };
+                if (col.field) {
+                    self.fieldMap[col.field.split('.')[0]] = col;
+                }
+                if (col.displayName) {
+                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+                }
+            }
         });
     }
 };
