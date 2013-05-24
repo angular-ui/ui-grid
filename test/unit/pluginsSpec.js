@@ -1,4 +1,6 @@
-﻿'use strict';
+﻿(function() {
+
+"use strict";
 
 /* jasmine specs for plugins go here */
 
@@ -102,3 +104,5 @@ describe('plugins', function () {
     });
 
 });
+
+})();

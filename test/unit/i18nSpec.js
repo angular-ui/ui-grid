@@ -1,4 +1,6 @@
-'use strict';
+(function() {
+
+"use strict";
 
 /* jasmine specs for directives go here */
 
@@ -68,3 +70,5 @@ describe('i18n', function () {
         });
     });
 });
+
+})();

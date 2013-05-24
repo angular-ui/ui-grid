@@ -1,4 +1,6 @@
-'use strict';
+(function() {
+
+"use strict";
 
 /* jasmine specs for services go here */
 describe('Dom Utility Service', function () {
@@ -142,19 +144,19 @@ describe('Sort Service', function () {
     }));
 
     describe('guessing the sort function', function() {
-	      var foo = {};
-	      it('should return the correct function for the type', function () {
-	        expect($sort.guessSortFn(true)).toEqual($sort.sortBool);
-	        expect($sort.guessSortFn(false)).toEqual($sort.sortBool);
-	        expect($sort.guessSortFn(-0.13)).toEqual($sort.sortNumber);
-	        expect($sort.guessSortFn("-0.13")).toEqual($sort.sortNumberStr);
-	        expect($sort.guessSortFn("0.13")).toEqual($sort.sortNumberStr);
-	        expect($sort.guessSortFn("+0.13")).toEqual($sort.sortNumberStr);
-	        expect($sort.guessSortFn(new Date())).toEqual($sort.sortDate);
-	        expect($sort.guessSortFn("foo")).toEqual($sort.sortAlpha);
-	        expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
-	      });
-	  });
+          var foo = {};
+          it('should return the correct function for the type', function () {
+            expect($sort.guessSortFn(true)).toEqual($sort.sortBool);
+            expect($sort.guessSortFn(false)).toEqual($sort.sortBool);
+            expect($sort.guessSortFn(-0.13)).toEqual($sort.sortNumber);
+            expect($sort.guessSortFn("-0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn("0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn("+0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn(new Date())).toEqual($sort.sortDate);
+            expect($sort.guessSortFn("foo")).toEqual($sort.sortAlpha);
+            expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
+          });
+      });
 });
 
 describe('Utility Service', function () {
@@ -222,9 +224,11 @@ describe('Utility Service', function () {
         it('returns true', function () {
             var hello; 
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
-            var hello = null;
+
+            hello = null;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
-            var hello = undefined;
+            
+            hello = undefined;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
             expect($utils.isNullOrUndefined(null)).toEqual(true);
             expect($utils.isNullOrUndefined(undefined)).toEqual(true);
@@ -236,3 +240,8 @@ describe('Utility Service', function () {
         });
     });
 });
+<<<<<<< HEAD
+=======
+
+})();
+>>>>>>> Jshint: cleaning up unit tests
