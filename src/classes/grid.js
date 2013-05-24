@@ -431,7 +431,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
             // WTF is this? -- Brian (2013-05-24)
             if (self.config.maintainColumnRatios === false) {
-                angular.noop();
+                // angular.noop();
             }
             else {
                 self.config.maintainColumnRatios = true;
