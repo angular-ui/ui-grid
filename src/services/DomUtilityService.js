@@ -85,6 +85,7 @@
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
+
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
@@ -93,14 +94,18 @@
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
-        };
+        }
+
         if ($utils.isIe) { // IE
             $style[0].styleSheet.cssText = css;
         }
+
         else {
             $style[0].appendChild(document.createTextNode(css));
         }
+
         grid.$styleSheet = $style;
+        
         if (digest) {
             $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
             domUtilityService.digest($scope);

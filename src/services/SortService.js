@@ -102,7 +102,7 @@
             while (tem === 0 && indx < l) {
                 // grab the metadata for the rest of the logic
                 col = sortInfo.columns[indx];
-                direction = sortInfo.directions[indx],
+                direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
                 
                 var propA = $parse(order[indx])(itemA);
