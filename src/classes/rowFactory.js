@@ -132,7 +132,7 @@
         } else {
             for (var prop in g) {
                 // exclude the meta properties.
-                if (prop == NG_FIELD || prop == NG_DEPTH || prop == NG_COLUMN) {
+                if (prop === NG_FIELD || prop === NG_DEPTH || prop === NG_COLUMN) {
                     continue;
                 } else if (g.hasOwnProperty(prop)) {
                     //build the aggregate row
@@ -175,16 +175,25 @@
             maxDepth = groups.length,
             cols = $scope.columns;
 
-        for (var x = 0; x < rows.length; x++){
+        function filterCols(cols, group) {
+            return cols.filter(function(c) {
+                return c.field === group;
+            });
+        }
+
+        for (var x = 0; x < rows.length; x++) {
             var model = rows[x].entity;
-            if (!model) return;
+            if (!model) {
+                return;
+            }
             rows[x][NG_HIDDEN] = grid.config.groupsCollapsedByDefault;
             var ptr = self.groupedData;
+
             for (var y = 0; y < groups.length; y++) {
                 var group = groups[y];
-                var col = cols.filter(function(c) {
-                    return c.field == group;
-                })[0];
+
+                var col = filterCols(cols, group)[0];
+
                 var val = $utils.evalProperty(model, group);
                 val = val ? val.toString() : 'null';
                 if (!ptr[val]) {
@@ -205,7 +214,8 @@
                 ptr.values = [];
             }
             ptr.values.push(rows[x]);
-        };
+        }
+
         //moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
         for (var z = 0; z < groups.length; z++) {
             if (!cols[z].isAggCol && z <= maxDepth) {
@@ -226,6 +236,7 @@
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
+
         domUtilityService.BuildStyles($scope, grid, true);
 		grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
