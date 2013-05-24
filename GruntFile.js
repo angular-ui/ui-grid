@@ -219,6 +219,53 @@
                     "ng-grid.min.css": ["src/less/global.less"]
                 }
             }
+        },
+        jshint: {
+            options: {
+                boss: true,
+                browser: true,
+                camelcase: true,
+                curly: true,
+                eqeqeq: true,
+                eqnull: true,
+                // forin: true,
+                immed: true,
+                // indent: 4,
+                latedef: true,
+                newcap: true,
+                noarg: true,
+                sub: true,
+                // undef: true,
+                // unused: true,
+                globals: {
+                    angular: false,
+                    $: false
+                }
+            },
+            src: [ 'src/**/*.js', 'plugins/**/*.js' ],
+            spec: {
+                options: {
+                    globals: {
+                        angular: false,
+                        beforeEach: false,
+                        browser: false,
+                        browserTrigger: false,
+                        describe: false,
+                        expect: false,
+                        inject: false,
+                        input: false,
+                        it: false,
+                        module: false,
+                        repeater: false,
+                        runs: false,
+                        waits: false,
+                        waitsFor: false
+                    }
+                },
+                files: {
+                    spec: ['test/**/*.js']
+                },
+            }
         }
     });
 
@@ -226,6 +273,8 @@
     grunt.loadNpmTasks('grunt-karma');
     // Load the grunt-contrib-watch plugin for doing file watches
     grunt.loadNpmTasks('grunt-contrib-watch');
+
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask('test', ['karma:unit']);
 
