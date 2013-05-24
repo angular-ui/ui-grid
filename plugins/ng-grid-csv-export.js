@@ -45,9 +45,10 @@ function ngGridCsvExportPlugin (opts) {
                 for ( k in keys) {
                     var curCellRaw;
                     if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
-                      curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
-                    } else {
-                      curCellRaw = gridData[gridRow][keys[k]];
+                        curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
+                    }
+                    else {
+                        curCellRaw = gridData[gridRow][keys[k]];
                     }
                     csvData += '"' + csvStringify(curCellRaw) + '",';
                 }
@@ -64,9 +65,11 @@ function ngGridCsvExportPlugin (opts) {
         }
         setTimeout(showDs, 0);
         scope.catHashKeys = function() {
-          hash = '';
-          for (var idx in scope.renderedRows) { hash += scope.renderedRows[idx].$$hashKey;  }
-          return hash;
+            var hash = '';
+            for (var idx in scope.renderedRows) {
+                hash += scope.renderedRows[idx].$$hashKey;
+            }
+            return hash;
         };
         scope.$watch('catHashKeys()', showDs);
     };
