@@ -179,15 +179,12 @@ describe('Utility Service', function () {
     // visualLength
     describe('visualLength should return the correct visual length of text.', function () {
         it('returns integer', function() {
-            // NOTE: this test will not work correctly on Linux, due to different DPI settings that we do not have control over. 
-            //       Until there's a way around this, just don't run it and do a fake test instead to keep the numbers right
-            if (!navigator.platform.match(/linux/i)) {
-                var node = angular.element('<div style="width: 30px; font-size: 12pt">The quick brown fox jumped over the lazy dog.</div>');
-                expect($utils.visualLength(node)).toEqual(286);
-            }
-            else {
-                expect(true).toEqual(true);
-            }
+            var div = '<div style="line-height: 1; margin: 0; padding: 0; border: 0; vertical-align: baseline; width: 30px; font-family: Arial; font-size: 12pt">The quick brown fox jumped over the lazy dog.</div></body></html>';
+            var visualLength = $utils.visualLength(div);
+            // Was .toEqual(286) but was inconsistent across Browsers and operating systems. Firefox is 329, Chromium, Chrome, and PhantomJS are 286
+            //   CSS reset and forcing font family and physical font sizes does not help
+            expect(visualLength).toBeGreaterThan(285); 
+            expect(visualLength).toBeLessThan(330); 
         });
     });
     // forIn
