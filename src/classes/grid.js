@@ -740,7 +740,14 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         $scope.selectionProvider.toggleSelectAll(a);
     };
     $scope.totalFilteredItemsLength = function() {
-        return self.filteredRows.length;
+        // The "showing items: count" footer section isn't correctly accounting for filtering
+        // when enablePaging: true. Introducing an optional pagingOption of totalServerFilteredItems
+        // will allow the controller to communicate this correctly to the grid control
+        if (self.config.enablePaging) {
+            return self.config.pagingOptions.totalServerFilteredItems ? self.config.pagingOptions.totalServerFilteredItems : self.filteredRows.length;
+        } else {
+            return self.filteredRows.length;
+        }
     };
     $scope.showGroupPanel = function() {
         return self.config.showGroupPanel;
