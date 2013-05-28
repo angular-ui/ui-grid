@@ -27,9 +27,28 @@
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
                             }, true);
-                        } else {
+                        }
+                        else {
     						grid.buildColumns();
     					}
+
+                        // Watch totalServerItems if it's a string
+                        if (typeof options.totalServerItems == "string") {
+                            $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
+                                // If the newTotal is not defined (like during init, set the value to 1)
+                                if (!angular.isDefined(newTotal)) {
+                                    $scope.totalServerItems = 1;
+                                }
+                                // Otherwise set the value to the new total
+                                else {
+                                    $scope.totalServerItems = newTotal;
+                                }
+                            });
+                        }
+                        // If it's NOT a string, then just set totalServerItems to its value
+                        else {
+                            $scope.totalServerItems = options.totalServerItems;
+                        }
     					
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                         if (typeof options.data == "string") {
@@ -115,7 +134,7 @@
     					options.gridId = grid.gridId;
     					options.ngGrid = grid;
     					options.$gridScope = $scope;
-                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
+    					options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
     					$scope.$on('ngGridEventDigestGrid', function(){
     						domUtilityService.digest($scope.$parent);
     					});			
@@ -130,7 +149,7 @@
                         //initialize plugins.
                         angular.forEach(options.plugins, function (p) {
                             if (typeof p === 'function') {
-                                p = p.call(this);
+                                p = new p(); //If p is a function, then we assume it is a class.
                             }
                             p.init($scope.$new(), grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;

@@ -1,0 +1,25 @@
+.ngCell {
+  overflow: hidden;
+  position: absolute;
+  border-right: 1px solid @borderColor;
+  border-left: 1px solid @borderColor;
+  top: 0;
+  bottom: 0;
+  background-color: inherit;
+}
+
+.ngCell:first-child {
+  border-left: 0;
+}
+
+.ngCellText {
+  padding: 5px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

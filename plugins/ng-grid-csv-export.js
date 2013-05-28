@@ -5,7 +5,7 @@
 //    download from a data-uri link
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
-ngGridCsvExportPlugin = function(opts) {
+function ngGridCsvExportPlugin (opts) {
     var self = this;
     self.grid = null;
     self.scope = null;
