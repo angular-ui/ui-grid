@@ -127,11 +127,12 @@ describe('directives', function () {
             
             describe('column', function () {
                 describe('cell editing', function () {
-                    var elm, element, $scope, $compile;
+                    var elm, element, $scope, $compile, $sniffer
 
-                    beforeEach(inject(function ($rootScope, _$compile_) {
+                    beforeEach(inject(function ($rootScope, _$compile_, _$sniffer_) {
                         $compile = _$compile_;
                         $scope = $rootScope;
+                        $sniffer = _$sniffer_;
                         elm = angular.element(
                             '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
                         );
@@ -233,10 +234,7 @@ describe('directives', function () {
                             var testName = 'Test Name';
                             input.val(testName);
 
-                            expect(function(){
-                                // Trigger the input handler
-                                input.triggerHandler('keyup');
-                            }).not.toThrow();
+                            browserTrigger(input, $sniffer.hasEvent('input') ? 'input' : 'change');
 
                             // The value of the input should stay 'Test'
                             expect(input.val()).toEqual(testName);
