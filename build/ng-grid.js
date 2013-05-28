@@ -1284,7 +1284,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         $utils.forIn(item, function (prop, propName) {
             if (self.config.excludeProperties.indexOf(propName) == -1) {
                 self.config.columnDefs.push({
-                    field: propName
+                    field: propName,
+                    width:120
                 });
             }
         });
