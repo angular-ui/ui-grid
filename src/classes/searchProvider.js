@@ -143,7 +143,11 @@
 			$scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
-        }
+    } else {
+      // if filterOptions.useExternalFilter: true, filterOptions.filterText should be bound
+      // to the input from the search box.
+      grid.config.filterOptions.filterText = a;
+    }
 	});
     if (!self.extFilter) {
         $scope.$watch('columns', function (cs) {
