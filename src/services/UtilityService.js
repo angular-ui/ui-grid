@@ -10,6 +10,8 @@
                 document.body.appendChild(elem);
             }
             $(elem).css('font', $(node).css('font'));
+            $(elem).css('font-size', $(node).css('font-size'));
+            $(elem).css('font-family', $(node).css('font-family'));
             elem.innerHTML = $(node).text();
             return elem.offsetWidth;
         },
