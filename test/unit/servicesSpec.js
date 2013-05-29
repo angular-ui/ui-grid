@@ -240,8 +240,5 @@ describe('Utility Service', function () {
         });
     });
 });
-<<<<<<< HEAD
-=======
 
 })();
->>>>>>> Jshint: cleaning up unit tests
