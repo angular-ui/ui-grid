@@ -8,6 +8,7 @@
   - Moved this changelog to CHANGELOG.md!
   - Added tests for i18n languages. Any new language must cover all the properties that the default language (English) has.
   - CSS files compiling with less ([24bb173](https://github.com/angular-ui/ng-grid/commit/24bb173))
+  - Added optional --browsers flag for test tasks. `grunt test --browsers=Chrome,Firefox,PhantomJS` will test in all 3 browsers at once.
 
 - **Sorting**
   - Allow optional '+' prefix to trigger numerical sort ([f3aff74](https://github.com/angular-ui/ng-grid/commit/f3aff74), [8e5c0a1](https://github.com/angular-ui/ng-grid/commit/8e5c0a1))

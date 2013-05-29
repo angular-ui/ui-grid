@@ -1,4 +1,8 @@
 ﻿module.exports = function (grunt) {
+    // * Read command-line switches
+    // - Read in --browsers CLI option; split it on commas into an array if it's a string, otherwise ignore it
+    var browsers = typeof grunt.option('browsers') == 'string' ? grunt.option('browsers').split(',') : undefined;
+
     var stripBanner = function (src, options) {
 
         if (!options) { options = {}; }
@@ -96,33 +100,36 @@
                 options: {
                     configFile: '<%= testFiles.karmaUnit %>',
                     autoWatch: false,
-                    singleRun: true
+                    singleRun: true,
+                    browsers: browsers || ['Chrome']
                 },
             },
             watch: {
                 options: {
                     configFile: '<%= testFiles.karmaUnit %>',
                     autoWatch: false,
-                    // singleRun: true
+                    browsers: browsers || ['Chrome']
                 },
                 background: true
             },
             e2e: {
                 configFile: 'config/karma-e2e.conf.js',
                 autoWatch: false,
-                singleRun: true
+                singleRun: true,
+                browsers: browsers || ['Chrome']
             },
             midway: {
                 configFile: 'config/karma-midway.conf.js',
                 autoWatch: false,
-                singleRun: true
+                singleRun: true,
+                browsers: browsers || ['Chrome']
             },
             ci: {
                 options: {
                     configFile: '<%= testFiles.karmaUnit %>',
                     autoWatch: false,
                     singleRun: true,
-                    browsers: ['PhantomJS']
+                    browsers: browsers || ['PhantomJS']
                 },
             }
         },

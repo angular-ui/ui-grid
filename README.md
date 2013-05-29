@@ -111,3 +111,10 @@ There is a task for CI testing with PhantomJS
 3. This task first builds the debug version of the source files and does not clean them up. If you run it you will have uncommitted changes in your working directory that you probably want to lose. `git checkout build` to lose them.
 
     > grunt test-ci
+
+### Selecting browsers
+
+All the test tasks accept a `--browsers` command line option that will be passed to karma.
+    
+    # Automatically re-run tests in both Chrome and FF.
+    grunt testwatch --browsers=Chrome,Firefox
