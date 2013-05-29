@@ -129,7 +129,7 @@ describe('directives', function () {
             
             describe('column', function () {
                 describe('cell editing', function () {
-                    var elm, element, $scope, $compile, $sniffer
+                    var elm, element, $scope, $compile, $sniffer;
 
                     beforeEach(inject(function ($rootScope, _$compile_, _$sniffer_) {
                         $compile = _$compile_;
