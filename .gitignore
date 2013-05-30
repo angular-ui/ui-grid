@@ -81,6 +81,11 @@ web.config
 .builds
 *.dotCover
 
+#################
+## Sublime Text
+#################
+*.sublime-*
+
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
 
