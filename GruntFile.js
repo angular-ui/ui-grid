@@ -282,12 +282,12 @@
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('test', ['karma:unit']);
+    grunt.registerTask('test', ['jshint', 'karma:unit']);
 
     // Task for development; auto-build ng-grid.debug.js on source file changes, auto-test on ng-grid.debug.js or unit test changes
-    grunt.registerTask('testwatch', ['karma:watch', 'watch']);
+    grunt.registerTask('testwatch', ['jshint', 'karma:watch', 'watch']);
 
-    grunt.registerTask('test-ci', ['debug', 'karma:ci']);
+    grunt.registerTask('test-ci', ['jshint', 'debug', 'karma:ci']);
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
