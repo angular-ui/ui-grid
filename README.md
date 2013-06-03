@@ -43,7 +43,7 @@ _The bare bones_:
 <link rel="stylesheet" type="text/css" href="../ng-grid.css" /> 
 <body ng-app="myApp">
     <div ng-grid="myOptions"></div>
-<body>
+</body>
 ```
 ```javascript
 // Define your own controller somewhere..
