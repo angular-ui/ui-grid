@@ -2,16 +2,17 @@ var ngDomAccessProvider = function (grid) {
     this.previousColumn = null;
     this.grid = grid;
 
-    var changeUserSelect = function (elm, value) {
-        elm.css({
-            '-webkit-touch-callout': value,
-            '-webkit-user-select': value,
-            '-khtml-user-select': value,
-            '-moz-user-select': value === 'none' ? '-moz-none' : value,
-            '-ms-user-select': value,
-            'user-select': value
-        });
-    };
+};
+
+var changeUserSelect = function (elm, value) {
+    elm.css({
+        '-webkit-touch-callout': value,
+        '-webkit-user-select': value,
+        '-khtml-user-select': value,
+        '-moz-user-select': value === 'none' ? '-moz-none' : value,
+        '-ms-user-select': value,
+        'user-select': value
+    });
 };
 
 ngDomAccessProvider.prototype.selectInputElement = function (elm) {
