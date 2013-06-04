@@ -10,9 +10,16 @@
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-	self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+
+    // TODO: Use the column's definition for enabling cell editing
+    // self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : config.enableCellEdit;
+
     self.headerRowHeight = config.headerRowHeight;
-    self.displayName = colDef.displayName || colDef.field;
+
+    // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
+    self.displayName = (colDef.displayName === undefined) ? colDef.field : colDef.displayName;
+
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
@@ -42,10 +49,10 @@
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
     self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-	if(self.enableCellEdit) {
-	    self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
-	    self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
-	}
+    if(self.enableCellEdit) {
+        self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+        self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
+    }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
             type: "GET",
@@ -53,7 +60,7 @@
             async: false
         }).responseText;
     }
-	if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+    if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
         self.editableCellTemplate = $.ajax({
             type: "GET",
             url: colDef.editableCellTemplate,

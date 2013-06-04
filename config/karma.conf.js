@@ -8,9 +8,13 @@ files = [
   'lib/jquery-1.9.1.js',
   'lib/angular.js',
   'test/lib/angular/angular-mocks.js',
+  'test/lib/angular/browserTrigger.js',
 
   // App code
   'build/ng-grid.debug.js',
+    
+  // Plugins
+  'plugins/*.js',
 
   // Test specs
   'test/unit/**/*.js'

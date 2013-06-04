@@ -1,4 +1,4 @@
-ngGridLayoutPlugin = function() {
+function ngGridLayoutPlugin () {
     var self = this;
     this.grid = null;
     this.scope = null;
