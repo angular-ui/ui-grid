@@ -447,7 +447,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
             // set the width of each column based on the number of stars
             angular.forEach(asterisksArray, function(col, i) {
-                var isLast = (i == (asterisksArray.length - 1));
+                var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
                 $scope.columns[col.index].width -= isLast ? 0 : 1;
