@@ -436,22 +436,21 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             else {
                 self.config.maintainColumnRatios = true;
             }
-
             // get the remaining width
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
+            // are we overflowing vertically?
+            if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+                //compensate for scrollbar
+                remainingWidth -= domUtilityService.ScrollW;
+            }
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
             // set the width of each column based on the number of stars
-            angular.forEach(asterisksArray, function(col) {
+            angular.forEach(asterisksArray, function(col, i) {
+                var isLast = (i == (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                var offset = 1; //We're going to remove 1 px so we won't overlflow the viwport by default
-                // are we overflowing vertically?
-                if (self.maxCanvasHt > $scope.viewportDimHeight()) {
-                    //compensate for scrollbar
-                    offset += domUtilityService.ScrollW;
-                }
-                $scope.columns[col.index].width -= offset;
+                $scope.columns[col.index].width -= isLast ? 0 : 1;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
