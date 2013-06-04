@@ -133,23 +133,24 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
+    self.toggleSelectAll = function (checkAll, bypass, selectFiltered) {
+        var rows = selectFiltered ? grid.filteredRows : grid.rowCache;
+        if (bypass || grid.config.beforeSelectionChange(rows, checkAll)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
             }
-            for (var i = 0; i < grid.filteredRows.length; i++) {
-                grid.filteredRows[i].selected = checkAll;
-                if (grid.filteredRows[i].clone) {
-                    grid.filteredRows[i].clone.selected = checkAll;
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].selected = checkAll;
+                if (rows[i].clone) {
+                    rows[i].clone.selected = checkAll;
                 }
                 if (checkAll) {
-                    self.selectedItems.push(grid.filteredRows[i].entity);
+                    self.selectedItems.push(rows[i].entity);
                 }
             }
             if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
+                grid.config.afterSelectionChange(rows, checkAll);
             }
         }
     };

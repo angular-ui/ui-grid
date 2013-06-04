@@ -112,6 +112,10 @@
                         options.selectAll = function (state) {
                             $scope.toggleSelectAll(state);
                         };
+                        // method for user to set the select all state on visible items.
+                        options.selectVisible = function (state) {
+                            $scope.toggleSelectAll(state, true);
+                        };
                         // method for user to set the groups programatically
                         options.groupBy = function (field) {
                             if (field) {

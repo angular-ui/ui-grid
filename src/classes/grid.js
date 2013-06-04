@@ -741,8 +741,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.toggleShowMenu = function() {
         $scope.showMenu = !$scope.showMenu;
     };
-    $scope.toggleSelectAll = function(a) {
-        $scope.selectionProvider.toggleSelectAll(a);
+    $scope.toggleSelectAll = function(state, selectOnlyVisible) {
+        $scope.selectionProvider.toggleSelectAll(state, false, selectOnlyVisible);
     };
     $scope.totalFilteredItemsLength = function() {
         return self.filteredRows.length;
