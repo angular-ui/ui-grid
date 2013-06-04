@@ -27,9 +27,8 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
 
                 var thisIndx = rowItem.rowIndex;
-                var prevIndx = self.lastClickedRow.rowIndex;
-                self.lastClickedRow = rowItem;
-
+                var prevIndx = self.lastClickedRowIndex;
+                
                 if (thisIndx === prevIndx) {
                     return false;
                 }
@@ -67,6 +66,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                     }
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
+                self.lastClickedRow = rowItem;
+                self.lastClickedRowIndex = rowItem.rowIndex;
+
                 return true;
             }
         }
@@ -84,6 +86,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
             self.setSelection(rowItem, !rowItem.selected);
         }
         self.lastClickedRow = rowItem;
+        self.lastClickedRowIndex = rowItem.rowIndex;
         return true;
     };
 

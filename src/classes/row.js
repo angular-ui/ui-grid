@@ -70,4 +70,5 @@ ngRow.prototype.setVars = function (fromRow) {
 	fromRow.clone = this;
 	this.entity = fromRow.entity;
 	this.selected = fromRow.selected;
+    this.orig = fromRow;
 };
