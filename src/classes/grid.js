@@ -430,12 +430,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         if (asterisksArray.length > 0) {
 
             // WTF is this? -- Brian (2013-05-24)
-            if (self.config.maintainColumnRatios === false) {
-                // angular.noop();
-            }
-            else {
-                self.config.maintainColumnRatios = true;
-            }
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
             // get the remaining width
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
             // are we overflowing vertically?
