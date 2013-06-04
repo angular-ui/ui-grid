@@ -8,7 +8,7 @@ ng-grid Team:
 * [Tim Sweet](http://ornerydevelopment.blogspot.com/)
 * [Jonathon Ricaurte](https://github.com/jonricaurte)
 * [Brian Hann](https://github.com/c0bra)
- 
+
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
 Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome Drag-N-Drop aggregate feature. However, you can still groupby without draggability)
@@ -45,7 +45,7 @@ _The bare bones_:
 <link rel="stylesheet" type="text/css" href="../ng-grid.css" /> 
 <body ng-app="myApp">
     <div ng-grid="myOptions"></div>
-<body>
+</body>
 ```
 ```javascript
 // Define your own controller somewhere..
