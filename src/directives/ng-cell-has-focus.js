@@ -45,6 +45,9 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                 if (isFocused && evt.keyCode !== 37 && evt.keyCode !== 38 && evt.keyCode !== 39 && evt.keyCode !== 40 && evt.keyCode !== 9 && !evt.shiftKey && evt.keyCode !== 13) {
                     focusOnInputElement($scope,elm);
                 }
+                if (evt.shiftKey && (evt.keyCode >= 65 && evt.keyCode <= 90)) {
+                    focusOnInputElement($scope, elm);
+                }
                 if (evt.keyCode === 27) {
                     elm.focus();
                 }
