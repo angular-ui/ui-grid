@@ -1,4 +1,6 @@
-'use strict';
+(function() {
+
+"use strict";
 
 /* jasmine specs for services go here */
 describe('Dom Utility Service', function () {
@@ -101,7 +103,7 @@ describe('Dom Utility Service', function () {
             expect(domsizesCalled).toEqual(true);
             expect(scrollLeftCalled).toEqual(true);
             expect(scrollTopCalled).toEqual(true);
-            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 417px}.1 .col0 { width: 100px; left: 0px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
+            expect(temp).toMatch(/.1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 4\d\dpx}.1 .col0 { width: 100px; left: 0px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }/);
         });
     });
     // setColLeft
@@ -129,7 +131,7 @@ describe('Dom Utility Service', function () {
             $dUtils.BuildStyles($scope, grid, true);
             $dUtils.setColLeft($scope.columns[0], 300, grid);
             var temp = grid.$styleSheet.html();
-            expect(temp).toEqual(".1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 417px}.1 .col0 { width: 100px; left: 300px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }")
+            expect(temp).toMatch(/.1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 4\d\dpx}.1 .col0 { width: 100px; left: 300px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }/);
         });
     });
 });
@@ -140,6 +142,21 @@ describe('Sort Service', function () {
     beforeEach(inject(function ($sortService) {
         $sort = $sortService;
     }));
+
+    describe('guessing the sort function', function() {
+          var foo = {};
+          it('should return the correct function for the type', function () {
+            expect($sort.guessSortFn(true)).toEqual($sort.sortBool);
+            expect($sort.guessSortFn(false)).toEqual($sort.sortBool);
+            expect($sort.guessSortFn(-0.13)).toEqual($sort.sortNumber);
+            expect($sort.guessSortFn("-0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn("0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn("+0.13")).toEqual($sort.sortNumberStr);
+            expect($sort.guessSortFn(new Date())).toEqual($sort.sortDate);
+            expect($sort.guessSortFn("foo")).toEqual($sort.sortAlpha);
+            expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
+          });
+      });
 });
 
 describe('Utility Service', function () {
@@ -164,8 +181,12 @@ describe('Utility Service', function () {
     // visualLength
     describe('visualLength should return the correct visual length of text.', function () {
         it('returns integer', function() {
-            var node = angular.element('<div style="width: 30px;">The quick brown fox jumped over the lazy dog.</div>');
-            expect($utils.visualLength(node)).toEqual(286);
+            var div = '<div style="line-height: 1; margin: 0; padding: 0; border: 0; vertical-align: baseline; width: 30px; font-family: Arial; font-size: 12pt">The quick brown fox jumped over the lazy dog.</div></body></html>';
+            var visualLength = $utils.visualLength(div);
+            // Was .toEqual(286) but was inconsistent across Browsers and operating systems. Firefox is 329, Chromium, Chrome, and PhantomJS are 286, Travis CI is 362!
+            //   CSS reset and forcing font family and physical font sizes does not help
+            expect(visualLength).toBeGreaterThan(285); 
+            expect(visualLength).toBeLessThan(363); 
         });
     });
     // forIn
@@ -203,9 +224,11 @@ describe('Utility Service', function () {
         it('returns true', function () {
             var hello; 
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
-            var hello = null;
+
+            hello = null;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
-            var hello = undefined;
+            
+            hello = undefined;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
             expect($utils.isNullOrUndefined(null)).toEqual(true);
             expect($utils.isNullOrUndefined(undefined)).toEqual(true);
@@ -217,3 +240,5 @@ describe('Utility Service', function () {
         });
     });
 });
+
+})();

@@ -6,15 +6,14 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
     self.pKeyParser = $parse(grid.config.primaryKey);
+
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (rowItem, evt) {
         // ctrl-click + shift-click multi-selections
-		// up/down key navigation in multi-selections
-		var charCode = evt.which || evt.keyCode;
-		var isUpDownKeyPress = (charCode === 40 || charCode === 38);
-        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
-            self.toggleSelectAll(false, true);
-        }
+        // up/down key navigation in multi-selections
+        var charCode = evt.which || evt.keyCode;
+        var isUpDownKeyPress = (charCode === 40 || charCode === 38);
+
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
@@ -22,27 +21,33 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                     rowsArr = grid.rowFactory.parsedData.filter(function(row) {
                         return !row.isAggRow;
                     });
-                } else {
+                }
+                else {
                     rowsArr = grid.filteredRows;
                 }
+
                 var thisIndx = rowItem.rowIndex;
-                var prevIndx = self.lastClickedRow.rowIndex;
-                self.lastClickedRow = rowItem;
-                if (thisIndx == prevIndx) {
+                var prevIndx = self.lastClickedRowIndex;
+                
+                if (thisIndx === prevIndx) {
                     return false;
                 }
+
                 if (thisIndx < prevIndx) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-					thisIndx--;
-                } else {
-					prevIndx++;
-				}
+                    thisIndx--;
+                }
+                else {
+                    prevIndx++;
+                }
+
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(rowsArr[prevIndx]);
                 }
+
                 if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
                     for (var i = 0; i < rows.length; i++) {
                         var ri = rows[i];
@@ -54,16 +59,21 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                         var index = self.selectedItems.indexOf(ri.entity);
                         if (index === -1) {
                             self.selectedItems.push(ri.entity);
-                        } else {
+                        }
+                        else {
                             self.selectedItems.splice(index, 1);
                         }
                     }
                     rows[rows.length - 1].afterSelectionChange(rows, evt);
                 }
+                self.lastClickedRow = rowItem;
+                self.lastClickedRowIndex = rowItem.rowIndex;
+
                 return true;
             }
-        } else if (!self.multi) {
-            if (self.lastClickedRow == rowItem) {
+        }
+        else if (!self.multi) {
+            if (self.lastClickedRow === rowItem) {
                 self.setSelection(self.lastClickedRow, grid.config.keepLastSelected ? true : !rowItem.selected);
             } else {
                 if (self.lastClickedRow) {
@@ -71,10 +81,12 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 }
                 self.setSelection(rowItem, !rowItem.selected);
             }
-        } else if (!evt.keyCode || isUpDownKeyPress) {
+        }
+        else if (!evt.keyCode || isUpDownKeyPress) {
             self.setSelection(rowItem, !rowItem.selected);
         }
-		self.lastClickedRow = rowItem;
+        self.lastClickedRow = rowItem;
+        self.lastClickedRowIndex = rowItem.rowIndex;
         return true;
     };
 
@@ -83,11 +95,12 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         if (grid.config.primaryKey) {
             var val = self.pKeyParser(entity);
             angular.forEach(self.selectedItems, function (c) {
-                if (val == self.pKeyParser(c)) {
+                if (val === self.pKeyParser(c)) {
                     isSelected = true;
                 }
             });
-        } else {
+        }
+        else {
             isSelected = self.selectedItems.indexOf(entity) !== -1;
         }
         return isSelected;
@@ -95,49 +108,52 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (rowItem, isSelected) {
-		if(grid.config.enableRowSelection){
-			if (!isSelected) {
-				var indx = self.selectedItems.indexOf(rowItem.entity);
-				if(indx != -1){
-					self.selectedItems.splice(indx, 1);
-				}
-			} else {
-				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-					if(!self.multi && self.selectedItems.length > 0){
-						self.toggleSelectAll(false, true);
-					}
-					self.selectedItems.push(rowItem.entity);
-				}
-			}
-			rowItem.selected = isSelected;
-			if (rowItem.orig) {
-			    rowItem.orig.selected = isSelected;
-			}
-			if (rowItem.clone) {
-			    rowItem.clone.selected = isSelected;
-			}
-			rowItem.afterSelectionChange(rowItem);
-		}
+        if(grid.config.enableRowSelection){
+            if (!isSelected) {
+                var indx = self.selectedItems.indexOf(rowItem.entity);
+                if (indx !== -1) {
+                    self.selectedItems.splice(indx, 1);
+                }
+            }
+            else {
+                if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+                    if (!self.multi && self.selectedItems.length > 0) {
+                        self.toggleSelectAll(false, true);
+                    }
+                    self.selectedItems.push(rowItem.entity);
+                }
+            }
+            rowItem.selected = isSelected;
+            if (rowItem.orig) {
+                rowItem.orig.selected = isSelected;
+            }
+            if (rowItem.clone) {
+                rowItem.clone.selected = isSelected;
+            }
+            rowItem.afterSelectionChange(rowItem);
+        }
     };
+
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all
-    self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
+    self.toggleSelectAll = function (checkAll, bypass, selectFiltered) {
+        var rows = selectFiltered ? grid.filteredRows : grid.rowCache;
+        if (bypass || grid.config.beforeSelectionChange(rows, checkAll)) {
             var selectedlength = self.selectedItems.length;
             if (selectedlength > 0) {
                 self.selectedItems.length = 0;
             }
-            for (var i = 0; i < grid.filteredRows.length; i++) {
-                grid.filteredRows[i].selected = checkAll;
-                if (grid.filteredRows[i].clone) {
-                    grid.filteredRows[i].clone.selected = checkAll;
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].selected = checkAll;
+                if (rows[i].clone) {
+                    rows[i].clone.selected = checkAll;
                 }
                 if (checkAll) {
-                    self.selectedItems.push(grid.filteredRows[i].entity);
+                    self.selectedItems.push(rows[i].entity);
                 }
             }
             if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
+                grid.config.afterSelectionChange(rows, checkAll);
             }
         }
     };

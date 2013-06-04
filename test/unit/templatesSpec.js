@@ -1,4 +1,6 @@
-'use strict';
+(function() {
+
+"use strict";
 
 describe('templates', function () {
   var $scope;
@@ -15,3 +17,5 @@ describe('templates', function () {
   //   }));
   // });
 });
+
+})();
