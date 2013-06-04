@@ -18,9 +18,6 @@
             if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
             }
-            if (grid.config.enableRowReordering) {
-                grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
-            }
         }
         $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
@@ -171,38 +168,6 @@
             domUtilityService.BuildStyles($scope, grid, true);
             // clear out the colToMove object
             self.colToMove = undefined;
-        }
-    };
-    // Row functions
-    self.onRowMouseDown = function(event) {
-        // Get the closest row element from where we clicked.
-        var targetRow = $(event.target).closest('.ngRow');
-        // Get the scope from the row element
-        var rowScope = angular.element(targetRow).scope();
-        if (rowScope) {
-            // set draggable events
-            targetRow.attr('draggable', 'true');
-            // Save the row for later.
-            domUtilityService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
-        }
-    };
-    self.onRowDrop = function(event) {
-        // Get the closest row to where we dropped
-        var targetRow = $(event.target).closest('.ngRow');
-        // Get the scope from the row element.
-        var rowScope = angular.element(targetRow).scope();
-        if (rowScope) {
-            // If we have the same Row, do nothing.
-            var prevRow = domUtilityService.eventStorage.rowToMove;
-            if (prevRow.scope.row === rowScope.row) {
-                return;
-            }
-            grid.changeRowOrder(prevRow.scope.row, rowScope.row);
-            grid.searchProvider.evalFilter();
-            // clear out the rowToMove object
-            domUtilityService.eventStorage.rowToMove = undefined;
-            // if there isn't an apply already in progress lets start one
-            domUtilityService.digest(rowScope.$root);
         }
     };
 

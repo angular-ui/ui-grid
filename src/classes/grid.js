@@ -55,9 +55,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Enable column pinning
         enablePinning: false,
         
-        //Enable drag and drop row reordering. Only works in HTML5 compliant browsers.
-        enableRowReordering: false,
-        
         //To be able to have selectable rows in grid.
         enableRowSelection: true,
 
@@ -519,14 +516,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         domUtilityService.BuildStyles($scope, self, true);
     };
     self.lastSortedColumns = [];
-    self.changeRowOrder = function(prevRow, targetRow) {
-        // Splice the Rows via the actual datasource
-        var i = self.rowCache.indexOf(prevRow);
-        var j = self.rowCache.indexOf(targetRow);
-        self.rowCache.splice(i, 1);
-        self.rowCache.splice(j, 0, prevRow);
-        $scope.$emit('ngGridEventChangeOrder', self.rowCache);
-    };
     self.sortData = function(col, evt) {
         if (evt && evt.shiftKey && self.config.sortInfo) {
             var indx = self.config.sortInfo.columns.indexOf(col);
