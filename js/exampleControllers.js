@@ -281,9 +281,11 @@ angular.module('myApp.exampleControllers', [])
 	$scope.gridOptions = { 
 		data: 'myData',
 		enableCellSelection: true,
-		canSelectRows: false,
+		enableCellEdit: true,
+		enableRowSelection: false,
 		displaySelectionCheckbox: false,
-		columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, {field:'age', displayName:'Age'}]
+		columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, 
+		             {field:'age', displayName:'Age', enableFocusedCellEdit: false}]
 	};
 }])
 	

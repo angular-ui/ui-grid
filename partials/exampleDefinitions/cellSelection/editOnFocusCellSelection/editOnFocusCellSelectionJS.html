@@ -9,8 +9,10 @@ app.controller('MyCtrl', function($scope) {
     $scope.gridOptions = { 
         data: 'myData',
         enableCellSelection: true,
-        canSelectRows: false,
-        columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, {field:'age', displayName:'Age'}]
+        enableRowSelection: false,
+        enableCellEdit: true,
+        columnDefs: [{field: 'name', displayName: 'Name', enableCellEdit: true}, 
+                     {field:'age', displayName:'Age', enableCellEdit: false}]
     };
 });
 </pre>
