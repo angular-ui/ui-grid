@@ -23,7 +23,7 @@ ngDomAccessProvider.prototype.selectInputElement = function (elm) {
 };
 ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) { 
     if ($scope.selectionProvider.lastClickedRow) {
-        var columnIndex = index !== undefined ? index : previousColumn;
+        var columnIndex = index !== undefined ? index : this.previousColumn;
         var elm = $scope.selectionProvider.lastClickedRow.clone ? $scope.selectionProvider.lastClickedRow.clone.elm : $scope.selectionProvider.lastClickedRow.elm;
         if (columnIndex !== undefined && elm) {
             var columns = angular.element(elm[0].children).filter(function () { return this.nodeType !== 8; }); //Remove html comments for IE8
@@ -34,19 +34,20 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
             if (columns[i]) {
                 columns[i].children[0].focus();
             }
-            previousColumn = columnIndex;
+            this.previousColumn = columnIndex;
         }
     }
 };
 ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     var doingKeyDown = false;
+    var that = this;
     elm.bind('keydown', function (evt) {
         if (evt.keyCode === 16) { //shift key
             changeUserSelect(elm, 'none', evt);
             return true;
         } else if (!doingKeyDown) {
             doingKeyDown = true;
-            var ret = ngMoveSelectionHandler($scope, elm, evt, this.grid);
+            var ret = ngMoveSelectionHandler($scope, elm, evt, that.grid);
             doingKeyDown = false;
             return ret;
         }
