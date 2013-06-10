@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/09/2013 19:24
+* Compiled At: 06/09/2013 19:27
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1645,7 +1645,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 0 : 2;
+                $scope.columns[col.index].width -= isLast ? 2 : 0;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -1947,7 +1947,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     };
 
     $scope.viewportDimHeight = function() {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 1);
     };
     $scope.groupBy = function (col) {
         if (self.data.length < 1 || !col.groupable  || !col.field) {
@@ -2015,7 +2015,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += cols[i].width;
             }
         }
-        return totalWidth;
+        return totalWidth + 2;
     };
     $scope.headerScrollerDim = function() {
         var viewportH = $scope.viewportDimHeight(),
