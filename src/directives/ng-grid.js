@@ -11,7 +11,7 @@
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
                     return grid.init().then(function() {
                         // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
-                        if (typeof options.columnDefs == "string") {
+                        if (typeof options.columnDefs === "string") {
                             $scope.$parent.$watch(options.columnDefs, function (a) {
                                 if (!a) {
                                     grid.refreshDomSizes();
@@ -27,12 +27,31 @@
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
                             }, true);
-                        } else {
-    						grid.buildColumns();
-    					}
-    					
+                        }
+                        else {
+                            grid.buildColumns();
+                        }
+
+                        // Watch totalServerItems if it's a string
+                        if (typeof options.totalServerItems === "string") {
+                            $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
+                                // If the newTotal is not defined (like during init, set the value to 1)
+                                if (!angular.isDefined(newTotal)) {
+                                    $scope.totalServerItems = 1;
+                                }
+                                // Otherwise set the value to the new total
+                                else {
+                                    $scope.totalServerItems = newTotal;
+                                }
+                            });
+                        }
+                        // If it's NOT a string, then just set totalServerItems to its value
+                        else {
+                            $scope.totalServerItems = options.totalServerItems;
+                        }
+                        
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                        if (typeof options.data == "string") {
+                        if (typeof options.data === "string") {
                             var dataWatcher = function (a) {
                                 // make a temporary copy of the data
                                 grid.data = $.extend([], a);
@@ -60,7 +79,7 @@
                                 dataWatcher($scope.$eval(options.data));
                             });
                         }
-    					
+                        
                         grid.footerController = new ngFooter($scope, grid);
                         //set the right styling on the container
                         iElement.addClass("ngGrid").addClass(grid.gridId.toString());
@@ -93,11 +112,15 @@
                         options.selectAll = function (state) {
                             $scope.toggleSelectAll(state);
                         };
+                        // method for user to set the select all state on visible items.
+                        options.selectVisible = function (state) {
+                            $scope.toggleSelectAll(state, true);
+                        };
                         // method for user to set the groups programatically
                         options.groupBy = function (field) {
                             if (field) {
                                 $scope.groupBy($scope.columns.filter(function(c) {
-                                    return c.field == field;
+                                    return c.field === field;
                                 })[0]);
                             } else {
                                 var arr = $.extend(true, [], $scope.configGroups);
@@ -107,36 +130,38 @@
                         // method for user to set the sort field programatically
                         options.sortBy = function (field) {
                             var col = $scope.columns.filter(function (c) {
-                                return c.field == field;
+                                return c.field === field;
                             })[0];
-                            if (col) col.sort();
+                            if (col) {
+                                col.sort();
+                            }
                         };
                         // the grid Id, entity, scope for convenience
-    					options.gridId = grid.gridId;
-    					options.ngGrid = grid;
-    					options.$gridScope = $scope;
-                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
-    					$scope.$on('ngGridEventDigestGrid', function(){
-    						domUtilityService.digest($scope.$parent);
-    					});			
-    					
-    					$scope.$on('ngGridEventDigestGridParent', function(){
-    						domUtilityService.digest($scope.$parent);
-    					});
+                        options.gridId = grid.gridId;
+                        options.ngGrid = grid;
+                        options.$gridScope = $scope;
+                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
+                        $scope.$on('ngGridEventDigestGrid', function(){
+                            domUtilityService.digest($scope.$parent);
+                        });         
+                        
+                        $scope.$on('ngGridEventDigestGridParent', function(){
+                            domUtilityService.digest($scope.$parent);
+                        });
                         // set up the columns 
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
                         });
                         //initialize plugins.
                         angular.forEach(options.plugins, function (p) {
-                            if (typeof p === 'function') {
-                                p = p.call(this);
+                            if (typeof p === "function") {
+                                p = new p(); //If p is a function, then we assume it is a class.
                             }
                             p.init($scope.$new(), grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;
                         });
                         //send initi finalize notification.
-                        if (options.init == "function") {
+                        if (options.init === "function") {
                             options.init(grid, $scope);
                         }
                         return null;
