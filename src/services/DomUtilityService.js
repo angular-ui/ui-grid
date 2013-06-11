@@ -118,7 +118,7 @@
                 regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + (col.width-1) + "px; left: " + colLeft + "px");
             if ($utils.isIe) { // IE
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);

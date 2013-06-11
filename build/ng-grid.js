@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/10/2013 19:14
+* Compiled At: 06/10/2013 20:31
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -307,7 +307,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
                 regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + (col.width-1) + "px; left: " + colLeft + "px");
             if ($utils.isIe) { 
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);
