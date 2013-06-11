@@ -442,7 +442,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 2 : 0;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -772,6 +771,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         })[0];
         col.isGroupedBy = false;
         col.groupIndex = 0;
+        self.clearSortingData();
         if ($scope.columns[index].isAggCol) {
             $scope.columns.splice(index, 1);
             $scope.configGroups.splice(index, 1);
@@ -812,7 +812,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += cols[i].width;
             }
         }
-        return totalWidth + 2;
+        return totalWidth;
     };
     $scope.headerScrollerDim = function() {
         var viewportH = $scope.viewportDimHeight(),

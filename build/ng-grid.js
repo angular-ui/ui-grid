@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/09/2013 19:50
+* Compiled At: 06/10/2013 19:14
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -280,8 +280,8 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
             var col = cols[i];
             if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                css += "." + gridId + " .col" + i + " { width: " + (col.width-1) + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + (col.width-1) + "px; }";
                 sumWidth += col.width;
             }
         }
@@ -1422,7 +1422,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 2 : 0;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -1733,6 +1732,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         })[0];
         col.isGroupedBy = false;
         col.groupIndex = 0;
+        self.clearSortingData();
         if ($scope.columns[index].isAggCol) {
             $scope.columns.splice(index, 1);
             $scope.configGroups.splice(index, 1);
@@ -1771,7 +1771,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += cols[i].width;
             }
         }
-        return totalWidth + 2;
+        return totalWidth;
     };
     $scope.headerScrollerDim = function() {
         var viewportH = $scope.viewportDimHeight(),

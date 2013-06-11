@@ -90,8 +90,8 @@
             var col = cols[i];
             if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                css += "." + gridId + " .col" + i + " { width: " + (col.width-1) + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + (col.width-1) + "px; }";
                 sumWidth += col.width;
             }
         }
