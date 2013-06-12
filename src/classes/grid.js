@@ -771,7 +771,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         })[0];
         col.isGroupedBy = false;
         col.groupIndex = 0;
-        self.clearSortingData();
         if ($scope.columns[index].isAggCol) {
             $scope.columns.splice(index, 1);
             $scope.configGroups.splice(index, 1);

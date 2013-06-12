@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/12/2013 16:24
+* Compiled At: 06/12/2013 16:31
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1732,7 +1732,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         })[0];
         col.isGroupedBy = false;
         col.groupIndex = 0;
-        self.clearSortingData();
         if ($scope.columns[index].isAggCol) {
             $scope.columns.splice(index, 1);
             $scope.configGroups.splice(index, 1);
