@@ -386,8 +386,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // Build a map of ngColumn indices <-> columnDefs column indices (the "originalIndex" property on ngColumns).
         angular.forEach($scope.columns, function(ngCol, i) {
             // Disregard columns created by grouping (the grouping columns don't match a column from columnDefs)
-            if (!$utils.isNullOrUndefined(ngCol.originalIndex))
+            if (!$utils.isNullOrUndefined(ngCol.originalIndex)) {
                 indexMap[ngCol.originalIndex] = i;
+            }
         });
 
         angular.forEach(self.config.columnDefs, function(colDef, i) {
@@ -489,10 +490,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 // Calc the % relative to the amount of % reserved for the visible columns (that use % based widths)
                 var t = colDef.width;
                 var percent = parseInt(t.slice(0, -1), 10) / 100;
-                if (hiddenPercent > 0)
+                if (hiddenPercent > 0) {
                     percent = percent / percentWidthUsed;
-                else
+                }
+                else {
                     percent = percent / percentWidth;
+                }
 
                 var pixelsForPercentBasedWidth = self.rootDim.outerWidth * percentWidth;
                 ngColumn.width = Math.floor(pixelsForPercentBasedWidth * percent);
