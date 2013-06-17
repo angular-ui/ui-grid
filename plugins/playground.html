@@ -4,7 +4,6 @@
         <meta charset="utf-8">
         <title>Custom Plunker</title>
         <link rel="stylesheet" type="text/css" href="http://angular-ui.github.com/ng-grid/css/ng-grid.css" />
-        <link rel="stylesheet" type="text/css" href="style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
         <script type="text/javascript" src="../build/ng-grid.debug.js"></script>
@@ -59,12 +58,14 @@
                 $scope.gridOptionsBig = {
                     data: 'myDataBig',
                     plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin(hgtOpts)],
-                    showGroupPanel: true
+                    showGroupPanel: true,
+					showFooter: true
                 };
                 $scope.gridOptionsSmall = {
                     data: 'myDataSmall',
                     plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin()],
-                    showGroupPanel: true
+                    showGroupPanel: true,
+					showFooter: true
                 };
             });
         </script>
