@@ -372,57 +372,69 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
     };
     self.configureColumnWidths = function() {
-        var cols = self.config.columnDefs;
-        var indexOffset = self.config.showSelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
-
-        var numOfCols = cols.length + indexOffset,
-            asterisksArray = [],
+        var asterisksArray = [],
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
 
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
 
-        angular.forEach(cols, function(col, i) {
-                i += indexOffset;
+        // When rearranging columns, their index in $scope.columns will no longer match the original column order from columnDefs causing
+        // their width config to be out of sync. We can use "originalIndex" on the ngColumns to get hold of the correct setup from columnDefs, but to
+        // avoid O(n) lookups in $scope.columns per column we setup a map.
+        var indexMap = {};
+        // Build a map of ngColumn indices <-> columnDefs column indices (the "originalIndex" property on ngColumns).
+        angular.forEach($scope.columns, function(ngCol, i) {
+            // Disregard columns created by grouping (the grouping columns don't match a column from columnDefs)
+            if (!$utils.isNullOrUndefined(ngCol.originalIndex))
+                indexMap[ngCol.originalIndex] = i;
+        });
+
+        angular.forEach(self.config.columnDefs, function(colDef, i) {
+                // Get the ngColumn that matches the current column from columnDefs
+                var ngColumn = $scope.columns[indexMap[i]];
+
+                colDef.index = i;
+
                 var isPercent = false, t;
                 //if width is not defined, set it to a single star
-                if ($utils.isNullOrUndefined(col.width)) {
-                    col.width = "*";
+                if ($utils.isNullOrUndefined(colDef.width)) {
+                    colDef.width = "*";
                 } else { // get column width
-                    isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
-                    t = isPercent ? col.width : parseInt(col.width, 10);
+                    isPercent = isNaN(colDef.width) ? $utils.endsWith(colDef.width, "%") : false;
+                    t = isPercent ? colDef.width : parseInt(colDef.width, 10);
                 }
+
                 // check if it is a number
             if (isNaN(t)) {
-                t = col.width;
+                t = colDef.width;
                 // figure out if the width is defined or if we need to calculate it
                 if (t === 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
-                    $scope.columns[i].width = col.minWidth;
-                    totalWidth += $scope.columns[i].width;
-                    var temp = $scope.columns[i];
-                    $timeout(function () {
-                        self.resizeOnData(temp, true);
+                    ngColumn.width = ngColumn.minWidth;
+                    totalWidth += ngColumn.width;
+                    var temp = ngColumn;
+
+                    $scope.$on("ngGridEventData", function () {
+                        self.resizeOnData(temp);
                     });
                     return;
                 } else if (t.indexOf("*") !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
-                    if (col.visible !== false) {
+                    if (ngColumn.visible !== false) {
                         asteriskNum += t.length;
                     }
-                    col.index = i;
-                    asterisksArray.push(col);
+                    asterisksArray.push(colDef);
                     return;
                 } else if (isPercent) { // If the width is a percentage, save it until the very last.
-                    col.index = i;
-                    percentArray.push(col);
+                    percentArray.push(colDef);
                     return;
                 } else { // we can't parse the width so lets throw an error.
                     throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
-            } else if (col.visible !== false) {
-                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
+            } else if (ngColumn.visible !== false) {
+                totalWidth += ngColumn.width = parseInt(colDef.width, 10);
             }
         });
+
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
 
@@ -437,23 +449,53 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
+
             // set the width of each column based on the number of stars
-            angular.forEach(asterisksArray, function(col, i) {
+            angular.forEach(asterisksArray, function(colDef, i) {
+                // Get the ngColumn that matches the current column from columnDefs
+                var ngColumn = $scope.columns[indexMap[colDef.index]];
                 var isLast = (i === (asterisksArray.length - 1));
-                var t = col.width.length;
-                $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 0 : 2;
-                if (col.visible !== false) {
-                    totalWidth += $scope.columns[col.index].width;
+                ngColumn.width = asteriskVal * colDef.width.length;
+                ngColumn.width -= isLast ? 0 : 1;
+                if (ngColumn.visible !== false) {
+                    totalWidth += ngColumn.width;
                 }
             });
         }
+        
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0) {
+            // If any columns with % widths have been hidden, then let other % based columns use their width
+            var percentWidth = 0; // The total % value for all columns setting their width using % (will e.g. be 40 for 2 columns with 20% each)
+            var hiddenPercent = 0; // The total % value for all columns setting their width using %, but which have been hidden
+            angular.forEach(percentArray, function(colDef) {
+                // Get the ngColumn that matches the current column from columnDefs
+                var ngColumn = $scope.columns[indexMap[colDef.index]];
+                var t = colDef.width;
+                var percent = parseInt(t.slice(0, -1), 10) / 100;
+                percentWidth += percent;
+
+                if (!ngColumn.visible) {
+                    hiddenPercent += percent;
+                }
+            });
+            var percentWidthUsed = percentWidth - hiddenPercent;
+
             // do the math
-            angular.forEach(percentArray, function(col) {
-                var t = col.width;
-                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+            angular.forEach(percentArray, function(colDef) {
+                // Get the ngColumn that matches the current column from columnDefs
+                var ngColumn = $scope.columns[indexMap[colDef.index]];
+                
+                // Calc the % relative to the amount of % reserved for the visible columns (that use % based widths)
+                var t = colDef.width;
+                var percent = parseInt(t.slice(0, -1), 10) / 100;
+                if (hiddenPercent > 0)
+                    percent = percent / percentWidthUsed;
+                else
+                    percent = percent / percentWidth;
+
+                var pixelsForPercentBasedWidth = self.rootDim.outerWidth * percentWidth;
+                ngColumn.width = Math.floor(pixelsForPercentBasedWidth * percent);
             });
         }
     };
