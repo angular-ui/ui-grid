@@ -94,17 +94,17 @@
         for(ii = 0; ii < dLength; ii++){
             item = d[ii];
             var newItem = {
-                _orig_: item,
-                _index_: ii
-            }
+                _orig: item,
+                _index: ii
+            };
             for(jj = 0; jj < l; jj++){
                 orderItem = order[jj];
-                newItem[orderItem] = $parse(orderItem)(item)
+                newItem[orderItem] = $parse(orderItem)(item);
             }
-            results.push(newItem)
+            results.push(newItem);
         }
         return results;
-    }
+    };
     // the core sorting logic trigger
     sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
@@ -163,7 +163,7 @@
 
         precalcLn = precalc.length;
         for(var ii = 0; ii < precalcLn; ii++){
-            data.push(d[precalc[ii]["_index_"]]);
+            data.push(d[precalc[ii]["_index"]]);
         }
 
     };
