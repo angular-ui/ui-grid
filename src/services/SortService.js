@@ -82,6 +82,29 @@
         }
     };
     //#endregion
+    //precalculate the sort data for all objects to eliminate the need to do it
+    //in each call of arr.sort(function(){})
+    sortService.preCalcSortData = function(d, order, $parse){
+        var dLength = d.length,
+            l = order.length,
+            results = [],
+            item,
+            ii, jj,
+            orderItem;
+        for(ii = 0; ii < dLength; ii++){
+            item = d[ii];
+            var newItem = {
+                _orig_: item,
+                _index_: ii
+            }
+            for(jj = 0; jj < l; jj++){
+                orderItem = order[jj];
+                newItem[orderItem] = $parse(orderItem)(item)
+            }
+            results.push(newItem)
+        }
+        return results;
+    }
     // the core sorting logic trigger
     sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
@@ -92,10 +115,12 @@
             order = sortInfo.fields,
             col,
             direction,
+            precalcLn,
             // IE9 HACK.... omg, I can't reference data array within the sort fn below. has to be a separate reference....!!!!
-            d = data.slice(0);
+            d = data.slice(0),
+            precalc = sortService.preCalcSortData(d, order, $parse);
         //now actually sort the data
-        data.sort(function (itemA, itemB) {
+        precalc.sort(function (itemA, itemB) {
             var tem = 0,
                 indx = 0,
                 sortFn;
@@ -104,9 +129,9 @@
                 col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
-                
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
+
+                var propA = itemA[order[indx]];
+                var propB = itemB[order[indx]];
                 // we want to allow zero values to be evaluated in the sort function
                 if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
                     // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
@@ -132,6 +157,15 @@
                 return 0 - tem;
             }
         });
+
+        //clear the current array
+        data.length = 0;
+
+        precalcLn = precalc.length;
+        for(var ii = 0; ii < precalcLn; ii++){
+            data.push(d[precalc[ii]["_index_"]]);
+        }
+
     };
     sortService.Sort = function(sortInfo, data) {
         if (sortService.isSorting) {
