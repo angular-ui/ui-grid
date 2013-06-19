@@ -105,6 +105,22 @@
         }
         return results;
     };
+    //pregather the sort functions into an object.  IE8 really struggles
+    //when there are lots of fn calls, even if the call doesn't do much.
+    //so pulling the getSortFn out of the arr.sort(function(){}) helps
+    sortService.preCalcSortFns = function(sortInfo, data){
+        var cols = sortInfo.columns,
+            len = cols.length,
+            result = {},
+            col;
+
+        for(var ii = 0; ii < len; ii++){
+            col = cols[ii];
+            result[ii] = sortService.getSortFn(col, data);
+        }
+
+        return result;
+    };
     // the core sorting logic trigger
     sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
@@ -113,12 +129,12 @@
         }
         var l = sortInfo.fields.length,
             order = sortInfo.fields,
-            col,
             direction,
             precalcLn,
             // IE9 HACK.... omg, I can't reference data array within the sort fn below. has to be a separate reference....!!!!
             d = data.slice(0),
-            precalc = sortService.preCalcSortData(d, order, $parse);
+            precalc = sortService.preCalcSortData(data, order, $parse),
+            sortFns = sortService.preCalcSortFns(sortInfo, data);
         //now actually sort the data
         precalc.sort(function (itemA, itemB) {
             var tem = 0,
@@ -126,9 +142,8 @@
                 sortFn;
             while (tem === 0 && indx < l) {
                 // grab the metadata for the rest of the logic
-                col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx];
-                sortFn = sortService.getSortFn(col, d);
+                sortFn = sortFns[indx];
 
                 var propA = itemA[order[indx]];
                 var propB = itemB[order[indx]];
