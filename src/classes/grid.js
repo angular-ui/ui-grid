@@ -383,11 +383,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // their width config to be out of sync. We can use "originalIndex" on the ngColumns to get hold of the correct setup from columnDefs, but to
         // avoid O(n) lookups in $scope.columns per column we setup a map.
         var indexMap = {};
-        // Build a map of ngColumn indices <-> columnDefs column indices (the "originalIndex" property on ngColumns).
+        // Build a map of columnDefs column indices -> ngColumn indices (via the "originalIndex" property on ngColumns).
         angular.forEach($scope.columns, function(ngCol, i) {
             // Disregard columns created by grouping (the grouping columns don't match a column from columnDefs)
             if (!$utils.isNullOrUndefined(ngCol.originalIndex)) {
-                indexMap[ngCol.originalIndex] = i;
+                var origIndex = ngCol.originalIndex;
+                if (self.config.showSelectionCheckbox) {
+                    // The originalIndex will be offset 1 when including the selection column
+                    origIndex--;
+                }
+                indexMap[origIndex] = i;
             }
         });
 
