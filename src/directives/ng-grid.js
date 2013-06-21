@@ -161,7 +161,7 @@
                             options.plugins[$utils.getInstanceType(p)] = p;
                         });
                         //send initi finalize notification.
-                        if (options.init === "function") {
+                        if (typeof options.init === "function") {
                             options.init(grid, $scope);
                         }
                         return null;
