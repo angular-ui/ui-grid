@@ -14,7 +14,7 @@ function ngGridFlexibleHeightPlugin (opts) {
             if (scope.baseViewportHeight == null || scope.baseViewportHeight === 0) {
                 scope.baseViewportHeight = self.grid.$viewport.height();
             }
-            if (scope.baseViewportHeight > naturalHeight) {
+            if (scope.baseViewportHeight < naturalHeight) {
                 if (opts != null) {
                     if (opts.minHeight != null && (naturalHeight + extraHeight) < opts.minHeight) {
                         naturalHeight = opts.minHeight - extraHeight - 2;
