@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/22/2013 15:35
+* Compiled At: 06/22/2013 16:17
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -598,16 +598,17 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
             var results = (funcNameRegex).exec(o.constructor.toString());
             return (results && results.length > 1) ? results[1] : "";
         },
-        // we copy KO's ie detection here bc it isn't exported in the min versions of KO
-        // Detect IE versions for workarounds (uses IE conditionals, not UA string, for robustness) 
+        // Detect IE versions for bug workarounds (uses IE conditionals, not UA string, for robustness)
+        // Note that, since IE 10 does not support conditional comments, the following logic only detects IE < 10.
+        // Currently this is by design, since IE 10+ behaves correctly when treated as a standard browser.
+        // If there is a future need to detect specific versions of IE10+, we will amend this.
         ieVersion: (function() {
             var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
 
             // Keep constructing conditional HTML blocks until we hit one that resolves to an empty fragment
-            while (iElems[0]) {
+            do{
                 div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->';
-            }
-
+            }while(iElems[0]);
             return version > 4 ? version : undefined;
         })()
     };

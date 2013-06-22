@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/22/2013 15:35
+* Compiled At: 06/22/2013 16:17
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -555,10 +555,9 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
         },
         ieVersion: (function() {
             var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
-            while (iElems[0]) {
+            do{
                 div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->';
-            }
-
+            }while(iElems[0]);
             return version > 4 ? version : undefined;
         })()
     };
