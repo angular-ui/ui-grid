@@ -3,7 +3,7 @@
  * Originally created by @tigbro, for the @jquery-mobile-angular-adapter
  * https://github.com/tigbro/jquery-mobile-angular-adapter
  */
-ngGridDirectives.directive('ngIf', [function () {
+ngGridDirectives.directive('ngEditCellIf', [function () {
   return {
     transclude: 'element',
     priority: 1000,
@@ -15,7 +15,7 @@ ngGridDirectives.directive('ngIf', [function () {
         var childElement;
         var childScope;
  
-        scope.$watch(attr['ngIf'], function (newValue) {
+        scope.$watch(attr['ngEditCellIf'], function (newValue) {
           if (childElement) {
             childElement.remove();
             childElement = undefined;

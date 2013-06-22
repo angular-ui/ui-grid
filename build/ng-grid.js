@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/03/2013 21:19
+* Compiled At: 06/22/2013 15:35
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2547,6 +2547,40 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
     };
     return ngCell;
 }]);
+
+ngGridDirectives.directive('ngEditCellIf', [function () {
+  return {
+    transclude: 'element',
+    priority: 1000,
+    terminal: true,
+    restrict: 'A',
+    compile: function (e, a, transclude) {
+      return function (scope, element, attr) {
+
+        var childElement;
+        var childScope;
+        scope.$watch(attr['ngEditCellIf'], function (newValue) {
+          if (childElement) {
+            childElement.remove();
+            childElement = undefined;
+          }
+          if (childScope) {
+            childScope.$destroy();
+            childScope = undefined;
+          }
+
+          if (newValue) {
+            childScope = scope.$new();
+            transclude(childScope, function (clone) {
+              childElement = clone;
+              element.after(clone);
+            });
+          }
+        });
+      };
+    }
+  };
+}]);
 ngGridDirectives.directive('ngGridFooter', ['$compile', '$templateCache', function ($compile, $templateCache) {
     var ngGridFooter = {
         scope: false,
@@ -2737,40 +2771,6 @@ ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
         }
     };
     return ngHeaderCell;
-}]);
-
-ngGridDirectives.directive('ngIf', [function () {
-  return {
-    transclude: 'element',
-    priority: 1000,
-    terminal: true,
-    restrict: 'A',
-    compile: function (e, a, transclude) {
-      return function (scope, element, attr) {
-
-        var childElement;
-        var childScope;
-        scope.$watch(attr['ngIf'], function (newValue) {
-          if (childElement) {
-            childElement.remove();
-            childElement = undefined;
-          }
-          if (childScope) {
-            childScope.$destroy();
-            childScope = undefined;
-          }
-
-          if (newValue) {
-            childScope = scope.$new();
-            transclude(childScope, function (clone) {
-              childElement = clone;
-              element.after(clone);
-            });
-          }
-        });
-      };
-    }
-  };
 }]);
 ngGridDirectives.directive('ngInput', [function() {
     return {
@@ -2980,10 +2980,10 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("cellEditTemplate.html",
     "<div ng-cell-has-focus ng-dblclick=\"editCell()\">" +
-    "	<div ng-if=\"!isFocused\">" +
+    "	<div ng-edit-cell-if=\"!isFocused\">" +
     "	DISPLAY_CELL_TEMPLATE" +
     "	</div>" +
-    "	<div ng-if=\"isFocused\">" +
+    "	<div ng-edit-cell-if=\"isFocused\">" +
     "	EDITABLE_CELL_TEMPLATE" +
     "	</div>" +
     "</div>"
