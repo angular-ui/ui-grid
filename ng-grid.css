@@ -30,7 +30,6 @@
 }
 .ngHeaderCell {
   border-right: 1px solid #d4d4d4;
-  border-left: 1px solid #d4d4d4;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -61,9 +60,6 @@
 }
 .ngNoSort {
   cursor: default;
-}
-.ngHeaderCell:first-child {
-  border-left: 0;
 }
 .ngHeaderButton {
   position: absolute;
@@ -281,7 +277,7 @@
   overflow: hidden;
   top: 0;
   bottom: 0;
-  right: -1px;
+  right: 0;
   left: 0;
 }
 .ngAggregateText {
@@ -308,13 +304,9 @@
   overflow: hidden;
   position: absolute;
   border-right: 1px solid #d4d4d4;
-  border-left: 1px solid #d4d4d4;
   top: 0;
   bottom: 0;
   background-color: inherit;
-}
-.ngCell:first-child {
-  border-left: 0;
 }
 .ngCellText {
   padding: 5px;

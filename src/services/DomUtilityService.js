@@ -90,8 +90,8 @@
             var col = cols[i];
             if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                css += "." + gridId + " .col" + i + " { width: " + (col.width-1) + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + (col.width-1) + "px; }";
                 sumWidth += col.width;
             }
         }
@@ -118,7 +118,7 @@
                 regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + (col.width-1) + "px; left: " + colLeft + "px");
             if ($utils.isIe) { // IE
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);

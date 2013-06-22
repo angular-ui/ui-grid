@@ -1,8 +1,8 @@
-﻿/***********************************************
+/***********************************************
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/03/2013 21:19
+* Compiled At: 06/12/2013 16:31
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -297,8 +297,8 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
             var col = cols[i];
             if (col.visible !== false) {
                 var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                css += "." + gridId + " .col" + i + " { width: " + (col.width-1) + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + (col.width-1) + "px; }";
                 sumWidth += col.width;
             }
         }
@@ -325,7 +325,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
                 regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + (col.width-1) + "px; left: " + colLeft + "px");
             if ($utils.isIe) { // IE
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);
@@ -1645,7 +1645,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 0 : 2;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
@@ -1947,7 +1946,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     };
 
     $scope.viewportDimHeight = function() {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 1);
     };
     $scope.groupBy = function (col) {
         if (self.data.length < 1 || !col.groupable  || !col.field) {
