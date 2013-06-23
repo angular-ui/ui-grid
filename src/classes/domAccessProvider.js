@@ -40,14 +40,14 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
 };
 ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     var doingKeyDown = false;
-    var that = this;
+    var self = this;
     elm.bind('keydown', function (evt) {
         if (evt.keyCode === 16) { //shift key
             changeUserSelect(elm, 'none', evt);
             return true;
         } else if (!doingKeyDown) {
             doingKeyDown = true;
-            var ret = ngMoveSelectionHandler($scope, elm, evt, that.grid);
+            var ret = ngMoveSelectionHandler($scope, elm, evt, self.grid);
             doingKeyDown = false;
             return ret;
         }
