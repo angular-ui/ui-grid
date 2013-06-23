@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/22/2013 17:21
+* Compiled At: 06/23/2013 13:21
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -923,9 +923,11 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
         if (!grid.config.jqueryUIDraggable) {
             var columns = grid.$root.find('.ngHeaderSortColumn'); 
             angular.forEach(columns, function(col){
-                col.setAttribute('draggable', 'true');
-                if (col.addEventListener) { 
-                    col.addEventListener('dragstart', self.dragStart);
+                if(col.className && col.className.indexOf("ngHeaderSortColumn") !== -1){
+                    col.setAttribute('draggable', 'true');
+                    if (col.addEventListener) { 
+                        col.addEventListener('dragstart', self.dragStart);
+                    }
                 }
             });
             if (navigator.userAgent.indexOf("MSIE") !== -1){
@@ -2748,7 +2750,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             p.init($scope.$new(), grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;
                         });
-                        if (options.init === "function") {
+                        if (typeof options.init === "function") {
                             options.init(grid, $scope);
                         }
                         return null;
@@ -2759,6 +2761,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
     };
     return ngGridDirective;
 }]);
+
 ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
     var ngHeaderCell = {
         scope: false,
