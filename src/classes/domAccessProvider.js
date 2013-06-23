@@ -4,7 +4,7 @@ var ngDomAccessProvider = function (grid) {
 
 };
 
-var changeUserSelect = function (elm, value) {
+ngDomAccessProvider.prototype.changeUserSelect = function (elm, value) {
     elm.css({
         '-webkit-touch-callout': value,
         '-webkit-user-select': value,
@@ -43,7 +43,7 @@ ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     var self = this;
     elm.bind('keydown', function (evt) {
         if (evt.keyCode === 16) { //shift key
-            changeUserSelect(elm, 'none', evt);
+            self.changeUserSelect(elm, 'none', evt);
             return true;
         } else if (!doingKeyDown) {
             doingKeyDown = true;
@@ -55,7 +55,7 @@ ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     });
     elm.bind('keyup', function (evt) {
         if (evt.keyCode === 16) { //shift key
-            changeUserSelect(elm, 'text', evt);
+            self.changeUserSelect(elm, 'text', evt);
         }
         return true;
     });
