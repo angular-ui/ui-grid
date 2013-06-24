@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/23/2013 13:21
+* Compiled At: 06/23/2013 19:00
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2335,7 +2335,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 self.setSelection(rowItem, !rowItem.selected);
             }
         }
-        else if (!evt.keyCode || isUpDownKeyPress) {
+        else if (!evt.keyCode || isUpDownKeyPress && !grid.config.selectWithCheckboxOnly) {
             self.setSelection(rowItem, !rowItem.selected);
         }
         self.lastClickedRow = rowItem;
