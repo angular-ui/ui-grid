@@ -82,7 +82,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                 self.setSelection(rowItem, !rowItem.selected);
             }
         }
-        else if (!evt.keyCode || isUpDownKeyPress) {
+        else if (!evt.keyCode || isUpDownKeyPress && !grid.config.selectWithCheckboxOnly) {
             self.setSelection(rowItem, !rowItem.selected);
         }
         self.lastClickedRow = rowItem;
