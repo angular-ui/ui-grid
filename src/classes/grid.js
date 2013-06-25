@@ -431,8 +431,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         });
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0) {
-            //if they use percentages, they expect column ratios to stay intact especially if grid width is percentage or using position absolute
-            self.config.maintainColumnRatios = true;
+            //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
             // do the math
             angular.forEach(percentArray, function(col) {
                 var t = col.width;
@@ -444,8 +444,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
-            //if they use *s, they expect column ratios to stay intact especially if grid width is percentage or using position absolute
-            self.config.maintainColumnRatios = true;
+            //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
             // get the remaining width
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
             // are we overflowing vertically?
