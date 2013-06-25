@@ -145,7 +145,6 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
-        showGroupPanel: true,
         showFilter: true,
         multiSelect: true,
         columnDefs: 'myDefs2',

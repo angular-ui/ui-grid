@@ -257,9 +257,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.calcMaxCanvasHeight = function() {
-        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
-            return !e[NG_HIDDEN];
-        }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
+        var calculatedHeight;
+        if(self.config.groups.length > 0){
+            calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
+                return !e[NG_HIDDEN];
+            }).length * self.config.rowHeight;
+        } else {
+            calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+        }
+        return calculatedHeight;
     };
     self.elementDims = {
         scrollW: 0,
@@ -384,15 +390,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
 
         angular.forEach(cols, function(col, i) {
-                i += indexOffset;
-                var isPercent = false, t;
-                //if width is not defined, set it to a single star
-                if ($utils.isNullOrUndefined(col.width)) {
-                    col.width = "*";
-                } else { // get column width
-                    isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
-                    t = isPercent ? col.width : parseInt(col.width, 10);
-                }
+            i += indexOffset;
+            var isPercent = false, t;
+            //if width is not defined, set it to a single star
+            if ($utils.isNullOrUndefined(col.width)) {
+                col.width = "*";
+            } else { // get column width
+                isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
+                t = isPercent ? col.width : parseInt(col.width, 10);
+            }
                 // check if it is a number
             if (isNaN(t)) {
                 t = col.width;
@@ -423,11 +429,23 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
             }
         });
+        // Now we check if we saved any percentage columns for calculating last
+        if (percentArray.length > 0) {
+            //if they use percentages, they expect column ratios to stay intact especially if grid width is percentage or using position absolute
+            self.config.maintainColumnRatios = true;
+            // do the math
+            angular.forEach(percentArray, function(col) {
+                var t = col.width;
+                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+                if (col.visible !== false) {
+                    totalWidth += $scope.columns[col.index].width;
+                }
+            });
+        }
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
-
-            // WTF is this? -- Brian (2013-05-24)
-            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
+            //if they use *s, they expect column ratios to stay intact especially if grid width is percentage or using position absolute
+            self.config.maintainColumnRatios = true;
             // get the remaining width
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
             // are we overflowing vertically?
@@ -439,21 +457,21 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
             // set the width of each column based on the number of stars
             angular.forEach(asterisksArray, function(col, i) {
-                var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 0 : 2;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
-            });
-        }
-        // Now we check if we saved any percentage columns for calculating last
-        if (percentArray.length > 0) {
-            // do the math
-            angular.forEach(percentArray, function(col) {
-                var t = col.width;
-                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+
+                var isLast = (i === (asterisksArray.length - 1));
+                //if last asterisk and doesn't fill width of grid, add the difference
+                if(isLast && totalWidth < self.rootDim.outerWidth){
+                    var gridWidthDifference = self.rootDim.outerWidth - totalWidth;
+                    if(self.maxCanvasHt > $scope.viewportDimHeight()){
+                        gridWidthDifference -= domUtilityService.ScrollW;
+                    }
+                    $scope.columns[col.index].width += gridWidthDifference;
+                }
             });
         }
     };

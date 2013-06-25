@@ -184,13 +184,24 @@
             domUtilityService.numberOfGrids++;
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
-        }// resize on window resize
-        $(window).resize(function() {
-            domUtilityService.RebuildGrid($scope,grid);
+        }
+        // resize on window resize
+        var windowThrottle;
+        $(window).resize(function(){
+            clearTimeout(windowThrottle);
+            windowThrottle = setTimeout(function() {
+                //in function for IE8 compatibility
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
         });
         // resize on parent resize as well.
+        var parentThrottle;
         $(grid.$root.parent()).on('resize', function() {
-            domUtilityService.RebuildGrid($scope, grid);
+            clearTimeout(parentThrottle);
+            parentThrottle = setTimeout(function() {
+                //in function for IE8 compatibility
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
         });
     };
     // In this example we want to assign grid events.

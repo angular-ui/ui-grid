@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/23/2013 19:00
+* Compiled At: 06/24/2013 22:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1045,11 +1045,19 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        $(window).resize(function() {
-            domUtilityService.RebuildGrid($scope,grid);
+        var windowThrottle;
+        $(window).resize(function(){
+            clearTimeout(windowThrottle);
+            windowThrottle = setTimeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
         });
+        var parentThrottle;
         $(grid.$root.parent()).on('resize', function() {
-            domUtilityService.RebuildGrid($scope, grid);
+            clearTimeout(parentThrottle);
+            parentThrottle = setTimeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
         });
     };
     self.assignGridEventHandlers();
@@ -1246,9 +1254,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; 
     }
     self.calcMaxCanvasHeight = function() {
-        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
-            return !e[NG_HIDDEN];
-        }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
+        var calculatedHeight;
+        if(self.config.groups.length > 0){
+            calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
+                return !e[NG_HIDDEN];
+            }).length * self.config.rowHeight;
+        } else {
+            calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+        }
+        return calculatedHeight;
     };
     self.elementDims = {
         scrollW: 0,
@@ -1372,14 +1386,14 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
 
         angular.forEach(cols, function(col, i) {
-                i += indexOffset;
-                var isPercent = false, t;
-                if ($utils.isNullOrUndefined(col.width)) {
-                    col.width = "*";
-                } else { 
-                    isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
-                    t = isPercent ? col.width : parseInt(col.width, 10);
-                }
+            i += indexOffset;
+            var isPercent = false, t;
+            if ($utils.isNullOrUndefined(col.width)) {
+                col.width = "*";
+            } else { 
+                isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
+                t = isPercent ? col.width : parseInt(col.width, 10);
+            }
             if (isNaN(t)) {
                 t = col.width;
                 if (t === 'auto') { 
@@ -1408,27 +1422,38 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
             }
         });
+        if (percentArray.length > 0) {
+            self.config.maintainColumnRatios = true;
+            angular.forEach(percentArray, function(col) {
+                var t = col.width;
+                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+                if (col.visible !== false) {
+                    totalWidth += $scope.columns[col.index].width;
+                }
+            });
+        }
         if (asterisksArray.length > 0) {
-            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
+            self.config.maintainColumnRatios = true;
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
             if (self.maxCanvasHt > $scope.viewportDimHeight()) {
                 remainingWidth -= domUtilityService.ScrollW;
             }
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
             angular.forEach(asterisksArray, function(col, i) {
-                var isLast = (i === (asterisksArray.length - 1));
                 var t = col.width.length;
                 $scope.columns[col.index].width = asteriskVal * t;
-                $scope.columns[col.index].width -= isLast ? 0 : 2;
                 if (col.visible !== false) {
                     totalWidth += $scope.columns[col.index].width;
                 }
-            });
-        }
-        if (percentArray.length > 0) {
-            angular.forEach(percentArray, function(col) {
-                var t = col.width;
-                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+
+                var isLast = (i === (asterisksArray.length - 1));
+                if(isLast && totalWidth < self.rootDim.outerWidth){
+                    var gridWidthDifference = self.rootDim.outerWidth - totalWidth;
+                    if(self.maxCanvasHt > $scope.viewportDimHeight()){
+                        gridWidthDifference -= domUtilityService.ScrollW;
+                    }
+                    $scope.columns[col.index].width += gridWidthDifference;
+                }
             });
         }
     };
@@ -2418,7 +2443,7 @@ var ngStyleProvider = function($scope, grid) {
         return ret;
     };
     $scope.canvasStyle = function() {
-        return { "height": grid.maxCanvasHt.toString() + "px" };
+        return { "height": grid.maxCanvasHt + "px" };
     };
     $scope.headerScrollerStyle = function() {
         return { "height": grid.config.headerRowHeight + "px" };
@@ -2427,10 +2452,10 @@ var ngStyleProvider = function($scope, grid) {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
     };
     $scope.headerStyle = function() {
-        return { "width": (grid.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": grid.config.headerRowHeight + "px" };
     };
     $scope.groupPanelStyle = function () {
-        return { "width": (grid.rootDim.outerWidth) + "px", "height": "32px" };
+        return { "width": grid.rootDim.outerWidth + "px", "height": "32px" };
     };
     $scope.viewportStyle = function() {
         return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
@@ -2983,11 +3008,11 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("cellEditTemplate.html",
     "<div ng-cell-has-focus ng-dblclick=\"editCell()\">" +
-    "	<div ng-edit-cell-if=\"!isFocused\">" +
-    "	DISPLAY_CELL_TEMPLATE" +
+    "	<div ng-edit-cell-if=\"!isFocused\">	" +
+    "		DISPLAY_CELL_TEMPLATE" +
     "	</div>" +
     "	<div ng-edit-cell-if=\"isFocused\">" +
-    "	EDITABLE_CELL_TEMPLATE" +
+    "		EDITABLE_CELL_TEMPLATE" +
     "	</div>" +
     "</div>"
   );
@@ -3077,7 +3102,10 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("headerRowTemplate.html",
-    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\" ng-header-cell></div>"
+    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\">" +
+    "	<div class=\"ngVerticalBar\" ng-style=\"{height: col.headerRowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$first }\">&nbsp;</div>" +
+    "	<div ng-header-cell></div>" +
+    "</div>"
   );
 
   $templateCache.put("menuTemplate.html",
@@ -3102,7 +3130,10 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
   );
 
   $templateCache.put("rowTemplate.html",
-    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>"
+    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">" +
+    "	<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$first }\">&nbsp;</div>" +
+    "	<div ng-cell></div>" +
+    "</div>"
   );
 
 }]);
