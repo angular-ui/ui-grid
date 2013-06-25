@@ -386,7 +386,8 @@ describe('directives', function () {
                         scope.$digest();
 
                         var oldRow = elm.find('.ngRow:last');
-                        expect(oldRow.html()).toMatch(/Moroni.+?50/);
+                        expect(oldRow.html()).toMatch(/.+\s+.+\s+.+Moroni/);
+                        expect(oldRow.html()).toMatch(/\s+.+50.+/);
                         expect(oldRow.hasClass('selected')).toBe(true);
                     });
 
