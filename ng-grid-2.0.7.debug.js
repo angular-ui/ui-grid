@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/25/2013 22:47
+* Compiled At: 06/26/2013 08:00
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -919,7 +919,7 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
                 i = 1; //don't want to focus on checkbox
             }
             if (columns[i]) {
-                columns[i].children[0].focus();
+                columns[i].children[1].children[0].focus();
             }
             this.previousColumn = columnIndex;
         }
@@ -3215,6 +3215,14 @@ ngGridDirectives.directive('ngInput', [function() {
 
                 return true;
             });
+
+            elm.bind('click', function(evt) {
+                evt.stopPropagation();
+            }); 
+
+            elm.bind('mousedown', function(evt) {
+                evt.stopPropagation();
+            }); 
         }
     };
 }]);

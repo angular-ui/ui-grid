@@ -32,6 +32,14 @@ ngGridDirectives.directive('ngInput', [function() {
 
                 return true;
             });
+
+            elm.bind('click', function(evt) {
+                evt.stopPropagation();
+            }); 
+
+            elm.bind('mousedown', function(evt) {
+                evt.stopPropagation();
+            }); 
         }
     };
 }]);

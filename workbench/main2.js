@@ -20,6 +20,7 @@ function userController($scope, $timeout) {
 		multiSelect: true,
         enableRowReordering: false,
 		enableCellSelection: true,
+		enableCellEdit: true,
         showGroupPanel: true,
         columnDefs: 'myDefs'
     };
@@ -36,7 +37,7 @@ function userController($scope, $timeout) {
 	
 	$scope.changeDefs = function(){
 		$scope.myDefs = [{ field: 'Sku', displayName: 'My Sku' },
-			{ field: 'Vendor', displayName: 'Supplier' },
+			{ field: 'Vendor', displayName: 'Supplier', editableCellTemplate: '<input type="number" style="width:100px; height:30px;" ng-model="COL_FIELD" ng-input="COL_FIELD" />' },
 			{ field: 'SeasonCode.test', displayName: 'My SeasonCode', cellTemplate: '<input style="width:100%;height:100%;" class="ui-widget input" type="text" ng-readonly="!row.selected" ng-model="COL_FIELD"/>' },
 			{ field: 'Mfg_Id', displayName: 'Manufacturer ID' },
 			{ field: 'UPC', displayName: 'Bar Code' }];

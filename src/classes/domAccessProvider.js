@@ -32,7 +32,7 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
                 i = 1; //don't want to focus on checkbox
             }
             if (columns[i]) {
-                columns[i].children[0].focus();
+                columns[i].children[1].children[0].focus();
             }
             this.previousColumn = columnIndex;
         }

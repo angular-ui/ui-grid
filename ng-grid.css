@@ -340,7 +340,7 @@
 }
 .ngCellElement:focus {
   outline: 0;
-  background-color: #c9dde1;
+  background-color: #b3c4c7;
 }
 .ngRow.canSelect {
   cursor: pointer;
