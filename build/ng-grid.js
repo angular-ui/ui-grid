@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/26/2013 08:00
+* Compiled At: 06/26/2013 08:34
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -551,7 +551,13 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
         },
         getInstanceType: function (o) {
             var results = (funcNameRegex).exec(o.constructor.toString());
-            return (results && results.length > 1) ? results[1] : "";
+            if (results && results.length > 1) {
+                var instanceType = results[1].replace(/^\s+|\s+$/g, ""); 
+                return instanceType;
+            }
+            else {
+                return "";
+            }
         },
         ieVersion: (function() {
             var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
