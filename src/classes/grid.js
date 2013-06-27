@@ -383,8 +383,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             asteriskNum = 0,
             totalWidth = 0;
 
-        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
-
         // When rearranging columns, their index in $scope.columns will no longer match the original column order from columnDefs causing
         // their width config to be out of sync. We can use "originalIndex" on the ngColumns to get hold of the correct setup from columnDefs, but to
         // avoid O(n) lookups in $scope.columns per column we setup a map.
@@ -395,6 +393,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             if (!$utils.isNullOrUndefined(ngCol.originalIndex)) {
                 var origIndex = ngCol.originalIndex;
                 if (self.config.showSelectionCheckbox) {
+                    //if visible, takes up 25 pixels
+                    if(i === 0 && ngCol.visible){
+                        totalWidth += 25;
+                    }
                     // The originalIndex will be offset 1 when including the selection column
                     origIndex--;
                 }
@@ -541,7 +543,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                domUtilityService.BuildStyles($scope, self, true);
+                domUtilityService.RebuildGrid($scope, self);
                 $scope.$emit('ngGridEventColumns', a);
             }, true);
             $scope.$watch(function() {
@@ -684,9 +686,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.fixColumnIndexes = function() {
         //fix column indexes
         for (var i = 0; i < $scope.columns.length; i++) {
-            if ($scope.columns[i].visible !== false) {
-                $scope.columns[i].index = i;
-            }
+            $scope.columns[i].index = i;
         }
     };
     self.fixGroupIndexes = function() {

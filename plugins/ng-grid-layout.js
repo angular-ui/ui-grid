@@ -6,9 +6,6 @@ function ngGridLayoutPlugin () {
         self.domUtilityService = services.DomUtilityService;
         self.grid = grid;
         self.scope = scope;
-
-        // Register for column rearranging events
-        scope.$parent.$on('ngGridEventColumns', self.updateGridLayout);
     };
 
     this.updateGridLayout = function () {

@@ -23,9 +23,7 @@
                                 $scope.columns = [];
                                 grid.config.columnDefs = a;
                                 grid.buildColumns();
-                                grid.configureColumnWidths();
                                 grid.eventProvider.assignEvents();
-                                domUtilityService.RebuildGrid($scope, grid);
                             }, true);
                         }
                         else {

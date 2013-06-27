@@ -132,7 +132,7 @@
     domUtilityService.setColLeft.immediate = 1;
     domUtilityService.RebuildGrid = function($scope, grid){
         domUtilityService.UpdateGridLayout($scope, grid);
-        if (grid.config.maintainColumnRatios) {
+        if (grid.config.maintainColumnRatios == null || grid.config.maintainColumnRatios) {
             grid.configureColumnWidths();
         }
         $scope.adjustScrollLeft(grid.$viewport.scrollLeft());

@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/26/2013 19:28
+* Compiled At: 06/27/2013 04:08
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -318,7 +318,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
     domUtilityService.setColLeft.immediate = 1;
     domUtilityService.RebuildGrid = function($scope, grid){
         domUtilityService.UpdateGridLayout($scope, grid);
-        if (grid.config.maintainColumnRatios) {
+        if (grid.config.maintainColumnRatios == null || grid.config.maintainColumnRatios) {
             grid.configureColumnWidths();
         }
         $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
@@ -1039,8 +1039,8 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             $scope.columns.splice(self.colToMove.col.index, 1);
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
-            domUtilityService.BuildStyles($scope, grid, true);
             self.colToMove = undefined;
+            domUtilityService.digest($scope);
         }
     };
 
@@ -1384,13 +1384,14 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-
-        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
         var indexMap = {};
         angular.forEach($scope.columns, function(ngCol, i) {
             if (!$utils.isNullOrUndefined(ngCol.originalIndex)) {
                 var origIndex = ngCol.originalIndex;
                 if (self.config.showSelectionCheckbox) {
+                    if(i === 0 && ngCol.visible){
+                        totalWidth += 25;
+                    }
                     origIndex--;
                 }
                 indexMap[origIndex] = i;
@@ -1509,7 +1510,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                domUtilityService.BuildStyles($scope, self, true);
+                domUtilityService.RebuildGrid($scope, self);
                 $scope.$emit('ngGridEventColumns', a);
             }, true);
             $scope.$watch(function() {
@@ -1645,9 +1646,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     };
     self.fixColumnIndexes = function() {
         for (var i = 0; i < $scope.columns.length; i++) {
-            if ($scope.columns[i].visible !== false) {
-                $scope.columns[i].index = i;
-            }
+            $scope.columns[i].index = i;
         }
     };
     self.fixGroupIndexes = function() {
@@ -2687,9 +2686,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 $scope.columns = [];
                                 grid.config.columnDefs = a;
                                 grid.buildColumns();
-                                grid.configureColumnWidths();
                                 grid.eventProvider.assignEvents();
-                                domUtilityService.RebuildGrid($scope, grid);
                             }, true);
                         }
                         else {
