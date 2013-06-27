@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/26/2013 08:34
+* Compiled At: 06/26/2013 19:28
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2821,22 +2821,12 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             $scope.isFocused = true;
             domUtilityService.digest($scope);   
 
-            //Remove html comments for IE8
-            var elementWithoutComments = angular.element(elm[0].children).filter(function () {
-                return this.nodeType !== 8;
+            $scope.$broadcast('ngGridEventStartCellEdit');
+
+            $scope.$on('ngGridEventEndCellEdit', function() {
+                $scope.isFocused = false;
+                domUtilityService.digest($scope);
             });
-
-            var inputElement = angular.element(elementWithoutComments[0].children[0]); 
-
-            if (inputElement.length > 0) {
-                angular.element(inputElement).focus();
-                $scope.domAccessProvider.selectInputElement(inputElement[0]);
-                angular.element(inputElement).bind('blur', function(){  
-                    $scope.isFocused = false;   
-                    domUtilityService.digest($scope);
-                    return true;
-                }); 
-            }
         };
 
         return function($scope, elm) {
@@ -3229,6 +3219,14 @@ ngGridDirectives.directive('ngInput', [function() {
             elm.bind('mousedown', function(evt) {
                 evt.stopPropagation();
             }); 
+
+            scope.$on('ngGridEventStartCellEdit', function () {
+                elm.focus();
+            });
+
+            angular.element(elm).bind('blur', function () {
+                scope.$emit('ngGridEventEndCellEdit');
+            });
         }
     };
 }]);

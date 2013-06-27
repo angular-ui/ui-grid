@@ -40,6 +40,14 @@ ngGridDirectives.directive('ngInput', [function() {
             elm.bind('mousedown', function(evt) {
                 evt.stopPropagation();
             }); 
+
+            scope.$on('ngGridEventStartCellEdit', function () {
+                elm.focus();
+            });
+
+            angular.element(elm).bind('blur', function () {
+                scope.$emit('ngGridEventEndCellEdit');
+            });
         }
     };
 }]);

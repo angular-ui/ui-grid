@@ -4,22 +4,12 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             $scope.isFocused = true;
             domUtilityService.digest($scope);   
 
-            //Remove html comments for IE8
-            var elementWithoutComments = angular.element(elm[0].children).filter(function () {
-                return this.nodeType !== 8;
+            $scope.$broadcast('ngGridEventStartCellEdit');
+
+            $scope.$on('ngGridEventEndCellEdit', function() {
+                $scope.isFocused = false;
+                domUtilityService.digest($scope);
             });
-
-            var inputElement = angular.element(elementWithoutComments[0].children[0]); 
-
-            if (inputElement.length > 0) {
-                angular.element(inputElement).focus();
-                $scope.domAccessProvider.selectInputElement(inputElement[0]);
-                angular.element(inputElement).bind('blur', function(){  
-                    $scope.isFocused = false;   
-                    domUtilityService.digest($scope);
-                    return true;
-                }); 
-            }
         };
 
         return function($scope, elm) {
