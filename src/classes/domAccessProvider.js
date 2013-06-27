@@ -14,13 +14,6 @@ ngDomAccessProvider.prototype.changeUserSelect = function (elm, value) {
         'user-select': value
     });
 };
-
-ngDomAccessProvider.prototype.selectInputElement = function (elm) {
-    var node = elm.nodeName.toLowerCase();
-    if (node === 'input' || node === 'textarea') {
-        elm.select();
-    }
-};
 ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) { 
     if ($scope.selectionProvider.lastClickedRow) {
         var columnIndex = index !== undefined ? index : this.previousColumn;

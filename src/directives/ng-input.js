@@ -42,7 +42,7 @@ ngGridDirectives.directive('ngInput', [function() {
             }); 
 
             scope.$on('ngGridEventStartCellEdit', function () {
-                elm.focus();
+                elm.select();
             });
 
             angular.element(elm).bind('blur', function () {

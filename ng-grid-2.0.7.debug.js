@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/27/2013 04:08
+* Compiled At: 06/27/2013 06:27
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -738,7 +738,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.resizable = false;
     self.pinnable = false;
     self.pinned = (config.enablePinning && colDef.pinned);
-    self.originalIndex = self.index;
+    self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
         self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
@@ -906,13 +906,6 @@ ngDomAccessProvider.prototype.changeUserSelect = function (elm, value) {
         '-ms-user-select': value,
         'user-select': value
     });
-};
-
-ngDomAccessProvider.prototype.selectInputElement = function (elm) {
-    var node = elm.nodeName.toLowerCase();
-    if (node === 'input' || node === 'textarea') {
-        elm.select();
-    }
 };
 ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) { 
     if ($scope.selectionProvider.lastClickedRow) {
@@ -1574,13 +1567,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }, $scope, self, domUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {
-            var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
+            var checkboxOffset = self.config.showSelectionCheckbox ? 1 : 0;
+            var groupOffset = $scope.configGroups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
-                i += indexOffset;
+                i += checkboxOffset;
                 var column = new ngColumn({
                     colDef: colDef,
-                    index: i,
+                    index: i + groupOffset,
+                    originalIndex: i,
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData,
                     resizeOnDataCallback: self.resizeOnData,
@@ -1617,7 +1612,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var origIndex = ngCol.originalIndex;
                 if (self.config.showSelectionCheckbox) {
                     //if visible, takes up 25 pixels
-                    if(i === 0 && ngCol.visible){
+                    if(ngCol.originalIndex === 0 && ngCol.visible){
                         totalWidth += 25;
                     }
                     // The originalIndex will be offset 1 when including the selection column
@@ -3218,7 +3213,7 @@ ngGridDirectives.directive('ngInput', [function() {
             }); 
 
             scope.$on('ngGridEventStartCellEdit', function () {
-                elm.focus();
+                elm.select();
             });
 
             angular.element(elm).bind('blur', function () {
