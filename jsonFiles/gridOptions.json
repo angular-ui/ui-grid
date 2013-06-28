@@ -181,7 +181,7 @@
 	},
 	{
 		"id": "rowTemplate",
-		"defaultValue": "<div ng-style=\"{'cursor': row.cursor, 'z-index': col.zIndex() }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>",
+		"defaultValue": "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\"><div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div><div ng-cell></div></div>",
 		"definition": "Define a row Template to customize output. See github wiki for more details.",
 		"plunker": "Link"
 	},

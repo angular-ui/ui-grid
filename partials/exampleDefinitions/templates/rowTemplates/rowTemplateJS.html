@@ -8,7 +8,10 @@ app.controller('MyCtrl', function($scope) {
                     {name: "Enos", age: 34}];
     $scope.gridOptions = { 
         data: 'myData',
-		rowTemplate: '&lt;div style="height: 100%" ng-class="{green: row.getProperty(\'age\') < 30}"&gt;&lt;div ng-style="{\'cursor\': row.cursor, \'z-index\': col.zIndex() }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}" ng-cell&gt;&lt;/div&gt;&lt;/div&gt;'
+		rowTemplate:'&lt;div style="height: 100%" ng-class="{green: row.getProperty(\'age\') < 30}"&gt;&lt;div ng-style="{ \'cursor\': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}"&gt;' +
+                           '&lt;div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }"&gt;&nbsp;&lt;/div&gt;' +
+                           '&lt;div ng-cell&gt;&lt;/div&gt;' +
+                     '&lt;/div&gt;&lt;/div&gt;'
     };
 });
 </pre>
