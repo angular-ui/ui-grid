@@ -377,6 +377,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 cols.push(column);
             });
             $scope.columns = cols;
+            if ($scope.configGroups.length > 0) {
+                self.rowFactory.getGrouping($scope.configGroups);
+            }
         }
     };
     self.configureColumnWidths = function() {
@@ -447,7 +450,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
             } else if (ngColumn.visible !== false) {
-                totalWidth += ngColumn.width = parseInt(colDef.width, 10);
+                totalWidth += ngColumn.width = parseInt(ngColumn.width, 10);
             }
         });
         
