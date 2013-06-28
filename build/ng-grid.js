@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/27/2013 22:45
+* Compiled At: 06/28/2013 00:08
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -769,6 +769,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         }
     };
     self.gripOnMouseDown = function(event) {
+        domUtilityService.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -793,6 +794,8 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         $scope.adjustScrollLeft(0);
+        domUtilityService.digest($scope);
+        domUtilityService.isColumnResizing = false;
         return false;
     };
     self.copy = function() {
@@ -1507,7 +1510,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                domUtilityService.RebuildGrid($scope, self);
+                if(!domUtilityService.isColumnResizing){
+                    domUtilityService.RebuildGrid($scope, self);
+                }
                 $scope.$emit('ngGridEventColumns', a);
             }, true);
             $scope.$watch(function() {

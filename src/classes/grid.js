@@ -548,7 +548,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                domUtilityService.RebuildGrid($scope, self);
+                if(!domUtilityService.isColumnResizing){
+                    domUtilityService.RebuildGrid($scope, self);
+                }
                 $scope.$emit('ngGridEventColumns', a);
             }, true);
             $scope.$watch(function() {

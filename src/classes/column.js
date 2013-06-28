@@ -120,6 +120,7 @@
         }
     };
     self.gripOnMouseDown = function(event) {
+        domUtilityService.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -145,6 +146,7 @@
         event.target.parentElement.style.cursor = 'default';
         $scope.adjustScrollLeft(0);
         domUtilityService.digest($scope);
+        domUtilityService.isColumnResizing = false;
         return false;
     };
     self.copy = function() {
