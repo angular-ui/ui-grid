@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/27/2013 22:03
+* Compiled At: 06/27/2013 22:45
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -850,7 +850,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         $scope.adjustScrollLeft(0);
-        domUtilityService.digest($scope);
+        //domUtilityService.digest($scope);
         return false;
     };
     self.copy = function() {
@@ -2433,6 +2433,8 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
                 }, $scope, grid, domUtilityService, $templateCache, $utils));
             }
         }
+
+        domUtilityService.BuildStyles($scope, grid, true);
 		grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;
@@ -3506,7 +3508,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("headerRowTemplate.html",
     "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\">" +
-    "	<div class=\"ngVerticalBar\" ng-style=\"{height: col.headerRowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$first }\">&nbsp;</div>" +
+    "	<div class=\"ngVerticalBar\" ng-style=\"{height: col.headerRowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>" +
     "	<div ng-header-cell></div>" +
     "</div>"
   );
@@ -3534,7 +3536,7 @@ angular.module("ngGrid").run(["$templateCache", function($templateCache) {
 
   $templateCache.put("rowTemplate.html",
     "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">" +
-    "	<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$first }\">&nbsp;</div>" +
+    "	<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>" +
     "	<div ng-cell></div>" +
     "</div>"
   );
