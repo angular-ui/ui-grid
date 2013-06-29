@@ -156,16 +156,16 @@ angular.module('myApp.exampleControllers', [])
         filterText: "",
         useExternalFilter: true
     };
+    $scope.totalServerItems = 0;
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000],
         pageSize: 250,
-        totalServerItems: 0,
         currentPage: 1
     };
 	$scope.setPagingData = function(data, page, pageSize){	
 		var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
 		$scope.myData = pagedData;
-		$scope.pagingOptions.totalServerItems = data.length;
+		$scope.totalServerItems = data.length;
 		if (!$scope.$$phase) {
 			$scope.$apply();
 		}
@@ -202,6 +202,7 @@ angular.module('myApp.exampleControllers', [])
 		data: 'myData',
         enablePaging: true,
 		showFooter: true,
+        totalServerItems: 'totalServerItems',
         pagingOptions: $scope.pagingOptions,
         filterOptions: $scope.filterOptions
     };	
