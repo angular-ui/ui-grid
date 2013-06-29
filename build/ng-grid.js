@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/28/2013 22:34
+* Compiled At: 06/28/2013 22:46
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -39,7 +39,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         newColumnIndex,
         lastInRow = false,
         firstInRow = false,
-        rowIndex = $scope.selectionProvider.lastClickedRow == undefined ? 1 : $scope.selectionProvider.lastClickedRow.rowIndex,
+        rowIndex = $scope.selectionProvider.lastClickedRow === undefined ? 1 : $scope.selectionProvider.lastClickedRow.rowIndex,
         visibleCols = $scope.columns.filter(function(c) { return c.visible; }),
         pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
 
