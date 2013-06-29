@@ -136,7 +136,7 @@
     self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
-        self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        self.width = config.colDef.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
