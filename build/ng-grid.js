@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/28/2013 23:01
+* Compiled At: 06/28/2013 23:32
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2698,7 +2698,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (typeof options.totalServerItems === "string") {
                             $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
                                 if (!angular.isDefined(newTotal)) {
-                                    $scope.totalServerItems = 1;
+                                    $scope.totalServerItems = 0;
                                 }
                                 else {
                                     $scope.totalServerItems = newTotal;

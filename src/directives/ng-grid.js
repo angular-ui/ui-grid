@@ -34,9 +34,9 @@
                         // Watch totalServerItems if it's a string
                         if (typeof options.totalServerItems === "string") {
                             $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
-                                // If the newTotal is not defined (like during init, set the value to 1)
+                                // If the newTotal is not defined (like during init, set the value to 0)
                                 if (!angular.isDefined(newTotal)) {
-                                    $scope.totalServerItems = 1;
+                                    $scope.totalServerItems = 0;
                                 }
                                 // Otherwise set the value to the new total
                                 else {
