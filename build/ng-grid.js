@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/28/2013 22:03
+* Compiled At: 06/28/2013 22:34
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -785,7 +785,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
-        self.width = config.colDef.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
