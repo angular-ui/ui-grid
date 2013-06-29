@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/28/2013 22:46
+* Compiled At: 06/28/2013 23:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3036,9 +3036,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 }
                             });
                         }
-                        // If it's NOT a string, then just set totalServerItems to its value
+                        // If it's NOT a string, then just set totalServerItems to 0 since they should only be setting this if using a string
                         else {
-                            $scope.totalServerItems = options.totalServerItems;
+                            $scope.totalServerItems = 0;
                         }
                         
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data

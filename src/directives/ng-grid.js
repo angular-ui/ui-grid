@@ -44,9 +44,9 @@
                                 }
                             });
                         }
-                        // If it's NOT a string, then just set totalServerItems to its value
+                        // If it's NOT a string, then just set totalServerItems to 0 since they should only be setting this if using a string
                         else {
-                            $scope.totalServerItems = options.totalServerItems;
+                            $scope.totalServerItems = 0;
                         }
                         
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data

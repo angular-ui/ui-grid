@@ -21,7 +21,8 @@ function userController($scope) {
         columnDefs: 'myDefs',
         showColumnMenu: true,
         enableColumnReordering: true,
-        enableColumnResize:true
+        enableColumnResize:true,
+        showFooter: true
     };
 	
 		$scope.myData = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': 0, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },

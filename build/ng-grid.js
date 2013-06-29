@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/28/2013 22:46
+* Compiled At: 06/28/2013 23:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2706,7 +2706,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             });
                         }
                         else {
-                            $scope.totalServerItems = options.totalServerItems;
+                            $scope.totalServerItems = 0;
                         }
                         if (typeof options.data === "string") {
                             var dataWatcher = function (a) {
