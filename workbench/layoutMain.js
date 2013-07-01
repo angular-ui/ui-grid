@@ -59,6 +59,8 @@ function userController($scope) {
         multiSelect: true,
         showGroupPanel: false,
         showColumnMenu: true,
+        enableCellSelection: true,
+        enableCellEditOnFocus: true,
 		plugins: [plugins.ngGridLayoutPlugin],
         enablePaging: true,
         showFooter: true,

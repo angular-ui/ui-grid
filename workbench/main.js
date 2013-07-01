@@ -114,7 +114,7 @@ function userController($scope) {
 		showGroupPanel: true,
 		showFooter: false,
 		showFilter: true,
-		enableCellEdit: true,
+        enableCellEdit: true,
         enableCellSelection: true,
 		showSelectionCheckbox: true,
         selectWithCheckboxOnly: true,

@@ -13,7 +13,7 @@
 
     // TODO: Use the column's definition for enabling cell editing
     // self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
-    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : config.enableCellEdit;
+    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : (config.enableCellEdit || config.enableCellEditOnFocus);
 
     self.headerRowHeight = config.headerRowHeight;
 

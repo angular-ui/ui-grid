@@ -26,7 +26,9 @@ ngGridDirectives.directive('ngInput', [function() {
                         }
                         break;
                     case 13: // Enter (Leave Field)
-                        elm.blur();
+                        if(scope.totalFilteredItemsLength() - 1 > scope.row.rowIndex && scope.row.rowIndex > 0  && scope.enableCellEditOnFocus || scope.enableCellEdit) {
+                            elm.blur();
+                        }
                         break;
                 }
 
@@ -42,6 +44,7 @@ ngGridDirectives.directive('ngInput', [function() {
             }); 
 
             scope.$on('ngGridEventStartCellEdit', function () {
+                elm.focus();
                 elm.select();
             });
 

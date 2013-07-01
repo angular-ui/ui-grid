@@ -36,6 +36,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enables cell editing.
         enableCellEdit: false,
+
+        //Enables cell editing on focus
+        enableCellEditOnFocus: false,
         
         //Enables cell selection.
         enableCellSelection: false,
@@ -366,7 +369,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
-                    enableCellEdit: self.config.enableCellEdit 
+                    enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus
                 }, $scope, self, domUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
@@ -711,6 +714,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
     $scope.enableCellSelection = self.config.enableCellSelection;
+    $scope.enableCellEditOnFocus = self.config.enableCellEditOnFocus;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
