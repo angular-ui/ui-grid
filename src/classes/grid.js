@@ -491,6 +491,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // var p = $q.defer();
         // p.resolve();
         // return p.promise;
+        $scope.$watch(function() {
+            return self.config.sortInfo;
+        }, function(sortInfo){
+            if (!sortService.isSorting) {
+                self.getColsFromFields();
+                self.sortActual();
+                self.searchProvider.evalFilter();
+            }
+            //$scope.$emit('ngGridEventSorted', grid.config.sortInfo);
+        },true);
     };
    
     self.resizeOnData = function(col) {
