@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/30/2013 20:57
+* Compiled At: 06/30/2013 21:00
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2875,7 +2875,7 @@ ngGridDirectives.directive('ngInput', [function() {
                         }
                         break;
                     case 13: 
-                        if(scope.totalFilteredItemsLength() - 1 > scope.row.rowIndex && scope.row.rowIndex > 0  && scope.enableCellEditOnFocus || scope.enableCellEdit) {
+                        if(scope.enableCellEditOnFocus && scope.totalFilteredItemsLength() - 1 > scope.row.rowIndex && scope.row.rowIndex > 0  || scope.enableCellEdit) {
                             elm.blur();
                         }
                         break;
