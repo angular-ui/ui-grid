@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/01/2013 07:40
+* Compiled At: 07/01/2013 07:58
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2309,7 +2309,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
-                    self.fieldMap[col.field.split('.')[0]] = col;
+                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
                 }
                 if (col.displayName) {
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;

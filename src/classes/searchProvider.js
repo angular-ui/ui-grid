@@ -162,7 +162,7 @@
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
-                    self.fieldMap[col.field.split('.')[0]] = col;
+                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
                 }
                 if (col.displayName) {
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
