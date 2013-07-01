@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/30/2013 22:01
+* Compiled At: 07/01/2013 07:40
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2181,14 +2181,14 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                                 f = $filter(s[0]);
                             }
                             var pVal = item[prop];
-                            if (pVal != null) {
+                            if (pVal !== null && pVal !== undefined) {
                                 if (typeof f === "function") {
                                     var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
                                     result = condition.regex.test(filterRes);
                                 } else {
                                     result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
                                 }
-                                if (pVal && result) {
+                                if (result) {
                                     return true;
                                 }
                             }
@@ -2203,7 +2203,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 var sp = col.cellFilter.split(':');
                 var filter = col.cellFilter ? $filter(sp[0]) : null;
                 var value = item[condition.column] || item[col.field.split('.')[0]];
-                if (value == null) {
+                if (value === null || value === undefined) {
                     return false;
                 }
                 if (typeof filter === "function") {
@@ -2213,7 +2213,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 else {
                     result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
                 }
-                if (!value || !result) {
+                if (!result) {
                     return false;
                 }
             }
@@ -2948,7 +2948,7 @@ ngGridDirectives.directive('ngViewport', [function() {
                 $scope.$digest();
             }
             prevScollLeft = scrollLeft;
-            prevScollTop = prevScollTop;
+            prevScollTop = scrollTop;
             isMouseWheelActive = false;
             return true;
         });

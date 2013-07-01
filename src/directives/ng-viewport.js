@@ -15,7 +15,7 @@ ngGridDirectives.directive('ngViewport', [function() {
                 $scope.$digest();
             }
             prevScollLeft = scrollLeft;
-            prevScollTop = prevScollTop;
+            prevScollTop = scrollTop;
             isMouseWheelActive = false;
             return true;
         });
