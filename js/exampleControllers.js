@@ -282,11 +282,32 @@ angular.module('myApp.exampleControllers', [])
 	$scope.gridOptions = { 
 		data: 'myData',
 		enableCellSelection: true,
+		enableCellEditOnFocus: true,
+		enableRowSelection: false,
+		columnDefs: [{field: 'name', displayName: 'Name', enableCellEdit: true}, 
+		             {field:'age', displayName:'Age'}]
+	};
+}])
+	
+.controller('ExcelEditingExampleCtrl', ['$scope', function($scope) {
+	$scope.basicTabs = tabs;
+	$scope.selectedBasicTab = $scope.basicTabs[0];		
+	$scope.switchTab = function(tab){
+		$scope.selectedBasicTab = $scope.basicTabs[tab];
+	};				
+	$scope.link = function(){ return "partials/exampleDefinitions/cellSelection/excelEditing/excelEditing" + $scope.selectedBasicTab.title + '.html';};
+	$scope.myData = [{name: "Moroni", age: 50},
+					 {name: "Tiancum", age: 43},
+					 {name: "Jacob", age: 27},
+					 {name: "Nephi", age: 29},
+					 {name: "Enos", age: 34}];
+	$scope.gridOptions = { 
+		data: 'myData',
+		enableCellSelection: true,
 		enableCellEdit: true,
 		enableRowSelection: false,
-		displaySelectionCheckbox: false,
-		columnDefs: [{field: 'name', displayName: 'Name', enableFocusedCellEdit: true}, 
-		             {field:'age', displayName:'Age', enableFocusedCellEdit: false}]
+		columnDefs: [{field: 'name', displayName: 'Name', enableCellEdit: true}, 
+		             {field:'age', displayName:'Age'}]
 	};
 }])
 	
