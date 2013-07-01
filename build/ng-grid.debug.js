@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/30/2013 21:00
+* Compiled At: 06/30/2013 22:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -826,7 +826,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         }
     };
     self.gripOnMouseDown = function(event) {
-        domUtilityService.isColumnResizing = true;
+        $scope.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -843,6 +843,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        $scope.hasUserChangedGridColumnWidths = true;
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
@@ -850,9 +851,8 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         $(document).off('mousemove', self.onMouseMove);
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
-        $scope.adjustScrollLeft(0);
         domUtilityService.digest($scope);
-        domUtilityService.isColumnResizing = false;
+        $scope.isColumnResizing = false;
         return false;
     };
     self.copy = function() {
@@ -1646,7 +1646,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
 
              // check if it is a number
-            if (isNaN(t)) {
+            if (isNaN(t) && !$scope.hasUserChangedGridColumnWidths) {
                 t = colDef.width;
                 // figure out if the width is defined or if we need to calculate it
                 if (t === 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
@@ -1769,7 +1769,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                if(!domUtilityService.isColumnResizing){
+                if(!$scope.isColumnResizing){
                     domUtilityService.RebuildGrid($scope, self);
                 }
                 $scope.$emit('ngGridEventColumns', a);
