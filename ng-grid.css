@@ -19,8 +19,20 @@
   overflow: auto;
   min-height: 20px;
 }
+.ngViewport:focus {
+  outline: none;
+}
 .ngCanvas {
   position: relative;
+}
+.ngVerticalBar {
+  position: absolute;
+  right: 0;
+  width: 0;
+}
+.ngVerticalBarVisible {
+  width: 1px;
+  background-color: #d4d4d4;
 }
 .ngHeaderContainer {
   position: relative;
@@ -29,12 +41,13 @@
   background-color: inherit;
 }
 .ngHeaderCell {
-  border-right: 1px solid #d4d4d4;
-  border-left: 1px solid #d4d4d4;
   position: absolute;
   top: 0;
   bottom: 0;
   background-color: inherit;
+}
+.ngHeaderCell.pinned {
+  z-index: 1;
 }
 .ngHeaderSortColumn {
   position: absolute;
@@ -61,9 +74,6 @@
 }
 .ngNoSort {
   cursor: default;
-}
-.ngHeaderCell:first-child {
-  border-left: 0;
 }
 .ngHeaderButton {
   position: absolute;
@@ -131,6 +141,24 @@
   border-style: solid;
   border-width: 6.5px 4.5px 0 4.5px;
   border-color: #4d4d4d transparent transparent transparent;
+}
+.ngPinnedIcon {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAmElEQVQoU33PQapBURjA8UtkwJuaWYGSgfQWYBMvczPmTCzAAGVuaA228BZhRCkDGSmE31FucuRfvzq3vr5zT/JSjSU7DsypEPXDkDVn2hSIytJhw4kWGaLCxgHh2gt/RBuLzNhz5caWPjnSqqw4EraFfwznf8qklWjwy4IRTerkiQoPGtPl40OehcEJvcfXl8LglLfBJLkDcMgbgHlHhK8AAAAASUVORK5CYII=);
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  height: 10px;
+  width: 10px;
+}
+.ngUnPinnedIcon {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAlElEQVQoU33PPQrCQBRF4fFnI2KfZVi5ARvdgo1l6mwmkCJVOgluwd5OwUoDtnoOxAei8cLXTN7cvEl/skCNDCMPfsUPO5zQwOHIDEvYtMURHe6wOVLgigvOePRyeDkyR4ln7wZ//7XfFBu8B23+aDJjrHGAwza7hjtHJvDmHg7b7Bru7AMjK7Rw2ObBVHDY5oGk9AKQNB2zy8MBTgAAAABJRU5ErkJggg==);
+  background-repeat: no-repeat;
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  right: 5px;
+  top: 5px;
 }
 .ngColMenu {
   right: 2px;
@@ -307,14 +335,12 @@
 .ngCell {
   overflow: hidden;
   position: absolute;
-  border-right: 1px solid #d4d4d4;
-  border-left: 1px solid #d4d4d4;
   top: 0;
   bottom: 0;
   background-color: inherit;
 }
-.ngCell:first-child {
-  border-left: 0;
+.ngCell.pinned {
+  z-index: 1;
 }
 .ngCellText {
   padding: 5px;
@@ -338,7 +364,7 @@
 }
 .ngCellElement:focus {
   outline: 0;
-  background-color: #c9dde1;
+  background-color: #b3c4c7;
 }
 .ngRow.canSelect {
   cursor: pointer;

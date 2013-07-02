@@ -26,11 +26,30 @@ ngGridDirectives.directive('ngInput', [function() {
                         }
                         break;
                     case 13: // Enter (Leave Field)
-                        elm.blur();
+                        if(scope.enableCellEditOnFocus && scope.totalFilteredItemsLength() - 1 > scope.row.rowIndex && scope.row.rowIndex > 0  || scope.enableCellEdit) {
+                            elm.blur();
+                        }
                         break;
                 }
 
                 return true;
+            });
+
+            elm.bind('click', function(evt) {
+                evt.stopPropagation();
+            }); 
+
+            elm.bind('mousedown', function(evt) {
+                evt.stopPropagation();
+            }); 
+
+            scope.$on('ngGridEventStartCellEdit', function () {
+                elm.focus();
+                elm.select();
+            });
+
+            angular.element(elm).bind('blur', function () {
+                scope.$emit('ngGridEventEndCellEdit');
             });
         }
     };

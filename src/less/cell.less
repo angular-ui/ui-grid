@@ -1,15 +1,13 @@
 .ngCell {
   overflow: hidden;
   position: absolute;
-  border-right: 1px solid @borderColor;
-  border-left: 1px solid @borderColor;
   top: 0;
   bottom: 0;
   background-color: inherit;
 }
 
-.ngCell:first-child {
-  border-left: 0;
+.ngCell.pinned {
+    z-index: 1;
 }
 
 .ngCellText {

@@ -63,7 +63,13 @@
         },
         getInstanceType: function (o) {
             var results = (funcNameRegex).exec(o.constructor.toString());
-            return (results && results.length > 1) ? results[1] : "";
+            if (results && results.length > 1) {
+                var instanceType = results[1].replace(/^\s+|\s+$/g, ""); // Trim surrounding whitespace; IE appears to add a space at the end
+                return instanceType;
+            }
+            else {
+                return "";
+            }
         },
         // Detect IE versions for bug workarounds (uses IE conditionals, not UA string, for robustness)
         // Note that, since IE 10 does not support conditional comments, the following logic only detects IE < 10.

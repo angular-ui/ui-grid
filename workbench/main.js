@@ -7,7 +7,7 @@ function userController($scope) {
     $scope.myData = [];
     $scope.filterOptions = {
         filterText: "",
-        useExternalFilter: false,
+        useExternalFilter: false
     };
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000], //page Sizes
@@ -87,7 +87,7 @@ function userController($scope) {
             });
         },
         scope: undefined,
-        grid: undefined,
+        grid: undefined
     };
 
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableCellEdit: true },
@@ -114,7 +114,7 @@ function userController($scope) {
 		showGroupPanel: true,
 		showFooter: false,
 		showFilter: true,
-		enableCellEdit: true,
+        enableCellEdit: true,
         enableCellSelection: true,
 		showSelectionCheckbox: true,
         selectWithCheckboxOnly: true,
@@ -122,7 +122,7 @@ function userController($scope) {
         maintainColumnRatios: true,
         columnDefs: 'myDefs',
         primaryKey: 'id',
-        sortInfo: {fields:['name'], directions:['asc'] },
+        sortInfo: {fields:['name'], directions:['asc'] }
     };
     $scope.doStuff = function (evt) {
         var elm = angular.element(evt.currentTarget.parentNode);
@@ -145,7 +145,6 @@ function userController($scope) {
         data: 'myData2',
         selectedItems: $scope.mySelections2,
         beforeSelectionChange: self.selectionchanging,
-        showGroupPanel: true,
         showFilter: true,
         multiSelect: true,
         columnDefs: 'myDefs2',

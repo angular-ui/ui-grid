@@ -6,12 +6,14 @@
 }
 
 .ngHeaderCell {
-    border-right: 1px solid @borderColor;
-    border-left: 1px solid @borderColor;
     position: absolute;
     top: 0;
     bottom: 0;
     background-color: inherit;
+}
+
+.ngHeaderCell.pinned {
+    z-index: 1;
 }
 
 .ngHeaderSortColumn {
@@ -42,10 +44,6 @@
 
 .ngNoSort {
     cursor:default;
-}
-
-.ngHeaderCell:first-child {
-    border-left: 0;
 }
 
 .ngHeaderButton {
@@ -120,4 +118,23 @@
     border-style: solid;
     border-width: 6.5px 4.5px 0 4.5px;
     border-color: @buttonColor transparent transparent transparent;
+}
+
+.ngPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAmElEQVQoU33PQapBURjA8UtkwJuaWYGSgfQWYBMvczPmTCzAAGVuaA228BZhRCkDGSmE31FucuRfvzq3vr5zT/JSjSU7DsypEPXDkDVn2hSIytJhw4kWGaLCxgHh2gt/RBuLzNhz5caWPjnSqqw4EraFfwznf8qklWjwy4IRTerkiQoPGtPl40OehcEJvcfXl8LglLfBJLkDcMgbgHlHhK8AAAAASUVORK5CYII=);
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 10px;
+    width: 10px;
+}
+.ngUnPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAlElEQVQoU33PPQrCQBRF4fFnI2KfZVi5ARvdgo1l6mwmkCJVOgluwd5OwUoDtnoOxAei8cLXTN7cvEl/skCNDCMPfsUPO5zQwOHIDEvYtMURHe6wOVLgigvOePRyeDkyR4ln7wZ//7XfFBu8B23+aDJjrHGAwza7hjtHJvDmHg7b7Bru7AMjK7Rw2ObBVHDY5oGk9AKQNB2zy8MBTgAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    right: 5px;
+    top: 5px;
 }

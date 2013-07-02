@@ -27,8 +27,23 @@
   min-height: 20px;
 }
 
+.ngViewport:focus {
+    outline: none;
+}
+
 .ngCanvas {
   position: relative;
+}
+
+.ngVerticalBar {
+  position: absolute;
+  right:0;
+  width:0;
+}
+
+.ngVerticalBarVisible {
+  width: 1px;
+  background-color: @borderColor;
 }
 
 @import 'header';

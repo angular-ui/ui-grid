@@ -17,7 +17,7 @@
                 if (!condition.column) {
                     for (var prop in item) {
                         if (item.hasOwnProperty(prop)) {
-                            var c = self.fieldMap[prop];
+                            var c = self.fieldMap[prop.toLowerCase()];
                             if (!c) {
                                 continue;
                             }
@@ -28,14 +28,14 @@
                                 f = $filter(s[0]);
                             }
                             var pVal = item[prop];
-                            if (pVal != null) {
+                            if (pVal !== null && pVal !== undefined) {
                                 if (typeof f === "function") {
                                     var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
                                     result = condition.regex.test(filterRes);
                                 } else {
                                     result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
                                 }
-                                if (pVal && result) {
+                                if (result) {
                                     return true;
                                 }
                             }
@@ -51,7 +51,7 @@
                 var sp = col.cellFilter.split(':');
                 var filter = col.cellFilter ? $filter(sp[0]) : null;
                 var value = item[condition.column] || item[col.field.split('.')[0]];
-                if (value == null) {
+                if (value === null || value === undefined) {
                     return false;
                 }
                 if (typeof filter === "function") {
@@ -61,7 +61,7 @@
                 else {
                     result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
                 }
-                if (!value || !result) {
+                if (!result) {
                     return false;
                 }
             }
@@ -162,7 +162,7 @@
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
-                    self.fieldMap[col.field.split('.')[0]] = col;
+                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
                 }
                 if (col.displayName) {
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
