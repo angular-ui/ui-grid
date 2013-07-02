@@ -17,7 +17,7 @@
                 if (!condition.column) {
                     for (var prop in item) {
                         if (item.hasOwnProperty(prop)) {
-                            var c = self.fieldMap[prop];
+                            var c = self.fieldMap[prop.toLowerCase()];
                             if (!c) {
                                 continue;
                             }

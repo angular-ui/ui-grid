@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/01/2013 07:58
+* Compiled At: 07/01/2013 19:56
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1522,9 +1522,18 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 $utils.seti18n($scope, newLang);
             });
             self.maxCanvasHt = self.calcMaxCanvasHeight();
+
             if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                self.getColsFromFields();
-                self.sortActual();
+                $scope.$watch(function() {
+                    return self.config.sortInfo;
+                }, function(sortInfo){
+                    if (!sortService.isSorting) {
+                        self.getColsFromFields();
+                        self.sortActual();
+                        self.searchProvider.evalFilter();
+                        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
+                    }
+                },true);
             }
         });
     };
@@ -1600,7 +1609,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             var i = self.config.sortInfo.fields.indexOf(c.field);
             if (i !== -1) {
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.columns[i] = c;
             }
             return false;
         });
@@ -1849,6 +1858,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         return newDim;
     };
 };
+
 var ngRange = function (top, bottom) {
     this.topRow = top;
     this.bottomRow = bottom;
@@ -2170,7 +2180,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 if (!condition.column) {
                     for (var prop in item) {
                         if (item.hasOwnProperty(prop)) {
-                            var c = self.fieldMap[prop];
+                            var c = self.fieldMap[prop.toLowerCase()];
                             if (!c) {
                                 continue;
                             }

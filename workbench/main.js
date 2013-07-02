@@ -7,7 +7,7 @@ function userController($scope) {
     $scope.myData = [];
     $scope.filterOptions = {
         filterText: "",
-        useExternalFilter: false,
+        useExternalFilter: false
     };
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000], //page Sizes
@@ -87,7 +87,7 @@ function userController($scope) {
             });
         },
         scope: undefined,
-        grid: undefined,
+        grid: undefined
     };
 
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableCellEdit: true },
@@ -122,7 +122,7 @@ function userController($scope) {
         maintainColumnRatios: true,
         columnDefs: 'myDefs',
         primaryKey: 'id',
-        sortInfo: {fields:['name'], directions:['asc'] },
+        sortInfo: {fields:['name'], directions:['asc'] }
     };
     $scope.doStuff = function (evt) {
         var elm = angular.element(evt.currentTarget.parentNode);

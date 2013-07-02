@@ -562,25 +562,24 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 $utils.seti18n($scope, newLang);
             });
             self.maxCanvasHt = self.calcMaxCanvasHeight();
+
             if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                self.getColsFromFields();
-                self.sortActual();
+                $scope.$watch(function() {
+                    return self.config.sortInfo;
+                }, function(sortInfo){
+                    if (!sortService.isSorting) {
+                        self.getColsFromFields();
+                        self.sortActual();
+                        self.searchProvider.evalFilter();
+                        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
+                    }
+                },true);
             }
         });
 
         // var p = $q.defer();
         // p.resolve();
         // return p.promise;
-        $scope.$watch(function() {
-            return self.config.sortInfo;
-        }, function(sortInfo){
-            if (!sortService.isSorting) {
-                self.getColsFromFields();
-                self.sortActual();
-                self.searchProvider.evalFilter();
-            }
-            //$scope.$emit('ngGridEventSorted', grid.config.sortInfo);
-        },true);
     };
    
     self.resizeOnData = function(col) {
