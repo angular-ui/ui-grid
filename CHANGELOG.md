@@ -52,6 +52,7 @@ ng-grid-flexible-height plugin
   * Using domUtilityService.UpdateGridLayout instead of grid.refreshDomSizes which correctly grows the grid if it's been shrunk (e.g. when paging to the last page and it has few rows + the plugin has a smaller min. height than what's needed on the other pages)
 
 ### Bug fixes
+Too many to list. Here is the pull request https://github.com/angular-ui/ng-grid/pull/511
 
 
 <a name="2.0.6"></a>
