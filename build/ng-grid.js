@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/01/2013 20:11
+* Compiled At: 07/01/2013 20:39
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1619,7 +1619,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(tempData, function(item, i) {
                 var e = self.rowMap[i];
                 if (e !== undefined) {
-                    var v = self.rowCache[i];
+                    var v = self.rowCache[e];
                     if (v !== undefined) {
                         item.preSortSelected = v.selected;
                         item.preSortIndex = i;
