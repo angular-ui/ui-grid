@@ -13,7 +13,7 @@
 
     // TODO: Use the column's definition for enabling cell editing
     // self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
-    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : config.enableCellEdit;
+    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : (config.enableCellEdit || config.enableCellEditOnFocus);
 
     self.headerRowHeight = config.headerRowHeight;
 
@@ -32,7 +32,7 @@
     self.resizable = false;
     self.pinnable = false;
     self.pinned = (config.enablePinning && colDef.pinned);
-    self.originalIndex = self.index;
+    self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
         self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
@@ -120,6 +120,7 @@
         }
     };
     self.gripOnMouseDown = function(event) {
+        $scope.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -136,6 +137,7 @@
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        $scope.hasUserChangedGridColumnWidths = true;
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
@@ -143,8 +145,8 @@
         $(document).off('mousemove', self.onMouseMove);
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
-        $scope.adjustScrollLeft(0);
         domUtilityService.digest($scope);
+        $scope.isColumnResizing = false;
         return false;
     };
     self.copy = function() {

@@ -321,7 +321,7 @@ describe('directives', function () {
                                          {name: "Jacob", age: 27},
                                          {name: "Nephi", age: 29},
                                          {name: "Enos", age: 34}];
-
+                
                     scope.gridOptions = {
                         data: 'myData',
                         totalServerItems: 357
@@ -333,7 +333,7 @@ describe('directives', function () {
                     element = comp(elm)(scope);
                     scope.$digest();
 
-                    expect(element.find('.ngFooterTotalItems').text()).toContain(357);
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
                 });
 
                 it('should update the total items when totalServerItems is increased', function () {
@@ -386,7 +386,8 @@ describe('directives', function () {
                         scope.$digest();
 
                         var oldRow = elm.find('.ngRow:last');
-                        expect(oldRow.html()).toMatch(/Moroni.+?50/);
+                        expect(oldRow.html()).toMatch(/.+\s+.+\s+.+Moroni/);
+                        expect(oldRow.html()).toMatch(/\s+.+50.+/);
                         expect(oldRow.hasClass('selected')).toBe(true);
                     });
 

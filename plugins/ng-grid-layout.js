@@ -9,8 +9,14 @@ function ngGridLayoutPlugin () {
     };
 
     this.updateGridLayout = function () {
-        self.scope.$apply(function(){
+        if (!self.scope.$$phase) {
+            self.scope.$apply(function(){
+                self.domUtilityService.RebuildGrid(self.scope, self.grid);
+            });
+        }
+        else {
+            // $digest or $apply already in progress
             self.domUtilityService.RebuildGrid(self.scope, self.grid);
-        });
+        }
     };
 }
