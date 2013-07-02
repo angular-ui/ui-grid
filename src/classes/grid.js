@@ -646,7 +646,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             var i = self.config.sortInfo.fields.indexOf(c.field);
             if (i !== -1) {
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.columns[i] = c;
             }
             return false;
         });
