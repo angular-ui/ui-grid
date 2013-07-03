@@ -140,6 +140,20 @@
         }
     };
 
+    if (!self.extFilter) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
+                if (col.field) {
+                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
+                }
+                if (col.displayName) {
+                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+                }
+            }
+        });
+    }
+
     $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
@@ -156,18 +170,4 @@
             self.evalFilter();
         }
     });
-
-    if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
-            for (var i = 0; i < cs.length; i++) {
-                var col = cs[i];
-                if (col.field) {
-                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
-                }
-                if (col.displayName) {
-                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-                }
-            }
-        });
-    }
 };

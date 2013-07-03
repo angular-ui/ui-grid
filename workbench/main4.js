@@ -23,7 +23,8 @@ function userController($scope) {
         enableColumnReordering: true,
         enableColumnResize:true,
         showFooter: true,
-        showFilter: true
+        showFilter: true,
+        filterOptions: {filterText:'573', useExternalFilter: false}
     };
 	
 		$scope.myData = [{ 'Sku': 'C-', 'Vendor': 'NEWB', 'SeasonCode': false, 'Mfg_Id': '573-', 'UPC': '' },

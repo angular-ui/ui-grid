@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/02/2013 22:38
+* Compiled At: 07/02/2013 23:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2295,6 +2295,20 @@ var ngSearchProvider = function ($scope, grid, $filter) {
         }
     };
 
+    if (!self.extFilter) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
+                if (col.field) {
+                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
+                }
+                if (col.displayName) {
+                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+                }
+            }
+        });
+    }
+
     $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
@@ -2311,20 +2325,6 @@ var ngSearchProvider = function ($scope, grid, $filter) {
             self.evalFilter();
         }
     });
-
-    if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
-            for (var i = 0; i < cs.length; i++) {
-                var col = cs[i];
-                if (col.field) {
-                    self.fieldMap[col.field.split('.')[0].toLowerCase()] = col;
-                }
-                if (col.displayName) {
-                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-                }
-            }
-        });
-    }
 };
 var ngSelectionProvider = function (grid, $scope, $parse) {
     var self = this;
