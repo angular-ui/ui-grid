@@ -237,8 +237,7 @@
             }
         }
 
-        domUtilityService.BuildStyles($scope, grid, true);
-		grid.fixColumnIndexes();
+        grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);

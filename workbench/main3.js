@@ -13,8 +13,11 @@ function userController($scope) {
 		enableRowSelection: true,
 		multiSelect: true,
         enableRowReordering: false,
-        showGroupPanel: true,
-        columnDefs: 'myDefs',
+        columnDefs: [{ cellTemplate: '<p>{{row.getProperty(\'Vendor\')}}</p>' },
+        { field: 'Vendor', displayName: 'Supplier' },
+        { field: 'SeasonCode', displayName: 'My SeasonCode' },
+        { field: 'Mfg_Id', displayName: 'Manufacturer ID' },
+        { field: 'UPC', displayName: 'Bar Code' }],
 		groups: ['SeasonCode', 'Vendor']
     };
 	

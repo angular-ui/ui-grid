@@ -116,8 +116,6 @@ function userController($scope) {
 		showFilter: true,
         enableCellEdit: true,
         enableCellSelection: true,
-		showSelectionCheckbox: true,
-        selectWithCheckboxOnly: true,
         showColumnMenu: true,
         maintainColumnRatios: true,
         columnDefs: 'myDefs',

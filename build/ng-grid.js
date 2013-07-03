@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/01/2013 21:49
+* Compiled At: 07/02/2013 22:38
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1527,9 +1527,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     return self.config.sortInfo;
                 }, function(sortInfo){
                     if (!sortService.isSorting) {
-                        self.getColsFromFields();
-                        self.sortActual();
-                        self.searchProvider.evalFilter();
+                        self.sortColumnsInit();
                         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
                     }
                 },true);
@@ -1598,7 +1596,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
-    self.getColsFromFields = function() {
+    self.sortColumnsInit = function() {
         if (self.config.sortInfo.columns) {
             self.config.sortInfo.columns.length = 0;
         } else {
@@ -1610,7 +1608,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
                 self.config.sortInfo.columns[i] = c;
             }
-            return false;
+        });
+        angular.forEach(self.config.sortInfo.columns, function(c){
+            self.sortData(c);
         });
     };
     self.sortActual = function() {
@@ -2149,8 +2149,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
             }
         }
 
-        domUtilityService.BuildStyles($scope, grid, true);
-		grid.fixColumnIndexes();
+        grid.fixColumnIndexes();
         $scope.adjustScrollLeft(0);
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
@@ -2566,7 +2565,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                     if (isFocused && evt.keyCode !== 37 && evt.keyCode !== 38 && evt.keyCode !== 39 && evt.keyCode !== 40 && evt.keyCode !== 9 && !evt.shiftKey && evt.keyCode !== 13) {
                         focusOnInputElement($scope,elm);
                     }
-                    if (evt.shiftKey && (evt.keyCode >= 65 && evt.keyCode <= 90)) {
+                    if (isFocused && evt.shiftKey && (evt.keyCode >= 65 && evt.keyCode <= 90)) {
                         focusOnInputElement($scope, elm);
                     }
                     if (evt.keyCode === 27) {
@@ -2755,9 +2754,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 grid.configureColumnWidths();
                                 grid.refreshDomSizes();
                                 if (grid.config.sortInfo.fields.length > 0) {
-                                    grid.getColsFromFields();
-                                    grid.sortActual();
-                                    grid.searchProvider.evalFilter();
+                                    grid.sortColumnsInit();
                                     $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);

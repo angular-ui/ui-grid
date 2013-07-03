@@ -568,9 +568,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     return self.config.sortInfo;
                 }, function(sortInfo){
                     if (!sortService.isSorting) {
-                        self.getColsFromFields();
-                        self.sortActual();
-                        self.searchProvider.evalFilter();
+                        self.sortColumnsInit();
                         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
                     }
                 },true);
@@ -645,7 +643,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
-    self.getColsFromFields = function() {
+    self.sortColumnsInit = function() {
         if (self.config.sortInfo.columns) {
             self.config.sortInfo.columns.length = 0;
         } else {
@@ -657,7 +655,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
                 self.config.sortInfo.columns[i] = c;
             }
-            return false;
+        });
+        angular.forEach(self.config.sortInfo.columns, function(c){
+            self.sortData(c);
         });
     };
     self.sortActual = function() {
