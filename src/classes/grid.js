@@ -691,6 +691,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 c.sortPriority = null;
             });
             self.lastSortedColumns = [];
+			self.config.sortInfo.columns = [];
+			self.config.sortInfo.fields = [];
+			self.config.sortInfo.directions = [];
         } else {
             angular.forEach(self.lastSortedColumns, function (c) {
                 if (col.index !== c.index) {
