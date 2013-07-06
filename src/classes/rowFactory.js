@@ -217,23 +217,25 @@
         }
 
         //moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
-        for (var z = 0; z < groups.length; z++) {
-            if (!cols[z].isAggCol && z <= maxDepth) {
-                cols.splice(0, 0, new ngColumn({
-                    colDef: {
-                        field: '',
-                        width: 25,
-                        sortable: false,
-                        resizable: false,
-                        headerCellTemplate: '<div class="ngAggHeader"></div>',
-                        pinned: grid.config.pinSelectionCheckbox
+        if(cols.length > 0) {
+            for (var z = 0; z < groups.length; z++) {
+                if (!cols[z].isAggCol && z <= maxDepth) {
+                    cols.splice(0, 0, new ngColumn({
+                        colDef: {
+                            field: '',
+                            width: 25,
+                            sortable: false,
+                            resizable: false,
+                            headerCellTemplate: '<div class="ngAggHeader"></div>',
+                            pinned: grid.config.pinSelectionCheckbox
+                            
+                        },
+                        enablePinning: grid.config.enablePinning,
+                        isAggCol: true,
+                        headerRowHeight: grid.config.headerRowHeight
                         
-                    },
-                    enablePinning: grid.config.enablePinning,
-                    isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight
-                    
-                }, $scope, grid, domUtilityService, $templateCache, $utils));
+                    }, $scope, grid, domUtilityService, $templateCache, $utils));
+                }
             }
         }
 

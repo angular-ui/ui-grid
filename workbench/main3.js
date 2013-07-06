@@ -10,8 +10,9 @@ function userController($scope) {
 	$scope.gridOptions = {
         data: 'myData',
         selectedItems: $scope.selections,
-		enableRowSelection: true,
-		multiSelect: true,
+    		enableRowSelection: true,
+    		multiSelect: true,
+        showGroupPanel: true,
         enableRowReordering: false,
         columnDefs: [{ cellTemplate: '<p>{{row.getProperty(\'Vendor\')}}</p>' },
         { field: 'Vendor', displayName: 'Supplier' },

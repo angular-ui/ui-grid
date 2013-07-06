@@ -380,8 +380,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 cols.push(column);
             });
             $scope.columns = cols;
-            if ($scope.configGroups.length > 0) {
-                self.rowFactory.getGrouping($scope.configGroups);
+            if (self.config.groups.length > 0) {
+                self.rowFactory.getGrouping(self.config.groups);
             }
         }
     };
