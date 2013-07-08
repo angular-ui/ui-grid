@@ -8,65 +8,83 @@
 
     self.fieldMap = {};
 
-    self.evalFilter = function () {
-        var filterFunc = function(item) {
-            for (var x = 0, len = searchConditions.length; x < len; x++) {
-                var condition = searchConditions[x];
-                //Search entire row
-                var result;
-                if (!condition.column) {
-                    for (var prop in item) {
-                        if (item.hasOwnProperty(prop)) {
-                            var c = self.fieldMap[prop];
-                            if (!c) {
-                                continue;
-                            }
-                            var f = null,
-                                s = null;
-                            if (c && c.cellFilter) {
-                                s = c.cellFilter.split(':');
-                                f = $filter(s[0]);
-                            }
-                            var pVal = item[prop];
-                            if (pVal != null) {
-                                if (typeof f === "function") {
-                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
-                                    result = condition.regex.test(filterRes);
-                                } else {
-                                    result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
-                                }
-                                if (pVal && result) {
-                                    return true;
-                                }
-                            }
+    var searchEntireRow = function(condition, item, fieldMap){
+        var result;
+        for (var prop in item) {
+            if (item.hasOwnProperty(prop)) {
+                var c = fieldMap[prop.toLowerCase()];
+                if (!c) {
+                    continue;
+                }
+                var pVal = item[prop];
+                if(typeof pVal === 'object'){
+                    return searchEntireRow(condition, pVal, c);
+                } else {
+                    var f = null,
+                        s = null;
+                    if (c && c.cellFilter) {
+                        s = c.cellFilter.split(':');
+                        f = $filter(s[0]);
+                    }
+                    if (pVal !== null && pVal !== undefined) {
+                        if (typeof f === "function") {
+                            var filterRes = f(pVal, s[1]).toString();
+                            result = condition.regex.test(filterRes);
+                        } else {
+                            result = condition.regex.test(pVal.toString());
+                        }
+                        if (result) {
+                            return true;
                         }
                     }
-                    return false;
-                }
-                //Search by column.
-                var col = self.fieldMap[condition.columnDisplay];
-                if (!col) {
-                    return false;
-                }
-                var sp = col.cellFilter.split(':');
-                var filter = col.cellFilter ? $filter(sp[0]) : null;
-                var value = item[condition.column] || item[col.field.split('.')[0]];
-                if (value == null) {
-                    return false;
-                }
-                if (typeof filter === "function") {
-                    var filterResults = filter(typeof value === "object" ? evalObject(value, col.field) : value, sp[1]).toString();
-                    result = condition.regex.test(filterResults);
-                }
-                else {
-                    result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
-                }
-                if (!value || !result) {
-                    return false;
                 }
             }
+        }
+        return false;
+    };
+
+    var searchColumn = function(condition, item){
+        var result;
+        var col = self.fieldMap[condition.columnDisplay];
+        if (!col) {
+            return false;
+        }
+        var sp = col.cellFilter.split(':');
+        var filter = col.cellFilter ? $filter(sp[0]) : null;
+        var value = item[condition.column] || item[col.field.split('.')[0]];
+        if (value === null || value === undefined) {
+            return false;
+        }
+        if (typeof filter === "function") {
+            var filterResults = filter(typeof value === "object" ? evalObject(value, col.field) : value, sp[1]).toString();
+            result = condition.regex.test(filterResults);
+        }
+        else {
+            result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
+        }
+        if (result) {
             return true;
-        };
+        }
+        return false;
+    };
+
+    var filterFunc = function(item) {
+        for (var x = 0, len = searchConditions.length; x < len; x++) {
+            var condition = searchConditions[x];
+            var result;
+            if (!condition.column) {
+                result = searchEntireRow(condition, item, self.fieldMap);
+            } else {
+                result = searchColumn(condition, item);
+            }     
+            if(!result) {
+                return false;
+            }      
+        }
+        return true;
+    };
+
+    self.evalFilter = function () {
         if (searchConditions.length === 0) {
             grid.filteredRows = grid.rowCache;
         } else {
@@ -140,6 +158,30 @@
         }
     };
 
+    if (!self.extFilter) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
+                if (col.field) {
+                    if(col.field.match(/\./g)){
+                        var properties = col.field.split('.');
+                        var currentProperty = self.fieldMap;
+                        for(var j = 0; j < properties.length - 1; j++) {
+                            currentProperty[ properties[j] ] =  currentProperty[ properties[j] ] || {};
+                            currentProperty = currentProperty[properties[j]];
+                        }
+                        currentProperty[ properties[properties.length - 1] ] = col;
+                    } else {
+                        self.fieldMap[col.field.toLowerCase()] = col;
+                    }
+                }
+                if (col.displayName) {
+                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+                }
+            }
+        });
+    }
+
     $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
@@ -156,18 +198,4 @@
             self.evalFilter();
         }
     });
-
-    if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
-            for (var i = 0; i < cs.length; i++) {
-                var col = cs[i];
-                if (col.field) {
-                    self.fieldMap[col.field.split('.')[0]] = col;
-                }
-                if (col.displayName) {
-                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-                }
-            }
-        });
-    }
 };

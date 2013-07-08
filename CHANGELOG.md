@@ -1,4 +1,61 @@
 <a name="2.0.6"></a>
+## 2.0.7 *(2013-07-01)*
+
+### Features
+This release is mainly focused on fixing the grid layout/column widths:
+
+Columns
+----------------------------------
+
+*  Removed border-left and border-right from columns. Now we are using vertical bars so if someone sets a width to be 400px for a column, the column will actually be 400px, not 401-402px due to the border. This caused the horizontal overflowing to happen producing a horizontal scrollbar. This also fixed issues like https://github.com/angular-ui/ng-grid/issues/411 where you would see columns not extend all the way to the edge and you would get double borders
+* Percent calculation is handled before asterisks calculations because percent calculation should take higher priority, and the asterisks calculations will then be able to fill the remaining space instead of horizontally overflowing the viewport
+
+
+----------------------------------
+A fix contributed by @swalters for #436:
+
+Editing Cells
+----------------------------------
+
+When editing a cell, the ng-cell-has-focus directive will broadcast a message named ngGridEventStartCellEdit to let all children know that you can now give yourself focus. When the editable cell template is done with editing (usually on a blur event) you need to emit ngGridEventEndCellEdit to let ng-cell-has-focus know that you are done editing and it will then show the non-editable cell template. The reasoning for this is (good quote): "Now I can wrap my input elements in divs/spans, whatever and control exactly what element's blur triggers the end edit" - @swalters. An example (used for ng-input directive):
+
+scope.$on('ngGridEventStartCellEdit', function () {
+    elm.focus();
+ });
+
+angular.element(elm).bind('blur', function () {
+    scope.$emit('ngGridEventEndCellEdit');
+});
+
+Also, there is another option now which is enableCellEditOnFocus (yes, it's coming back) so now you can choose between excel-like editing or enabling edit mode on focus.
+
+----------------------------------
+Also some fixes contributed by @ebbe-brandstrup are:
+
+configureColumnWidths
+----------------------------------
+* Columns sized with * or % now expand / shrink as other * or %-based columns are hidden / shown
+  * Note: the changes auto-expand/shrink only take effect on-the-fly
+  * Works with grouping and when enabling the selection checkbox row (showSelectionCheckbox)
+* Bugfixes in configureColumnWidths
+  * Re-ordered columns now keep their width setup
+  * Fixed "asteriskNum" so it no longer includes hidden columns (was checking .visible on a columnDefs column instead of the matching ngColumn)
+  * Fixed "totalWidth" so it no longer includes hidden columns when using px values for width (was checking .visible on a columnDefs column instead of the matching ngColumn)
+  * Fixed ngColumn width being initialized to undefined when using "auto" for width, regardless of "minWidth" settings (was checking .minWidth on a columnDefs column instead of the matching ngColumn)
+
+Renamed "col" to "colDef" in configureColumnWidths() in the places where "col" was a column from "columnDefs". It made it clearer for me whether I was referring to a ngColumn or a column from columnDefs. There were a couple of bugs caused by that (col.visible incorrectly accessed on columnDefs objects instead of ngColumns, and the like).
+
+ng-grid-flexible-height plugin
+----------------------------------------
+* Bugfixes in ng-grid-flexible-height
+  * The plugin couldn't shrink the grid, only grow it
+  * Using domUtilityService.UpdateGridLayout instead of grid.refreshDomSizes which correctly grows the grid if it's been shrunk (e.g. when paging to the last page and it has few rows + the plugin has a smaller min. height than what's needed on the other pages)
+
+### Bug fixes
+Too many to list. Here is the pull request https://github.com/angular-ui/ng-grid/pull/511
+
+
+<a name="2.0.6"></a>
 ## 2.0.6 *(2013-06-?)*
 
 ### Features

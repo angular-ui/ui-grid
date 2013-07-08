@@ -18,32 +18,21 @@ function userController($scope) {
 		multiSelect: false,
         enableRowReordering: false,
         showGroupPanel: true,
-        columnDefs: 'myDefs'
+        columnDefs: 'myDefs',
+        showColumnMenu: true,
+        enableColumnReordering: true,
+        enableColumnResize:true,
+        showFooter: true,
+        showFilter: true,
+        filterOptions: {filterText:'573', useExternalFilter: false}
     };
 	
-		$scope.myData = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': 0, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
-						  { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
-						  { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': 04, 'Mfg_Id': '355-6906843', 'UPC': '229487568922' }];
+		$scope.myData = [{ 'Sku': 'C-', 'Vendor': 'NEWB', 'SeasonCode': false, 'Mfg_Id': '573-', 'UPC': '' },
+						  { 'Sku': 'J-', 'Vendor': 'NIKE', 'SeasonCode': false, 'Mfg_Id': '-', 'UPC': '' },
+						  { 'Sku': 'K-', 'Vendor': 'REEB', 'SeasonCode': true, 'Mfg_Id': '355-', 'UPC': '' },
+						  { 'Sku': 'J-', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '-8855467', 'UPC': '' },
+						  { 'Sku': 'K-', 'Vendor': 'REEB', 'SeasonCode': true, 'Mfg_Id': '355-', 'UPC': '' },
+						  { 'Sku': 'J-', 'Vendor': 'NIKE', 'SeasonCode': 0, 'Mfg_Id': '-', 'UPC': '' }];
 					  
 	
 }

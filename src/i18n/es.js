@@ -1,4 +1,4 @@
-﻿window.ngGrid.i18n['sp'] = {
+﻿window.ngGrid.i18n['es'] = {
     ngAggregateLabel: 'Artículos',
     ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
     ngSearchPlaceHolder: 'Buscar...',

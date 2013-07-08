@@ -166,10 +166,9 @@
             $scope.columns.splice(self.colToMove.col.index, 1);
             $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
             grid.fixColumnIndexes();
-            // Finally, rebuild the CSS styles.
-            domUtilityService.BuildStyles($scope, grid, true);
             // clear out the colToMove object
             self.colToMove = undefined;
+            domUtilityService.digest($scope);
         }
     };
 

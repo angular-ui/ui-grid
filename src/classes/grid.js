@@ -36,6 +36,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enables cell editing.
         enableCellEdit: false,
+
+        //Enables cell editing on focus
+        enableCellEditOnFocus: false,
         
         //Enables cell selection.
         enableCellSelection: false,
@@ -351,20 +354,22 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }, $scope, self, domUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {
-            var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
+            var checkboxOffset = self.config.showSelectionCheckbox ? 1 : 0;
+            var groupOffset = $scope.configGroups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
-                i += indexOffset;
+                i += checkboxOffset;
                 var column = new ngColumn({
                     colDef: colDef,
-                    index: i,
+                    index: i + groupOffset,
+                    originalIndex: i,
                     headerRowHeight: self.config.headerRowHeight,
                     sortCallback: self.sortData,
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
-                    enableCellEdit: self.config.enableCellEdit 
+                    enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus
                 }, $scope, self, domUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
@@ -375,6 +380,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 cols.push(column);
             });
             $scope.columns = cols;
+            if (self.config.groups.length > 0) {
+                self.rowFactory.getGrouping(self.config.groups);
+            }
         }
     };
     self.configureColumnWidths = function() {
@@ -382,8 +390,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
-
-        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
 
         // When rearranging columns, their index in $scope.columns will no longer match the original column order from columnDefs causing
         // their width config to be out of sync. We can use "originalIndex" on the ngColumns to get hold of the correct setup from columnDefs, but to
@@ -395,6 +401,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             if (!$utils.isNullOrUndefined(ngCol.originalIndex)) {
                 var origIndex = ngCol.originalIndex;
                 if (self.config.showSelectionCheckbox) {
+                    //if visible, takes up 25 pixels
+                    if(ngCol.originalIndex === 0 && ngCol.visible){
+                        totalWidth += 25;
+                    }
                     // The originalIndex will be offset 1 when including the selection column
                     origIndex--;
                 }
@@ -418,7 +428,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
 
              // check if it is a number
-            if (isNaN(t)) {
+            if (isNaN(t) && !$scope.hasUserChangedGridColumnWidths) {
                 t = colDef.width;
                 // figure out if the width is defined or if we need to calculate it
                 if (t === 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
@@ -443,7 +453,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
             } else if (ngColumn.visible !== false) {
-                totalWidth += ngColumn.width = parseInt(colDef.width, 10);
+                totalWidth += ngColumn.width = parseInt(ngColumn.width, 10);
             }
         });
         
@@ -541,7 +551,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               $scope.$emit('ngGridEventGroups', a);
             }, true);
             $scope.$watch('columns', function (a) {
-                domUtilityService.BuildStyles($scope, self, true);
+                if(!$scope.isColumnResizing){
+                    domUtilityService.RebuildGrid($scope, self);
+                }
                 $scope.$emit('ngGridEventColumns', a);
             }, true);
             $scope.$watch(function() {
@@ -550,9 +562,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 $utils.seti18n($scope, newLang);
             });
             self.maxCanvasHt = self.calcMaxCanvasHeight();
+
             if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                self.getColsFromFields();
-                self.sortActual();
+                $scope.$watch(function() {
+                    return self.config.sortInfo;
+                }, function(sortInfo){
+                    if (!sortService.isSorting) {
+                        self.sortColumnsInit();
+                        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
+                    }
+                },true);
             }
         });
 
@@ -624,7 +643,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
-    self.getColsFromFields = function() {
+    self.sortColumnsInit = function() {
         if (self.config.sortInfo.columns) {
             self.config.sortInfo.columns.length = 0;
         } else {
@@ -634,9 +653,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             var i = self.config.sortInfo.fields.indexOf(c.field);
             if (i !== -1) {
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.columns[i] = c;
             }
-            return false;
+        });
+        angular.forEach(self.config.sortInfo.columns, function(c){
+            self.sortData(c);
         });
     };
     self.sortActual = function() {
@@ -645,7 +666,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(tempData, function(item, i) {
                 var e = self.rowMap[i];
                 if (e !== undefined) {
-                    var v = self.rowCache[i];
+                    var v = self.rowCache[e];
                     if (v !== undefined) {
                         item.preSortSelected = v.selected;
                         item.preSortIndex = i;
@@ -684,9 +705,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.fixColumnIndexes = function() {
         //fix column indexes
         for (var i = 0; i < $scope.columns.length; i++) {
-            if ($scope.columns[i].visible !== false) {
-                $scope.columns[i].index = i;
-            }
+            $scope.columns[i].index = i;
         }
     };
     self.fixGroupIndexes = function() {
@@ -704,6 +723,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.jqueryUITheme = self.config.jqueryUITheme;
     $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
     $scope.enableCellSelection = self.config.enableCellSelection;
+    $scope.enableCellEditOnFocus = self.config.enableCellEditOnFocus;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
