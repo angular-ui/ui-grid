@@ -19,6 +19,7 @@
                                     return;
                                 }
                                 // we have to set this to false in case we want to autogenerate columns with no initial data.
+								grid.clearSortingData();
                                 grid.lateBoundColumns = false;
                                 $scope.columns = [];
                                 grid.config.columnDefs = a;
