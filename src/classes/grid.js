@@ -311,6 +311,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.maxCanvasHt = self.calcMaxCanvasHeight();
     };
     self.buildColumnDefsFromData = function () {
+        self.config.columnDefsFromData = true;
         self.config.columnDefs = [];
         var item = self.data[0];
         if (!item) {

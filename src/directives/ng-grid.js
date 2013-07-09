@@ -52,6 +52,10 @@
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                         if (typeof options.data === "string") {
                             var dataWatcher = function (a) {
+                                if (grid.config.columnDefsFromData) {
+                                    grid.config.columnDefs = undefined;
+                                    grid.buildColumns();
+                                }
                                 // make a temporary copy of the data
                                 grid.data = $.extend([], a);
                                 grid.rowFactory.fixRowCache();
