@@ -54,25 +54,43 @@
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        self.cellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.cellTemplate,
-            async: false
-        }).responseText;
+        var tmpl = $templateCache.get(colDef.cellTemplate).replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+        if (tmpl) {
+            self.cellTemplate = tmpl;
+        } else {
+            self.cellTemplate = $.ajax({
+                type: "GET",
+                url: colDef.cellTemplate,
+                async: false
+            }).responseText.replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+            $templateCache.put(colDef.cellTemplate, self.cellTemplate);
+        }
     }
     if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
-        self.editableCellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.editableCellTemplate,
-            async: false
-        }).responseText;
+        var tmpl = $templateCache.get(colDef.editableCellTemplate);
+        if (tmpl) {
+            self.editableCellTemplate = tmpl;
+        } else {
+            self.editableCellTemplate = $.ajax({
+                type: "GET",
+                url: colDef.editableCellTemplate,
+                async: false
+            }).responseText;
+            $templateCache.put(colDef.editableCellTemplate, self.editableCellTemplate);
+        }
     }
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.headerCellTemplate,
-            async: false
-        }).responseText;
+        var tmpl = self.headerCellTemplate;
+        if (tmpl) {
+            self.headerCellTemplate = tmpl;
+        } else {
+            self.headerCellTemplate = $.ajax({
+                type: "GET",
+                url: colDef.headerCellTemplate,
+                async: false
+            }).responseText;
+            $templateCache.put(colDef.headerCellTemplate, self.headerCellTemplate);
+        }
     }
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
