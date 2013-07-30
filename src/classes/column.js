@@ -3,7 +3,8 @@
         colDef = config.colDef,
         delay = 500,
         clicks = 0,
-        timer = null;
+        timer = null,
+        tpl = "";
     self.colDef = config.colDef;
     self.width = colDef.width;
     self.groupIndex = 0;
@@ -54,9 +55,9 @@
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        var tmpl = $templateCache.get(colDef.cellTemplate).replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-        if (tmpl) {
-            self.cellTemplate = tmpl;
+        tpl = $templateCache.get(colDef.cellTemplate).replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+        if (tpl) {
+            self.cellTemplate = tpl;
         } else {
             self.cellTemplate = $.ajax({
                 type: "GET",
@@ -65,11 +66,12 @@
             }).responseText.replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
             $templateCache.put(colDef.cellTemplate, self.cellTemplate);
         }
+        colDef.cellTemplate = self.cellTemplate;
     }
     if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
-        var tmpl = $templateCache.get(colDef.editableCellTemplate);
-        if (tmpl) {
-            self.editableCellTemplate = tmpl;
+        tpl = $templateCache.get(colDef.editableCellTemplate);
+        if (tpl) {
+            self.editableCellTemplate = tpl;
         } else {
             self.editableCellTemplate = $.ajax({
                 type: "GET",
@@ -78,11 +80,12 @@
             }).responseText;
             $templateCache.put(colDef.editableCellTemplate, self.editableCellTemplate);
         }
+        colDef.editableCellTemplate = self.editableCellTemplate;
     }
     if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        var tmpl = self.headerCellTemplate;
-        if (tmpl) {
-            self.headerCellTemplate = tmpl;
+        tpl = $templateCache.get(colDef.headerCellTemplate);
+        if (tpl) {
+            self.headerCellTemplate = tpl;
         } else {
             self.headerCellTemplate = $.ajax({
                 type: "GET",
@@ -91,6 +94,7 @@
             }).responseText;
             $templateCache.put(colDef.headerCellTemplate, self.headerCellTemplate);
         }
+        colDef.headerCellTemplate = self.headerCellTemplate;
     }
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
