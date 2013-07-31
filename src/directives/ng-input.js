@@ -49,7 +49,8 @@ ngGridDirectives.directive('ngInput', [function() {
             });
 
             angular.element(elm).bind('blur', function () {
-                scope.$emit('ngGridEventEndCellEdit');
+                if (!scope.disableEndCellEditWhenInvalidInput || ngModel.$valid)
+                    scope.$emit('ngGridEventEndCellEdit');
             });
         }
     };
