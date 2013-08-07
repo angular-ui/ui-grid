@@ -159,7 +159,7 @@
                         flags: 'g'
                     },
                     {
-                        search: '\{\{',
+                        search: '\}\}',
                         replace: '<%= grunt.option("endSymbol") %>',
                         flags: 'g'
                     }
