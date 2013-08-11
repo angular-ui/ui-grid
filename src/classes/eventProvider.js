@@ -36,7 +36,7 @@
             //Fix for FireFox. Instead of using jQuery on('dragstart', function) on find, we have to use addEventListeners for each column.
             var columns = grid.$root.find('.ngHeaderSortColumn'); //have to iterate if using addEventListener
             for( var i = 0; i < columns.length; i++ ) {
-				var col = columns[i];
+                var col = columns[i];
                 if(col.className && col.className.indexOf("ngHeaderSortColumn") !== -1){
                     col.setAttribute('draggable', 'true');
                     //jQuery 'on' function doesn't have  dataTransfer as part of event in handler unless added to event props, which is not recommended
