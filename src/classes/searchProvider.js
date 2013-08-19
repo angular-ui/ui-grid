@@ -18,7 +18,9 @@
                 }
                 var pVal = item[prop];
                 if(typeof pVal === 'object'){
-                    return searchEntireRow(condition, pVal, c);
+                    if (searchEntireRow(condition, pVal, c)) {
+						return true;
+					}
                 } else {
                     var f = null,
                         s = null;
