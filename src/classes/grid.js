@@ -655,7 +655,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
         });
         angular.forEach(self.config.sortInfo.columns, function(c){
-            self.sortData(c);
+            self.sortData(c, { shiftKey: true });
         });
     };
     self.sortActual = function() {
