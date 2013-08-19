@@ -19,25 +19,24 @@
                 var pVal = item[prop];
                 if(typeof pVal === 'object'){
                     if (searchEntireRow(condition, pVal, c)) {
-						return true;
-					}
-                } else {
-                    var f = null,
-                        s = null;
-                    if (c && c.cellFilter) {
-                        s = c.cellFilter.split(':');
-                        f = $filter(s[0]);
+                        return true;
                     }
-                    if (pVal !== null && pVal !== undefined) {
-                        if (typeof f === "function") {
-                            var filterRes = f(pVal, s[1]).toString();
-                            result = condition.regex.test(filterRes);
-                        } else {
-                            result = condition.regex.test(pVal.toString());
-                        }
-                        if (result) {
-                            return true;
-                        }
+                }
+                var f = null,
+                    s = null;
+                if (c && c.cellFilter) {
+                    s = c.cellFilter.split(':');
+                    f = $filter(s[0]);
+                }
+                if (pVal !== null && pVal !== undefined) {
+                    if (typeof f === "function") {
+                        var filterRes = f(pVal, s[1]).toString();
+                        result = condition.regex.test(filterRes);
+                    } else {
+                        result = condition.regex.test(pVal.toString());
+                    }
+                    if (result) {
+                        return true;
                     }
                 }
             }

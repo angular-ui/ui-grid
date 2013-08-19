@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 08/19/2013 10:15
+* Compiled At: 08/19/2013 11:10
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1608,7 +1608,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
         });
         angular.forEach(self.config.sortInfo.columns, function(c){
-            self.sortData(c);
+            self.sortData(c, { shiftKey: true });
         });
     };
     self.sortActual = function() {
@@ -2181,25 +2181,24 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 var pVal = item[prop];
                 if(typeof pVal === 'object'){
                     if (searchEntireRow(condition, pVal, c)) {
-						return true;
-					}
-                } else {
-                    var f = null,
-                        s = null;
-                    if (c && c.cellFilter) {
-                        s = c.cellFilter.split(':');
-                        f = $filter(s[0]);
+                        return true;
                     }
-                    if (pVal !== null && pVal !== undefined) {
-                        if (typeof f === "function") {
-                            var filterRes = f(pVal, s[1]).toString();
-                            result = condition.regex.test(filterRes);
-                        } else {
-                            result = condition.regex.test(pVal.toString());
-                        }
-                        if (result) {
-                            return true;
-                        }
+                }
+                var f = null,
+                    s = null;
+                if (c && c.cellFilter) {
+                    s = c.cellFilter.split(':');
+                    f = $filter(s[0]);
+                }
+                if (pVal !== null && pVal !== undefined) {
+                    if (typeof f === "function") {
+                        var filterRes = f(pVal, s[1]).toString();
+                        result = condition.regex.test(filterRes);
+                    } else {
+                        result = condition.regex.test(pVal.toString());
+                    }
+                    if (result) {
+                        return true;
                     }
                 }
             }
