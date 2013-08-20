@@ -91,32 +91,36 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     };
 
     self.getSelection = function (entity) {
-        var isSelected = false;
+        return self.getSelectionIndex(entity) !== -1;
+    };
+
+    self.getSelectionIndex = function (entity) {
+        var index = -1;
         if (grid.config.primaryKey) {
             var val = self.pKeyParser(entity);
-            angular.forEach(self.selectedItems, function (c) {
+            angular.forEach(self.selectedItems, function (c, k) {
                 if (val === self.pKeyParser(c)) {
-                    isSelected = true;
+                    index = k;
                 }
             });
         }
         else {
-            isSelected = self.selectedItems.indexOf(entity) !== -1;
+            index = self.selectedItems.indexOf(entity);
         }
-        return isSelected;
+        return index;
     };
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (rowItem, isSelected) {
         if(grid.config.enableRowSelection){
             if (!isSelected) {
-                var indx = self.selectedItems.indexOf(rowItem.entity);
+                var indx = self.getSelectionIndex(rowItem.entity);
                 if (indx !== -1) {
                     self.selectedItems.splice(indx, 1);
                 }
             }
             else {
-                if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+                if (self.getSelectionIndex(rowItem.entity) === -1) {
                     if (!self.multi && self.selectedItems.length > 0) {
                         self.toggleSelectAll(false, true);
                     }
