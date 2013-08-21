@@ -70,26 +70,8 @@
             else {
                 return "";
             }
-        },
-        // Detect IE versions for bug workarounds (uses IE conditionals, not UA string, for robustness)
-        // Note that, since IE 10 does not support conditional comments, the following logic only detects IE < 10.
-        // Currently this is by design, since IE 10+ behaves correctly when treated as a standard browser.
-        // If there is a future need to detect specific versions of IE10+, we will amend this.
-        ieVersion: (function() {
-            var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
-
-            // Keep constructing conditional HTML blocks until we hit one that resolves to an empty fragment
-            do{
-                div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->';
-            }while(iElems[0]);
-            return version > 4 ? version : undefined;
-        })()
+        }
     };
 
-    $.extend(utils, {
-        isIe: (function() {
-            return utils.ieVersion !== undefined;
-        })()
-    });
     return utils;
 }]);
