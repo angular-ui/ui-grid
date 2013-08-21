@@ -92,7 +92,7 @@
                         //now use the manager to assign the event handlers
                         grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
 
-                        // method for user to select a specific row programatically
+                        // method for user to select a specific row programmatically
                         options.selectRow = function (rowIndex, state) {
                             if (grid.rowCache[rowIndex]) {
                                 if (grid.rowCache[rowIndex].clone) {
@@ -101,7 +101,7 @@
                                 grid.rowCache[rowIndex].setSelection(state ? true : false);
                             }
                         };
-                        // method for user to select the row by data item programatically
+                        // method for user to select the row by data item programmatically
                         options.selectItem = function (itemIndex, state) {
                             options.selectRow(grid.rowMap[itemIndex], state);
                         };
@@ -113,7 +113,7 @@
                         options.selectVisible = function (state) {
                             $scope.toggleSelectAll(state, true);
                         };
-                        // method for user to set the groups programatically
+                        // method for user to set the groups programmatically
                         options.groupBy = function (field) {
                             if (field) {
                                 $scope.groupBy($scope.columns.filter(function(c) {
