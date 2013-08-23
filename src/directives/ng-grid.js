@@ -55,13 +55,6 @@
                                 // make a temporary copy of the data
                                 grid.data = $.extend([], a);
                                 grid.rowFactory.fixRowCache();
-                                angular.forEach(grid.data, function (item, j) {
-                                    var indx = grid.rowMap[j] || j;
-                                    if (grid.rowCache[indx]) {
-                                        grid.rowCache[indx].ensureEntity(item);
-                                    }
-                                    grid.rowMap[indx] = j;
-                                });
                                 grid.searchProvider.evalFilter();
                                 grid.configureColumnWidths();
                                 grid.refreshDomSizes();
@@ -71,10 +64,7 @@
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
-                                dataWatcher($scope.$eval(options.data));
-                            });
+                            $scope.$parent.$watch(options.data, dataWatcher, true);
                         }
                         
                         grid.footerController = new ngFooter($scope, grid);

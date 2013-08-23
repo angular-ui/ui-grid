@@ -110,13 +110,10 @@
 
     self.fixRowCache = function () {
         var newLen = grid.data.length;
-        var diff = newLen - grid.rowCache.length;
-        if (diff < 0) {
-            grid.rowCache.length = grid.rowMap.length = newLen;
-        } else {
-            for (var i = grid.rowCache.length; i < newLen; i++) {
-                grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
-            }
+        grid.rowCache.length = grid.rowMap.length = newLen;
+        for (var i = 0; i < newLen; i++) {
+            grid.rowMap[i] = i;
+            grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
         }
     };
 
