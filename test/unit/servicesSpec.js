@@ -39,7 +39,7 @@ describe('Dom Utility Service', function () {
 
         it('should should find the correct elements and assign them in the grid properly', function () {
             $dUtils.AssignGridContainers($scope, root, grid);
-            
+
             expect(grid.$root.is(".ngGrid")).toEqual(true);
             expect(grid.$root.length).toEqual(1);
 
@@ -56,7 +56,7 @@ describe('Dom Utility Service', function () {
             expect(grid.$viewport.length).toEqual(1);
             expect(grid.$canvas.is(".ngCanvas")).toEqual(true);
             expect(grid.$canvas.length).toEqual(1);
-            
+
             // Removed footer tests as it is in its own directive, and not available in the grid template dom
 
             expect(grid.elementDims.rootMaxH).toEqual(grid.$root.height());
@@ -65,7 +65,7 @@ describe('Dom Utility Service', function () {
     });
     // BuildStyles
     describe('BuildStyles', function () {
-        it('should set the $styleSheet object of the grid to be a stylesheet object with CSS', function () {
+        it('should set the styleSheet object of the grid to be a stylesheet object with CSS', function () {
             var domsizesCalled;
             var scrollLeftCalled;
             var scrollTopCalled;
@@ -99,7 +99,8 @@ describe('Dom Utility Service', function () {
             };
             $dUtils.AssignGridContainers($scope, root, grid);
             $dUtils.BuildStyles($scope, grid, true);
-            var temp = grid.$styleSheet.html();
+            var gs = grid.styleSheet;
+            var temp = gs && (gs.innerHTML || (gs.styleSheet && gs.styleSheet.cssText));
             expect(domsizesCalled).toEqual(true);
             expect(scrollLeftCalled).toEqual(true);
             expect(scrollTopCalled).toEqual(true);
@@ -130,7 +131,8 @@ describe('Dom Utility Service', function () {
             $dUtils.AssignGridContainers($scope, root, grid);
             $dUtils.BuildStyles($scope, grid, true);
             $dUtils.setColLeft($scope.columns[0], 300, grid);
-            var temp = grid.$styleSheet.html();
+            var gs = grid.styleSheet;
+            var temp = gs && (gs.innerHTML || (gs.styleSheet && gs.styleSheet.cssText));
             expect(temp).toMatch(/.1 .ngCanvas { width: 400px; }.1 .ngRow { width: 400px; }.1 .ngCanvas { width: 400px; }.1 .ngHeaderScroller { width: 4\d\dpx}.1 .col0 { width: 100px; left: 300px; height: 30px }.1 .colt0 { width: 100px; }.1 .col1 { width: 100px; left: 100px; height: 30px }.1 .colt1 { width: 100px; }.1 .col2 { width: 100px; left: 200px; height: 30px }.1 .colt2 { width: 100px; }.1 .col3 { width: 100px; left: 300px; height: 30px }.1 .colt3 { width: 100px; }/);
         });
     });
@@ -185,8 +187,8 @@ describe('Utility Service', function () {
             var visualLength = $utils.visualLength(div);
             // Was .toEqual(286) but was inconsistent across Browsers and operating systems. Firefox is 329, Chromium, Chrome, and PhantomJS are 286, Travis CI is 367!
             //   CSS reset and forcing font family and physical font sizes does not help
-            expect(visualLength).toBeGreaterThan(285); 
-            expect(visualLength).toBeLessThan(368); 
+            expect(visualLength).toBeGreaterThan(285);
+            expect(visualLength).toBeLessThan(368);
         });
     });
     // forIn
@@ -212,7 +214,7 @@ describe('Utility Service', function () {
     describe('endsWith should return true or false based on the last character in a string', function () {
         var str = "Peter Piper picked a peck of pickeled peppers";
         it('returns true', function() {
-            
+
             expect($utils.endsWith(str, "peppers")).toEqual(true);
         });
         it('returns false', function () {
@@ -222,12 +224,12 @@ describe('Utility Service', function () {
     // isNullOrUndefined
     describe('isNullOrUndefined return true or false based on wherer or not a given reference is explucitly null or undefined', function () {
         it('returns true', function () {
-            var hello; 
+            var hello;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
 
             hello = null;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
-            
+
             hello = undefined;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
             expect($utils.isNullOrUndefined(null)).toEqual(true);
