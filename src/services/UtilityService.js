@@ -38,16 +38,21 @@
             return false;
         },
         getElementsByClassName: function(cl) {
-            var retnode = [];
-            var myclass = new RegExp('\\b' + cl + '\\b');
-            var elem = document.getElementsByTagName('*');
-            for (var i = 0; i < elem.length; i++) {
-                var classes = elem[i].className;
-                if (myclass.test(classes)) {
-                    retnode.push(elem[i]);
-                }
+            if (document.getElementsByClassName) {
+                return document.getElementsByClassName(cl);
             }
-            return retnode;
+            else {
+                var retnode = [];
+                var myclass = new RegExp('\\b' + cl + '\\b');
+                var elem = document.getElementsByTagName('*');
+                for (var i = 0; i < elem.length; i++) {
+                    var classes = elem[i].className;
+                    if (myclass.test(classes)) {
+                        retnode.push(elem[i]);
+                    }
+                }
+                return retnode;    
+            }
         },
         newId: (function() {
             var seedId = new Date().getTime();
