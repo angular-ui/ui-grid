@@ -9,10 +9,11 @@
                 elem.style.visibility = "hidden";
                 document.body.appendChild(elem);
             }
-            $(elem).css('font', $(node).css('font'));
-            $(elem).css('font-size', $(node).css('font-size'));
-            $(elem).css('font-family', $(node).css('font-family'));
-            elem.innerHTML = $(node).text();
+            var $node = $(node);
+            $(elem).css({'font': $node.css('font'),
+                        'font-size': $node.css('font-size'),
+                        'font-family': $node.css('font-family')});
+            elem.innerHTML = $node.text();
             return elem.offsetWidth;
         },
         forIn: function(obj, action) {
