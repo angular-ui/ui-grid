@@ -581,22 +581,22 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.resizeOnData = function(col) {
         // we calculate the longest data.
         var longest = col.minWidth;
-        var cell_index = 0;
+        var cellIndex = 0;
         var column = [];
         angular.forEach([self.$headerScroller].concat($scope.renderedRows), function(row, index) {
-            var row_el = index == 0 ? row : row.elm;
-            if (row_el && !row.isAggRow) {
-                var i = cell_index,
-                    cells = row_el.children(),
+            var rowEl = index === 0 ? row : row.elm;
+            if (rowEl && !row.isAggRow) {
+                var i = cellIndex,
+                    cells = rowEl.children(),
                     cell,
-                    cell_scope;
+                    cellScope;
                 for (; cells && i < cells.length; i+=1) {
                     cell = cells.eq(i);
-                    cell_scope = cell.scope();
-                    if (cell_scope && 'col' in cell_scope) {
-                        if (cell_scope.col.index === col.index) {
+                    cellScope = cell.scope();
+                    if (cellScope && 'col' in cellScope) {
+                        if (cellScope.col.index === col.index) {
                             column.push(cell[0]);
-                            cell_index = i; // for next row: start from founded index
+                            cellIndex = i; // for next row: start from founded index
                             break;
                         }
                     }
