@@ -1,4 +1,4 @@
-﻿/* 
+﻿/*
  Reorderablr row plugin
 */
 
@@ -47,7 +47,7 @@ function ngGridReorderable () {
                 return;
             }
             self.changeRowOrder(prevRow.scope.row, rowScope.row);
-            grid.searchProvider.evalFilter();
+            self.myGrid.searchProvider.evalFilter();
             // clear out the rowToMove object
             self.services.DomUtilityService.eventStorage.rowToMove = undefined;
             // if there isn't an apply already in progress lets start one
@@ -56,11 +56,12 @@ function ngGridReorderable () {
     };
     self.changeRowOrder = function (prevRow, targetRow) {
         // Splice the Rows via the actual datasource
-        var i = self.rowCache.indexOf(prevRow);
-        var j = self.rowCache.indexOf(targetRow);
+        var i = prevRow.rowIndex;
+        var j = targetRow.rowIndex;
+        oldRow = self.myGrid.rowCache[i];
         self.myGrid.rowCache.splice(i, 1);
-        self.myGrid.rowCache.splice(j, 0, prevRow);
-        self.$scope.$emit('ngGridEventChangeOrder', self.rowCache);
+        self.myGrid.rowCache.splice(j, 0, oldRow);
+        self.$scope.$emit('ngGridEventChangeOrder', self.myGrid.rowCache);
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
