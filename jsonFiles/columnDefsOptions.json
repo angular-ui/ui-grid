@@ -102,6 +102,12 @@
 		"plunker": "Link"
 	},
 	{	
+		"id": "visible",
+		"defaultValue": "true",
+		"definition": "Whether or not the column is visible by default. Can be overridden by the user at run-time if showColumnMenu is true.",
+		"plunker": "Link"
+	},
+	{	
 		"id": "width",
 		"defaultValue": "'*'",
 		"definition": "Sets the width of the column. Can be a fixed width in pixels as an int (42), string px('42px'), percentage string ('42%'), weighted asterisks (width divided by total number of *'s is all column definition widths)  See github wiki for more details.",
