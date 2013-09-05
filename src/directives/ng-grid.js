@@ -69,6 +69,9 @@
                             if (options.watchData === 'deep') {
                                 $scope.$parent.$watch(options.data, dataWatcher, true);
                             }
+                            else if (typeof $scope.$parent.$watchCollection === 'function') {
+                                $scope.$parent.$watchCollection(options.data, dataWatcher, true);
+                            }
                             else {
                                 $scope.$parent.$watch(options.data, dataWatcher);
                                 $scope.$parent.$watch(options.data + '.length', function() {
