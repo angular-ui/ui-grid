@@ -7,6 +7,7 @@
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+                    options.watchData = typeof options.watchData !== 'undefined' ? options.watchData : true;
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
                     return grid.init().then(function() {
@@ -48,20 +49,13 @@
                         else {
                             $scope.totalServerItems = 0;
                         }
-                        
+
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                        if (typeof options.data === "string") {
+                        if (options.watchData && typeof options.data === "string") {
                             var dataWatcher = function (a) {
                                 // make a temporary copy of the data
                                 grid.data = $.extend([], a);
                                 grid.rowFactory.fixRowCache();
-                                angular.forEach(grid.data, function (item, j) {
-                                    var indx = grid.rowMap[j] || j;
-                                    if (grid.rowCache[indx]) {
-                                        grid.rowCache[indx].ensureEntity(item);
-                                    }
-                                    grid.rowMap[indx] = j;
-                                });
                                 grid.searchProvider.evalFilter();
                                 grid.configureColumnWidths();
                                 grid.refreshDomSizes();
@@ -71,10 +65,19 @@
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
-                                dataWatcher($scope.$eval(options.data));
-                            });
+
+                            if (options.watchData === 'deep') {
+                                $scope.$parent.$watch(options.data, dataWatcher, true);
+                            }
+                            else if (typeof $scope.$parent.$watchCollection === 'function') {
+                                $scope.$parent.$watchCollection(options.data, dataWatcher, true);
+                            }
+                            else {
+                                $scope.$parent.$watch(options.data, dataWatcher);
+                                $scope.$parent.$watch(options.data + '.length', function() {
+                                    dataWatcher($scope.$eval(options.data));
+                                });
+                            }
                         }
                         
                         grid.footerController = new ngFooter($scope, grid);
@@ -92,7 +95,7 @@
                         //now use the manager to assign the event handlers
                         grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
 
-                        // method for user to select a specific row programatically
+                        // method for user to select a specific row programmatically
                         options.selectRow = function (rowIndex, state) {
                             if (grid.rowCache[rowIndex]) {
                                 if (grid.rowCache[rowIndex].clone) {
@@ -101,7 +104,7 @@
                                 grid.rowCache[rowIndex].setSelection(state ? true : false);
                             }
                         };
-                        // method for user to select the row by data item programatically
+                        // method for user to select the row by data item programmatically
                         options.selectItem = function (itemIndex, state) {
                             options.selectRow(grid.rowMap[itemIndex], state);
                         };
@@ -113,7 +116,7 @@
                         options.selectVisible = function (state) {
                             $scope.toggleSelectAll(state, true);
                         };
-                        // method for user to set the groups programatically
+                        // method for user to set the groups programmatically
                         options.groupBy = function (field) {
                             if (field) {
                                 $scope.groupBy($scope.columns.filter(function(c) {

@@ -138,6 +138,11 @@ Backup*/
 UpgradeLog*.XML
 
 
+############
+## WebStorm
+############
+.[Ii]dea
+
 
 ############
 ## Windows
