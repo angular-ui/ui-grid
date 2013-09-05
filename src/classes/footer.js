@@ -4,9 +4,17 @@
         return ret;
     };
     
+    $scope.$watch('totalServerItems',function(n,o){
+        $scope.currentMaxPages = $scope.maxPages();
+    });
+
     $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
+    
     $scope.maxPages = function () {
+        if($scope.maxRows() === 0) {
+            return 1;
+        }
         return Math.ceil($scope.maxRows() / $scope.pagingOptions.pageSize);
     };
 
