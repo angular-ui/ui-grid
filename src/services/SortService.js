@@ -1,5 +1,19 @@
 ﻿angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
+    var dataTypes = sortService.dataTypes = {
+        "number": "sortNumber",
+        "numberString": "sortNumberStr",
+        "string": "sortAlpha",
+        "boolean": "sortBool",
+        "date": "sortDate",
+        "basic": "sortBasic"
+    };
+
+    sortService.addDataType = function(key, method, sortFn){
+        this.dataTypes[key] = method;
+        this[method] = sortFn;
+    };
+
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
@@ -104,7 +118,7 @@
                 col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
-                
+
                 var propA = $parse(order[indx])(itemA);
                 var propB = $parse(order[indx])(itemB);
                 // we want to allow zero values to be evaluated in the sort function
@@ -156,7 +170,10 @@
             if (!item) {
                 return sortFn;
             }
-            sortFn = sortService.guessSortFn($parse(col.field)(item));
+
+            sortFn =  ("dataType" in col.colDef && col.colDef.dataType in dataTypes) ?
+                sortService[dataTypes[col.colDef.dataType]] : sortService.guessSortFn($parse(col.field)(item));
+
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;

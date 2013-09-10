@@ -71,10 +71,10 @@ describe('Dom Utility Service', function () {
             var scrollTopCalled;
 
             $scope.columns = [
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, }];
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 }];
             $scope.totalRowWidth = function() {
                 return 400;
             };
@@ -159,6 +159,39 @@ describe('Sort Service', function () {
             expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
           });
       });
+
+    describe('working with colDef dataType', function () {
+
+        var sorterFn = function(a, b) {
+            return 0;
+        };
+
+
+        it('should be able to define a custom dataType', function() {
+            $sort.addDataType('foo', 'sortFoo', sorterFn);
+
+            expect($sort.dataTypes.foo).toEqual('sortFoo');
+            expect($sort.sortFoo).toEqual(sorterFn);
+        });
+
+        it('should prefer dataType rather than guessing', function() {
+            var col = {
+                colDef: {
+                    field: 'foo',
+                    displayName: 'Foo',
+                    dataType: 'foo'
+                }
+            }, data = [{
+                foo: 'Bar'
+            }], data2 = [{
+                bar: 'Bar'
+            }];
+
+            $sort.addDataType('foo', 'sortFoo', sorterFn);
+
+            expect($sort.getSortFn(col, data)).toEqual($sort.sortFoo);
+        });
+    });
 });
 
 describe('Utility Service', function () {
