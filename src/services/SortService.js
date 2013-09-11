@@ -2,26 +2,23 @@
     var sortService = {};
 
     var dataTypes = sortService.dataTypes = {
-        "number": "sortNumber",
-        "numberString": "sortNumberStr",
-        "string": "sortAlpha",
-        "boolean": "sortBool",
-        "date": "sortDate",
-        "basic": "sortBasic"
+        number: 'sortNumber',
+        numberString: 'sortNumberStr',
+        string: 'sortAlpha',
+        boolean: 'sortBool',
+        date: 'sortDate',
+        basic: 'sortBasic'
     }; // quick lookup hash for column types and their sort funcs
-
     sortService.addDataType = function(key/* string */, sortFn/* comparator cb*/) {
         var method = 'sort' + angular.uppercase(key.charAt(0)) + key.substring(1);
 
         this.dataTypes[key] = method;
         this[method] = sortFn;
     };
-
     sortService.removeDataType = function(key/* string*/) {
         delete this[this.dataTypes[key]];
         delete this.dataTypes[key];
     };
-
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
@@ -179,7 +176,7 @@
                 return sortFn;
             }
             // prefer .dataType to guessing, if available.
-            sortFn =  ("dataType" in col.colDef && col.colDef.dataType in dataTypes) ?
+            sortFn = ('dataType' in col.colDef && col.colDef.dataType in dataTypes) ?
                 sortService[dataTypes[col.colDef.dataType]] : sortService.guessSortFn($parse(col.field)(item));
 
             //cache it
