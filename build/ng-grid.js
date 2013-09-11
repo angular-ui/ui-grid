@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 09/10/2013 18:45
+* Compiled At: 09/11/2013 10:34
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -340,6 +340,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
 }]);
 angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
+
     var dataTypes = sortService.dataTypes = {
         "number": "sortNumber",
         "numberString": "sortNumberStr",
@@ -347,11 +348,18 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
         "boolean": "sortBool",
         "date": "sortDate",
         "basic": "sortBasic"
-    };
+    }; 
 
-    sortService.addDataType = function(key, method, sortFn){
+    sortService.addDataType = function(key, sortFn) {
+        var method = 'sort' + angular.uppercase(key.charAt(0)) + key.substring(1);
+
         this.dataTypes[key] = method;
         this[method] = sortFn;
+    };
+
+    sortService.removeDataType = function(key) {
+        delete this[this.dataTypes[key]];
+        delete this.dataTypes[key];
     };
 
     sortService.colSortFnCache = {};
@@ -491,7 +499,6 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
             if (!item) {
                 return sortFn;
             }
-
             sortFn =  ("dataType" in col.colDef && col.colDef.dataType in dataTypes) ?
                 sortService[dataTypes[col.colDef.dataType]] : sortService.guessSortFn($parse(col.field)(item));
             if (sortFn) {
