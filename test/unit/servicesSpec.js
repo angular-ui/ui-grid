@@ -139,10 +139,15 @@ describe('Dom Utility Service', function () {
 });
 
 describe('Sort Service', function () {
-    var $sort;
+    var $sort,
+        sorterFn = function(a, b) {
+            return 0;
+        };
+
     beforeEach(module('ngGrid'));
     beforeEach(inject(function ($sortService) {
         $sort = $sortService;
+        $sort.addDataType('foo', sorterFn);
     }));
 
     describe('guessing the sort function', function() {
@@ -162,16 +167,18 @@ describe('Sort Service', function () {
 
     describe('working with colDef dataType', function () {
 
-        var sorterFn = function(a, b) {
-            return 0;
-        };
-
-
         it('should be able to define a custom dataType', function() {
-            $sort.addDataType('foo', 'sortFoo', sorterFn);
+            $sort.addDataType('bar', sorterFn);
 
-            expect($sort.dataTypes.foo).toEqual('sortFoo');
-            expect($sort.sortFoo).toEqual(sorterFn);
+            expect($sort.dataTypes.bar).toEqual('sortBar');
+            expect($sort.sortBar).toEqual(sorterFn);
+        });
+
+        it('should be able to de-register a custom dataType', function() {
+            $sort.removeDataType('foo');
+
+            expect($sort.dataTypes.foo).toBeUndefined();
+            expect($sort.sortFoo).toBeUndefined();
         });
 
         it('should prefer dataType rather than guessing', function() {
@@ -182,14 +189,12 @@ describe('Sort Service', function () {
                     dataType: 'foo'
                 }
             }, data = [{
-                foo: 'Bar'
-            }], data2 = [{
-                bar: 'Bar'
+                foo: 111
             }];
 
-            $sort.addDataType('foo', 'sortFoo', sorterFn);
 
             expect($sort.getSortFn(col, data)).toEqual($sort.sortFoo);
+
         });
     });
 });

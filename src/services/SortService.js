@@ -1,5 +1,6 @@
 ﻿angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
+
     var dataTypes = sortService.dataTypes = {
         "number": "sortNumber",
         "numberString": "sortNumberStr",
@@ -7,11 +8,18 @@
         "boolean": "sortBool",
         "date": "sortDate",
         "basic": "sortBasic"
-    };
+    }; // quick lookup hash for column types and their sort funcs
 
-    sortService.addDataType = function(key, method, sortFn){
+    sortService.addDataType = function(key/* string */, sortFn/* comparator cb*/) {
+        var method = 'sort' + angular.uppercase(key.charAt(0)) + key.substring(1);
+
         this.dataTypes[key] = method;
         this[method] = sortFn;
+    };
+
+    sortService.removeDataType = function(key/* string*/) {
+        delete this[this.dataTypes[key]];
+        delete this.dataTypes[key];
     };
 
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
@@ -170,7 +178,7 @@
             if (!item) {
                 return sortFn;
             }
-
+            // prefer .dataType to guessing, if available.
             sortFn =  ("dataType" in col.colDef && col.colDef.dataType in dataTypes) ?
                 sortService[dataTypes[col.colDef.dataType]] : sortService.guessSortFn($parse(col.field)(item));
 
