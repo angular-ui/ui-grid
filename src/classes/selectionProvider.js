@@ -7,6 +7,16 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
     self.pKeyParser = $parse(grid.config.primaryKey);
 
+    // If multiSelect value is a string, bind it to the corresponding variable, as with data.
+    // This way we can watch for updates and therefore dynamically toggle multiSelect.
+    if(typeof grid.config.multiSelect === 'string') {
+        $scope.$parent.$watch(grid.config.multiSelect, function (newMultiSelectValue) {
+            self.multi = newMultiSelectValue;
+        });
+    } else {
+        self.multi = grid.config.multiSelect;
+    }
+
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (rowItem, evt) {
         // ctrl-click + shift-click multi-selections
