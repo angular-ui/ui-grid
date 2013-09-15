@@ -186,21 +186,28 @@
         }
         // resize on window resize
         var windowThrottle;
-        $(window).resize(function(){
+        var windowResize = function(){
             clearTimeout(windowThrottle);
             windowThrottle = setTimeout(function() {
                 //in function for IE8 compatibility
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
-        });
+        };
+        $(window).on('resize.nggrid', windowResize);
         // resize on parent resize as well.
         var parentThrottle;
-        $(grid.$root.parent()).on('resize', function() {
+        var parentResize = function() {
             clearTimeout(parentThrottle);
             parentThrottle = setTimeout(function() {
                 //in function for IE8 compatibility
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
+        };
+        $(grid.$root.parent()).on('resize.nggrid', parentResize);
+
+        $scope.$on('$destroy', function(){
+            $(window).off('resize.nggrid', windowResize);
+            $(grid.$root.parent()).off('resize.nggrid', parentResize);
         });
     };
     // In this example we want to assign grid events.
