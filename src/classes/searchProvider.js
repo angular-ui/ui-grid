@@ -8,6 +8,17 @@
 
     self.fieldMap = {};
 
+    var convertToFieldMap = function(obj) {
+
+        var fieldMap = {};
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                fieldMap[prop.toLowerCase()] = obj[prop];
+            }
+        }
+        return fieldMap;
+    };
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -18,7 +29,8 @@
                 }
                 var pVal = item[prop];
                 if(typeof pVal === 'object'){
-                    return searchEntireRow(condition, pVal, c);
+                    var objectFieldMap = convertToFieldMap(c);
+                    return searchEntireRow(condition, pVal, objectFieldMap);
                 } else {
                     var f = null,
                         s = null;
