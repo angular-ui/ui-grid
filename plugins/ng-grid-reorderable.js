@@ -16,12 +16,20 @@ function ngGridReorderable () {
         // In this example we want to assign grid events.
         self.assignEvents();
     };
+
     self.colToMove = undefined;
     self.groupToMove = undefined;
+
     self.assignEvents = function() {
         // Here we set the onmousedown event handler to the header container.
-        self.myGrid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
+        self.myGrid.$viewport.on('mousedown', self.onRowMouseDown)
+                .on('dragstart', self.dragStart)
+                .on('dragover', self.dragOver)
+                .on('dragleave', self.dragLeave)
+                .on('drop', self.onRowDrop)
+                .on('dragend', self.dragEnd);
     };
+
     // Row functions
     self.onRowMouseDown = function(event) {
         // Get the closest row element from where we clicked.
@@ -33,9 +41,13 @@ function ngGridReorderable () {
             targetRow.attr('draggable', 'true');
             // Save the row for later.
             self.services.DomUtilityService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
+            self.$scope.$emit('ngGridEventChangeOrderStart', targetRow);
         }
     };
+
     self.onRowDrop = function(event) {
+        event.stopPropagation(); // Stops some browsers from redirecting.
+        event.preventDefault();
         // Get the closest row to where we dropped
         var targetRow = $(event.target).closest('.ngRow');
         // Get the scope from the row element.
@@ -54,6 +66,7 @@ function ngGridReorderable () {
             self.services.DomUtilityService.digest(rowScope.$root);
         }
     };
+
     self.changeRowOrder = function (prevRow, targetRow) {
         // Splice the Rows via the actual datasource
         var i = prevRow.rowIndex;
@@ -63,7 +76,34 @@ function ngGridReorderable () {
         self.myGrid.rowCache.splice(j, 0, oldRow);
         self.$scope.$emit('ngGridEventChangeOrder', self.myGrid.rowCache);
     };
-    self.dragOver = function(evt) {
-        evt.preventDefault();
+
+    self.dragStart = function(event) {
+        event.target.style.opacity = '0.4';
+
+        dragSrcEl = event.target;
+        event.originalEvent.dataTransfer.effectAllowed = 'move';
+        event.originalEvent.dataTransfer.setData('text/html', dragSrcEl.innerHTML);
+        //event.originalEvent.dataTransfer.setDragImage(dragSrcEl);
+    }
+
+    self.dragEnd = function(event) {
+        event.target.style.opacity = '1';
+    }
+
+    self.dragOver = function(event) {
+        var targetRow = $(event.target).closest('.ngRow');
+        targetRow.addClass("over");
+        if (event.preventDefault) {
+            event.preventDefault();
+        }
+        event.originalEvent.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+        return false;
+    };
+
+    self.dragLeave = function(event) {
+        var targetRow = $(event.target).closest('.ngRow');
+        targetRow.removeClass("over");
+        event.preventDefault();
     };
 }
