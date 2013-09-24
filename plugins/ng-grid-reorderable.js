@@ -80,15 +80,14 @@ function ngGridReorderable () {
     self.dragStart = function(event) {
         event.target.style.opacity = '0.4';
 
-        dragSrcEl = event.target;
+        var dragSrcEl = event.target;
         event.originalEvent.dataTransfer.effectAllowed = 'move';
         event.originalEvent.dataTransfer.setData('text/html', dragSrcEl.innerHTML);
-        //event.originalEvent.dataTransfer.setDragImage(dragSrcEl);
-    }
+    };
 
     self.dragEnd = function(event) {
         event.target.style.opacity = '1';
-    }
+    };
 
     self.dragOver = function(event) {
         var targetRow = $(event.target).closest('.ngRow');
