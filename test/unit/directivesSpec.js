@@ -414,8 +414,49 @@ describe('directives', function () {
                 });
             });
             describe('searchProvider', function () {
-                it('should do something', function () {
-                    //add work here
+                beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
+                    $scope = $rootScope.$new();
+                    $dUtils = $domUtilityService;
+                    $linker = $compile;
+                    $cache = $templateCache;
+
+                    elm = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope = $rootScope;
+
+                    scope.filterOptions = {
+                    filterText: ''
+                    };
+
+                    scope.myData = [{name: "Moroni", obj1: {age: 50}, obj2: {grade: 'one'} },
+                                    {name: "Tiancum", obj1: {age: 43}, obj2: {grade: 'two'} },
+                                    {name: "Jacob", obj1: {age: 27}, obj2: {grade: 'three'} },
+                                    {name: "Nephi", obj1: {age: 29}, obj2: {grade: 'four'} },
+                                    {name: "Enos", obj1: {age: 34}, obj2: {grade: 'five'} }];
+
+                    scope.gridOptions = {
+                    data: 'myData',
+                    filterOptions: scope.filterOptions,
+                    showFooter: true,
+                    columnDefs: [
+                                 { field: 'name' },
+                                 { field: 'obj1.age' },
+                                 { field: 'obj2.grade' }
+                                 ]
+                    };
+					
+                    $compile(elm)(scope);
+                    scope.$digest();
+                }));
+
+                it('should find values in properties that come after the first object', function() {
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain(5);
+                    
+                    // Enter search text
+                    scope.filterOptions.filterText = 'two';
+                    scope.$digest();
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 1');
                 });
             });
             describe('selectionProvider', function () {
