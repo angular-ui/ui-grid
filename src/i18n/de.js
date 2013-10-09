@@ -1,14 +1,14 @@
 ﻿window.ngGrid.i18n['de'] = {
-    ngAggregateLabel: 'artikel',
-    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngAggregateLabel: 'eintrag',
+    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hierhin um nach dieser Spalte zu gruppieren.',
     ngSearchPlaceHolder: 'Suche...',
     ngMenuText: 'Spalten auswählen:',
-    ngShowingItemsLabel: 'Zeige Artikel:',
-    ngTotalItemsLabel: 'Meiste Artikel:',
-    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
-    ngPageSizeLabel: 'Größe Seite:',
-    ngPagerFirstTitle: 'Erste Page',
-    ngPagerNextTitle: 'Nächste Page',
-    ngPagerPrevTitle: 'Vorherige Page',
-    ngPagerLastTitle: 'Letzte Page'
+    ngShowingItemsLabel: 'Zeige Einträge:',
+    ngTotalItemsLabel: 'Einträge gesamt:',
+    ngSelectedItemsLabel: 'Ausgewählte Einträge:',
+    ngPageSizeLabel: 'Einträge pro Seite:',
+    ngPagerFirstTitle: 'Erste Seite',
+    ngPagerNextTitle: 'Nächste Seite',
+    ngPagerPrevTitle: 'Vorherige Seite',
+    ngPagerLastTitle: 'Letzte Seite'
 };
