@@ -136,7 +136,6 @@
         var columnFilters = qStr.split(";");
         for (var i = 0; i < columnFilters.length; i++) {
             var args = columnFilters[i].split(':');
-            console.log(JSON.stringify(args));
             var modifiers = 'i';
             if (args.length > 1) {
                 var columnName = $.trim(args[0]);
@@ -144,7 +143,6 @@
                 if(typeof(args[2]) === 'string') {
                     modifiers = $.trim(args[2]);
                 }
-                console.log('new modifier ' + modifiers);
                 if (columnName && columnValue) {
                     searchConditions.push({
                         column: columnName,
@@ -153,7 +151,6 @@
                     });
                 }
             } else {
-                console.log('default arguments');
                 var val = $.trim(args[0]);
                 if (val) {
                     searchConditions.push({
