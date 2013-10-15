@@ -50,7 +50,7 @@
     self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
     self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if(self.enableCellEdit) {
-        self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+        self.cellEditTemplate = colDef.cellEditTemplate || $templateCache.get('cellEditTemplate.html');
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
