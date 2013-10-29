@@ -150,7 +150,7 @@
         return false;
     };
     self.copy = function() {
-        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache, $utils);
         ret.isClone = true;
         ret.orig = self;
         return ret;
