@@ -21,10 +21,10 @@
         for (var i = 0; i < templates.length; i++){
             var template = templates[i];
             var curTemplate = $templateCache.get(template);
-            if (start != "}}"){
+            if (start !== "}}"){
                 curTemplate = curTemplate.replace(/\{\{/g, start);
             }
-            if (end != "}}"){
+            if (end !== "}}"){
                 curTemplate = curTemplate.replace(/\}\}/g, end);
             }
             $templateCache.put(template, curTemplate);
