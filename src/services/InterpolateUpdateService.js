@@ -20,14 +20,14 @@
         var end = $interpolate.endSymbol();
         for (var i = 0; i < templates.length; i++){
             var template = templates[i];
-            var cur_template = $templateCache.get(template);
+            var curTemplate = $templateCache.get(template);
             if (start != "}}"){
-                cur_template = cur_template.replace(/\{\{/g, start);
+                curTemplate = curTemplate.replace(/\{\{/g, start);
             }
             if (end != "}}"){
-                cur_template = cur_template.replace(/\}\}/g, end);
+                curTemplate = curTemplate.replace(/\}\}/g, end);
             }
-            $templateCache.put(template, cur_template);
+            $templateCache.put(template, curTemplate);
         }
-    }
+    };
 }]);
