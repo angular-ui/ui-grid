@@ -26,7 +26,7 @@
     self.sortPriority = undefined;
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
-    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    self.aggLabelFilter = colDef.aggLabelFilter || colDef.cellFilter;
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
@@ -50,7 +50,7 @@
     self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
     self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
     if(self.enableCellEdit) {
-        self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+        self.cellEditTemplate = colDef.cellEditTemplate || $templateCache.get('cellEditTemplate.html');
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {

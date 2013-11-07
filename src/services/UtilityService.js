@@ -9,10 +9,11 @@
                 elem.style.visibility = "hidden";
                 document.body.appendChild(elem);
             }
-            $(elem).css('font', $(node).css('font'));
-            $(elem).css('font-size', $(node).css('font-size'));
-            $(elem).css('font-family', $(node).css('font-family'));
-            elem.innerHTML = $(node).text();
+            var $node = $(node);
+            $(elem).css({'font': $node.css('font'),
+                        'font-size': $node.css('font-size'),
+                        'font-family': $node.css('font-family')});
+            elem.innerHTML = $node.text();
             return elem.offsetWidth;
         },
         forIn: function(obj, action) {
@@ -38,16 +39,21 @@
             return false;
         },
         getElementsByClassName: function(cl) {
-            var retnode = [];
-            var myclass = new RegExp('\\b' + cl + '\\b');
-            var elem = document.getElementsByTagName('*');
-            for (var i = 0; i < elem.length; i++) {
-                var classes = elem[i].className;
-                if (myclass.test(classes)) {
-                    retnode.push(elem[i]);
-                }
+            if (document.getElementsByClassName) {
+                return document.getElementsByClassName(cl);
             }
-            return retnode;
+            else {
+                var retnode = [];
+                var myclass = new RegExp('\\b' + cl + '\\b');
+                var elem = document.getElementsByTagName('*');
+                for (var i = 0; i < elem.length; i++) {
+                    var classes = elem[i].className;
+                    if (myclass.test(classes)) {
+                        retnode.push(elem[i]);
+                    }
+                }
+                return retnode;    
+            }
         },
         newId: (function() {
             var seedId = new Date().getTime();
@@ -70,26 +76,8 @@
             else {
                 return "";
             }
-        },
-        // Detect IE versions for bug workarounds (uses IE conditionals, not UA string, for robustness)
-        // Note that, since IE 10 does not support conditional comments, the following logic only detects IE < 10.
-        // Currently this is by design, since IE 10+ behaves correctly when treated as a standard browser.
-        // If there is a future need to detect specific versions of IE10+, we will amend this.
-        ieVersion: (function() {
-            var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
-
-            // Keep constructing conditional HTML blocks until we hit one that resolves to an empty fragment
-            do{
-                div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->';
-            }while(iElems[0]);
-            return version > 4 ? version : undefined;
-        })()
+        }
     };
 
-    $.extend(utils, {
-        isIe: (function() {
-            return utils.ieVersion !== undefined;
-        })()
-    });
     return utils;
 }]);

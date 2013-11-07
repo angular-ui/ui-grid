@@ -15,7 +15,7 @@
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
-            if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
+            if (grid.config.enableColumnReordering) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
             }
         }
@@ -158,8 +158,8 @@
         // Get the scope from the header.
         var headerScope = angular.element(headerContainer).scope();
         if (headerScope) {
-            // If we have the same column, do nothing.
-            if (self.colToMove.col === headerScope.col) {
+            // If we have the same column or the target column is pinned, do nothing.
+            if (self.colToMove.col === headerScope.col || headerScope.col.pinned) {
                 return;
             }
             // Splice the columns
