@@ -18,3 +18,32 @@
   -->
 </div>
 ```
+
+
+## Alternative
+
+```html
+<div class="grid">
+  <div ui-grid-header>
+    <!-- auto-generate column headers if no content supplied? -->
+  </div>
+  
+  <div class="grid-body" ui-virtualize="data as $rows">
+    <!-- virtualize creates `$rows` that is passed to ng-repeat -->
+    <div ng-repeat="row in $rows">
+      
+      
+      <div ng-repeat="column in row">
+        <!-- ability to define custom columns -->
+        <!-- ability to virtualize columns too:
+        <div ng-repeat="column in $columns" ui-virtualize="row as $columns">
+        -->
+      </div>
+      
+      <!-- or pretty much a default template of the above snippet ^^ -->
+      <ui-grid-row data="row"></ui-grid-row>
+      
+    </div>
+  </div>
+</div>
+```
