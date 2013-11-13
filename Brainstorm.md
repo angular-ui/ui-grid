@@ -10,5 +10,11 @@
   <div ui-grid-repeat  ui-repeat-virtual="d in data">
     <!-- auto-generate columns if no content supplied? -->
   </div>
+  
+  <!-- or perhaps this?? (from ProLoser) -->
+  <ng-repeat="item in $virtualized" ui-virtualize="items">
+  <!--
+    ui-virtualize virtualizes a list of items and hands it to the built-in repeater, if the repeater is performant enough
+  -->
 </div>
 ```
