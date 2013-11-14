@@ -3,6 +3,7 @@
 > Don't build the 'everything-in-one' solution first. Build a "you must put the components together yourself" approach 
 > first. Then create some directives afterwards that simply packages everything together _for_ you.
 > - ProLoser's 2c
+> 
 > Gotcha, it's just pinned collumns is a pretty big feature and is one that has been a performance problem. 
 > It's a core feature. not some add-on, so anything we do has to work with that. 
 > - Rob
