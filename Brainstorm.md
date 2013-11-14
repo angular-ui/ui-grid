@@ -1,3 +1,10 @@
+# Mantra
+
+> Don't build the 'everything-in-one' solution first. Build a "you must put the components together yourself" approach 
+> first. Then create some directives afterwards that simply packages everything together _for_ you.
+> - ProLoser's 2c
+
+
 # Declaritive HTML
 
 ```html
