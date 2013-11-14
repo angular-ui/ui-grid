@@ -27,11 +27,11 @@ We'll have the code to do so in order to do some core demo/default implementatio
 
 ```html
 <div class="grid">
-  <div ui-grid-header>
+  <div ui-grid-header scrollsync>
     <!-- auto-generate column headers if no content supplied? -->
   </div>
   
-  <div class="grid-body" ui-virtualize="data as $rows">
+  <div class="grid-body" ui-virtualize="data as $rows" scrollsync ui-pinnable="columns">
     <!-- virtualize creates `$rows` that is passed to ng-repeat -->
     <div ng-repeat="row in $rows">
       
@@ -62,19 +62,25 @@ We'll have the code to do so in order to do some core demo/default implementatio
     <!-- auto-generate column headers if no content supplied? -->
     <!-- how to mark-up pinned columns so they align with resepective pinned grid-body below? -->
   </div>
+  <div class="grid-body" ui-virtualize="data.rows as $rows" ui-pinnable="data.columns">
+    <div ng-repeat="row in $rows">
+      <!-- ui-pinnable creates a subset of columns -->
+      <div ng-repeat="column in $pinnable.unpinned">
+        {{ row[column] }}
+      </div>
+    </div>
+  </div>
   <div class="grid-body pinned left" ui-virtualize="data as $rows">
     <div ng-repeat="row in $rows">
-      <div ng-repeat="column in row">
+      <div ng-repeat="column in $pinnable.left">
+        {{ row[column] }}
       </div>
     </div>
-  <div class="grid-body" ui-virtualize="data as $rows">
+  </div>
+  <div class="grid-body pinned right" ui-virtualize="data as $rows">
     <div ng-repeat="row in $rows">
-      <div ng-repeat="column in row">
-      </div>
-    </div>
-    <div class="grid-body pinned right" ui-virtualize="data as $rows">
-    <div ng-repeat="row in $rows">
-      <div ng-repeat="column in row">
+      <div ng-repeat="column in $pinnable.right">
+        {{ row[column] }}
       </div>
     </div>
   </div>
