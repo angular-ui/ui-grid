@@ -17,8 +17,12 @@ ngGridDirectives.directive('ngViewport', [function() {
             }
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(ensureDigest, 50);
+            if ($scope.forceSyncScrolling) {
+                ensureDigest();
+            } else {
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(ensureDigest, 50);   
+            }
             prevScollLeft = scrollLeft;
             prevScollTop = scrollTop;
             isMouseWheelActive = false;
