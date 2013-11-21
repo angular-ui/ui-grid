@@ -6,8 +6,9 @@
 ## Outstanding Problems
 
 * pinned columns performance
-* ???
-
+* Core performance (multiple grids, grids loading slowly, horizontal scrolling peformance in general)
+* Events (many bugs)
+* Layout flexibility 
 
 # Declaritive HTML
 
