@@ -16,6 +16,7 @@
 * Sorting Columns
 * Easy-to-customize templates
 * Editing
+* Grouping
 
 # Declaritive HTML
 
