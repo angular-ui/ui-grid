@@ -17,6 +17,14 @@
 * Easy-to-customize templates
 * Editing
 * Grouping
+* Searching / filtering (over whole grid, by column)
+* Pagination (with hooks for backend retrieval)
+* Row / column selection (both by user and programmatically)
+
+## Plugins?
+* Column reordering
+* Row reordering
+* Exporting?
 
 # Declaritive HTML
 
