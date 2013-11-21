@@ -10,6 +10,13 @@
 * Events (many bugs)
 * Layout flexibility 
 
+# Desired Functionality
+
+* Pinning columns
+* Sorting Columns
+* Easy-to-customize templates
+* Editing
+
 # Declaritive HTML
 
 ```html
