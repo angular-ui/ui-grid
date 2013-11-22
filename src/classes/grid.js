@@ -117,6 +117,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Set this to false if you only want one item selected at a time
         multiSelect: true,
 
+        //Set to true to watch for changes on cell data. This is more costly, so only use when needed.
+        updateOnCellDataChange: false,
+
         // pagingOptions -
         pagingOptions: {
             // pageSizes: list of available page sizes.
