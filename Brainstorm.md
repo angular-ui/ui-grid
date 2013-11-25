@@ -20,6 +20,7 @@
 * Searching / filtering (over whole grid, by column)
 * Pagination (with hooks for backend retrieval)
 * Row / column selection (both by user and programmatically)
+* Column resizing (drag separator to resize, double-click to auto-size)
 
 ## Plugins?
 * Column reordering
