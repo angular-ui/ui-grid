@@ -34,8 +34,10 @@ Add CSV Export to your ng-grid tables by including it in your plugins array:
 Options
 -------
 
-        opts =
-             { columnOverrides: < hash of column override functions > }
+        opts = {
+            columnOverrides: < hash of column override functions >
+            customDataWatcher: < function whose return value can be $watched to detect changed data >
+        }
 
 For arrays and objects you may want to override the default `JSON.stringify`
 conversion into strings.
