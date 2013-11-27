@@ -21,6 +21,13 @@
 * Pagination (with hooks for backend retrieval)
 * Row / column selection (both by user and programmatically)
 * Column resizing (drag separator to resize, double-click to auto-size)
+* Mobile/responsive options? (Column 
+ 
+# Browser Support?
+* IE9+, latest FF, Opera and Chrome. (Which safari version? jQuery 2.* goes with 5.1)
+ 
+# Angular Support?
+* We should state support up front with each release. Also, one of the things that has come up a lot is issues with unstable releases. We should state whether or not we're going to support unstable angular. Just as a standard. 
 
 ## Plugins?
 * Column reordering
