@@ -6,6 +6,7 @@
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
 function ngGridCsvExportPlugin (opts) {
+    opts = opts||{}; // remove need for null checks on opts
     var self = this;
     self.grid = null;
     self.scope = null;
@@ -50,7 +51,7 @@ function ngGridCsvExportPlugin (opts) {
             for (var gridRow in gridData) {
                 for ( k in keys) {
                     var curCellRaw = fieldGetters[keys[k]](gridData[gridRow]);
-                    if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
+                    if (opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
                         curCellRaw = opts.columnOverrides[keys[k]](curCellRaw);
                     }
                     csvData += '"' + csvStringify(curCellRaw) + '",';
