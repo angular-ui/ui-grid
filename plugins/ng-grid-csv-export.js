@@ -6,6 +6,7 @@
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
 function ngGridCsvExportPlugin (opts) {
+    opts = opts||{}; // remove need for null checks on opts
     var self = this;
     self.grid = null;
     self.scope = null;
@@ -14,7 +15,13 @@ function ngGridCsvExportPlugin (opts) {
         self.scope = scope;
         function showDs() {
             var keys = [];
-            for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
+            var fieldNames = {};
+            var fieldGetters = {};
+            for (var f in grid.config.columnDefs) {
+                keys.push(grid.config.columnDefs[f].field);
+                fieldNames[grid.config.columnDefs[f].field] = grid.config.columnDefs[f].displayName||grid.config.columnDefs[f].field;
+                fieldGetters[grid.config.columnDefs[f].field] = services.ParseService(grid.config.columnDefs[f].field);
+            }
             var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
@@ -37,18 +44,15 @@ function ngGridCsvExportPlugin (opts) {
                 return newStr + "\n";
             }
             for (var k in keys) {
-                csvData += '"' + csvStringify(keys[k]) + '",';
+                csvData += '"' + csvStringify(fieldNames[keys[k]]) + '",';
             }
             csvData = swapLastCommaForNewline(csvData);
             var gridData = grid.data;
             for (var gridRow in gridData) {
                 for ( k in keys) {
-                    var curCellRaw;
-                    if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
-                        curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
-                    }
-                    else {
-                        curCellRaw = gridData[gridRow][keys[k]];
+                    var curCellRaw = fieldGetters[keys[k]](gridData[gridRow]);
+                    if (opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
+                        curCellRaw = opts.columnOverrides[keys[k]](curCellRaw);
                     }
                     csvData += '"' + csvStringify(curCellRaw) + '",';
                 }
