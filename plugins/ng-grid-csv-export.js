@@ -6,12 +6,14 @@
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
 function ngGridCsvExportPlugin (opts) {
+    opts = opts||{}; // remove need for null checks on opts
     var self = this;
     self.grid = null;
     self.scope = null;
     self.init = function(scope, grid, services) {
         self.grid = grid;
         self.scope = scope;
+        self.scope.csvExportFilename = opts.initialFilename||"Export.csv";
         function showDs() {
             var keys = [];
             for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
@@ -44,7 +46,7 @@ function ngGridCsvExportPlugin (opts) {
             for (var gridRow in gridData) {
                 for ( k in keys) {
                     var curCellRaw;
-                    if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
+                    if (opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
                         curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
                     }
                     else {
@@ -60,8 +62,20 @@ function ngGridCsvExportPlugin (opts) {
             var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
             csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
+            csvDataLinkHtml += "\" download=\""+encodeURIComponent(self.scope.csvExportFilename).replace("'", "%27")+"\">CSV Export</a>";
+            if (opts.editableFilename) {
+                csvDataLinkHtml += " <input type='text' class='ng-grid-csv-export-filename' value='"+self.scope.csvExportFilename+"'/>";
+            }
+            csvDataLinkHtml += "</br></span>";
             fp.append(csvDataLinkHtml);
+            if (opts.editableFilename) {
+                var filenameInput = grid.$root.find(".ngFooterPanel .csv-data-link-span input.ng-grid-csv-export-filename");
+                filenameInput.on("change", function(event) {
+                    var csvDataLink = grid.$root.find(".ngFooterPanel .csv-data-link-span a");
+                    self.scope.csvExportFilename = event.currentTarget.value;
+                    csvDataLink.attr("download", self.scope.csvExportFilename);
+                });
+            }
         }
         setTimeout(showDs, 0);
         scope.catHashKeys = function() {
