@@ -16,7 +16,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         newColumnIndex = visibleCols.indexOf($scope.col);
     }
 
-    if (charCode !== 37 && charCode !== 38 && charCode !== 39 && charCode !== 40 && charCode !== 9 && charCode !== 13) {
+    if (charCode !== 37 && charCode !== 38 && charCode !== 39 && charCode !== 40 && (grid.config.noTabInterference || charCode !== 9) && charCode !== 13) {
         return true;
     }
     
