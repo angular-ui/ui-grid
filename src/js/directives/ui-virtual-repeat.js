@@ -139,14 +139,18 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
 
     if (height && height !== '0px' && height !== 'auto') {
       // $log.info('Row height is "%s" from css height', height);
-    } else if (maxHeight && maxHeight !== '0px' && maxHeight !== 'none') {
+    }
+    else if (maxHeight && maxHeight !== '0px' && maxHeight !== 'none') {
       height = maxHeight;
       // $log.info('Row height is "%s" from css max-height', height);
-    } else if (element.clientHeight) {
+    }
+    else if (element.clientHeight) {
       height = element.clientHeight+'px';
       // $log.info('Row height is "%s" from client height', height);
-    } else {
-      throw new Error("Unable to compute height of row");
+    }
+    else {
+      //throw new Error("Unable to compute height of row");
+      return;
     }
 
     angular.element(element).css('height', height);
