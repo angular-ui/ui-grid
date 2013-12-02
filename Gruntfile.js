@@ -3,8 +3,9 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  // Include ui-grid.js first as it instantiates the module
   var testFiles = {
-    unit: ['src/js/**/*.js', 'test/unit/**/*.spec.js']
+    unit: ['src/js/**/*.js', 'test/unit/**/*.spec.js', '.tmp/template.js']
   };
 
   // Project configuration.
@@ -17,6 +18,35 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= pkg.license %> */\n',
 
+    // Clean the temp directory
+    clean: ['.tmp'],
+
+    // Templates
+    ngtemplates: {
+      'ui-grid': {
+        cwd: 'src/templates',
+        src: ['**/*.html'],
+        dest: '.tmp/template.js',
+        options: {
+          module: 'ui.grid',
+          htmlmin:  { collapseWhitespace: true, collapseBooleanAttributes: true },
+          // Strip .html extension
+          url: function(url) { return url.replace('.html', ''); }
+        }
+      }
+    },
+
+    // ngtemplates: {
+    //   'ui-grid': {
+    //     cwd: 'src/templates',
+    //     src: '_partials/**/*.html',
+    //     dest: '.tmp/template.js',
+    //     options: {
+    //       htmlmin:  { collapseWhitespace: true, collapseBooleanAttributes: true }
+    //     }
+    //   }
+    // },
+
     // Task configuration.
     concat: {
       options: {
@@ -24,7 +54,7 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['src/js/**/*.js'],
+        src: ['src/js/**/*.js', '.tmp/template.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -76,10 +106,14 @@ module.exports = function(grunt) {
           files: angularFiles('1.2.0').concat(testFiles.unit)
         }
       },
-
       'angular-1.2.1': {
         options: {
           files: angularFiles('1.2.1').concat(testFiles.unit)
+        }
+      },
+      'angular-1.2.3': {
+        options: {
+          files: angularFiles('1.2.3').concat(testFiles.unit)
         }
       }
     },
@@ -94,7 +128,7 @@ module.exports = function(grunt) {
         noarg: true,
         sub: true,
         undef: true,
-        unused: true,
+        unused: false,
         boss: true,
         eqnull: true,
         browser: true,
@@ -130,6 +164,12 @@ module.exports = function(grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       },
+
+      ngtemplates: {
+        files: 'src/templates/**/*.html',
+        tasks: ['ngtemplates']
+      },
+
       // src_test: {
       //   files: '<%= jshint.src_test.src %>',
       //   tasks: ['jshint:src_test', 'jasmine']
@@ -153,7 +193,7 @@ module.exports = function(grunt) {
 
       livereload: {
         options: { livereload: true },
-        files: ['dist/**/*', 'misc/demo/index.html'],
+        files: ['dist/**/*', 'misc/demo/**/*.html'],
       }
     },
 
@@ -176,7 +216,7 @@ module.exports = function(grunt) {
   }
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'karma:single', 'concat', 'uglify', 'less']);
+  grunt.registerTask('default', ['clean', 'jshint', 'karma:single', 'ngtemplates', 'concat', 'uglify', 'less']);
 
   grunt.registerTask('dev', ['connect', 'karmangular:start', 'watch']);
 
