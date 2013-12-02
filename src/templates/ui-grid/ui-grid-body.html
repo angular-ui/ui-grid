@@ -1,0 +1,11 @@
+<div class="ui-grid-viewport">
+  <div>
+    <table ng-class="tableClass">
+      <tbody>
+        <tr ui-virtual-repeat="d in gridData">
+          <td ng-repeat="c in columns">{{ d[c.field] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
