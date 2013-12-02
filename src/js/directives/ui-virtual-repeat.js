@@ -145,7 +145,7 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
       // $log.info('Row height is "%s" from css max-height', height);
     }
     else if (element.clientHeight) {
-      height = element.clientHeight+'px';
+      height = element.clientHeight + 'px';
       // $log.info('Row height is "%s" from client height', height);
     }
     else {

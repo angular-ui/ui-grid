@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       ' Licensed <%= pkg.license %> */\n',
 
     // Clean the temp directory
-    clean: ['.tmp'],
+    clean: ['.tmp', 'dist'],
 
     // Templates
     ngtemplates: {
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
     karma: {
       options: {
         configFile: 'test/karma.conf.js',
-        files: testFiles,
+        files: angularFiles('1.2.3').concat(testFiles.unit),
         background: true
       },
       // dev: {
@@ -216,7 +216,10 @@ module.exports = function(grunt) {
   }
 
   // Default task.
-  grunt.registerTask('default', ['clean', 'jshint', 'karma:single', 'ngtemplates', 'concat', 'uglify', 'less']);
+  grunt.registerTask('default', ['clean', 'jshint', 'ngtemplates', 'karma:single', 'concat', 'uglify', 'less']);
+
+  // Build with no testing
+  grunt.registerTask('build', ['clean', 'ngtemplates', 'concat', 'uglify', 'less']);
 
   grunt.registerTask('dev', ['connect', 'karmangular:start', 'watch']);
 
