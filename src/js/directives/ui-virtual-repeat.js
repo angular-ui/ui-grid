@@ -92,8 +92,8 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
   // Otherwise, set height from the current computed value or use
   // window.innerHeight as a fallback
   //
-  function setViewportCss (viewport) {
-    var viewportCss = {'overflow': 'auto'};
+  function setViewportCSS(viewport) {
+    var viewportCSS = {'overflow': 'auto'};
 
     var style = window.getComputedStyle ?
                 window.getComputedStyle(viewport[0]) :
@@ -103,29 +103,29 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
     var height = style && style.getPropertyValue('height');
 
     if (maxHeight && maxHeight !== '0px') {
-      viewportCss.maxHeight = maxHeight;
+      viewportCSS.maxHeight = maxHeight;
     }
     else if (height && height !== '0px') {
-      viewportCss.height = height;
+      viewportCSS.height = height;
     }
     else {
-      viewportCss.height = window.innerHeight;
+      viewportCSS.height = window.innerHeight;
     }
 
-    viewport.css(viewportCss);
+    viewport.css(viewportCSS);
   }
 
   // Apply explicit styles to the content element to prevent pesky padding
   // or borders messing with our calculations:
-  function setContentCss(content) {
-    var contentCss = {
+  function setContentCSS(content) {
+    var contentCSS = {
       margin: 0,
       padding: 0,
       border: 0,
       'box-sizing': 'border-box'
     };
 
-    content.css(contentCss);
+    content.css(contentCSS);
   }
 
   // TODO: compute outerHeight (padding + border unless box-sizing is border)
@@ -195,8 +195,8 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
       state.highWater = state.highWater || 20;
       // TODO: now watch the water marks
 
-      setContentCss(dom.content);
-      setViewportCss(dom.viewport);
+      setContentCSS(dom.content);
+      setViewportCSS(dom.viewport);
       // When the user scrolls, we move the `state.firstActive`
       dom.viewport.bind('scroll', sfVirtualRepeatOnScroll);
 
@@ -209,22 +209,22 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
       // ----
 
       // Apply explicit styles to the item element
-      function setElementCss (element) {
-        var elementCss = {
+      function setElementCSS(element) {
+        var elementCSS = {
           // no margin or it'll screw up the height calculations.
           margin: '0'
         };
 
         if (!isTagNameInList(element[0], DONT_SET_DISPLAY_BLOCK)) {
           // display: block if it's safe to do so
-          elementCss.display = 'block';
+          elementCSS.display = 'block';
         }
 
         if (rowHeight) {
-          elementCss.height = rowHeight + 'px';
+          elementCSS.height = rowHeight + 'px';
         }
 
-        element.css(elementCss);
+        element.css(elementCSS);
       }
 
       function makeNewScope (idx, collection, containerScope) {
@@ -247,7 +247,7 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
         for (idx = start; idx !== end; idx++) {
           childScope = makeNewScope(idx, collection, containerScope);
           element = linker(childScope, angular.noop);
-          setElementCss(element);
+          setElementCSS(element);
           newElements.push(element);
           frag.appendChild(element[0]);
         }
