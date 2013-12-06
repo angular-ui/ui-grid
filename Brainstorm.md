@@ -22,6 +22,7 @@
 * Row / column selection (both by user and programmatically)
 * Column resizing (drag separator to resize, double-click to auto-size)
 * Mobile/responsive options? (Column 
+* Swappable templating. [seems like a common request, update/swap template and alter grid look+feel+functionality]
  
 # Browser Support?
 * IE9+, latest FF, Opera and Chrome. (Which safari version? jQuery 2.* goes with 5.1)
