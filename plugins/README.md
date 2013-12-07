@@ -35,6 +35,7 @@ Options
 
         opts = {
                  columnOverrides: < hash of column override functions >,
+                 customDataWatcher: < function whose return value can be $watched to detect changed data >,
                  initialFilename: < export filename to use, defaults to "Export.csv" >,
                  editableFilename: < whether to provide a text input for the user to set export filename, defaults to false >
                }
