@@ -1,4 +1,4 @@
-﻿/// <reference path="footer.js" />
+/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
 var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
@@ -391,6 +391,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.configureColumnWidths = function() {
         var asterisksArray = [],
             percentArray = [],
+            autoColumns = [],
             asteriskNum = 0,
             totalWidth = 0;
 
@@ -416,7 +417,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         });
 
         angular.forEach(self.config.columnDefs, function(colDef, i) {
-                // Get the ngColumn that matches the current column from columnDefs
+            // Get the ngColumn that matches the current column from columnDefs
             var ngColumn = $scope.columns[indexMap[i]];
 
             colDef.index = i;
@@ -430,18 +431,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 t = isPercent ? colDef.width : parseInt(colDef.width, 10);
             }
 
-             // check if it is a number
+            // check if it is a number
             if (isNaN(t) && !$scope.hasUserChangedGridColumnWidths) {
                 t = colDef.width;
                 // figure out if the width is defined or if we need to calculate it
-                if (t === 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
+                if (t === 'auto') { // set it for now to min width - we'll calculate width later
                     ngColumn.width = ngColumn.minWidth;
                     totalWidth += ngColumn.width;
                     var temp = ngColumn;
 
-                    $scope.$on("ngGridEventData", function () {
-                        self.resizeOnData(temp);
-                    });
+                    autoColumns.push(ngColumn);
                     return;
                 } else if (t.indexOf("*") !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
                     if (ngColumn.visible !== false) {
@@ -459,6 +458,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 totalWidth += ngColumn.width = parseInt(ngColumn.width, 10);
             }
         });
+
+        // If there is 1 or more auto columns, we'll wait for the data to come in and then re-calculate widths
+        if (autoColumns.length && !self.attachedAutoColumnsListener) {
+            self.attachedAutoColumnsListener = true;
+            $scope.$on("ngGridEventData", function () {
+                angular.forEach(autoColumns, function(col) {
+                    self.resizeOnData(col);
+                });
+            });
+        }
         
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0) {
