@@ -67,9 +67,12 @@ module.exports = function(config) {
     // if true, it capture browsers, run tests and exit
     singleRun: false,
 
+    browserDisconnectTimeout: 10000,
+    browserDisconnectTolerance: 2,
+    browserNoActivityTimeout: 20000,
+
     sauceLabs: {
       username: 'nggrid',
-      accessKey: '45dabea8-d4d4-4924-a4af-5651952f67ed',
       startConnect: false,
       testName: 'ui-grid unit tests',
     },
@@ -136,4 +139,10 @@ module.exports = function(config) {
     }
 
   });
+  
+  // TODO(c0bra): remove once SauceLabs supports websockets.
+  // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
+  if (process.env.TRAVIS) {
+    config.transports = ['xhr-polling'];
+  }
 };

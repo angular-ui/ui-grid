@@ -24,9 +24,9 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 - mkdir -p $LOGS_DIR
 - ./misc/test_lib/sauce/sauce_connect_setup.sh
-- npm install --quiet -g grunt-cli karma
+- npm install --quiet -g grunt-cli
 - npm install
-- npm install karma@canary
+- npm install -g -f karma@canary
 - ./misc/test_lib/sauce/sauce_connect_block.sh
 
 script:
