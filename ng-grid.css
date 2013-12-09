@@ -350,6 +350,7 @@
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
+  cursor: text;
 }
 .ngSelectionCell {
   margin-top: 9px;
