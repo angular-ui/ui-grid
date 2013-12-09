@@ -31,17 +31,30 @@
   <body ng-controller="Main">
     <!-- <h1>Test</h1> -->
 
-    <h2>Grid here</h2>
-    <div class="">
-      <div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>
-    </div>
+    <h2>Calcuated Cols Grid here</h2>
+      <div class="row">
+          <div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>
+      </div>
+      
+      <h2>Declaritive Cols Grid here</h2>
+      <div class="row">
+          <div class="col-md-5" ui-grid="data" ui-grid-columns="[{name:'LastName',field:'lastName'}]" ui-grid-table-class="table"></div>
+      </div>
+      
+      <h2>Imperative Cols Grid here</h2>
+      <div class="row">
+          <div class="col-md-5" ui-grid="data" ui-grid-options="myGridOptions" ui-grid-table-class="table"></div>
+      </div>
 
-    <script>
+      <script>
 
       var app = angular.module('test', ['ui.grid', 'ui.virtual-repeat']);
 
       app.controller('Main', function($scope) {
-        $scope.data = [
+          $scope.myGridOptions = {};
+          $scope.myGridOptions.columnDefs = [{name:"First Name", field:"firstName"}];
+
+          $scope.data = [
           {
               "id": 0,
               "age": 31,
