@@ -1,16 +1,28 @@
- language: node_js
- node_js:
-   - "0.10"
+language: node_js
+node_js:
+  - "0.10"
 
- branches:
+env:
+  global:
+    - SAUCE_USERNAME=nggrid
+    - SAUCE_ACCESS_KEY=45dabea8-d4d4-4924-a4af-5651952f67ed
+    - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
+    - LOGS_DIR=/tmp/angular-build/logs
+
+branches:
   only:
     - master
+    - 3.0
     - /^release-.*$/
 
- before_script:
+before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - mkdir -p $LOGS_DIR
+  - ./misc/test_lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma
   - npm install
+  - ./misc/test_lib/sauce/sauce_connect_block.sh
 
- script: grunt test-ci
+script:
+  - grunt test:ci

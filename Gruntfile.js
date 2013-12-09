@@ -101,6 +101,12 @@ module.exports = function(grunt) {
         singleRun: true
       },
 
+      ci: {
+        background: false,
+        singleRun: true,
+        browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_8', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11' ]
+      },
+
       'angular-1.2.0': {
         options: {
           files: angularFiles('1.2.0').concat(testFiles.unit)
@@ -221,7 +227,11 @@ module.exports = function(grunt) {
   // Build with no testing
   grunt.registerTask('build', ['clean', 'ngtemplates', 'concat', 'uglify', 'less']);
 
+  // Development watch task
   grunt.registerTask('dev', ['connect', 'karmangular:start', 'watch']);
+
+  // Testing tasks
+  grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:ci']);
 
   grunt.registerTask('karmangular', 'Run tests against multiple versions of angular', function() {
     // Start karma servers
