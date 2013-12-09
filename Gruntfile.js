@@ -98,7 +98,8 @@ module.exports = function(grunt) {
       // },
       single: {
         background: false,
-        singleRun: true
+        singleRun: true,
+        reporters: ['dots'],
       },
 
       // CI tasks are broken apart as the free Sauce Labs account only lets us have 3 concurrent browsers
