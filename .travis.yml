@@ -1,31 +1,34 @@
 language: node_js
+
 node_js:
-  - "0.10"
+- '0.10'
 
 env:
   global:
-    - SAUCE_USERNAME=nggrid
-    - SAUCE_ACCESS_KEY=45dabea8-d4d4-4924-a4af-5651952f67ed
-    - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
-    - LOGS_DIR=/tmp/angular-build/logs
+  - SAUCE_USERNAME=nggrid
+  - SAUCE_ACCESS_KEY=45dabea8-d4d4-4924-a4af-5651952f67ed
+  - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
+  - LOGS_DIR=/tmp/angular-build/logs
+  - secure: PEQFPTi8DRVrj6dEl6tQ+QTI07N8A3XST9eu5uHyW9YuDErDpn6rE8iEI2bd6nU5jldF9cCaGprpEi6aTP71jxFkm2Yjk1PRxtSVo5Cvu7sEwaFOnZi2KBgpKAdv8T3GB4rcjePe3oPwSkw1i/s9THSe18KSzZdgwP2LMctlCyA=
 
 branches:
   only:
-    - master
-    - /3\.0/
-    - /^release-.*$/
+  - master
+  - /3\.0/
+  - /^release-.*$/
 
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - mkdir -p $LOGS_DIR
-  - ./misc/test_lib/sauce/sauce_connect_setup.sh
-  - npm install --quiet -g grunt-cli karma
-  - npm install
-  - npm install karma@canary
-  - ./misc/test_lib/sauce/sauce_connect_block.sh
+- chmod +x ./misc/test_lib/sauce/sauce_connect_setup.sh
+- chmod +x ./misc/test_lib/sauce/sauce_connect_block.sh
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- mkdir -p $LOGS_DIR
+- ./misc/test_lib/sauce/sauce_connect_setup.sh
+- npm install --quiet -g grunt-cli karma
+- npm install
+- npm install karma@canary
+- ./misc/test_lib/sauce/sauce_connect_block.sh
 
-# Run default task first, then CI task(s)
 script:
-  - grunt
-  - ./travis_build.sh
+- grunt
+- ./travis_build.sh
