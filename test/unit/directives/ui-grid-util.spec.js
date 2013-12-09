@@ -24,7 +24,7 @@ describe('ui-grid-util', function() {
         ['ALLCAPS', 'Allcaps']
       ];
 
-      translationExpects.forEach(function (set) {
+      angular.forEach(translationExpects, function (set) {
         var strIn = set[0];
         var strOut = set[1];
         

@@ -11,11 +11,11 @@ app.service('GridUtil', function () {
       return columnName.replace(/_/g, ' ')
         // Replace a completely all-capsed word with a first-letter-capitalized version
         .replace(/^[A-Z]+$/, function (match) {
-          return match.charAt(0).toUpperCase() + match.slice(1).toLowerCase();
+          return angular.lowercase(angular.uppercase(match.charAt(0)) + match.slice(1));
         })
         // Capitalize the first letter of words
         .replace(/(\w+)/g, function (match) {
-          return match.charAt(0).toUpperCase() + match.slice(1);
+          return angular.uppercase(match.charAt(0)) + match.slice(1);
         })
         // Put a space in between words that have partial capilizations (i.e. 'firstName' becomes 'First Name')
         .replace(/([A-Z]|[A-Z]\w+)([A-Z])/g, "$1 $2");

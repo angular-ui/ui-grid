@@ -22,7 +22,8 @@ before_script:
   - ./misc/test_lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma
   - npm install
+  - npm install karma@canary
   - ./misc/test_lib/sauce/sauce_connect_block.sh
 
 script:
-  - grunt test:ci
+  - ./travis_build.sh

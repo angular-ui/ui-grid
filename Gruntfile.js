@@ -101,11 +101,33 @@ module.exports = function(grunt) {
         singleRun: true
       },
 
-      ci: {
+      // CI tasks are broken apart as the free Sauce Labs account only lets us have 3 concurrent browsers
+
+      sauce: {
         background: false,
         singleRun: true,
-        browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_8', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11' ]
+        reporters: ['saucelabs'],
+        browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11', 'SL_Android_4', 'SL_iOS_6' ]
       },
+
+      // 'sauce1': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox'  ]
+      // },
+      // 'sauce2': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_IE_8', 'SL_IE_9' ]
+      // },
+      // 'sauce3': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_IE_10', 'SL_IE_11' ]
+      // },
 
       'angular-1.2.0': {
         options: {
@@ -231,7 +253,7 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', ['connect', 'karmangular:start', 'watch']);
 
   // Testing tasks
-  grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:ci']);
+  grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
 
   grunt.registerTask('karmangular', 'Run tests against multiple versions of angular', function() {
     // Start karma servers
@@ -257,6 +279,31 @@ module.exports = function(grunt) {
       }
     }
   });
+
+   // Run multiple tests serially, but continue if one of them fails.
+    // Adapted from http://stackoverflow.com/questions/16487681/gruntfile-getting-error-codes-from-programs-serially
+    grunt.registerTask('serialsauce', function() {
+        var done = this.async();
+        var tasks = {'karma:sauce1': 0, 'karma:sauce2': 0, 'karma:sauce3': 0};
+        var success = true;
+        grunt.util.async.forEachSeries(Object.keys(tasks),
+          function(task, next) {
+            grunt.util.spawn({
+              grunt: true,  // use grunt to spawn
+              args: [task], // spawn this task
+              opts: { stdio: 'inherit' } // print to the same stdout
+            }, function(err, result, code) {
+              tasks[task] = code;
+              if (code !== 0) {
+                success = false;
+              }
+              next();
+            });
+          },
+          function() {
+            done(success);
+        });
+    });
 
   // Return a list of angular files for a specific version
   function angularFiles(version) {

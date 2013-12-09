@@ -71,7 +71,7 @@ module.exports = function(config) {
       username: 'nggrid',
       accessKey: '45dabea8-d4d4-4924-a4af-5651952f67ed',
       startConnect: false,
-      testName: 'ui-grid unit tests'
+      testName: 'ui-grid unit tests',
     },
 
     // For more browsers on Sauce Labs see:
@@ -90,37 +90,49 @@ module.exports = function(config) {
         browserName: 'safari',
         platform: 'Mac 10.8',
         version: '6'
+      },
+      'SL_IE_8_XP': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows XP',
+        version: '8'
+      },
+      'SL_IE_8': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '8'
+      },
+      'SL_IE_9': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '9'
+      },
+      'SL_IE_10': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '10'
+      },
+      'SL_IE_11': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 8.1',
+        version: '11'
+      },
+      'SL_Android_4': {
+        base: 'SauceLabs',
+        browserName: 'android',
+        platform: 'Linux',
+        version: '4.0'
+      },
+      'SL_iOS_6': {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.8',
+        version: '6.0'
       }
-      // 'SL_IE_8_XP': {
-      //   base: 'SauceLabs',
-      //   browserName: 'internet explorer',
-      //   platform: 'Windows XP',
-      //   version: '8'
-      // },
-      // 'SL_IE_8': {
-      //   base: 'SauceLabs',
-      //   browserName: 'internet explorer',
-      //   platform: 'Windows 7',
-      //   version: '8'
-      // },
-      // 'SL_IE_9': {
-      //   base: 'SauceLabs',
-      //   browserName: 'internet explorer',
-      //   platform: 'Windows 2008',
-      //   version: '9'
-      // },
-      // 'SL_IE_10': {
-      //   base: 'SauceLabs',
-      //   browserName: 'internet explorer',
-      //   platform: 'Windows 2012',
-      //   version: '10'
-      // },
-      // 'SL_IE_11': {
-      //   base: 'SauceLabs',
-      //   browserName: 'internet explorer',
-      //   platform: 'Windows 8.1',
-      //   version: '11'
-      // }
     }
 
   });
