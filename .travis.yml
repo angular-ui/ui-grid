@@ -12,7 +12,7 @@ env:
 branches:
   only:
     - master
-    - 3.0
+    - /3\.0/
     - /^release-.*$/
 
 before_script:
