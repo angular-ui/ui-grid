@@ -145,6 +145,14 @@ module.exports = function(config, specificOptions) {
   if (process.env.TRAVIS) {
     config.logLevel = config.LOG_DEBUG;
 
+    var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
+    
+    config.transports = ['websocket', 'xhr-polling'];
+
+    config.sauceLabs.build = buildLabel;
+    config.sauceLabs.startConnect = false;
+    config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+
     config.transports = ['xhr-polling'];
 
     // Debug logging into a file, that we print out at the end of the build.
