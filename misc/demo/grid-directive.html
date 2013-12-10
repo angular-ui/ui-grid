@@ -31,19 +31,21 @@
   <body ng-controller="Main">
     <!-- <h1>Test</h1> -->
 
-    <h2>Calcuated Cols Grid here</h2>
       <div class="row">
-          <div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>
+        <h2>Calcuated Cols Grid here</h2>
+        <div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>
       </div>
       
-      <h2>Declaritive Cols Grid here</h2>
       <div class="row">
-          <div class="col-md-5" ui-grid="data" ui-grid-columns="[{name:'LastName',field:'lastName'}]" ui-grid-table-class="table"></div>
+        <h2>Declaritive Cols Grid here</h2>
+      </div>
+      <div class="row">
+        <div class="col-md-5" ui-grid="data" ui-grid-columns="[{name:'LastName',field:'lastName'}]" ui-grid-table-class="table"></div>
       </div>
       
-      <h2>Imperative Cols Grid here</h2>
       <div class="row">
-          <div class="col-md-5" ui-grid="data" ui-grid-options="myGridOptions" ui-grid-table-class="table"></div>
+        <h2>Imperative Cols Grid here</h2>
+        <div class="col-md-5" ui-grid="data" ui-grid-options="myGridOptions" ui-grid-table-class="table"></div>
       </div>
 
       <script>

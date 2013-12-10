@@ -1,5 +1,24 @@
 {
-  "name": "ng-grid",
-  "version": "2.0.7",
-  "main": ["./ng-grid.min.css", "./build/ng-grid.min.js"]
+  "name": "ui-grid",
+  "version": "3.0.0",
+  "homepage": "https://github.com/angular-ui/ng-grid",
+  "authors": [
+    "__Contributors__"
+  ],
+  "description": "Angular data grid",
+  "keywords": [
+    "angular",
+    "grid"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    
+  }
 }

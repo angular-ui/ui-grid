@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "0.0.0",
+  "version": "3.0.0",
   "description": "__Contributors:__",
   "directories": {
     "test": "test"
@@ -45,6 +45,8 @@
     "karma-phantomjs-launcher": "~0.1",
     "karma": "~0.10",
     "grunt-karma": "~0.6.2",
-    "karma-sauce-launcher": "~0.1.5"
+    "karma-sauce-launcher": "~0.1.5",
+    "bower": "~1.2",
+    "grunt-ngdocs": "~0.1"
   }
 }

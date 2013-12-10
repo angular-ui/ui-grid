@@ -1,0 +1,24 @@
+@ngdoc overview
+@name Tutorial: Basic Grid
+@description
+
+In this example we create the most basic grid possible. Our 
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', function ($scope) {
+      $scope.data = [
+        { name: 'Bob', title: 'CEO' },
+        { name: 'Frank', title: 'Lowly Developer' }
+      ];
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="data"></div>
+    </div>
+  </file>
+</example>

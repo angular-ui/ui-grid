@@ -83,6 +83,10 @@ module.exports = function(grunt) {
       concat: {
         src: '<%= concat.dist.dest %>',
         dest: 'dist/<%= pkg.name %>.min.js'
+      },
+      doc: {
+        src: '<%= concat.dist.dest %>',
+        dest: 'docs/js/<%= pkg.name %>.min.js'
       }
     },
 
@@ -212,7 +216,7 @@ module.exports = function(grunt) {
       // },
       rebuild: {
         files: testFiles.unit,
-        tasks: ['jshint:src_test', 'karmangular:run', 'concat', 'uglify'],
+        tasks: ['jshint:src_test', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
         options: {
           // livereload: true
         }
@@ -222,6 +226,11 @@ module.exports = function(grunt) {
         tasks: ['less']
       },
 
+      docs: {
+        files: ['misc/tutorial/**/*.ngdoc'],
+        tasks: 'ngdocs'
+      },
+
       // karma: {
       //   files: ['src/**/*.js', 'test/unit/**/*.spec.js'],
       //   tasks: ['karma:dev:run'] //NOTE the :run flag
@@ -229,17 +238,41 @@ module.exports = function(grunt) {
 
       livereload: {
         options: { livereload: true },
-        files: ['dist/**/*', 'misc/demo/**/*.html'],
+        files: ['dist/**/*', 'misc/demo/**/*.html', 'docs/**/*'],
       }
     },
 
     connect: {
-      server: {
+      demo: {
         options: {
           port: 9002,
           base: '.',
           livereload: true
         }
+      },
+      docs: {
+        options: {
+          port: 9003,
+          base: './docs',
+          livereload: true
+        }
+      }
+    },
+
+    ngdocs: {
+      options: {
+        dest: 'docs',
+        scripts: ['angular.js', 'dist/ui-grid.min.js'],
+        styles: ['misc/doc/css/bootstrap-flatly.min.css'],
+        html5Mode: false
+      },
+      api: {
+        src: ['src/**/*.js'],
+        title: 'API'
+      },
+      tutorial: {
+        src: ['misc/tutorial/**/*.ngdoc'],
+        title: 'Tutorial'
       }
     }
   });

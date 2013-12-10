@@ -3,6 +3,32 @@
 
 var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body']);
 
+/**
+ *  @ngdoc directive
+ *  @name ui.grid.directive:uiGrid
+ *  @element div
+ *  
+ *  @description Create a very basic grid.
+ *
+ *  @example
+    <example module="app">
+      <file name="app.js">
+        var app = angular.module('app', ['ui.grid']);
+
+        app.controller('MainCtrl', ['$scope', function ($scope) {
+          $scope.data = [
+            { name: 'Bob', title: 'CEO' },
+            { name: 'Frank', title: 'Lowly Developer' }
+          ];
+        }]);
+      </file>
+      <file name="index.html">
+        <div ng-controller="MainCtrl">
+          <div ui-grid="data"></div>
+        </div>
+      </file>
+    </example>
+ */
 app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', function($compile, $templateCache, $log, GridUtil) {
   function linkFn(scope, elm, attrs, controller) { }
 
@@ -14,31 +40,31 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
       tableClass: '@uiGridTableClass',
       options: '@uiGridOptions'
     },
-    compile: function (elm, attrs) {
-      // If the contents of the grid element are empty, use the default grid template
-      var newContent;
-      if (/^\s*$/.test(elm.html())) {
-        newContent = $templateCache.get('ui-grid/ui-grid');
-      }
+    // compile: function (elm, attrs) {
+    //   // If the contents of the grid element are empty, use the default grid template
+    //   var newContent;
+    //   if (/^\s*$/.test(elm.html())) {
+    //     newContent = $templateCache.get('ui-grid/ui-grid');
+    //   }
 
-      var linker = function (scope, elm, attrs) {
-        if (newContent) {
-          elm.replaceWith($compile(newContent)(scope));
-        }
-      };
+    //   var linker = function (scope, elm, attrs) {
+    //     if (newContent) {
+    //       elm.replaceWith($compile(newContent)(scope));
+    //     }
+    //   };
 
-      return {
-        pre: linker,
-        post: linkFn
-      };
-    },
+    //   return {
+    //     pre: linker,
+    //     post: linkFn
+    //   };
+    // },
     controller: ['$scope','$element','$attrs', function($scope, $element, $attrs) {
         this.gridData = $scope.uiGrid;
 
         $scope.gridOptions = {};
         
         //use parent scope options if specified
-        if ($scope.options) {
+        if ($scope.options) {add
             if (!$scope.$parent[$scope.options]) {
                 throw new Error($scope.options + ' was not defined in parent scope');
             }
