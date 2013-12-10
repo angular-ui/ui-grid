@@ -6,7 +6,6 @@ node_js:
 env:
   global:
   - SAUCE_USERNAME=nggrid
-  - SAUCE_ACCESS_KEY=45dabea8-d4d4-4924-a4af-5651952f67ed
   - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
   - LOGS_DIR=/tmp/angular-build/logs
   - secure: PEQFPTi8DRVrj6dEl6tQ+QTI07N8A3XST9eu5uHyW9YuDErDpn6rE8iEI2bd6nU5jldF9cCaGprpEi6aTP71jxFkm2Yjk1PRxtSVo5Cvu7sEwaFOnZi2KBgpKAdv8T3GB4rcjePe3oPwSkw1i/s9THSe18KSzZdgwP2LMctlCyA=
