@@ -64,7 +64,7 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
         $scope.gridOptions = {};
         
         //use parent scope options if specified
-        if ($scope.options) {add
+        if ($scope.options) {
             if (!$scope.$parent[$scope.options]) {
                 throw new Error($scope.options + ' was not defined in parent scope');
             }
