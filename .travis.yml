@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-- '0.10'
+  - '0.10'
 
 env:
   global:
@@ -17,16 +17,19 @@ branches:
   - /^release-.*$/
 
 before_script:
-- chmod +x ./misc/test_lib/sauce/sauce_connect_setup.sh ./misc/test_lib/sauce/sauce_connect_block.sh ./travis_build.sh
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-- mkdir -p $LOGS_DIR
-- ./misc/test_lib/sauce/sauce_connect_setup.sh
-- npm install --quiet -g grunt-cli
-- npm install
-- npm install -g -f karma@canary
-- ./misc/test_lib/sauce/sauce_connect_block.sh
+  - chmod +x ./misc/test_lib/sauce/sauce_connect_setup.sh ./misc/test_lib/sauce/sauce_connect_block.sh ./travis_build.sh
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - mkdir -p $LOGS_DIR
+  - ./misc/test_lib/sauce/sauce_connect_setup.sh
+  - npm install --quiet -g grunt-cli
+  - npm install
+  - npm install -g -f karma@canary
+  - ./misc/test_lib/sauce/sauce_connect_block.sh
 
 script:
-- grunt
-- ./travis_build.sh
+  - grunt
+  - ./travis_build.sh
+
+after_script:
+  - ./travis_print_logs.sh

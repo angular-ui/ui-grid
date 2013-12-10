@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Fri Nov 08 2013 09:25:16 GMT-0600 (Central Standard Time)
 
-module.exports = function(config) {
+module.exports = function(config, specificOptions) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
@@ -143,6 +143,14 @@ module.exports = function(config) {
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
+    config.logLevel = config.LOG_DEBUG;
+
     config.transports = ['xhr-polling'];
+
+    // Debug logging into a file, that we print out at the end of the build.
+    config.loggers.push({
+      type: 'file',
+      filename: process.env.LOGS_DIR + '/' + (specificOptions.logFile || 'karma.log')
+    });
   }
 };
