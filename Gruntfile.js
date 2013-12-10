@@ -108,7 +108,8 @@ module.exports = function(grunt) {
         background: false,
         singleRun: true,
         reporters: ['saucelabs'],
-        browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11', 'SL_Android_4', 'SL_iOS_6' ]
+        // browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11', 'SL_Android_4', 'SL_iOS_6' ]
+        browsers: [ 'SL_Chrome' ]
       },
 
       // 'sauce1': {
