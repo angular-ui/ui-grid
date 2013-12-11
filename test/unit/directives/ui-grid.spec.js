@@ -1,9 +1,10 @@
 describe('ui-grid', function() {
 
     beforeEach(module('ui.grid'));
-    beforeEach(module('ui.grid.body'));
-    beforeEach(module('ui.grid.header'));
-    beforeEach(module('ui.grid.util'));
+    // beforeEach(module('ui.virtual-repeat'));
+    // beforeEach(module('ui.grid.body'));
+    // beforeEach(module('ui.grid.header'));
+    // beforeEach(module('ui.grid.util'));
     
     describe('ui-grid calculated columns', function() {
         var element, scope;
@@ -16,7 +17,7 @@ describe('ui-grid', function() {
             scope.$digest();
         }));
 
-        it('gets columns correctly', function() {
+        iit('gets columns correctly', function() {
             expect(element.isolateScope().gridOptions.columnDefs.length).toBe(2);
             expect(element.isolateScope().gridOptions.columnDefs[0].name).toBe('Col1');
             expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('col1');

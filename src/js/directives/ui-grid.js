@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 
-var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body']);
+var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.virtual-repeat']);
 
 /**
  *  @ngdoc directive
@@ -34,33 +34,32 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
 
   return {
     restrict: 'EA',
-    templateUrl: 'ui-grid/ui-grid',
+    // templateUrl: 'ui-grid/ui-grid',
     // transclude: true,
     scope: {
       uiGrid: '=',
       tableClass: '@uiGridTableClass',
       options: '@uiGridOptions'
     },
-    // compile: function (elm, attrs) {
-    //   // If the contents of the grid element are empty, use the default grid template
-    //   var newContent;
-    //   var b = elm.html();
-    //   $log.debug('html', b);
-    //   if (/^\s*$/.test(elm.html())) {
-    //     newContent = $templateCache.get('ui-grid/ui-grid');
-    //   }
+    compile: function (elm, attrs) {
+      // If the contents of the grid element are empty, use the default grid template
+      var tmpl;
+      if (elm.html() === '' || /^\s*$/.test(elm.html())) {
+        tmpl = $templateCache.get('ui-grid/ui-grid');
+      }
 
-    //   var linker = function (scope, elm, attrs) {
-    //     if (newContent) {
-    //       elm.replaceWith($compile(newContent)(scope));
-    //     }
-    //   };
+      var linker = function (scope, elm, attrs) {
+        if (tmpl) {
+          elm.append(tmpl);
+          $compile(elm.contents())(scope);
+        }
+      };
 
-    //   return {
-    //     pre: linker,
-    //     post: linkFn
-    //   };
-    // },
+      return {
+        pre: linker,
+        post: linkFn
+      };
+    },
     controller: ['$scope','$element','$attrs', function($scope, $element, $attrs) {
       this.gridData = $scope.uiGrid;
 
