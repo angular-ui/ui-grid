@@ -33,6 +33,7 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
   function linkFn(scope, elm, attrs, controller) { }
 
   return {
+    restrict: 'EA',
     templateUrl: 'ui-grid/ui-grid',
     // transclude: true,
     scope: {
@@ -43,6 +44,8 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
     // compile: function (elm, attrs) {
     //   // If the contents of the grid element are empty, use the default grid template
     //   var newContent;
+    //   var b = elm.html();
+    //   $log.debug('html', b);
     //   if (/^\s*$/.test(elm.html())) {
     //     newContent = $templateCache.get('ui-grid/ui-grid');
     //   }
@@ -59,22 +62,22 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
     //   };
     // },
     controller: ['$scope','$element','$attrs', function($scope, $element, $attrs) {
-        this.gridData = $scope.uiGrid;
+      this.gridData = $scope.uiGrid;
 
-        $scope.gridOptions = {};
-        
-        //use parent scope options if specified
-        if ($scope.options) {
-            if (!$scope.$parent[$scope.options]) {
-                throw new Error($scope.options + ' was not defined in parent scope');
-            }
-            $scope.gridOptions = $scope.$parent[$scope.options];
+      $scope.gridOptions = {};
+      
+      //use parent scope options if specified
+      if ($scope.options) {
+        if (!$scope.$parent[$scope.options]) {
+          throw new Error($scope.options + ' was not defined in parent scope');
         }
+        $scope.gridOptions = $scope.$parent[$scope.options];
+      }
 
-        //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
-        this.columns = $scope.gridOptions.columnDefs || $scope.$eval($attrs.uiGridColumns) || GridUtil.getColumnsFromData($scope.uiGrid);
+      //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
+      this.columns = $scope.gridOptions.columnDefs || $scope.$eval($attrs.uiGridColumns) || GridUtil.getColumnsFromData($scope.uiGrid);
 
-        $scope.gridOptions.columnDefs = $scope.gridOptions.columnDefs || this.columns;
+      $scope.gridOptions.columnDefs = $scope.gridOptions.columnDefs || this.columns;
     }]
   };
 }]);

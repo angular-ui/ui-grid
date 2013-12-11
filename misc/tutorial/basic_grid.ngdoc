@@ -7,7 +7,7 @@ In this example we create the most basic grid possible. Our
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ui.grid', 'ui.virtual-repeat']);
 
     app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.data = [
@@ -18,7 +18,7 @@ In this example we create the most basic grid possible. Our
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="data"></div>
+      <div ui-grid="data" ui-grid-table-class="table"></div>
     </div>
   </file>
 </example>

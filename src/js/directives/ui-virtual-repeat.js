@@ -405,7 +405,6 @@ mod.directive('uiVirtualRepeat', ['$log', '$rootElement', function($log, $rootEl
     // terminal: true,
     compile: uiVirtualRepeatCompile,
     controller: ['$scope', function ($scope) {
-      $scope.goo = 'fasfd';
       this.visibleRows = 0;
       this.visibleRows = this.visibleRows + 1;
     }]

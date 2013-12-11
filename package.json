@@ -6,7 +6,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "license": "MIT",
   "devDependencies": {
     "grunt": "~0.4",
+    "bower": "~1.2.2",
     "grunt-contrib-concat": "~0.3",
     "grunt-contrib-uglify": "~0.2",
     "grunt-contrib-watch": "~0.5",
@@ -35,18 +36,19 @@
     "grunt-contrib-less": "~0.8",
     "grunt-angular-templates": "~0.5",
     "grunt-contrib-connect": "~0.5",
-    "karma-script-launcher": "~0.1",
-    "karma-firefox-launcher": "~0.1",
-    "karma-html2js-preprocessor": "~0.1",
-    "karma-chrome-launcher": "~0.1",
-    "karma-requirejs": "~0.2",
+
+    "karma": "",
     "karma-jasmine": "~0.1",
-    "karma-coffee-preprocessor": "~0.1",
+    "karma-requirejs": "~0.2",
+    "karma-chrome-launcher": "~0.1",
+    "karma-firefox-launcher": "~0.1",
     "karma-phantomjs-launcher": "~0.1",
-    "karma": "~0.10",
-    "grunt-karma": "~0.6.2",
     "karma-sauce-launcher": "~0.1.5",
-    "bower": "~1.2",
-    "grunt-ngdocs": "~0.1"
+    "karma-script-launcher": "~0.1",
+    "grunt-karma": "~0.6.2",
+    
+    
+    "marked": "~0.2",
+    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.1.7-custom2"
   }
 }

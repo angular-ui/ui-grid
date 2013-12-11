@@ -227,7 +227,7 @@ module.exports = function(grunt) {
       },
 
       docs: {
-        files: ['misc/tutorial/**/*.ngdoc'],
+        files: ['misc/tutorial/**/*.ngdoc', 'misc/doc/**/*'],
         tasks: 'ngdocs'
       },
 
@@ -262,8 +262,18 @@ module.exports = function(grunt) {
     ngdocs: {
       options: {
         dest: 'docs',
-        scripts: ['angular.js', 'dist/ui-grid.min.js'],
-        styles: ['misc/doc/css/bootstrap-flatly.min.css'],
+        scripts: [
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js',
+          'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
+          'bower_components/google-code-prettify/src/prettify.js',
+          'node_modules/marked/lib/marked.js',
+          'dist/ui-grid.js'
+        ],
+        styles: [
+          'misc/doc/css/prettify.css',
+          'misc/doc/css/bootstrap-flatly.css',
+          'dist/ui-grid.css'
+        ],
         html5Mode: false
       },
       api: {
