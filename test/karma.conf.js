@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Fri Nov 08 2013 09:25:16 GMT-0600 (Central Standard Time)
+var util = require('../lib/grunt/utils.js');
 
 module.exports = function(config) {
   config.set({
@@ -76,7 +77,7 @@ module.exports = function(config) {
 
     // For more browsers on Sauce Labs see:
     // https://saucelabs.com/docs/platforms/webdriver
-    customLaunchers: '<%= customLaunchers %>'
+    customLaunchers: util.customLaunchers()
 
   });
   

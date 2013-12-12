@@ -4,22 +4,6 @@ var util = require('./lib/grunt/utils.js');
 
 /*global module:false*/
 module.exports = function(grunt) {
-  
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-angular-templates');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-ngdocs');
-  grunt.loadNpmTasks('grunt-conventional-changelog');
-  grunt.loadNpmTasks('grunt-gh-pages');
-  grunt.loadTasks('lib/grunt');
-
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -135,30 +119,30 @@ module.exports = function(grunt) {
       //   browsers: [ 'SL_Chrome' ]
       // },
 
-      'sauce1': {
-        background: false,
-        singleRun: true,
-        reporters: ['saucelabs'],
-        browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox'  ]
-      },
-      'sauce2': {
-        background: false,
-        singleRun: true,
-        reporters: ['saucelabs'],
-        browsers: [ 'SL_IE_8_XP', 'SL_IE_8', 'SL_IE_9' ]
-      },
-      'sauce3': {
-        background: false,
-        singleRun: true,
-        reporters: ['saucelabs'],
-        browsers: [ 'SL_IE_10', 'SL_IE_11' ]
-      },
-      'sauce4': {
-        background: false,
-        singleRun: true,
-        reporters: ['saucelabs'],
-        browsers: [ 'SL_Android_4', 'SL_iOS_6' ]
-      }
+      // 'sauce1': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox'  ]
+      // },
+      // 'sauce2': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_IE_8_XP', 'SL_IE_8', 'SL_IE_9' ]
+      // },
+      // 'sauce3': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_IE_10', 'SL_IE_11' ]
+      // },
+      // 'sauce4': {
+      //   background: false,
+      //   singleRun: true,
+      //   reporters: ['saucelabs'],
+      //   browsers: [ 'SL_Android_4', 'SL_iOS_6' ]
+      // }
       
     },
 
@@ -318,6 +302,22 @@ module.exports = function(grunt) {
       }
     }
   });
+  util.updateConfig();
+  
+  grunt.loadTasks('lib/grunt');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-angular-templates');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-ngdocs');
+  grunt.loadNpmTasks('grunt-conventional-changelog');
+  grunt.loadNpmTasks('grunt-gh-pages');
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server
