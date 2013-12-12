@@ -1,2 +1,3 @@
 1. Copy angular-animate, prettify.js and marked.js into the docs/js dir separately from grunt-ngdocs. It's causing them to show up in `<script>` tags in the Examples which isn't what we want
 1. Add --browsers option for testing on saucelabs with specific browser(s)
+1. Make karmangular run in `watch` mode and in singlerun too.

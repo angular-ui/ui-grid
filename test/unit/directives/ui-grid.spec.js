@@ -25,7 +25,7 @@ describe('ui-grid', function() {
 
     });
 
-    describe('ui-grid declaritive columns', function() {
+    describe('ui-grid declarative columns', function() {
         var element, scope;
 
         beforeEach(inject(function($compile, $rootScope) {

@@ -1,17 +1,30 @@
 // var eyes = require('eyes');
+var path = require('path');
+var util = require('./lib/grunt/utils.js');
 
 /*global module:false*/
 module.exports = function(grunt) {
-
-  // Include ui-grid.js first as it instantiates the module
-  var testFiles = {
-    unit: ['src/js/**/*.js', 'test/unit/**/*.spec.js', '.tmp/template.js']
-  };
+  
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-angular-templates');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-ngdocs');
+  grunt.loadNpmTasks('grunt-conventional-changelog');
+  grunt.loadNpmTasks('grunt-gh-pages');
+  grunt.loadTasks('lib/grunt');
 
   // Project configuration.
   grunt.initConfig({
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
+    dist: 'dist',
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -19,7 +32,7 @@ module.exports = function(grunt) {
       ' Licensed <%= pkg.license %> */\n',
 
     // Clean the temp directory
-    clean: ['.tmp', 'dist'],
+    clean: ['.tmp', '<%= dist %>', 'docs'],
 
     // Templates
     ngtemplates: {
@@ -55,7 +68,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: ['src/js/**/*.js', '.tmp/template.js'],
-        dest: 'dist/<%= pkg.name %>.js'
+        dest: '<%= dist %>/release/<%= pkg.name %>.js'
       }
     },
 
@@ -93,7 +106,7 @@ module.exports = function(grunt) {
     karma: {
       options: {
         configFile: 'test/karma.conf.js',
-        files: angularFiles('1.2.3').concat(testFiles.unit),
+        files: util.angularFiles(util.latestAngular()).concat(util.testFiles.unit),
         background: true
       },
       // dev: {
@@ -103,7 +116,13 @@ module.exports = function(grunt) {
       single: {
         background: false,
         singleRun: true,
-        reporters: ['dots'],
+        reporters: ['progress'],
+      },
+
+      travis: {
+        background: false,
+        singleRun: true,
+        reporters: ['progress'],
       },
 
       // CI tasks are broken apart as the free Sauce Labs account only lets us have 3 concurrent browsers
@@ -139,23 +158,8 @@ module.exports = function(grunt) {
         singleRun: true,
         reporters: ['saucelabs'],
         browsers: [ 'SL_Android_4', 'SL_iOS_6' ]
-      },
-
-      'angular-1.2.0': {
-        options: {
-          files: angularFiles('1.2.0').concat(testFiles.unit)
-        }
-      },
-      'angular-1.2.1': {
-        options: {
-          files: angularFiles('1.2.1').concat(testFiles.unit)
-        }
-      },
-      'angular-1.2.3': {
-        options: {
-          files: angularFiles('1.2.3').concat(testFiles.unit)
-        }
       }
+      
     },
 
     jshint: {
@@ -175,6 +179,10 @@ module.exports = function(grunt) {
         globals: {
           angular: false,
           console: false,
+
+          /* grunt */
+          process: false,
+          require: false,
 
           /* Jasmine */
           after: false,
@@ -215,7 +223,7 @@ module.exports = function(grunt) {
       //   tasks: ['jshint:src_test', 'jasmine']
       // },
       rebuild: {
-        files: testFiles.unit,
+        files: util.testFiles.unit,
         tasks: ['jshint:src_test', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
         options: {
           // livereload: true
@@ -242,18 +250,30 @@ module.exports = function(grunt) {
       }
     },
 
-    connect: {
-      demo: {
+    'gh-pages': {
+      'gh-pages': {
         options: {
-          port: 9002,
+          base: '<%= dist %>',
+          repo: 'https://github.com/angular-ui/ui-grid.info.git',
+          message: 'gh-pages v<%= pkg.version %>',
+          add: true
+        },
+        src: ['**/*']
+      }
+    },
+
+    connect: {
+      dev: {
+        options: {
+          port: process.env.DEV_PORT || 9002,
           base: '.',
           livereload: true
         }
       },
       docs: {
         options: {
-          port: 9003,
-          base: './docs',
+          port: process.env.DOCS_PORT || 9003,
+          base: '<%= dist %>/docs',
           livereload: true
         }
       }
@@ -261,20 +281,25 @@ module.exports = function(grunt) {
 
     ngdocs: {
       options: {
-        dest: 'docs',
+        dest: '<%= dist %>/docs',
         scripts: [
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js',
           'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js',
-          'dist/ui-grid.js'
+          '<%= concat.dist.dest %>'
         ],
         styles: [
           'misc/doc/css/prettify.css',
           'misc/doc/css/bootstrap-flatly.css',
-          'dist/ui-grid.css'
+          '<%= dist %>/ui-grid.css'
         ],
-        html5Mode: false
+        title: 'UI Grid',
+        html5Mode: false,
+        analytics: {
+          account: 'UA-46391685-1',
+          domainName: 'ui-grid.info'
+        }
       },
       api: {
         src: ['src/**/*.js'],
@@ -289,95 +314,39 @@ module.exports = function(grunt) {
     changelog: {
       options: {
         dest: 'CHANGELOG.md',
-        templateFile: 'misc/changelog.tpl.md',
         github: 'angular-ui/ng-grid'
       }
     }
   });
-  
-  // Load in grunt plugins dynamically
-  for (var key in grunt.file.readJSON("package.json").devDependencies) {
-    if (key !== "grunt" && key.indexOf("grunt") === 0) {
-      grunt.loadNpmTasks(key);
-    }
-  }
+
+  // register before and after test tasks so we don't have to change cli
+  // options on the CI server
+  grunt.registerTask('before-test', ['clean', 'jshint', 'ngtemplates']);
+  grunt.registerTask('after-test', ['build']);
 
   // Default task.
-  grunt.registerTask('default', ['clean', 'jshint', 'ngtemplates', 'karma:single', 'concat', 'uglify', 'less']);
+  // grunt.registerTask('default', ['clean', 'jshint', 'ngtemplates', 'karma:single', 'concat', 'uglify', 'less', 'ngdocs']);
+  grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
-  grunt.registerTask('build', ['clean', 'ngtemplates', 'concat', 'uglify', 'less']);
+  grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs']);
 
   // Development watch task
-  grunt.registerTask('dev', ['connect', 'karmangular:start', 'watch']);
+  grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'karmangular:start', 'watch']);
 
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
 
-  grunt.registerTask('karmangular', 'Run tests against multiple versions of angular', function() {
-    // Start karma servers
-    if (this.args.length > 0) {
-      var karmaOpts = grunt.config('karma');
-
-      var angularTasks = [];
-      for (var o in karmaOpts) {
-        if (/^angular-/.test(o)) {
-          angularTasks.push(o);
-        }
-      }
-
-      if (this.args[0] === 'start') {
-        angularTasks.forEach(function(t) {
-          grunt.task.run('karma:' + t + ':start');
-        });
-      }
-      else if (this.args[0] === 'run') {
-        angularTasks.forEach(function(t) {
-          grunt.task.run('karma:' + t + ':run');
-        });
-      }
+  // Test
+  grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
+    // This task can be executed in 2 different environments: local, and Travis-CI
+    if (process.env.TRAVIS) {
+      grunt.task.run('karma:travis', 'serialsauce');
+    } else {
+      // grunt.task.run(this.args.length ? 'karma:single' : 'karma:continuous');
+      grunt.task.run('karmangular');
     }
   });
-
-  // Run multiple tests serially, but continue if one of them fails.
-  // Adapted from http://stackoverflow.com/questions/16487681/gruntfile-getting-error-codes-from-programs-serially
-  grunt.registerTask('serialsauce', function() {
-      var done = this.async();
-      var tasks = {'karma:sauce1': 0, 'karma:sauce2': 0, 'karma:sauce3': 0, 'karma:sauce4': 0};
-      var success = true;
-      grunt.util.async.forEachSeries(Object.keys(tasks),
-        function(task, next) {
-          grunt.util.spawn({
-            grunt: true,  // use grunt to spawn
-            args: [task], // spawn this task
-            opts: { stdio: 'inherit' } // print to the same stdout
-          }, function(err, result, code) {
-            tasks[task] = code;
-            if (code !== 0) {
-              success = false;
-            }
-            next();
-          });
-        },
-        function() {
-          done(success);
-      });
-  });
-
-  // Return a list of angular files for a specific version
-  function angularFiles(version) {
-    // Get the list of angulary files (angular.js, angular-mocks.js, etc)
-    var files = grunt.file.readJSON('misc/test_lib/angular/files.json');
-
-    // Start with our test files
-    var retFiles = []; //grunt.template.process('<%= karma.options.files %>').split(",");
-
-    files.forEach(function(f) {
-      var path = ['misc', 'test_lib', 'angular', version, f].join('/');
-      retFiles.push(path);
-    });
-
-    return retFiles;
-  }
+  
 };

@@ -10,13 +10,10 @@ module.exports = function(config) {
     // frameworks to use
     frameworks: ['jasmine'],
 
-    // list of files / patterns to load in the browser
+    // list of files / patterns to load in the browser (we add more dynamically in our tasks)
     files: [
-        // 'test_lib/angular/1.2.3/**/*.js',
-
-        // '.tmp/**/*.js',
-        'src/js/**/*.js',
-        'test/unit/**/*.spec.js'
+      'src/js/**/*.js',
+      'test/unit/**/*.spec.js'
     ],
 
 
@@ -79,64 +76,7 @@ module.exports = function(config) {
 
     // For more browsers on Sauce Labs see:
     // https://saucelabs.com/docs/platforms/webdriver
-    customLaunchers: {
-      'SL_Chrome': {
-        base: 'SauceLabs',
-        browserName: 'chrome'
-      },
-      'SL_Firefox': {
-        base: 'SauceLabs',
-        browserName: 'firefox'
-      },
-      'SL_Safari': {
-        base: 'SauceLabs',
-        browserName: 'safari',
-        platform: 'Mac 10.8',
-        version: '6'
-      },
-      'SL_IE_8_XP': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows XP',
-        version: '8'
-      },
-      'SL_IE_8': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 7',
-        version: '8'
-      },
-      'SL_IE_9': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 7',
-        version: '9'
-      },
-      'SL_IE_10': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 7',
-        version: '10'
-      },
-      'SL_IE_11': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 8.1',
-        version: '11'
-      },
-      'SL_Android_4': {
-        base: 'SauceLabs',
-        browserName: 'android',
-        platform: 'Linux',
-        version: '4.0'
-      },
-      'SL_iOS_6': {
-        base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.8',
-        version: '6.0'
-      }
-    }
+    customLaunchers: '<%= customLaunchers %>'
 
   });
   
