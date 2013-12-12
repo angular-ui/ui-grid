@@ -284,10 +284,18 @@ module.exports = function(grunt) {
         src: ['misc/tutorial/**/*.ngdoc'],
         title: 'Tutorial'
       }
+    },
+
+    changelog: {
+      options: {
+        dest: 'CHANGELOG.md',
+        templateFile: 'misc/changelog.tpl.md',
+        github: 'angular-ui/ng-grid'
+      }
     }
   });
   
-  // These plugins provide necessary tasks.
+  // Load in grunt plugins dynamically
   for (var key in grunt.file.readJSON("package.json").devDependencies) {
     if (key !== "grunt" && key.indexOf("grunt") === 0) {
       grunt.loadNpmTasks(key);
