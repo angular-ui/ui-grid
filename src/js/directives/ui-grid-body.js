@@ -5,14 +5,17 @@ var app = angular.module('ui.grid.body', []);
 
 app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
   return {
-    templateUrl: 'ui-grid/ui-grid-body',
     replace: true,
+    priority: 1000,
+    templateUrl: 'ui-grid/ui-grid-body',
     require: '?^uiGrid',
     scope: {
       tableClass: '=uiGridTableClass'
     },
     link: function(scope, elm, attrs, uiGridCtrl) {
-      if (!uiGridCtrl) {
+      $log.debug('body postlink scope', scope.$id);
+
+      if (uiGridCtrl === undefined) {
         $log.warn('[ui-grid-body] uiGridCtrl is undefined!');
       }
 

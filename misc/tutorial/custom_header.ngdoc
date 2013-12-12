@@ -18,7 +18,24 @@ Create a grid almost the same as the most basic one, but with a custom header
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="data" ui-grid-table-class="table"></div>
+
+      <div ui-grid="data">
+        <div ui-grid-header>
+          Scope: {{ columns | json }}
+          <div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th ng-repeat="col in columns">{{ col.name | uppercase }}</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+
+        <div ui-grid-body></div>
+      </div>
+
     </div>
   </file>
 </example>

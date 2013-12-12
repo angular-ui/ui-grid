@@ -30,12 +30,15 @@ var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.virtu
     </example>
  */
 app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', function($compile, $templateCache, $log, GridUtil) {
-  function linkFn(scope, elm, attrs, controller) { }
+  function postLink(scope, elm, attrs, controller) {
+    $log.debug('grid postlink scope', scope.$id);
+  }
 
   return {
     restrict: 'EA',
     // templateUrl: 'ui-grid/ui-grid',
     // transclude: true,
+    priority: 1000,
     scope: {
       uiGrid: '=',
       tableClass: '@uiGridTableClass',
@@ -48,7 +51,11 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
         tmpl = $templateCache.get('ui-grid/ui-grid');
       }
 
-      var linker = function (scope, elm, attrs) {
+      var preLink = function (scope, elm, attrs) {
+        scope.blah = 'test1';
+
+        $log.debug('grid prelink scope', scope.$id);
+
         if (tmpl) {
           elm.append(tmpl);
           $compile(elm.contents())(scope);
@@ -56,11 +63,14 @@ app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', funct
       };
 
       return {
-        pre: linker,
-        post: linkFn
+        pre: preLink,
+        post: postLink
       };
     },
     controller: ['$scope','$element','$attrs', function($scope, $element, $attrs) {
+      $log.debug('controller scope', $scope.$id);
+      $log.debug('controller running');
+
       this.gridData = $scope.uiGrid;
 
       $scope.gridOptions = {};

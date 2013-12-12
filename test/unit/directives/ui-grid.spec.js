@@ -17,7 +17,7 @@ describe('ui-grid', function() {
             scope.$digest();
         }));
 
-        iit('gets columns correctly', function() {
+        it('gets columns correctly', function() {
             expect(element.isolateScope().gridOptions.columnDefs.length).toBe(2);
             expect(element.isolateScope().gridOptions.columnDefs[0].name).toBe('Col1');
             expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('col1');
