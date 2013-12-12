@@ -21,3 +21,6 @@ Development "watch" task. This will automatically rebuild from source on changes
 
     grunt dev
 
+# Thanks
+
+Thanks to [Sauce Labs](http://saucelabs.com) and [BrowserStack](http://www.browserstack.com) for providing their testing platforms to open source projects for free.
