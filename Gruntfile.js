@@ -107,43 +107,7 @@ module.exports = function(grunt) {
         background: false,
         singleRun: true,
         reporters: ['progress'],
-      },
-
-      // CI tasks are broken apart as the free Sauce Labs account only lets us have 3 concurrent browsers
-
-      // sauce: {
-      //   background: false,
-      //   singleRun: true,
-      //   reporters: ['saucelabs'],
-      //   // browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox', 'SL_IE_8_XP', 'SL_IE_9', 'SL_IE_10', 'SL_IE_11', 'SL_Android_4', 'SL_iOS_6' ]
-      //   browsers: [ 'SL_Chrome' ]
-      // },
-
-      // 'sauce1': {
-      //   background: false,
-      //   singleRun: true,
-      //   reporters: ['saucelabs'],
-      //   browsers: [ 'SL_Chrome', 'SL_Safari', 'SL_Firefox'  ]
-      // },
-      // 'sauce2': {
-      //   background: false,
-      //   singleRun: true,
-      //   reporters: ['saucelabs'],
-      //   browsers: [ 'SL_IE_8_XP', 'SL_IE_8', 'SL_IE_9' ]
-      // },
-      // 'sauce3': {
-      //   background: false,
-      //   singleRun: true,
-      //   reporters: ['saucelabs'],
-      //   browsers: [ 'SL_IE_10', 'SL_IE_11' ]
-      // },
-      // 'sauce4': {
-      //   background: false,
-      //   singleRun: true,
-      //   reporters: ['saucelabs'],
-      //   browsers: [ 'SL_Android_4', 'SL_iOS_6' ]
-      // }
-      
+      }
     },
 
     jshint: {
@@ -303,7 +267,7 @@ module.exports = function(grunt) {
     }
   });
   util.updateConfig();
-  
+
   grunt.loadTasks('lib/grunt');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');

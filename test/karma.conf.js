@@ -1,6 +1,7 @@
 // Karma configuration
 // Generated on Fri Nov 08 2013 09:25:16 GMT-0600 (Central Standard Time)
 var util = require('../lib/grunt/utils.js');
+var grunt = require('grunt');
 
 module.exports = function(config) {
   config.set({
@@ -101,5 +102,10 @@ module.exports = function(config) {
       type: 'file',
       filename: process.env.LOGS_DIR + '/' + ('karma.log')
     });
+  }
+
+  if (grunt.option('browsers')) {
+    var bs = grunt.option('browsers').split(/,/).map(function(b) { return b.trim(); });
+    config.browsers = bs;
   }
 };
