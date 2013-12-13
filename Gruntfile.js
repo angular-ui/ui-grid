@@ -60,12 +60,12 @@ module.exports = function(grunt) {
       dist: {
         // paths: ['/bower_components/bootstrap'],
         files: {
-          'dist/<%= pkg.name %>.css': 'src/less/main.less',
+          'dist/release/<%= pkg.name %>.css': 'src/less/main.less',
         }
       },
       min: {
         files: {
-          'dist/<%= pkg.name %>.min.css': 'src/less/main.less',
+          'dist/release/<%= pkg.name %>.min.css': 'src/less/main.less',
         },
         options: {
           compress: true
@@ -79,11 +79,7 @@ module.exports = function(grunt) {
       },
       concat: {
         src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
-      },
-      doc: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'docs/js/<%= pkg.name %>.min.js'
+        dest: '<%= dist %>/release/<%= pkg.name %>.min.js'
       }
     },
 
@@ -240,7 +236,7 @@ module.exports = function(grunt) {
         styles: [
           'misc/doc/css/prettify.css',
           'misc/doc/css/bootstrap-flatly.css',
-          '<%= dist %>/ui-grid.css'
+          '<%= dist %>/release/ui-grid.css'
         ],
         title: 'UI Grid',
         html5Mode: false,

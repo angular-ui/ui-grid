@@ -194,3 +194,4 @@ Sauce-Connect.jar
 *.log
 docs
 bower_components
+.grunt
