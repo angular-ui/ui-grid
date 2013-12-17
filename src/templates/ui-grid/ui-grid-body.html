@@ -1,4 +1,4 @@
-<div class="ui-grid-viewport">
+<!-- <div class="ui-grid-viewport">
   <div>
     <table ng-class="tableClass">
       <tbody>
@@ -7,5 +7,11 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</div> -->
+
+<div ui-grid-viewport class="ui-grid-viewport">
+  <div class="ui-grid-canvas">
+    <div ui-grid-row ng-repeat="row in renderedRows"></div>
   </div>
 </div>

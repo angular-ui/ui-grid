@@ -6,7 +6,7 @@ describe('ui-grid', function() {
     // beforeEach(module('ui.grid.header'));
     // beforeEach(module('ui.grid.util'));
     
-    describe('ui-grid calculated columns', function() {
+    /*describe('ui-grid calculated columns', function() {
         var element, scope;
 
         beforeEach(inject(function($compile, $rootScope) {
@@ -64,5 +64,5 @@ describe('ui-grid', function() {
             expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('impCol1');
         });
 
-    });
+    });*/
 });

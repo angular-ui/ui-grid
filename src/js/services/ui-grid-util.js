@@ -64,7 +64,36 @@ app.service('GridUtil', function () {
         .replace(/(\w+?(?=[A-Z]))/g, '$1 ');
     },
 
-    // Return a list of column names, given a data set
+    /**
+     * @ngdoc method
+     * @name getColumnsFromData
+     * @methodOf ui.grid.util.service:GridUtil
+     * @description Return a list of column names, given a data set
+     *
+     * @param {string} data Data array for grid
+     * @returns {Object} Column definitions with field accessor and column name
+     *
+     * @example
+       <pre>
+         var data = [
+           { firstName: 'Bob', lastName: 'Jones' },
+           { firstName: 'Frank', lastName: 'Smith' }
+         ];
+
+         var columnDefs = GridUtil.getColumnsFromData(data);
+
+         columnDefs == [
+          {
+            field: 'firstName',
+            name: 'First Name'
+          },
+          {
+            field: 'lastName',
+            name: 'Last Name'
+          }
+         ];
+       </pre>
+     */
     getColumnsFromData: function (data) {
       var columnDefs = [];
 
@@ -80,6 +109,21 @@ app.service('GridUtil', function () {
       return columnDefs;
     },
 
+    /**
+     * @ngdoc method
+     * @name newId
+     * @methodOf ui.grid.util.service:GridUtil
+     * @description Return a unique ID string
+     *
+     * @returns {string} Unique string
+     *
+     * @example
+       <pre>
+        var id = GridUtil.newId();
+
+        # 1387305700482;
+       </pre>
+     */
     newId: (function() {
       var seedId = new Date().getTime();
       return function() {

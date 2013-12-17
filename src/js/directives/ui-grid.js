@@ -29,66 +29,50 @@ var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.virtu
       </file>
     </example>
  */
-app.directive('uiGrid', ['$compile', '$templateCache', '$log', 'GridUtil', function($compile, $templateCache, $log, GridUtil) {
-  function postLink(scope, elm, attrs, controller) {
-    $log.debug('grid postlink scope', scope.$id);
+app.directive('uiGrid',
+  [
+    '$compile',
+    '$templateCache',
+    '$log',
+    'GridUtil',
+  function(
+    $compile,
+    $templateCache,
+    $log,
+    GridUtil
+  ) {
+
+    function preLink(scope, elm, attrs) {
+      var options = scope.uiGrid;
+
+      // Create an ID for this grid
+      scope.gridId = GridUtil.newId();
+
+      // Get the grid dimensions from the element
+
+      // Initialize the grid
+
+      // Get the column definitions
+        // Put a watch on them
+
+      elm.on('$destroy', function() {
+        // Remove columnDefs watch
+      });
+    }
+    
+    return {
+      templateUrl: 'ui-grid/ui-grid',
+      scope: {
+        uiGrid: '='
+      },
+      compile: {
+        pre: preLink
+      },
+      controller: function ($scope, $element, $attrs) {
+
+      }
+    };
   }
-
-  return {
-    restrict: 'EA',
-    // templateUrl: 'ui-grid/ui-grid',
-    // transclude: true,
-    priority: 1000,
-    scope: {
-      uiGrid: '=',
-      tableClass: '@uiGridTableClass',
-      options: '@uiGridOptions'
-    },
-    compile: function (elm, attrs) {
-      // If the contents of the grid element are empty, use the default grid template
-      var tmpl;
-      if (elm.html() === '' || /^\s*$/.test(elm.html())) {
-        tmpl = $templateCache.get('ui-grid/ui-grid');
-      }
-
-      var preLink = function (scope, elm, attrs) {
-        scope.blah = 'test1';
-
-        $log.debug('grid prelink scope', scope.$id);
-
-        if (tmpl) {
-          elm.append(tmpl);
-          $compile(elm.contents())(scope);
-        }
-      };
-
-      return {
-        pre: preLink,
-        post: postLink
-      };
-    },
-    controller: ['$scope','$element','$attrs', function($scope, $element, $attrs) {
-      $log.debug('controller scope', $scope.$id);
-      $log.debug('controller running');
-
-      this.gridData = $scope.uiGrid;
-
-      $scope.gridOptions = {};
-      
-      //use parent scope options if specified
-      if ($scope.options) {
-        if (!$scope.$parent[$scope.options]) {
-          throw new Error($scope.options + ' was not defined in parent scope');
-        }
-        $scope.gridOptions = $scope.$parent[$scope.options];
-      }
-
-      //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
-      this.columns = $scope.gridOptions.columnDefs || $scope.$eval($attrs.uiGridColumns) || GridUtil.getColumnsFromData($scope.uiGrid);
-
-      $scope.gridOptions.columnDefs = $scope.gridOptions.columnDefs || this.columns;
-    }]
-  };
-}]);
+]);
 
 })();
