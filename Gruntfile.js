@@ -102,7 +102,7 @@ module.exports = function(grunt) {
       travis: {
         background: false,
         singleRun: true,
-        reporters: ['progress'],
+        reporters: ['dots'],
       }
     },
 
@@ -303,7 +303,8 @@ module.exports = function(grunt) {
     // This task can be executed in 2 different environments: local, and Travis-CI
     if (process.env.TRAVIS) {
       grunt.task.run('karma:travis');
-    } else {
+    }
+    else {
       // grunt.task.run(this.args.length ? 'karma:single' : 'karma:continuous');
       grunt.task.run('karmangular');
     }
