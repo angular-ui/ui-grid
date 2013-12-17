@@ -28,7 +28,10 @@ before_script:
 
 script:
   - grunt
-  - ./travis_build.sh
+
+# Run the SauceLabs tests after a successful build
+after_success:
+  - grunt test:ci
 
 after_script:
   - ./travis_print_logs.sh
