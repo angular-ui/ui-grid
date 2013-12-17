@@ -292,7 +292,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs']);
 
   // Development watch task
-  grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'karmangular:start', 'watch']);
+  grunt.registerTask('dev', ['before-test', 'karmangular:latest', 'after-test', 'connect', 'karmangular:start', 'watch']);
 
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
