@@ -1,12 +1,14 @@
 (function(){
 'use strict';
 
-var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.virtual-repeat']);
+var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.style', 'ui.virtual-repeat']);
 
 /**
  *  @ngdoc directive
  *  @name ui.grid.directive:uiGrid
  *  @element div
+ *  @restrict EA
+ *  @param {array} uiGrid Array of rows to display in the grid
  *  
  *  @description Create a very basic grid.
  *
@@ -55,6 +57,8 @@ app.directive('uiGrid',
       // Get the column definitions
         // Put a watch on them
 
+      console.log('gridId', scope.gridId);
+
       elm.on('$destroy', function() {
         // Remove columnDefs watch
       });
@@ -65,8 +69,10 @@ app.directive('uiGrid',
       scope: {
         uiGrid: '='
       },
-      compile: {
-        pre: preLink
+      compile: function () {
+        return {
+          pre: preLink
+        };
       },
       controller: function ($scope, $element, $attrs) {
 

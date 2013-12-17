@@ -65,16 +65,16 @@ describe('ui.grid.util', function() {
       var columns = GridUtil.getColumnsFromData(data);
 
       expect(columns)
-        .toEqual([
-          {
-            field: 'firstName',
-            name: 'First Name'
-          },
-          {
-            field: 'lastName',
-            name: 'Last Name'
-          }
-        ]);
+      .toEqual([
+        {
+          field: 'firstName',
+          name: 'First Name'
+        },
+        {
+          field: 'lastName',
+          name: 'Last Name'
+        }
+      ]);
     });
   });
 });
