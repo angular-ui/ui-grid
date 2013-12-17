@@ -29,7 +29,6 @@ before_script:
 script:
   - grunt
 
-# Run the SauceLabs tests after a successful build
 after_success:
   - grunt test:ci
 

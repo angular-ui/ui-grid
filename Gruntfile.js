@@ -302,7 +302,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
     // This task can be executed in 2 different environments: local, and Travis-CI
     if (process.env.TRAVIS) {
-      grunt.task.run('karma:travis', 'serialsauce');
+      grunt.task.run('karma:travis');
     } else {
       // grunt.task.run(this.args.length ? 'karma:single' : 'karma:continuous');
       grunt.task.run('karmangular');
