@@ -4,6 +4,10 @@ describe('ui.grid.style', function() {
 
   beforeEach(module('ui.grid.style'));
 
+  beforeEach(module(function($sceProvider) {
+    $sceProvider.enabled(true);
+  }));
+
   describe('ui-grid-style', function() {
     var element, scope, compile, recompile;
 
@@ -29,6 +33,22 @@ describe('ui.grid.style', function() {
       element = angular.element('<style>{{ foo }}</style>');
       recompile();
       expect(element.text()).toEqual('{{ foo }}');
+    });
+
+    it('does not create useless <br>s', function() {
+      element = angular.element("<style ui-grid-style>{{ foo }}</style>");
+      scope.foo = '\n.bar { color: red }\n';
+      recompile();
+      dump(element.html());
+      expect(element.html()).toEqual(scope.foo);
+    });
+
+     it('works when mixing text and expressions', function() {
+      element = angular.element("<style ui-grid-style>.blah { color: {{ color }}; }</style>");
+      scope.color = 'black';
+      recompile();
+      dump(element.html());
+      expect(element.html()).toEqual('.blah { color: black; }');
     });
   });
 

@@ -30,15 +30,16 @@
 
 var app = angular.module('ui.grid.style', []);
 
-app.directive('uiGridStyle', ['$interpolate', function($interpolate) {
+app.directive('uiGridStyle', ['$interpolate', '$sce', function($interpolate, $sce) {
   return {
     // restrict: 'A',
     priority: 1000,
     link: function(scope, element) {
       var interpolateFn = $interpolate(element.text(), true);
+
       if (interpolateFn) {
         scope.$watch(interpolateFn, function(value) {
-          element[0].innerText = value;
+          element.text(value);
         });
       }
     }
