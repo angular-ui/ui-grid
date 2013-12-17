@@ -1,4 +1,4 @@
-﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
+﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', '$injector', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q, $injector) {
     var ngGridDirective = {
         scope: true,
         compile: function() {
@@ -155,7 +155,12 @@
                             if (typeof p === "function") {
                                 p = new p(); //If p is a function, then we assume it is a class.
                             }
-                            p.init($scope.$new(), grid, options.$gridServices);
+                            if (typeof p.init === "function") {
+                                p.init($scope.$new(), grid, options.$gridServices);
+                            } else {
+                                // if init is an array, then inject a dependency
+                                $injector.invoke(p.init)($scope.$new(), grid, options.$gridServices);
+                            }
                             options.plugins[$utils.getInstanceType(p)] = p;
                         });
                         //send initi finalize notification.
