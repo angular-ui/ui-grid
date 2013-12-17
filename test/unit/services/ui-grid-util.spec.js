@@ -1,25 +1,39 @@
-
-describe('ui-grid-util', function() {
+describe('ui.grid.util', function() {
   var GridUtil;
 
+  beforeEach(module('ui.grid.util'));
 
-  beforeEach(function() {
-    module('ui.grid.util');
+  beforeEach(inject(function(_GridUtil_) {
+    GridUtil = _GridUtil_;
+  }));
 
-    inject(function ($injector) {
-      GridUtil = $injector.get('GridUtil');
+  describe('newId()', function() {
+    it('creates a unique id each time it is called', function() {
+      var id1 = GridUtil.newId();
+      var id2 = GridUtil.newId();
+
+      expect(id1).not.toEqual(id2);
     });
   });
 
   describe('readableColumnName', function() {
-    it('should create readable column names from properties', function() {
+    it('does not throw with null name', function() {
+      expect(function() {
+        GridUtil.readableColumnName(null);
+      }).not.toThrow();
+    });
 
+    it('should create readable column names from properties', function() {
       var translationExpects = [
+        [0, '0'],
         ['property', 'Property'],
         ['Property', 'Property'],
         ['aProperty', 'A Property'],
         ['ThisProperty', 'This Property'],
+        ['thisSecondProperty', 'This Second Property'],
+        ['thingsILove', 'Things I Love'],
         ['a_property', 'A Property'],
+        ['a__property', 'A Property'],
         ['another_property', 'Another Property'],
         ['ALLCAPS', 'Allcaps']
       ];
@@ -30,6 +44,12 @@ describe('ui-grid-util', function() {
         
         expect(GridUtil.readableColumnName(strIn)).toEqual(strOut);
       });
+    });
+
+    it('handles multiple capitlization->separations', function() {
+      var multiCapsed = GridUtil.readableColumnName('thisIsSoCool');
+
+      expect(multiCapsed).toEqual('This Is So Cool');
     });
   });
 
@@ -57,5 +77,4 @@ describe('ui-grid-util', function() {
         ]);
     });
   });
-
 });
