@@ -24,6 +24,7 @@ before_script:
   - ./lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma-cli
   - npm install
+  - bower install
   - ./lib/sauce/sauce_connect_block.sh
 
 script:
