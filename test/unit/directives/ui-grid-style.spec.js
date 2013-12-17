@@ -39,7 +39,6 @@ describe('ui.grid.style', function() {
       element = angular.element("<style ui-grid-style>{{ foo }}</style>");
       scope.foo = '\n.bar { color: red }\n';
       recompile();
-      dump(element.html());
       expect(element.html()).toEqual(scope.foo);
     });
 
@@ -47,7 +46,6 @@ describe('ui.grid.style', function() {
       element = angular.element("<style ui-grid-style>.blah { color: {{ color }}; }</style>");
       scope.color = 'black';
       recompile();
-      dump(element.html());
       expect(element.html()).toEqual('.blah { color: black; }');
     });
   });
