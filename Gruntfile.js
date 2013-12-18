@@ -8,8 +8,10 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
+    version: util.getVersion(),
     dist: 'dist',
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+    site: process.env.TRAVIS ? 'ui.grid.info' : 'localhost:<%= connect.docs.options.port %>',
+    banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
@@ -179,8 +181,13 @@ module.exports = function(grunt) {
       },
 
       docs: {
-        files: ['misc/tutorial/**/*.ngdoc', 'misc/doc/**/*'],
+        files: ['misc/tutorial/**/*.ngdoc', 'misc/doc/**'],
         tasks: 'ngdocs'
+      },
+
+      copy: {
+        files: ['misc/site/**'],
+        tasks: 'copy'
       },
 
       // karma: {
@@ -199,7 +206,7 @@ module.exports = function(grunt) {
         options: {
           base: '<%= dist %>',
           repo: 'https://github.com/angular-ui/ui-grid.info.git',
-          message: 'gh-pages v<%= pkg.version %>',
+          message: 'gh-pages v<%= version %>',
           add: true
         },
         src: ['**/*']
@@ -217,7 +224,7 @@ module.exports = function(grunt) {
       docs: {
         options: {
           port: process.env.DOCS_PORT || 9003,
-          base: '<%= dist %>/docs',
+          base: '<%= dist %>',
           livereload: true
         }
       }
@@ -231,7 +238,7 @@ module.exports = function(grunt) {
           'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js',
-          '<%= concat.dist.dest %>'
+          'http://<%= site %>/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
@@ -239,11 +246,13 @@ module.exports = function(grunt) {
           '<%= dist %>/release/ui-grid.css'
         ],
         title: 'UI Grid',
+        titleLink: 'http://<%= site %>',
         html5Mode: false,
         analytics: {
           account: 'UA-46391685-1',
           domainName: 'ui-grid.info'
-        }
+        },
+        navTemplate: 'misc/doc/templates/nav.html'
       },
       api: {
         src: ['src/**/*.js'],
@@ -255,10 +264,37 @@ module.exports = function(grunt) {
       }
     },
 
+    copy: {
+      site: {
+        options: {
+          processContent: grunt.template.process
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'misc/site/',
+            src: '**',
+            dest: '<%= dist %>'
+          }
+        ]
+      }
+    },
+
     changelog: {
       options: {
         dest: 'CHANGELOG.md',
         github: 'angular-ui/ng-grid'
+      }
+    },
+
+    cutrelease: {
+      options: {
+        cleanup: true,
+        keepUnstable: false
+      },
+      dist: {
+        src: '<%= dist %>/release/*.{js,css}',
+        dest: '<%= dist %>/release/'
       }
     }
   });
@@ -272,6 +308,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-angular-templates');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-karma');
@@ -289,7 +326,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
-  grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs']);
+  grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs', 'copy']);
 
   // Development watch task
   grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'karmangular:start', 'watch']);
@@ -310,4 +347,5 @@ module.exports = function(grunt) {
     }
   });
   
+  grunt.registerTask('release', ['clean', 'build', 'gh-pages']);
 };

@@ -4,6 +4,7 @@
 1. Figure out how to run e2e tests on docs (look at angularjs source)
 1. `readableColumnNames` need to be overrideable by i18n.
 1. SauceLabs Mac test hanging?
+1. Add banners to compiled .css files (grunt-banner?)
 
 1. [DONE] Add --browsers option for testing on saucelabs with specific browser(s)
 1. [DONE] Make karmangular run in `watch` mode and in singlerun too.

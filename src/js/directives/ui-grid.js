@@ -75,7 +75,7 @@ app.directive('uiGrid',
         };
       },
       controller: function ($scope, $element, $attrs) {
-
+        
       }
     };
   }

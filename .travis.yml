@@ -32,6 +32,7 @@ script:
 
 after_success:
   - grunt test:ci
+  - grunt release
 
 after_script:
   - ./travis_print_logs.sh
