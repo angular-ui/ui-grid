@@ -614,7 +614,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             } else {
                 self.config.sortInfo.directions[indx] = col.sortDirection;
             }
-        } else {
+        } else if (evt && self.config.sortInfo ) {
             var isArr = $.isArray(col);
             self.config.sortInfo.columns.length = 0;
             self.config.sortInfo.fields.length = 0;
