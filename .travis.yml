@@ -30,9 +30,9 @@ before_script:
   - ./lib/sauce/sauce_connect_block.sh
 
 script:
-  - after_success
+  - grunt
 
-grunt:
+after_success:
   - grunt test:ci
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
