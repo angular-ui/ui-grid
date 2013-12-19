@@ -9,7 +9,19 @@ body {
   font-weight: 200;
   line-height: 2.1428571435;
   color: inherit;
-  background-color: #eeeeee;
+  /*background-color: #eeeeee;*/
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    right bottom,
+    color-stop(0.25, #CAD8F7),
+    color-stop(1, #B1F2E7)
+  );
+  background-image: -o-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
+  background-image: -moz-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
+  background-image: -webkit-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
+  background-image: -ms-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
+  background-image: linear-gradient(to right, #CAD8F7 25%, #B1F2E7 100%);
 }
 
 .jumbotron h1,

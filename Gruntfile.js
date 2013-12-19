@@ -206,7 +206,7 @@ module.exports = function(grunt) {
       'gh-pages': {
         options: {
           base: '<%= dist %>',
-          repo: 'https://github.com/angular-ui/ui-grid.info.git',
+          repo: 'https://${GITHUB_NAME}:${GITHUB_PASS}@github.com/angular-ui/ui-grid.info.git',
           message: 'gh-pages v<%= version %>',
           add: true
         },
