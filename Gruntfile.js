@@ -348,5 +348,5 @@ module.exports = function(grunt) {
     }
   });
   
-  grunt.registerTask('release', ['clean', 'build', 'gh-pages']);
+  grunt.registerTask('release', ['clean', 'build', 'cutrelease', 'gh-pages']);
 };
