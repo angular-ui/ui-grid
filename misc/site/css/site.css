@@ -14,14 +14,14 @@ body {
     linear,
     left bottom,
     right bottom,
-    color-stop(0.25, #CAD8F7),
-    color-stop(1, #B1F2E7)
+    color-stop(0.38, #D1F1FF),
+    color-stop(1, #EDFCF9)
   );
-  background-image: -o-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
-  background-image: -moz-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
-  background-image: -webkit-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
-  background-image: -ms-linear-gradient(right, #CAD8F7 25%, #B1F2E7 100%);
-  background-image: linear-gradient(to right, #CAD8F7 25%, #B1F2E7 100%);
+  background-image: -o-linear-gradient(right, #D1F1FF 38%, #EDFCF9 100%);
+  background-image: -moz-linear-gradient(right, #D1F1FF 38%, #EDFCF9 100%);
+  background-image: -webkit-linear-gradient(right, #D1F1FF 38%, #EDFCF9 100%);
+  background-image: -ms-linear-gradient(right, #D1F1FF 38%, #EDFCF9 100%);
+  background-image: linear-gradient(to right, #D1F1FF 38%, #EDFCF9 100%);
 }
 
 .jumbotron h1,
