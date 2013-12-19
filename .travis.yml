@@ -33,7 +33,7 @@ before_script:
 script:
   - grunt
   - git config credential.helper "store --file=.git/credentials"
-  - echo "https://${GITHUB_NAME}:${GH_TOKEN}@github.com" > .git/credentials
+  - echo "https://${GITHUB_NAME}:${GITHUB_PASS}@github.com" > .git/credentials
   - grunt release
 
 after_success:
