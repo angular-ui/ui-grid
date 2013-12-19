@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
     version: util.getVersion(),
+    stable_version: util.getStableVersion(),
     dist: 'dist',
     site: process.env.TRAVIS ? 'ui.grid.info' : 'localhost:<%= connect.docs.options.port %>',
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %> - ' +
