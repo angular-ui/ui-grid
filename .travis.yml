@@ -11,6 +11,7 @@ env:
   - secure: PEQFPTi8DRVrj6dEl6tQ+QTI07N8A3XST9eu5uHyW9YuDErDpn6rE8iEI2bd6nU5jldF9cCaGprpEi6aTP71jxFkm2Yjk1PRxtSVo5Cvu7sEwaFOnZi2KBgpKAdv8T3GB4rcjePe3oPwSkw1i/s9THSe18KSzZdgwP2LMctlCyA=
   - secure: A4ur05WzvEsExKuAR81MmxNldgYbpc8VwI/9hC2v+IWAAaFClWDH6OdlbfO8gNaWJVnLmvMS8emA7zkBuKgQhuMP0u8RoSwn7TOObaCICEM7mbFPRwCX1td0/4FyUdUUAE/jw3Cx4SBdrb0qGkMmdg36W4II1BBzkMnJblUfnNU=
   - secure: W2QpRQppqS1wMhbiOTOzJmaUXZtjUQdoWj+IKuyX6m7/A2A4YDXfNj+vzXfffbVqnBFDzrYRtcZ6IMmHn9QDs4gJaAaQDc1104UEd/sbVEujDn+9YOE3tTdRLE13FgdwwrLNcpypiPZ+rpWvEizRAlwoMXIiVhL8pUc1hysX9qM=
+  - secure: IaTLpsLUet/9al3Lg9n1k+M+5zIEnCwx7fwOjNoUmHYrYRImDUVmtymb9HSdzozn8cV1z+k6V62wghjK0b8c5tZ0mE9PRtEN8Nv1CjVmrbURpQaypC2A1HT3xg3/MDRwvAoiHILPxTo4k5jw1wgNrYKxCLbb7vmvoPwVv7seTT8=
 
 branches:
   only:
@@ -31,12 +32,12 @@ before_script:
 
 script:
   - grunt
+  - git config credential.helper "store --file=.git/credentials"
+  - echo "https://${GITHUB_NAME}:${GH_TOKEN}@github.com" > .git/credentials
+  - grunt release
 
 after_success:
   - grunt test:ci
-  - git config credential.helper "store --file=.git/credentials"
-  - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-  - grunt release
 
 after_script:
   - ./travis_print_logs.sh
