@@ -288,7 +288,7 @@ module.exports = function(grunt) {
       }
     },
 
-    cutrelease: {
+    'cut-release': {
       options: {
         cleanup: true,
         keepUnstable: false
@@ -348,5 +348,5 @@ module.exports = function(grunt) {
     }
   });
   
-  grunt.registerTask('release', ['clean', 'build', 'cutrelease', 'gh-pages']);
+  grunt.registerTask('release', ['clean', 'build', 'cut-release', 'gh-pages']);
 };

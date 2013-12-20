@@ -38,10 +38,10 @@ script:
   - grunt
   # - git config credential.helper "store --file=.git/credentials"
   # - echo "https://${GITHUB_NAME}:${GITHUB_PASS}@github.com" > .git/credentials
+  - grunt test:ci
   - grunt release
 
-after_success:
-  - grunt test:ci
+# after_success:
 
 after_script:
   - ./travis_print_logs.sh

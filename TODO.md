@@ -3,8 +3,7 @@
 1. `readableColumnNames` need to be overrideable by i18n.
 1. Add banners to compiled .css files (grunt-banner?)
 1. Add grunt-nuget task to autodeploy builds to nuget
-1. Use: git describe --tags `git rev-list --tags --max-count=1`
-     to replace the code in utils.getVersion();
+1. Try to reomve `npm install` commands from travis before-script
 
 1. [DONE] Add --browsers option for testing on saucelabs with specific browser(s)
 1. [DONE] Make karmangular run in `watch` mode and in singlerun too.
