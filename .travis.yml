@@ -41,7 +41,8 @@ before_script:
 script:
   - ./scripts/travis/travis_build.sh
 
-# after_success:
+after_success:
+  - grunt release
 
 after_script:
   - ./travis_print_logs.sh

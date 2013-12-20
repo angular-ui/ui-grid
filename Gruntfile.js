@@ -137,7 +137,16 @@ module.exports = function(grunt) {
         keepAlive: true,
         configFile: "./test/protractor.conf.js"
       },
-      singlerun: {},
+      singlerun: {
+        keepAlive: false,
+        options: {
+          args: {
+            seleniumPort: 4444,
+            baseUrl: 'http://localhost:9999',
+            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
+          }
+        }
+      },
       auto: {
         keepAlive: true,
         options: {
@@ -405,7 +414,7 @@ module.exports = function(grunt) {
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
-  grunt.registerTask('test:e2e', ['protractor:singlerun']);
+  grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
 
   // Test
   grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
