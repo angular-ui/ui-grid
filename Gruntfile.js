@@ -158,7 +158,7 @@ module.exports = function(grunt) {
             sauceKey: process.env.SAUCE_ACCESS_KEY
           }
         }
-      }
+      },
       auto: {
         keepAlive: true,
         options: {
