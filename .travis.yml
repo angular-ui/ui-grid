@@ -7,6 +7,9 @@ notifications:
   irc: "chat.freenode.net#ui-grid"
 
 env:
+  matrix:
+    - JOB=unit
+    - JOB=e2e
   global:
   - SAUCE_USERNAME=nggrid
   - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
@@ -32,14 +35,11 @@ before_script:
   - npm install --quiet -g grunt-cli karma-cli
   - npm install
   - bower install
+  - grunt install
   - ./lib/sauce/sauce_connect_block.sh
 
 script:
-  - grunt
-  # - git config credential.helper "store --file=.git/credentials"
-  # - echo "https://${GITHUB_NAME}:${GITHUB_PASS}@github.com" > .git/credentials
-  - grunt test:ci
-  - grunt release
+  - ./scripts/travis/travis_build.sh
 
 # after_success:
 

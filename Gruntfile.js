@@ -11,12 +11,35 @@ module.exports = function(grunt) {
     version: util.getVersion(),
     stable_version: util.getStableVersion(),
     dist: 'dist',
-    site: process.env.TRAVIS ? 'ui.grid.info' : 'localhost:<%= connect.docs.options.port %>',
+    site: process.env.TRAVIS ? 'ui-grid.info' : 'localhost:<%= connect.docs.options.port %>',
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= pkg.license %> */\n',
+
+    shell: {
+      options: {
+        stdout: true
+      },
+      selenium: {
+        command: './selenium/start',
+        options: {
+          stdout: false,
+          async: true
+        }
+      },
+      'protractor-install': {
+        command: './node_modules/protractor/bin/webdriver-manager update'
+      },
+      'protractor-start': {
+        command: 'node ./node_modules/protractor/bin/webdriver-manager start',
+        options: {
+          stdout: true,
+          async: true
+        }
+      }
+    },
 
     // Clean the temp directory
     clean: ['.tmp', '<%= dist %>', 'docs'],
@@ -109,6 +132,30 @@ module.exports = function(grunt) {
       }
     },
 
+    protractor: {
+      options: {
+        keepAlive: true,
+        configFile: "./test/protractor.conf.js"
+      },
+      singlerun: {},
+      auto: {
+        keepAlive: true,
+        options: {
+          args: {
+            seleniumPort: 4444,
+            specs: ['.tmp/e2e/**/*.spec.js', 'test/e2e/**/*.spec.js']
+          }
+        }
+      }
+      // docs: {
+      //   options: {
+      //     args: {
+      //       baseUrl: 'http://localhost:9999'
+      //     }
+      //   }
+      // }
+    },
+
     jshint: {
       options: {
         curly: true,
@@ -176,6 +223,11 @@ module.exports = function(grunt) {
           // livereload: true
         }
       },
+      protractor: {
+        files: ['.tmp/e2e/**/*.spec.js', 'test/e2e/**/*.spec.js', '<%= dist %>/docs/**'],
+        tasks: ['protractor:auto']
+      },
+
       less: {
         files: 'src/**/*.less',
         tasks: ['less']
@@ -227,6 +279,12 @@ module.exports = function(grunt) {
           port: process.env.DOCS_PORT || 9003,
           base: '<%= dist %>',
           livereload: true
+        }
+      },
+      testserver: {
+        options: {
+          port: process.env.TEST_PORT || 9999,
+          base: '<%= dist %>'
         }
       }
     },
@@ -313,9 +371,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-angular-templates');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-protractor-runner');
   grunt.loadNpmTasks('grunt-ngdocs');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-gh-pages');
+  grunt.loadNpmTasks('grunt-shell-spawn');
+
+  grunt.registerTask('install', ['shell:protractor-install']);
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server
@@ -329,12 +391,18 @@ module.exports = function(grunt) {
   // Build with no testing
   grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs', 'copy']);
 
+  // Auto-test tasks for development
+  grunt.registerTask('autotest:unit', ['karmangular:start']);
+  grunt.registerTask('autotest:e2e', ['shell:protractor-start']);
+
   // Development watch task
-  grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'karmangular:start', 'watch']);
+  grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch']);
 
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
+  grunt.registerTask('test:docs', ['connect:', 'protractor:docs']);
+  grunt.registerTask('test:e2e', ['protractor:singlerun']);
 
   // Test
   grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
@@ -349,4 +417,12 @@ module.exports = function(grunt) {
   });
   
   grunt.registerTask('release', ['clean', 'build', 'cut-release', 'gh-pages']);
+
+  grunt.registerTask('blah', function () {
+    var ngdoc = require('./node_modules/grunt-ngdocs/src/ngdoc.js');
+
+    console.log(ngdoc);
+  });
+
+  grunt.registerTask('butt', ['shell:protractor-start', 'watch:protractor']);
 };
