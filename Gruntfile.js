@@ -143,14 +143,16 @@ module.exports = function(grunt) {
         options: {
           args: {
             seleniumPort: 4444,
-            specs: ['.tmp/e2e/**/*.spec.js', 'test/e2e/**/*.spec.js']
+            baseUrl: 'http://localhost:9999',
+            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
           }
         }
       }
       // docs: {
       //   options: {
       //     args: {
-      //       baseUrl: 'http://localhost:9999'
+      //       seleniumPort: 4444,
+            
       //     }
       //   }
       // }
@@ -224,7 +226,7 @@ module.exports = function(grunt) {
         }
       },
       protractor: {
-        files: ['.tmp/e2e/**/*.spec.js', 'test/e2e/**/*.spec.js', '<%= dist %>/docs/**'],
+        files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
         tasks: ['protractor:auto']
       },
 
@@ -292,12 +294,13 @@ module.exports = function(grunt) {
     ngdocs: {
       options: {
         dest: '<%= dist %>/docs',
+        testingUrlPrefix: '<%= protractor.auto.options.args.baseUrl %>/docs/#/',
         scripts: [
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js',
           'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js',
-          'http://<%= site %>/release/<%= pkg.name %>.js'
+          '<%= protractor.auto.options.args.baseUrl %>/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
@@ -401,7 +404,7 @@ module.exports = function(grunt) {
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
-  grunt.registerTask('test:docs', ['connect:', 'protractor:docs']);
+  grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['protractor:singlerun']);
 
   // Test
@@ -417,12 +420,4 @@ module.exports = function(grunt) {
   });
   
   grunt.registerTask('release', ['clean', 'build', 'cut-release', 'gh-pages']);
-
-  grunt.registerTask('blah', function () {
-    var ngdoc = require('./node_modules/grunt-ngdocs/src/ngdoc.js');
-
-    console.log(ngdoc);
-  });
-
-  grunt.registerTask('butt', ['shell:protractor-start', 'watch:protractor']);
 };

@@ -17,18 +17,21 @@
         var app = angular.module('app', ['ui.grid']);
        
         app.controller('MainCtrl', ['$scope', function ($scope) {
-          $scope.myStyle = '.blah { color: red }';
+          $scope.myStyle = '.blah { border: 1px solid }';
         }]);
       </script>
      
       <div ng-controller="MainCtrl">
         <style ui-grid-style>{{ myStyle }}</style>
-        <span class="blah">I am red.</span>
+        <span class="blah">I am in a box.</span>
       </div>
     </doc:source>
     <doc:scenario>
-      it('should do stuff!', function () {
-        
+      it('should apply the right class to the element', function () {
+        element(by.css('.blah')).getCssValue('border')
+          .then(function(c) {
+            expect(c).toContain('1px solid');
+          });
       });
     </doc:scenario>
    </doc:example>
