@@ -147,6 +147,18 @@ module.exports = function(grunt) {
           }
         }
       },
+      ci: {
+        keepAlive: false,
+        options: {
+          args: {
+            seleniumPort: 4444,
+            baseUrl: 'http://localhost:9999',
+            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
+            sauceUser: process.env.SAUCE_USERNAME,
+            sauceKey: process.env.SAUCE_ACCESS_KEY
+          }
+        }
+      }
       auto: {
         keepAlive: true,
         options: {
@@ -415,6 +427,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
+  grunt.registerTask('test:e2e:ci', ['connect:testserver', 'protractor:ci']);
 
   // Test
   grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
