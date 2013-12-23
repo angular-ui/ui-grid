@@ -151,7 +151,8 @@ module.exports = function(grunt) {
         options: {
           keepAlive: false,
           args: {
-            seleniumPort: 4444,
+            // seleniumAddress: 'http://localhost:4445',
+            // seleniumPort: 4445,
             baseUrl: 'http://127.0.0.1:9999',
             specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
             sauceUser: process.env.SAUCE_USERNAME,
