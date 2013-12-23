@@ -138,8 +138,8 @@ module.exports = function(grunt) {
         configFile: "./test/protractor.conf.js"
       },
       singlerun: {
-        keepAlive: false,
         options: {
+          keepAlive: false,
           args: {
             seleniumPort: 4444,
             baseUrl: 'http://localhost:9999',
@@ -148,8 +148,8 @@ module.exports = function(grunt) {
         }
       },
       ci: {
-        keepAlive: false,
         options: {
+          keepAlive: false,
           args: {
             seleniumPort: 4444,
             baseUrl: 'http://localhost:9999',
@@ -160,8 +160,8 @@ module.exports = function(grunt) {
         }
       },
       auto: {
-        keepAlive: true,
         options: {
+          keepAlive: true,
           args: {
             seleniumPort: 4444,
             baseUrl: 'http://localhost:9999',
