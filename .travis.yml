@@ -7,9 +7,9 @@ notifications:
   irc: "chat.freenode.net#ui-grid"
 
 env:
-  matrix:
-    - JOB=unit
-    - JOB=e2e
+  # matrix:
+  #   - JOB=unit
+  #   - JOB=e2e
   global:
   - SAUCE_USERNAME=nggrid
   - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
