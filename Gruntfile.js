@@ -11,7 +11,7 @@ module.exports = function(grunt) {
     version: util.getVersion(),
     stable_version: util.getStableVersion(),
     dist: 'dist',
-    site: process.env.TRAVIS ? 'ui-grid.info' : 'localhost:<%= connect.docs.options.port %>',
+    site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -142,7 +142,7 @@ module.exports = function(grunt) {
           keepAlive: false,
           args: {
             seleniumPort: 4444,
-            baseUrl: 'http://localhost:9999',
+            baseUrl: 'http://127.0.0.1:9999',
             specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
           }
         }
@@ -152,7 +152,7 @@ module.exports = function(grunt) {
           keepAlive: false,
           args: {
             seleniumPort: 4444,
-            baseUrl: 'http://localhost:9999',
+            baseUrl: 'http://127.0.0.1:9999',
             specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
             sauceUser: process.env.SAUCE_USERNAME,
             sauceKey: process.env.SAUCE_ACCESS_KEY
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
           keepAlive: true,
           args: {
             seleniumPort: 4444,
-            baseUrl: 'http://localhost:9999',
+            baseUrl: 'http://127.0.0.1:9999',
             specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
           }
         }
