@@ -42,7 +42,7 @@ script:
   # - ./travis_build.sh
   - grunt
   - grunt test:ci
-  - grunt test:ci:e2e
+  - grunt test:e2e:ci
 
 after_success:
   - grunt release
