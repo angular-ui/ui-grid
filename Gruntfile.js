@@ -429,7 +429,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
-  grunt.registerTask('test:e2e:ci', ['connect:testserver', 'protractor:ci']);
+  grunt.registerTask('test:e2e:ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
 
   // Test
   grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
