@@ -24,6 +24,6 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 20000
+    defaultTimeoutInterval: 60000
   }
 };

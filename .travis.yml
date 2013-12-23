@@ -39,7 +39,10 @@ before_script:
   - ./lib/sauce/sauce_connect_block.sh
 
 script:
-  - ./travis_build.sh
+  # - ./travis_build.sh
+  - grunt
+  - grunt test:ci
+  - grunt test:ci:e2e
 
 after_success:
   - grunt release

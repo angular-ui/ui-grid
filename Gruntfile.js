@@ -320,8 +320,10 @@ module.exports = function(grunt) {
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js',
           'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
-          'node_modules/marked/lib/marked.js',
-          '<%= protractor.auto.options.args.baseUrl %>/release/<%= pkg.name %>.js'
+          'node_modules/marked/lib/marked.js'
+        ],
+        httpScripts: [
+          '/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
