@@ -16,5 +16,5 @@ set -e
 # fi
 
 grunt
-grunt test:ci
-grunt test:e2e:ci
+grunt test:ci --verbose
+grunt test:e2e:ci --verbose
