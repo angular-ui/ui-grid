@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         }
       },
       'protractor-install': {
-        command: './node_modules/protractor/bin/webdriver-manager update'
+        command: 'node ./node_modules/protractor/bin/webdriver-manager update'
       },
       'protractor-start': {
         command: 'node ./node_modules/protractor/bin/webdriver-manager start',
@@ -38,6 +38,12 @@ module.exports = function(grunt) {
           stdout: true,
           async: true
         }
+      },
+      'npm-install': {
+        command: 'npm install'
+      },
+      'bower-install': {
+        command: 'bower install'
       }
     },
 
@@ -249,7 +255,7 @@ module.exports = function(grunt) {
       },
       protractor: {
         files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
-        tasks: ['protractor:auto']
+        tasks: ['protractor-watch:auto']
       },
 
       less: {
@@ -318,8 +324,10 @@ module.exports = function(grunt) {
         dest: '<%= dist %>/docs',
         testingUrlPrefix: '<%= protractor.auto.options.args.baseUrl %>/docs/#/',
         scripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js',
-          'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js',
+        ],
+        hiddenScripts: [
+          'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],
@@ -404,7 +412,24 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-shell-spawn');
 
-  grunt.registerTask('install', ['shell:protractor-install']);
+  // grunt.renameTask('protractor', 'protractor-old');
+  grunt.registerTask('protractor-watch', function () {
+    var e2e = grunt.option('e2e');
+
+    if (e2e !== false) {
+      var args = '';
+      if (this.args) {
+        args = ':' + this.args.join(':');
+      }
+
+      grunt.task.run('protractor' + args);
+    }
+    else {
+      grunt.log.writeln("Skipping e2e testing...");
+    }
+  });
+
+  grunt.registerTask('install', ['shell:npm-install', 'shell:bower-install', 'shell:protractor-install']);
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server
@@ -423,7 +448,16 @@ module.exports = function(grunt) {
   grunt.registerTask('autotest:e2e', ['shell:protractor-start']);
 
   // Development watch task
-  grunt.registerTask('dev', ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch']);
+  grunt.registerTask('dev', function() {
+    var e2e = grunt.option('e2e');
+
+    var tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
+    if (e2e === false) {
+      tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
+    }
+
+    grunt.task.run(tasks);
+  });
 
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
