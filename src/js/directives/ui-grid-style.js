@@ -39,11 +39,14 @@
 
 var app = angular.module('ui.grid.style', []);
 
-app.directive('uiGridStyle', ['$interpolate', '$sce', function($interpolate, $sce) {
+app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolate) {
   return {
     // restrict: 'A',
-    priority: 1000,
-    link: function(scope, element) {
+    // priority: 1000,
+    require: '?^uiGrid',
+    link: function(scope, element, attrs, uiGridCtrl) {
+      $log.debug('ui-grid-style link');
+
       var interpolateFn = $interpolate(element.text(), true);
 
       if (interpolateFn) {
@@ -51,6 +54,34 @@ app.directive('uiGridStyle', ['$interpolate', '$sce', function($interpolate, $sc
           element.text(value);
         });
       }
+
+      if (uiGridCtrl) {
+        uiGridCtrl.buildColumnStyles = function() {
+          var width = uiGridCtrl.grid.gridWidth;
+          var equalWidth = width / scope.options.columnDefs.length;
+
+          var ret = '';
+          var left = 0;
+          angular.forEach(scope.options.columnDefs, function(c, i) {
+            ret += ' .grid' + scope.gridId + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+            left = left + equalWidth;
+          });
+
+          scope.columnStyles = ret;
+        };
+      } 
+
+      // scope.columnStyles = function() {
+      //   if (! uiGridCtrl) {
+      //     $log.fatal('[ui-grid-style] uiGridCtrl is not defined!');
+      //   }
+
+      //   if (uiGridCtrl.grid && uiGridCtrl.grid.gridWidth) {
+      //     $log.debug('oh hi!');
+
+          
+      //   }
+      // };
     }
   };
 }]);

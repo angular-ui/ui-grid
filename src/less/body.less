@@ -1,0 +1,26 @@
+
+.ui-grid-viewport {
+  // overflow: auto; // TODO(c0bra): turn back on when virtual repeater is hooked up
+  min-height: 20px;
+
+  :focus {
+    outline: none;
+  }
+}
+
+.ui-grid-canvas {
+  position: relative;
+}
+
+.ui-grid-row {
+  position: absolute;
+  // border-bottom: 1px solid @borderColor;
+
+  :nth-child(odd) {
+    background-color: @rowColorOdd; //rgb(253, 253, 253);
+  }
+
+  :nth-child(even) {
+    background-color: @rowColorEven;
+  }
+}

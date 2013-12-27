@@ -1,17 +1,7 @@
-<!-- <div class="ui-grid-viewport">
-  <div>
-    <table ng-class="tableClass">
-      <tbody>
-        <tr ui-virtual-repeat="d in gridData">
-          <td ng-repeat="c in columns">{{ d[c.field] }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div> -->
-
 <div ui-grid-viewport class="ui-grid-viewport">
   <div class="ui-grid-canvas">
-    <div ui-grid-row ng-repeat="row in renderedRows"></div>
+    <div ng-repeat="row in renderedRows">
+      <div ui-grid-row="row"></div>
+    </div>
   </div>
 </div>

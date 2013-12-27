@@ -200,6 +200,7 @@ module.exports = function(grunt) {
         boss: true,
         eqnull: true,
         browser: true,
+        debug: true, // debugger statements allowed
         globals: {
           angular: false,
           console: false,
@@ -220,7 +221,8 @@ module.exports = function(grunt) {
           inject: false,
           it: false,
           iit: false,
-          module: false
+          module: false,
+          debugger: false
         }
       },
       gruntfile: {
@@ -260,7 +262,7 @@ module.exports = function(grunt) {
 
       less: {
         files: 'src/**/*.less',
-        tasks: ['less']
+        tasks: ['less', 'ngdocs']
       },
 
       docs: {

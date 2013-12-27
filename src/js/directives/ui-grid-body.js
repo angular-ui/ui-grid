@@ -9,22 +9,13 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
     priority: 1000,
     templateUrl: 'ui-grid/ui-grid-body',
     require: '?^uiGrid',
-    scope: {
-      tableClass: '=uiGridTableClass'
-    },
+    scope: false,
     link: function(scope, elm, attrs, uiGridCtrl) {
-      $log.debug('body postlink scope', scope.$id);
-
       if (uiGridCtrl === undefined) {
         $log.warn('[ui-grid-body] uiGridCtrl is undefined!');
       }
 
-      if (uiGridCtrl && typeof(uiGridCtrl.columns) !== 'undefined' && uiGridCtrl.columns) {
-        scope.columns = uiGridCtrl.columns;
-      }
-      if (uiGridCtrl && typeof(uiGridCtrl.gridData) !== 'undefined' && uiGridCtrl.gridData) {
-        scope.gridData = uiGridCtrl.gridData;
-      }
+      $log.debug('ui-grid-body link');
     }
   };
 }]);

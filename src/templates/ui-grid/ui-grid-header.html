@@ -1,18 +1,9 @@
-<!-- <div>
-  <table class="ui-grid-header ui-grid-header-table" ng-class="tableClass">
-    <thead>
-      <tr>
-        <th ng-repeat="col in columns">{{ col.name }}</th>
-      </tr>
-    </thead>
-  </table>
-</div> -->
-
 <div class="ui-grid-top-panel">
   <div class="ui-grid-header">
-    <div ng-style="{ height: col.headerRowHeight }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngHeaderCell">
-      <div class="ngVerticalBar" ng-style="{height: col.headerRowHeight}" ng-class="{ ngVerticalBarVisible: !$last }">&nbsp;</div>
-      <div ng-header-cell></div>
+    <div ng-repeat="col in options.columnDefs" class="ui-grid-header-cell col{{ $index }}"> <!-- ng-style="{ height: col.headerRowHeight }" -->
+      <div class="ui-grid-vertical-bar">&nbsp;</div> <!-- ng-style="{height: col.headerRowHeight}" ng-class="{ ngVerticalBarVisible: !$last }" -->
+      <!-- <div ng-header-cell></div> -->
+      <div><span class="ui-grid-cell-contents">{{ col.name }}</span></div>
     </div>
   </div>
 

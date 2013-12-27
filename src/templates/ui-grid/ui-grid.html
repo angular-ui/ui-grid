@@ -6,12 +6,22 @@
   
 </div> -->
 
-<div class="ui-grid">
-  <!-- TODO (c0bra): add "scoped attr here, eventually? -->
+<div class="ui-grid grid{{ gridId }}">
+  <!-- TODO (c0bra): add "scoped" attr here, eventually? -->
   <style ui-grid-style>
     .grid{{ gridId }} {
       /* Styles for the grid */
     }
+
+    .grid{{ gridId }} .ui-grid-header {
+      height: {{ options.headerRowHeight }}px;
+    }
+
+    .grid{{ gridId }} .ui-grid-row, .grid{{ gridId }} .ui-grid-cell {
+      height: {{ options.rowHeight }}px;
+    }
+
+    {{ columnStyles }}
   </style>
 
   <div ui-grid-header></div>

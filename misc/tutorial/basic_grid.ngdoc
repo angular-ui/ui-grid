@@ -18,7 +18,13 @@ In this example we create the most basic grid possible. Our
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="data"></div>
+      <div ui-grid="{ data: data }" class="grid"></div>
     </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 150px;
+    }
   </file>
 </example>

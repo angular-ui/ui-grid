@@ -37,6 +37,10 @@ You can also use the `--browsers` specify what browsers to test with (PhantomJS 
     # Run a single test run against multiple browsers
     > grunt karma:single --browsers=Chrome,Firefox,IE
 
+By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
+
+    > grunt dev --no-e2e
+
 ## Karmangular
 
 The `karmangular` task runs tests serially against multiple browsers (it is used internally by the `dev` task).
