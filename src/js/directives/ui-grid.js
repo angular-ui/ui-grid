@@ -58,7 +58,9 @@ app.directive('uiGrid',
         // Height of the header row in
         headerRowHeight: 30,
 
-        rowHeight: 30
+        rowHeight: 30,
+
+        maxVisibleRowCount: 50
       };
       uiGridCtrl.grid = { options: scope.options };
 
@@ -99,7 +101,10 @@ app.directive('uiGrid',
             uiGridCtrl.grid.gridWidth = scope.gridWidth = elm[0].clientWidth;
             uiGridCtrl.grid.gridHeight = scope.gridHeight = elm[0].clientHeight;
 
+            scope.visibleRowCount = scope.options.data.length;
+
             uiGridCtrl.buildColumnStyles();
+            uiGridCtrl.buildRowStyles();
           }
         };
       },

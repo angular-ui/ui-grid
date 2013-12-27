@@ -8,11 +8,15 @@ app.directive('uiGridRow', ['$log', 'GridUtil', function($log, GridUtil) {
     replace: true,
     priority: 1000,
     templateUrl: 'ui-grid/ui-grid-row',
-    require: '?^uiGrid',
+    require: ['?^uiGrid', '?^ngRepeat'],
     scope: {
-      row: '=uiGridRow'
+      row: '=uiGridRow',
+      rowIndex: '='
     },
-    link: function(scope, elm, attrs, uiGridCtrl) {
+    link: function(scope, elm, attrs, controllers) {
+      var uiGridCtrl   = controllers[0];
+      var ngRepeatCtrl = controllers[1];
+
       if (uiGridCtrl === undefined) {
         $log.warn('[ui-grid-row] uiGridCtrl is undefined!');
       }

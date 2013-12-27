@@ -13,6 +13,11 @@
       /* Styles for the grid */
     }
 
+    .grid{{ gridId }} .ui-grid-canvas {
+      /* Styles for the grid */
+      height: {{ options.rowHeight * visibleRowCount }}px;
+    }
+
     .grid{{ gridId }} .ui-grid-header {
       height: {{ options.headerRowHeight }}px;
     }
@@ -20,6 +25,8 @@
     .grid{{ gridId }} .ui-grid-row, .grid{{ gridId }} .ui-grid-cell {
       height: {{ options.rowHeight }}px;
     }
+
+    {{ rowStyles }}
 
     {{ columnStyles }}
   </style>

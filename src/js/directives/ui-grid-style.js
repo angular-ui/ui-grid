@@ -63,11 +63,24 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           var ret = '';
           var left = 0;
           angular.forEach(scope.options.columnDefs, function(c, i) {
-            ret += ' .grid' + scope.gridId + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+            ret = ret + ' .grid' + scope.gridId + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
             left = left + equalWidth;
           });
 
           scope.columnStyles = ret;
+        };
+
+        uiGridCtrl.buildRowStyles = function() {
+          var offset = 0;
+          var rowHeight = scope.options.rowHeight;
+
+          var ret = '';
+          for (var i = 1; i < scope.options.maxVisibleRowCount; i++) {
+            ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
+            offset = offset + rowHeight;
+          }
+
+          scope.rowStyles = ret;
         };
       } 
 
