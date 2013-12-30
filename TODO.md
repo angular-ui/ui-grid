@@ -11,6 +11,11 @@
   1. Still need to test this with hidden elements
 1. Add 'track by $index' to ng-repeats?
 1. Add virtual repeat functionality
+1. Need to make the docs pages allow the user to choose the unstable or stable release (or version) in a drop-down (like Angular does).
+1. Scrollbar should only show up when there's elements to scroll.
+1. Mouse wheel should work in viewport (almost done)
+1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
+1. elementHeight() (AND jQuery.height()) isn't working on the .ui-grid element. It's not accounting for the border when figuring out the canvas drawing space.
 
 # Done!
 

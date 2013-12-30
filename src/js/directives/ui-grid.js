@@ -106,7 +106,22 @@ app.directive('uiGrid',
 
             uiGridCtrl.grid.options.canvasHeight = scope.gridHeight - scope.options.headerRowHeight;
 
-            scope.visibleRowCount = scope.options.data.length;
+            if (typeof(scope.options.data) !== 'undefined' && scope.options.data !== undefined && scope.options.data.length) {
+              scope.visibleRowCount = scope.options.data.length;
+            }
+
+            scope.$watch('uiGrid.data', function(n, o) {
+              if (n !== o) {
+                if (scope.options.columnDefs.length <= 0) {
+                  scope.options.columnDefs = GridUtil.getColumnsFromData(n);
+                }
+
+                scope.options.data = n;
+                scope.renderedRows = scope.options.data;
+
+                uiGridCtrl.buildStyles();
+              }
+            });
 
             // uiGridCtrl.buildStyles();
           }

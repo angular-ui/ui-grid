@@ -6,6 +6,8 @@ function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
 }
 
+var rnumnonpx = new RegExp( "^(" + (/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/).source + ")(?!px)[a-z%]+$", "i" );
+
 function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
   var i = extra === ( isBorderBox ? 'border' : 'content' ) ?
           // If we already have the right measurement, avoid augmentation
@@ -15,33 +17,60 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 
           val = 0;
 
-  angular.forEach(['Top', 'Right', 'Bottom', 'Left'], function (side) {
+  var sides = ['Top', 'Right', 'Bottom', 'Left'];
+  
+  for ( ; i < 4; i += 2 ) {
+    var side = sides[i];
+    // dump('side', side);
+
     // both box models exclude margin, so add it if we want it
     if ( extra === 'margin' ) {
-      val += parseFloat(styles[extra + side]);
+      var marg = parseFloat(styles[extra + side]);
+      if (!isNaN(marg)) {
+        val += marg;
+      }
     }
+    // dump('val1', val);
 
     if ( isBorderBox ) {
       // border-box includes padding, so remove it if we want content
       if ( extra === 'content' ) {
-        val -= parseFloat(styles['padding' + side]);
+        var padd = parseFloat(styles['padding' + side]);
+        if (!isNaN(padd)) {
+          val -= padd;
+          // dump('val2', val);
+        }
       }
 
       // at this point, extra isn't border nor margin, so remove border
       if ( extra !== 'margin' ) {
-        val -= parseFloat(styles['border' + side + 'Width']);
+        var bordermarg = parseFloat(styles['border' + side + 'Width']);
+        if (!isNaN(bordermarg)) {
+          val -= bordermarg;
+          // dump('val3', val);
+        }
       }
     }
     else {
       // at this point, extra isn't content, so add padding
-      val += parseFloat(styles['padding' + side]);
+      var nocontentPad = parseFloat(styles['padding' + side]);
+      if (!isNaN(nocontentPad)) {
+        val += nocontentPad;
+        // dump('val4', val);
+      }
 
       // at this point, extra isn't content nor padding, so add border
       if ( extra !== 'padding') {
-        val += parseFloat(styles['border' + side + 'Width']);
+        var nocontentnopad = parseFloat(styles['border' + side + 'Width']);
+        if (!isNaN(nocontentnopad)) {
+          val += nocontentnopad;
+          // dump('val5', val);
+        }
       }
     }
-  });
+  }
+
+  // dump('augVal', val);
 
   return val;
 }
@@ -56,29 +85,31 @@ function getWidthOrHeight( elem, name, extra ) {
   // some non-html elements return undefined for offsetWidth, so check for null/undefined
   // svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
   // MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
-  // if ( val <= 0 || val == null ) {
-  //         // Fall back to computed then uncomputed css if necessary
-  //         val = curCSS( elem, name, styles );
-  //         if ( val < 0 || val == null ) {
-  //                 val = elem.style[ name ];
-  //         }
+  if ( val <= 0 || val == null ) {
+          // Fall back to computed then uncomputed css if necessary
+          val = styles[name];
+          if ( val < 0 || val == null ) {
+            val = elem.style[ name ];
+          }
 
-  //         // Computed unit is not pixels. Stop here and return.
-  //         if ( rnumnonpx.test(val) ) {
-  //                 return val;
-  //         }
+          // Computed unit is not pixels. Stop here and return.
+          if ( rnumnonpx.test(val) ) {
+            return val;
+          }
 
-  //         // we need the check for style in case a browser which returns unreliable values
-  //         // for getComputedStyle silently falls back to the reliable elem.style
-  //         valueIsBorderBox = isBorderBox &&
-  //                 ( support.boxSizingReliable() || val === elem.style[ name ] );
+          // we need the check for style in case a browser which returns unreliable values
+          // for getComputedStyle silently falls back to the reliable elem.style
+          valueIsBorderBox = isBorderBox &&
+                  ( true || val === elem.style[ name ] ); // use 'true' instead of 'support.boxSizingReliable()'
 
-  //         // Normalize "", auto, and prepare for extra
-  //         val = parseFloat( val ) || 0;
-  // }
+          // Normalize "", auto, and prepare for extra
+          val = parseFloat( val ) || 0;
+  }
+
+  // dump('gworh val', val);
 
   // use the active box-sizing model to add/subtract irrelevant styles
-  return ( val +
+  var ret = ( val +
           augmentWidthOrHeight(
                   elem,
                   name,
@@ -87,6 +118,9 @@ function getWidthOrHeight( elem, name, extra ) {
                   styles
           )
   );
+
+  // dump('ret', ret, val);
+  return ret;
 }
 
 /**
@@ -183,6 +217,8 @@ app.service('GridUtil', ['$window', function ($window) {
     getColumnsFromData: function (data) {
       var columnDefs = [];
 
+      if (! data || typeof(data[0]) === 'undefined' || data[0] === undefined) { return []; }
+
       var item = data[0];
       
       angular.forEach(item, function (prop, propName) {
@@ -222,7 +258,8 @@ app.service('GridUtil', ['$window', function ($window) {
     * @name elementWidth
     * @methodOf ui.grid.util.service:GridUtil
     *
-    * @param {element} DOM element
+    * @param {element} element DOM element
+    * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
     *
     * @returns {number} Element width in pixels, accounting for any borders, etc.
     */
@@ -235,7 +272,8 @@ app.service('GridUtil', ['$window', function ($window) {
     * @name elementHeight
     * @methodOf ui.grid.util.service:GridUtil
     *
-    * @param {element} DOM element
+    * @param {element} element DOM element
+    * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
     *
     * @returns {number} Element height in pixels, accounting for any borders, etc.
     */

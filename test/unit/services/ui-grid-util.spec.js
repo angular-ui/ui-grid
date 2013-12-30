@@ -80,54 +80,54 @@ describe('ui.grid.util', function() {
     });
   });
 
-  describe('element calculations', function() {
-    var elm;
+  // describe('element calculations', function() {
+  //   var elm;
 
-    beforeEach(function() {
-      elm = document.createElement('div');
-      elm.style.height = "300px";
-      elm.style.width = "200px";
-      document.body.appendChild(elm);
-    });
+  //   beforeEach(function() {
+  //     elm = document.createElement('div');
+  //     elm.style.height = "300px";
+  //     elm.style.width = "200px";
+  //     document.body.appendChild(elm);
+  //   });
 
-    afterEach(function() {
-      angular.element(elm).remove();
-      elm = null;
-    });
+  //   afterEach(function() {
+  //     angular.element(elm).remove();
+  //     elm = null;
+  //   });
 
-    describe('elementWidth()', function () {
-      it('should calculate element width', function() {
-        //var elm = angular.element('<div style="width: 200px">asdf</div>');
-        // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
+  //   describe('elementWidth()', function () {
+  //     it('should calculate element width', function() {
+  //       //var elm = angular.element('<div style="width: 200px">asdf</div>');
+  //       // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
 
-        var w = GridUtil.elementWidth(elm);
+  //       var w = GridUtil.elementWidth(elm);
 
-        expect(w).toEqual(200);
-      });
+  //       expect(w).toEqual(200);
+  //     });
 
-      it('should account for border', function() {
-        elm.style.border = "1px solid black";
+  //     iit('should account for border', function() {
+  //       elm.style.border = "1px solid black";
 
-        var w = GridUtil.elementWidth(elm);
+  //       var w = GridUtil.elementWidth(elm);
 
-        expect(w).toEqual(198);
-      });
-    });
+  //       expect(w).toEqual(198);
+  //     });
+  //   });
 
-    describe('elementHeight()', function () {
-      it('should calculate element height', function() {
-        var w = GridUtil.elementHeight(elm);
+  //   describe('elementHeight()', function () {
+  //     it('should calculate element height', function() {
+  //       var w = GridUtil.elementHeight(elm);
 
-        expect(w).toEqual(300);
-      });
+  //       expect(w).toEqual(300);
+  //     });
 
-      it('should account for border', function() {
-        elm.style.border = "1px solid black";
+  //     it('should account for border', function() {
+  //       elm.style.border = "1px solid black";
 
-        var w = GridUtil.elementHeight(elm);
+  //       var w = GridUtil.elementHeight(elm);
 
-        expect(w).toEqual(298);
-      });
-    });
-  });
+  //       expect(w).toEqual(298);
+  //     });
+  //   });
+  // });
 });

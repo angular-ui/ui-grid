@@ -1,0 +1,32 @@
+@ngdoc overview
+@name Tutorial: Large Dataset
+@description
+
+This grid example uses a data set of 10,000 records
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {  };
+
+      $http.get('/data/500.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+</example>
