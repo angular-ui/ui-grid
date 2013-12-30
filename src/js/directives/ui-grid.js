@@ -91,6 +91,7 @@ app.directive('uiGrid',
       scope: {
         uiGrid: '='
       },
+      replace: true,
       compile: function () {
         return {
           pre: preLink,
@@ -98,13 +99,14 @@ app.directive('uiGrid',
             $log.debug('ui-grid postlink');
 
             // Get the grid dimensions from the element
+            // uiGridCtrl.grid.gridWidth = scope.gridWidth = GridUtil.elementWidth(elm);
+            // uiGridCtrl.grid.gridHeight = scope.gridHeight = GridUtil.elementHeight(elm);
             uiGridCtrl.grid.gridWidth = scope.gridWidth = elm[0].clientWidth;
             uiGridCtrl.grid.gridHeight = scope.gridHeight = elm[0].clientHeight;
 
             scope.visibleRowCount = scope.options.data.length;
 
-            uiGridCtrl.buildColumnStyles();
-            uiGridCtrl.buildRowStyles();
+            uiGridCtrl.buildStyles();
           }
         };
       },

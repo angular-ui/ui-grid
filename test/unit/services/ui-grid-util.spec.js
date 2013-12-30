@@ -1,10 +1,12 @@
 describe('ui.grid.util', function() {
-  var GridUtil;
+  var GridUtil,
+      $window;
 
   beforeEach(module('ui.grid.util'));
 
-  beforeEach(inject(function(_GridUtil_) {
+  beforeEach(inject(function(_GridUtil_, _$window_) {
     GridUtil = _GridUtil_;
+    $window = _$window_;
   }));
 
   describe('newId()', function() {
@@ -75,6 +77,57 @@ describe('ui.grid.util', function() {
           name: 'Last Name'
         }
       ]);
+    });
+  });
+
+  describe('element calculations', function() {
+    var elm;
+
+    beforeEach(function() {
+      elm = document.createElement('div');
+      elm.style.height = "300px";
+      elm.style.width = "200px";
+      document.body.appendChild(elm);
+    });
+
+    afterEach(function() {
+      angular.element(elm).remove();
+      elm = null;
+    });
+
+    describe('elementWidth()', function () {
+      it('should calculate element width', function() {
+        //var elm = angular.element('<div style="width: 200px">asdf</div>');
+        // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
+
+        var w = GridUtil.elementWidth(elm);
+
+        expect(w).toEqual(200);
+      });
+
+      it('should account for border', function() {
+        elm.style.border = "1px solid black";
+
+        var w = GridUtil.elementWidth(elm);
+
+        expect(w).toEqual(198);
+      });
+    });
+
+    describe('elementHeight()', function () {
+      it('should calculate element height', function() {
+        var w = GridUtil.elementHeight(elm);
+
+        expect(w).toEqual(300);
+      });
+
+      it('should account for border', function() {
+        elm.style.border = "1px solid black";
+
+        var w = GridUtil.elementHeight(elm);
+
+        expect(w).toEqual(298);
+      });
     });
   });
 });

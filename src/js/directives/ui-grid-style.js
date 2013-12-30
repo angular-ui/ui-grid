@@ -82,6 +82,11 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
 
           scope.rowStyles = ret;
         };
+
+        uiGridCtrl.buildStyles = function() {
+          uiGridCtrl.buildColumnStyles();
+          uiGridCtrl.buildRowStyles();
+        };
       } 
 
       // scope.columnStyles = function() {
