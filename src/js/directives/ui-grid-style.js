@@ -56,7 +56,7 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
       }
 
       if (uiGridCtrl) {
-        uiGridCtrl.buildColumnStyles = function() {
+        uiGridCtrl.styleComputions.push(function() {
           var width = uiGridCtrl.grid.gridWidth;
           var equalWidth = width / scope.options.columnDefs.length;
 
@@ -68,9 +68,9 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           });
 
           scope.columnStyles = ret;
-        };
+        });
 
-        uiGridCtrl.buildRowStyles = function() {
+        uiGridCtrl.styleComputions.push(function() {
           var offset = 0;
           var rowHeight = scope.options.rowHeight;
 
@@ -81,25 +81,8 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           }
 
           scope.rowStyles = ret;
-        };
-
-        uiGridCtrl.buildStyles = function() {
-          uiGridCtrl.buildColumnStyles();
-          uiGridCtrl.buildRowStyles();
-        };
-      } 
-
-      // scope.columnStyles = function() {
-      //   if (! uiGridCtrl) {
-      //     $log.fatal('[ui-grid-style] uiGridCtrl is not defined!');
-      //   }
-
-      //   if (uiGridCtrl.grid && uiGridCtrl.grid.gridWidth) {
-      //     $log.debug('oh hi!');
-
-          
-      //   }
-      // };
+        });
+      }
     }
   };
 }]);

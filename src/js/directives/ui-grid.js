@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 
-var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.row', 'ui.grid.style', 'ui.virtual-repeat']);
+var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.row', 'ui.grid.style', 'ui.grid.scrollbar']);
 
 /**
  *  @ngdoc directive
@@ -102,15 +102,33 @@ app.directive('uiGrid',
             // uiGridCtrl.grid.gridWidth = scope.gridWidth = GridUtil.elementWidth(elm);
             // uiGridCtrl.grid.gridHeight = scope.gridHeight = GridUtil.elementHeight(elm);
             uiGridCtrl.grid.gridWidth = scope.gridWidth = elm[0].clientWidth;
-            uiGridCtrl.grid.gridHeight = scope.gridHeight = elm[0].clientHeight;
+            uiGridCtrl.grid.gridHeight = scope.gridHeight = GridUtil.elementHeight(elm);
+
+            uiGridCtrl.grid.options.canvasHeight = scope.gridHeight - scope.options.headerRowHeight;
 
             scope.visibleRowCount = scope.options.data.length;
 
-            uiGridCtrl.buildStyles();
+            // uiGridCtrl.buildStyles();
           }
         };
       },
       controller: function ($scope, $element, $attrs) {
+        var self = this;
+        self.styleComputions = [];
+
+        self.buildStyles = function() {
+          // uiGridCtrl.buildColumnStyles();
+          // uiGridCtrl.buildRowStyles();
+
+          angular.forEach(self.styleComputions, function(comp) {
+            comp.call(self, $scope);
+          });
+        };
+
+        $scope.$watch(function () { return self.styleComputions; }, function() {
+          self.buildStyles();
+        });
+
         $log.debug('ui-grid controller');
       }
     };

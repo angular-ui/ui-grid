@@ -6,7 +6,8 @@
     }
 
     .grid{{ gridId }} .ui-grid-canvas {
-      height: {{ options.rowHeight * visibleRowCount }}px;
+      /*height: {{ options.rowHeight * visibleRowCount }}px;*/
+      height: {{ options.canvasHeight }}px;
     }
 
     .grid{{ gridId }} .ui-grid-header, .grid{{ gridId }} .ui-grid-header-cell .ui-grid-vertical-bar {
@@ -20,6 +21,8 @@
     {{ rowStyles }}
 
     {{ columnStyles }}
+
+    {{ scrollbarStyles }}
   </style>
 
   <div ui-grid-header></div>

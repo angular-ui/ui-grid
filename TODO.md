@@ -8,7 +8,9 @@
 1. e2e tests failing on travis, unable to connect to SauceLabs, or timing out?
   1. Maybe try BrowserStack?
 1. Add util methods that will perform the same as jquery's .height() and .width() on elements.
+  1. Still need to test this with hidden elements
 1. Add 'track by $index' to ng-repeats?
+1. Add virtual repeat functionality
 
 # Done!
 
