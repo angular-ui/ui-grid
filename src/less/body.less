@@ -16,11 +16,11 @@
   position: absolute;
   // border-bottom: 1px solid @borderColor;
 
-  :nth-child(odd) {
+  &:nth-child(odd) .ui-grid-cell {
     background-color: @rowColorOdd; //rgb(253, 253, 253);
   }
 
-  :nth-child(even) {
+  &:nth-child(even) .ui-grid-cell {
     background-color: @rowColorEven;
   }
 }

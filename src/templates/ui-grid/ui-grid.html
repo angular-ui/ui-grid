@@ -14,15 +14,14 @@
     }
 
     .grid{{ gridId }} .ui-grid-canvas {
-      /* Styles for the grid */
       height: {{ options.rowHeight * visibleRowCount }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-header {
+    .grid{{ gridId }} .ui-grid-header, .grid{{ gridId }} .ui-grid-header-cell .ui-grid-vertical-bar {
       height: {{ options.headerRowHeight }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-row, .grid{{ gridId }} .ui-grid-cell {
+    .grid{{ gridId }} .ui-grid-row, .grid{{ gridId }} .ui-grid-cell, .grid{{ gridId }} .ui-grid-cell .ui-grid-vertical-bar {
       height: {{ options.rowHeight }}px;
     }
 

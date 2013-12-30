@@ -9,7 +9,12 @@
   width: 0;
 }
 
-.ui-grid-vertical-bar-visible {
+.ui-grid-header-cell:not(:last-child) .ui-grid-vertical-bar, .ui-grid-cell:not(:last-child) .ui-grid-vertical-bar {
   width: 1px;
   background-color: @borderColor;
 }
+
+// .ui-grid-vertical-bar-visible {
+//   width: 1px;
+//   background-color: @borderColor;
+// }
