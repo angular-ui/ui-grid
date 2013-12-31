@@ -75,7 +75,7 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           var rowHeight = scope.options.rowHeight;
 
           var ret = '';
-          for (var i = 1; i < scope.options.maxVisibleRowCount; i++) {
+          for (var i = 1; i < Math.max(scope.options.maxVisibleRowCount || 0, uiGridCtrl.minRowsToRender() || 0); i++) {
             ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
             offset = offset + rowHeight;
           }

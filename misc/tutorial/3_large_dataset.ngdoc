@@ -20,6 +20,9 @@ This grid example uses a data set of 10,000 records
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <strong>Data Length:</strong> {{ gridOptions.data.length }}
+      <br>
+      <br>
       <div ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>

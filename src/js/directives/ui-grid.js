@@ -63,7 +63,12 @@ app.directive('uiGrid',
         maxVisibleRowCount: 200,
 
         // Turn virtualization on when number of data elements goes over this number
-        virtualizationThreshold: 50
+        virtualizationThreshold: 50,
+
+        // Extra rows to to render outside of the viewport
+        excessRows: 6,
+
+        scrollThreshold: 4
       };
       uiGridCtrl.grid = { options: scope.options };
 
@@ -73,6 +78,7 @@ app.directive('uiGrid',
       scope.gridId = GridUtil.newId();
 
       // Initialize the grid
+      scope.renderedRows = [];
 
       // Get the column definitions
       //   If no columnDefs were supplied, generate them ourself
@@ -127,9 +133,12 @@ app.directive('uiGrid',
                 }
 
                 scope.options.data = n;
-                scope.renderedRows = scope.options.data;
+                // scope.renderedRows = scope.options.data;
 
                 uiGridCtrl.buildStyles();
+
+                var scrollTop = uiGridCtrl.viewport[0].scrollTop;
+                uiGridCtrl.adjustScrollVertical(scrollTop, true);
 
                 scope.$evalAsync(function() {
                   uiGridCtrl.refreshCanvas();
