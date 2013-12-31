@@ -8,7 +8,7 @@ app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'GridUtil',
     restrict: 'EA',
     templateUrl: 'ui-grid/ui-grid-header',
     replace: true,
-    priority: 1000,
+    // priority: 1000,
     require: '?^uiGrid',
     scope: false,
     link: function (scope, elm, attrs, uiGridCtrl) {
@@ -16,6 +16,15 @@ app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'GridUtil',
         $log.warn('[ui-grid-header] uiGridCtrl is undefined!');
       }
       $log.debug('ui-grid-header link');
+
+      if (uiGridCtrl) {
+        uiGridCtrl.header = elm;
+      }
+
+      // Need to refresh the canvas size when the columnDefs change
+      scope.$watch('options.columnDefs', function(n, o) {
+        uiGridCtrl.refreshCanvas();
+      });
     }
   };
 }]);

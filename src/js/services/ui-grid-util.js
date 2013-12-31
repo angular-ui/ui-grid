@@ -282,7 +282,7 @@ app.service('GridUtil', ['$window', function ($window) {
     }
   };
 
-  angular.forEach(['width', 'height'], function(name){
+  angular.forEach(['width', 'height'], function (name){
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
     s['element' + capsName] = function (elem, extra) {
       var e = elem;
@@ -290,9 +290,15 @@ app.service('GridUtil', ['$window', function ($window) {
         e = elem[0];
       }
       
-      return getWidthOrHeight( e, name, extra );
+      return elem ? getWidthOrHeight( e, name, extra ) : null;
+    };
+
+    s['outerElement' + capsName] = function (elem, margin) {
+      return elem ? s['element' + capsName].call(this, elem, margin ? 'margin' : 'border') : null;
     };
   });
+
+
 
   return s;
 }]);

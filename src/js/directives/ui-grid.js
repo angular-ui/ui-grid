@@ -60,7 +60,10 @@ app.directive('uiGrid',
 
         rowHeight: 30,
 
-        maxVisibleRowCount: 50
+        maxVisibleRowCount: 50,
+
+        // Turn virtualization on when number of data elements goes over this number
+        virtualizationThreshold: 50
       };
       uiGridCtrl.grid = { options: scope.options };
 
@@ -77,6 +80,9 @@ app.directive('uiGrid',
         options.columnDefs = GridUtil.getColumnsFromData(options.data);
 
         // TOD: Put a watch on them
+        scope.$evalAsync(function() {
+          uiGridCtrl.refreshCanvas();
+        });
       }
 
       scope.renderedRows = options.data;
@@ -103,8 +109,8 @@ app.directive('uiGrid',
             // uiGridCtrl.grid.gridHeight = scope.gridHeight = GridUtil.elementHeight(elm);
             uiGridCtrl.grid.gridWidth = scope.gridWidth = elm[0].clientWidth;
             uiGridCtrl.grid.gridHeight = scope.gridHeight = GridUtil.elementHeight(elm);
-
-            uiGridCtrl.grid.options.canvasHeight = scope.gridHeight - scope.options.headerRowHeight;
+            
+            uiGridCtrl.refreshCanvas();
 
             if (typeof(scope.options.data) !== 'undefined' && scope.options.data !== undefined && scope.options.data.length) {
               scope.visibleRowCount = scope.options.data.length;
@@ -120,6 +126,10 @@ app.directive('uiGrid',
                 scope.renderedRows = scope.options.data;
 
                 uiGridCtrl.buildStyles();
+
+                scope.$evalAsync(function() {
+                  uiGridCtrl.refreshCanvas();
+                });
               }
             });
 
@@ -128,6 +138,8 @@ app.directive('uiGrid',
         };
       },
       controller: function ($scope, $element, $attrs) {
+        $log.debug('ui-grid controller');
+
         var self = this;
         self.styleComputions = [];
 
@@ -144,7 +156,19 @@ app.directive('uiGrid',
           self.buildStyles();
         });
 
-        $log.debug('ui-grid controller');
+        // Refresh the canvas drawable size 
+        self.refreshCanvas = function() {
+          // Default to the configured header row height, then calculate it once the header is linked
+          var headerHeight = $scope.options.headerRowHeight;
+
+          if (self.header) {
+            headerHeight = GridUtil.outerElementHeight(self.header);
+          }
+          
+          // TODO(c0bra): account for footer height
+          // NOTE: canvas height drawable height is the height of the grid minus the header row height (including any border)
+          self.grid.options.canvasHeight = $scope.gridHeight - headerHeight;
+        };
       }
     };
   }
