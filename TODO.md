@@ -16,6 +16,8 @@
   1. i.e. add ng-show based on canvasHeight > gridbody height
 1. Mouse wheel should work in viewport (almost done)
 1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
+1. Figure out a way to put border on last row if the
+1. [IDEA] - Plugin playground. 
 
 # Done!
 

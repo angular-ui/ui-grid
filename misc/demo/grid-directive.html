@@ -7,24 +7,20 @@
     <meta content="width=device-width" name="viewport">
     
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
-    <link href="/dist/ui-grid.css" rel="stylesheet">
+    <link href="/dist/release/ui-grid.css" rel="stylesheet">
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="/misc/test_lib/angular/1.2.1/angular.js"></script>
-    <script src="/dist/ui-grid.js"></script>
+    <script src="/lib/test/angular/1.2.5/angular.js"></script>
+    <script src="/dist/release/ui-grid.js"></script>
 
     <style>
       body {
         padding: 20px;
       }
 
-      .vtable {
-        max-width: 400px;
-      }
-
-      .ui-grid-viewport {
-        /*border: 1px solid blue;*/
-        max-height: 200px;
+      .grid {
+        height: 300px;
+        width: 600px;
       }
     </style>
   </head>
@@ -32,29 +28,17 @@
     <!-- <h1>Test</h1> -->
 
       <div class="row">
-        <h2>Calcuated Cols Grid here</h2>
-        <div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>
-      </div>
-      
-      <div class="row">
-        <h2>Declaritive Cols Grid here</h2>
-      </div>
-      <div class="row">
-        <div class="col-md-5" ui-grid="data" ui-grid-columns="[{name:'LastName',field:'lastName'}]" ui-grid-table-class="table"></div>
-      </div>
-      
-      <div class="row">
-        <h2>Imperative Cols Grid here</h2>
-        <div class="col-md-5" ui-grid="data" ui-grid-options="myGridOptions" ui-grid-table-class="table"></div>
+        <h2>Grid</h2>
+        <div ui-grid="myGridOptions" class="grid"></div>
       </div>
 
       <script>
 
-      var app = angular.module('test', ['ui.grid', 'ui.virtual-repeat']);
+      var app = angular.module('test', ['ui.grid']);
 
       app.controller('Main', function($scope) {
-          $scope.myGridOptions = {};
-          $scope.myGridOptions.columnDefs = [{name:"First Name", field:"firstName"}];
+          $scope.myGridOptions = { data: 'data' };
+          $scope.myGridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
 
           $scope.data = [
           {

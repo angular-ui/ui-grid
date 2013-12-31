@@ -60,7 +60,7 @@ app.directive('uiGrid',
 
         rowHeight: 30,
 
-        maxVisibleRowCount: 50,
+        maxVisibleRowCount: 200,
 
         // Turn virtualization on when number of data elements goes over this number
         virtualizationThreshold: 50
@@ -79,13 +79,16 @@ app.directive('uiGrid',
       if (! options.columnDefs || options.columnDefs.length === 0) {
         options.columnDefs = GridUtil.getColumnsFromData(options.data);
 
-        // TOD: Put a watch on them
-        scope.$evalAsync(function() {
-          uiGridCtrl.refreshCanvas();
-        });
+        // TODO(c0bra): Put a watch on them
       }
 
-      scope.renderedRows = options.data;
+      // if (angular.isArray(options.data)) {
+      //   scope.renderedRows = options.data;
+      // }
+
+      // scope.$evalAsync(function() {
+      //   uiGridCtrl.refreshCanvas();
+      // });
 
       elm.on('$destroy', function() {
         // Remove columnDefs watch
@@ -116,8 +119,9 @@ app.directive('uiGrid',
               scope.visibleRowCount = scope.options.data.length;
             }
 
-            scope.$watch('uiGrid.data', function(n, o) {
-              if (n !== o) {
+            function watchFunction(n, o) {
+              // $log.debug('watch fired!', n, o);
+              if (n) {
                 if (scope.options.columnDefs.length <= 0) {
                   scope.options.columnDefs = GridUtil.getColumnsFromData(n);
                 }
@@ -131,9 +135,17 @@ app.directive('uiGrid',
                   uiGridCtrl.refreshCanvas();
                 });
               }
-            });
+            }
+            
+            var dataWatchDereg;
+            if (angular.isString(scope.uiGrid.data)) {
+              dataWatchDereg = scope.$parent.$watch(scope.uiGrid.data, watchFunction);
+            }
+            else {
+              dataWatchDereg = scope.$parent.$watch(function() { return scope.uiGrid.data; }, watchFunction);
+            }
 
-            // uiGridCtrl.buildStyles();
+            elm.on('$destroy', dataWatchDereg);
           }
         };
       },
@@ -168,7 +180,12 @@ app.directive('uiGrid',
           // TODO(c0bra): account for footer height
           // NOTE: canvas height drawable height is the height of the grid minus the header row height (including any border)
           self.grid.options.canvasHeight = $scope.gridHeight - headerHeight;
-        };
+
+          // Calculate the height of all the displayable rows
+          if (self.canvas && self.grid.options.data.length) {
+            self.grid.options.totalRowHeight = self.grid.options.rowHeight * self.grid.options.data.length;
+          }
+        }; 
       }
     };
   }
