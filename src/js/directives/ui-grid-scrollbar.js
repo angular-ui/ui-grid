@@ -21,6 +21,10 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + (gridScope.options.canvasHeight / 8 || 20) + 'px; }';
       }
 
+      scope.showScrollbar = function() {
+        return uiGridCtrl.canvas[0].scrollHeight > uiGridCtrl.viewport[0].scrollHeight;
+      };
+
       if (uiGridCtrl) {
         uiGridCtrl.styleComputions.push(updateScrollbar);
       }
@@ -34,7 +38,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
       // Get the "bottom bound" which the scrollbar cannot scroll past
       var elmBottomBound = scope.options.canvasHeight - elmHeight;
       
-      elm.on('mousedown', function(event) {
+      function mousedown(event) {
         // Prevent default dragging of selected content
         event.preventDefault();
         elmHeight = GridUtil.elementHeight(elm, 'margin');
@@ -43,7 +47,9 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
 
         $document.on('mousemove', mousemove);
         $document.on('mouseup', mouseup);
-      });
+      }
+
+      elm.on('mousedown', mousedown);
 
       function mousemove(event) {
         y = event.screenY - startY;
@@ -56,7 +62,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       }
 
-      scope.$on('uiGridScrollVertical', function(evt, args) {
+      var scrollUnbinder = scope.$on('uiGridScrollVertical', function(evt, args) {
         if (args.scrollPercentage < 0) { args.scrollPercentage = 0; }
         if (args.scrollPercentage > 1) { args.scrollPercentage = 1; }
 
@@ -77,8 +83,10 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
       }
 
       elm.on('$destroy', function() {
+        scrollUnbinder();
         $document.unbind('mousemove', mousemove);
         $document.unbind('mouseup', mouseup);
+        elm.unbind('mousedown');
       });
     }
   };
