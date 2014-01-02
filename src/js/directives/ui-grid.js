@@ -66,7 +66,7 @@ app.directive('uiGrid',
         virtualizationThreshold: 50,
 
         // Extra rows to to render outside of the viewport
-        excessRows: 6,
+        excessRows: 4,
 
         scrollThreshold: 4
       };

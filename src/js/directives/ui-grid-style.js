@@ -70,7 +70,7 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           scope.columnStyles = ret;
         });
 
-        uiGridCtrl.styleComputions.push(function() {
+        uiGridCtrl.recalcRowStyles = function() {
           var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
           var rowHeight = scope.options.rowHeight;
 
@@ -82,7 +82,9 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           }
 
           scope.rowStyles = ret;
-        });
+        };
+
+        uiGridCtrl.styleComputions.push(uiGridCtrl.recalcRowStyles);
       }
     }
   };

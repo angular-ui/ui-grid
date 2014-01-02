@@ -66,8 +66,6 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
             // }
 
             newRange = [rangeStart, rangeEnd];
-
-            $log.debug('newRange', newRange);
         }
         else {
           var maxLen = scope.options.data.length;
@@ -105,10 +103,14 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         // use wheelDeltaY
         evt.preventDefault();
 
+        $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
+
         var scrollAmount = evt.wheelDeltaY * -1;
 
         // Get the scroll percentage
-        var scrollPercentage = (uiGridCtrl.canvas[0].scrollTop + scrollAmount) / (uiGridCtrl.canvas[0].scrollHeight - scope.options.canvasHeight);
+        var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
+
+        // $log.debug('scrollPercentage', scrollPercentage);
 
         // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);
         // uiGridCtrl.canvas[0].scrollTop = uiGridCtrl.canvas[0].scrollTop + scrollAmount;
@@ -147,12 +149,14 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         //   newRows[i].renderedRowIndex = i;
         // }
 
-        uiGridCtrl.refreshCanvas();
+        // uiGridCtrl.refreshCanvas();
+        // uiGridCtrl.buildStyles();
+        uiGridCtrl.recalcRowStyles();
       };
 
       // Method for updating the visible rows
       uiGridCtrl.updateViewableRange = function(renderedRange) {
-        $log.debug('new viewable range', renderedRange);
+        // $log.debug('new viewable range', renderedRange);
         var rowArr = scope.options.data.slice(renderedRange[0], renderedRange[1]);
 
         uiGridCtrl.setRenderedRows(rowArr);
