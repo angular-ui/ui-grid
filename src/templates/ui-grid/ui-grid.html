@@ -5,8 +5,11 @@
       /* Styles for the grid */
     }
 
+    .grid{{ gridId }} .ui-grid-viewport {
+      height: {{ options.viewportHeight }}px;
+    }
+
     .grid{{ gridId }} .ui-grid-canvas {
-      /*height: {{ options.rowHeight * visibleRowCount }}px;*/
       height: {{ options.canvasHeight }}px;
     }
 
@@ -19,7 +22,7 @@
     }
 
     .grid{{ gridId }} .ui-grid-row:last-child .ui-grid-cell {
-      border-bottom-width: {{ ((options.totalRowHeight < options.canvasHeight) && '1') || '0' }}px;
+      border-bottom-width: {{ ((options.totalRowHeight < options.viewportHeight) && '1') || '0' }}px;
     }
 
     {{ rowStyles }}

@@ -71,11 +71,12 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
         });
 
         uiGridCtrl.styleComputions.push(function() {
-          var offset = 0;
+          var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
           var rowHeight = scope.options.rowHeight;
 
           var ret = '';
-          for (var i = 1; i < Math.max(scope.options.maxVisibleRowCount || 0, uiGridCtrl.minRowsToRender() || 0); i++) {
+          var rowStyleCount = uiGridCtrl.minRowsToRender() + (scope.options.excessRows * 2);
+          for (var i = 1; i <= rowStyleCount; i++) {
             ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
             offset = offset + rowHeight;
           }

@@ -24,21 +24,26 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
       uiGridCtrl.prevScrollTop = 0;
 
-      uiGridCtrl.adjustScrollVertical = function (scrollTop, force) {
+      uiGridCtrl.adjustScrollVertical = function (scrollTop, scrollPercentage, force) {
         if (uiGridCtrl.prevScrollTop === scrollTop && !force) {
           return;
         }
 
-        if (scrollTop > 0 && uiGridCtrl.viewport[0].scrollHeight - scrollTop <= uiGridCtrl.viewportOuterHeight) {
+        if (scrollTop > 0 && uiGridCtrl.canvas[0].scrollHeight - scrollTop <= uiGridCtrl.viewportOuterHeight) {
           // $scope.$emit('ngGridEventScroll');
         }
 
-        // var rowIndex = Math.floor(scrollTop / scope.options.rowHeight);
-         var rowIndex = Math.floor(scope.options.data.length * Math.floor(scrollTop / scope.options.canvasHeight));
+        // $log.debug('scrollPercentage', scrollPercentage);
 
-        $log.debug('newScrollTop', scrollTop);
-        $log.debug('rowIndex', rowIndex);
-        $log.debug('data.length', scope.options.data.length);
+        // var rowIndex = Math.floor(scrollTop / scope.options.rowHeight);
+        // $log.debug(scope.options.data.length + ' * (' + scrollTop + ' / ' + scope.options.canvasHeight + ')');
+        // var rowIndex = Math.floor(scope.options.data.length * scrollTop / scope.options.canvasHeight);
+        scrollTop = Math.floor(uiGridCtrl.canvas[0].scrollHeight * scrollPercentage);
+        var rowIndex = Math.min(scope.options.data.length, scope.options.data.length * scrollPercentage);
+
+        // $log.debug('newScrollTop', scrollTop);
+        // $log.debug('rowIndex', rowIndex);
+        // $log.debug('data.length', scope.options.data.length);
         var newRange = [];
         if (scope.options.data.length > scope.options.virtualizationThreshold) {
             // Have we hit the threshold going down?
@@ -47,9 +52,22 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
             }
             //Have we hit the threshold going up?
             if (uiGridCtrl.prevScrollTop > scrollTop && rowIndex > uiGridCtrl.prevScrollIndex - scope.options.scrollThreshold) {
-              return; 
+              return;
             }
-            newRange = [Math.max(0, rowIndex - scope.options.excessRows), rowIndex + uiGridCtrl.minRowsToRender() + scope.options.excessRows];
+
+            var minRows = uiGridCtrl.minRowsToRender();
+            var rangeStart = Math.floor(Math.max(0, rowIndex - scope.options.excessRows));
+            var rangeEnd = Math.floor(Math.min(scope.options.data.length, rowIndex + minRows + scope.options.excessRows));
+
+            // if (rangeEnd - rangeStart < minRows) {
+            //   $log.debug('range too small', rangeStart);
+            //   rangeStart = rangeEnd - minRows - scope.options.excessRows; //rangeStart - (minRows - (rangeEnd - rangeStart));
+            //   $log.debug('new start of range', rangeStart);
+            // }
+
+            newRange = [rangeStart, rangeEnd];
+
+            $log.debug('newRange', newRange);
         }
         else {
           var maxLen = scope.options.data.length;
@@ -64,11 +82,22 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       // Listen for scroll events
       var scrollUnbinder = scope.$on('uiGridScrollVertical', function(evt, args) {
         // $log.debug('scroll', args.scrollPercentage, scope.options.canvasHeight, args.scrollPercentage * scope.options.canvasHeight);
-        var newScrollTop = args.scrollPercentage * (uiGridCtrl.canvas[0].scrollHeight - scope.options.canvasHeight);
+        var newScrollTop = Math.max(0, args.scrollPercentage * scope.options.canvasHeight);
+        // $log.debug('uiGridCtrl.canvas[0].scrollHeight', uiGridCtrl.canvas[0].scrollHeight);
+        // $log.debug('newScrollTop', newScrollTop);
 
-        uiGridCtrl.adjustScrollVertical(newScrollTop);
+        // var scrollMultiplier = (scope.options.canvasHeight / (scope.options.rowHeight * scope.options.data.length)) * 100;
+        var scrollMultiplier = 1; // (scope.options.rowHeight * scope.options.data.length) / scope.options.canvasHeight;
+        // $log.debug('scrollMultiplier', scrollMultiplier);
+        // newScrollTop = newScrollTop * scrollMultiplier;
 
-        uiGridCtrl.canvas[0].scrollTop = newScrollTop;
+        var scrollPercentage = args.scrollPercentage * scrollMultiplier;
+
+        scope.options.offsetTop = newScrollTop;
+
+        uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
+
+        uiGridCtrl.viewport[0].scrollTop = newScrollTop;
       });
       
       // Scroll the viewport when the mousewheel is used
@@ -99,34 +128,32 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         elm.unbind('keyDown');
       });
 
-      uiGridCtrl.minRowsToRender = function() {
-        return Math.floor(scope.options.canvasHeight / scope.options.rowHeight);
-      };
-
       uiGridCtrl.setRenderedRows = function (newRows) {
-        $log.debug('scope.renderedRows', scope.renderedRows);
         scope.renderedRows.length = newRows.length;
 
-        for (var i = 0; i < newRows.length; i++) {
-          // if (! scope.renderedRows[i]) {
-            // $scope.renderedRows[i] = angular.copy(newRows[i]);
-          // }
-          scope.renderedRows[i] = angular.copy(newRows[i]);
-        }
+        scope.$evalAsync(function() {
+          for (var i = 0; i < newRows.length; i++) {
+            // if (! scope.renderedRows[i]) {
+              // $scope.renderedRows[i] = angular.copy(newRows[i]);
+            // }
+            
+            scope.renderedRows[i] = newRows[i];
+          }
+        });
+        
         //   $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
         //   $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
         //   $scope.renderedRows[i].selected = newRows[i].selected;
         //   newRows[i].renderedRowIndex = i;
         // }
 
-        // uiGridCtrl.refreshCanvas();
+        uiGridCtrl.refreshCanvas();
       };
 
       // Method for updating the visible rows
       uiGridCtrl.updateViewableRange = function(renderedRange) {
         $log.debug('new viewable range', renderedRange);
         var rowArr = scope.options.data.slice(renderedRange[0], renderedRange[1]);
-        $log.debug('rowArr', rowArr);
 
         uiGridCtrl.setRenderedRows(rowArr);
       };

@@ -17,7 +17,8 @@
 1. Mouse wheel should work in viewport (almost done)
 1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
 1. Figure out a way to put border on last row if the
-1. [IDEA] - Plugin playground. 
+1. [IDEA] - Plugin playground. Upload your own plugins and have live examples on a marketplace sort of thing.
+1. Looks like the canvas needs to be the height of all the elements (rowheight * data length) in order for the scroll to work right
 
 # Done!
 

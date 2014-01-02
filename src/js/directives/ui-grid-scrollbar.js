@@ -18,11 +18,14 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
       $log.debug('ui-grid-scrollbar link');
 
       function updateScrollbar(gridScope) {
-        gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + (gridScope.options.canvasHeight / 8 || 20) + 'px; }';
+        var scrollbarHeight = Math.max(35, gridScope.options.viewportHeight / gridScope.options.canvasHeight * gridScope.options.viewportHeight);
+
+        gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
       }
 
       scope.showScrollbar = function() {
-        return uiGridCtrl.canvas[0].scrollHeight > uiGridCtrl.viewport[0].scrollHeight;
+        // return uiGridCtrl.canvas[0].scrollHeight > uiGridCtrl.viewport[0].scrollHeight;
+        return true;
       };
 
       if (uiGridCtrl) {
@@ -36,13 +39,13 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
       var elmHeight = GridUtil.elementHeight(elm, 'margin');
 
       // Get the "bottom bound" which the scrollbar cannot scroll past
-      var elmBottomBound = scope.options.canvasHeight - elmHeight;
+      var elmBottomBound = scope.options.viewportHeight - elmHeight;
       
       function mousedown(event) {
         // Prevent default dragging of selected content
         event.preventDefault();
         elmHeight = GridUtil.elementHeight(elm, 'margin');
-        elmBottomBound = scope.options.canvasHeight - elmHeight;
+        elmBottomBound = scope.options.viewportHeight - elmHeight;
         startY = event.screenY - y;
 
         $document.on('mousemove', mousemove);
@@ -62,18 +65,18 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       }
 
-      var scrollUnbinder = scope.$on('uiGridScrollVertical', function(evt, args) {
+      var scrollDereg = scope.$on('uiGridScrollVertical', function(evt, args) {
         if (args.scrollPercentage < 0) { args.scrollPercentage = 0; }
         if (args.scrollPercentage > 1) { args.scrollPercentage = 1; }
 
         elmHeight = GridUtil.elementHeight(elm, 'margin');
-        elmBottomBound = scope.options.canvasHeight - elmHeight;
+        elmBottomBound = scope.options.viewportHeight - elmHeight;
 
         var newScrollTop = args.scrollPercentage * elmBottomBound;
 
         y = newScrollTop;
         elm.css({
-          top: newScrollTop + 'px'
+          top: (scope.options.offsetTop || 0) + newScrollTop + 'px'
         });
       });
 
@@ -83,7 +86,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
       }
 
       elm.on('$destroy', function() {
-        scrollUnbinder();
+        scrollDereg();
         $document.unbind('mousemove', mousemove);
         $document.unbind('mouseup', mouseup);
         elm.unbind('mousedown');

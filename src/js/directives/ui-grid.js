@@ -138,7 +138,7 @@ app.directive('uiGrid',
                 uiGridCtrl.buildStyles();
 
                 var scrollTop = uiGridCtrl.viewport[0].scrollTop;
-                uiGridCtrl.adjustScrollVertical(scrollTop, true);
+                uiGridCtrl.adjustScrollVertical(scrollTop, null, true);
 
                 scope.$evalAsync(function() {
                   uiGridCtrl.refreshCanvas();
@@ -177,6 +177,10 @@ app.directive('uiGrid',
           self.buildStyles();
         });
 
+        self.minRowsToRender = function() {
+          return Math.floor($scope.options.viewportHeight / $scope.options.rowHeight);
+        };
+
         // Refresh the canvas drawable size 
         self.refreshCanvas = function() {
           // Default to the configured header row height, then calculate it once the header is linked
@@ -187,13 +191,17 @@ app.directive('uiGrid',
           }
           
           // TODO(c0bra): account for footer height
-          // NOTE: canvas height drawable height is the height of the grid minus the header row height (including any border)
-          self.grid.options.canvasHeight = $scope.gridHeight - headerHeight;
+          // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
+          // self.grid.options.canvasHeight = $scope.gridHeight - headerHeight;
+          $scope.options.viewportHeight = $scope.gridHeight - headerHeight;
+          $scope.options.canvasHeight = $scope.options.rowHeight * $scope.options.data.length;
 
           // Calculate the height of all the displayable rows
           if (self.canvas && self.grid.options.data.length) {
             self.grid.options.totalRowHeight = self.grid.options.rowHeight * self.grid.options.data.length;
           }
+
+          self.buildStyles();
         }; 
       }
     };
