@@ -39,9 +39,6 @@ module.exports = function(grunt) {
           async: true
         }
       },
-      'npm-install': {
-        command: 'npm install'
-      },
       'bower-install': {
         command: 'bower install'
       }
@@ -431,7 +428,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('install', ['shell:npm-install', 'shell:bower-install', 'shell:protractor-install']);
+  grunt.registerTask('install', ['shell:bower-install', 'shell:protractor-install']);
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server

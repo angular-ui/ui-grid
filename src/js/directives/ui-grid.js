@@ -178,7 +178,7 @@ app.directive('uiGrid',
         });
 
         self.minRowsToRender = function() {
-          return Math.floor($scope.options.viewportHeight / $scope.options.rowHeight);
+          return Math.ceil($scope.options.viewportHeight / $scope.options.rowHeight);
         };
 
         // Refresh the canvas drawable size 

@@ -70,21 +70,21 @@ app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolat
           scope.columnStyles = ret;
         });
 
-        uiGridCtrl.recalcRowStyles = function() {
-          var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
-          var rowHeight = scope.options.rowHeight;
+        // uiGridCtrl.recalcRowStyles = function() {
+        //   var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
+        //   var rowHeight = scope.options.rowHeight;
 
-          var ret = '';
-          var rowStyleCount = uiGridCtrl.minRowsToRender() + (scope.options.excessRows * 2);
-          for (var i = 1; i <= rowStyleCount; i++) {
-            ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
-            offset = offset + rowHeight;
-          }
+        //   var ret = '';
+        //   var rowStyleCount = uiGridCtrl.minRowsToRender() + (scope.options.excessRows * 2);
+        //   for (var i = 1; i <= rowStyleCount; i++) {
+        //     ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
+        //     offset = offset + rowHeight;
+        //   }
 
-          scope.rowStyles = ret;
-        };
+        //   scope.rowStyles = ret;
+        // };
 
-        uiGridCtrl.styleComputions.push(uiGridCtrl.recalcRowStyles);
+        // uiGridCtrl.styleComputions.push(uiGridCtrl.recalcRowStyles);
       }
     }
   };

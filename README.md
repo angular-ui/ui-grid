@@ -7,10 +7,12 @@
 # Building
 
 Install dependencies
-
+    
+    # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
+    
     > npm install
-    > bower install
+    > grunt install
 
 Default grunt task will test and build files into dist/
 

@@ -109,8 +109,7 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         // Get the scroll percentage
         var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
-
-        // $log.debug('scrollPercentage', scrollPercentage);
+        $log.debug('scrollPercentage', scrollPercentage);
 
         // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);
         // uiGridCtrl.canvas[0].scrollTop = uiGridCtrl.canvas[0].scrollTop + scrollAmount;
@@ -151,7 +150,7 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         // uiGridCtrl.refreshCanvas();
         // uiGridCtrl.buildStyles();
-        uiGridCtrl.recalcRowStyles();
+        // uiGridCtrl.recalcRowStyles();
       };
 
       // Method for updating the visible rows
@@ -160,6 +159,12 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         var rowArr = scope.options.data.slice(renderedRange[0], renderedRange[1]);
 
         uiGridCtrl.setRenderedRows(rowArr);
+      };
+
+      scope.rowStyle = function(index) {
+        var offset = (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0);
+        var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
+        return ret;
       };
     }
   };
