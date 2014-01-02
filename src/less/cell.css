@@ -1,11 +1,8 @@
-.ui-grid-cell {
+﻿.ui-grid-cell {
   overflow: hidden;
   position: absolute;
-//  top: 0;
-//  bottom: 0;
   background-color: inherit;
 }
-
 .ui-grid-cell-contents {
   padding: 5px;
   -moz-box-sizing: border-box;
