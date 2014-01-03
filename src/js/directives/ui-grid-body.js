@@ -88,7 +88,8 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       // Listen for scroll events
       var scrollUnbinder = scope.$on('uiGridScrollVertical', function(evt, args) {
         // $log.debug('scroll', args.scrollPercentage, scope.options.canvasHeight, args.scrollPercentage * scope.options.canvasHeight);
-        var newScrollTop = Math.max(0, args.scrollPercentage * scope.options.canvasHeight);
+        var newScrollTop = Math.max(0, args.scrollPercentage * (scope.options.canvasHeight - scope.options.viewportHeight));
+
         // $log.debug('uiGridCtrl.canvas[0].scrollHeight', uiGridCtrl.canvas[0].scrollHeight);
         // $log.debug('newScrollTop', newScrollTop);
 
@@ -99,12 +100,14 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         var scrollPercentage = args.scrollPercentage * scrollMultiplier;
 
-        // $log.debug('newScrollTop', newScrollTop);
+        $log.debug('newScrollTop', newScrollTop);
+        $log.debug('scrollPercentage', scrollPercentage);
+
         scope.options.offsetTop = newScrollTop;
 
         // Prevent scroll top from going over the maximum (canvas height - viewport height)
-        if (newScrollTop > uiGridCtrl.canvas[0].offsetHeight - uiGridCtrl.viewport[0].offsetHeight) {
-          newScrollTop = uiGridCtrl.canvas[0].offsetHeight - uiGridCtrl.viewport[0].offsetHeight;
+        if (newScrollTop > scope.options.canvasHeight - scope.options.viewportHeight) {
+          newScrollTop = scope.options.canvasHeight - scope.options.viewportHeight;
         }
 
         uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
@@ -178,14 +181,30 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         uiGridCtrl.setRenderedRows(rowArr);
       };
 
-      scope.rowStyle = function (index) {
-        if (index === 0) {
-           var marginTop = uiGridCtrl.currentTopRow * scope.options.rowHeight;
-           return { 'margin-top': marginTop + 'px' };
-        }
-          
-        return null;
+      // scope.rowStyle = function(index) {
+      //    var offset = (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0);
+      //    var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
+      //    return ret;
+      // };
+
+      scope.rowStyle = function(index) {
+        var offset = Math.max(0, (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0));
+        // offset = Math.min(scope.options.canvasHeight - scope.options.viewportHeight, offset);
+        var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
+        return ret;
       };
+
+      // scope.rowStyle = function (index) {
+      //   if (index === 0) {
+      //     var offset = Math.max(0, (-1 * scope.options.rowHeight * scope.options.excessRows) + (uiGridCtrl.currentTopRow * scope.options.rowHeight));
+      //     // var marginTop = uiGridCtrl.currentTopRow * scope.options.rowHeight;
+      //     var marginTop = offset;
+
+      //      return { 'margin-top': marginTop + 'px' };
+      //   }
+        
+      //   return null;
+      // };
     }
   };
 }]);

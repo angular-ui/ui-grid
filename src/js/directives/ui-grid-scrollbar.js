@@ -62,7 +62,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         if (y > elmBottomBound) { y = elmBottomBound; }
 
         var scrollPercentage = y / elmBottomBound;
-        $log.debug('scrollPercentage', scrollPercentage);
+        // $log.debug('scrollPercentage', scrollPercentage);
 
         scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       }
@@ -75,21 +75,22 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         elmBottomBound = scope.options.viewportHeight - elmHeight;
 
         // $log.debug('elmHeight', elmHeight);
-        $log.debug('elmBottomBound', elmBottomBound);
+        // $log.debug('elmBottomBound', elmBottomBound);
 
         var newScrollTop = Math.floor(args.scrollPercentage * elmBottomBound);
 
-        $log.debug('newScrollTop', newScrollTop);
-        $log.debug('maxScrollTop', elmBottomBound);
+        // $log.debug('newScrollTop', newScrollTop);
+        // $log.debug('maxScrollTop', elmBottomBound);
 
         var newTop = newScrollTop; //(scope.options.offsetTop || 0) + newScrollTop;
 
         // Prevent scrollbar from going beyond container
-        // if (newTop > scope.options.canvasHeight - elmHeight) {
-        //   newTop = scope.options.canvasHeight - elmHeight;
-        // }
+        if (newTop > scope.options.canvasHeight - elmHeight) {
+          $log.debug('newTop too big!', newTop);
+          newTop = scope.options.canvasHeight - elmHeight;
+        }
 
-        $log.debug('newTop', newTop);
+        // $log.debug('newTop', newTop);
 
         y = newScrollTop;
         elm.css({
