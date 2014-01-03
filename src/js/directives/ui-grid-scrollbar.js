@@ -17,15 +17,16 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
 
       $log.debug('ui-grid-scrollbar link');
 
+      // Size the scrollbar according to the amount of data. 35px high minimum, otherwise scale inversely proportinal to canvas vs viewport height
       function updateScrollbar(gridScope) {
         var scrollbarHeight = Math.max(35, gridScope.options.viewportHeight / gridScope.options.canvasHeight * gridScope.options.viewportHeight);
 
         gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
       }
 
+      // Only show the scrollbar when the canvas height is less than the viewport height
       scope.showScrollbar = function() {
-        // return uiGridCtrl.canvas[0].scrollHeight > uiGridCtrl.viewport[0].scrollHeight;
-        return true;
+        return scope.options.canvasHeight > scope.options.viewportHeight;
       };
 
       if (uiGridCtrl) {
@@ -61,6 +62,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         if (y > elmBottomBound) { y = elmBottomBound; }
 
         var scrollPercentage = y / elmBottomBound;
+        $log.debug('scrollPercentage', scrollPercentage);
 
         scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       }
@@ -72,11 +74,22 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         elmHeight = GridUtil.elementHeight(elm, 'margin');
         elmBottomBound = scope.options.viewportHeight - elmHeight;
 
-        var newScrollTop = args.scrollPercentage * elmBottomBound;
+        // $log.debug('elmHeight', elmHeight);
+        $log.debug('elmBottomBound', elmBottomBound);
 
-        var newTop = (scope.options.offsetTop || 0) + newScrollTop;
+        var newScrollTop = Math.floor(args.scrollPercentage * elmBottomBound);
 
-        $log.debug('newScrollTop', scope.options.offsetTop, newScrollTop);
+        $log.debug('newScrollTop', newScrollTop);
+        $log.debug('maxScrollTop', elmBottomBound);
+
+        var newTop = newScrollTop; //(scope.options.offsetTop || 0) + newScrollTop;
+
+        // Prevent scrollbar from going beyond container
+        // if (newTop > scope.options.canvasHeight - elmHeight) {
+        //   newTop = scope.options.canvasHeight - elmHeight;
+        // }
+
+        $log.debug('newTop', newTop);
 
         y = newScrollTop;
         elm.css({

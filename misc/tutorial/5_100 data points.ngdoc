@@ -1,8 +1,8 @@
 @ngdoc overview
-@name Tutorial: Large Dataset
+@name Tutorial: 100 Rows
 @description
 
-This grid example uses a data set of 10,000 records
+This grid example uses a data set of 1000 records
 
 @example
 <example module="app">
@@ -12,7 +12,7 @@ This grid example uses a data set of 10,000 records
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {  };
 
-      $http.get('/data/500.json')
+      $http.get('/data/100.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
@@ -29,7 +29,7 @@ This grid example uses a data set of 10,000 records
   <file name="main.css">
     .grid {
       width: 500px;
-      height: 450px;
+      height: 400px;
     }
   </file>
 </example>

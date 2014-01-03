@@ -19,7 +19,8 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
       // Stick the canvas in the controller
       uiGridCtrl.canvas = angular.element( elm[0].getElementsByClassName('ui-grid-canvas')[0] );
-      uiGridCtrl.viewport = elm; //angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
+      // uiGridCtrl.viewport = elm; //angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
+      uiGridCtrl.viewport = angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
       uiGridCtrl.viewportOuterHeight = GridUtil.outerElementHeight(uiGridCtrl.viewport[0]);
 
       uiGridCtrl.prevScrollTop = 0;
@@ -41,6 +42,12 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         // var rowIndex = Math.floor(scope.options.data.length * scrollTop / scope.options.canvasHeight);
         scrollTop = Math.floor(uiGridCtrl.canvas[0].scrollHeight * scrollPercentage);
         var rowIndex = Math.min(scope.options.data.length, scope.options.data.length * scrollPercentage);
+
+        // Define a max row index that we can't scroll past
+        var maxRowIndex = scope.options.data.length - 1 - uiGridCtrl.minRowsToRender();
+        if (rowIndex > maxRowIndex) {
+          rowIndex = maxRowIndex;
+        }
 
         // $log.debug('newScrollTop', scrollTop);
         // $log.debug('rowIndex', rowIndex);
@@ -92,11 +99,15 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         var scrollPercentage = args.scrollPercentage * scrollMultiplier;
 
-        $log.debug('newScrollTop', newScrollTop);
+        // $log.debug('newScrollTop', newScrollTop);
         scope.options.offsetTop = newScrollTop;
 
-        uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
+        // Prevent scroll top from going over the maximum (canvas height - viewport height)
+        if (newScrollTop > uiGridCtrl.canvas[0].offsetHeight - uiGridCtrl.viewport[0].offsetHeight) {
+          newScrollTop = uiGridCtrl.canvas[0].offsetHeight - uiGridCtrl.viewport[0].offsetHeight;
+        }
 
+        uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
         uiGridCtrl.viewport[0].scrollTop = newScrollTop;
       });
       
@@ -111,6 +122,9 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         // Get the scroll percentage
         var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
+
+        // TODO(c0bra): Keep scrollPercentage within the range 0-1.
+
         $log.debug('scrollPercentage', scrollPercentage);
 
         // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);

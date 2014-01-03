@@ -18,7 +18,9 @@
 1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
 1. Figure out a way to put border on last row if the
 1. [IDEA] - Plugin playground. Upload your own plugins and have live examples on a marketplace sort of thing.
-1. Looks like the canvas needs to be the height of all the elements (rowheight * data length) in order for the scroll to work right
+1. The scrollbar is snapping at the bottom of the viewport. I believe this is because both it and the canvas are scrolling at the same time, by percentages, and I think they kinda get out of sync because 
+   multiplying by a percentage and rounding leaves room for error.  Hopefully we can figure out how to take the scrollbar OUT of the viewport and have it scroll on its own, without the canvas offset.
+
 
 # Done!
 
@@ -35,3 +37,4 @@
 1. [DONE] elementHeight() (AND jQuery.height()) isn't working on the .ui-grid element. It's not accounting for the border when figuring out the canvas drawing space.
   1. [NOTE] - I just had to subtract "1" from the canvas height. Not sure why. After that, any borders of any size on the grid element are accounted for correctly.
    1 [NOTE] - It was because of the top-panel bottom border, which is 1px by default
+1. [DONE] Looks like the canvas needs to be the height of all the elements (rowheight * data length) in order for the scroll to work right
