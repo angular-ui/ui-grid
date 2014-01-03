@@ -23,6 +23,7 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       uiGridCtrl.viewportOuterHeight = GridUtil.outerElementHeight(uiGridCtrl.viewport[0]);
 
       uiGridCtrl.prevScrollTop = 0;
+      uiGridCtrl.currentTopRow = 0;
 
       uiGridCtrl.adjustScrollVertical = function (scrollTop, scrollPercentage, force) {
         if (uiGridCtrl.prevScrollTop === scrollTop && !force) {
@@ -156,16 +157,20 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
       // Method for updating the visible rows
       uiGridCtrl.updateViewableRange = function(renderedRange) {
-        // $log.debug('new viewable range', renderedRange);
+        $log.debug('new viewable range', renderedRange);
         var rowArr = scope.options.data.slice(renderedRange[0], renderedRange[1]);
+        uiGridCtrl.currentTopRow = renderedRange[0];
 
         uiGridCtrl.setRenderedRows(rowArr);
       };
 
-      scope.rowStyle = function(index) {
-        var offset = Math.max(0, (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0));
-        var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
-        return ret;
+      scope.rowStyle = function (index) {
+        if (index === 0) {
+           var marginTop = uiGridCtrl.currentTopRow * scope.options.rowHeight;
+           return { 'margin-top': marginTop + 'px' };
+        }
+          
+        return null;
       };
     }
   };
