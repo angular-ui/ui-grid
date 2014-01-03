@@ -91,6 +91,7 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
         var scrollPercentage = args.scrollPercentage * scrollMultiplier;
 
+        $log.debug('newScrollTop', newScrollTop);
         scope.options.offsetTop = newScrollTop;
 
         uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
@@ -162,7 +163,7 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       };
 
       scope.rowStyle = function(index) {
-        var offset = (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0);
+        var offset = Math.max(0, (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0));
         var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
         return ret;
       };

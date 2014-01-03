@@ -74,9 +74,13 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
 
         var newScrollTop = args.scrollPercentage * elmBottomBound;
 
+        var newTop = (scope.options.offsetTop || 0) + newScrollTop;
+
+        $log.debug('newScrollTop', scope.options.offsetTop, newScrollTop);
+
         y = newScrollTop;
         elm.css({
-          top: (scope.options.offsetTop || 0) + newScrollTop + 'px'
+          top: newTop + 'px'
         });
       });
 
