@@ -2,7 +2,7 @@
 @name Tutorial: Large Dataset
 @description
 
-This grid example uses a data set of 10,000 records
+This grid example uses a data set of 500 records
 
 @example
 <example module="app">
@@ -12,7 +12,14 @@ This grid example uses a data set of 10,000 records
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {  };
 
-      $http.get('/data/500.json')
+      $scope.gridOptions.columnDefs = [
+        {field:'id'},
+        {field:'name'},
+        {field:'age'}
+      ]
+
+
+      $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
