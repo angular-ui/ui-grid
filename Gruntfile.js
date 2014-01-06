@@ -323,7 +323,7 @@ module.exports = function(grunt) {
         dest: '<%= dist %>/docs',
         testingUrlPrefix: '<%= protractor.auto.options.args.baseUrl %>/docs/#/',
         scripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.js',
         ],
         hiddenScripts: [
           'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js',
@@ -331,12 +331,14 @@ module.exports = function(grunt) {
           'node_modules/marked/lib/marked.js'
         ],
         httpScripts: [
-          '/release/<%= pkg.name %>.js'
+          process.env.TRAVIS ? '/release/<%= pkg.name %>.unstable.js' : '/release/<%= pkg.name %>.js'
+          // '/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
           'misc/doc/css/bootstrap-flatly.css',
-          '<%= dist %>/release/ui-grid.css'
+          process.env.TRAVIS ? '<%= dist %>/release/<%= pkg.name %>.unstable.css' : '<%= dist %>/release/<%= pkg.name %>.css'
+          // '<%= dist %>/release/<%= pkg.name %>.css'
         ],
         title: 'UI Grid',
         titleLink: 'http://<%= site %>',
