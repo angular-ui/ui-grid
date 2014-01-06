@@ -227,10 +227,15 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
           //   that will fit into the viewport. If it's not an even amount there will be a remainder and the viewport will not scroll far enough.
           //   We add the remainder on by using the offset-able height's (canvas - viewport) modulus of the row height, and then we multiply
           //   by the percentage of the index of the row we're scrolled to so the modulus is added increasingly the further on we scroll
-          var mod = Math.ceil( ((scope.options.canvasHeight - scope.options.viewportHeight) % scope.options.rowHeight) * (uiGridCtrl.prevScrollIndex / uiGridCtrl.maxRowIndex));
-          $log.debug('mod', mod);
+          var rowPercent = (uiGridCtrl.prevScrollIndex / uiGridCtrl.maxRowIndex);
+          var mod = Math.ceil( ((scope.options.canvasHeight - scope.options.viewportHeight) % scope.options.rowHeight) * rowPercent);
 
-          var offset = (scope.options.offsetTop) - (scope.options.rowHeight * scope.options.excessRows) - mod;
+          // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
+          //   add it back until the offset is fully there are the bottom
+          var extraRowOffset = (1 - rowPercent);
+
+          var offset = (scope.options.offsetTop) - (scope.options.rowHeight * (scope.options.excessRows - extraRowOffset)) - mod; // + extraRowOffset;
+
           // $log.debug('offset | offsetTop', offset, scope.options.offsetTop);
           return { 'margin-top': offset + 'px' };
         }
