@@ -277,6 +277,69 @@ app.service('GridUtil', ['$window', function ($window) {
     */
     elementHeight: function (elem) {
       
+    },
+
+    normalizeWheelEvent: function (event) {
+      // var toFix = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+      // var toBind = 'onwheel' in document || document.documentMode >= 9 ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'];
+      var lowestDelta, lowestDeltaXY;
+      
+      var orgEvent   = event || window.event,
+          args       = [].slice.call(arguments, 1),
+          delta      = 0,
+          deltaX     = 0,
+          deltaY     = 0,
+          absDelta   = 0,
+          absDeltaXY = 0,
+          fn;
+
+      // event = $.event.fix(orgEvent);
+      // event.type = 'mousewheel';
+
+      // Old school scrollwheel delta
+      if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta; }
+      if ( orgEvent.detail )     { delta = orgEvent.detail * -1; }
+
+      // At a minimum, setup the deltaY to be delta
+      deltaY = delta;
+
+      // Firefox < 17 related to DOMMouseScroll event
+      if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
+          deltaY = 0;
+          deltaX = delta * -1;
+      }
+
+      // New school wheel delta (wheel event)
+      if ( orgEvent.deltaY ) {
+          deltaY = orgEvent.deltaY * -1;
+          delta  = deltaY;
+      }
+      if ( orgEvent.deltaX ) {
+          deltaX = orgEvent.deltaX;
+          delta  = deltaX * -1;
+      }
+
+      // Webkit
+      if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY; }
+      if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = orgEvent.wheelDeltaX * -1; }
+
+      // Look for lowest delta to normalize the delta values
+      absDelta = Math.abs(delta);
+      if ( !lowestDelta || absDelta < lowestDelta ) { lowestDelta = absDelta; }
+      absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+      if ( !lowestDeltaXY || absDeltaXY < lowestDeltaXY ) { lowestDeltaXY = absDeltaXY; }
+
+      // Get a whole value for the deltas
+      fn     = delta > 0 ? 'floor' : 'ceil';
+      delta  = Math[fn](delta  / lowestDelta);
+      deltaX = Math[fn](deltaX / lowestDeltaXY);
+      deltaY = Math[fn](deltaY / lowestDeltaXY);
+
+      return {
+        delta: delta,
+        deltaX: deltaX,
+        deltaY: deltaY
+      };
     }
   };
 

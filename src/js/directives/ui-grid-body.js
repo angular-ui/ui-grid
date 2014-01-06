@@ -143,13 +143,16 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       });
       
       // Scroll the viewport when the mousewheel is used
-      elm.bind('mousewheel', function(evt) {
+      elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
         // use wheelDeltaY
         evt.preventDefault();
 
+        // $log.debug('evt', evt);
         // $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
 
-        var scrollAmount = evt.wheelDeltaY * -1;
+        var newEvent = GridUtil.normalizeWheelEvent(evt);
+
+        var scrollAmount = newEvent.deltaY * -120;
 
         // Get the scroll percentage
         // var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);

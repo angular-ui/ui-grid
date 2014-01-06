@@ -331,14 +331,14 @@ module.exports = function(grunt) {
           'node_modules/marked/lib/marked.js'
         ],
         httpScripts: [
-          process.env.TRAVIS ? '/release/<%= pkg.name %>.unstable.js' : '/release/<%= pkg.name %>.js'
-          // '/release/<%= pkg.name %>.js'
+          // process.env.TRAVIS ? '/release/<%= pkg.name %>.unstable.js' : '/release/<%= pkg.name %>.js'
+          '/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
           'misc/doc/css/bootstrap-flatly.css',
-          process.env.TRAVIS ? '<%= dist %>/release/<%= pkg.name %>.unstable.css' : '<%= dist %>/release/<%= pkg.name %>.css'
-          // '<%= dist %>/release/<%= pkg.name %>.css'
+          // process.env.TRAVIS ? '<%= dist %>/release/<%= pkg.name %>.unstable.css' : '<%= dist %>/release/<%= pkg.name %>.css'
+          '<%= dist %>/release/<%= pkg.name %>.css'
         ],
         title: 'UI Grid',
         titleLink: 'http://<%= site %>',
