@@ -86,37 +86,35 @@ function getWidthOrHeight( elem, name, extra ) {
   // svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
   // MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
   if ( val <= 0 || val == null ) {
-          // Fall back to computed then uncomputed css if necessary
-          val = styles[name];
-          if ( val < 0 || val == null ) {
-            val = elem.style[ name ];
-          }
+    // Fall back to computed then uncomputed css if necessary
+    val = styles[name];
+    if ( val < 0 || val == null ) {
+      val = elem.style[ name ];
+    }
 
-          // Computed unit is not pixels. Stop here and return.
-          if ( rnumnonpx.test(val) ) {
-            return val;
-          }
+    // Computed unit is not pixels. Stop here and return.
+    if ( rnumnonpx.test(val) ) {
+      return val;
+    }
 
-          // we need the check for style in case a browser which returns unreliable values
-          // for getComputedStyle silently falls back to the reliable elem.style
-          valueIsBorderBox = isBorderBox &&
-                  ( true || val === elem.style[ name ] ); // use 'true' instead of 'support.boxSizingReliable()'
+    // we need the check for style in case a browser which returns unreliable values
+    // for getComputedStyle silently falls back to the reliable elem.style
+    valueIsBorderBox = isBorderBox &&
+            ( true || val === elem.style[ name ] ); // use 'true' instead of 'support.boxSizingReliable()'
 
-          // Normalize "", auto, and prepare for extra
-          val = parseFloat( val ) || 0;
+    // Normalize "", auto, and prepare for extra
+    val = parseFloat( val ) || 0;
   }
-
-  // dump('gworh val', val);
 
   // use the active box-sizing model to add/subtract irrelevant styles
   var ret = ( val +
-          augmentWidthOrHeight(
-                  elem,
-                  name,
-                  extra || ( isBorderBox ? "border" : "content" ),
-                  valueIsBorderBox,
-                  styles
-          )
+    augmentWidthOrHeight(
+      elem,
+      name,
+      extra || ( isBorderBox ? "border" : "content" ),
+      valueIsBorderBox,
+      styles
+    )
   );
 
   // dump('ret', ret, val);

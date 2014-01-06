@@ -19,7 +19,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
 
       // Size the scrollbar according to the amount of data. 35px high minimum, otherwise scale inversely proportinal to canvas vs viewport height
       function updateScrollbar(gridScope) {
-        var scrollbarHeight = Math.max(35, gridScope.options.viewportHeight / gridScope.options.canvasHeight * gridScope.options.viewportHeight);
+        var scrollbarHeight = Math.floor(Math.max(35, gridScope.options.viewportHeight / gridScope.options.canvasHeight * gridScope.options.viewportHeight));
 
         gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
       }
@@ -62,7 +62,7 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         if (y > elmBottomBound) { y = elmBottomBound; }
 
         var scrollPercentage = y / elmBottomBound;
-        // $log.debug('scrollPercentage', scrollPercentage);
+        // $log.debug('scrollPercentage', y, scope.options.viewportHeight, elmHeight, elmBottomBound, scrollPercentage);
 
         scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       }
@@ -77,7 +77,8 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         // $log.debug('elmHeight', elmHeight);
         // $log.debug('elmBottomBound', elmBottomBound);
 
-        var newScrollTop = Math.floor(args.scrollPercentage * elmBottomBound);
+        // var newScrollTop = Math.floor(args.scrollPercentage * elmBottomBound);
+        var newScrollTop = args.scrollPercentage * elmBottomBound;
 
         // $log.debug('newScrollTop', newScrollTop);
         // $log.debug('maxScrollTop', elmBottomBound);
