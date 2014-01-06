@@ -147,16 +147,19 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
         // use wheelDeltaY
         evt.preventDefault();
 
-        $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
+        // $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
 
         var scrollAmount = evt.wheelDeltaY * -1;
 
         // Get the scroll percentage
-        var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
+        // var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
+        var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (scope.options.canvasHeight - scope.options.viewportHeight);
 
         // TODO(c0bra): Keep scrollPercentage within the range 0-1.
+        if (scrollPercentage < 0) { scrollPercentage = 0; }
+        if (scrollPercentage > 1) { scrollPercentage = 1; }
 
-        $log.debug('scrollPercentage', scrollPercentage);
+        // $log.debug('scrollPercentage', scrollPercentage);
 
         // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);
         // uiGridCtrl.canvas[0].scrollTop = uiGridCtrl.canvas[0].scrollTop + scrollAmount;
