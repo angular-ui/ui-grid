@@ -322,6 +322,20 @@ module.exports = function(grunt) {
       options: {
         dest: '<%= dist %>/docs',
         testingUrlPrefix: '<%= protractor.auto.options.args.baseUrl %>/docs/#/',
+        versionedFiles: {
+          default: process.env.TRAVIS ? 'unstable' : 'stable',
+          waitEval: "(function() { var ret = true; try { angular.module('ui.grid'); } catch (e) { ret = false; } return ret; })()",
+          versions: {
+            stable: [
+              { src: '/release/<%= pkg.name %>.js', type: 'script' },
+              { src: '/release/<%= pkg.name %>.css', type: 'css' }
+            ],
+            unstable: [
+              { src: '/release/<%= pkg.name %>.unstable.js', type: 'script' },
+              { src: '/release/<%= pkg.name %>.unstable.css', type: 'css' }
+            ]
+          }
+        },
         scripts: [
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.js',
         ],
@@ -332,13 +346,13 @@ module.exports = function(grunt) {
         ],
         httpScripts: [
           // process.env.TRAVIS ? '/release/<%= pkg.name %>.unstable.js' : '/release/<%= pkg.name %>.js'
-          '/release/<%= pkg.name %>.js'
+          // '/release/<%= pkg.name %>.js'
         ],
         styles: [
           'misc/doc/css/prettify.css',
           'misc/doc/css/bootstrap-flatly.css',
           // process.env.TRAVIS ? '<%= dist %>/release/<%= pkg.name %>.unstable.css' : '<%= dist %>/release/<%= pkg.name %>.css'
-          '<%= dist %>/release/<%= pkg.name %>.css'
+          // '<%= dist %>/release/<%= pkg.name %>.css'
         ],
         title: 'UI Grid',
         titleLink: 'http://<%= site %>',
