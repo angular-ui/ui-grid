@@ -331,8 +331,8 @@ module.exports = function(grunt) {
               { src: '/release/<%= pkg.name %>.css', type: 'css' }
             ],
             unstable: [
-              { src: '/release/<%= pkg.name %>.unstable.js', type: 'script' },
-              { src: '/release/<%= pkg.name %>.unstable.css', type: 'css' }
+              { src: '/release/<%= pkg.name %>-unstable.js', type: 'script' },
+              { src: '/release/<%= pkg.name %>-unstable.css', type: 'css' }
             ]
           }
         },
