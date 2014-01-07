@@ -176,56 +176,37 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
 
       });
 
+      // Unbind all $watches and events on $destroy
       elm.bind('$destroy', function() {
         scrollUnbinder();
-        elm.unbind('mousewheel');
         elm.unbind('keyDown');
+
+        angular.forEach(['wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'], function (eventName) {
+          elm.unbind(eventName);  
+        });
       });
 
       uiGridCtrl.setRenderedRows = function (newRows) {
-        scope.renderedRows.length = newRows.length;
+        // NOTE: without the $evalAsync the new rows don't show up
         scope.$evalAsync(function() {
           for (var i = 0; i < newRows.length; i++) {
-            // if (! scope.renderedRows[i]) {
-              // $scope.renderedRows[i] = angular.copy(newRows[i]);
-            // }
+            scope.renderedRows.length = newRows.length;
             
             scope.renderedRows[i] = newRows[i];
           }
         });
-        
-        //   $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
-        //   $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
-        //   $scope.renderedRows[i].selected = newRows[i].selected;
-        //   newRows[i].renderedRowIndex = i;
-        // }
-
-        // uiGridCtrl.refreshCanvas();
-        // uiGridCtrl.buildStyles();
-        // uiGridCtrl.recalcRowStyles();
       };
 
       // Method for updating the visible rows
       uiGridCtrl.updateViewableRange = function(renderedRange) {
-        // $log.debug('new viewable range', renderedRange);
+        // Slice out the range of rows from the data
         var rowArr = scope.options.data.slice(renderedRange[0], renderedRange[1]);
+
+        // Define the top-most rendered row
         uiGridCtrl.currentTopRow = renderedRange[0];
 
         uiGridCtrl.setRenderedRows(rowArr);
       };
-
-      // scope.rowStyle = function(index) {
-      //    var offset = (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0);
-      //    var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
-      //    return ret;
-      // };
-
-//      scope.rowStyle = function(index) {
-//        var offset = Math.max(0, (-1 * scope.options.rowHeight * scope.options.excessRows) + (scope.options.offsetTop || 0));
-//        // offset = Math.min(scope.options.canvasHeight - scope.options.viewportHeight, offset);
-//        var ret = { top: offset + (index * scope.options.rowHeight) + 'px' };
-//        return ret;
-//      };
 
       scope.rowStyle = function (index) {
         if (index === 0 && uiGridCtrl.currentTopRow !== 0) {
@@ -237,12 +218,12 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
           var mod = Math.ceil( ((scope.options.canvasHeight - scope.options.viewportHeight) % scope.options.rowHeight) * rowPercent);
 
           // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
-          //   add it back until the offset is fully there are the bottom
+          //   add it back until the offset is fully there are the bottom. Basically we add a percentage of a rowHeight back as we scroll down, from 0% at the top to 100%
+          //   at the bottom
           var extraRowOffset = (1 - rowPercent);
 
-          var offset = (scope.options.offsetTop) - (scope.options.rowHeight * (scope.options.excessRows - extraRowOffset)) - mod; // + extraRowOffset;
-
-          // $log.debug('offset | offsetTop', offset, scope.options.offsetTop);
+          var offset = (scope.options.offsetTop) - (scope.options.rowHeight * (scope.options.excessRows - extraRowOffset)) - mod;
+          
           return { 'margin-top': offset + 'px' };
         }
           
