@@ -493,5 +493,5 @@ module.exports = function(grunt) {
     }
   });
   
-  grunt.registerTask('release', ['clean', 'build', 'cut-release', 'gh-pages']);
+  grunt.registerTask('release', ['clean', 'ng-templates', 'build', 'cut-release', 'gh-pages']);
 };
