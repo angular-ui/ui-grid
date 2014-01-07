@@ -21,7 +21,7 @@ ngGridDirectives.directive('ngViewport', [function() {
                 ensureDigest();
             } else {
                 clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(ensureDigest, 50);   
+                scrollTimer = setTimeout(ensureDigest, 150);   
             }
             prevScollLeft = scrollLeft;
             prevScollTop = scrollTop;
