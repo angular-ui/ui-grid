@@ -44,31 +44,37 @@
       // restrict: 'A',
       // priority: 1000,
       require: '?^uiGrid',
-      link: function(scope, element, attrs, uiGridCtrl) {
+      link: function($scope, $elm, $attrs, uiGridCtrl) {
         $log.debug('ui-grid-style link');
+        if (uiGridCtrl === undefined) {
+           $log.warn('[ui-grid-style link] uiGridCtrl is undefined!');
+        }
 
-        var interpolateFn = $interpolate(element.text(), true);
+        var interpolateFn = $interpolate($elm.text(), true);
 
         if (interpolateFn) {
-          scope.$watch(interpolateFn, function(value) {
-            element.text(value);
+          $scope.$watch(interpolateFn, function(value) {
+            $elm.text(value);
           });
         }
 
-        if (uiGridCtrl) {
-          uiGridCtrl.styleComputions.push(function() {
+
+        //todo: remove this if by injecting gridCtrl into unit tests
+        if(uiGridCtrl){
+          uiGridCtrl.grid.registerStyleComputation(function() {
             var width = uiGridCtrl.grid.gridWidth;
-            var equalWidth = width / scope.options.columnDefs.length;
+            var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;
 
             var ret = '';
             var left = 0;
-            scope.options.columnDefs.forEach(function(c, i) {
-              ret = ret + ' .grid' + scope.gridId + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+            uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
+              ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
               left = left + equalWidth;
             });
 
-            scope.columnStyles = ret;
+            $scope.columnStyles = ret;
           });
+        }
 
           // uiGridCtrl.recalcRowStyles = function() {
           //   var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
@@ -85,7 +91,7 @@
           // };
 
           // uiGridCtrl.styleComputions.push(uiGridCtrl.recalcRowStyles);
-        }
+
       }
     };
   }]);

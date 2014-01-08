@@ -3,41 +3,26 @@
 
   var app = angular.module('ui.grid.row', []);
 
-  app.directive('uiGridRow', ['$log', '$compile', 'gridUtil', function($log, $compile, GridUtil) {
+  app.directive('uiGridRow', ['$log', function($log) {
     return {
       replace: true,
       // priority: 2001,
       templateUrl: 'ui-grid/ui-grid-row',
-      require: ['?^uiGrid', '?^ngRepeat'],
+      require: '?^uiGrid',
       scope: {
         row: '=uiGridRow',
         rowIndex: '='
       },
       compile: function() {
         return {
-          pre: function(scope, elm, attrs) {
-            // if (scope.rowIndex === 0) {
-            //   ng-style="rowStyle($index)"
-            //   elm.attr('ng-style', "rowStyle($index)");
-            //   $compile(elm)(scope);
-            // }
+          pre: function($scope, $elm, $attrs) {
           },
-          post: function(scope, elm, attrs, controllers) {
-            var uiGridCtrl   = controllers[0];
-            var ngRepeatCtrl = controllers[1];
-
+          post: function($scope, $elm, $attrs, uiGridCtrl) {
             if (uiGridCtrl === undefined) {
-              $log.warn('[ui-grid-row] uiGridCtrl is undefined!');
+              throw new Error('[ui-grid-row] uiGridCtrl is undefined!');
             }
 
-            // if (scope.rowIndex === 0) {
-            //   // ng-style="rowStyle($index)"
-            //   elm.attr('ng-style', "rowStyle($index)");
-            //   $log.debug(elm.contents());
-            //   // $compile()(scope);
-            // }
-
-            scope.options = uiGridCtrl.grid.options;
+            $scope.grid = uiGridCtrl.grid;
           }
         };
       }

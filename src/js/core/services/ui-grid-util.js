@@ -1,6 +1,6 @@
 (function() {
 
-var app = angular.module('ui.grid.util', []);
+var module = angular.module('ui.grid.util', []);
 
 function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-app.service('GridUtil', ['$window', function ($window) {
+module.service('gridUtil', ['$window', function ($window) {
   var s = {
 
     /**
@@ -219,7 +219,7 @@ app.service('GridUtil', ['$window', function ($window) {
 
       var item = data[0];
       
-      angular.forEach(item, function (prop, propName) {
+      angular.forEach(item,function (prop, propName) {
         columnDefs.push({
           field: propName,
           name: s.readableColumnName(propName)
@@ -343,7 +343,7 @@ app.service('GridUtil', ['$window', function ($window) {
     }
   };
 
-  angular.forEach(['width', 'height'], function (name){
+  ['width', 'height'].forEach(function (name){
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
     s['element' + capsName] = function (elem, extra) {
       var e = elem;

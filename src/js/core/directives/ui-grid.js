@@ -2,20 +2,70 @@
 'use strict';
 
   //class definitions
+
+  /**
+   * @description Grid defines a logical grid.  Any non-dom properties and elements needed by the grid should
+   *              be defined in this class
+   * @param id
+   * @constructor
+   */
   var Grid = function(id){
-    this.gridId = id;
+    this.id = id;
     this.options = new OptionsInstance();
+    this.headerHeight = this.options.headerRowHeight;
+    this.gridHeight = 0;
+    this.gridWidth = 0;
     this.columnsProcessors = [];
+    this.styleComputations = [];
+    this.renderedRows = [];
   };
 
   Grid.prototype.registerColumnsProcessor = function(columnsProcessor){
     this.columnsProcessors.push(columnsProcessor);
   };
 
+  Grid.prototype.registerStyleComputation = function(styleComputation){
+    this.styleComputations.push(styleComputation);
+  };
+
+  Grid.prototype.setRenderedRows = function(newRows){
+    for (var i = 0; i < newRows.length; i++) {
+      this.renderedRows.length = newRows.length;
+
+      this.renderedRows[i] = newRows[i];
+    }
+  };
+
+  Grid.prototype.buildStyles = function($scope) {
+    var self = this;
+    self.styleComputations.forEach(function(comp) {
+        comp.call(self, $scope);
+      });
+  };
+
+  Grid.prototype.minRowsToRender = function() {
+    return Math.ceil(this.getViewportHeight() / this.options.rowHeight);
+  };
+
+  // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
+  // TODO(c0bra): account for footer height
+  Grid.prototype.getViewportHeight = function(){
+    return this.gridHeight - this.headerHeight;
+  };
+
+  Grid.prototype.getCanvasHeight = function(){
+    return this.options.rowHeight * this.options.data.length;
+  };
+
+  Grid.prototype.getTotalRowHeight = function(){
+     return this.options.rowHeight * this.options.data.length;
+  };
+
+
   //Grid Options defaults
   var OptionsInstance = function(){
     this.data = [];
-    this.columnDefs = null;
+    this.columnDefs = [];
     this.headerRowHeight = 30;
     this.rowHeight = 30;
     this.maxVisibleRowCount = 200;
@@ -30,54 +80,41 @@
   };
 
 
-var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.row', 'ui.grid.style', 'ui.grid.scrollbar']);
+var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.row', 'ui.grid.style', 'ui.grid.scrollbar','ui.grid.util']);
 
   module.controller('ui.grid.controller',['$scope', '$element', '$attrs','$log','gridUtil',
     function ($scope, $elm, $attrs,$log,gridUtil) {
       $log.debug('ui-grid controller');
 
       var self = this;
-      self.styleComputions = [];
 
       self.grid = new Grid(gridUtil.newId);
+      //extend options with ui-grid attribute reference
+      angular.extend(self.grid.options, $scope.uiGrid);
 
+      //all properties of grid are available on scope
+      $scope.grid = self.grid;
 
-      var options = $scope.options = self.grid.options;
-
-      angular.extend(options, $scope.uiGrid);
-
-      // add Id to scope
-      $scope.gridId = self.grid.gridId;
-
-      // Initialize the rendered rows
-      $scope.renderedRows = [];
-
-      // Get the column definitions
-      //   If no columnDefs were supplied, generate them ourself
-      if (! options.columnDefs || options.columnDefs.length === 0) {
-        options.columnDefs = gridUtil.getColumnsFromData(options.data);
-
-        // Need to refresh the canvas size when the columnDefs change
-        $scope.$watch('options.columnDefs', function(n, o) {
-          self.refreshCanvas();
-        });
+      //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
+      if (self.grid.options.columnDefs.length === 0) {
+        self.grid.options.columnDefs =  $scope.$eval($attrs.uiGridColumns) || gridUtil.getColumnsFromData($scope.uiGrid);
       }
 
-      if (typeof($scope.options.data) !== 'undefined' && $scope.options.data !== undefined && $scope.options.data.length) {
-        $scope.visibleRowCount = $scope.options.data.length;
-      }
+      // Need to refresh the canvas size when the columnDefs change
+      $scope.$watch('grid.options.columnDefs', function () {
+        self.refreshCanvas();
+      });
 
       function dataWatchFunction(n, o) {
         // $log.debug('watch fired!', n, o);
         if (n) {
-          if ($scope.options.columnDefs.length <= 0) {
-            $scope.options.columnDefs = gridUtil.getColumnsFromData(n);
+          if (self.grid.options.columnDefs.length <= 0) {
+            self.grid.options.columnDefs = gridUtil.getColumnsFromData(n);
           }
 
-          $scope.options.data = n;
-          // scope.renderedRows = scope.options.data;
+          self.grid.options.data = n;
 
-          self.buildStyles();
+          self.grid.buildStyles();
 
           var scrollTop = self.viewport[0].scrollTop;
           self.adjustScrollVertical(scrollTop, null, true);
@@ -100,44 +137,15 @@ var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.gr
       $scope.$on('$destroy', dataWatchDereg);
 
 
-      self.buildStyles = function() {
-        // uiGridCtrl.buildColumnStyles();
-        // uiGridCtrl.buildRowStyles();
-
-        self.styleComputions.forEach(function(comp) {
-          comp.call(self, $scope);
-        });
-      };
-
-      $scope.$watch(function () { return self.styleComputions; }, function() {
-        self.buildStyles();
+      $scope.$watch(function () { return self.grid.styleComputations; }, function() {
+        self.grid.buildStyles($scope);
       });
 
-      self.minRowsToRender = function() {
-        return Math.ceil($scope.options.viewportHeight / $scope.options.rowHeight);
-      };
+
 
       // Refresh the canvas drawable size
       self.refreshCanvas = function() {
-        // Default to the configured header row height, then calculate it once the header is linked
-        var headerHeight = $scope.options.headerRowHeight;
-
-        if (self.header) {
-          headerHeight = gridUtil.outerElementHeight(self.header);
-        }
-
-        // TODO(c0bra): account for footer height
-        // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
-        // self.grid.options.canvasHeight = $scope.gridHeight - headerHeight;
-        $scope.options.viewportHeight = $scope.gridHeight - headerHeight;
-        $scope.options.canvasHeight = $scope.options.rowHeight * $scope.options.data.length;
-
-        // Calculate the height of all the displayable rows
-        if (self.canvas && self.grid.options.data.length) {
-          self.grid.options.totalRowHeight = self.grid.options.rowHeight * self.grid.options.data.length;
-        }
-
-        self.buildStyles();
+        self.grid.buildStyles($scope);
       };
     }]);
 
@@ -193,17 +201,10 @@ module.directive('uiGrid',
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $log.debug('ui-grid postlink');
 
-              // Get the grid dimensions from the element
-              // uiGridCtrl.grid.gridWidth = scope.gridWidth = gridUtil.elementWidth(elm);
-              // uiGridCtrl.grid.gridHeight = scope.gridHeight = gridUtil.elementHeight(elm);
               uiGridCtrl.grid.gridWidth = $scope.gridWidth = $elm[0].clientWidth;
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
               uiGridCtrl.refreshCanvas();
-
-
-
-
             }
           };
         }
