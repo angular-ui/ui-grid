@@ -17,7 +17,7 @@
                     continue;
                 }
                 var pVal = item[prop];
-                if(typeof pVal === 'object'){
+                if(typeof pVal === 'object' && !(pVal instanceof Date)) {
                     result = searchEntireRow(condition, pVal, c);
                     if (result) {
                         return true;
@@ -31,7 +31,8 @@
                     }
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
-                            var filterRes = f(pVal, s[1]).toString();
+                            // Have to slice off the quotes the parser would have removed
+                            var filterRes = f(pVal, s[1].slice(1,-1)).toString();
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());
@@ -79,10 +80,10 @@
                 result = searchEntireRow(condition, item, self.fieldMap);
             } else {
                 result = searchColumn(condition, item);
-            }     
+            }
             if(!result) {
                 return false;
-            }      
+            }
         }
         return true;
     };
@@ -98,7 +99,7 @@
         for (var i = 0; i < grid.filteredRows.length; i++)
         {
             grid.filteredRows[i].rowIndex = i;
-            
+
         }
         grid.rowFactory.filteredRowsChanged();
     };
