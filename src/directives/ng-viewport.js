@@ -3,6 +3,12 @@ ngGridDirectives.directive('ngViewport', [function() {
         var isMouseWheelActive;
         var prevScollLeft;
         var prevScollTop = 0;
+        var ensureDigest = function() {
+            if (!$scope.$root.$$phase) {
+                $scope.$digest();
+            }
+        };
+        var scrollTimer;
         elm.bind('scroll', function(evt) {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
@@ -11,8 +17,11 @@ ngGridDirectives.directive('ngViewport', [function() {
             }
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
-            if (!$scope.$root.$$phase) {
-                $scope.$digest();
+            if ($scope.forceSyncScrolling) {
+                ensureDigest();
+            } else {
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(ensureDigest, 150);   
             }
             prevScollLeft = scrollLeft;
             prevScollTop = scrollTop;
