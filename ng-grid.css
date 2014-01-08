@@ -34,6 +34,12 @@
   width: 1px;
   background-color: #d4d4d4;
 }
+#testDataLength {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -100000;
+}
 .ngHeaderContainer {
   position: relative;
   overflow: hidden;
@@ -350,7 +356,6 @@
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
-  cursor: text;
 }
 .ngSelectionCell {
   margin-top: 9px;
