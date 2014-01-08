@@ -3,7 +3,7 @@
 
 var app = angular.module('ui.grid.body', []);
 
-app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
+app.directive('uiGridBody', ['$log', '$document', '$timeout', 'GridUtil', function($log, $document, $timeout, GridUtil) {
   return {
     replace: true,
     // priority: 1000,
@@ -144,45 +144,101 @@ app.directive('uiGridBody', ['$log', 'GridUtil', function($log, GridUtil) {
       
       // Scroll the viewport when the mousewheel is used
       elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
-        // use wheelDeltaY
         evt.preventDefault();
 
-        // $log.debug('evt', evt);
-        // $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
-
+        // Normalize the mouse wheel event for cross-browser support
         var newEvent = GridUtil.normalizeWheelEvent(evt);
 
         var scrollAmount = newEvent.deltaY * -120;
 
         // Get the scroll percentage
-        // var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - scope.options.viewportHeight);
         var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (scope.options.canvasHeight - scope.options.viewportHeight);
 
-        // TODO(c0bra): Keep scrollPercentage within the range 0-1.
+        // Keep scrollPercentage within the range 0-1.
         if (scrollPercentage < 0) { scrollPercentage = 0; }
         if (scrollPercentage > 1) { scrollPercentage = 1; }
-
-        // $log.debug('scrollPercentage', scrollPercentage);
-
-        // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);
-        // uiGridCtrl.canvas[0].scrollTop = uiGridCtrl.canvas[0].scrollTop + scrollAmount;
-        // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop);
 
         scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: elm });
       });
 
+      var startY = 0,
+          startX = 0,
+          scrollTopStart = 0,
+          direction = 1;
+      function touchmove(event) {
+        // $log.debug('touchstart');
+        event.preventDefault();
+
+        // $log.debug('event', event);
+
+        var deltaX, deltaY, newX, newY;
+        newX = event.targetTouches[0].pageX;
+        newY = event.targetTouches[0].screenY;
+        deltaX = -(newX - startX);
+        deltaY = -(newY - startY);
+
+        direction = (deltaY < 1) ? -1 : 1;
+
+        deltaY *= 2;
+
+        var scrollPercentage = (scrollTopStart + deltaY) / (scope.options.canvasHeight - scope.options.viewportHeight);
+
+        // $log.debug('scrollPercentage', scrollPercentage, deltaY, scope.options.canvasHeight - scope.options.viewportHeight);
+
+        scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: event.target });
+      }
+
+      function touchend(event) {
+        // $log.debug('touchend!');
+        event.preventDefault();
+        $document.unbind('touchmove', touchmove);
+        $document.unbind('touchend', touchend);
+        $document.unbind('touchcancel', touchend);
+
+        var decelerateInterval = 125; // 1/8th second
+        var decelerateCount = 4; // == 1/2 second
+        var scrollLength = 80 * direction;
+        
+        function decelerate() {
+          $timeout(function() {
+            var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollLength) / (scope.options.canvasHeight - scope.options.viewportHeight);
+
+            scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: event.target });
+
+            decelerateCount = decelerateCount -1;
+            scrollLength = scrollLength / 2;
+
+            if (decelerateCount > 0) {
+              decelerate();
+            }
+          }, decelerateInterval);
+        }
+        decelerate();
+      }
+
+      if (GridUtil.isTouchEnabled()) {
+        elm.bind('touchstart', function (event) {
+          event.preventDefault();
+          // $log.debug('touchstart');
+          startY = event.targetTouches[0].screenY;
+          scrollTopStart = uiGridCtrl.viewport[0].scrollTop;
+          // $log.debug('scrollTopStart', scrollTopStart);
+          $document.on('touchmove', touchmove);
+          $document.on('touchend touchcancel', touchend);
+        });
+      }
+
       // TODO(c0bra): Scroll the viewport when the up and down arrow keys are used
-      elm.bind('keyDown', function(evt, args) {
+      elm.bind('keydown', function(evt, args) {
 
       });
 
       // Unbind all $watches and events on $destroy
       elm.bind('$destroy', function() {
         scrollUnbinder();
-        elm.unbind('keyDown');
 
-        angular.forEach(['wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'], function (eventName) {
-          elm.unbind(eventName);  
+        angular.forEach(['touchstart', 'touchmove', 'touchend', 'keydown', 'wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'], function (eventName) {
+          elm.unbind(eventName);
         });
       });
 

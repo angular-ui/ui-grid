@@ -24,14 +24,14 @@ app.directive('uiGridScrollbar', ['$log', '$document', 'GridUtil', function($log
         gridScope.scrollbarStyles = '.grid' + gridScope.gridId + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
       }
 
+      if (uiGridCtrl) {
+        uiGridCtrl.styleComputions.push(updateScrollbar);
+      }
+
       // Only show the scrollbar when the canvas height is less than the viewport height
       scope.showScrollbar = function() {
         return scope.options.canvasHeight > scope.options.viewportHeight;
       };
-
-      if (uiGridCtrl) {
-        uiGridCtrl.styleComputions.push(updateScrollbar);
-      }
 
       var startY = 0,
           y = 0;

@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-app.service('GridUtil', ['$window', function ($window) {
+app.service('GridUtil', ['$window', '$document', function ($window, $document) {
   var s = {
 
     /**
@@ -340,6 +340,17 @@ app.service('GridUtil', ['$window', function ($window) {
         deltaX: deltaX,
         deltaY: deltaY
       };
+    },
+
+    // Stolen from Modernizr
+    isTouchEnabled: function() {
+      var bool;
+
+      if (('ontouchstart' in $window) || $window.DocumentTouch && $document instanceof DocumentTouch) {
+        bool = true;
+      }
+
+      return bool;
     }
   };
 

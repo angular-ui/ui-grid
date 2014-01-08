@@ -219,7 +219,8 @@ module.exports = function(grunt) {
           it: false,
           iit: false,
           module: false,
-          debugger: false
+          debugger: false,
+          DocumentTouch: false
         }
       },
       gruntfile: {
@@ -305,6 +306,7 @@ module.exports = function(grunt) {
       },
       docs: {
         options: {
+          hostname: '*',
           port: process.env.DOCS_PORT || 9003,
           base: '<%= dist %>',
           livereload: true
@@ -337,10 +339,11 @@ module.exports = function(grunt) {
           }
         },
         scripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.js',
+          '//code.angularjs.org/1.2.6/angular.js',
+          '//code.angularjs.org/1.2.6/angular-touch.js',
         ],
         hiddenScripts: [
-          'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js',
+          'http://code.angularjs.org/1.2.6/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],

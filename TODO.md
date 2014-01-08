@@ -12,6 +12,8 @@
 1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
 1. [IDEA] - Plugin playground. Upload your own plugins and have live examples on a marketplace sort of thing.
 1. Make mouse wheel scroll N number of rows, not a specific amount of pixels.
+1. "Edit in Plunkr / JsFiddle" buttons don't work. They need to use the absolute url to the script file.
+  1. Maybe we can just do another conditional on process.env.TRAVIS and add the <%= site %> on as a prefix.
 
 
 # Done!

@@ -18,15 +18,17 @@ var app = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.
         var app = angular.module('app', ['ui.grid']);
 
         app.controller('MainCtrl', ['$scope', function ($scope) {
-          $scope.data = [
-            { name: 'Bob', title: 'CEO' },
-            { name: 'Frank', title: 'Lowly Developer' }
-          ];
+          $scope.gridOptions = {
+            data: [
+              { name: 'Bob', title: 'CEO' },
+              { name: 'Frank', title: 'Lowly Developer' }
+            ]
+          };
         }]);
       </file>
       <file name="index.html">
         <div ng-controller="MainCtrl">
-          <div ui-grid="{ data: data }"></div>
+          <div ui-grid="gridOptions"></div>
         </div>
       </file>
     </example>
@@ -202,7 +204,7 @@ app.directive('uiGrid',
           }
 
           self.buildStyles();
-        }; 
+        };
       }
     };
   }
