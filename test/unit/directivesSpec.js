@@ -374,7 +374,6 @@ describe('directives', function () {
                         // dump(Array.prototype.forEach.mostRecentCall);
 
                         expect(angular.forEach).toHaveBeenCalled();
-                        expect(Array.prototype.forEach).not.toHaveBeenCalled();
                     }));
                 });
 
