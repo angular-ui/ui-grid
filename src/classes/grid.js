@@ -85,6 +85,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // the template for the column menu and filter, including the button.
         footerTemplate: undefined,
 
+        // Enables a trade off between refreshing the contents of the grid continuously while scrolling (behaviour when true) 
+        // and keeping the scroll bar button responsive at the expense of refreshing grid contents (behaviour when false)
+        forceSyncScrolling: true,
+
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
         
@@ -184,7 +188,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         i18n: 'en',
         
         //the threshold in rows to force virtualization on
-        virtualizationThreshold: 50
+        virtualizationThreshold: 50,
+
+	// Don't handle tabs, so they can be used to navigate between controls.
+	noTabInterference: false
     },
         self = this;
     self.maxCanvasHt = 0;
@@ -369,7 +376,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
-                    enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus
+                    enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus,
+                    cellEditableCondition: self.config.cellEditableCondition
                 }, $scope, self, domUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
@@ -728,6 +736,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.showFooter = self.config.showFooter;
     $scope.footerRowHeight = $scope.showFooter ? self.config.footerRowHeight : 0;
     $scope.showColumnMenu = self.config.showColumnMenu;
+    $scope.forceSyncScrolling = self.config.forceSyncScrolling;
     $scope.showMenu = false;
     $scope.configGroups = [];
     $scope.gridId = self.gridId;
@@ -802,8 +811,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             newRange = new ngRange(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
         } else {
-            var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
-            newRange = new ngRange(0, Math.min(maxLen, self.minRowsToRender() + EXCESS_ROWS));
+            var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.filteredRows.length;
+            newRange = new ngRange(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
         }
         self.prevScrollTop = scrollTop;
         self.rowFactory.UpdateViewableRange(newRange);
