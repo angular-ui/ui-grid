@@ -94,44 +94,70 @@
             direction,
             // IE9 HACK.... omg, I can't reference data array within the sort fn below. has to be a separate reference....!!!!
             d = data.slice(0);
-        //now actually sort the data
-        data.sort(function (itemA, itemB) {
-            var tem = 0,
-                indx = 0,
-                sortFn;
-            while (tem === 0 && indx < l) {
-                // grab the metadata for the rest of the logic
-                col = sortInfo.columns[indx];
-                direction = sortInfo.directions[indx];
-                sortFn = sortService.getSortFn(col, d);
-                
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
-                // we want to allow zero values to be evaluated in the sort function
-                if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
-                    // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-                    if (!propB && !propA) {
-                        tem = 0;
-                    }
-                    else if (!propA) {
-                        tem = 1;
-                    }
-                    else if (!propB) {
-                        tem = -1;
-                    }
+
+
+        var sorted = false;
+        // IE array.sort is very slow when comparison function is used.
+        // This is a workaround for IE in a common case when only one
+        // sort column is used and its comparison function is sortAlpha.
+        if ((navigator.appName == 'Microsoft Internet Explorer') && (sortInfo.columns.length == 1)) {
+            col = sortInfo.columns[0];
+            var sortFn = sortService.getSortFn(col, d);
+            if (sortFn === sortService.sortAlpha){
+                var origSortFn = Object.prototype.toString;
+                var fieldFn = $parse(order[0]);
+                Object.prototype.toString = function () {
+                    return fieldFn(this);
+                };
+                data.sort();
+                Object.prototype.toString = origSortFn;
+                var direction = sortInfo.directions[0];
+                if (direction != ASC) {
+                    data.reverse();
                 }
-                else {
-                    tem = sortFn(propA, propB);
+                sorted = true;
+            }
+        }
+
+        if (!sorted) {
+            data.sort(function (itemA, itemB) {
+                var tem = 0,
+                    indx = 0,
+                    sortFn;
+                while (tem === 0 && indx < l) {
+                    // grab the metadata for the rest of the logic
+                    col = sortInfo.columns[indx];
+                    direction = sortInfo.directions[indx];
+                    sortFn = sortService.getSortFn(col, d);
+                    
+                    var propA = $parse(order[indx])(itemA);
+                    var propB = $parse(order[indx])(itemB);
+                    // we want to allow zero values to be evaluated in the sort function
+                    if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
+                        // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
+                        if (!propB && !propA) {
+                            tem = 0;
+                        }
+                        else if (!propA) {
+                            tem = 1;
+                        }
+                        else if (!propB) {
+                            tem = -1;
+                        }
+                    }
+                    else {
+                        tem = sortFn(propA, propB);
+                    }
+                    indx++;
                 }
-                indx++;
-            }
-            //made it this far, we don't have to worry about null & undefined
-            if (direction === ASC) {
-                return tem;
-            } else {
-                return 0 - tem;
-            }
-        });
+                //made it this far, we don't have to worry about null & undefined
+                if (direction === ASC) {
+                    return tem;
+                } else {
+                    return 0 - tem;
+                }
+            });
+        }
     };
     sortService.Sort = function(sortInfo, data) {
         if (sortService.isSorting) {
