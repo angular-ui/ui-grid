@@ -1,6 +1,6 @@
 
 describe('ui.grid.style', function() {
-  var GridUtil;
+
 
   beforeEach(module('ui.grid.style'));
 

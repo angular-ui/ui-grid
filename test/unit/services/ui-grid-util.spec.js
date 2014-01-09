@@ -1,18 +1,18 @@
 describe('ui.grid.util', function() {
-  var GridUtil,
+  var gridUtil,
       $window;
 
   beforeEach(module('ui.grid.util'));
 
-  beforeEach(inject(function(_GridUtil_, _$window_) {
-    GridUtil = _GridUtil_;
+  beforeEach(inject(function(_gridUtil_, _$window_) {
+    gridUtil = _gridUtil_;
     $window = _$window_;
   }));
 
   describe('newId()', function() {
     it('creates a unique id each time it is called', function() {
-      var id1 = GridUtil.newId();
-      var id2 = GridUtil.newId();
+      var id1 = gridUtil.newId();
+      var id2 = gridUtil.newId();
 
       expect(id1).not.toEqual(id2);
     });
@@ -21,7 +21,7 @@ describe('ui.grid.util', function() {
   describe('readableColumnName', function() {
     it('does not throw with null name', function() {
       expect(function() {
-        GridUtil.readableColumnName(null);
+        gridUtil.readableColumnName(null);
       }).not.toThrow();
     });
 
@@ -44,12 +44,12 @@ describe('ui.grid.util', function() {
         var strIn = set[0];
         var strOut = set[1];
         
-        expect(GridUtil.readableColumnName(strIn)).toEqual(strOut);
+        expect(gridUtil.readableColumnName(strIn)).toEqual(strOut);
       });
     });
 
     it('handles multiple capitlization->separations', function() {
-      var multiCapsed = GridUtil.readableColumnName('thisIsSoCool');
+      var multiCapsed = gridUtil.readableColumnName('thisIsSoCool');
 
       expect(multiCapsed).toEqual('This Is So Cool');
     });
@@ -64,7 +64,7 @@ describe('ui.grid.util', function() {
         }
       ];
 
-      var columns = GridUtil.getColumnsFromData(data);
+      var columns = gridUtil.getColumnsFromData(data);
 
       expect(columns)
       .toEqual([
@@ -100,7 +100,7 @@ describe('ui.grid.util', function() {
         //var elm = angular.element('<div style="width: 200px">asdf</div>');
         // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
 
-        var w = GridUtil.elementWidth(elm);
+        var w = gridUtil.elementWidth(elm);
 
         expect(w).toEqual(200);
       });
@@ -108,7 +108,7 @@ describe('ui.grid.util', function() {
 
     describe('elementHeight()', function () {
       it('should calculate element height', function() {
-        var w = GridUtil.elementHeight(elm);
+        var w = gridUtil.elementHeight(elm);
 
         expect(w).toEqual(300);
       });
@@ -119,7 +119,7 @@ describe('ui.grid.util', function() {
         //var elm = angular.element('<div style="width: 200px">asdf</div>');
         // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
 
-        var w = GridUtil.elementWidth(elm);
+        var w = gridUtil.elementWidth(elm);
 
         expect(w).toEqual(200);
       });
@@ -128,7 +128,7 @@ describe('ui.grid.util', function() {
     describe('outerElementHeight()', function () {
       it('should calculate element height, including border', function() {
         elm.style.border = "1px solid black";
-        var w = GridUtil.outerElementHeight(elm);
+        var w = gridUtil.outerElementHeight(elm);
 
         expect(w).toEqual(302);
       });
@@ -137,7 +137,7 @@ describe('ui.grid.util', function() {
     describe('outerElementWidth()', function () {
       it('should calculate element Width, including border', function() {
         elm.style.border = "1px solid black";
-        var w = GridUtil.outerElementWidth(elm);
+        var w = gridUtil.outerElementWidth(elm);
 
         expect(w).toEqual(202);
       });

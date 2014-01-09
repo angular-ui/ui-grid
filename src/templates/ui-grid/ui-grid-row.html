@@ -1,5 +1,5 @@
 <div>
-  <div ng-repeat="col in options.columnDefs" class="ui-grid-cell col{{ $index }}"> <!-- ng-style="{ 'cursor': row.cursor }" ng-class="col.colIndex()" class="{{col.cellClass}}" -->
+  <div ng-repeat="col in grid.options.columnDefs" class="ui-grid-cell col{{ $index }}"> <!-- ng-style="{ 'cursor': row.cursor }" ng-class="col.colIndex()" class="{{col.cellClass}}" -->
     <div class="ui-grid-vertical-bar">&nbsp;</div> <!-- ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }" -->
     <div class="ui-grid-cell-contents">{{ row[col.field] }}</div> <!-- ng-class="col.colIndex()" -->
   </div>

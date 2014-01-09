@@ -1,28 +1,28 @@
-<div class="ui-grid grid{{ gridId }}">
+<div class="ui-grid grid{{ grid.id }}">
   <!-- TODO (c0bra): add "scoped" attr here, eventually? -->
   <style ui-grid-style>
-    .grid{{ gridId }} {
+    .grid{{ grid.id }} {
       /* Styles for the grid */
     }
 
-    .grid{{ gridId }} .ui-grid-viewport {
-      height: {{ options.viewportHeight }}px;
+    .grid{{ grid.id }} .ui-grid-viewport {
+      height: {{ grid.getViewportHeight() }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-canvas {
-      height: {{ options.canvasHeight }}px;
+    .grid{{ grid.id }} .ui-grid-canvas {
+      height: {{ grid.getCanvasHeight() }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-header, .grid{{ gridId }} .ui-grid-header-cell .ui-grid-vertical-bar {
-      height: {{ options.headerRowHeight }}px;
+    .grid{{ grid.id }} .ui-grid-header, .grid{{ grid.id }} .ui-grid-header-cell .ui-grid-vertical-bar {
+      height: {{ grid.options.headerRowHeight }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-row, .grid{{ gridId }} .ui-grid-cell, .grid{{ gridId }} .ui-grid-cell .ui-grid-vertical-bar {
-      height: {{ options.rowHeight }}px;
+    .grid{{ grid.id }} .ui-grid-row, .grid{{ grid.id }} .ui-grid-cell, .grid{{ grid.id }} .ui-grid-cell .ui-grid-vertical-bar {
+      height: {{ grid.options.rowHeight }}px;
     }
 
-    .grid{{ gridId }} .ui-grid-row:last-child .ui-grid-cell {
-      border-bottom-width: {{ ((options.totalRowHeight < options.viewportHeight) && '1') || '0' }}px;
+    .grid{{ grid.id }} .ui-grid-row:last-child .ui-grid-cell {
+      border-bottom-width: {{ ((grid.getTotalRowHeight() < grid.getViewportHeight()) && '1') || '0' }}px;
     }
 
     {{ rowStyles }}

@@ -1,6 +1,6 @@
 <div class="ui-grid-top-panel">
   <div class="ui-grid-header">
-    <div ng-repeat="col in options.columnDefs" class="ui-grid-header-cell col{{ $index }}"> <!-- ng-style="{ height: col.headerRowHeight }" -->
+    <div ng-repeat="col in grid.options.columnDefs" class="ui-grid-header-cell col{{ $index }}"> <!-- ng-style="{ height: col.headerRowHeight }" -->
       <div class="ui-grid-vertical-bar">&nbsp;</div> <!-- ng-style="{height: col.headerRowHeight}" ng-class="{ ngVerticalBarVisible: !$last }" -->
       <!-- <div ng-header-cell></div> -->
       <div class="ui-grid-cell-contents">{{ col.name || col.field }}</span></div>
