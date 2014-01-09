@@ -97,22 +97,24 @@
 
 
         var sorted = false;
+        var sortFn;
+
         // IE array.sort is very slow when comparison function is used.
         // This is a workaround for IE in a common case when only one
         // sort column is used and its comparison function is sortAlpha.
-        if ((navigator.appName == 'Microsoft Internet Explorer') && (sortInfo.columns.length == 1)) {
+        if ((navigator.appName === 'Microsoft Internet Explorer') && (sortInfo.columns.length === 1)) {
             col = sortInfo.columns[0];
-            var sortFn = sortService.getSortFn(col, d);
+            sortFn = sortService.getSortFn(col, d);
             if (sortFn === sortService.sortAlpha){
-                var origSortFn = Object.prototype.toString;
+                var origToStringFn = Object.prototype.toString;
                 var fieldFn = $parse(order[0]);
                 Object.prototype.toString = function () {
                     return fieldFn(this);
                 };
                 data.sort();
-                Object.prototype.toString = origSortFn;
+                Object.prototype.toString = origToStringFn;
                 var direction = sortInfo.directions[0];
-                if (direction != ASC) {
+                if (direction !== ASC) {
                     data.reverse();
                 }
                 sorted = true;
@@ -122,8 +124,7 @@
         if (!sorted) {
             data.sort(function (itemA, itemB) {
                 var tem = 0,
-                    indx = 0,
-                    sortFn;
+                    indx = 0;
                 while (tem === 0 && indx < l) {
                     // grab the metadata for the rest of the logic
                     col = sortInfo.columns[indx];
