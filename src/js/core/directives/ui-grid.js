@@ -96,11 +96,6 @@ var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.gr
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
-      //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
-      if (self.grid.options.columnDefs.length === 0) {
-        self.grid.options.columnDefs =  $scope.$eval($attrs.uiGridColumns) || gridUtil.getColumnsFromData($scope.uiGrid);
-      }
-
       // Need to refresh the canvas size when the columnDefs change
       $scope.$watch('grid.options.columnDefs', function () {
         self.refreshCanvas();
@@ -109,16 +104,20 @@ var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.gr
       function dataWatchFunction(n, o) {
         // $log.debug('watch fired!', n, o);
         if (n) {
-          if (self.grid.options.columnDefs.length <= 0) {
-            self.grid.options.columnDefs = gridUtil.getColumnsFromData(n);
+          //use gridOptions.columns or ui-grid-columns attribute json or get the columns from the data
+          if (self.grid.options.columnDefs.length === 0) {
+            self.grid.options.columnDefs =  $scope.$eval($attrs.uiGridColumns) || gridUtil.getColumnsFromData(n);
           }
 
           self.grid.options.data = n;
 
           self.grid.buildStyles();
 
-          var scrollTop = self.viewport[0].scrollTop;
-          self.adjustScrollVertical(scrollTop, null, true);
+          //todo: move this to the ui-body-directive and define how we handle ordered event registration
+          if(self.viewport){
+            var scrollTop = self.viewport[0].scrollTop;
+            self.adjustScrollVertical(scrollTop, null, true);
+          }
 
           $scope.$evalAsync(function() {
             self.refreshCanvas();
