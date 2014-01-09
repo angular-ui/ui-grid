@@ -82,7 +82,8 @@
 
 var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.grid.row', 'ui.grid.style', 'ui.grid.scrollbar','ui.grid.util']);
 
-  module.controller('ui.grid.controller',['$scope', '$element', '$attrs','$log','gridUtil',
+
+  module.controller('uiGridController',['$scope', '$element', '$attrs','$log','gridUtil',
     function ($scope, $elm, $attrs,$log,gridUtil) {
       $log.debug('ui-grid controller');
 
@@ -145,6 +146,10 @@ var module = angular.module('ui.grid', ['ui.grid.header', 'ui.grid.body', 'ui.gr
 
       // Refresh the canvas drawable size
       self.refreshCanvas = function() {
+        if (self.header) {
+          self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+        }
+
         self.grid.buildStyles($scope);
       };
     }]);
@@ -195,7 +200,7 @@ module.directive('uiGrid',
           uiGrid: '='
         },
         replace: true,
-        controller: 'ui.grid.controller',
+        controller: 'uiGridController',
         compile: function () {
           return {
             post: function ($scope, $elm, $attrs, uiGridCtrl) {

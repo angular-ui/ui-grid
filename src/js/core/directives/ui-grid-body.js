@@ -106,9 +106,8 @@
 
         // Listen for scroll events
         var scrollUnbinder = $scope.$on('uiGridScrollVertical', function(evt, args) {
-          $log.debug('scroll', args.scrollPercentage, uiGridCtrl.grid.getCanvasHeight(), args.scrollPercentage * uiGridCtrl.grid.getCanvasHeight());
-
-          var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.viewportHeight);
+          // $log.debug('scroll', args.scrollPercentage, uiGridCtrl.grid.getCanvasHeight(), args.scrollPercentage * uiGridCtrl.grid.getCanvasHeight());
+          var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
           // $log.debug('scrollLength', scrollLength, scrollLength % uiGridCtrl.grid.options.rowHeight);
           var newScrollTop = Math.max(0, args.scrollPercentage * scrollLength);
@@ -171,15 +170,16 @@
           $scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: $elm });
         });
 
+        
         var startY = 0,
             startX = 0,
             scrollTopStart = 0,
-            direction = 1;
+            direction = 1,
+            moveStart;
         function touchmove(event) {
-          // $log.debug('touchstart');
           event.preventDefault();
 
-          // $log.debug('event', event);
+          // $log.debug('touchmove', event);
 
           var deltaX, deltaY, newX, newY;
           newX = event.targetTouches[0].pageX;
@@ -193,8 +193,6 @@
 
           var scrollPercentage = (scrollTopStart + deltaY) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
-          // $log.debug('scrollPercentage', scrollPercentage, deltaY, scope.options.canvasHeight - scope.options.viewportHeight);
-
           $scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: event.target });
         }
 
@@ -205,9 +203,19 @@
           $document.unbind('touchend', touchend);
           $document.unbind('touchcancel', touchend);
 
+          // Get the distance we moved on the Y axis
+          var scrollTopEnd = uiGridCtrl.viewport[0].scrollTop;
+          var deltaY = Math.abs(scrollTopEnd - scrollTopStart);
+
+          // Get the duration it took to move this far
+          var moveDuration = (new Date()) - moveStart;
+
+          // Scale the amount moved by the time it took to move it (i.e. quicker, longer moves == more scrolling after the move is over)
+          var moveScale = deltaY / moveDuration;
+
           var decelerateInterval = 125; // 1/8th second
           var decelerateCount = 4; // == 1/2 second
-          var scrollLength = 80 * direction;
+          var scrollLength = 60 * direction * moveScale;
           
           function decelerate() {
             $timeout(function() {
@@ -229,10 +237,12 @@
         if (GridUtil.isTouchEnabled()) {
           $elm.bind('touchstart', function (event) {
             event.preventDefault();
-            $log.debug('touchstart', event);
+            // $log.debug('touchstart', event);
+
+            moveStart = new Date();
             startY = event.targetTouches[0].screenY;
             scrollTopStart = uiGridCtrl.viewport[0].scrollTop;
-            // $log.debug('scrollTopStart', scrollTopStart);
+            
             $document.on('touchmove', touchmove);
             $document.on('touchend touchcancel', touchend);
           });
@@ -280,7 +290,6 @@
             //   We add the remainder on by using the offset-able height's (canvas - viewport) modulus of the row height, and then we multiply
             //   by the percentage of the index of the row we're scrolled to so the modulus is added increasingly the further on we scroll
             var rowPercent = (uiGridCtrl.prevScrollIndex / uiGridCtrl.maxRowIndex);
-            // var mod = Math.ceil( ((uiGridCtrl.grid.options.canvasHeight - uiGridCtrl.grid.options.viewportHeight) % uiGridCtrl.grid.options.rowHeight) * rowPercent);
             var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight()) % uiGridCtrl.grid.options.rowHeight) * rowPercent);
 
             // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
