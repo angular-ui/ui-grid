@@ -113,7 +113,7 @@
                 };
                 data.sort();
                 Object.prototype.toString = origToStringFn;
-                var direction = sortInfo.directions[0];
+                direction = sortInfo.directions[0];
                 if (direction !== ASC) {
                     data.reverse();
                 }
