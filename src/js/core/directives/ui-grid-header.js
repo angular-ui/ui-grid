@@ -19,6 +19,7 @@
 
         if (uiGridCtrl) {
           uiGridCtrl.grid.headerHeight = gridUtil.outerElementHeight($elm);
+          $log.debug('uiGridCtrl.grid.headerHeight', $elm);
         }
       }
     };

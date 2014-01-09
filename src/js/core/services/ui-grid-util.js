@@ -353,7 +353,7 @@ module.service('gridUtil', ['$window', '$document', function ($window, $document
       return bool;
     }
   };
-
+  
   ['width', 'height'].forEach(function (name){
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
     s['element' + capsName] = function (elem, extra) {
