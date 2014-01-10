@@ -44,7 +44,7 @@
           scrollTop = uiGridCtrl.canvas[0].scrollHeight * scrollPercentage;
 
           var minRows = uiGridCtrl.grid.minRowsToRender();
-          var maxRowIndex = uiGridCtrl.grid.options.data.length - minRows;
+          var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
 
           // var rowIndex = Math.ceil(Math.min(uiGridCtrl.grid.options.data.length, uiGridCtrl.grid.options.data.length * scrollPercentage));
@@ -60,7 +60,7 @@
           // $log.debug('rowIndex', rowIndex);
           // $log.debug('data.length', uiGridCtrl.grid.options.data.length);
           var newRange = [];
-          if (uiGridCtrl.grid.options.data.length > uiGridCtrl.grid.options.virtualizationThreshold) {
+          if (uiGridCtrl.grid.rows.length > uiGridCtrl.grid.options.virtualizationThreshold) {
             // Have we hit the threshold going down?
             if (uiGridCtrl.prevScrollTop < scrollTop && rowIndex < uiGridCtrl.prevScrollIndex + uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
               return;
@@ -73,7 +73,7 @@
             // $log.debug('rowIndex | maxRowIndex | minRows', rowIndex, maxRowIndex, minRows);
 
             var rangeStart = Math.max(0, rowIndex - uiGridCtrl.grid.options.excessRows);
-            var rangeEnd = Math.min(uiGridCtrl.grid.options.data.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
+            var rangeEnd = Math.min(uiGridCtrl.grid.rows.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
 
             // if (rangeEnd - rangeStart < minRows) {
             //   $log.debug('range too small', rangeStart);
@@ -95,7 +95,7 @@
             newRange = [rangeStart, rangeEnd];
           }
           else {
-            var maxLen = uiGridCtrl.grid.options.data.length;
+            var maxLen = uiGridCtrl.grid.rows.length;
             newRange = [0, Math.max(maxLen, minRows + uiGridCtrl.grid.options.excessRows)];
           }
 
@@ -275,7 +275,7 @@
         // Method for updating the visible rows
         var updateViewableRange = function(renderedRange) {
           // Slice out the range of rows from the data
-          var rowArr = uiGridCtrl.grid.options.data.slice(renderedRange[0], renderedRange[1]);
+          var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
 
           // Define the top-most rendered row
           uiGridCtrl.currentTopRow = renderedRange[0];

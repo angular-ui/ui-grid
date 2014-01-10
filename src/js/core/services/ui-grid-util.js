@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$window', '$document', function ($window, $document) {
+module.service('gridUtil', ['$window', '$document','$http', function ($window, $document,$http) {
   var s = {
 
     /**
@@ -251,6 +251,29 @@ module.service('gridUtil', ['$window', '$document', function ($window, $document
       };
     })(),
 
+
+    /**
+     * @ngdoc method
+     * @name getTemplate
+     * @methodOf ui.grid.util.service:GridUtil
+     * @description Get's template from Url
+     *
+     * @returns {object} a promise resolving to template contents
+     *
+     * @example
+     <pre>
+     GridUtil.getTemplate(url).then(function (contents) {
+          alert(contents);
+        })
+     </pre>
+     */
+    getTemplate: function (url) {
+      return $http({method: 'GET', url: url, cache: true})
+        .then(function (result) {
+          return result.data;
+        });
+    },
+
     /**
     * @ngdoc method
     * @name elementWidth
@@ -351,6 +374,13 @@ module.service('gridUtil', ['$window', '$document', function ($window, $document
       }
 
       return bool;
+    },
+
+    isNullOrUndefined: function(obj) {
+      if (obj === undefined || obj === null) {
+        return true;
+      }
+      return false;
     }
   };
 

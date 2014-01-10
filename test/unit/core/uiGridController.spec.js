@@ -6,11 +6,18 @@ describe('ui.grid.controller', function() {
   beforeEach(module('ui.grid'));
 
   describe('no columns. data in options', function() {
-    beforeEach(inject(function ($rootScope, $controller,_gridUtil_) {
+    beforeEach(inject(function ($rootScope, $controller,_gridUtil_,$templateCache) {
       gridUtil = _gridUtil_;
+
+      $templateCache.put('ui-grid/uiGridCell','<div></div>');
+      $templateCache.put('ui-grid/uiGridHeaderCell','<div></div>');
+
       scope = $rootScope.$new();
       scope.options = {};
-      scope.options.data = [{col1:'val'}];
+      scope.options.data = [
+        {col1:'row1'},
+        {col1:'row2'}
+      ];
       scope.uiGrid = {data:scope.options.data};
       var element = angular.element('<div ui-grid="options"</div>');
       uiGridController = $controller('uiGridController', { $scope: scope, $element:element, $attrs:''});
@@ -19,19 +26,50 @@ describe('ui.grid.controller', function() {
     }));
 
     describe('newGrid', function() {
-      it('creates a new grid instance', function() {
-        expect(uiGridController.grid).toBeDefined();
-        expect(uiGridController.grid.id).toBeDefined();
-        expect(uiGridController.grid.options).toBeDefined();
-      });
       it('has column definitions', function() {
         expect(uiGridController.grid.options.columnDefs).toBeDefined();
         expect(uiGridController.grid.options.columnDefs.length).toBe(1);
       });
+      it('has 1 column builder', function() {
+        expect(uiGridController.grid.columnBuilders.length).toBe(1);
+      });
+      it('has 2 rows', function() {
+        expect(uiGridController.grid.rows.length).toBe(2);
+      });
+      it('has columns', function() {
+        expect(uiGridController.grid.columns['col1']).toBeDefined();
+      });
       it('has grid data', function() {
         expect(uiGridController.grid.options.data).toBeDefined();
-        expect(uiGridController.grid.options.data.length).toBe(1);
+        expect(uiGridController.grid.options.data.length).toBe(2);
       });
     });
+
+    describe('respond to data modifications', function() {
+      it('has 3 rows after add', function() {
+        scope.options.data.push({col1:'row3'});
+        scope.$apply();
+        expect(uiGridController.grid.rows.length).toBe(3);
+      });
+
+      it('has 1 rows after delete', function() {
+        scope.options.data.splice(1 , 1 );
+        scope.$apply();
+        expect(uiGridController.grid.rows.length).toBe(1);
+      });
+
+      it('has data options referenced changed', function() {
+        scope.options.data = [
+          {col1:'row1Swapped'},
+          {col1:'row2Swapped'},
+          {col1:'row3Swapped'},
+          {col1:'row4Swapped'}
+        ];
+        scope.uiGrid = {data:scope.options.data};
+        scope.$apply();
+        expect(uiGridController.grid.rows.length).toBe(4);
+      });
+    });
+
   });
 });
