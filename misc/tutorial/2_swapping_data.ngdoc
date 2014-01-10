@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Swapping Data
+@name Tutorial: Add/Delete/Swap
 @description
 
 You can swap out data in the grid by simply providing a different reference.
@@ -16,6 +16,22 @@ You can swap out data in the grid by simply providing a different reference.
         }
         else {
           $scope.gridOpts.data = data1;
+        }
+      };
+
+      $scope.addData = function() {
+        var n = $scope.gridOpts.data.length + 1;
+        $scope.gridOpts.data.push({
+                    "firstName": "New " + n,
+                    "lastName": "Person " + n,
+                    "company": "abc",
+                    "employed": true
+                  });
+      };
+
+      $scope.removeFirstRow = function() {
+        if($scope.gridOpts.data.length > 0){
+           $scope.gridOpts.data.splice(0,1);
         }
       };
 
@@ -43,18 +59,6 @@ You can swap out data in the grid by simply providing a different reference.
           "lastName": "Oneill",
           "company": "Letpro",
           "employed": false
-        },
-        {
-            "firstName": "Jefferson",
-            "lastName": "Cohen",
-            "company": "Slambda",
-            "employed": false
-        },
-        {
-            "firstName": "Gladys",
-            "lastName": "Maldonado",
-            "company": "Ramjob",
-            "employed": false
         }
       ];
 
@@ -105,6 +109,8 @@ You can swap out data in the grid by simply providing a different reference.
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <button type="button" class="btn btn-success" ng-click="swapData()">Swap Data</button>
+      <button type="button" class="btn btn-success" ng-click="addData()">Add Data</button>
+      <button type="button" class="btn btn-success" ng-click="removeFirstRow()">Remove First Row</button>
       <br>
       <br>
       <div ui-grid="gridOpts" class="grid"></div>
