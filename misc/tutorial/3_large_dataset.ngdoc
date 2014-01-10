@@ -2,7 +2,7 @@
 @name Tutorial: Large Dataset
 @description
 
-This grid example uses a data set of 500 records
+This grid example uses a data set of 500 records.  Demonstrates binding complex column properties on Address.City.
 
 @example
 <example module="app">

@@ -37,7 +37,8 @@ describe('ui.grid.controller', function() {
         expect(uiGridController.grid.rows.length).toBe(2);
       });
       it('has columns', function() {
-        expect(uiGridController.grid.columns['col1']).toBeDefined();
+        expect(uiGridController.grid.columns.length).toBeDefined(1);
+        expect(uiGridController.grid.getColumn('col1')).not.toBeNull();
       });
       it('has grid data', function() {
         expect(uiGridController.grid.options.data).toBeDefined();
