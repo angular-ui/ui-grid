@@ -11,8 +11,8 @@
   });
 
 
-  module.service('gridClassFactory', ['gridUtil','$q','$templateCache','uiGridConstants',
-        function (gridUtil,$q,$templateCache,uiGridConstants) {
+  module.service('gridClassFactory', ['gridUtil','$q','$templateCache','uiGridConstants','$log',
+        function (gridUtil,$q,$templateCache,uiGridConstants,$log) {
 
     var service = {
       /**
@@ -31,44 +31,29 @@
        * @param grid - reference to grid
        * @returns a promise
        */
-      defaultColumnBuilder:function(grid){
-        if(!grid.options.columnDefs && !grid.options.columnDefs.length){
-          throw new Error('argument colDefs is not an array');
-        }
+      defaultColumnBuilder:function(colDef,col,gridOptions){
 
         var templateGetPromises = [];
 
-        grid.options.columnDefs.forEach(function(colDef,index){
-          if(!colDef.field){
-            throw new Error('colDef.field property is required');
-          }
-          var col = grid.getColumn(colDef.field);
+        col.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('ui-grid/uiGridHeaderCell');
 
-          if(!col){
-            col = new GridColumn(colDef,index);
-            grid.columns.push(col);
-          }
-
-          col.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('ui-grid/uiGridHeaderCell');
-
-          col.cellTemplate = colDef.cellTemplate ||
-            $templateCache.get('ui-grid/uiGridCell')
-              .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
+        col.cellTemplate = colDef.cellTemplate ||
+          $templateCache.get('ui-grid/uiGridCell')
+            .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
 
 
+        if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
+          templateGetPromises.push(
+            gridUtil.getTemplate(colDef.cellTemplate).then(function(contents){col.cellTemplate = contents;})
+          );
+        }
 
-          if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.cellTemplate).then(function(contents){col.cellTemplate = contents;})
-            );
-          }
+        if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
+          templateGetPromises.push(
+            gridUtil.getTemplate(colDef.headerCellTemplate).then(function(contents){col.headerCellTemplate = contents;})
+          );
+        }
 
-          if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.headerCellTemplate).then(function(contents){col.headerCellTemplate = contents;})
-            );
-          }
-        });
 
         return $q.all(templateGetPromises);
       }
@@ -115,11 +100,27 @@
     };
 
     Grid.prototype.buildColumns = function () {
+      $log.debug('buildColumns');
       var self = this;
       var builderPromises = [];
-      self.columnBuilders.forEach(function (builder) {
-        builderPromises.push(builder.call(self,self));
+
+      self.options.columnDefs.forEach(function(colDef,index){
+        if(!colDef.field){
+          throw new Error('colDef.field property is required');
+        }
+        var col = self.getColumn(colDef.field);
+
+        if(!col){
+          col = new GridColumn(colDef,index);
+          self.columns.push(col);
+        }
+
+        self.columnBuilders.forEach(function (builder) {
+          builderPromises.push(builder.call(self,colDef,col,self.options));
+        });
+
       });
+
       return $q.all(builderPromises);
     };
 
@@ -306,7 +307,7 @@
       }
       else{
         if(self.grid.options.columnDefs.length>0){
-           self.grid.buildColumns();
+        //   self.grid.buildColumns();
         }
       }
 
@@ -328,8 +329,8 @@
           //load columns if needed
           if(!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0){
               self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n);
-              promises.push(self.grid.buildColumns());
           }
+          promises.push(self.grid.buildColumns());
 
           $q.all(promises).then(function(){
             //wrap data in a gridRow
