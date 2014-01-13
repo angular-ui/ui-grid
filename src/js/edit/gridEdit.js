@@ -43,6 +43,56 @@
     };
   }]);
 
+  module.directive('uiGridCell', ['$compile','uiGridConstants', '$log',function ($compile,uiGridConstants,$log) {
+    var ngCell = {
+      priority: 4900,
+      scope: false,
+      compile: function() {
+        return {
+          pre: function($scope, iElement) {
+            $log.debug('gridEdit uiGridCell pre-link');
+            if (!$scope.col.colDef.enableCellEdit) {
+              return;
+            }
+
+          .//  iElement[0].children.insertBefore
+
+            var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
+
+//            if ($scope.col.enableCellEdit) {
+//              html =  $scope.col.cellEditTemplate;
+//              html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
+//              html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field));
+//            } else {
+//              html = cellTemplate;
+//            }
+
+            var cellElement = $compile(html)($scope);
+
+//            if ($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') === -1) {
+//              cellElement[0].setAttribute('tabindex', 0);
+//              cellElement.addClass('ngCellElement');
+//            }
+
+            iElement.append(cellElement);
+          },
+          post: function($scope, iElement) {
+            $log.debug('gridEdit uiGridCell post-link');
+//            if ($scope.enableCellSelection) {
+//              $scope.domAccessProvider.selectionHandlers($scope, iElement);
+//            }
+//
+//            $scope.$on('ngGridEventDigestCell', function() {
+//              domUtilityService.digest($scope);
+//            });
+          }
+        };
+      }
+    };
+
+    return ngCell;
+  }]);
+
 
   module.directive('ngCellHasFocus', [
     function () {

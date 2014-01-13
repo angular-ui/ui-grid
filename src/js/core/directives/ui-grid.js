@@ -433,12 +433,15 @@ module.directive('uiGrid',
   ]);
 
 
-  module.directive('uiGridCell', ['$compile','uiGridConstants', function ($compile,uiGridConstants) {
+  module.directive('uiGridCell', ['$compile','uiGridConstants','$log', function ($compile,uiGridConstants,$log) {
     var ngCell = {
+      priority: 5000,
       scope: false,
       compile: function() {
+
         return {
           pre: function($scope, iElement) {
+            $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
 
 //            if ($scope.col.enableCellEdit) {
@@ -459,6 +462,7 @@ module.directive('uiGrid',
             iElement.append(cellElement);
           },
           post: function($scope, iElement) {
+            $log.debug('uiGridCell post-link');
 //            if ($scope.enableCellSelection) {
 //              $scope.domAccessProvider.selectionHandlers($scope, iElement);
 //            }
