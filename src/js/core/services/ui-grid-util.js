@@ -302,6 +302,23 @@ module.service('gridUtil', ['$window', '$document','$http', function ($window, $
       
     },
 
+    /**
+    * @ngdoc method
+    * @name normalizeWheelEvent
+    * @methodOf ui.grid.util.service:GridUtil
+    *
+    * @param {event} event A mouse wheel event
+    *
+    * @returns {event} A normalized event
+    *
+    * @description
+    * Given an event from this list:
+    *
+    * `wheel, mousewheel, DomMouseScroll, MozMousePixelScroll`
+    *
+    * "normalize" it
+    * so that it stays consistent no matter what browser it comes from (i.e. scale it correctl and make sure the direction is right.)
+    */
     normalizeWheelEvent: function (event) {
       // var toFix = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
       // var toBind = 'onwheel' in document || document.documentMode >= 9 ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'];
