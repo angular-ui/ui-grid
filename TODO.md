@@ -15,6 +15,8 @@
 1. "Edit in Plunkr / JsFiddle" buttons don't work. They need to use the absolute url to the script file.
   1. Maybe we can just do another conditional on process.env.TRAVIS and add the <%= site %> on as a prefix.
 1. [IDEA] add a test that, during a scroll event, spies on number of reads/writes to DOM properties that cause reflow
+
+1. *** ADD DEMO FOR GRIDS IN HIDDEN TABS ***
   
 
 # Done!
