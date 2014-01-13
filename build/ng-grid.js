@@ -2548,6 +2548,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             domUtilityService.digest($scope);
 
             $scope.$broadcast('ngGridEventStartCellEdit');
+            $scope.$emit('ngGridEventStartCellEdit');
 
             $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
