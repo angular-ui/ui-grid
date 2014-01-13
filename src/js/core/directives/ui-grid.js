@@ -16,9 +16,11 @@
 
     var service = {
       /**
-       * @description creates a new grid instnace
-       * @param id {string}
-       * @returns {Grid}
+       * @ngdoc method
+       * @name createGrid
+       * @methodOf ui.grid.directive:uiGrid
+       * @description Creates a new grid instnace
+       * @returns {Grid} grid
        */
       createGrid : function(){
         var grid = new Grid(gridUtil.newId());
@@ -261,8 +263,7 @@
       self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
       // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
-      self.displayName = (colDef.displayName === undefined) ? colDef.field : colDef.displayName;
-
+      self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.field) : colDef.displayName;
 
       //self.originalIndex = index;
 
