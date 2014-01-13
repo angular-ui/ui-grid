@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$window', '$document','$http', function ($window, $document,$http) {
+module.service('gridUtil', ['$window', '$document', '$http', function ($window, $document, $http) {
   var s = {
 
     /**
@@ -401,7 +401,7 @@ module.service('gridUtil', ['$window', '$document','$http', function ($window, $
     }
   };
 
-  ['width', 'height'].forEach(function (name){
+  ['width', 'height'].forEach(function (name) {
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
     s['element' + capsName] = function (elem, extra) {
       var e = elem;

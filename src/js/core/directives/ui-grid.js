@@ -11,8 +11,8 @@
   });
 
 
-  module.service('gridClassFactory', ['gridUtil','$q','$templateCache','uiGridConstants',
-        function (gridUtil,$q,$templateCache,uiGridConstants) {
+  module.service('gridClassFactory', ['gridUtil', '$q', '$templateCache', 'uiGridConstants',
+        function (gridUtil, $q, $templateCache, uiGridConstants) {
 
     var service = {
       /**
@@ -33,20 +33,20 @@
        * @param grid - reference to grid
        * @returns a promise
        */
-      defaultColumnBuilder:function(grid){
-        if(!grid.options.columnDefs && !grid.options.columnDefs.length){
+      defaultColumnBuilder: function (grid) {
+        if (!grid.options.columnDefs && !grid.options.columnDefs.length) {
           throw new Error('argument colDefs is not an array');
         }
 
         var templateGetPromises = [];
 
-        grid.options.columnDefs.forEach(function(colDef,index){
-          if(!colDef.field){
+        grid.options.columnDefs.forEach(function (colDef, index) {
+          if (!colDef.field) {
             throw new Error('colDef.field property is required');
           }
           var col = grid.getColumn(colDef.field);
 
-          if(!col){
+          if (!col) {
             col = new GridColumn(colDef,index);
             grid.columns.push(col);
           }
@@ -57,17 +57,21 @@
             $templateCache.get('ui-grid/uiGridCell')
               .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
 
-
-
           if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
             templateGetPromises.push(
-              gridUtil.getTemplate(colDef.cellTemplate).then(function(contents){col.cellTemplate = contents;})
+              gridUtil.getTemplate(colDef.cellTemplate)
+                .then(function (contents) {
+                  col.cellTemplate = contents;
+                })
             );
           }
 
           if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
             templateGetPromises.push(
-              gridUtil.getTemplate(colDef.headerCellTemplate).then(function(contents){col.headerCellTemplate = contents;})
+              gridUtil.getTemplate(colDef.headerCellTemplate)
+                .then(function (contents) {
+                  col.headerCellTemplate = contents;
+                })
             );
           }
         });
@@ -125,17 +129,17 @@
       return $q.all(builderPromises);
     };
 
-    Grid.prototype.modifyRows = function(newRawData){
+    Grid.prototype.modifyRows = function(newRawData) {
       var self = this;
 
-      if (self.rows.length === 0 && newRawData.length > 0){
+      if (self.rows.length === 0 && newRawData.length > 0) {
         self.addRows(newRawData);
         return;
       }
 
       //look for new rows
-      var newRows = newRawData.filter(function(newItem){
-         return !self.rows.some(function(oldRow){
+      var newRows = newRawData.filter(function (newItem) {
+         return !self.rows.some(function(oldRow) {
            return self.options.rowEquality(oldRow.entity,newItem);
          });
       });
@@ -157,7 +161,7 @@
 
     };
 
-    Grid.prototype.addRows = function(newRawData){
+    Grid.prototype.addRows = function(newRawData) {
       var self = this;
 
       for(var i=0; i < newRawData.length; i++) {
@@ -165,7 +169,7 @@
       }
     };
 
-    Grid.prototype.processRowBuilders = function(gridRow){
+    Grid.prototype.processRowBuilders = function(gridRow) {
       var self = this;
 
       self.rowBuilders.forEach(function (builder) {
@@ -231,7 +235,7 @@
       this.scrollThreshold = 4;
 
       //rows are compared via reference by default.  This can be overridden to compare on whatever you like
-      this.rowEquality = function(itemA,itemB){
+      this.rowEquality = function(itemA,itemB) {
         return itemA === itemB;
       };
     }
@@ -283,7 +287,7 @@
 
   module.controller('uiGridController',['$scope', '$element', '$attrs','$log','gridUtil','$q','uiGridConstants',
     '$templateCache','gridClassFactory',
-    function ($scope, $elm, $attrs,$log,gridUtil,$q,uiGridConstants,$templateCache,gridClassFactory) {
+    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants, $templateCache, gridClassFactory) {
       $log.debug('ui-grid controller');
 
       var self = this;
@@ -296,7 +300,7 @@
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
-      if($attrs.uiGridColumns){
+      if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
           self.grid.options.columnDefs =  value;
           self.grid.buildColumns()
@@ -305,12 +309,11 @@
             });
         });
       }
-      else{
-        if(self.grid.options.columnDefs.length>0){
+      else {
+        if (self.grid.options.columnDefs.length > 0) {
            self.grid.buildColumns();
         }
       }
-
 
 
       var dataWatchCollectionDereg;
@@ -327,18 +330,18 @@
 
         if (n) {
           //load columns if needed
-          if(!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0){
+          if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
               self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n);
               promises.push(self.grid.buildColumns());
           }
 
-          $q.all(promises).then(function(){
+          $q.all(promises).then(function() {
             //wrap data in a gridRow
             $log.debug('Modifying rows');
             self.grid.modifyRows(n);
 
             //todo: move this to the ui-body-directive and define how we handle ordered event registration
-            if(self.viewport){
+            if (self.viewport) {
               var scrollTop = self.viewport[0].scrollTop;
               self.adjustScrollVertical(scrollTop, null, true);
             }
