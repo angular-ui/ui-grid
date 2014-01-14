@@ -339,11 +339,11 @@ module.exports = function(grunt) {
           }
         },
         scripts: [
-          '//code.angularjs.org/1.2.6/angular.js',
-          '//code.angularjs.org/1.2.6/angular-touch.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-touch.js',
         ],
         hiddenScripts: [
-          'http://code.angularjs.org/1.2.6/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],

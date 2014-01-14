@@ -75,7 +75,7 @@ Using a grid in a modal popup
       transform: translateX(-50%) translateY(-50%);
 
       border: 1px solid #333;
-      background-color: #ccc;
+      background-color: #fafafa;
 
       padding: 15px;
     }
