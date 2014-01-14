@@ -55,7 +55,7 @@
               return;
             }
 
-          .//  iElement[0].children.insertBefore
+          //  iElement[0].children.insertBefore
 
             var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
 
