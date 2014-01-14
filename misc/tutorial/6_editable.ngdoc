@@ -1,0 +1,42 @@
+@ngdoc overview
+@name Tutorial: Editable Grid
+@description
+
+This grid example uses a data set of 500 records.  Demonstrates in-line editing in grid.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {  };
+
+      $scope.gridOptions.columnDefs = [
+        {field:'id'},
+        {field:'name',enableCellEdit:true},
+        {field:'age'},
+        {field: 'address.city'}
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <br>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 450px;
+    }
+  </file>
+</example>

@@ -6,20 +6,25 @@
     CUSTOM_FILTERS: /CUSTOM_FILTERS/g,
     COL_FIELD: /COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
-    EDITABLE_CELL_TEMPLATE: /EDITABLE_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/
   });
 
-
-  module.service('gridClassFactory', ['gridUtil', '$q', '$templateCache', 'uiGridConstants',
-        function (gridUtil, $q, $templateCache, uiGridConstants) {
+  /**
+   *  @ngdoc object
+   *  @name ui.grid.service:gridClassFactory
+   *
+   *  @description factory to return dom specific instances of a grid
+   *
+   */
+  module.service('gridClassFactory', ['gridUtil','$q','$templateCache','uiGridConstants','$log',
+        function (gridUtil,$q,$templateCache,uiGridConstants,$log) {
 
     var service = {
       /**
        * @ngdoc method
        * @name createGrid
-       * @methodOf ui.grid.directive:uiGrid
-       * @description Creates a new grid instnace
+       * @methodOf ui.grid.service:gridClassFactory
+       * @description Creates a new grid instance. Each instance will have a unique id
        * @returns {Grid} grid
        */
       createGrid : function(){
@@ -29,52 +34,42 @@
       },
 
       /**
-       * Processes designTime column definitions and creates runtime column properties
-       * @param grid - reference to grid
-       * @returns a promise
+       * @ngdoc function
+       * @name defaultColumnBuilder
+       * @methodOf ui.grid.service:gridClassFactory
+       * @description Processes designTime column definitions and applies them to col for the
+       *              core grid features
+       * @param {object} colDef reference to column definition
+       * @param {GridColumn} col reference to gridCol
+       * @param {object} gridOptions reference to grid options
        */
-      defaultColumnBuilder: function (grid) {
-        if (!grid.options.columnDefs && !grid.options.columnDefs.length) {
-          throw new Error('argument colDefs is not an array');
-        }
+      defaultColumnBuilder: function (colDef, col, gridOptions) {
 
         var templateGetPromises = [];
 
-        grid.options.columnDefs.forEach(function (colDef, index) {
-          if (!colDef.field) {
-            throw new Error('colDef.field property is required');
-          }
-          var col = grid.getColumn(colDef.field);
+        col.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('ui-grid/uiGridHeaderCell');
 
-          if (!col) {
-            col = new GridColumn(colDef,index);
-            grid.columns.push(col);
-          }
+        col.cellTemplate = colDef.cellTemplate ||
+          $templateCache.get('ui-grid/uiGridCell')
+            .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
 
-          col.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('ui-grid/uiGridHeaderCell');
+        if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
+          templateGetPromises.push(
+            gridUtil.getTemplate(colDef.cellTemplate)
+              .then(function (contents) {
+                col.cellTemplate = contents;
+              })
+          );
+        }
 
-          col.cellTemplate = colDef.cellTemplate ||
-            $templateCache.get('ui-grid/uiGridCell')
-              .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
-
-          if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.cellTemplate)
-                .then(function (contents) {
-                  col.cellTemplate = contents;
-                })
-            );
-          }
-
-          if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.headerCellTemplate)
-                .then(function (contents) {
-                  col.headerCellTemplate = contents;
-                })
-            );
-          }
-        });
+        if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
+          templateGetPromises.push(
+            gridUtil.getTemplate(colDef.headerCellTemplate)
+              .then(function (contents) {
+                col.headerCellTemplate = contents;
+              })
+          );
+        }
 
         return $q.all(templateGetPromises);
       }
@@ -83,15 +78,17 @@
 
     //class definitions
 
+
     /**
+     * @ngdoc function
+     * @name Grid
      * @description Grid defines a logical grid.  Any non-dom properties and elements needed by the grid should
      *              be defined in this class
-     * @param id
-     * @constructor
+     * @param {string} id id to assign to grid
      */
     var Grid = function (id) {
       this.id = id;
-      this.options = new Options();
+      this.options = new GridOptions();
       this.headerHeight = this.options.headerRowHeight;
       this.gridHeight = 0;
       this.gridWidth = 0;
@@ -111,24 +108,74 @@
       this.renderedRows = [];
     };
 
+    /**
+     * @ngdoc function
+     * @name registerColumnBuilder
+     * @methodOf Grid
+     * @description When the build creates columns from column definitions, the columnbuilders will be called to add
+     * additional properties to the column.
+     * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
+     */
     Grid.prototype.registerColumnBuilder = function (columnsProcessor) {
       this.columnBuilders.push(columnsProcessor);
     };
 
+    /**
+     * @ngdoc function
+     * @name getColumn
+     * @methodOf Grid
+     * @description returns a grid column for the field name
+     * @param {string} field field name
+     */
     Grid.prototype.getColumn = function (field) {
-       var columns = this.columns.filter(function(column){return column.colDef.field === field;});
-       return columns.length > 0 ? columns[0] : null;
+      var columns = this.columns.filter(function (column) {
+        return column.colDef.field === field;
+      });
+      return columns.length > 0 ? columns[0] : null;
     };
 
+    /**
+     * @ngdoc function
+     * @name buildColumns
+     * @methodOf Grid
+     * @description creates GridColumn objects from the columnDefinition.  Calls each registered
+     * columnBuilder to further process the column
+     * @returns {Promise} a promise to load any needed column resources
+     */
     Grid.prototype.buildColumns = function () {
+      $log.debug('buildColumns');
       var self = this;
       var builderPromises = [];
-      self.columnBuilders.forEach(function (builder) {
-        builderPromises.push(builder.call(self, self));
+
+      self.options.columnDefs.forEach(function (colDef, index) {
+        if (!colDef.field) {
+          throw new Error('colDef.field property is required');
+        }
+        var col = self.getColumn(colDef.field);
+
+        if (!col) {
+          col = new GridColumn(colDef, index);
+          self.columns.push(col);
+        }
+
+        self.columnBuilders.forEach(function (builder) {
+          builderPromises.push(builder.call(self, colDef, col, self.options));
+        });
+        
       });
+
       return $q.all(builderPromises);
     };
 
+    /**
+     * @ngdoc function
+     * @name modifyRows
+     * @methodOf Grid
+     * @description creates or removes GridRow objects from the newRawData array.  Calls each registered
+     * rowBuilder to further process the row
+     *
+     * Rows are identified using the gridOptions.rowEquality function
+     */
     Grid.prototype.modifyRows = function(newRawData) {
       var self = this;
 
@@ -161,6 +208,13 @@
 
     };
 
+  /**
+    * Private Undocumented Method
+    * @name addRows
+    * @methodOf Grid
+    * @description adds the newRawData array of rows to the grid and calls all registered
+    * rowBuilders
+    */
     Grid.prototype.addRows = function(newRawData) {
       var self = this;
 
@@ -169,6 +223,14 @@
       }
     };
 
+    /**
+     * @ngdoc function
+     * @name processRowBuilders
+     * @methodOf Grid
+     * @description processes all RowBuilders for the gridRow
+     * @parameter {GridRow} gridRow reference to gridRow
+     * @returns {GridRow} the gridRow with all additional behaivor added
+     */
     Grid.prototype.processRowBuilders = function(gridRow) {
       var self = this;
 
@@ -179,7 +241,13 @@
       return gridRow;
     };
 
-
+    /**
+     * @ngdoc function
+     * @name registerStyleComputation
+     * @methodOf Grid
+     * @description registered a styleComputation function
+     * @parameter {function($scope)} styleComputation function
+     */
     Grid.prototype.registerStyleComputation = function (styleComputation) {
       this.styleComputations.push(styleComputation);
     };
@@ -192,6 +260,12 @@
       }
     };
 
+    /**
+     * @ngdoc function
+     * @name buildStyles
+     * @methodOf Grid
+     * @description calls each styleComputation function
+     */
     Grid.prototype.buildStyles = function ($scope) {
       var self = this;
       self.styleComputations.forEach(function (comp) {
@@ -218,10 +292,34 @@
     };
 
 
-    //Grid Options defaults
-    function Options() {
+    /**
+     * @ngdoc function
+     * @name GridOptions
+     * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
+     * over this object.
+     * @param {string} id id to assign to grid
+     */
+    function GridOptions() {
+      /**
+       * @ngdoc object
+       * @name data
+       * @propertyOf  GridOptions
+       * @description Array of data to be rendered to grid.  Array can contain complex objects
+       */
       this.data = [];
+
+      /**
+       * @ngdoc object
+       * @name columnDefs
+       * @propertyOf  GridOptions
+       * @description (optional) Array of columnDef objects.  Only required property is field
+       *  @example
+
+       var columnDefs = [{field:'field1'}, {field:'field2'}];
+
+       */
       this.columnDefs = [];
+
       this.headerRowHeight = 30;
       this.rowHeight = 30;
       this.maxVisibleRowCount = 200;
@@ -234,9 +332,17 @@
 
       this.scrollThreshold = 4;
 
-      //rows are compared via reference by default.  This can be overridden to compare on whatever you like
-      this.rowEquality = function(itemA, itemB) {
-        return itemA === itemB;
+      /**
+       * @ngdoc function
+       * @name rowEquality
+       * @methodOf GridOptions
+       * @description By default, rows are compared using object equality.  This option can be overridden
+       * to compare on any data item property or function
+       * @param {object} entityA First Data Item to compare
+       * @param {object} entityB Second Data Item to compare
+       */
+      this.rowEquality = function(entityA, entityB) {
+        return entityA === entityB;
       };
 
       // Custom template for header row
@@ -244,10 +350,12 @@
     }
 
     /**
-     *
-     * @param entity (the item from options.data
-     * @param index current position of row
-     * @constructor
+     * @ngdoc function
+     * @name GridRow
+     * @description Wrapper for the GridOptions.data rows.  Allows for needed properties and functions
+     * to be assigned to a grid row
+     * @param {object} entity the array item from GridOptions.data
+     * @param {number} index the current position of the row in the array
      */
     function GridRow(entity, index) {
       this.entity = entity;
@@ -255,8 +363,12 @@
     }
 
     /**
-     * @constructor GridColumn is a runtime representation of a column
-     * @param colDef Designtime column definition
+     * @ngdoc function
+     * @name GridColumn
+     * @description Wrapper for the GridOptions.colDefs items.  Allows for needed properties and functions
+     * to be assigned to a grid column
+     * @param {ColDef} colDef Column definition
+     * @param {number} index the current position of the column in the array
      */
     function GridColumn(colDef, index) {
       var self = this;
@@ -312,7 +424,7 @@
       }
       else {
         if (self.grid.options.columnDefs.length > 0) {
-           self.grid.buildColumns();
+        //   self.grid.buildColumns();
         }
       }
 
@@ -333,8 +445,8 @@
           //load columns if needed
           if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
               self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n);
-              promises.push(self.grid.buildColumns());
           }
+          promises.push(self.grid.buildColumns());
 
           $q.all(promises).then(function() {
             //wrap data in a gridRow
@@ -437,12 +549,15 @@ module.directive('uiGrid',
   ]);
 
 
-  module.directive('uiGridCell', ['$compile','uiGridConstants', function ($compile,uiGridConstants) {
+  module.directive('uiGridCell', ['$compile','uiGridConstants','$log', function ($compile,uiGridConstants,$log) {
     var ngCell = {
+      priority: 5000,
       scope: false,
       compile: function() {
+
         return {
           pre: function($scope, iElement) {
+            $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
 
 //            if ($scope.col.enableCellEdit) {
@@ -463,6 +578,7 @@ module.directive('uiGrid',
             iElement.append(cellElement);
           },
           post: function($scope, iElement) {
+            $log.debug('uiGridCell post-link');
 //            if ($scope.enableCellSelection) {
 //              $scope.domAccessProvider.selectionHandlers($scope, iElement);
 //            }
