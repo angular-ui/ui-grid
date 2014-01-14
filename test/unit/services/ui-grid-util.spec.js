@@ -37,7 +37,8 @@ describe('ui.grid.util', function() {
         ['a_property', 'A Property'],
         ['a__property', 'A Property'],
         ['another_property', 'Another Property'],
-        ['ALLCAPS', 'Allcaps']
+        ['ALLCAPS', 'Allcaps'],
+        ['address.city', 'Address.City'],
       ];
 
       angular.forEach(translationExpects, function (set) {

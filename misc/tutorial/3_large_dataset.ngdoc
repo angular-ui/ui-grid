@@ -2,7 +2,7 @@
 @name Tutorial: Large Dataset
 @description
 
-This grid example uses a data set of 500 records.  Demonstrates binding complex column properties on Address.City.
+This grid example uses a data set of 10,000 records.  Demonstrates binding complex column properties on Address.City.
 
 @example
 <example module="app">
@@ -19,7 +19,7 @@ This grid example uses a data set of 500 records.  Demonstrates binding complex 
         {field: 'address.city'}
       ];
 
-      $http.get('/data/500_complex.json')
+      $http.get('/data/10000_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
