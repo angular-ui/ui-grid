@@ -23,6 +23,9 @@
         uiGridCtrl.viewport = angular.element( $elm[0].getElementsByClassName('ui-grid-viewport')[0] );
         uiGridCtrl.viewportOuterHeight = GridUtil.outerElementHeight(uiGridCtrl.viewport[0]);
 
+        // Explicitly set the viewport scrollTop to 0; Firefox apparently caches it
+        uiGridCtrl.viewport[0].scrollTop = 0;
+
         uiGridCtrl.prevScrollTop = 0;
         uiGridCtrl.currentTopRow = 0;
 
@@ -131,7 +134,7 @@
           //   $log.debug('too high!');
           //   newScrollTop = uiGridCtrl.grid.options.canvasHeight - uiGridCtrl.grid.options.viewportHeight;
           // }
-
+          
           uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
           uiGridCtrl.viewport[0].scrollTop = newScrollTop;
           uiGridCtrl.grid.options.offsetTop = newScrollTop;

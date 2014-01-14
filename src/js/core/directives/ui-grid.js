@@ -458,7 +458,7 @@
             //todo: move this to the ui-body-directive and define how we handle ordered event registration
             if (self.viewport) {
               var scrollTop = self.viewport[0].scrollTop;
-              self.adjustScrollVertical(scrollTop, null, true);
+              self.adjustScrollVertical(scrollTop, 0, true);
             }
 
             $scope.$evalAsync(function() {
