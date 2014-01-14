@@ -11,7 +11,6 @@ Using a grid in a modal popup
 
     app.controller('MainCtrl', ['$rootScope', '$scope', '$http', 'modal', function ($rootScope, $scope, $http, modal) {
       var myModal = new modal();
-      console.log('myModal', myModal);
 
       $scope.hideGrid = true;
 
