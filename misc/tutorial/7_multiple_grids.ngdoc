@@ -27,11 +27,11 @@ Using multiple grids on a single page
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <div class="row">
-        <div class="span2">
+        <div class="span4">
           <div ui-grid="gridOptions1" class="grid"></div>
         </div>
         
-        <div class="offset1 span2">
+        <div class="span4">
           <div ui-grid="gridOptions2" class="grid"></div>
         </div>
       </div>
