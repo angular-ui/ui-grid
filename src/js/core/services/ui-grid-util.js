@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$window', '$document', '$http', function ($window, $document, $http) {
+module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', function ($window, $document, $http, $templateCache) {
   var s = {
 
     /**
@@ -268,10 +268,15 @@ module.service('gridUtil', ['$window', '$document', '$http', function ($window, 
      </pre>
      */
     getTemplate: function (url) {
-      return $http({method: 'GET', url: url, cache: true})
-        .then(function (result) {
-          return result.data;
-        });
+      return $http({ method: 'GET', url: url, cache: $templateCache })
+        .then(
+          function (result) {
+            return result.data.trim();
+          },
+          function (err) {
+            throw "Could not get template " + url + ": " + err;
+          }
+        );
     },
 
     /**

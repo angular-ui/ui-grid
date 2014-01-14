@@ -4,22 +4,41 @@
   var app = angular.module('ui.grid.header', ['ui.grid']);
 
   app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'gridUtil', function($log, $templateCache, $compile, gridUtil) {
+    var defaultTemplate = 'ui-grid/ui-grid-header';
+
     return {
       restrict: 'EA',
-      templateUrl: 'ui-grid/ui-grid-header',
+      // templateUrl: 'ui-grid/ui-grid-header',
       replace: true,
       // priority: 1000,
       require: '?^uiGrid',
       scope: false,
-      link: function ($scope, $elm, $attrs, uiGridCtrl) {
-        if (uiGridCtrl === undefined) {
-          throw new Error('[ui-grid-header] uiGridCtrl is undefined!');
-        }
-        $log.debug('ui-grid-header link');
+      compile: function($elm, $attrs) {
+        return {
+          pre: function ($scope, $elm, $attrs) {
+            var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 
-        if (uiGridCtrl) {
-          uiGridCtrl.header = $elm;
-        }
+             gridUtil.getTemplate(headerTemplate)
+              .then(function (contents) {
+                var template = angular.element(contents);
+                
+                var newElm = $compile(template)($scope);
+                $elm.append(newElm);
+              });
+          },
+
+          post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            if (uiGridCtrl === undefined) {
+              throw new Error('[ui-grid-header] uiGridCtrl is undefined!');
+            }
+
+            $log.debug('ui-grid-header link');
+
+            if (uiGridCtrl) {
+              uiGridCtrl.header = $elm;
+            }
+          }
+        };
       }
     };
   }]);
