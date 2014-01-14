@@ -139,6 +139,8 @@
           uiGridCtrl.viewport[0].scrollTop = newScrollTop;
           uiGridCtrl.grid.options.offsetTop = newScrollTop;
 
+          uiGridCtrl.fireScrollEvent();
+
           // scope.$evalAsync(function() {
 
           // });

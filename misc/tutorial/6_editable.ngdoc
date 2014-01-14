@@ -2,7 +2,7 @@
 @name Tutorial: Editable Grid
 @description
 
-This grid example uses a data set of 500 records.  Demonstrates in-line editing in grid.
+You can use the `enableCellEdit` options in your column definitions to allow a column to be editable. Double click in a cell to edit it.
 
 @example
 <example module="app">
@@ -13,10 +13,10 @@ This grid example uses a data set of 500 records.  Demonstrates in-line editing 
       $scope.gridOptions = {  };
 
       $scope.gridOptions.columnDefs = [
-        {field:'id'},
-        {field:'name',enableCellEdit:true},
-        {field:'age'},
-        {field: 'address.city'}
+        { field: 'id' },
+        { field: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
+        { field: 'age' },
+        { field: 'address.city' }
       ];
 
       $http.get('/data/500_complex.json')

@@ -63,6 +63,7 @@
           var scrollPercentage = y / elmBottomBound;
           // $log.debug('scrollPercentage', y, uiGridCtrl.grid.optionsviewportHeight, elmHeight, elmBottomBound, scrollPercentage);
 
+          //TODO: When this is part of ui.grid module, the event name should be a constant
           $scope.$emit('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: $elm });
         }
 
