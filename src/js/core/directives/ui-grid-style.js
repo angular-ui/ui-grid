@@ -68,7 +68,8 @@
             var ret = '';
             var left = 0;
             uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
-              ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+              // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+              ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; }';
               left = left + equalWidth;
             });
 

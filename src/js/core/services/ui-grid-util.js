@@ -6,7 +6,11 @@ function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
 }
 
-var rnumnonpx = new RegExp( "^(" + (/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/).source + ")(?!px)[a-z%]+$", "i" );
+var rnumnonpx = new RegExp( "^(" + (/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/).source + ")(?!px)[a-z%]+$", "i" ),
+    // swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
+    // see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+    rdisplayswap = /^(block|none|table(?!-c[ea]).+)/,
+    cssShow = { position: "absolute", visibility: "hidden", display: "block" };
 
 function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
   var i = extra === ( isBorderBox ? 'border' : 'content' ) ?
@@ -307,6 +311,41 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
       
     },
 
+    swap: function( elem, options, callback, args ) {
+      var ret, name,
+              old = {};
+
+      // Remember the old values, and insert the new ones
+      for ( name in options ) {
+        old[ name ] = elem.style[ name ];
+        elem.style[ name ] = options[ name ];
+      }
+
+      ret = callback.apply( elem, args || [] );
+
+      // Revert the old values
+      for ( name in options ) {
+        elem.style[ name ] = old[ name ];
+      }
+
+      return ret;
+    },
+
+    fakeElement: function( elem, options, callback, args ) {
+      var ret, name,
+          newElement = angular.element(elem).clone()[0];
+
+      for ( name in options ) {
+        newElement.style[ name ] = options[ name ];
+      }
+
+      angular.element(document.body).append(newElement);
+
+      ret = callback.call( newElement, newElement );
+
+      return ret;
+    },
+
     /**
     * @ngdoc method
     * @name normalizeWheelEvent
@@ -413,8 +452,19 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
       if (typeof(e.length) !== 'undefined' && e.length) {
         e = elem[0];
       }
-      
-      return elem ? getWidthOrHeight( e, name, extra ) : null;
+
+      if (e) {
+        // debugger;
+        var styles = getStyles(e);
+        return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
+                  s.fakeElement(e, cssShow, function(newElm) {
+                    return getWidthOrHeight( newElm, name, extra );
+                  }) :
+                  getWidthOrHeight( e, name, extra );
+      }
+      else {
+        return null;
+      }
     };
 
     s['outerElement' + capsName] = function (elem, margin) {

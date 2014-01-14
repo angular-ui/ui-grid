@@ -113,6 +113,23 @@ describe('ui.grid.util', function() {
 
         expect(w).toEqual(300);
       });
+
+      it('should work with hidden element', function() {
+        angular.element(elm).remove();
+
+        elm = document.createElement('div');
+        elm.style.height = "300px";
+        elm.style.width = "200px";
+        elm.style.display = "none";
+        document.body.appendChild(elm);
+
+        angular.element(elm).append('<div id="testelm" style="display: none">Test Test Test</div>');
+
+        var testelm = document.getElementById('testelm');
+        var h = gridUtil.elementHeight(testelm);
+
+        expect(h).toBeGreaterThan(0);
+      });
     });
 
     describe('elementWidth()', function () {

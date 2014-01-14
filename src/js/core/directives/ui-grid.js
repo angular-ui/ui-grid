@@ -27,7 +27,7 @@
        * @description Creates a new grid instance. Each instance will have a unique id
        * @returns {Grid} grid
        */
-      createGrid : function(){
+      createGrid : function() {
         var grid = new Grid(gridUtil.newId());
         grid.registerColumnBuilder(service.defaultColumnBuilder);
         return grid;
@@ -280,7 +280,9 @@
     // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
     // TODO(c0bra): account for footer height
     Grid.prototype.getViewportHeight = function () {
-      return this.gridHeight - this.headerHeight;
+      var viewPortHeight = this.gridHeight - this.headerHeight;
+      $log.debug('viewPortHeight', viewPortHeight);
+      return viewPortHeight;
     };
 
     Grid.prototype.getCanvasHeight = function () {
@@ -478,6 +480,7 @@
       $scope.grid.refreshCanvas = self.refreshCanvas = function() {
         if (self.header) {
           self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+          $log.debug('self.grid.headerHeight', self.grid.headerHeight);
         }
 
         self.grid.buildStyles($scope);
@@ -537,7 +540,7 @@ module.directive('uiGrid',
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $log.debug('ui-grid postlink');
 
-              uiGridCtrl.grid.gridWidth = $scope.gridWidth = $elm[0].clientWidth;
+              uiGridCtrl.grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
               uiGridCtrl.refreshCanvas();
@@ -557,7 +560,7 @@ module.directive('uiGrid',
 
         return {
           pre: function($scope, iElement) {
-            $log.debug('uiGridCell pre-link');
+            // $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
 
 //            if ($scope.col.enableCellEdit) {
@@ -578,7 +581,7 @@ module.directive('uiGrid',
             iElement.append(cellElement);
           },
           post: function($scope, iElement) {
-            $log.debug('uiGridCell post-link');
+            // $log.debug('uiGridCell post-link');
 //            if ($scope.enableCellSelection) {
 //              $scope.domAccessProvider.selectionHandlers($scope, iElement);
 //            }
