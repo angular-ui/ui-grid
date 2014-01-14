@@ -343,6 +343,8 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
 
       ret = callback.call( newElement, newElement );
 
+      angular.element(newElement).remove();
+
       return ret;
     },
 
