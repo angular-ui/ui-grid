@@ -6,7 +6,10 @@
     CUSTOM_FILTERS: /CUSTOM_FILTERS/g,
     COL_FIELD: /COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
-    TEMPLATE_REGEXP: /<.+>/
+    TEMPLATE_REGEXP: /<.+>/,
+    events : {
+      GRID_SCROLL: 'uiGridScroll'
+    }
   });
 
   /**
@@ -483,6 +486,11 @@
         self.grid.buildStyles($scope);
       };
 
+      //todo: throttle this event?
+      self.fireScrollEvent = function(){
+        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL,'vertical');
+      };
+
     }]);
 
 /**
@@ -556,36 +564,15 @@ module.directive('uiGrid',
       compile: function() {
 
         return {
-          pre: function($scope, iElement) {
+          pre: function($scope, $elm) {
             $log.debug('uiGridCell pre-link');
-            var html = $scope.col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
-
-//            if ($scope.col.enableCellEdit) {
-//              html =  $scope.col.cellEditTemplate;
-//              html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-//              html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field));
-//            } else {
-//              html = cellTemplate;
-//            }
-
+            var html = $scope.col.cellTemplate
+              .replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
             var cellElement = $compile(html)($scope);
-
-//            if ($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') === -1) {
-//              cellElement[0].setAttribute('tabindex', 0);
-//              cellElement.addClass('ngCellElement');
-//            }
-
-            iElement.append(cellElement);
+            $elm.append(cellElement);
           },
-          post: function($scope, iElement) {
+          post: function($scope, $elm) {
             $log.debug('uiGridCell post-link');
-//            if ($scope.enableCellSelection) {
-//              $scope.domAccessProvider.selectionHandlers($scope, iElement);
-//            }
-//
-//            $scope.$on('ngGridEventDigestCell', function() {
-//              domUtilityService.digest($scope);
-//            });
           }
         };
       }
