@@ -124,7 +124,7 @@
       var self = this;
       var builderPromises = [];
       self.columnBuilders.forEach(function (builder) {
-        builderPromises.push(builder.call(self,self));
+        builderPromises.push(builder.call(self, self));
       });
       return $q.all(builderPromises);
     };
@@ -140,7 +140,7 @@
       //look for new rows
       var newRows = newRawData.filter(function (newItem) {
          return !self.rows.some(function(oldRow) {
-           return self.options.rowEquality(oldRow.entity,newItem);
+           return self.options.rowEquality(oldRow.entity, newItem);
          });
       });
 
@@ -149,9 +149,9 @@
       }
 
       //look for deleted rows
-      var deletedRows = self.rows.filter(function(oldRow){
-        return !newRawData.some(function(newItem){
-          return self.options.rowEquality(newItem,oldRow.entity);
+      var deletedRows = self.rows.filter(function (oldRow) {
+        return !newRawData.some(function (newItem) {
+          return self.options.rowEquality(newItem, oldRow.entity);
         });
       });
 
@@ -164,8 +164,8 @@
     Grid.prototype.addRows = function(newRawData) {
       var self = this;
 
-      for(var i=0; i < newRawData.length; i++) {
-        self.rows.push( self.processRowBuilders(new GridRow(newRawData[i],i)) );
+      for (var i=0; i < newRawData.length; i++) {
+        self.rows.push( self.processRowBuilders(new GridRow(newRawData[i], i)) );
       }
     };
 
@@ -235,9 +235,12 @@
       this.scrollThreshold = 4;
 
       //rows are compared via reference by default.  This can be overridden to compare on whatever you like
-      this.rowEquality = function(itemA,itemB) {
+      this.rowEquality = function(itemA, itemB) {
         return itemA === itemB;
       };
+
+      // Custom template for header row
+      this.headerTemplate = null;
     }
 
     /**
@@ -276,10 +279,8 @@
 
       self.visible = gridUtil.isNullOrUndefined(colDef.visible) || colDef.visible;
 
-
       self.headerClass = colDef.headerClass;
       self.cursor = self.sortable ? 'pointer' : 'default';
-
     }
 
     return service;
@@ -294,7 +295,7 @@
 
       self.grid = gridClassFactory.createGrid();
 
-      //extend options with ui-grid attribute reference
+      // Extend options with ui-grid attribute reference
       angular.extend(self.grid.options, $scope.uiGrid);
 
       //all properties of grid are available on scope
@@ -362,7 +363,7 @@
       });
 
       // Refresh the canvas drawable size
-      self.refreshCanvas = function() {
+      $scope.grid.refreshCanvas = self.refreshCanvas = function() {
         if (self.header) {
           self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
         }
