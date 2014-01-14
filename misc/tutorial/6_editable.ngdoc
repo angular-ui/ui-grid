@@ -14,7 +14,7 @@ This grid example uses a data set of 500 records.  Demonstrates in-line editing 
 
       $scope.gridOptions.columnDefs = [
         {field:'id'},
-        {field:'name',enableCellEdit:true},
+        {field:'name',enableCellEdit:true, displayName:'name (editable)'},
         {field:'age'},
         {field: 'address.city'}
       ];
