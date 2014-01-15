@@ -56,8 +56,8 @@
    *  @description factory to return dom specific instances of a grid
    *
    */
-  module.service('gridClassFactory', ['gridUtil','$q','$templateCache','uiGridConstants','$log',
-        function (gridUtil,$q,$templateCache,uiGridConstants,$log) {
+  module.service('gridClassFactory', ['gridUtil', '$q', '$templateCache', 'uiGridConstants', '$log',
+        function (gridUtil, $q, $templateCache, uiGridConstants, $log) {
 
     var service = {
       /**
@@ -193,10 +193,10 @@
         }
         var col = self.getColumn(colDef.field);
 
-        //if (!col) {
+        if (!col) {
           col = new GridColumn(colDef, index);
           self.columns.push(col);
-        //}
+        }
 
         self.columnBuilders.forEach(function (builder) {
           builderPromises.push(builder.call(self, colDef, col, self.options));
@@ -412,7 +412,7 @@
      * @param {ColDef} colDef column definition
      * @returns {string} resulting name that can be evaluated on scope
      */
-    GridRow.prototype.getQualifiedColField = function(colDef){
+    GridRow.prototype.getQualifiedColField = function(colDef) {
       return 'row.entity.' + colDef.field;
     };
 
@@ -452,8 +452,7 @@
     return service;
   }]);
 
-  module.controller('uiGridController',['$scope', '$element', '$attrs','$log','gridUtil','$q','uiGridConstants',
-    '$templateCache','gridClassFactory',
+  module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants', '$templateCache', 'gridClassFactory',
     function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants, $templateCache, gridClassFactory) {
       $log.debug('ui-grid controller');
 
@@ -538,8 +537,8 @@
       };
 
       //todo: throttle this event?
-      self.fireScrollEvent = function(){
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL,'vertical');
+      self.fireScrollEvent = function() {
+        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, 'vertical');
       };
 
     }]);
@@ -610,12 +609,11 @@ module.directive('uiGrid',
   ]);
 
 
-  module.directive('uiGridCell', ['$compile','uiGridConstants','$log', function ($compile,uiGridConstants,$log) {
+  module.directive('uiGridCell', ['$compile', 'uiGridConstants', '$log', function ($compile, uiGridConstants, $log) {
     var ngCell = {
       priority: 0,
       scope: false,
       compile: function() {
-
         return {
           pre: function($scope, $elm) {
             // $log.debug('uiGridCell pre-link');
