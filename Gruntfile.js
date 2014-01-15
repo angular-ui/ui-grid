@@ -202,6 +202,10 @@ module.exports = function(grunt) {
           angular: false,
           console: false,
 
+          /* jquery (testing only) */
+          $:false,
+          jQuery: false,
+
           /* grunt */
           process: false,
           require: false,

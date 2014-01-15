@@ -20,6 +20,45 @@
   });
 
   /**
+   *  @ngdoc service
+   *  @name ui.grid.edit.service:uiGridEditService
+   *
+   *  @description Services for editing features
+   */
+  module.service('uiGridEditService', ['$log', '$q', '$templateCache',
+    function ($log, $q, $templateCache) {
+
+      var service = {
+        /**
+         * @ngdoc service
+         * @name editColumnBuilder
+         * @methodOf ui.grid.edit.service:uiGridEditService
+         * @description columnBuilder function that adds edit properties to grid column
+         * @returns {promise} promise that will load any needed templates when resolved
+         */
+        editColumnBuilder: function (colDef, col, gridOptions) {
+
+          var promises = [];
+
+          col.enableCellEdit = colDef.enableCellEdit !== undefined ?
+            colDef.enableCellEdit : gridOptions.enableCellEdit;
+
+          col.cellEditableCondition = colDef.cellEditableCondition || gridOptions.cellEditableCondition || 'true';
+
+          if (col.enableCellEdit) {
+            col.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('ui-grid/edit/editableCell');
+            col.editableCellDirective = colDef.editableCellDirective || 'ui-grid-text-editor';
+          }
+
+          return $q.all(promises);
+        }
+      };
+
+      return service;
+
+    }]);
+
+  /**
   *  @ngdoc directive
   *  @name ui.grid.edit.directive:uiGridEdit
   *  @element div
@@ -51,7 +90,7 @@
     </file>
   </example>
   */
-  module.directive('uiGridEdit', ['$log', '$q', '$templateCache', function ($log, $q, $templateCache) {
+  module.directive('uiGridEdit', ['$log', 'uiGridEditService', function ($log, uiGridEditService) {
     return {
       replace: true,
       priority: 5000,
@@ -61,29 +100,7 @@
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
             $log.debug('uiGridEdit preLink');
-            uiGridCtrl.grid.registerColumnBuilder(editColumnBuilder);
-
-            /**
-             * Processes designTime column definitions and creates runtime column properties
-             * @param grid - reference to grid
-             * @returns a promise
-             */
-            function editColumnBuilder(colDef, col, gridOptions) {
-
-              var promises = [];
-
-              col.enableCellEdit = colDef.enableCellEdit !== undefined ?
-                colDef.enableCellEdit : gridOptions.enableCellEdit;
-
-              col.cellEditableCondition = colDef.cellEditableCondition || gridOptions.cellEditableCondition || 'true';
-
-              if (col.enableCellEdit) {
-                col.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('ui-grid/edit/editableCell');
-                col.editableCellDirective = colDef.editableCellDirective || 'ui-grid-text-editor';
-              }
-
-              return $q.all(promises);
-            }
+            uiGridCtrl.grid.registerColumnBuilder(uiGridEditService.editColumnBuilder);
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
           }
@@ -127,7 +144,7 @@
    *    - Standards should be Esc keydown
    *
    *  Grid Events that end editing:
-   *    - scrolling
+   *    - uiGridConstants.events.GRID_SCROLL
    *
    */
   module.directive('uiGridCell', ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log','$parse',
@@ -247,6 +264,21 @@
       return ngCell;
     }]);
 
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:uiGridTextEditor
+   *  @element div
+   *  @restrict A
+   *
+   *  @description input editor component for text fields.  Can be used as a template to develop other editors
+   *
+   *  Events that end editing:
+   *     blur and enter keydown
+   *
+   *  Events that cancel editing:
+   *    - Esc keydown
+   *
+   */
   module.directive('uiGridTextEditor',
     ['uiGridConstants', 'uiGridEditConstants', '$log', '$templateCache', '$compile',
       function (uiGridConstants, uiGridEditConstants, $log, $templateCache, $compile) {
