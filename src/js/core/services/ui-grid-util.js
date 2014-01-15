@@ -429,6 +429,8 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
     },
 
     // Stolen from Modernizr
+    // TODO: make this, and everythign that flows from it, robust
+    //http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
     isTouchEnabled: function() {
       var bool;
 
