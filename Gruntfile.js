@@ -278,7 +278,7 @@ module.exports = function(grunt) {
 
       less: {
         files: 'src/**/*.less',
-        tasks: ['less', 'ngdocs']
+        tasks: ['less', 'ngdocs', 'concat:customizer_less']
       },
 
       docs: {
