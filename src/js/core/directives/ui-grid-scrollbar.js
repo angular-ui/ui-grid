@@ -103,12 +103,28 @@
           $document.unbind('mousemove', mousemove);
           $document.unbind('mouseup', mouseup);
         }
+        
+        // if (! gridUtil.isTouchEnabled()) {
+        //   $scope.grid.element.on('mouseenter mouseleave', function() {
+        //     $elm.toggleClass('in');
+        //   });
+        // }
+        // else {
+        //   $elm.addClass('in');
+        // }
+
+        // $scope.grid.element.on('mouseout', function() {
+        //   $log.debug('mouseout!');
+        //   $elm.removeClass('in');
+        // });
 
         $elm.on('$destroy', function() {
           scrollDereg();
           $document.unbind('mousemove', mousemove);
           $document.unbind('mouseup', mouseup);
           $elm.unbind('mousedown');
+          // $scope.grid.element.unbind('mouseenter');
+          // $scope.grid.element.unbind('mouseleave');
         });
       }
     };

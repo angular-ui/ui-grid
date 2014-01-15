@@ -1,4 +1,6 @@
 
+@scrollbarWidth: 7px;
+
 .ui-grid-scrollbar {
   top: 0;
   z-index: 10;
@@ -10,14 +12,21 @@
   cursor: pointer;
   // transform: translateZ(0);
 
-  .rounded(7px);
+  .rounded(@scrollbarWidth);
   .box-shadow(0 0 1px #fff);
   // .transition(300ms, linear);
 
   &-vertical {
-    width: 7px;
+    width: @scrollbarWidth;
     margin-top: 4px;
     margin-bottom: 4px;
     right: 4px;
+    // right: @scrollbarWidth;
+    // .transition();
   }
+
+  // &-vertical.in {
+  //   .transition();
+  //   right: 4px;
+  // }
 }
