@@ -43,36 +43,18 @@
     return {
       // restrict: 'A',
       // priority: 1000,
-      require: '?^uiGrid',
+      // require: '?^uiGrid',
       link: function($scope, $elm, $attrs, uiGridCtrl) {
-        $log.debug('ui-grid-style link');
-        if (uiGridCtrl === undefined) {
-           $log.warn('[ui-grid-style link] uiGridCtrl is undefined!');
-        }
+        $log.debug('ui-grid-style link', $elm);
+        // if (uiGridCtrl === undefined) {
+        //    $log.warn('[ui-grid-style link] uiGridCtrl is undefined!');
+        // }
 
         var interpolateFn = $interpolate($elm.text(), true);
 
         if (interpolateFn) {
           $scope.$watch(interpolateFn, function(value) {
             $elm.text(value);
-          });
-        }
-
-        //todo: remove this if by injecting gridCtrl into unit tests
-        if (uiGridCtrl) {
-          uiGridCtrl.grid.registerStyleComputation(function() {
-            var width = uiGridCtrl.grid.gridWidth;
-            var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;
-
-            var ret = '';
-            var left = 0;
-            uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
-              // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
-              ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; }';
-              left = left + equalWidth;
-            });
-
-            $scope.columnStyles = ret;
           });
         }
 

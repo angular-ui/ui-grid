@@ -44,22 +44,39 @@
     </div>
   </header>
   
-  <div class="container" ng-app="customizer" ng-controller='Main'>
+  <div ng-cloak class="container" ng-app="customizer" ng-controller='Main'>
     <br>
     <br>
 
-    <textarea ng-model="source" rows="6" class="span12">
-      
-    </textarea>
+    <div class="row">
+      <form>
+        <div class="span4" ng-repeat="v in variables track by $index">
+          <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input name="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
+        </div>
+      </form>
+    </div>
 
-    <div class="well">{{ css }}</div>
+    <div class="text-error">{{ cssErr }}</div>
 
+    <br>
+      <div class="grid" ui-grid="gridOptions"></div>
+
+    <style ui-grid-style>
+      .grid {
+        width: 400px;
+        height: 300px;
+      }
+
+      {{ css }}
+    </style>
   </div>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
-  <script src="/js/customizer.js">></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js"></script>
+  <!-- <link rel="stylesheet" href="/release/ui-grid.css" /> -->
+  <script src="/release/ui-grid.js"></script>
+  <script src="/js/customizer.js"></script>
 </body>
 </html>

@@ -37,6 +37,24 @@
             if (uiGridCtrl) {
               uiGridCtrl.header = $elm;
             }
+
+            //todo: remove this if by injecting gridCtrl into unit tests
+            if (uiGridCtrl) {
+              uiGridCtrl.grid.registerStyleComputation(function() {
+                var width = uiGridCtrl.grid.gridWidth;
+                var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;
+
+                var ret = '';
+                var left = 0;
+                uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
+                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
+                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; }';
+                  left = left + equalWidth;
+                });
+
+                $scope.columnStyles = ret;
+              });
+            }
           }
         };
       }
