@@ -7,23 +7,38 @@
     overflow: hidden;
     font-weight: bold;
 
-    .gradient(#f3f3f3, #eee, #fff);
+    .gradient(#f3f3f3, #eee, #fff);  
+}
 
-  // &:before, &:after {
-  //   content:"";
-  //   display:table;
-  // }
+.ui-grid-header {
+  // Clearfix for floating header cells
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
 
-  // &:after {
-  //   clear:both;
-  // }
+  &:after {
+    clear:both;
+  }
 }
 
 .ui-grid-header-cell {
-  // position: absolute;
   position: relative;
   float: left;
   top: 0;
   bottom: 0;
   background-color: inherit;
+
+  // Default to width 0 so header height can calculate right. Otherwise
+  //  the header cells will flow onto the next line of the header container
+  //  and cause the header height to be calculated as twice the height
+  //  it should be. The column widths are calculated dynamically
+  width: 0;
+}
+
+// Make vertical bar in header row fill the height of the cell completely
+.ui-grid-header .ui-grid-vertical-bar {
+  top: 0;
+  bottom: 0;
 }

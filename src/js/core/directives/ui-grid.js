@@ -156,10 +156,10 @@
         }
         var col = self.getColumn(colDef.field);
 
-        if (!col) {
+        //if (!col) {
           col = new GridColumn(colDef, index);
           self.columns.push(col);
-        }
+        //}
 
         self.columnBuilders.forEach(function (builder) {
           builderPromises.push(builder.call(self, colDef, col, self.options));
@@ -259,7 +259,7 @@
       for (var i = 0; i < newRows.length; i++) {
         this.renderedRows.length = newRows.length;
 
-        this.renderedRows[i] =newRows[i];
+        this.renderedRows[i] = newRows[i];
       }
     };
 
@@ -284,7 +284,6 @@
     // TODO(c0bra): account for footer height
     Grid.prototype.getViewportHeight = function () {
       var viewPortHeight = this.gridHeight - this.headerHeight;
-      $log.debug('viewPortHeight', viewPortHeight);
       return viewPortHeight;
     };
 
@@ -476,17 +475,16 @@
 
 
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
-        self.grid.buildStyles($scope);
+        self.refreshCanvas();
       });
 
       // Refresh the canvas drawable size
       $scope.grid.refreshCanvas = self.refreshCanvas = function() {
+        self.grid.buildStyles($scope);
+
         if (self.header) {
           self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
-          $log.debug('self.grid.headerHeight', self.grid.headerHeight);
         }
-
-        self.grid.buildStyles($scope);
       };
 
       //todo: throttle this event?
@@ -548,6 +546,8 @@ module.directive('uiGrid',
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $log.debug('ui-grid postlink');
 
+              uiGridCtrl.grid.element = $elm;
+
               uiGridCtrl.grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
@@ -568,14 +568,14 @@ module.directive('uiGrid',
 
         return {
           pre: function($scope, $elm) {
-            $log.debug('uiGridCell pre-link');
+            // $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
               .replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           },
           post: function($scope, $elm) {
-            $log.debug('uiGridCell post-link');
+            // $log.debug('uiGridCell post-link');
           }
         };
       }
