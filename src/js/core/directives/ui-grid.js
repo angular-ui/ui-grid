@@ -121,7 +121,7 @@
 
     /**
      * @ngdoc function
-     * @name Grid
+     * @name ui.grid.class:Grid
      * @description Grid defines a logical grid.  Any non-dom properties and elements needed by the grid should
      *              be defined in this class
      * @param {string} id id to assign to grid
@@ -151,7 +151,7 @@
     /**
      * @ngdoc function
      * @name registerColumnBuilder
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description When the build creates columns from column definitions, the columnbuilders will be called to add
      * additional properties to the column.
      * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
@@ -163,7 +163,7 @@
     /**
      * @ngdoc function
      * @name getColumn
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description returns a grid column for the field name
      * @param {string} field field name
      */
@@ -177,7 +177,7 @@
     /**
      * @ngdoc function
      * @name buildColumns
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description creates GridColumn objects from the columnDefinition.  Calls each registered
      * columnBuilder to further process the column
      * @returns {Promise} a promise to load any needed column resources
@@ -210,7 +210,7 @@
     /**
      * @ngdoc function
      * @name modifyRows
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description creates or removes GridRow objects from the newRawData array.  Calls each registered
      * rowBuilder to further process the row
      *
@@ -251,7 +251,7 @@
   /**
     * Private Undocumented Method
     * @name addRows
-    * @methodOf Grid
+    * @methodOf ui.grid.class:Grid
     * @description adds the newRawData array of rows to the grid and calls all registered
     * rowBuilders
     */
@@ -266,7 +266,7 @@
     /**
      * @ngdoc function
      * @name processRowBuilders
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description processes all RowBuilders for the gridRow
      * @parameter {GridRow} gridRow reference to gridRow
      * @returns {GridRow} the gridRow with all additional behaivor added
@@ -284,7 +284,7 @@
     /**
      * @ngdoc function
      * @name registerStyleComputation
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description registered a styleComputation function
      * @parameter {function($scope)} styleComputation function
      */
@@ -303,7 +303,7 @@
     /**
      * @ngdoc function
      * @name buildStyles
-     * @methodOf Grid
+     * @methodOf ui.grid.class:Grid
      * @description calls each styleComputation function
      */
     Grid.prototype.buildStyles = function ($scope) {
@@ -336,7 +336,7 @@
 
     /**
      * @ngdoc function
-     * @name GridOptions
+     * @name ui.grid.class:GridOptions
      * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
      * over this object.
      * @param {string} id id to assign to grid
@@ -345,7 +345,7 @@
       /**
        * @ngdoc object
        * @name data
-       * @propertyOf  GridOptions
+       * @propertyOf  ui.grid.class:GridOptions
        * @description Array of data to be rendered to grid.  Array can contain complex objects
        */
       this.data = [];
@@ -353,11 +353,11 @@
       /**
        * @ngdoc object
        * @name columnDefs
-       * @propertyOf  GridOptions
+       * @propertyOf  ui.grid.class:GridOptions
        * @description (optional) Array of columnDef objects.  Only required property is field
        *  @example
 
-       var columnDefs = [{field:'field1'}, {field:'field2'}];
+       var columnDefs = [{field:'field1'}, {field:'field2'}]; 
 
        */
       this.columnDefs = [];
@@ -377,7 +377,7 @@
       /**
        * @ngdoc function
        * @name rowEquality
-       * @methodOf GridOptions
+       * @methodOf ui.grid.class:GridOptions
        * @description By default, rows are compared using object equality.  This option can be overridden
        * to compare on any data item property or function
        * @param {object} entityA First Data Item to compare
@@ -393,7 +393,7 @@
 
     /**
      * @ngdoc function
-     * @name GridRow
+     * @name ui.grid.class:GridRow
      * @description Wrapper for the GridOptions.data rows.  Allows for needed properties and functions
      * to be assigned to a grid row
      * @param {object} entity the array item from GridOptions.data
@@ -404,13 +404,22 @@
       this.index = index;
     }
 
+    /**
+     * @ngdoc function
+     * @name getQualifiedColField
+     * @methodOf ui.grid.class:GridRow
+     * @description returns the qualified field name as it exists on scope
+     * ie: row.entity.fieldA
+     * @param {ColDef} colDef column definition
+     * @returns {string} resulting name that can be evaluated on scope
+     */
     GridRow.prototype.getQualifiedColField = function(colDef){
       return 'row.entity.' + colDef.field;
     };
 
     /**
      * @ngdoc function
-     * @name GridColumn
+     * @name ui.grid.class:GridColumn
      * @description Wrapper for the GridOptions.colDefs items.  Allows for needed properties and functions
      * to be assigned to a grid column
      * @param {ColDef} colDef Column definition
@@ -611,7 +620,7 @@ module.directive('uiGrid',
           pre: function($scope, $elm) {
             $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
-              .replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
+              .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col.colDef));
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           },
