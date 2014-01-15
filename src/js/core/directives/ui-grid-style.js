@@ -58,9 +58,8 @@
           });
         }
 
-
         //todo: remove this if by injecting gridCtrl into unit tests
-        if(uiGridCtrl){
+        if (uiGridCtrl) {
           uiGridCtrl.grid.registerStyleComputation(function() {
             var width = uiGridCtrl.grid.gridWidth;
             var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;

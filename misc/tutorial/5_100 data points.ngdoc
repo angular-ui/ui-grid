@@ -2,7 +2,7 @@
 @name Tutorial: 100 Rows
 @description
 
-This grid example uses a data set of 1000 records
+This grid example uses a data set of 100 records
 
 @example
 <example module="app">
@@ -10,7 +10,7 @@ This grid example uses a data set of 1000 records
     var app = angular.module('app', ['ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {  };
+      $scope.gridOptions = {};
 
       $http.get('/data/100.json')
         .success(function(data) {
