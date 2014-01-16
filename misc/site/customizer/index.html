@@ -150,8 +150,31 @@
   -->
 
   <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js"></script>
-  <script src="/release/ui-grid.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
+
+  <script>
+    function outerHTML(node){
+        // if IE, Chrome take the internal method otherwise build one
+        return node.outerHTML || (
+          function(n){
+              var div = document.createElement('div'), h;
+              div.appendChild(n);
+              h = div.innerHTML;
+              div = null;
+              return h;
+          })(node);
+    }
+
+    var s = document.createElement('script');
+    if (window.location.href.match('ui-grid.info')) {
+      s.src = '/release/ui-grid-unstable.js';
+    }
+    else {
+      s.src = '/release/ui-grid.js';
+    }
+    document.write(outerHTML(s));
+  </script>
+
   <script src="/js/customizer.js"></script>
 </body>
 </html>

@@ -109,7 +109,7 @@ app.service('less', function($log, $q) {
             p.reject(err.message);
           }
           else {
-            $log.debug('tree', tree);
+            // $log.debug('tree', tree);
             var css = tree.toCSS({ compress: comp });
             p.resolve(css);
           }
@@ -129,7 +129,6 @@ app.directive('hoverSelect', function() {
   
   return {
     link: function(scope, elm, attrs) {
-      console.log('linking hover select');
       elm.on('mouseover', function() {
         var startPos = 0, endPos = elm.val().length;
 
