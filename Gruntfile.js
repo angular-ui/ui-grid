@@ -82,6 +82,18 @@ module.exports = function(grunt) {
       dist: {
         src: ['src/js/**/*.js', '.tmp/template.js'],
         dest: '<%= dist %>/release/<%= pkg.name %>.js'
+      },
+
+      // Concat all the less files together for the customizer
+      customizer_less: {
+        options: {
+          process: function(src, filepath) {
+            // Strip import statements since we're concatting
+            return src.replace(/\@import\s*.+?;/g, '');
+          }
+        },
+        src: 'src/less/**/*.less',
+        dest: '<%= dist %>/less/<%= pkg.name %>.less'
       }
     },
 
@@ -115,7 +127,9 @@ module.exports = function(grunt) {
     karma: {
       options: {
         configFile: 'test/karma.conf.js',
-        files: util.angularFiles(util.latestAngular()).concat(util.testFiles.unit),
+        files:  util.testDependencies.unit
+                .concat(util.angularFiles(util.latestAngular()))
+                .concat(util.testFiles.unit),
         background: true
       },
       // dev: {
@@ -264,7 +278,7 @@ module.exports = function(grunt) {
 
       less: {
         files: 'src/**/*.less',
-        tasks: ['less', 'ngdocs']
+        tasks: ['less', 'ngdocs', 'concat:customizer_less']
       },
 
       docs: {

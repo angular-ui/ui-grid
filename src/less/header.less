@@ -1,3 +1,5 @@
+
+@topPanelRadius: @gridBorderRadius - @gridBorderWidth;
 .ui-grid-top-panel {
     position: relative;
     // z-index: 1;
@@ -7,7 +9,9 @@
     overflow: hidden;
     font-weight: bold;
 
-    .gradient(#f3f3f3, #eee, #fff);  
+    .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+
+    .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
 }
 
 .ui-grid-header {
@@ -21,6 +25,8 @@
   &:after {
     clear:both;
   }
+
+  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
 }
 
 .ui-grid-header-cell {

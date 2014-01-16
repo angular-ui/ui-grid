@@ -150,8 +150,7 @@
         $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
           // use wheelDeltaY
           evt.preventDefault();
-
-          // $log.debug('evt', evt);
+          
           // $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
 
           var newEvent = GridUtil.normalizeWheelEvent(evt);
@@ -160,9 +159,10 @@
 
           // Get the scroll percentage
           // var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - uiGridCtrl.grid.options.viewportHeight);
+          // $log.debug(uiGridCtrl.viewport[0].scrollTop, scrollAmount, uiGridCtrl.grid.getCanvasHeight(), uiGridCtrl.grid.getViewportHeight());
           var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
-          // TODO(c0bra): Keep scrollPercentage within the range 0-1.
+          // Keep scrollPercentage within the range 0-1.
           if (scrollPercentage < 0) { scrollPercentage = 0; }
           if (scrollPercentage > 1) { scrollPercentage = 1; }
 

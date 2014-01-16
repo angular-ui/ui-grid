@@ -1,35 +1,47 @@
 
-@prefix: ui-grid-;
+/* This file contains variable declarations (do not remove this line) */
 
-@rowColorEven: @middleGray;
-@rowColorOdd: @lightGray;
+/*-- VARIABLES (DO NOT REMOVE THESE COMMENTS) --*/
 
-@backgroundColor: #fdfdfd;
+/**
+* @section Grid styles
+*/
+@gridBorderWidth: 1px;
+@gridBorderRadius: 0px;
+@borderColor: #d4d4d4;
 
-// Gray color for header and footer and panels
-@darkGray: #EAEAEA;
 
-@panelColor: @darkGray;
+/**
+* @section Header styles
+*/
 
-// Gray colors used for row alternation
-@lightGray: #fdfdfd;
-@middleGray: #f3f3f3;
+/** @description Colors for header gradient */
+@headerBackgroundColor: #f3f3f3;
+@headerGradientStart: #eee;
+@headerGradientStop: #fff;
 
-// Gray for borders
-@darkAccentGray: #d4d4d4;
-@borderColor: @darkAccentGray;
+/**
+* @section Grid body styles
+*/
 
-// Used for columnmenu buton
-@grayGreen: #bdd0cb;
+/** @description Colors used for row alternation */
+@rowColorEven: #f3f3f3;
+@rowColorOdd: #fdfdfd;
 
-// Used for column menu background
-@darkGrayGreen: darken(@grayGreen, 10%);
+// TODO: colors for buttons
 
-// Used for row selections
-@grayBlue: #C9DDE1; // #b3c4c7;
+// TODO: color for menu background
 
-// Used for cell selections
-@darkGrayBlue: #b3c4c7;
+// TODO: color  for row selections
 
-// Color for buttons
-@buttonColor: lighten(#333, 10%);
+// TODO: color for cell selections
+
+/**
+* @section Scrollbar styles
+*/
+@scrollbarBackground: rgba(0, 0, 0, 0.5);
+@scrollbarWidth: 7px;
+@scrollbarBorderRadius: @scrollbarWidth;
+@scrollbarShadow: 0 0 0px #fff;
+
+/*-- END VARIABLES (DO NOT REMOVE THESE COMMENTS) --*/
