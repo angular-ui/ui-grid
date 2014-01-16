@@ -100,8 +100,8 @@
         });
 
         function mouseup() {
-          $document.unbind('mousemove', mousemove);
-          $document.unbind('mouseup', mouseup);
+          $document.off('mousemove', mousemove);
+          $document.off('mouseup', mouseup);
         }
         
         // if (! gridUtil.isTouchEnabled()) {
