@@ -149,119 +149,108 @@
    */
   module.directive('uiGridCell', ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log','$parse',
     function ($compile, uiGridConstants, uiGridEditConstants, $log, $parse) {
-      var uiGridCell = {
+      return {
         priority: -100, // run after default uiGridCell directive
         restrict: 'A',
         scope: false,
-        compile: function () {
-          return {
-            pre: function ($scope, $elm, $attrs) {
-              $log.debug('gridEdit uiGridCell pre-link');
+        link: function ($scope, $elm, $attrs) {
+          if (!$scope.col.colDef.enableCellEdit) {
+            return;
+          }
 
-            },
-            post: function ($scope, $elm, $attrs) {
-              $log.debug('gridEdit uiGridCell post-link');
-              if (!$scope.col.colDef.enableCellEdit) {
-                return;
-              }
+          var origHtml;
+          var html;
+          var origCellValue;
+          var inEdit = false;
+          var cellModel;
 
-              var origHtml;
-              var html;
-              var origCellValue;
-              var inEdit = false;
-              var cellModel;
+          registerBeginEditEvents();
 
-              registerBeginEditEvents();
-
-              function registerBeginEditEvents(){
-                $elm.on('dblclick', function () {
+          function registerBeginEditEvents(){
+            $elm.on('dblclick', function () {
+              beginEdit();
+            });
+            $elm.on('keydown', function (evt) {
+              switch (evt.keyCode) {
+                case uiGridConstants.keymap.F2:
+                  evt.stopPropagation();
                   beginEdit();
-                });
-                $elm.on('keydown', function (evt) {
-                  switch (evt.keyCode) {
-                    case uiGridConstants.keymap.F2:
-                      evt.stopPropagation();
-                      beginEdit();
-                      break;
-                  }
-                });
+                  break;
               }
+            });
+          }
 
-              function cancelBeginEditEvents(){
-                $elm.off('dblclick', 'keydown');
-              }
+          function cancelBeginEditEvents(){
+            $elm.off('dblclick', 'keydown');
+          }
 
-              function beginEdit() {
-                cellModel = $parse($scope.row.getQualifiedColField($scope.col));
-                //get original value from the cell
-                origCellValue = cellModel($scope);
+          function beginEdit() {
+            cellModel = $parse($scope.row.getQualifiedColField($scope.col));
+            //get original value from the cell
+            origCellValue = cellModel($scope);
 
 
-                origHtml = $scope.col.cellTemplate;
-                origHtml = origHtml.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+            origHtml = $scope.col.cellTemplate;
+            origHtml = origHtml.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
-                html = $scope.col.editableCellTemplate;
-                html = html.replace(uiGridEditConstants.EDITABLE_CELL_DIRECTIVE, $scope.col.editableCellDirective);
+            html = $scope.col.editableCellTemplate;
+            html = html.replace(uiGridEditConstants.EDITABLE_CELL_DIRECTIVE, $scope.col.editableCellDirective);
 
-                var cellElement;
-                $scope.$apply(function () {
-                    inEdit = true;
-                    cancelBeginEditEvents();
+            var cellElement;
+            $scope.$apply(function () {
+                inEdit = true;
+                cancelBeginEditEvents();
 
-                    cellElement = $compile(html)($scope);
-                    $elm.find('div').replaceWith(cellElement);
-                  }
-                );
-
-                //stop editing when grid is scrolled
-                var deregOnGridScroll = $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
-                  endEdit();
-                  deregOnGridScroll();
-                });
-
-                //end editing
-                var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
-                  endEdit();
-                  deregOnEndCellEdit();
-                });
-
-                //cancel editing
-                var deregOnCancelCellEdit = $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
-                  cancelEdit();
-                  deregOnCancelCellEdit();
-                });
-
-                $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT);
-              }
-
-              function endEdit() {
-                if (!inEdit) {
-                  return;
-                }
-                //replace element with original
-                var cellElement = $compile(origHtml)($scope);
+                cellElement = $compile(html)($scope);
                 $elm.find('div').replaceWith(cellElement);
-                $scope.$apply();
-                inEdit = false;
-                registerBeginEditEvents();
               }
+            );
 
-              function cancelEdit() {
-                if (!inEdit) {
-                  return;
-                }
+            //stop editing when grid is scrolled
+            var deregOnGridScroll = $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
+              endEdit();
+              deregOnGridScroll();
+            });
 
-                cellModel.assign($scope,origCellValue);
+            //end editing
+            var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
+              endEdit();
+              deregOnEndCellEdit();
+            });
 
-                endEdit();
-              }
+            //cancel editing
+            var deregOnCancelCellEdit = $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
+              cancelEdit();
+              deregOnCancelCellEdit();
+            });
 
+            $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT);
+          }
+
+          function endEdit() {
+            if (!inEdit) {
+              return;
             }
-          };
+            //replace element with original
+            var cellElement = $compile(origHtml)($scope);
+            $elm.find('div').replaceWith(cellElement);
+            $scope.$apply();
+            inEdit = false;
+            registerBeginEditEvents();
+          }
+
+          function cancelEdit() {
+            if (!inEdit) {
+              return;
+            }
+
+            cellModel.assign($scope,origCellValue);
+
+            endEdit();
+          }
+
         }
       };
-
-      return uiGridCell;
     }]);
 
   /**
