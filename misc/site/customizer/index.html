@@ -73,12 +73,12 @@
         <form class="container">
           <div class="row">
             <div class="span4" ng-repeat="v in variables track by $index">
-              <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input name="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
+              <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input id="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
             </div>
           </div>
         </form>
       </div>
-      <div class="span4">
+      <div class="span4" data-spy="affix" data-offset-top="0">
         <style>
           .grid {
             width: 400px;
@@ -90,7 +90,6 @@
           {{ css }}
         </style>
         
-        
         <div class="grid" ui-grid="gridOptions"></div>
       </div>
     </div>
@@ -100,7 +99,7 @@
     <br>
 
     <label for="customLess">Custom Less</label>
-    <textarea class="span8" name="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
+    <textarea class="span8" id="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
 
     <br>
     <br>
@@ -123,6 +122,8 @@
         <br>
 
         <textarea hover-select row="20" class="compiled-css span5" readonly>{{ css }}</textarea>
+        <br>
+        Hover then copy and paste the CSS.
         <!-- <button class="btn btn-success" data-clipboard-text="{{ css }}">Copy to Clipboard</button> -->
       </div>
       <div class="modal-footer">
