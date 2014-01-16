@@ -19,6 +19,7 @@ app.controller('Main', function($log, $http, $scope, less) {
       $scope.defaultVariables = angular.copy($scope.variables);
     });
 
+  // function() { return { a: $scope.source, b: $scope.compress }; }
   $scope.$watch('source', function(n, o) {
     if (n) {
       $scope.updateCSS();
@@ -30,10 +31,12 @@ app.controller('Main', function($log, $http, $scope, less) {
     $scope.updateCSS();
   }
 
-  $scope.updateCSS = function() {
+  $scope.updateCSS = function(compress) {
+    $scope.compress = compress;
+
     var fullSrc = $scope.source + ' ' + $scope.customLess;
     var src = less.replaceVariables(fullSrc, $scope.variables);
-    less.process(src)
+    less.process(src, $scope.compress)
       .then(
         function(css) {
           $scope.css = css;
@@ -43,7 +46,15 @@ app.controller('Main', function($log, $http, $scope, less) {
           $scope.cssErr = err;
         }
       );
-    };
+  };
+
+  $scope.cssSize = function() {
+    return (unescape(encodeURIComponent( $scope.css )).length / 1000).toFixed(2) + 'kB';
+  };
+
+  // $scope.clipboard = function() {
+  //   client.setText($scope.css);
+  // };
 });
 
 app.service('less', function($log, $q) {
@@ -96,10 +107,43 @@ app.service('less', function($log, $q) {
         });
       }
       catch (e) {
-        p.resolve(e);
+        // $log.debug('catch e', e);
+        p.reject(e.message);
       }
 
       return p.promise;
+    }
+  };
+});
+
+app.directive('hoverSelect', function() {
+  
+  return {
+    link: function(scope, elm, attrs) {
+      console.log('linking hover select');
+      elm.on('mouseover', function() {
+        var startPos = 0, endPos = elm.val().length;
+
+         // Chrome / Firefox
+        if(typeof(elm[0].selectionStart) != "undefined") {
+          elm.focus();
+          elm[0].selectionStart = startPos;
+          elm[0].selectionEnd = endPos;
+          return true;
+        }
+
+        // IE
+        if (document.selection && document.selection.createRange) {
+            elm.focus();
+            elm.select();
+            var range = document.selection.createRange();
+            range.collapse(true);
+            range.moveEnd("character", endPos);
+            range.moveStart("character", startPos);
+            range.select();
+            return true;
+        }
+      });
     }
   };
 });
