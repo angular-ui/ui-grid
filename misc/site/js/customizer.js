@@ -59,6 +59,9 @@ app.controller('Main', function($log, $http, $scope, less) {
 
 app.service('less', function($log, $q) {
   var variableBlockRe = /\/\*-- VARIABLES.+?--\*\/([\s\S]+?)\/\*-- END VARIABLES.+?--\*\//m;
+
+  var sectionRe = /\/\*\*([\s\S])*?\*\//mg;
+
   var variableRe = /(\@\w+)\: (.+?);/g;
 
   return {
@@ -66,12 +69,18 @@ app.service('less', function($log, $q) {
       var groups = src.match(variableBlockRe);
       var variableText = groups[1];
 
-      var variables = []
+      var sections = [];
+      var variables = [];
 
-      var match;
-      while (match = variableRe.exec(variableText)) {
-        variables.push({ name: match[1], value: match[2] });
-      }
+      var sectionMatch;
+      while (sectionMatch = sectionRe.exec(variableText) {
+        var sectionName = 
+
+        var varMatch;
+        while (varMatch = variableRe.exec(variableText)) {
+          variables.push({ name: varMatch[1], value: varMatch[2] });
+        }
+      });
 
       return variables;
     },
