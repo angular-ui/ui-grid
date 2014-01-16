@@ -1,0 +1,35 @@
+@ngdoc overview
+@name Tutorial: Cell Navigation
+@description
+
+This grid example uses the ui-grid-cellnav directive to add cell navigation
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellnav']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {};
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <br>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-cellnav class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>
