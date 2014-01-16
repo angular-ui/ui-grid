@@ -149,7 +149,7 @@
    */
   module.directive('uiGridCell', ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log','$parse',
     function ($compile, uiGridConstants, uiGridEditConstants, $log, $parse) {
-      var ngCell = {
+      var uiGridCell = {
         priority: -100, // run after default uiGridCell directive
         restrict: 'A',
         scope: false,
@@ -261,7 +261,7 @@
         }
       };
 
-      return ngCell;
+      return uiGridCell;
     }]);
 
   /**
