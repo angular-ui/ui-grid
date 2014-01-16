@@ -3,14 +3,14 @@
   z-index: 10;
   position: absolute;
 
-  background: rgba(0, 0, 0, 0.5);
+  background: @scrollbarBackground;
 
   opacity: 1;
   cursor: pointer;
   // transform: translateZ(0);
 
-  .rounded(@scrollbarWidth);
-  .box-shadow(0 0 1px #fff);
+  .rounded(@scrollbarBorderRadius);
+  .box-shadow(@scrollbarShadow);
   // .transition(300ms, linear);
 
   &-vertical {

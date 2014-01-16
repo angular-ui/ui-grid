@@ -16,6 +16,7 @@ app.controller('Main', function($log, $http, $scope, less) {
     .success(function (data) {
       $scope.source = data;
       $scope.variables = less.parseVariables(data);
+      $scope.defaultVariables = angular.copy($scope.variables);
     });
 
   $scope.$watch('source', function(n, o) {
@@ -24,8 +25,14 @@ app.controller('Main', function($log, $http, $scope, less) {
     }
   });
 
+  $scope.resetVariables = function() {
+    $scope.variables = angular.copy($scope.defaultVariables);
+    $scope.updateCSS();
+  }
+
   $scope.updateCSS = function() {
-    var src = less.replaceVariables($scope.source, $scope.variables);
+    var fullSrc = $scope.source + ' ' + $scope.customLess;
+    var src = less.replaceVariables(fullSrc, $scope.variables);
     less.process(src)
       .then(
         function(css) {
@@ -33,7 +40,6 @@ app.controller('Main', function($log, $http, $scope, less) {
           $scope.cssErr = null;
         },
         function(err) {
-          $log.debug('wha!');
           $scope.cssErr = err;
         }
       );
@@ -41,8 +47,6 @@ app.controller('Main', function($log, $http, $scope, less) {
 });
 
 app.service('less', function($log, $q) {
-  
-
   var variableBlockRe = /\/\*-- VARIABLES.+?--\*\/([\s\S]+?)\/\*-- END VARIABLES.+?--\*\//m;
   var variableRe = /(\@\w+)\: (.+?);/g;
 

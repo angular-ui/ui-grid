@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/docs/css/bootstrap-flatly.css" />
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="/release/ui-grid.css" />
 </head>
 <body>
   <header class="header">
@@ -46,6 +47,17 @@
   
   <div ng-cloak class="container" ng-app="customizer" ng-controller='Main'>
     <br>
+
+    <h2 class="text-center">Grid Customizer</h2>
+    
+    <br>
+
+    <div class="row">
+      <div class="span12">
+        <button type="button" class="btn btn-success" ng-click="resetVariables()">Reset Variables</button>
+      </div>
+    </div>
+
     <br>
 
     <div class="row">
@@ -59,23 +71,39 @@
     <div class="text-error">{{ cssErr }}</div>
 
     <br>
-      <div class="grid" ui-grid="gridOptions"></div>
 
-    <style ui-grid-style>
+    <label for="customLess">Custom Less</label>
+    <textarea class="span12" name="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
+
+    <br>
+    <br>
+
+    <style>
       .grid {
         width: 400px;
         height: 300px;
       }
-
+    </style>
+    
+    <style ui-grid-style>
       {{ css }}
     </style>
+    
+    
+    <div class="grid" ui-grid="gridOptions"></div>
+
+    <br>
+    <br>
+    <br>
   </div>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
   <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js"></script>
-  <!-- <link rel="stylesheet" href="/release/ui-grid.css" /> -->
   <script src="/release/ui-grid.js"></script>
   <script src="/js/customizer.js"></script>
 </body>
