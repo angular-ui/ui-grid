@@ -11,6 +11,11 @@
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
   <link rel="stylesheet" href="/release/ui-grid.css" />
+  <style>
+    .compiled-css {
+      height: 280px;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -55,17 +60,39 @@
     <div class="row">
       <div class="span12">
         <button type="button" class="btn btn-success" ng-click="resetVariables()">Reset Variables</button>
+        &nbsp;
+        &nbsp;
+        <button type="button" class="btn btn-primary" ng-click="showDownload = true">Download CSS</button>
       </div>
     </div>
 
     <br>
 
     <div class="row">
-      <form>
-        <div class="span4" ng-repeat="v in variables track by $index">
-          <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input name="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
-        </div>
-      </form>
+      <div class="span8">
+        <form class="container">
+          <div class="row">
+            <div class="span4" ng-repeat="v in variables track by $index">
+              <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input name="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="span4">
+        <style>
+          .grid {
+            width: 400px;
+            height: 300px;
+          }
+        </style>
+        
+        <style ui-grid-style>
+          {{ css }}
+        </style>
+        
+        
+        <div class="grid" ui-grid="gridOptions"></div>
+      </div>
     </div>
 
     <div class="text-error">{{ cssErr }}</div>
@@ -73,24 +100,35 @@
     <br>
 
     <label for="customLess">Custom Less</label>
-    <textarea class="span12" name="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
+    <textarea class="span8" name="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
 
     <br>
     <br>
 
-    <style>
-      .grid {
-        width: 400px;
-        height: 300px;
-      }
-    </style>
-    
-    <style ui-grid-style>
-      {{ css }}
-    </style>
-    
-    
-    <div class="grid" ui-grid="gridOptions"></div>
+    <div ng-cloak ng-show="showDownload" class="modal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="showDownload = false">&times;</button>
+        <h3>Download</h3>
+      </div>
+      <div class="modal-body">
+        <div class="btn-group" data-toggle="buttons-radio">
+          <button type="button" class="btn btn-success" ng-class="{ 'active' : !compressed }" ng-click="updateCSS(false)">Full</button>
+          <button type="button" class="btn btn-success" ng-class="{ 'active' : compressed }" ng-click="updateCSS(true)">Minified</button>
+        </div>
+        &nbsp;
+        &nbsp;
+        <strong>Size:</strong> {{ cssSize() }}
+
+        <br>
+        <br>
+
+        <textarea hover-select row="20" class="compiled-css span5" readonly>{{ css }}</textarea>
+        <!-- <button class="btn btn-success" data-clipboard-text="{{ css }}">Copy to Clipboard</button> -->
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn" ng-click="showDownload = false">Close</a>
+      </div>
+    </div>
 
     <br>
     <br>
@@ -100,7 +138,13 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
-
+  <!--
+  <script src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.2.3/ZeroClipboard.js"></script>
+  <script>
+    // ZeroClipboard.config( { moviePath: '//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.2.3/ZeroClipboard.swf' } );
+    var client = new ZeroClipboard({ moviePath: 'http://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.2.3/ZeroClipboard.swf' });
+  </script>
+  -->
 
   <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.js"></script>
