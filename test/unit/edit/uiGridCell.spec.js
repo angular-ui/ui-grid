@@ -18,7 +18,7 @@ describe('ui.grid.edit GridCellDirective', function () {
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();
     grid.options.columnDefs = [
-      {field: 'col1', enableCellEdit: true}
+      {name: 'col1', enableCellEdit: true}
     ];
     grid.options.data = [
       {col1: 'val'}
@@ -48,6 +48,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       //invoke edit
       element.dblclick();
       expect(element.find('input')).toBeDefined();
+      expect(element.find('input').val()).toBe('val');
     });
 
 

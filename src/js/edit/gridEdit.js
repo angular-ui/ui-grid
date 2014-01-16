@@ -290,7 +290,7 @@
               },
               post: function ($scope, $elm, $attrs) {
                 var html = $templateCache.get('ui-grid/edit/cellTextEditor');
-                html = html.replace(uiGridConstants.COL_FIELD, 'row.entity.' + $scope.col.colDef.field);
+                html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
                 var cellElement = $compile(html)($scope);
                 $elm.append(cellElement);
 
