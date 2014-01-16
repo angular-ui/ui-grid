@@ -69,18 +69,18 @@ app.service('less', function($log, $q) {
       var groups = src.match(variableBlockRe);
       var variableText = groups[1];
 
-      var sections = [];
+      // var sections = [];
       var variables = [];
 
-      var sectionMatch;
-      while (sectionMatch = sectionRe.exec(variableText) {
-        var sectionName = 
+      // var sectionMatch;
+      // while (sectionMatch = sectionRe.exec(variableText) {
+      //   var sectionName = 
 
         var varMatch;
         while (varMatch = variableRe.exec(variableText)) {
           variables.push({ name: varMatch[1], value: varMatch[2] });
         }
-      });
+      // });
 
       return variables;
     },

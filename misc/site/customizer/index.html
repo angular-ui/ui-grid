@@ -71,26 +71,26 @@
     <div class="row">
       <div class="span8">
         <form class="container">
-          <div class="row">
-            <div class="span4" ng-repeat="v in variables track by $index">
-              <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input id="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
-            </div>
+          <div class="span4" ng-repeat="v in variables track by $index">
+            <label for="{{ v.name }}" class="muted">{{ v.name }}</label> <input id="{{ v.name }}" type="text" ng-model="v.value" ng-change="updateCSS()">
           </div>
         </form>
       </div>
-      <div class="span4" data-spy="affix" data-offset-top="0">
-        <style>
-          .grid {
-            width: 400px;
-            height: 300px;
-          }
-        </style>
-        
-        <style ui-grid-style>
-          {{ css }}
-        </style>
-        
-        <div class="grid" ui-grid="gridOptions"></div>
+      <div class="span4">
+        <div data-spy="affix" data-offset-top="0">
+          <style>
+            .grid {
+              width: 400px;
+              height: 300px;
+            }
+          </style>
+          
+          <style ui-grid-style>
+            {{ css }}
+          </style>
+          
+          <div class="grid" ui-grid="gridOptions"></div>
+        </div>
       </div>
     </div>
 
@@ -134,6 +134,8 @@
     <br>
     <br>
     <br>
+
+    <!-- <div style="min-height: 4000px"></div> -->
   </div>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
