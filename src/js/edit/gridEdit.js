@@ -78,8 +78,8 @@
       ];
 
       $scope.columnDefs = [
-        {field: 'name', enableCellEdit: true},
-        {field: 'title', enableCellEdit: true}
+        {name: 'name', enableCellEdit: true},
+        {name: 'title', enableCellEdit: true}
       ];
     }]);
     </file>
@@ -192,13 +192,13 @@
               }
 
               function beginEdit() {
-                cellModel = $parse($scope.row.getQualifiedColField($scope.col.colDef));
+                cellModel = $parse($scope.row.getQualifiedColField($scope.col));
                 //get original value from the cell
                 origCellValue = cellModel($scope);
 
 
                 origHtml = $scope.col.cellTemplate;
-                origHtml = origHtml.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col.colDef));
+                origHtml = origHtml.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
                 html = $scope.col.editableCellTemplate;
                 html = html.replace(uiGridEditConstants.EDITABLE_CELL_DIRECTIVE, $scope.col.editableCellDirective);

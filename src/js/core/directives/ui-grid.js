@@ -164,12 +164,12 @@
      * @ngdoc function
      * @name getColumn
      * @methodOf ui.grid.class:Grid
-     * @description returns a grid column for the field name
-     * @param {string} field field name
+     * @description returns a grid column for the column name
+     * @param {string} name column name
      */
-    Grid.prototype.getColumn = function (field) {
+    Grid.prototype.getColumn = function (name) {
       var columns = this.columns.filter(function (column) {
-        return column.colDef.field === field;
+        return column.colDef.name === name;
       });
       return columns.length > 0 ? columns[0] : null;
     };
@@ -188,10 +188,8 @@
       var builderPromises = [];
 
       self.options.columnDefs.forEach(function (colDef, index) {
-        if (!colDef.field) {
-          throw new Error('colDef.field property is required');
-        }
-        var col = self.getColumn(colDef.field);
+        self.preprocessColDef(colDef);
+        var col = self.getColumn(colDef.name);
 
         if (!col) {
           col = new GridColumn(colDef, index);
@@ -205,6 +203,25 @@
       });
 
       return $q.all(builderPromises);
+    };
+
+    /**
+     * undocumented function
+     * @name preprocessColDef
+     * @methodOf ui.grid.class:Grid
+     * @description defaults the name property from field to maintain backwards compatibility with 2.x
+     * validates that name or field is present
+     */
+    Grid.prototype.preprocessColDef = function (colDef) {
+      if (!colDef.field && !colDef.name) {
+        throw new Error('colDef.name or colDef.field property is required');
+      }
+
+      //maintain backwards compatibility with 2.x
+      //field was required in 2.x.  now name is required
+      if (colDef.name === undefined && colDef.field !== undefined) {
+        colDef.name = colDef.field;
+      }
     };
 
     /**
@@ -353,10 +370,11 @@
        * @ngdoc object
        * @name columnDefs
        * @propertyOf  ui.grid.class:GridOptions
-       * @description (optional) Array of columnDef objects.  Only required property is field
+       * @description (optional) Array of columnDef objects.  Only required property is name.
+       * _field property can be used in place of name for backwards compatibilty with 2.x_
        *  @example
 
-       var columnDefs = [{field:'field1'}, {field:'field2'}]; 
+       var columnDefs = [{name:'field1'}, {name:'field2'}];
 
        */
       this.columnDefs = [];
@@ -409,11 +427,11 @@
      * @methodOf ui.grid.class:GridRow
      * @description returns the qualified field name as it exists on scope
      * ie: row.entity.fieldA
-     * @param {ColDef} colDef column definition
+     * @param {GridCol} col column instance
      * @returns {string} resulting name that can be evaluated on scope
      */
-    GridRow.prototype.getQualifiedColField = function(colDef) {
-      return 'row.entity.' + colDef.field;
+    GridRow.prototype.getQualifiedColField = function(col) {
+      return 'row.entity.' + col.field;
     };
 
     /**
@@ -421,12 +439,34 @@
      * @name ui.grid.class:GridColumn
      * @description Wrapper for the GridOptions.colDefs items.  Allows for needed properties and functions
      * to be assigned to a grid column
-     * @param {ColDef} colDef Column definition
+     * @param {ColDef} colDef Column definition.
+      <br/>Required properties
+      <ul>
+        <li>
+          name - name of field
+       </li>
+      </ul>
+
+      <br/>Optional properties
+      <ul>
+        <li>
+          field - angular expression that evaluates against grid.options.data array element.
+          <br/>can be complex - employee.address.city
+          <br/>Can also be a function - employee.getFullAddress()
+          <br/>see angular docs on binding expressions
+       </li>
+       <li>displayName - column name when displayed on screen.  defaults to name</li>
+       <li>todo: add other optional fields as implementation matures</li>
+      </ul>
+     *
      * @param {number} index the current position of the column in the array
      */
     function GridColumn(colDef, index) {
       var self = this;
       self.colDef = colDef;
+      if (colDef.name === undefined) {
+        throw new Error('colDef.name is required');
+      }
 
       //position of column
       self.index = index;
@@ -435,8 +475,12 @@
       self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
       self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
+
+      //use field if it is defined; name if it is not
+      self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
+
       // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
-      self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.field) : colDef.displayName;
+      self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
 
       //self.originalIndex = index;
 
@@ -446,7 +490,7 @@
       self.visible = gridUtil.isNullOrUndefined(colDef.visible) || colDef.visible;
 
       self.headerClass = colDef.headerClass;
-      self.cursor = self.sortable ? 'pointer' : 'default';
+      //self.cursor = self.sortable ? 'pointer' : 'default';
     }
 
     return service;
@@ -618,7 +662,7 @@ module.directive('uiGrid',
           pre: function($scope, $elm) {
             // $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
-              .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col.colDef));
+              .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           },

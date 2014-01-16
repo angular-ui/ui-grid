@@ -2,7 +2,14 @@
 @name Tutorial: Large Dataset
 @description
 
-This grid example uses a data set of 10,000 records.  Demonstrates binding complex column properties on Address.City.
+This grid example uses a data set of 10,000 records.
+
+Demonstrates the following:
+<ul>
+   <li>binding complex column properties on Address.City.</li>
+   <li>same field can be listed twice in the grid with a different name</li>
+   <li>using field instead of name for backwards compatibility with 2.x</li>
+ </ul>
 
 @example
 <example module="app">
@@ -13,10 +20,11 @@ This grid example uses a data set of 10,000 records.  Demonstrates binding compl
       $scope.gridOptions = {  };
 
       $scope.gridOptions.columnDefs = [
-        {field:'id'},
-        {field:'name'},
-        {field:'age'},
-        {field: 'address.city'}
+        {name:'id'},
+        {name:'name'},
+        {field:'age'}, // showing backwards compatibility with 2.x.  you can use field in place of name
+        {name: 'address.city'},
+        {name: 'age again', field:'age'}
       ];
 
       $http.get('/data/10000_complex.json')

@@ -225,8 +225,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
       
       angular.forEach(item,function (prop, propName) {
         columnDefs.push({
-          field: propName,
-          name: s.readableColumnName(propName)
+          name: propName
         });
       });
 
