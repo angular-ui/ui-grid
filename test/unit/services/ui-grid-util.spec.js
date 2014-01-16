@@ -70,12 +70,10 @@ describe('ui.grid.util', function() {
       expect(columns)
       .toEqual([
         {
-          field: 'firstName',
-          name: 'First Name'
+          name: 'firstName'
         },
         {
-          field: 'lastName',
-          name: 'Last Name'
+          name: 'lastName'
         }
       ]);
     });

@@ -13,10 +13,10 @@ You can use the `enableCellEdit` options in your column definitions to allow a c
       $scope.gridOptions = {  };
 
       $scope.gridOptions.columnDefs = [
-        { field: 'id' },
-        { field: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
-        { field: 'age' },
-        { field: 'address.city' }
+        { name: 'id' },
+        { name: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
+        { name: 'age' },
+        { name: 'address.city' }
       ];
 
       $http.get('/data/500_complex.json')

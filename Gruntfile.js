@@ -127,7 +127,9 @@ module.exports = function(grunt) {
     karma: {
       options: {
         configFile: 'test/karma.conf.js',
-        files: util.angularFiles(util.latestAngular()).concat(util.testFiles.unit),
+        files:  util.testDependencies.unit
+                .concat(util.angularFiles(util.latestAngular()))
+                .concat(util.testFiles.unit),
         background: true
       },
       // dev: {
