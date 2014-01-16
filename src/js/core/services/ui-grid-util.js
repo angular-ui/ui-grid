@@ -381,6 +381,11 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
       // event = $.event.fix(orgEvent);
       // event.type = 'mousewheel';
 
+      // NOTE: jQuery masks the event and stores it in the event as originalEvent
+      if (orgEvent.originalEvent) {
+        orgEvent = orgEvent.originalEvent;
+      }
+
       // Old school scrollwheel delta
       if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta; }
       if ( orgEvent.detail )     { delta = orgEvent.detail * -1; }

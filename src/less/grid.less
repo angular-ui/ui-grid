@@ -1,6 +1,8 @@
 
 .ui-grid {
-  border: 1px solid @borderColor;
+  border: @gridBorderWidth solid @borderColor;
+
+  .rounded(@gridBorderRadius);
 }
 
 .ui-grid-vertical-bar {
