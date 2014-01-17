@@ -86,6 +86,27 @@
         &nbsp;
         &nbsp;
         <button type="button" class="btn btn-primary" ng-click="showDownload = true">Download CSS</button>
+
+        <div class="pull-right">
+          <strong>Theme:</strong>
+          <div class="btn-group" ng-show="themes.length">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+              {{ theme || 'default' | capitalize }}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#" ng-click="setTheme()">Default</a>
+              </li>
+
+              <li ng-repeat="theme in themes">
+                <a href="#" ng-click="setTheme(theme)">
+                  {{ theme | capitalize }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -161,6 +182,7 @@
     <!-- <div style="min-height: 4000px"></div> -->
   </div>
 
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 

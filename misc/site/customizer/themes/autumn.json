@@ -1,0 +1,23 @@
+{
+  "variables": {
+    "@borderColor": "darken(@rowColorEven, 15%)",
+    "@rowColorOdd": "#FDFFE3",
+    "@rowColorEven": "#E6E3BB",
+    "@verticalBarColor": "@borderColor",
+
+    "@headerBackgroundColor": "#D3741C",
+    "@headerGradientStart": "",
+    "@headerGradientStop": "",
+    "@headerVerticalBarColor": "darken(@headerBackgroundColor, 15%)",
+
+    "@scrollbarBackground": "darken(@rowColorEven, 15%)",
+    "@scrollbarBackgroundHover": "darken(@scrollbarBackground, 15%)",
+    "@scrollbarBackgroundScrolling": "darken(@scrollbarBackgroundHover, 15%)",
+    "@scrollbarWidth": "10px",
+    "@scrollbarBorderRadius": "2px",
+    "@scrollbarShadow": "0 0 0px #fff",
+    "@scrollbarBorder": "1px solid darken(@scrollbarBackground, 15%)",
+    "@scrollbarBorderScrolling": "1px solid darken(@scrollbarBackground, 15%)"
+  },
+  "customLess": ".ui-grid { color: #242729; }\n\n.ui-grid-header { color: lighten(@headerBackgroundColor, 45%); }"
+}

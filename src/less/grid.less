@@ -13,7 +13,14 @@
 
 .ui-grid-header-cell:not(:last-child) .ui-grid-vertical-bar, .ui-grid-cell:not(:last-child) .ui-grid-vertical-bar {
   width: @gridBorderWidth;
-  background-color: @borderColor;
+}
+
+.ui-grid-header-cell:not(:last-child) .ui-grid-vertical-bar {
+  background-color: @headerVerticalBarColor;
+}
+
+.ui-grid-cell:not(:last-child) .ui-grid-vertical-bar {
+  background-color: @verticalBarColor;
 }
 
 // .ui-grid-vertical-bar-visible {

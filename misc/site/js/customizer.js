@@ -5,18 +5,21 @@ var app = angular.module('customizer', ['ui.grid', 'ui.grid.style']);
 app.run(function($log, $rootScope, $http) {
 });
 
-app.controller('Main', function($log, $http, $scope, less) {
+app.controller('Main', function($log, $http, $scope, less, Theme) {
+  // Create grid
   $scope.gridOptions = {};
   $http.get('/data/100.json')
     .success(function(data) {
       $scope.gridOptions.data = data;
     });
 
+  // Fetch initial less file
   $http.get('/less/ui-grid.less')
     .success(function (data) {
       $scope.source = data;
       $scope.variables = less.parseVariables(data);
-      $scope.defaultVariables = angular.copy($scope.variables);
+      $scope.trueDefaultVariables = angular.copy($scope.variables);
+      $scope.defaultVariables = angular.copy($scope.trueDefaultVariables);
     });
 
   // function() { return { a: $scope.source, b: $scope.compress }; }
@@ -26,7 +29,20 @@ app.controller('Main', function($log, $http, $scope, less) {
     }
   });
 
+  // Get themes
+  Theme.getThemes()
+    .then(function (themes) {
+      console.log('themes', themes);
+      $scope.themes = themes.themeList;
+      $scope.themeHash = themes.themeHash;
+    });
+
+  // Reset variables to defaults
   $scope.resetVariables = function() {
+    if ($scope.defaultCustomLess) {
+      $scope.customLess = $scope.defaultCustomLess;
+    }
+
     $scope.variables = angular.copy($scope.defaultVariables);
     $scope.updateCSS();
   }
@@ -52,9 +68,66 @@ app.controller('Main', function($log, $http, $scope, less) {
     return (unescape(encodeURIComponent( $scope.css )).length / 1000).toFixed(2) + 'kB';
   };
 
+  $scope.setTheme = function(theme) {
+    $scope.theme = theme;
+    if (theme) {
+      var themeData = $scope.themeHash[theme];
+
+      angular.forEach(themeData.variables, function (val, name) {
+        var matches = _.where($scope.defaultVariables, { name: name });
+        matches[0].value = val
+        // $scope.defaultVariables[name] = val;
+      });
+
+      if (themeData.customLess) {
+        $scope.defaultCustomLess = themeData.customLess;
+        $scope.customLess = themeData.customLess;
+      }
+
+      $scope.resetVariables();
+    }
+    else {
+      $scope.defaultVariables = angular.copy($scope.trueDefaultVariables);
+      $scope.defaultCustomLess = '';
+      $scope.customLess = '';
+      $scope.resetVariables();
+    }
+  };
+
   // $scope.clipboard = function() {
   //   client.setText($scope.css);
   // };
+});
+
+app.service('Theme', function($q, $http) {
+  return {
+    getThemes: function() {
+      var p = $q.defer();
+
+      $http.get('/customizer/themes/themes.json')
+        .success(function (themeList) {
+          var promises = [];
+          var themes = {};
+          angular.forEach(themeList, function(theme) {
+            var tp = $http.get('/customizer/themes/' + theme + '.json');
+            tp.success(function (data) {
+              themes[theme] = data;
+            });
+            promises.push(tp);
+          });
+
+          $q.all(promises)
+            .then(function() {
+              p.resolve({
+                themeList: themeList,
+                themeHash: themes
+              });
+            });
+        });
+
+      return p.promise;
+    }
+  };
 });
 
 app.service('less', function($log, $q) {
@@ -64,7 +137,7 @@ app.service('less', function($log, $q) {
 
   var variableRe = /(\@\w+)\: (.+?);/g;
 
-  return {
+  var lessService = {
     parseVariables: function (src) {
       var groups = src.match(variableBlockRe);
       var variableText = groups[1];
@@ -83,6 +156,10 @@ app.service('less', function($log, $q) {
       // });
 
       return variables;
+    },
+
+    replaceVariableBlock: function(src, replacement) {
+      return src.replace(variableBlockRe, replacement);
     },
 
     replaceVariables: function(src, vars) {
@@ -123,6 +200,8 @@ app.service('less', function($log, $q) {
       return p.promise;
     }
   };
+
+  return lessService;
 });
 
 app.directive('hoverSelect', function() {
@@ -154,6 +233,13 @@ app.directive('hoverSelect', function() {
       });
     }
   };
+});
+
+app.filter('capitalize', function() {
+    return function(input, scope) {
+        if (input!=null)
+            return input.substring(0,1).toUpperCase()+input.substring(1);
+    };
 });
 
 })();

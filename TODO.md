@@ -26,11 +26,14 @@
    - So in the uiGridBody it knows the indexes of the rows being rendered. It can just tell each row to calculate its own height in an $evalAsync.
       - Or perhaps the row heights can be calculated all at once in the body so we are not running N number of $evalAsync functions.
    - Invalidate row heights on data changes
-1. Add scrollbar border variable
 1. Add theming to customizer
 1. Add jade processing for misc/site directory
    - Don't `copy` .jade files with the copy task.
 1. Make scrollbar look like chrome's?
+
+1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
+
+1. Add a header border color
 
 # Done!
 
