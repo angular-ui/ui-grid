@@ -12,7 +12,14 @@ This grid example uses the ui-grid-cellNav directive to add cell navigation
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {};
 
-      $http.get('/data/100.json')
+      $scope.gridOptions.columnDefs = [
+        { name: 'id' },
+        { name: 'name'},
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
+        { name: 'address.city' }
+      ];
+
+      $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });

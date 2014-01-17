@@ -9,7 +9,7 @@
 
   /**
    *  @ngdoc object
-   *  @name ui.grid.cellNav.constant:uiGridEditConstants
+   *  @name ui.grid.cellNav.constant:uiGridCellNavConstants
    *
    *  @description constants available in cellNav
    */
@@ -19,15 +19,22 @@
 
   /**
    *  @ngdoc service
-   *  @name ui.grid.cellNav.service:uiGridNavService
+   *  @name ui.grid.cellNav.service:uiGridCellNavService
    *
-   *  @description Services for editing features. If you don't like the key maps we use,
-   *  override with a service decorator (see angular docs)
+   *  @description Services for cell navigation features. If you don't like the key maps we use,
+   *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
   module.service('uiGridCellNavService', ['$log', 'uiGridConstants', 'uiGridCellNavConstants', '$q',
     function ($log, uiGridConstants, uiGridCellNavConstants, $q) {
 
       var service = {
+        /**
+         * @ngdoc service
+         * @name getDirection
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @description  determines which direction to for a given keyDown event
+         * @returns {uiGridCellNavConstants.direction} direction
+         */
         getDirection: function (evt) {
           if (evt.keyCode === uiGridConstants.keymap.LEFT ||
             (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey)) {
@@ -51,40 +58,139 @@
           return null;
         },
 
+        /**
+         * @ngdoc service
+         * @name getNextRowCol
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @description  returns the next row and column for a given direction
+         * columns that are not focusable are skipped
+         * @param {object} direction navigation direction
+         * @param {Grid} grid current grid
+         * @param {GridRow} curRow Gridrow
+         * @param {GridCol} curCol Gridcol
+         * @returns {uiGridCellNavConstants.direction} rowCol object
+         */
         getNextRowCol: function (direction, grid, curRow, curCol) {
-
           switch (direction) {
             case uiGridCellNavConstants.direction.LEFT:
-              return service.getRowColLeft(grid, curRow, curCol);
+              return service.getRowColLeft(grid.rows, grid.columns, curRow, curCol);
             case uiGridCellNavConstants.direction.RIGHT:
-              break;
+              return service.getRowColRight(grid.rows, grid.columns, curRow, curCol);
             case uiGridCellNavConstants.direction.UP:
-              break;
+              return service.getRowColUp(grid.rows, grid.columns, curRow, curCol);
             case uiGridCellNavConstants.direction.DOWN:
-              break;
+              return service.getRowColDown(grid.rows, grid.columns, curRow, curCol);
           }
         },
 
-        getRowColLeft: function (grid, curRow, curCol) {
-          //todo: all columns must be filtered by allowCellFocus
-          if (curCol.index === 0) {
+        getRowColLeft: function (rows, cols, curRow, curCol) {
+          var colIndex = service.getNextColIndexLeft(cols, curCol);
+
+          if (colIndex > curCol.index) {
             if (curRow.index === 0) {
-              return new RowCol(curRow, curCol); //return same row and col
+              return new RowCol(curRow, cols[colIndex]); //return same row
             }
             else {
               //up one row and far right column
-              return new RowCol(grid.rows[curRow.index - 1], grid.columns[grid.columns.length - 1]);
+              return new RowCol(rows[curRow.index - 1], cols[colIndex]);
             }
           }
           else {
-            return new RowCol(curRow, grid.columns[curCol.index - 1]);
+            return new RowCol(curRow, cols[colIndex]);
+          }
+        },
+
+        getRowColRight: function (rows, cols, curRow, curCol) {
+          var colIndex = service.getNextColIndexRight(cols, curCol);
+
+          if (colIndex < curCol.index) {
+            if (curRow.index === rows.length - 1) {
+              return new RowCol(curRow, cols[colIndex]); //return same row
+            }
+            else {
+              //down one row and far left column
+              return new RowCol(rows[curRow.index + 1], cols[colIndex]);
+            }
+          }
+          else {
+            return new RowCol(curRow, cols[colIndex]);
+          }
+        },
+
+        getNextColIndexLeft: function (cols, curCol) {
+          //start with next col to the left or the end of the array if curCol is the first col
+          var i = curCol.index === 0 ? cols.length - 1 : curCol.index - 1;
+
+          //find first focusable column to the left
+          //circle around to the end of the array if no col is found
+          while (i !== curCol.index) {
+            if (cols[i].allowCellFocus) {
+              break;
+            }
+            i--;
+            //go to end of array if at the beginning
+            if (i === -1) {
+              i = cols.length - 1;
+            }
+          }
+
+          return i;
+        },
+
+        getNextColIndexRight: function (cols, curCol) {
+          //start with next col to the right or the beginning of the array if curCol is the last col
+          var i = curCol.index === cols.length - 1 ? 0 : curCol.index + 1;
+
+          //find first focusable column to the right
+          //circle around to the beginning of the array if no col is found
+          while (i !== curCol.index) {
+            if (cols[i].allowCellFocus) {
+              break;
+            }
+            i++;
+            //go to end of array if at the beginning
+            if (i > cols.length - 1) {
+              i = 0;
+            }
+          }
+
+          return i;
+        },
+
+        getRowColUp: function (rows, cols, curRow, curCol) {
+          //if curCol is not focusable, then we need to find a focusable column to the right
+          //this shouldn't ever happen in the grid, but we handle it anyway
+          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+
+
+          if (curRow.index === 0) {
+            return new RowCol(curRow,  cols[colIndex]); //return same row
+          }
+          else {
+            //up one row
+            return new RowCol(rows[curRow.index - 1], cols[colIndex]);
+          }
+        },
+
+        getRowColDown: function (rows, cols, curRow, curCol) {
+          //if curCol is not focusable, then we need to find a focusable column to the right
+          //this shouldn't ever happen in the grid, but we handle it anyway
+          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+
+
+          if (curRow.index === rows.length - 1) {
+            return new RowCol(curRow, cols[colIndex]); //return same row
+          }
+          else {
+            //down one row
+            return new RowCol(rows[curRow.index + 1], cols[colIndex]);
           }
         },
 
         /**
          * @ngdoc service
          * @name cellNavColumnBuilder
-         * @methodOf ui.grid.edit.service:uiGridEditService
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
          * @description columnBuilder function that adds cell navigation properties to grid column
          * @returns {promise} promise that will load any needed templates when resolved
          */
@@ -108,7 +214,7 @@
    *  @element div
    *  @restrict EA
    *
-   *  @description Adds editing features to the ui-grid directive.
+   *  @description Adds cell navigation features to the grid columns
    *
    *  @example
    <example module="app">
@@ -122,17 +228,17 @@
       ];
 
       $scope.columnDefs = [
-        {field: 'name',
-        {field: 'title'}
+        {name: 'name'},
+        {name: 'title'}
       ];
     }]);
-    </file>
-    <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-edit></div>
-    </div>
-    </file>
-  </example>
+   </file>
+   <file name="index.html">
+   <div ng-controller="MainCtrl">
+   <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-cellnav></div>
+   </div>
+   </file>
+   </example>
   */
   module.directive('uiGridCellnav', ['$log', 'uiGridCellNavService',
     function ($log, uiGridCellNavService) {
@@ -182,6 +288,8 @@
 
             var rowCol = uiGridCellNavService.getNextRowCol(direction, $scope.grid, $scope.row, $scope.col);
 
+            //todo: issue # 926
+            //uiGridCtrl.setFocus(rowCol.row, rowCol.col);
 
             return false;
           });
