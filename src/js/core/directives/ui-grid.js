@@ -12,6 +12,7 @@
     },
     // copied from http://www.lsauer.com/2011/08/javascript-keymap-keycodes-in-json.html
     keymap: {
+      TAB: 9,
       STRG: 17,
       CTRL: 17,
       CTRLRIGHT: 18,

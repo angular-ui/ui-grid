@@ -268,8 +268,8 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['uiGridCellNavService',
-    function (uiGridCellNavService) {
+  module.directive('uiGridCell', ['uiGridCellNavService', '$log',
+    function (uiGridCellNavService, $log) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
@@ -290,6 +290,7 @@
 
             //todo: issue # 926
             //uiGridCtrl.setFocus(rowCol.row, rowCol.col);
+            $log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name );
 
             return false;
           });
