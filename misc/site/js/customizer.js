@@ -32,7 +32,6 @@ app.controller('Main', function($log, $http, $scope, less, Theme) {
   // Get themes
   Theme.getThemes()
     .then(function (themes) {
-      console.log('themes', themes);
       $scope.themes = themes.themeList;
       $scope.themeHash = themes.themeHash;
     });

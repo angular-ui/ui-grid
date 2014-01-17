@@ -6,9 +6,9 @@
     "@verticalBarColor": "@borderColor",
 
     "@headerBackgroundColor": "#D3741C",
-    "@headerGradientStart": "",
-    "@headerGradientStop": "",
-    "@headerVerticalBarColor": "darken(@headerBackgroundColor, 15%)",
+    "@headerGradientStart": "@headerBackgroundColor",
+    "@headerGradientStop": "lighten(@headerGradientStart, 15%)",
+    "@headerVerticalBarColor": "darken(@headerBackgroundColor, 5%)",
 
     "@scrollbarBackground": "darken(@rowColorEven, 15%)",
     "@scrollbarBackgroundHover": "darken(@scrollbarBackground, 15%)",

@@ -16,7 +16,6 @@
   1. Maybe we can just do another conditional on process.env.TRAVIS and add the <%= site %> on as a prefix.
 1. [IDEA] add a test that, during a scroll event, spies on number of reads/writes to DOM properties that cause reflow
 1. [IDEA] - For grid search, if the grid has focus and the user presses ctrl/cmd+F we can pop up the search box.
-1. [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
 1. [BUG] - On uiGrid directive example in API docs, the scrollbar is showing up when there's nothing to scroll... then it disappears on scroll
 1. [IDEA] - Handle dynamic row sizes
    - Once a row is rendered outside the viewport for the first time, calculate its height and store it
@@ -26,14 +25,11 @@
    - So in the uiGridBody it knows the indexes of the rows being rendered. It can just tell each row to calculate its own height in an $evalAsync.
       - Or perhaps the row heights can be calculated all at once in the body so we are not running N number of $evalAsync functions.
    - Invalidate row heights on data changes
-1. Add theming to customizer
 1. Add jade processing for misc/site directory
    - Don't `copy` .jade files with the copy task.
 1. Make scrollbar look like chrome's?
 
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
-
-1. Add a header border color
 
 # Done!
 
@@ -58,3 +54,5 @@
 1. [DONE] Copy angular-animate, prettify.js and marked.js into the docs/js dir separately from grunt-ngdocs. It's causing them to show up in `<script>` tags in the Examples which isn't what we want  
 1. [DONE] Mouse wheel should work in viewport (almost done)
 1. [DONE] - [BUG] - Hidden grid doesn't calculate height of header correctly
+1. [DONE] - [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
+   - Was including wrong ui-grid.css file
