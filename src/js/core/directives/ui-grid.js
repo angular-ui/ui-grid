@@ -163,6 +163,18 @@
 
     /**
      * @ngdoc function
+     * @name registerRowBuilder
+     * @methodOf ui.grid.class:Grid
+     * @description When the build creates rows from gridOptions.data, the rowBuilders will be called to add
+     * additional properties to the row.
+     * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
+     */
+    Grid.prototype.registerRowBuilder = function (rowBuilder) {
+      this.rowBuilders.push(rowBuilder);
+    };
+
+    /**
+     * @ngdoc function
      * @name getColumn
      * @methodOf ui.grid.class:Grid
      * @description returns a grid column for the column name
@@ -271,7 +283,7 @@
     * @name addRows
     * @methodOf ui.grid.class:Grid
     * @description adds the newRawData array of rows to the grid and calls all registered
-    * rowBuilders
+    * rowBuilders. this keyword will reference the grid
     */
     Grid.prototype.addRows = function(newRawData) {
       var self = this;
@@ -293,7 +305,7 @@
       var self = this;
 
       self.rowBuilders.forEach(function (builder) {
-        builder.call(self,gridRow);
+        builder.call(self,gridRow, self.gridOptions);
       });
 
       return gridRow;

@@ -93,7 +93,7 @@
   module.directive('uiGridEdit', ['$log', 'uiGridEditService', function ($log, uiGridEditService) {
     return {
       replace: true,
-      priority: 5000,
+      priority: 0,
       require: '^uiGrid',
       scope: false,
       compile: function () {

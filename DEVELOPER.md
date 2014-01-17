@@ -1,74 +1,149 @@
 # UI Grid : An Angular data grid
 
-[![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid)
+# Welcome
 
-[![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
+Thanks for considering contributions to the ui-grid project. This doc will give you a jump start on the development standards we use.
 
-# Help!
+# Code Structure
+The development goal of ui-grid (ng-grid 3.0) is a fast, testable, and extendable grid component.
 
-Head to http://ui-grid.info for documentation and tutorials.
+The core angular module (ui.grid) provides the basics
+ - Virtualization
+ - Row Selection
 
-# Building
+Everything else should be added as new angular modules unless the grid team agrees that it's a core feature.
 
-Install dependencies
-    
-    # If you don't already have the grunt-cli installed:
-    > npm install -g grunt-cli
-    
-    > npm install
-    > grunt install
+## Feature module design
+* We prefer no 3rd party dependencies other than angular. Contact grid team if you have a 3rd party need that can't be avoided.
+* jQuery is only used in Unit Tests
+* unit test your code! not that hard. see test/unit for examples. Features will be rejected if the test coverage isn't adequate.
+* use ngDoc to document how to use your feature.  see examples in existing code.
+* New module should be named ui.grid.feature
+* feature folder is added below src/js
+* One js file per feature
+* feature.js contains an enclosure:
+```javascript
+(function () {
+  'use strict';
+  var module = angular.module('ui.grid.feature', ['ui.grid', 'ui.grid.util']);
+})();
 
-Default grunt task will test and build files into dist/
+```
 
-    > grunt
+* Constants should be added to module.constants.  Anytime a value is used in more than one place, consider a constant.
+```javascript
+  module.constant('uiGridFeatureConstants', {
+    FEATURE_CONSTANT1: 'abc',
+    featureGroupConstant: {
+      GROUP_ONE: 'somevalue',
+      GROUP_TWO: 'a'
+    }
+  });
+```
 
-# Developing
+* To add functionality to the core, there are several extension points
+### During Grid controller initialization
+Here you can do the following:
+1. columnBuilder functions allow you to add your own properties / functions to each GridCol object. for
+testing ease, it's best to create a service that returns the function.  See ui.grid.edit unit tests on how to easily test your function
+```javascript
+  module.service('uiGridFeatureService', ['$log', '$q', '$templateCache',
+    function ($log, $q, $templateCache) {
+      var service = {
+        featureColumnBuilder: function (colDef, col, gridOptions) {
+          //add any promises to an array
+          var promises = [];
+          //do something with col
+          col.featureProp = colDef.featureProp || 'default';
 
-Development "watch" task. This will automatically rebuild from source on changes, reload Grunfile.js if you change it, and rebuild the docs.
-1. A server on localhost:9002 serving whichever directory you checked out, with livereload. Navigate to http://localhost:9002/misc/demo to see the [demo files](http://localhost:9002/misc/demo/grid-directive.html).
-2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with a custom grunt-ngdocs that should work with Angular 1.2.4.
+          //return all promises (works even if the array is empty)
+          return $q.all(promises);
+        }
+     }
+     return service;
+   }]);
+```
 
-    > grunt dev
+2. rowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
+ best to implement function in a service.  See ui.grid.edit unit tests on how to easily test your function
+```javascript
+        ....
+        featureRowBuilder: function (row, gridOptions) {
+          //add any promises to an array
+          var promises = [];
+          //do something with col
+          row.featureProp = gridOptions.featureProp || 'default';
 
-By default `grunt dev` will start several karma background watchers that will run the tests against multiple versions of angular. You may specify the version(s) you want to use with the `--angular` flag:
+          //return all promises (works even if the array is empty)
+          return $q.all(promises);
+        }
+        ....
+```
 
-    > grunt dev --angular=1.2.1
+3. Create a directive that will be added to the same element as ui-grid
+<div ui-grid ui-grid-feature></div>
 
-    > grunt dev --angular=1.2.3,1.2.4
+Require the uiGrid controller from a parent directive. in the preLink function, register your
+column and row builders.  See ui.grid.edit unit tests on how to easily test your directive
 
-You can also use the `--browsers` specify what browsers to test with (PhantomJS is the default).
+```javascript
+  module.directive('uiGridFeature', ['uiGridFeatureService', function (uiGridEditService) {
+    return {
+      replace: true,
+      priority: 0, // this could be tweaked to fire your directive before/after other features
+      require: '^uiGrid',
+      scope: false,
+      compile: function () {
+        return {
+          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+            uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
+            uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
+            //do anything else you can safely do here
+            //!! of course, don't stomp on core grid logic or data
+          }
+        };
+      }
+    };
+  }]);
+```
 
-    > grunt dev --browsers=Chrome
+4. The next extension point requires some knowledge of the core grid directives. Thanks to a little known feature in angular,
+you can stack your feature directives before or after one of the core grid directives.  Simply use the same directive name
+and change the priority to a negative number (to execute after) or a positive number (to execute before)
 
-    # Run a single test run against multiple browsers
-    > grunt karma:single --browsers=Chrome,Firefox,IE
+Here's an example of augmenting the uiGridCell directive to add some element to a grid cell
+```javascript
+module.directive('uiGridCell', ['uiGridFeatureService',
+  function (uiGridCellNavService) {
+    return {
+      priority: -500, // run after default uiGridCell directive
+      restrict: 'A',
+      require: '^uiGrid',
+      scope: false,
+      link: function ($scope, $elm, $attrs, uiGridCtrl) {
 
-By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
+        if ($scope.col.featureProp === 'somevalue' && $scope.row.featureProp === 'somevalue') {
+          $elm.find('div').attr("someattrib", 0);
+        }
 
-    > grunt dev --no-e2e
+        //add whatever dom binding, manipulation,etc that is safe to do and performs well
+      }
+    };
+  }]);
+```
 
-## Karmangular
+5. Add a tutorial showing how to use your feature. Copy one of the existing misc/tutorial files, change the name at the top
+and configure it for your feature.  'grunt dev' and your tutorial is available on http://localhost:9003/docs/#/tutorial.
+Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid github.
 
-The `karmangular` task runs tests serially against multiple browsers (it is used internally by the `dev` task).
-  
-    # Run tests against all available versions of Angular on Chrome
-    > grunt karmangular --browsers=Chrome
+# Coding style
 
-    # Run tests with a couple versions of Angular against the default PhantomJS browser
-    > grunt karmangular --angular=1.2.0,1.2.1
+1. No tabs
+2. Indentions are 2 spaces
+3. Spaces are preferred between args, keywords, blocks
+   function (uiGridCellNavService, $log){
+   instead of
+   function(uiGridCellNavService,$log){
+4. jshint rules are enforced.  run 'grunt dev --no-e2e' to see if your code passes
 
-## SauceLabs
 
-ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY` environment variable set.
-
-    # Execute tests for a couple versions of angular on IE8
-    > grunt karmangular --angular=1.2.3,1.2.4 --browsers=SL_IE_8
-
-    # Run the watch tasks against IE10
-    > grunt dev --browsers=SL_IE10
-
-The full list of SauceLabs browsers is in `lib/grunt/util.js` in the `customLaunchers` method. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
-
-# Thanks
-
-Thanks to [Sauce Labs](http://saucelabs.com) and [BrowserStack](http://www.browserstack.com) for providing their testing platforms to open source projects for free.
