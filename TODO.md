@@ -16,8 +16,21 @@
   1. Maybe we can just do another conditional on process.env.TRAVIS and add the <%= site %> on as a prefix.
 1. [IDEA] add a test that, during a scroll event, spies on number of reads/writes to DOM properties that cause reflow
 1. [IDEA] - For grid search, if the grid has focus and the user presses ctrl/cmd+F we can pop up the search box.
-1. [BUG] - Viewport is intermittently calcuating too small on customizer page
-1. [BUG] - On uiGrid directive example, the scrollbar is showing up when there's nothing to scroll... then it disappears on scroll
+1. [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
+1. [BUG] - On uiGrid directive example in API docs, the scrollbar is showing up when there's nothing to scroll... then it disappears on scroll
+1. [IDEA] - Handle dynamic row sizes
+   - Once a row is rendered outside the viewport for the first time, calculate its height and store it
+   - For each stored height, remove one default height (30px now) from the calculation and replace it with this dynamic value.
+      - i.e. if there are 10 rows at 30px default a piece, that's 300px canvas height. Newly-rendered row is 50px, so subtract 30px from 300px (270px) and add 50px (320px)
+   - This would need to prevent the scrollTop on the viewport and scrollbar from changing. The percentages would probably change as the canvas height changes, and we'd need them to not jerky back or forward.
+   - So in the uiGridBody it knows the indexes of the rows being rendered. It can just tell each row to calculate its own height in an $evalAsync.
+      - Or perhaps the row heights can be calculated all at once in the body so we are not running N number of $evalAsync functions.
+   - Invalidate row heights on data changes
+1. Add scrollbar border variable
+1. Add theming to customizer
+1. Add jade processing for misc/site directory
+   - Don't `copy` .jade files with the copy task.
+1. Make scrollbar look like chrome's?
 
 # Done!
 
