@@ -17,22 +17,24 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
     grid = gridClassFactory.createGrid();
     grid.options.columnDefs = [
-      {name: 'col1', allowCellFocus: true},
-      {name: 'col2', allowCellFocus: false},
-      {name: 'col3'}
+      {name: 'col0', allowCellFocus: true},
+      {name: 'col1', allowCellFocus: false},
+      {name: 'col2'}
     ];
 
     grid.options.data = [
-      {col1: 'row0col0', col2: 'row0col1', col3: 'row0col2'},
-      {col1: 'row1col0', col2: 'row1col1', col3: 'row1col2'},
-      {col1: 'row2col0', col2: 'row2col1', col3: 'row2col2'}
+      {col0: 'row0col0', col1: 'row0col1', col2: 'row0col2'},
+      {col0: 'row1col0', col1: 'row1col1', col2: 'row1col2'},
+      {col0: 'row2col0', col1: 'row2col1', col2: 'row2col2'}
     ];
 
-    grid.buildColumns();
     grid.modifyRows(grid.options.data);
   }));
 
   describe('cellNavColumnBuilder function', function () {
+    beforeEach(function(){
+      grid.buildColumns();
+    });
 
     it('should populate allowCellFocus with defaults', function () {
       var colDef = grid.options.columnDefs[0];
@@ -53,6 +55,10 @@ describe('ui.grid.edit uiGridCellNavService', function () {
   });
 
   describe('getDirection(evt)', function () {
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+    });
     it('should navigate right on tab', function () {
       var evt = jQuery.Event("keydown");
       evt.keyCode = uiGridConstants.keymap.TAB;
@@ -130,31 +136,142 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
   });
 
-  describe('navigate', function () {
-
-    it('should navigate to col left', function () {
+  describe('navigate left', function () {
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+    });
+    it('should navigate to col left from unfocusable column', function () {
       var col = grid.columns[1];
       var row = grid.rows[0];
       var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
       expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col).toBe(grid.columns[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
     });
 
-    it('should navigate to up one row and far right column', function () {
+    it('should navigate up one row and far right column', function () {
       var col = grid.columns[0];
       var row = grid.rows[1];
       var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
       expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col).toBe(grid.columns[2]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
     });
 
-    it('should not navigate', function () {
+    it('should stay on same row and go to far right', function () {
       var col = grid.columns[0];
       var row = grid.rows[0];
       var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
       expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col).toBe(grid.columns[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
     });
+
+    it('should skip col that is not focusable', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+    });
+  });
+
+  describe('navigate right', function () {
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+    });
+    it('should navigate to col right from unfocusable column', function () {
+      var col = grid.columns[1];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+    it('should navigate down one row and far left column', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[1]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+    });
+
+    it('should stay on same row and go to far left', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[2];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[2]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+    });
+
+    it('should skip col that is not focusable', function () {
+      var col = grid.columns[0];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+  });
+
+  describe('navigate down', function () {
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+    });
+    it('should navigate to col right from unfocusable column', function () {
+      var col = grid.columns[1];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[1]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+    it('should navigate down one row and same column', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[1]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+    it('should stay on same row and same column', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[2];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[2]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+  });
+
+  describe('navigate up', function () {
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+    });
+    it('should navigate to col right from unfocusable column', function () {
+      var col = grid.columns[1];
+      var row = grid.rows[2];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[1]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+    it('should navigate up one row and same column', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[2];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[1]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
+    it('should stay on same row and same column', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[0];
+      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
+      expect(rowCol.row).toBe(grid.rows[0]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
+
   });
 
 });

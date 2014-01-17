@@ -12,6 +12,7 @@
     },
     // copied from http://www.lsauer.com/2011/08/javascript-keymap-keycodes-in-json.html
     keymap: {
+      TAB: 9,
       STRG: 17,
       CTRL: 17,
       CTRLRIGHT: 18,
@@ -285,8 +286,8 @@
      * @name processRowBuilders
      * @methodOf ui.grid.class:Grid
      * @description processes all RowBuilders for the gridRow
-     * @parameter {GridRow} gridRow reference to gridRow
-     * @returns {GridRow} the gridRow with all additional behaivor added
+     * @param {GridRow} gridRow reference to gridRow
+     * @returns {GridRow} the gridRow with all additional behavior added
      */
     Grid.prototype.processRowBuilders = function(gridRow) {
       var self = this;
@@ -303,7 +304,7 @@
      * @name registerStyleComputation
      * @methodOf ui.grid.class:Grid
      * @description registered a styleComputation function
-     * @parameter {function($scope)} styleComputation function
+     * @param {function($scope)} styleComputation function
      */
     Grid.prototype.registerStyleComputation = function (styleComputation) {
       this.styleComputations.push(styleComputation);
