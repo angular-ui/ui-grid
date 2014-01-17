@@ -2,12 +2,12 @@
 @name Tutorial: Cell Navigation (WIP)
 @description
 
-This grid example uses the ui-grid-cellnav directive to add cell navigation
+This grid example uses the ui-grid-cellNav directive to add cell navigation
 
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.cellnav']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {};
@@ -23,7 +23,7 @@ This grid example uses the ui-grid-cellnav directive to add cell navigation
       <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
       <br>
       <br>
-      <div ui-grid="gridOptions" ui-grid-cellnav class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-cellNav class="grid"></div>
     </div>
   </file>
   <file name="main.css">
