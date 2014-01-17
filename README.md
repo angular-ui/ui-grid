@@ -4,6 +4,10 @@
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
+# Help!
+
+Head to http://ui-grid.info for documentation and tutorials.
+
 # Building
 
 Install dependencies
