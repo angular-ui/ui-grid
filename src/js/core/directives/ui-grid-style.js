@@ -45,7 +45,7 @@
       // priority: 1000,
       // require: '?^uiGrid',
       link: function($scope, $elm, $attrs, uiGridCtrl) {
-        $log.debug('ui-grid-style link', $elm);
+        $log.debug('ui-grid-style link');
         // if (uiGridCtrl === undefined) {
         //    $log.warn('[ui-grid-style link] uiGridCtrl is undefined!');
         // }
