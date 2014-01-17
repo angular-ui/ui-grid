@@ -350,6 +350,15 @@
       return this.options.rowHeight * this.rows.length;
     };
 
+    // Is the grid currently scrolling?
+    Grid.prototype.isScrolling = function() {
+      return this.scrolling ? true : false;
+    };
+
+    Grid.prototype.setScrolling = function(scrolling) {
+      this.scrolling = scrolling;
+    };
+
 
     /**
      * @ngdoc function

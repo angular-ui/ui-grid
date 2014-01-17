@@ -9,26 +9,51 @@
       // priority: 1000,
       templateUrl: 'ui-grid/ui-grid-scrollbar',
       require: '?^uiGrid',
-      scope: false,
+      scope: {
+        'type': '@'
+      },
       link: function($scope, $elm, $attrs, uiGridCtrl) {
         if (uiGridCtrl === undefined) {
           throw new Error('[ui-grid-scrollbar] uiGridCtrl is undefined!');
         }
 
-        $log.debug('ui-grid-scrollbar link');
+        $log.debug('ui-grid-scrollbar link', $scope.type);
 
         /**
          * Link stuff
          */
 
+        if ($scope.type === 'vertical') {
+          $elm.addClass('ui-grid-scrollbar-vertical');
+        }
+        else if ($scope.type === 'horizontal') {
+          $elm.addClass('ui-grid-scrollbar-horizontal');
+        }
+
         // Get the scrolling class from the "scrolling-class" attribute
         var scrollingClass;
         $attrs.$observe('scrollingClass', function(n, o) {
-          $log.debug('scrollingClass', n);
           if (n) {
             scrollingClass = n;
           }
         });
+
+        var mouseInGrid;
+        function gridMouseEnter() {
+          mouseInGrid = true;
+          $elm.addClass('ui-grid-scrollbar-visible');
+
+          $document.on('mouseup', mouseup);
+        }
+        uiGridCtrl.grid.element.on('mouseenter', gridMouseEnter);
+
+        function gridMouseLeave() {
+          mouseInGrid = false;
+          if (! uiGridCtrl.grid.isScrolling()) {
+            $elm.removeClass('ui-grid-scrollbar-visible');
+          }
+        }
+        uiGridCtrl.grid.element.on('mouseleave', gridMouseLeave);
 
         /**
          *
@@ -39,8 +64,9 @@
         // Size the scrollbar according to the amount of data. 35px high minimum, otherwise scale inversely proportinal to canvas vs viewport height
         function updateScrollbar(gridScope) {
           var scrollbarHeight = Math.floor(Math.max(35, uiGridCtrl.grid.getViewportHeight() / uiGridCtrl.grid.getCanvasHeight() * uiGridCtrl.grid.getViewportHeight()));
+          $log.debug('scrollbarHeight', scrollbarHeight);
 
-          $scope.scrollbarStyles = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
+          uiGridCtrl.grid.scrollbarStyles = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-scrollbar-vertical { height: ' + scrollbarHeight + 'px; }';
         }
 
         // Only show the scrollbar when the canvas height is less than the viewport height
@@ -70,6 +96,8 @@
         function mousedown(event) {
           // Prevent default dragging of selected content
           event.preventDefault();
+
+          uiGridCtrl.grid.setScrolling(true);
 
           $elm.addClass(scrollingClass);
 
@@ -141,6 +169,12 @@
           // Remove the "scrolling" class, if any
           $elm.removeClass(scrollingClass);
 
+          if (! mouseInGrid) {
+            $elm.removeClass('ui-grid-scrollbar-visible');
+          }
+
+          uiGridCtrl.grid.setScrolling(false);
+
           // Unbind the events we bound to the document
           $document.off('mousemove', mousemove);
           $document.off('mouseup', mouseup);
@@ -176,9 +210,11 @@
 
         $elm.on('$destroy', function() {
           scrollDereg();
-          $document.unbind('mousemove', mousemove);
-          $document.unbind('mouseup', mouseup);
+          $document.off('mousemove', mousemove);
+          $document.off('mouseup', mouseup);
           $elm.unbind('mousedown');
+          uiGridCtrl.grid.element.off('mouseenter', gridMouseEnter);
+          uiGridCtrl.grid.element.off('mouseleave', gridMouseLeave);
 
           // For fancy slide-in effect above
           // $scope.grid.element.unbind('mouseenter');
