@@ -203,6 +203,8 @@
         
       });
 
+      debugger;
+
       return $q.all(builderPromises);
     };
 
@@ -342,8 +344,17 @@
       return viewPortHeight;
     };
 
+    Grid.prototype.getViewportWidth = function () {
+      var viewPortWidth = this.gridWidth;
+      return viewPortWidth;
+    };
+
     Grid.prototype.getCanvasHeight = function () {
       return this.options.rowHeight * this.rows.length;
+    };
+
+    Grid.prototype.getCanvasWidth = function () {
+      return this.canvasWidth;
     };
 
     Grid.prototype.getTotalRowHeight = function () {
