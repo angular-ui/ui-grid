@@ -21,7 +21,10 @@ Everything else should be added as new angular modules unless the grid team agre
 * New module should be named ui.grid.feature
 * feature folder is added below src/js
 * One js file per feature
+* no global variables
+* design and code the angular way. If you don't know what that is, then maybe you shouldn't be contributing to an angular project.  
 * feature.js contains an enclosure:
+
 ```javascript
 (function () {
   'use strict';
@@ -31,6 +34,7 @@ Everything else should be added as new angular modules unless the grid team agre
 ```
 
 * Constants should be added to module.constants.  Anytime a value is used in more than one place, consider a constant.
+
 ```javascript
   module.constant('uiGridFeatureConstants', {
     FEATURE_CONSTANT1: 'abc',
@@ -42,10 +46,13 @@ Everything else should be added as new angular modules unless the grid team agre
 ```
 
 * To add functionality to the core, there are several extension points
-### During Grid controller initialization
+
+#####During Grid controller initialization
 Here you can do the following:
-1. columnBuilder functions allow you to add your own properties / functions to each GridCol object. for
+######columnBuilder 
+columnBuilder functions allow you to add your own properties / functions to each GridCol object. for
 testing ease, it's best to create a service that returns the function.  See ui.grid.edit unit tests on how to easily test your function
+
 ```javascript
   module.service('uiGridFeatureService', ['$log', '$q', '$templateCache',
     function ($log, $q, $templateCache) {
@@ -64,8 +71,10 @@ testing ease, it's best to create a service that returns the function.  See ui.g
    }]);
 ```
 
-2. rowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
+######rowBuilder 
+rowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
  best to implement function in a service.  See ui.grid.edit unit tests on how to easily test your function
+
 ```javascript
         ....
         featureRowBuilder: function (row, gridOptions) {
@@ -80,7 +89,7 @@ testing ease, it's best to create a service that returns the function.  See ui.g
         ....
 ```
 
-3. Create a directive that will be added to the same element as ui-grid
+###### Create a directive that will be added to the same element as ui-grid
 <div ui-grid ui-grid-feature></div>
 
 Require the uiGrid controller from a parent directive. in the preLink function, register your
@@ -107,7 +116,8 @@ column and row builders.  See ui.grid.edit unit tests on how to easily test your
   }]);
 ```
 
-4. The next extension point requires some knowledge of the core grid directives. Thanks to a little known feature in angular,
+#####Directive Stacking
+The next extension point requires some knowledge of the core grid directives. Thanks to a little known feature in angular,
 you can stack your feature directives before or after one of the core grid directives.  Simply use the same directive name
 and change the priority to a negative number (to execute after) or a positive number (to execute before)
 
@@ -132,8 +142,8 @@ module.directive('uiGridCell', ['uiGridFeatureService',
   }]);
 ```
 
-5. Add a tutorial showing how to use your feature. Copy one of the existing misc/tutorial files, change the name at the top
-and configure it for your feature.  'grunt dev' and your tutorial is available on http://localhost:9003/docs/#/tutorial.
+##### Tutorials
+Add a tutorial showing how to use your feature. Copy one of the existing misc/tutorial files, change the name at the top and configure it for your feature.  'grunt dev' and your tutorial is available on http://localhost:9003/docs/#/tutorial.
 Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid github.
 
 # Coding style
