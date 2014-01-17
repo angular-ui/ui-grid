@@ -42,13 +42,13 @@
 /**
 * @section Scrollbar styles
 */
-@scrollbarBackground: rgba(0, 0, 0, 0.5);
-@scrollbarBackgroundHover: rgba(0, 0, 0, 0.55);
-@scrollbarBackgroundScrolling: rgba(0, 0, 0, 0.6);
-@scrollbarWidth: 14px;
-@scrollbarBorderRadius: @scrollbarWidth;
+@scrollbarBackground: darken(@rowColorEven, 15%);
+@scrollbarBackgroundHover: darken(@scrollbarBackground, 15%);
+@scrollbarBackgroundScrolling: darken(@scrollbarBackgroundHover, 15%);
+@scrollbarWidth: 10px;
+@scrollbarBorderRadius: 2px;
 @scrollbarShadow: 0 0 0px #fff;
-@scrollbarBorder: none;
-@scrollbarBorderScrolling: none;
+@scrollbarBorder: 1px solid darken(@scrollbarBackground, 15%);
+@scrollbarBorderScrolling: 1px solid darken(@scrollbarBackgroundScrolling, 15%);
 
 /*-- END VARIABLES (DO NOT REMOVE THESE COMMENTS) --*/
