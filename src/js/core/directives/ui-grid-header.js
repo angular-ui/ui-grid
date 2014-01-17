@@ -42,13 +42,24 @@
             if (uiGridCtrl) {
               uiGridCtrl.grid.registerStyleComputation(function() {
                 var width = uiGridCtrl.grid.gridWidth;
-                var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;
+                // var equalWidth = width / uiGridCtrl.grid.options.columnDefs.length;
+
+                var availableWidth = width;
+                var equalWidthColumnCount = uiGridCtrl.grid.options.columnDefs.length;
+                uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
+                  if (typeof(c.width) !== 'undefined' && c.width !== undefined) {
+                    availableWidth = availableWidth - c.width; 
+                    equalWidthColumnCount = equalWidthColumnCount - 1;
+                  }
+                });
+                var equalWidth = availableWidth / equalWidthColumnCount;
 
                 var ret = '';
                 var left = 0;
                 uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
                   // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
-                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; }';
+                  var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
+                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + colWidth + 'px; }';
                   left = left + equalWidth;
                 });
 

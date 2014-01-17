@@ -485,4 +485,16 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
   return s;
 }]);
 
+// Add 'px' to the end of a number string if it doesn't have it already
+module.filter('px', function() {
+  return function(str) {
+    if (str.match(/^[\d\.]+$/)) {
+      return str + 'px';
+    }
+    else {
+      return str;
+    }
+  };
+});
+
 })();
