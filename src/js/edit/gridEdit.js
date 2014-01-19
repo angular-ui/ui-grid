@@ -50,6 +50,10 @@
             col.editableCellDirective = colDef.editableCellDirective || 'ui-grid-text-editor';
           }
 
+          //enableCellEditOnFocus can only be used if cellnav module is used
+          col.enableCellEditOnFocus = colDef.enableCellEditOnFocus !== undefined ?
+            colDef.enableCellEditOnFocus : gridOptions.enableCellEditOnFocus;
+
           return $q.all(promises);
         }
       };
@@ -59,19 +63,19 @@
     }]);
 
   /**
-  *  @ngdoc directive
-  *  @name ui.grid.edit.directive:uiGridEdit
-  *  @element div
-  *  @restrict EA
-  *
-  *  @description Adds editing features to the ui-grid directive.
-  *
-  *  @example
-  <example module="app">
-    <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:uiGridEdit
+   *  @element div
+   *  @restrict EA
+   *
+   *  @description Adds editing features to the ui-grid directive.
+   *
+   *  @example
+   <example module="app">
+   <file name="app.js">
+   var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
 
-    app.controller('MainCtrl', ['$scope', function ($scope) {
+   app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.data = [
         { name: 'Bob', title: 'CEO' },
             { name: 'Frank', title: 'Lowly Developer' }
@@ -82,14 +86,14 @@
         {name: 'title', enableCellEdit: true}
       ];
     }]);
-    </file>
-    <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-edit></div>
-    </div>
-    </file>
-  </example>
-  */
+   </file>
+   <file name="index.html">
+   <div ng-controller="MainCtrl">
+   <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-edit></div>
+   </div>
+   </file>
+   </example>
+   */
   module.directive('uiGridEdit', ['$log', 'uiGridEditService', function ($log, uiGridEditService) {
     return {
       replace: true,
@@ -99,7 +103,6 @@
       compile: function () {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            $log.debug('uiGridEdit preLink');
             uiGridCtrl.grid.registerColumnBuilder(uiGridEditService.editColumnBuilder);
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
@@ -147,7 +150,7 @@
    *    - uiGridConstants.events.GRID_SCROLL
    *
    */
-  module.directive('uiGridCell', ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log','$parse',
+  module.directive('uiGridCell', ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log', '$parse',
     function ($compile, uiGridConstants, uiGridEditConstants, $log, $parse) {
       return {
         priority: -100, // run after default uiGridCell directive
@@ -158,7 +161,6 @@
             return;
           }
 
-          var origHtml;
           var html;
           var origCellValue;
           var inEdit = false;
@@ -166,7 +168,7 @@
 
           registerBeginEditEvents();
 
-          function registerBeginEditEvents(){
+          function registerBeginEditEvents() {
             $elm.on('dblclick', function () {
               beginEdit();
             });
@@ -178,20 +180,26 @@
                   break;
               }
             });
+            if ($scope.col.enableCellEditOnFocus) {
+              $elm.find('div').on('focus', function (evt) {
+                evt.stopPropagation();
+                beginEdit();
+              });
+            }
           }
 
-          function cancelBeginEditEvents(){
-            $elm.off('dblclick', 'keydown');
+          function cancelBeginEditEvents() {
+            $elm.off('dblclick');
+            $elm.off('keydown');
+            if ($scope.col.enableCellEditOnFocus) {
+              $elm.find('div').off('focus');
+            }
           }
 
           function beginEdit() {
             cellModel = $parse($scope.row.getQualifiedColField($scope.col));
             //get original value from the cell
             origCellValue = cellModel($scope);
-
-
-            origHtml = $scope.col.cellTemplate;
-            origHtml = origHtml.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
             html = $scope.col.editableCellTemplate;
             html = html.replace(uiGridEditConstants.EDITABLE_CELL_DIRECTIVE, $scope.col.editableCellDirective);
@@ -200,9 +208,9 @@
             $scope.$apply(function () {
                 inEdit = true;
                 cancelBeginEditEvents();
-
-                cellElement = $compile(html)($scope);
-                $elm.find('div').replaceWith(cellElement);
+                cellElement = $compile(html)($scope.$new());
+                angular.element($elm.children()[0]).addClass('ui-grid-cell-contents-hidden');
+                $elm.append(cellElement);
               }
             );
 
@@ -231,10 +239,8 @@
             if (!inEdit) {
               return;
             }
-            //replace element with original
-            var cellElement = $compile(origHtml)($scope);
-            $elm.find('div').replaceWith(cellElement);
-            $scope.$apply();
+            angular.element($elm.children()[1]).remove();
+            angular.element($elm.children()[0]).removeClass('ui-grid-cell-contents-hidden');
             inEdit = false;
             registerBeginEditEvents();
           }
@@ -243,8 +249,8 @@
             if (!inEdit) {
               return;
             }
-
-            cellModel.assign($scope,origCellValue);
+            cellModel.assign($scope, origCellValue);
+            $scope.$apply();
 
             endEdit();
           }
@@ -272,29 +278,34 @@
     ['uiGridConstants', 'uiGridEditConstants', '$log', '$templateCache', '$compile',
       function (uiGridConstants, uiGridEditConstants, $log, $templateCache, $compile) {
         return{
+          scope: true,
           compile: function () {
             return {
               pre: function ($scope, $elm, $attrs) {
 
               },
               post: function ($scope, $elm, $attrs) {
+
                 var html = $templateCache.get('ui-grid/edit/cellTextEditor');
                 html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
                 var cellElement = $compile(html)($scope);
                 $elm.append(cellElement);
 
-                var input = $elm.find('input')[0];
+                var inputElm = $elm.find('input');
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  input.focus();
+                  inputElm[0].focus();
+                  inputElm.on('blur', function (evt) {
+                    $scope.stopEdit();
+                  });
                 });
 
                 $scope.stopEdit = function () {
                   $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                 };
 
-                $elm.on('keydown', function(evt) {
+                $elm.on('keydown', function (evt) {
                   switch (evt.keyCode) {
                     case uiGridConstants.keymap.ESC:
                       evt.stopPropagation();
