@@ -6,75 +6,121 @@
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
 function ngGridCsvExportPlugin (opts) {
-    var self = this;
+    var self = this
+      , options = {
+        columnOverrides : null,
+        enableSelectionExporting : false,
+        template : '<span class="csv-data-link-span"><br><a href="data:text/csv;charset=UTF-8,{{__ALL__}}" download="Export.csv"><i class="icon-download icon-white"></i>Export CSV</a></span>'
+      };
+
+    angular.extend(options, opts);  
     self.grid = null;
     self.scope = null;
     self.init = function(scope, grid, services) {
         self.grid = grid;
         self.scope = scope;
-        function showDs() {
-            var keys = [];
-            for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
-            var csvData = '';
-            function csvStringify(str) {
-                if (str == null) { // we want to catch anything null-ish, hence just == not ===
-                    return '';
-                }
-                if (typeof(str) === 'number') {
-                    return '' + str;
-                }
-                if (typeof(str) === 'boolean') {
-                    return (str ? 'TRUE' : 'FALSE') ;
-                }
-                if (typeof(str) === 'string') {
-                    return str.replace(/"/g,'""');
-                }
+        self.cache;
 
-                return JSON.stringify(str).replace(/"/g,'""');
+        function csvStringify(str) {
+            if (str == null) { // we want to catch anything null-ish, hence just == not ===
+                return '';
             }
-            function swapLastCommaForNewline(str) {
-                var newStr = str.substr(0,str.length - 1);
-                return newStr + "\n";
+            if (typeof(str) === 'number') {
+                return '' + str;
             }
-            for (var k in keys) {
-                csvData += '"' + csvStringify(keys[k]) + '",';
+            if (typeof(str) === 'boolean') {
+                return (str ? 'TRUE' : 'FALSE');
             }
-            csvData = swapLastCommaForNewline(csvData);
-            var gridData = grid.data;
-            for (var gridRow in gridData) {
-                for ( k in keys) {
-                    var curCellRaw;
-                    if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
-                        curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
-                    }
-                    else {
-                        curCellRaw = gridData[gridRow][keys[k]];
-                    }
-                    csvData += '"' + csvStringify(curCellRaw) + '",';
-                }
-                csvData = swapLastCommaForNewline(csvData);
+            if (typeof(str) === 'string') {
+                return str.replace(/"/g,'""');
             }
-            var fp = grid.$root.find(".ngFooterPanel");
-            var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
-            if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
-            var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
-            csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
-            csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
-            fp.append(csvDataLinkHtml);
+            return JSON.stringify(str).replace(/"/g,'""');
         }
-        setTimeout(showDs, 0);
-        scope.catHashKeys = function() {
-            var hash = '';
-            for (var idx in scope.renderedRows) {
-                hash += scope.renderedRows[idx].$$hashKey;
+
+        function buildCsv(data) {
+            var keys = [], csvData = '', i, rIdx, cIdx;
+
+            function writeHeader(col) {
+                var fieldName = grid.config.columnDefs[col].field;
+                keys.push(fieldName);
+                csvData += col < grid.config.columnDefs.length - 1 ? 
+                            '"' + csvStringify(fieldName) + '",' : 
+                            '"' + csvStringify(fieldName) + '"\r\n';
             }
-            return hash;
-        };
+
+            function writeCell(row, col) {
+                var curCellRaw, columnName = keys[col];
+                if (opts != null && opts.columnOverrides != null && opts.columnOverrides[columnName] != null) {
+                    curCellRaw = opts.columnOverrides[columnName](data[row][columnName]);
+                }
+                else {
+                    curCellRaw = data[row][columnName];
+                }
+                csvData += col < keys.length - 1 ? 
+                            '"' + csvStringify(curCellRaw) + '",' : 
+                            '"' + csvStringify(curCellRaw) + '"\r\n';
+            }
+
+            // Header
+            for (i = 0; i < grid.config.columnDefs.length; i++) {
+                writeHeader(i);
+            }
+
+            // Body
+            for (rIdx = 0; rIdx < data.length; rIdx++) {
+                for (cIdx = 0; cIdx < keys.length; cIdx++) {
+                    writeCell(rIdx, cIdx);
+                }
+            }
+
+            return csvData;
+        }
+
+        function createDownloadLink (selectedItemsOnly) {
+            var csvAllData, csvSelectedData, csvDefaultData, csvDataLinkHtml
+              , csvDataLinkPrev = grid.$footerPanel.find('.csv-data-link-span');
+
+            if (csvDataLinkPrev != null) { csvDataLinkPrev.remove(); }
+
+            // Do not regenerate link for all data on selection change
+            if (!selectedItemsOnly) { self.cache = buildCsv(grid.data); }
+
+            csvAllData = self.cache;
+            csvDataLinkHtml = options.template.replace(/{{__ALL__}}/g, encodeURIComponent(csvAllData));
+
+            if (options.enableSelectionExporting) {
+                csvSelectedData = buildCsv(grid.config.selectedItems);
+                csvDefaultData = grid.config.selectedItems.length > 0 ? csvSelectedData : csvAllData;
+                csvDataLinkHtml = csvDataLinkHtml.replace(/{{__SELECTED_ITEMS__}}/g, encodeURIComponent(csvSelectedData));
+                csvDataLinkHtml = csvDataLinkHtml.replace(/{{__DEFAULT__}}/g, encodeURIComponent(csvDefaultData));
+            }
+
+            grid.$footerPanel.append(csvDataLinkHtml);
+        }
+
+        setTimeout(createDownloadLink, 0);
+        
+        scope.gridDataChanged = function () { return grid.data.length; }
+
+        scope.gridSelectionChanged = function () { 
+            return grid.config.selectedItems.length; 
+        }
+
+        // Watches selection changes only when user turns on support for exporting selection
+        if (options.enableSelectionExporting) {
+            scope.$watch('gridSelectionChanged()', function () {
+                createDownloadLink(true);
+            });
+        }
+
         if (opts.customDataWatcher) {
-            scope.$watch(opts.customDataWatcher, showDs);
+            scope.$watch(opts.customDataWatcher, function () {
+                createDownloadLink();                
+            });
         } else {
-            scope.$watch(scope.catHashKeys, showDs);
+            scope.$watch('gridDataChanged()', function () {
+                createDownloadLink();
+            });
         }
     };
 }
