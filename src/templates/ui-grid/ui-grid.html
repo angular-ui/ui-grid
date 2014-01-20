@@ -5,12 +5,22 @@
       /* Styles for the grid */
     }
 
+    .grid{{ grid.id }} .ui-grid-header {
+      width: {{ grid.getViewportWidth() }}px;
+    }
+
+    .grid{{ grid.id }} .ui-grid-header-canvas {
+      width: {{ grid.getCanvasWidth() }}px;
+    }
+
     .grid{{ grid.id }} .ui-grid-viewport {
       height: {{ grid.getViewportHeight() }}px;
+      width: {{ grid.getViewportWidth() }}px;
     }
 
     .grid{{ grid.id }} .ui-grid-canvas {
       height: {{ grid.getCanvasHeight() }}px;
+      width: {{ grid.getCanvasWidth() }}px;
     }
 
     .grid{{ grid.id }} .ui-grid-row, .grid{{ grid.id }} .ui-grid-cell, .grid{{ grid.id }} .ui-grid-cell .ui-grid-vertical-bar {

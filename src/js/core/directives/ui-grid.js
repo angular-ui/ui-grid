@@ -148,6 +148,7 @@
 
       //current rows that are rendered on the DOM
       this.renderedRows = [];
+      this.renderedColumns = [];
     };
 
     /**
@@ -203,8 +204,6 @@
         });
         
       });
-
-      // debugger;
 
       return $q.all(builderPromises);
     };
@@ -314,10 +313,17 @@
     };
 
     Grid.prototype.setRenderedRows = function (newRows) {
+      
       for (var i = 0; i < newRows.length; i++) {
         this.renderedRows.length = newRows.length;
-
         this.renderedRows[i] = newRows[i];
+      }
+    };
+
+    Grid.prototype.setRenderedColumns = function (newColumns) {
+      this.renderedColumns.length = newColumns.length;
+      for (var i = 0; i < newColumns.length; i++) {
+        this.renderedColumns[i] = newColumns[i];
       }
     };
 
@@ -336,6 +342,12 @@
 
     Grid.prototype.minRowsToRender = function () {
       return Math.ceil(this.getViewportHeight() / this.options.rowHeight);
+    };
+
+    Grid.prototype.minColumnsToRender = function () {
+      // TODO(c0bra): WTF to do here? columnHeight would be variable...
+      // return Math.ceil(this.getViewportWidth() / this.options.rowHeight);
+      return 20;
     };
 
     // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
@@ -408,8 +420,13 @@
       // Turn virtualization on when number of data elements goes over this number
       this.virtualizationThreshold = 50;
 
+      this.columnVirtualizationThreshold = 20;
+
       // Extra rows to to render outside of the viewport
       this.excessRows = 4;
+
+      // Extra columns to to render outside of the viewport
+      this.excessColumns = 4;
 
       this.scrollThreshold = 4;
 
@@ -537,6 +554,8 @@
           self.grid.options.columnDefs =  value;
           self.grid.buildColumns()
             .then(function(){
+              self.columnSizeCalculated = false;
+              // self.renderedColumns = self.grid.columns;
               self.refreshCanvas();
             });
         });
@@ -575,7 +594,9 @@
             //todo: move this to the ui-body-directive and define how we handle ordered event registration
             if (self.viewport) {
               var scrollTop = self.viewport[0].scrollTop;
+              var scrollLeft = self.viewport[0].scrollLeft;
               self.adjustScrollVertical(scrollTop, 0, true);
+              self.adjustScrollHorizontal(scrollLeft, 0, true);
             }
 
             $scope.$evalAsync(function() {
@@ -595,6 +616,63 @@
 
       // Refresh the canvas drawable size
       $scope.grid.refreshCanvas = self.refreshCanvas = function() {
+        if (self.header) {
+          // If we haven't calculated the sizes of the columns, calculate them!
+          if (! self.columnSizeCalculated) {
+            // Total width of header
+            var totalWidth = 0;
+
+            // All the header cell elements
+            var headerColumnElms = self.header[0].getElementsByClassName('ui-grid-header-cell');
+            
+            if (headerColumnElms.length > 0) {
+              // Go through all the header column elements
+              for (var i = 0; i < headerColumnElms.length; i++) {
+                var columnElm = headerColumnElms[i];
+
+                // Get the related column definition
+                var column = angular.element(columnElm).scope().col;
+
+                // Save the width so we can reset it
+                var savedWidth = columnElm.style.width;
+
+                // Change the width to 'auto' so it will expand out
+                columnElm.style.width = 'auto';
+
+                // Get the "drawn" width
+                var drawnWidth = gridUtil.outerElementWidth(columnElm);
+
+                // Save it in the columns defs
+                column.drawnWidth = drawnWidth;
+
+                // Reset the column width
+                columnElm.style.width = savedWidth;
+
+                // Increment the total header width by this column's drawn width
+                totalWidth = totalWidth + drawnWidth;
+              }
+
+              // If the total width of the header would be larger than the viewport, use it as the canvas width
+              if (totalWidth > self.grid.getViewportWidth()) {
+                self.grid.canvasWidth = totalWidth;
+
+                // Tell the grid to use the column drawn widths, if available
+                self.grid.useColumnDrawnWidths = true;
+              }
+              else {
+                self.grid.canvasWidth = self.grid.getViewportWidth();
+              }
+
+              // Evaluate all the stylings in another digest cycle
+              $scope.$evalAsync(function() {
+                self.grid.buildStyles($scope);
+              });
+
+              self.columnSizeCalculated = true;
+            }
+          }
+        }
+
         self.grid.buildStyles($scope);
 
         if (self.header) {
@@ -664,6 +742,10 @@ module.directive('uiGrid',
               uiGridCtrl.grid.element = $elm;
 
               uiGridCtrl.grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
+
+              // Default canvasWidth to the grid width, in case we don't get any column definitions to calculate it from
+              uiGridCtrl.grid.canvasWidth = uiGridCtrl.grid.gridWidth;
+
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
               uiGridCtrl.refreshCanvas();

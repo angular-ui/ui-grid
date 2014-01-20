@@ -21,81 +21,53 @@
         uiGridCtrl.canvas = angular.element( $elm[0].getElementsByClassName('ui-grid-canvas')[0] );
         // uiGridCtrl.viewport = elm; //angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
         uiGridCtrl.viewport = angular.element( $elm[0].getElementsByClassName('ui-grid-viewport')[0] );
+
         uiGridCtrl.viewportOuterHeight = GridUtil.outerElementHeight(uiGridCtrl.viewport[0]);
+        uiGridCtrl.viewportOuterWidth = GridUtil.outerElementWidth(uiGridCtrl.viewport[0]);
 
         // Explicitly set the viewport scrollTop to 0; Firefox apparently caches it
         uiGridCtrl.viewport[0].scrollTop = 0;
+        uiGridCtrl.viewport[0].scrollLeft = 0;
 
         uiGridCtrl.prevScrollTop = 0;
+        uiGridCtrl.prevScrollLeft = 0;
         uiGridCtrl.currentTopRow = 0;
+        uiGridCtrl.currentFirstColumn = 0;
 
         uiGridCtrl.adjustScrollVertical = function (scrollTop, scrollPercentage, force) {
           if (uiGridCtrl.prevScrollTop === scrollTop && !force) {
             return;
           }
 
-          if (scrollTop > 0 && uiGridCtrl.canvas[0].scrollHeight - scrollTop <= uiGridCtrl.viewportOuterHeight) {
-            // $scope.$emit('ngGridEventScroll');
-          }
-
-          // $log.debug('scrollPercentage', scrollPercentage);
-
-          // var rowIndex = Math.floor(scrollTop / uiGridCtrl.grid.options.rowHeight);
-          // $log.debug(uiGridCtrl.grid.options.data.length + ' * (' + scrollTop + ' / ' + uiGridCtrl.grid.options.canvasHeight + ')');
-          // var rowIndex = Math.floor(uiGridCtrl.grid.options.data.length * scrollTop / uiGridCtrl.grid.options.canvasHeight);
-          // scrollTop = Math.floor(uiGridCtrl.canvas[0].scrollHeight * scrollPercentage);
           scrollTop = uiGridCtrl.canvas[0].scrollHeight * scrollPercentage;
 
           var minRows = uiGridCtrl.grid.minRowsToRender();
           var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
-
-          // var rowIndex = Math.ceil(Math.min(uiGridCtrl.grid.options.data.length, uiGridCtrl.grid.options.data.length * scrollPercentage));
+          
           var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
-          // $log.debug('rowIndex', rowIndex);
 
           // Define a max row index that we can't scroll past
           if (rowIndex > maxRowIndex) {
             rowIndex = maxRowIndex;
           }
-
-          // $log.debug('newScrollTop', scrollTop);
-          // $log.debug('rowIndex', rowIndex);
-          // $log.debug('data.length', uiGridCtrl.grid.options.data.length);
+          
           var newRange = [];
           if (uiGridCtrl.grid.rows.length > uiGridCtrl.grid.options.virtualizationThreshold) {
             // Have we hit the threshold going down?
-            if (uiGridCtrl.prevScrollTop < scrollTop && rowIndex < uiGridCtrl.prevScrollIndex + uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+            if (uiGridCtrl.prevScrollTop < scrollTop && rowIndex < uiGridCtrl.prevRowScrollIndex + uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
               return;
             }
             //Have we hit the threshold going up?
-            if (uiGridCtrl.prevScrollTop > scrollTop && rowIndex > uiGridCtrl.prevScrollIndex - uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+            if (uiGridCtrl.prevScrollTop > scrollTop && rowIndex > uiGridCtrl.prevRowScrollIndex - uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
               return;
             }
-
-            // $log.debug('rowIndex | maxRowIndex | minRows', rowIndex, maxRowIndex, minRows);
 
             var rangeStart = Math.max(0, rowIndex - uiGridCtrl.grid.options.excessRows);
             var rangeEnd = Math.min(uiGridCtrl.grid.rows.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
 
-            // if (rangeEnd - rangeStart < minRows) {
-            //   $log.debug('range too small', rangeStart);
-            //   rangeStart = rangeEnd - minRows - uiGridCtrl.grid.options.excessRows; //rangeStart - (minRows - (rangeEnd - rangeStart));
-            //   $log.debug('new start of range', rangeStart);
-            // }
-
-            // Check to make sure the range isn't too long
-            // var rangeLength = rangeEnd - rangeStart;
-            // if (rowIndex === maxRowIndex && (uiGridCtrl.grid.options.offsetTop + (uiGridCtrl.grid.options.rowHeight * rangeLength) > uiGridCtrl.grid.options.canvasHeight)) {
-            //   $log.debug('range too big!', uiGridCtrl.grid.options.offsetTop, uiGridCtrl.grid.options.rowHeight * rangeLength, uiGridCtrl.grid.options.canvasHeight);
-
-            //   var removeRange = Math.floor( (uiGridCtrl.grid.options.offsetTop + (uiGridCtrl.grid.options.rowHeight * rangeLength) - uiGridCtrl.grid.options.canvasHeight) / uiGridCtrl.grid.options.rowHeight);
-            //   $log.debug('remove range', removeRange);
-
-            //   rangeStart = rangeStart + removeRange;
-            // }
-
             newRange = [rangeStart, rangeEnd];
+            $log.debug(newRange);
           }
           else {
             var maxLen = uiGridCtrl.grid.rows.length;
@@ -103,8 +75,53 @@
           }
 
           uiGridCtrl.prevScrollTop = scrollTop;
-          updateViewableRange(newRange);
-          uiGridCtrl.prevScrollIndex = rowIndex;
+          updateViewableRowRange(newRange);
+          uiGridCtrl.prevRowScrollIndex = rowIndex;
+        };
+
+        // Virtualization for horizontal scrolling
+        uiGridCtrl.adjustScrollHorizontal = function (scrollLeft, scrollPercentage, force) {
+          if (uiGridCtrl.prevScrollLeft === scrollLeft && !force) {
+            return;
+          }
+
+          scrollLeft = uiGridCtrl.canvas[0].scrollLeft * scrollPercentage;
+
+          var minCols = uiGridCtrl.grid.minColumnsToRender();
+          var maxColIndex = uiGridCtrl.grid.columns.length - minCols;
+          uiGridCtrl.maxColIndex = maxColIndex;
+          
+          var colIndex = Math.ceil(Math.min(maxColIndex, maxColIndex * scrollPercentage));
+
+          // Define a max row index that we can't scroll past
+          if (colIndex > maxColIndex) {
+            colIndex = maxColIndex;
+          }
+          
+          var newRange = [];
+          if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold) {
+            // Have we hit the threshold going down?
+            if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColScrollIndex + uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColIndex) {
+              return;
+            }
+            //Have we hit the threshold going up?
+            if (uiGridCtrl.prevScrollTop > scrollLeft && colIndex > uiGridCtrl.prevColScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColIndex) {
+              return;
+            }
+
+            var rangeStart = Math.max(0, colIndex - uiGridCtrl.grid.options.excessColumns);
+            var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
+
+            newRange = [rangeStart, rangeEnd];
+          }
+          else {
+            var maxLen = uiGridCtrl.grid.columns.length;
+            newRange = [0, Math.max(maxLen, minCols + uiGridCtrl.grid.options.excessColumns)];
+          }
+
+          uiGridCtrl.prevScrollLeft = scrollLeft;
+          updateViewableColumnRange(newRange);
+          uiGridCtrl.prevColScrollIndex = colIndex;
         };
 
         // Listen for scroll events
@@ -130,7 +147,7 @@
             var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
             
             // TODO(c0bra): add adjustScrollHorizontal() method
-            // uiGridCtrl.adjustScrollHorizontal(newScrollTop, scrollXPercentage);
+            uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
             uiGridCtrl.viewport[0].scrollLeft = newScrollLeft;
             uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
@@ -213,8 +230,7 @@
 
           $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
         }
-
-        // TODO(c0bra): handle X axis
+        
         function touchend(event) {
           // $log.debug('touchend!');
           event.preventDefault();
@@ -259,6 +275,7 @@
 
               decelerateCount = decelerateCount -1;
               scrollYLength = scrollYLength / 2;
+              scrollXLength = scrollXLength / 2;
 
               if (decelerateCount > 0) {
                 decelerate();
@@ -275,14 +292,16 @@
 
             moveStart = new Date();
             startY = event.targetTouches[0].screenY;
+            startX = event.targetTouches[0].screenX;
             scrollTopStart = uiGridCtrl.viewport[0].scrollTop;
+            scrollLeftStart = uiGridCtrl.viewport[0].scrollLeft;
             
             $document.on('touchmove', touchmove);
             $document.on('touchend touchcancel', touchend);
           });
         }
 
-        // TODO(c0bra): Scroll the viewport when the up and down arrow keys are used
+        // TODO(c0bra): Scroll the viewport when the up and down arrow keys are used? This would interfere with cell navigation
         $elm.bind('keydown', function(evt, args) {
 
         });
@@ -306,8 +325,15 @@
           });
         };
 
+        var setRenderedColumns = function (newColumns) {
+          // NOTE: without the $evalAsync the new rows don't show up
+          $scope.$evalAsync(function() {
+            uiGridCtrl.grid.setRenderedColumns(newColumns);
+          });
+        };
+
         // Method for updating the visible rows
-        var updateViewableRange = function(renderedRange) {
+        var updateViewableRowRange = function(renderedRange) {
           // Slice out the range of rows from the data
           var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
 
@@ -315,6 +341,17 @@
           uiGridCtrl.currentTopRow = renderedRange[0];
 
           setRenderedRows(rowArr);
+        };
+
+        // Method for updating the visible rows
+        var updateViewableColumnRange = function(renderedRange) {
+          // Slice out the range of rows from the data
+          var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
+
+          // Define the top-most rendered row
+          uiGridCtrl.currentFirstColumn = renderedRange[0];
+
+          setRenderedColumns(columnArr);
         };
 
         $scope.rowStyle = function (index) {
@@ -334,6 +371,30 @@
             var offset = (uiGridCtrl.grid.options.offsetTop) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessRows - extraRowOffset)) - mod;
 
             return { 'margin-top': offset + 'px' };
+          }
+
+          return null;
+        };
+
+        $scope.columnStyle = function (index) {
+          if (index === 0 && uiGridCtrl.currentFirstColumn !== 0) {
+            // Here we need to add an extra bit on to our offset. We are calculating the offset below based on the number of rows
+            //   that will fit into the viewport. If it's not an even amount there will be a remainder and the viewport will not scroll far enough.
+            //   We add the remainder on by using the offset-able height's (canvas - viewport) modulus of the row height, and then we multiply
+            //   by the percentage of the index of the row we're scrolled to so the modulus is added increasingly the further on we scroll
+            var columnPercent = (uiGridCtrl.prevColumnScrollIndex / uiGridCtrl.maxColumnIndex);
+
+            // TODO(c0bra): WTF to do here? We can't modulus on rowheight because column widths are variable...
+            var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.rowHeight) * columnPercent);
+
+            // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
+            //   add it back until the offset is fully there are the bottom. Basically we add a percentage of a rowHeight back as we scroll down, from 0% at the top to 100%
+            //   at the bottom
+            var extraColumnffset = (1 - columnPercent);
+
+            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessColumns - extraColumnffset)) - mod;
+
+            return { 'margin-left': offset + 'px' };
           }
 
           return null;

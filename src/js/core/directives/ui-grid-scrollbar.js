@@ -97,9 +97,7 @@
             return uiGridCtrl.grid.getCanvasHeight() > uiGridCtrl.grid.getViewportHeight();
           }
           else if ($scope.type === 'horizontal') {
-            // TODO(c0bra): revert once canvas width is calculated correctly
-            // return uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth(); 
-            return true;
+            return uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth(); 
           }
         };
 
