@@ -27,7 +27,8 @@
    - Invalidate row heights on data changes
 1. Add jade processing for misc/site directory
    - Don't `copy` .jade files with the copy task.
-1. Make scrollbar look like chrome's?
+1. Naming inconsistencies - uiGridConstants vs gridUtil, etc.
+
 
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
 
@@ -56,3 +57,4 @@
 1. [DONE] - [BUG] - Hidden grid doesn't calculate height of header correctly
 1. [DONE] - [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
    - Was including wrong ui-grid.css file
+1. [DONE] - Make scrollbar look like chrome's?

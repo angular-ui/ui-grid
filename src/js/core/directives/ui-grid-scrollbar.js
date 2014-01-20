@@ -3,7 +3,7 @@
 
   var app = angular.module('ui.grid.scrollbar', []);
 
-  app.directive('uiGridScrollbar', ['$log', '$document', 'gridUtil', function($log, $document, gridUtil) {
+  app.directive('uiGridScrollbar', ['$log', '$document', 'uiGridConstants', 'gridUtil', function($log, $document, uiGridConstants, gridUtil) {
     return {
       replace: true,
       // priority: 1000,
@@ -70,7 +70,16 @@
         }
 
         function updateHorizontalScrollbar(gridScope) {
-          var scrollbarWidth = Math.floor(Math.max(35, uiGridCtrl.grid.getViewportWidth() / uiGridCtrl.grid.getCanvasWidth() * uiGridCtrl.grid.getViewportWidth()));
+          var minWidth = 35;
+          var scrollbarWidth = Math.floor(
+                                 Math.max(
+                                   minWidth,
+                                   uiGridCtrl.grid.getViewportWidth() / uiGridCtrl.grid.getCanvasWidth() * uiGridCtrl.grid.getViewportWidth()
+                                 )
+                               );
+
+          scrollbarWidth = isNaN(scrollbarWidth) ? minWidth : scrollbarWidth;
+
           uiGridCtrl.grid.horizontalScrollbarStyles = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-scrollbar-horizontal { width: ' + scrollbarWidth + 'px; }';
         }
 
@@ -88,7 +97,9 @@
             return uiGridCtrl.grid.getCanvasHeight() > uiGridCtrl.grid.getViewportHeight();
           }
           else if ($scope.type === 'horizontal') {
-            return uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth(); 
+            // TODO(c0bra): revert once canvas width is calculated correctly
+            // return uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth(); 
+            return true;
           }
         };
 
@@ -189,14 +200,32 @@
           // The percentage that we've scrolled is the y axis delta divided by the total scrollable distance (which is the same as the bottom boundary)
 
           //TODO: When this is part of ui.grid module, the event name should be a constant
-          $scope.$emit('uiGridScrollVertical', scrollArgs);
+          // $log.debug('scrollArgs', scrollArgs);
+          $scope.$emit(uiGridConstants.events.GRID_SCROLL, scrollArgs);
         }
 
         // Bind to the scroll event which can come from the body (mouse wheel/touch events), or other places
-        var scrollDereg = $scope.$on('uiGridScrollVertical', function(evt, args) {
+        var scrollDereg = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
           // Make sure the percentage is normalized within the range 0-1
-          if (args.scrollPercentage < 0) { args.scrollPercentage = 0; }
-          if (args.scrollPercentage > 1) { args.scrollPercentage = 1; }
+
+          var scrollPercentage;
+          if ($scope.type === 'vertical') {
+            // Skip if no scroll on Y axis
+            if (! args.y) {
+              return;
+            }
+            scrollPercentage = args.y.percentage;
+          }
+          else if ($scope.type === 'horizontal') {
+            // Skip if no scroll on X axis
+            if (! args.x) {
+              return;
+            }
+            scrollPercentage = args.x.percentage;
+          }
+
+          if (scrollPercentage < 0) { scrollPercentage = 0; }
+          if (scrollPercentage > 1) { scrollPercentage = 1; }
 
           // Get the height of the element in case it changed (due to canvas/viewport resizing)
           // elmSize = getElmSize();
@@ -205,9 +234,7 @@
           elmMaxBound = getElmMaxBound();
 
           // The new top value for the scrollbar is the percentage of scroll multiplied by the bottom boundary
-          var newScrollTop = args.scrollPercentage * elmMaxBound;
-
-          var newTop = newScrollTop; //(uiGridCtrl.grid.optionsoffsetTop || 0) + newScrollTop;
+          var newScrollPosition = scrollPercentage * elmMaxBound;
 
           // Prevent scrollbar from going beyond container
           // if (newTop > uiGridCtrl.grid.getCanvasHeight() - elmHeight) {
@@ -215,12 +242,21 @@
           // }
 
           // Store the new top in the y value
-          y = newScrollTop;
 
-          // Set the css for top
-          $elm.css({
-            top: newTop + 'px'
-          });
+          if ($scope.type === 'vertical') {
+            y = newScrollPosition;
+
+            // Set the css for top
+            $elm.css({
+              top: y + 'px'
+            });
+          }
+          else {
+            x = newScrollPosition;
+            $elm.css({
+              left: x + 'px'
+            });
+          }
         });
   
         // When the user lets go of the mouse...

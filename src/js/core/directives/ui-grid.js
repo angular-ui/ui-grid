@@ -8,7 +8,8 @@
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
     events: {
-      GRID_SCROLL: 'uiGridScroll'
+      GRID_SCROLL: 'uiGridScroll',
+      GRID_SCROLLING: 'uiGridScrolling'
     },
     // copied from http://www.lsauer.com/2011/08/javascript-keymap-keycodes-in-json.html
     keymap: {
@@ -203,7 +204,7 @@
         
       });
 
-      debugger;
+      // debugger;
 
       return $q.all(builderPromises);
     };
@@ -602,8 +603,8 @@
       };
 
       //todo: throttle this event?
-      self.fireScrollEvent = function() {
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, 'vertical');
+      self.fireScrollingEvent = function() {
+        $scope.$broadcast(uiGridConstants.events.GRID_SCROLLING);
       };
 
     }]);

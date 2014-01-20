@@ -3,7 +3,7 @@
 
   var app = angular.module('ui.grid.body', []);
 
-  app.directive('uiGridBody', ['$log', '$document', '$timeout', 'gridUtil', function($log, $document, $timeout, GridUtil) {
+  app.directive('uiGridBody', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil', function($log, $document, $timeout, uiGridConstants, GridUtil) {
     return {
       replace: true,
       // priority: 1000,
@@ -108,78 +108,80 @@
         };
 
         // Listen for scroll events
-        var scrollUnbinder = $scope.$on('uiGridScrollVertical', function(evt, args) {
-          // $log.debug('scroll', args.scrollPercentage, uiGridCtrl.grid.getCanvasHeight(), args.scrollPercentage * uiGridCtrl.grid.getCanvasHeight());
-          var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+        var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
+          // Vertical scroll
+          if (args.y) {
+            var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
-          // $log.debug('scrollLength', scrollLength, scrollLength % uiGridCtrl.grid.options.rowHeight);
-          var newScrollTop = Math.max(0, args.scrollPercentage * scrollLength);
-          // $log.debug('mod', (scrollLength % uiGridCtrl.grid.options.rowHeight));
-          // newScrollTop = newScrollTop + (scrollLength % uiGridCtrl.grid.options.rowHeight);
+            var scrollYPercentage = args.y.percentage;
+            var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
+            
+            uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
 
-          // $log.debug('uiGridCtrl.canvas[0].scrollHeight', uiGridCtrl.canvas[0].scrollHeight);
+            uiGridCtrl.viewport[0].scrollTop = newScrollTop;
+            uiGridCtrl.grid.options.offsetTop = newScrollTop;
+          }
 
-          // var scrollMultiplier = (uiGridCtrl.grid.options.canvasHeight / (uiGridCtrl.grid.options.rowHeight * uiGridCtrl.grid.options.data.length)) * 100;
-          var scrollMultiplier = 1; // (uiGridCtrl.grid.options.rowHeight * uiGridCtrl.grid.options.data.length) / uiGridCtrl.grid.options.canvasHeight;
-          // $log.debug('scrollMultiplier', scrollMultiplier);
-          // newScrollTop = newScrollTop * scrollMultiplier;
+          // Horizontal scroll
+          if (args.x) {
+            var scrollWidth = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
 
-          var scrollPercentage = args.scrollPercentage * scrollMultiplier;
+            var scrollXPercentage = args.x.percentage;
+            var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
+            
+            // TODO(c0bra): add adjustScrollHorizontal() method
+            // uiGridCtrl.adjustScrollHorizontal(newScrollTop, scrollXPercentage);
 
-          // $log.debug('newScrollTop', newScrollTop);
-          // $log.debug('scrollPercentage - newScrollTop', scrollPercentage, newScrollTop);
+            uiGridCtrl.viewport[0].scrollLeft = newScrollLeft;
+            uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
+          }
 
-          // Prevent scroll top from going over the maximum (canvas height - viewport height)
-          // if (newScrollTop > uiGridCtrl.grid.options.canvasHeight - uiGridCtrl.grid.options.viewportHeight) {
-          //   $log.debug('too high!');
-          //   newScrollTop = uiGridCtrl.grid.options.canvasHeight - uiGridCtrl.grid.options.viewportHeight;
-          // }
-          
-          uiGridCtrl.adjustScrollVertical(newScrollTop, scrollPercentage);
-          uiGridCtrl.viewport[0].scrollTop = newScrollTop;
-          uiGridCtrl.grid.options.offsetTop = newScrollTop;
-
-          uiGridCtrl.fireScrollEvent();
-
-          // scope.$evalAsync(function() {
-
-          // });
+          uiGridCtrl.fireScrollingEvent();
         });
 
         // Scroll the viewport when the mousewheel is used
         $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
           // use wheelDeltaY
           evt.preventDefault();
-          
-          // $log.debug('evt.wheelDeltaY', evt.wheelDeltaY);
 
           var newEvent = GridUtil.normalizeWheelEvent(evt);
 
-          var scrollAmount = newEvent.deltaY * -120;
+          var args = { target: $elm };
+          if (newEvent.deltaY !== 0) {
+            var scrollYAmount = newEvent.deltaY * -120;
 
-          // Get the scroll percentage
-          // var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.viewport[0].scrollHeight - uiGridCtrl.grid.options.viewportHeight);
-          // $log.debug(uiGridCtrl.viewport[0].scrollTop, scrollAmount, uiGridCtrl.grid.getCanvasHeight(), uiGridCtrl.grid.getViewportHeight());
-          var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollAmount) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+            // Get the scroll percentage
+            var scrollYPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollYAmount) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
-          // Keep scrollPercentage within the range 0-1.
-          if (scrollPercentage < 0) { scrollPercentage = 0; }
-          if (scrollPercentage > 1) { scrollPercentage = 1; }
+            // Keep scrollPercentage within the range 0-1.
+            if (scrollYPercentage < 0) { scrollYPercentage = 0; }
+            if (scrollYPercentage > 1) { scrollYPercentage = 1; }
 
-          // $log.debug('scrollPercentage', scrollPercentage);
+            args.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
+          }
+          if (newEvent.deltaX !== 0) {
+            var scrollXAmount = newEvent.deltaX * -120;
 
-          // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop + scrollAmount);
-          // uiGridCtrl.canvas[0].scrollTop = uiGridCtrl.canvas[0].scrollTop + scrollAmount;
-          // $log.debug('new scrolltop', uiGridCtrl.canvas[0].scrollTop);
+            // Get the scroll percentage
+            var scrollXPercentage = (uiGridCtrl.viewport[0].scrollLeft + scrollXAmount) / (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
 
-          $scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: $elm });
+            // Keep scrollPercentage within the range 0-1.
+            if (scrollXPercentage < 0) { scrollXPercentage = 0; }
+            if (scrollXPercentage > 1) { scrollXPercentage = 1; }
+
+            args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
+          }
+
+          $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
         });
 
         
         var startY = 0,
             startX = 0,
             scrollTopStart = 0,
-            direction = 1,
+            scrollLeftStart = 0,
+            directionY = 1,
+            directionX = 1,
             moveStart;
         function touchmove(event) {
           event.preventDefault();
@@ -192,15 +194,27 @@
           deltaX = -(newX - startX);
           deltaY = -(newY - startY);
 
-          direction = (deltaY < 1) ? -1 : 1;
+          directionY = (deltaY < 1) ? -1 : 1;
+          directionX = (deltaX < 1) ? -1 : 1;
 
           deltaY *= 2;
+          deltaX *= 2;
 
-          var scrollPercentage = (scrollTopStart + deltaY) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+          var args = { target: event.target };
 
-          $scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: event.target });
+          if (deltaY !== 0) {
+            var scrollYPercentage = (scrollTopStart + deltaY) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+            args.y = { percentage: scrollYPercentage, pixels: deltaY };
+          }
+          if (deltaX !== 0) {
+            var scrollXPercentage = (scrollLeftStart + deltaX) / (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+            args.x = { percentage: scrollXPercentage, pixels: deltaX };
+          }
+
+          $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
         }
 
+        // TODO(c0bra): handle X axis
         function touchend(event) {
           // $log.debug('touchend!');
           event.preventDefault();
@@ -210,26 +224,41 @@
 
           // Get the distance we moved on the Y axis
           var scrollTopEnd = uiGridCtrl.viewport[0].scrollTop;
+          var scrollLeftEnd = uiGridCtrl.viewport[0].scrollTop;
           var deltaY = Math.abs(scrollTopEnd - scrollTopStart);
+          var deltaX = Math.abs(scrollLeftEnd - scrollLeftStart);
 
           // Get the duration it took to move this far
           var moveDuration = (new Date()) - moveStart;
 
           // Scale the amount moved by the time it took to move it (i.e. quicker, longer moves == more scrolling after the move is over)
-          var moveScale = deltaY / moveDuration;
+          var moveYScale = deltaY / moveDuration;
+          var moveXScale = deltaX / moveDuration;
 
           var decelerateInterval = 125; // 1/8th second
           var decelerateCount = 4; // == 1/2 second
-          var scrollLength = 60 * direction * moveScale;
-          
+          var scrollYLength = 60 * directionY * moveYScale;
+          var scrollXLength = 60 * directionX * moveXScale;
+
           function decelerate() {
             $timeout(function() {
-              var scrollPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollLength) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+              var args = { target: event.target };
 
-              $scope.$broadcast('uiGridScrollVertical', { scrollPercentage: scrollPercentage, target: event.target });
+              if (scrollYLength !== 0) {
+                var scrollYPercentage = (uiGridCtrl.viewport[0].scrollTop + scrollYLength) / (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+
+                args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
+              }
+
+              if (scrollXLength !== 0) {
+                var scrollXPercentage = (uiGridCtrl.viewport[0].scrollLeft + scrollXLength) / (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+                args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
+              }
+
+              $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
 
               decelerateCount = decelerateCount -1;
-              scrollLength = scrollLength / 2;
+              scrollYLength = scrollYLength / 2;
 
               if (decelerateCount > 0) {
                 decelerate();
