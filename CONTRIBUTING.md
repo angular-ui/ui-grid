@@ -8,6 +8,9 @@ the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue or assessing
 patches and features.
 
+## Developer guidelines
+
+If you're a developer, please take a look at the [Developer guidelines](DEVELOPER.md) 
 
 ## Using the issue tracker
 
