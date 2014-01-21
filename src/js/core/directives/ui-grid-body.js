@@ -67,7 +67,6 @@
             var rangeEnd = Math.min(uiGridCtrl.grid.rows.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
 
             newRange = [rangeStart, rangeEnd];
-            $log.debug(newRange);
           }
           else {
             var maxLen = uiGridCtrl.grid.rows.length;
@@ -88,24 +87,24 @@
           scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
 
           var minCols = uiGridCtrl.grid.minColumnsToRender();
-          var maxColIndex = uiGridCtrl.grid.columns.length - minCols;
-          uiGridCtrl.maxColIndex = maxColIndex;
+          var maxColumnIndex = uiGridCtrl.grid.columns.length - minCols;
+          uiGridCtrl.maxColumnIndex = maxColumnIndex;
           
-          var colIndex = Math.ceil(Math.min(maxColIndex, maxColIndex * scrollPercentage));
+          var colIndex = Math.ceil(Math.min(maxColumnIndex, maxColumnIndex * scrollPercentage));
 
           // Define a max row index that we can't scroll past
-          if (colIndex > maxColIndex) {
-            colIndex = maxColIndex;
+          if (colIndex > maxColumnIndex) {
+            colIndex = maxColumnIndex;
           }
           
           var newRange = [];
           if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold) {
             // Have we hit the threshold going down?
-            if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColScrollIndex + uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColIndex) {
+            if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColumnScrollIndex + uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
               return;
             }
             //Have we hit the threshold going up?
-            if (uiGridCtrl.prevScrollTop > scrollLeft && colIndex > uiGridCtrl.prevColScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColIndex) {
+            if (uiGridCtrl.prevScrollTop > scrollLeft && colIndex > uiGridCtrl.prevColumnScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
               return;
             }
 
@@ -121,7 +120,7 @@
 
           uiGridCtrl.prevScrollLeft = scrollLeft;
           updateViewableColumnRange(newRange);
-          uiGridCtrl.prevColScrollIndex = colIndex;
+          uiGridCtrl.prevColumnScrollIndex = colIndex;
         };
 
         // Listen for scroll events
@@ -202,8 +201,6 @@
             moveStart;
         function touchmove(event) {
           event.preventDefault();
-
-          // $log.debug('touchmove', event);
 
           var deltaX, deltaY, newX, newY;
           newX = event.targetTouches[0].pageX;
@@ -392,7 +389,8 @@
             //   at the bottom
             var extraColumnffset = (1 - columnPercent);
 
-            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessColumns - extraColumnffset)) - mod;
+            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessColumns - extraColumnffset)) - mod;
+            var offset = uiGridCtrl.grid.options.offsetLeft;
 
             return { 'margin-left': offset + 'px' };
           }
