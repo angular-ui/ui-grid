@@ -360,7 +360,7 @@
             //   that will fit into the viewport. If it's not an even amount there will be a remainder and the viewport will not scroll far enough.
             //   We add the remainder on by using the offset-able height's (canvas - viewport) modulus of the row height, and then we multiply
             //   by the percentage of the index of the row we're scrolled to so the modulus is added increasingly the further on we scroll
-            var rowPercent = (uiGridCtrl.prevScrollIndex / uiGridCtrl.maxRowIndex);
+            var rowPercent = (uiGridCtrl.prevRowScrollIndex / uiGridCtrl.maxRowIndex);
             var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight()) % uiGridCtrl.grid.options.rowHeight) * rowPercent);
 
             // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
