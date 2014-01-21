@@ -15,6 +15,12 @@ Demonstrating scrolling with large amount of columns
       $http.get('/data/100_columns.json')
       // $http.get('/data/100.json')
         .success(function(data) {
+          $scope.gridOptions.columnDefs = [];
+
+          angular.forEach(data[0], function(v, k) {
+            $scope.gridOptions.columnDefs.push({ field: k, width: 57 });
+          });
+
           $scope.gridOptions.data = data;
         });
     }]);

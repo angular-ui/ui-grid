@@ -198,6 +198,9 @@
           col = new GridColumn(colDef, index);
           self.columns.push(col);
         }
+        else {
+          col.updateDef(colDef, col.index);
+        }
 
         self.columnBuilders.forEach(function (builder) {
           builderPromises.push(builder.call(self, colDef, col, self.options));
@@ -313,9 +316,8 @@
     };
 
     Grid.prototype.setRenderedRows = function (newRows) {
-      
+      this.renderedRows.length = newRows.length;
       for (var i = 0; i < newRows.length; i++) {
-        this.renderedRows.length = newRows.length;
         this.renderedRows[i] = newRows[i];
       }
     };
@@ -345,9 +347,7 @@
     };
 
     Grid.prototype.minColumnsToRender = function () {
-      // TODO(c0bra): WTF to do here? columnHeight would be variable...
-      // return Math.ceil(this.getViewportWidth() / this.options.rowHeight);
-      return 20;
+      return Math.ceil(this.getViewportWidth() / this.options.columnWidth);
     };
 
     // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
@@ -416,6 +416,9 @@
       this.headerRowHeight = 30;
       this.rowHeight = 30;
       this.maxVisibleRowCount = 200;
+
+      this.columnWidth = 50;
+      this.maxVisibleColumnCount = 200;
 
       // Turn virtualization on when number of data elements goes over this number
       this.virtualizationThreshold = 50;
@@ -502,15 +505,53 @@
      */
     function GridColumn(colDef, index) {
       var self = this;
+
+      colDef.index = index;
+
+      self.updateDef(colDef);
+    }
+
+    GridColumn.prototype.updateDef = function(colDef, index) {
+      var self = this;
+
       self.colDef = colDef;
-      if (colDef.name === undefined) {
-        throw new Error('colDef.name is required');
-      }
 
       //position of column
-      self.index = index;
+      self.index = (typeof(index) === 'undefined') ? colDef.index : index;
 
-      self.width = colDef.width;
+      if (colDef.name === undefined) {
+        throw new Error('colDef.name is required for column at index ' + self.index);
+      }
+
+      var parseErrorMsg = "Cannot parse column width '" + colDef.width + "' for column named '" + colDef.name + "'";
+
+      // If width is not defined, set it to a single star
+      if (gridUtil.isNullOrUndefined(colDef.width)) {
+        self.width = '*';
+      }
+      else {
+        // If the width is not a number
+        if (! angular.isNumber(colDef.width)) {
+          // See if it ends with a percent
+          if (gridUtil.endsWith(colDef.width, '%')) {
+            // If so we should be able to parse the non-percent-sign part to a number
+            var percentStr = colDef.width.replace(/%/g, '');
+            var percent = parseFloat(percentStr);
+            if (isNaN(percent)) {
+              throw new Error(parseErrorMsg);
+            }
+          }
+          // Otherwise it should be a string of asterisks
+          else if (! colDef.width.match(/^\*+$/)) {
+            throw new Error(parseErrorMsg);
+          }
+        }
+        // Is a number, use it as the width
+        else {
+          self.width = colDef.width;
+        }
+      }
+
       self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
       self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
@@ -530,7 +571,9 @@
 
       self.headerClass = colDef.headerClass;
       //self.cursor = self.sortable ? 'pointer' : 'default';
-    }
+
+      self.visible = true;
+    };
 
     return service;
   }]);
@@ -551,10 +594,10 @@
 
       if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
-          self.grid.options.columnDefs =  value;
+          self.grid.options.columnDefs = value;
           self.grid.buildColumns()
             .then(function(){
-              self.columnSizeCalculated = false;
+              // self.columnSizeCalculated = false;
               // self.renderedColumns = self.grid.columns;
               self.refreshCanvas();
             });
@@ -574,6 +617,18 @@
       else {
         dataWatchCollectionDereg = $scope.$parent.$watchCollection(function() { return $scope.uiGrid.data; }, dataWatchFunction);
       }
+
+      var columnDefWatchDereg = $scope.$parent.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, function(n, o) {
+        if (n && n !== o) {
+          self.grid.options.columnDefs = n;
+          self.grid.buildColumns()
+            .then(function(){
+              // self.columnSizeCalculated = false;
+              // self.renderedColumns = self.grid.columns;
+              self.refreshCanvas();
+            });
+        }
+      });
 
       function dataWatchFunction(n) {
         $log.debug('dataWatch fired');
@@ -607,7 +662,10 @@
       }
 
 
-      $scope.$on('$destroy', dataWatchCollectionDereg);
+      $scope.$on('$destroy', function() {
+        dataWatchCollectionDereg();
+        columnDefWatchDereg();
+      });
 
 
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
@@ -616,62 +674,62 @@
 
       // Refresh the canvas drawable size
       $scope.grid.refreshCanvas = self.refreshCanvas = function() {
-        if (self.header) {
-          // If we haven't calculated the sizes of the columns, calculate them!
-          if (! self.columnSizeCalculated) {
-            // Total width of header
-            var totalWidth = 0;
+        // if (self.header) {
+        //   // If we haven't calculated the sizes of the columns, calculate them!
+        //   if (! self.columnSizeCalculated) {
+        //     // Total width of header
+        //     var totalWidth = 0;
 
-            // All the header cell elements
-            var headerColumnElms = self.header[0].getElementsByClassName('ui-grid-header-cell');
+        //     // All the header cell elements
+        //     var headerColumnElms = self.header[0].getElementsByClassName('ui-grid-header-cell');
             
-            if (headerColumnElms.length > 0) {
-              // Go through all the header column elements
-              for (var i = 0; i < headerColumnElms.length; i++) {
-                var columnElm = headerColumnElms[i];
+        //     if (headerColumnElms.length > 0) {
+        //       // Go through all the header column elements
+        //       for (var i = 0; i < headerColumnElms.length; i++) {
+        //         var columnElm = headerColumnElms[i];
 
-                // Get the related column definition
-                var column = angular.element(columnElm).scope().col;
+        //         // Get the related column definition
+        //         var column = angular.element(columnElm).scope().col;
 
-                // Save the width so we can reset it
-                var savedWidth = columnElm.style.width;
+        //         // Save the width so we can reset it
+        //         var savedWidth = columnElm.style.width;
 
-                // Change the width to 'auto' so it will expand out
-                columnElm.style.width = 'auto';
+        //         // Change the width to 'auto' so it will expand out
+        //         columnElm.style.width = 'auto';
 
-                // Get the "drawn" width
-                var drawnWidth = gridUtil.outerElementWidth(columnElm);
+        //         // Get the "drawn" width
+        //         var drawnWidth = gridUtil.outerElementWidth(columnElm);
 
-                // Save it in the columns defs
-                column.drawnWidth = drawnWidth;
+        //         // Save it in the columns defs
+        //         column.drawnWidth = drawnWidth;
 
-                // Reset the column width
-                columnElm.style.width = savedWidth;
+        //         // Reset the column width
+        //         columnElm.style.width = savedWidth;
 
-                // Increment the total header width by this column's drawn width
-                totalWidth = totalWidth + drawnWidth;
-              }
+        //         // Increment the total header width by this column's drawn width
+        //         totalWidth = totalWidth + drawnWidth;
+        //       }
 
-              // If the total width of the header would be larger than the viewport, use it as the canvas width
-              if (totalWidth > self.grid.getViewportWidth()) {
-                self.grid.canvasWidth = totalWidth;
+        //       // If the total width of the header would be larger than the viewport, use it as the canvas width
+        //       if (totalWidth > self.grid.getViewportWidth()) {
+        //         self.grid.canvasWidth = totalWidth;
 
-                // Tell the grid to use the column drawn widths, if available
-                self.grid.useColumnDrawnWidths = true;
-              }
-              else {
-                self.grid.canvasWidth = self.grid.getViewportWidth();
-              }
+        //         // Tell the grid to use the column drawn widths, if available
+        //         self.grid.useColumnDrawnWidths = true;
+        //       }
+        //       else {
+        //         self.grid.canvasWidth = self.grid.getViewportWidth();
+        //       }
 
-              // Evaluate all the stylings in another digest cycle
-              $scope.$evalAsync(function() {
-                self.grid.buildStyles($scope);
-              });
+        //       // Evaluate all the stylings in another digest cycle
+        //       $scope.$evalAsync(function() {
+        //         self.grid.buildStyles($scope);
+        //       });
 
-              self.columnSizeCalculated = true;
-            }
-          }
-        }
+        //       self.columnSizeCalculated = true;
+        //     }
+        //   }
+        // }
 
         self.grid.buildStyles($scope);
 

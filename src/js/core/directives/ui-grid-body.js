@@ -98,7 +98,7 @@
           }
           
           var newRange = [];
-          if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold) {
+          if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold && uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth()) {
             // Have we hit the threshold going down?
             if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColumnScrollIndex + uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
               return;
@@ -117,6 +117,8 @@
             var maxLen = uiGridCtrl.grid.columns.length;
             newRange = [0, Math.max(maxLen, minCols + uiGridCtrl.grid.options.excessColumns)];
           }
+
+          $log.debug(newRange);
 
           uiGridCtrl.prevScrollLeft = scrollLeft;
           updateViewableColumnRange(newRange);
@@ -382,15 +384,15 @@
             var columnPercent = (uiGridCtrl.prevColumnScrollIndex / uiGridCtrl.maxColumnIndex);
 
             // TODO(c0bra): WTF to do here? We can't modulus on rowheight because column widths are variable...
-            var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.rowHeight) * columnPercent);
+            var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.columnWidth) * columnPercent);
 
             // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
             //   add it back until the offset is fully there are the bottom. Basically we add a percentage of a rowHeight back as we scroll down, from 0% at the top to 100%
             //   at the bottom
-            var extraColumnffset = (1 - columnPercent);
+            var extraColumnOffset = (1 - columnPercent);
 
-            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessColumns - extraColumnffset)) - mod;
-            var offset = uiGridCtrl.grid.options.offsetLeft;
+            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
+            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset));
 
             return { 'margin-left': offset + 'px' };
           }

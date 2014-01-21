@@ -450,7 +450,14 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
         return true;
       }
       return false;
-    }
+    },
+
+    endsWith: function(str, suffix) {
+      if (!str || !suffix || typeof str !== "string") {
+        return false;
+      }
+      return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    },
   };
 
   ['width', 'height'].forEach(function (name) {
