@@ -33,6 +33,7 @@
    - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
 
 1. [IDEA] - Bind to 'resize' event and refresh grid on that
+1. Scrollbar not hiding on Mac OS. -- Check windows.
 
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
 
