@@ -85,7 +85,7 @@
             return;
           }
 
-          scrollLeft = uiGridCtrl.canvas[0].scrollLeft * scrollPercentage;
+          scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
 
           var minCols = uiGridCtrl.grid.minColumnsToRender();
           var maxColIndex = uiGridCtrl.grid.columns.length - minCols;
