@@ -1,4 +1,15 @@
-﻿window.ngGrid = {};
+﻿window.ngGrid = {
+    version: {
+        codeName: "",
+        full: "2.0.8",
+        major: 2,
+        minor: 0,
+        dot: 8,
+        get: function () { 
+            return this.full;
+        }
+    }
+};
 window.ngGrid.i18n = {};
 
 // Declare app level module which depends on filters, and services
