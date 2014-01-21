@@ -6,12 +6,12 @@
 //
 // Notes:  This has not been adequately tested and is very much a proof of concept at this point
 function ngGridCsvExportPlugin (opts) {
-    var self = this
-      , options = {
-        columnOverrides : null,
-        enableSelectionExporting : false,
-        template : '<span class="csv-data-link-span"><br><a href="data:text/csv;charset=UTF-8,{{__ALL__}}" download="Export.csv"><i class="icon-download icon-white"></i>Export CSV</a></span>'
-      };
+    var self = this, 
+        options = {
+            columnOverrides : null,
+            enableSelectionExporting : false,
+            template : '<span class="csv-data-link-span"><br><a href="data:text/csv;charset=UTF-8,{{__ALL__}}" download="Export.csv"><i class="icon-download icon-white"></i>Export CSV</a></span>'
+        };
 
     angular.extend(options, opts);  
     self.grid = null;
@@ -19,7 +19,7 @@ function ngGridCsvExportPlugin (opts) {
     self.init = function(scope, grid, services) {
         self.grid = grid;
         self.scope = scope;
-        self.cache;
+        self.cache = null;
 
         function csvStringify(str) {
             if (str == null) { // we want to catch anything null-ish, hence just == not ===
@@ -77,8 +77,8 @@ function ngGridCsvExportPlugin (opts) {
         }
 
         function createDownloadLink (selectedItemsOnly) {
-            var csvAllData, csvSelectedData, csvDefaultData, csvDataLinkHtml
-              , csvDataLinkPrev = grid.$footerPanel.find('.csv-data-link-span');
+            var csvAllData, csvSelectedData, csvDefaultData, csvDataLinkHtml, 
+                csvDataLinkPrev = grid.$footerPanel.find('.csv-data-link-span');
 
             if (csvDataLinkPrev != null) { csvDataLinkPrev.remove(); }
 
@@ -100,11 +100,13 @@ function ngGridCsvExportPlugin (opts) {
 
         setTimeout(createDownloadLink, 0);
         
-        scope.gridDataChanged = function () { return grid.data.length; }
+        scope.gridDataChanged = function () { 
+            return grid.data.length;
+        };
 
         scope.gridSelectionChanged = function () { 
             return grid.config.selectedItems.length; 
-        }
+        };
 
         // Watches selection changes only when user turns on support for exporting selection
         if (options.enableSelectionExporting) {
