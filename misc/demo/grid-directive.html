@@ -29,16 +29,31 @@
 
       <div class="row">
         <h2>Grid</h2>
-        <div ui-grid="myGridOptions" class="grid"></div>
+        <div ui-grid="gridOptions" class="grid"></div>
       </div>
+
+      <br>
+      <br>
 
       <script>
 
       var app = angular.module('test', ['ui.grid']);
 
-      app.controller('Main', function($scope) {
-          $scope.myGridOptions = { data: 'data' };
-          $scope.myGridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
+      app.controller('Main', function($scope, $http) {
+          // $scope.gridOptions = { data: 'data' };
+          $scope.gridOptions = {};
+          // $scope.gridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
+
+          $http.get('/misc/site/data/100_columns.json')
+            .success(function(data) {
+              $scope.gridOptions.columnDefs = [];
+
+              angular.forEach(data[0], function(v, k) {
+                $scope.gridOptions.columnDefs.push({ field: k, width: 57 });
+              });
+
+              $scope.gridOptions.data = data;
+            });
 
           $scope.data = [
           {

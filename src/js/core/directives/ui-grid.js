@@ -429,7 +429,7 @@
       this.excessRows = 4;
 
       // Extra columns to to render outside of the viewport
-      this.excessColumns = 4;
+      this.excessColumns = 6;
 
       this.scrollThreshold = 4;
 
@@ -473,7 +473,7 @@
      * @returns {string} resulting name that can be evaluated on scope
      */
     GridRow.prototype.getQualifiedColField = function(col) {
-      return 'row.entity.' + col.field;
+      return 'row.entity[col.field]';
     };
 
     /**
@@ -818,27 +818,39 @@ module.directive('uiGrid',
   ]);
 
 
-  module.directive('uiGridCell', ['$compile', 'uiGridConstants', '$log', function ($compile, uiGridConstants, $log) {
-    var ngCell = {
+  module.directive('uiGridCell', ['$compile', 'uiGridConstants', '$log', '$parse', function ($compile, uiGridConstants, $log, $parse) {
+    var uiGridCell = {
       priority: 0,
       scope: false,
       compile: function() {
         return {
           pre: function($scope, $elm) {
-            // $log.debug('uiGridCell pre-link');
+            $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
               .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           },
-          post: function($scope, $elm) {
+          post: function($scope, $elm, $attrs) {
             // $log.debug('uiGridCell post-link');
+            // if ($scope.row.index === 0) {
+              // $scope.$watch('col', function(n, o) {
+              //   if (n !== o) {
+              //     var html = $scope.col.cellTemplate
+              //       .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              //     var cellElement = $compile(html)($scope);
+              //     $log.debug('update!', cellElement.html());
+              //     $elm.empty();
+              //     $elm.append(cellElement);
+              //   }
+              // });
+            // }
           }
         };
       }
     };
 
-    return ngCell;
+    return uiGridCell;
   }]);
 
 })();

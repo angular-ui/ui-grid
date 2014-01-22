@@ -112,7 +112,7 @@
             var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
 
             newRange = [rangeStart, rangeEnd];
-            $log.debug(newRange);
+            // $log.debug(newRange);
           }
           else {
             var maxLen = uiGridCtrl.grid.columns.length;
@@ -373,7 +373,7 @@
 
             var offset = (uiGridCtrl.grid.options.offsetTop) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessRows - extraRowOffset)) - mod;
 
-            $log.debug('scrollTop, margin-top', uiGridCtrl.viewport[0].scrollTop, offset);
+            // $log.debug('scrollTop, margin-top', uiGridCtrl.viewport[0].scrollTop, offset);
 
             return { 'margin-top': offset + 'px' };
           }

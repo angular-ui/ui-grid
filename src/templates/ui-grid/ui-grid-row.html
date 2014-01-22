@@ -1,6 +1,7 @@
 <div>
   <div ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-cell col{{ col.index }}" ng-style="columnStyle($index)"> <!-- ng-style="{ 'cursor': row.cursor }" ng-class="col.colIndex()" class="{{col.cellClass}}" -->
     <div class="ui-grid-vertical-bar">&nbsp;</div> <!-- ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }" -->
-    <div ui-grid-cell/>
+    <div ui-grid-cell column="col" />
+    <!-- <div class="ui-grid-cell-contents">{{ row.entity[col.field] }}</div> -->
   </div>
 </div>
