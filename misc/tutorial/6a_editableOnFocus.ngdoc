@@ -2,8 +2,11 @@
 @name Tutorial: Edit On Focus
 @description
 
-Combinine ui.grid.edit with ui.grid.cellNav, you can enable editing when the cell gets focus.
+Combine ui.grid.edit with ui.grid.cellNav, you can enable editing when the cell gets focus.
 grid.options.enableCellEditOnFocus must be set to true.
+<br/>
+See api docs for default navigation keys and how you can override.
+
 
 @example
 <example module="app">

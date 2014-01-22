@@ -4,12 +4,15 @@ describe('ui.grid.edit GridCellDirective', function () {
   var element;
   var uiGridConstants;
   var recompile;
+  var $timeout;
 
   beforeEach(module('ui.grid.edit'));
 
-  beforeEach(inject(function ($rootScope, $compile, $controller, _gridUtil_, $templateCache, gridClassFactory, uiGridEditService, _uiGridConstants_) {
+  beforeEach(inject(function ($rootScope, $compile, $controller, _gridUtil_, $templateCache, gridClassFactory,
+                              uiGridEditService, _uiGridConstants_, _$timeout_) {
     gridUtil = _gridUtil_;
     uiGridConstants = _uiGridConstants_;
+    $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
     $templateCache.put('ui-grid/edit/editableCell', '<div editable_cell_directive></div>');
@@ -37,6 +40,34 @@ describe('ui.grid.edit GridCellDirective', function () {
     };
   }));
 
+  describe('ui.grid.edit uiGridCell start editing', function () {
+    var displayHtml;
+    beforeEach(function () {
+      element = angular.element('<div ui-grid-cell/>');
+      recompile();
+
+      displayHtml = element.html();
+      expect(element.text()).toBe('val');
+    });
+
+    it('startEdit on "a"', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = 65;
+      element.trigger(event);
+      expect(element.find('input')).toBeDefined();
+    });
+
+    it('not start edit on tab', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.TAB;
+      element.trigger(event);
+      expect(element.html()).toEqual(displayHtml);
+    });
+
+  });
+
   describe('ui.grid.edit uiGridCell and uiGridTextEditor full workflow', function () {
     var displayHtml;
     beforeEach(function () {
@@ -50,7 +81,6 @@ describe('ui.grid.edit GridCellDirective', function () {
       expect(element.find('input')).toBeDefined();
       expect(element.find('input').val()).toBe('val');
     });
-
 
     it('should stop editing on enter', function () {
       //stop edit
