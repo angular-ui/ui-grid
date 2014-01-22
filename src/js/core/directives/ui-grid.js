@@ -417,7 +417,7 @@
       this.rowHeight = 30;
       this.maxVisibleRowCount = 200;
 
-      this.columnWidth = 50;
+      this.columnWidth = 57;
       this.maxVisibleColumnCount = 200;
 
       // Turn virtualization on when number of data elements goes over this number
@@ -578,8 +578,8 @@
     return service;
   }]);
 
-  module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants', '$templateCache', 'gridClassFactory',
-    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants, $templateCache, gridClassFactory) {
+  module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants', '$templateCache', 'gridClassFactory', '$timeout',
+    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants, $templateCache, gridClassFactory, $timeout) {
       $log.debug('ui-grid controller');
 
       var self = this;
@@ -734,7 +734,10 @@
         self.grid.buildStyles($scope);
 
         if (self.header) {
-          self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+          // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
+          $timeout(function() {
+            self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+          }, 0);
         }
       };
 

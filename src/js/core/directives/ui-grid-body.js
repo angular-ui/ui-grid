@@ -80,8 +80,6 @@
 
         // Virtualization for horizontal scrolling
         uiGridCtrl.adjustScrollHorizontal = function (scrollLeft, scrollPercentage, force) {
-
-
           if (uiGridCtrl.prevScrollLeft === scrollLeft && !force) {
             return;
           }
@@ -106,7 +104,7 @@
               return;
             }
             //Have we hit the threshold going up?
-            if (uiGridCtrl.prevScrollTop > scrollLeft && colIndex > uiGridCtrl.prevColumnScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
+            if (uiGridCtrl.prevScrollLeft > scrollLeft && colIndex > uiGridCtrl.prevColumnScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
               return;
             }
 
@@ -114,8 +112,7 @@
             var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
 
             newRange = [rangeStart, rangeEnd];
-
-            $log.debug('min/actual', minCols, rangeEnd - rangeStart);
+            $log.debug(newRange);
           }
           else {
             var maxLen = uiGridCtrl.grid.columns.length;
@@ -139,6 +136,7 @@
             uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
 
             uiGridCtrl.viewport[0].scrollTop = newScrollTop;
+            
             uiGridCtrl.grid.options.offsetTop = newScrollTop;
           }
 
@@ -153,6 +151,11 @@
             uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
             uiGridCtrl.viewport[0].scrollLeft = newScrollLeft;
+
+            if (uiGridCtrl.headerViewport) {
+              uiGridCtrl.headerViewport.scrollLeft = newScrollLeft;
+            }
+
             uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
           }
 
@@ -370,6 +373,8 @@
 
             var offset = (uiGridCtrl.grid.options.offsetTop) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessRows - extraRowOffset)) - mod;
 
+            $log.debug('scrollTop, margin-top', uiGridCtrl.viewport[0].scrollTop, offset);
+
             return { 'margin-top': offset + 'px' };
           }
 
@@ -385,6 +390,8 @@
             var columnPercent = (uiGridCtrl.prevColumnScrollIndex / uiGridCtrl.maxColumnIndex);
 
             // TODO(c0bra): WTF to do here? We can't modulus on rowheight because column widths are variable...
+            var finalWidth = $scope.grid.columns[$scope.grid.columns.length-1].drawnWidth;
+            // $log.debug('finalWidth', finalWidth);
             var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.columnWidth) * columnPercent);
 
             // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
@@ -392,8 +399,12 @@
             //   at the bottom
             var extraColumnOffset = (1 - columnPercent);
 
-            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
-            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset));
+            // $log.debug('excess', uiGridCtrl.grid.options.excessColumns - extraColumnOffset);
+
+            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
+            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset));
+
+            // $log.debug('scrollLeft, margin-left', uiGridCtrl.viewport[0].scrollLeft, offset);
 
             return { 'margin-left': offset + 'px' };
           }

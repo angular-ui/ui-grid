@@ -16,6 +16,7 @@
       compile: function() {
         return {
           pre: function($scope, $elm, $attrs) {
+            $scope.columnStyle = $scope.$parent.columnStyle;
           },
           post: function($scope, $elm, $attrs, uiGridCtrl) {
             if (uiGridCtrl === undefined) {

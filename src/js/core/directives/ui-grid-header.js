@@ -3,7 +3,7 @@
 
   var app = angular.module('ui.grid.header', ['ui.grid']);
 
-  app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', function($log, $templateCache, $compile, uiGridConstants, gridUtil) {
+  app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-header';
 
     return {
@@ -100,6 +100,8 @@
                     manualWidthSum += column.width;
                     canvasWidth += column.width;
 
+                    column.drawnWidth = column.width;
+
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
                   }
                 });
@@ -114,6 +116,8 @@
 
                     canvasWidth = colWidth;
 
+                    column.drawnWidth = colWidth;
+
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                   });
                 }
@@ -126,6 +130,8 @@
                     var colWidth = asteriskVal * column.width.length;
 
                     canvasWidth += colWidth;
+
+                    column.drawnWidth = colWidth;
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                   });
@@ -145,20 +151,22 @@
             }
 
             // Scroll the header horizontally with the grid body
-            var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
-              // Horizontal scroll
-              if (args.x) {
-                var scrollWidth = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+            // var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
+            //   // Horizontal scroll
+            //   if (args.x) {
+            //     var scrollWidth = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
 
-                var scrollXPercentage = args.x.percentage;
-                var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
+            //     var scrollXPercentage = args.x.percentage;
+            //     var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
                 
-                uiGridCtrl.headerViewport.scrollLeft = newScrollLeft;
-              }
-            });
+            //     uiGridCtrl.headerViewport.scrollLeft = newScrollLeft;
+
+            //     $log.debug('header viewport scrollLeft', newScrollLeft);
+            //   }
+            // });
 
             $elm.bind('$destroy', function() {
-              scrollUnbinder();
+              // scrollUnbinder();
             });
           }
         };

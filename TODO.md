@@ -30,11 +30,12 @@
 1. Naming inconsistencies - uiGridConstants vs gridUtil, etc.
 
 1. Horizontal scrolling
-   - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
+   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
+   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and 
 
 1. [IDEA] - Bind to 'resize' event and refresh grid on that
-1. Scrollbar not hiding on Mac OS. -- Check windows.
-
+1. Scrollbar not hiding on Mac OS?
+1. Border of scrollbar on hover doesn't appear darker than background
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
 
 # Done!
