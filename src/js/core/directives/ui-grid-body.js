@@ -80,6 +80,8 @@
 
         // Virtualization for horizontal scrolling
         uiGridCtrl.adjustScrollHorizontal = function (scrollLeft, scrollPercentage, force) {
+
+
           if (uiGridCtrl.prevScrollLeft === scrollLeft && !force) {
             return;
           }
@@ -112,13 +114,13 @@
             var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
 
             newRange = [rangeStart, rangeEnd];
+
+            $log.debug('min/actual', minCols, rangeEnd - rangeStart);
           }
           else {
             var maxLen = uiGridCtrl.grid.columns.length;
             newRange = [0, Math.max(maxLen, minCols + uiGridCtrl.grid.options.excessColumns)];
           }
-
-          $log.debug(newRange);
 
           uiGridCtrl.prevScrollLeft = scrollLeft;
           updateViewableColumnRange(newRange);
@@ -231,8 +233,8 @@
         }
         
         function touchend(event) {
-          // $log.debug('touchend!');
           event.preventDefault();
+
           $document.unbind('touchmove', touchmove);
           $document.unbind('touchend', touchend);
           $document.unbind('touchcancel', touchend);
@@ -287,7 +289,6 @@
         if (GridUtil.isTouchEnabled()) {
           $elm.bind('touchstart', function (event) {
             event.preventDefault();
-            // $log.debug('touchstart', event);
 
             moveStart = new Date();
             startY = event.targetTouches[0].screenY;
