@@ -112,7 +112,7 @@
                 // if user provides custom sort, we want them to have full control of the sort
                 if (sortService.isCustomSort) {
                     res = sortFn(propA, propB);
-                    tem = direction === ASC ? res: 0 - res;
+                    tem = direction === ASC ? res : 0 - res;
                 } else {
                     // we want to allow zero values to be evaluated in the sort function
                     if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
@@ -130,7 +130,7 @@
                     else {
                         // this will keep nulls at the bottom regardless of ordering
                         res = sortFn(propA, propB);
-                        tem = direction === ASC ? res: 0 - res;
+                        tem = direction === ASC ? res : 0 - res;
                     }
                 }
                 indx++;
