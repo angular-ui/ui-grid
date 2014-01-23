@@ -24,6 +24,7 @@
             }
 
             $scope.grid = uiGridCtrl.grid;
+            $scope.getCellValue = uiGridCtrl.getCellValue;
           }
         };
       }
