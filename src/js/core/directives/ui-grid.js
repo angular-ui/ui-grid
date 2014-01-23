@@ -475,7 +475,11 @@
      * @returns {string} resulting name that can be evaluated on scope
      */
     GridRow.prototype.getQualifiedColField = function(col) {
-      return 'row.entity[col.field]';
+      return 'row.entity.' + col.field;
+    };
+
+    GridRow.prototype.getEntityQualifiedColField = function(col) {
+      return 'entity.' + col.field;
     };
 
     /**
@@ -580,8 +584,10 @@
     return service;
   }]);
 
-  module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants', '$templateCache', 'gridClassFactory', '$timeout',
-    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants, $templateCache, gridClassFactory, $timeout) {
+  module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants',
+                    '$templateCache', 'gridClassFactory', '$timeout', '$parse',
+    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants,
+              $templateCache, gridClassFactory, $timeout, $parse) {
       $log.debug('ui-grid controller');
 
       var self = this;
@@ -743,6 +749,14 @@
         }
       };
 
+      var cellValueGetterCache = {};
+      self.getCellValue = function(row,col){
+        if(!cellValueGetterCache[col.colDef.name]){
+          cellValueGetterCache[col.colDef.name] = $parse(row.getEntityQualifiedColField(col));
+        }
+        return cellValueGetterCache[col.colDef.name](row);
+      };
+
       //todo: throttle this event?
       self.fireScrollingEvent = function() {
         $scope.$broadcast(uiGridConstants.events.GRID_SCROLLING);
@@ -829,24 +843,12 @@ module.directive('uiGrid',
           pre: function($scope, $elm) {
             // $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
-              .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              .replace(uiGridConstants.COL_FIELD, 'getCellValue(row,col)');
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           },
           post: function($scope, $elm, $attrs) {
-            // $log.debug('uiGridCell post-link');
-            // if ($scope.row.index === 0) {
-              // $scope.$watch('col', function(n, o) {
-              //   if (n !== o) {
-              //     var html = $scope.col.cellTemplate
-              //       .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
-              //     var cellElement = $compile(html)($scope);
-              //     $log.debug('update!', cellElement.html());
-              //     $elm.empty();
-              //     $elm.append(cellElement);
-              //   }
-              // });
-            // }
+
           }
         };
       }

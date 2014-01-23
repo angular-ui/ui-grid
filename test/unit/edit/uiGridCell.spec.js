@@ -31,6 +31,8 @@ describe('ui.grid.edit GridCellDirective', function () {
     scope.col = grid.columns[0];
     scope.row = grid.rows[0];
 
+    scope.getCellValue = function(row,col){return 'val';};
+
     recompile = function () {
       $compile(element)(scope);
       $rootScope.$digest();
