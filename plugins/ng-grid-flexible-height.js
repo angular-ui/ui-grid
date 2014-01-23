@@ -43,7 +43,7 @@ function ngGridFlexibleHeightPlugin (opts) {
             hash += grid.$canvas.prop('scrollWidth');
             hash += grid.$canvas.prop('scrollHeight');
             return hash;
-        }
+        };
 
         self.scope.$watch('catHashKeys()', innerRecalcForData);
         self.scope.$watch('sizeHash()', innerRecalcForData);
