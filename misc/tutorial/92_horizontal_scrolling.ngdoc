@@ -12,7 +12,7 @@ Demonstrating scrolling with large amount of columns
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {};
 
-      $http.get('/data/100_columns.json')
+      $http.get('/data/50_columns.json')
       // $http.get('/data/100.json')
         .success(function(data) {
           $scope.gridOptions.columnDefs = [];

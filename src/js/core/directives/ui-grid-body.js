@@ -100,11 +100,11 @@
           var newRange = [];
           if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold && uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth()) {
             // Have we hit the threshold going down?
-            if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColumnScrollIndex + uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
+            if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColumnScrollIndex + uiGridCtrl.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
               return;
             }
             //Have we hit the threshold going up?
-            if (uiGridCtrl.prevScrollLeft > scrollLeft && colIndex > uiGridCtrl.prevColumnScrollIndex - uiGridCtrl.grid.options.scrollThreshold && colIndex < maxColumnIndex) {
+            if (uiGridCtrl.prevScrollLeft > scrollLeft && colIndex > uiGridCtrl.prevColumnScrollIndex - uiGridCtrl.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
               return;
             }
 
@@ -147,7 +147,6 @@
             var scrollXPercentage = args.x.percentage;
             var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
             
-            // TODO(c0bra): add adjustScrollHorizontal() method
             uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
             uiGridCtrl.viewport[0].scrollLeft = newScrollLeft;
@@ -390,23 +389,37 @@
             var columnPercent = (uiGridCtrl.prevColumnScrollIndex / uiGridCtrl.maxColumnIndex);
 
             // TODO(c0bra): WTF to do here? We can't modulus on rowheight because column widths are variable...
-            var finalWidth = $scope.grid.columns[$scope.grid.columns.length-1].drawnWidth;
-            // $log.debug('finalWidth', finalWidth);
-            var mod = Math.ceil( ((uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.columnWidth) * columnPercent);
+            var totalWidth = 0;
+            var canvasWidth = uiGridCtrl.grid.getCanvasWidth();
+            $scope.grid.renderedColumns.forEach(function(column) {
+              totalWidth += column.drawnWidth;
+            });
+            var missingWidth = canvasWidth - totalWidth;
+            // $log.debug('columnWidths, missingWidth', totalWidth, missingWidth);
+            
+            var mod = Math.ceil( ((canvasWidth - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.columnWidth) * columnPercent);
 
             // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
             //   add it back until the offset is fully there are the bottom. Basically we add a percentage of a rowHeight back as we scroll down, from 0% at the top to 100%
             //   at the bottom
             var extraColumnOffset = (1 - columnPercent);
+            
+            // $log.debug('excessColumns', columnPercent, totalWidth, mod, extraColumnOffset, uiGridCtrl.grid.options.excessColumns);
 
-            // $log.debug('excess', uiGridCtrl.grid.options.excessColumns - extraColumnOffset);
-
-            var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
+            var extraOffset = (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
+            // $log.debug('subtract', extraOffset);
+            var offset = (uiGridCtrl.grid.options.offsetLeft) - extraOffset;
             // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset));
 
             // $log.debug('scrollLeft, margin-left', uiGridCtrl.viewport[0].scrollLeft, offset);
 
-            return { 'margin-left': offset + 'px' };
+            var viewportWidth = uiGridCtrl.grid.getViewportWidth();
+
+            var newOffset = uiGridCtrl.grid.options.offsetLeft + viewportWidth - totalWidth;
+
+            $log.debug('col index', uiGridCtrl.prevColumnScrollIndex);
+
+            return { 'margin-left': newOffset + 'px' };
           }
 
           return null;

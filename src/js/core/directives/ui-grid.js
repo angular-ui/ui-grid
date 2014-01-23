@@ -417,7 +417,7 @@
       this.rowHeight = 30;
       this.maxVisibleRowCount = 200;
 
-      this.columnWidth = 57;
+      this.columnWidth = 50;
       this.maxVisibleColumnCount = 200;
 
       // Turn virtualization on when number of data elements goes over this number
@@ -432,6 +432,8 @@
       this.excessColumns = 6;
 
       this.scrollThreshold = 4;
+
+      this.horizontalScrollThreshold = 2;
 
       /**
        * @ngdoc function
@@ -825,7 +827,7 @@ module.directive('uiGrid',
       compile: function() {
         return {
           pre: function($scope, $elm) {
-            $log.debug('uiGridCell pre-link');
+            // $log.debug('uiGridCell pre-link');
             var html = $scope.col.cellTemplate
               .replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
             var cellElement = $compile(html)($scope);
