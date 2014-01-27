@@ -634,7 +634,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 self.lastSortedColumns.push(c);
             };
             if (isArr) {
-                self.clearSortingData();
                 angular.forEach(col, function (c, i) {
                     c.sortPriority = i + 1;
                     push(c);
@@ -644,10 +643,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 col.sortPriority = undefined;
                 push(col);
             }
+
+            self.sortActual();
+            self.searchProvider.evalFilter();
+            $scope.$emit('ngGridEventSorted', self.config.sortInfo);
         }
-        self.sortActual();
-        self.searchProvider.evalFilter();
-        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
     self.sortColumnsInit = function() {
         if (self.config.sortInfo.columns) {
@@ -655,16 +655,21 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         } else {
             self.config.sortInfo.columns = [];
         }
+
+        var cols = [];
         angular.forEach($scope.columns, function(c) {
             var i = self.config.sortInfo.fields.indexOf(c.field);
             if (i !== -1) {
                 c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                self.config.sortInfo.columns[i] = c;
+                cols[i] = c;
             }
         });
-        angular.forEach(self.config.sortInfo.columns, function(c){
-            self.sortData(c);
-        });
+
+        if(cols.length === 1){
+            self.sortData(cols[0]);
+        }else{
+            self.sortData(cols);
+        }
     };
     self.sortActual = function() {
         if (!self.config.useExternalSorting) {
