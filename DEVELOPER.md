@@ -5,7 +5,7 @@
 Thanks for considering contributions to the ui-grid project. This doc will give you a jump start on the development standards we use.
 
 # Code Structure
-The development goal of ui-grid (ng-grid 3.0) is a fast, testable, and extendable grid component.
+The development goal of ui-grid (ng-grid 3.0) is a fast, testable, and extensible grid component.
 
 The core angular module (ui.grid) provides the basics
  - Virtualization
@@ -22,7 +22,7 @@ Everything else should be added as new angular modules unless the grid team agre
 * feature folder is added below src/js
 * One js file per feature
 * no global variables
-* design and code the angular way. If you don't know what that is, then maybe you shouldn't be contributing to an angular project.  
+* design and code the angular way. What do we main by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!
 * feature.js contains an enclosure:
 
 ```javascript
@@ -50,7 +50,7 @@ Everything else should be added as new angular modules unless the grid team agre
 #####During Grid controller initialization
 Here you can do the following:
 ######columnBuilder 
-columnBuilder functions allow you to add your own properties / functions to each GridCol object. for
+ColumnBuilder functions allow you to add your own properties / functions to each GridCol object. for
 testing ease, it's best to create a service that returns the function.  See ui.grid.edit unit tests on how to easily test your function
 
 ```javascript
@@ -72,7 +72,7 @@ testing ease, it's best to create a service that returns the function.  See ui.g
 ```
 
 ######rowBuilder 
-rowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
+RowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
  best to implement function in a service.  See ui.grid.edit unit tests on how to easily test your function
 
 ```javascript
