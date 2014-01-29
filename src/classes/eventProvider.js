@@ -18,7 +18,7 @@
             });
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
                 grid.$groupPanel.off('mousedown');
@@ -27,17 +27,17 @@
             });
 
             if (grid.config.enableColumnReordering) {
-                grid.$headerScroller.on('drop', self.onHeaderDrop);
+                grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
 
-            grid.$headerScroller.on('$destroy', function() {
-                grid.$headerScroller.off('mousedown');
+            grid.$topPanel.on('$destroy', function() {
+                grid.$topPanel.off('mousedown');
 
                 if (grid.config.enableColumnReordering) {
-                    grid.$headerScroller.off('drop');
+                    grid.$topPanel.off('drop');
                 }
 
-                grid.$headerScroller = null;
+                grid.$topPanel = null;
             });
         }
 
