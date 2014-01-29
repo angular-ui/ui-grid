@@ -199,7 +199,7 @@
           self.columns.push(col);
         }
         else {
-          col.updateDef(colDef, col.index);
+          col.updateColumnDef(colDef, col.index);
         }
 
         self.columnBuilders.forEach(function (builder) {
@@ -514,10 +514,10 @@
 
       colDef.index = index;
 
-      self.updateDef(colDef);
+      self.updateColumnDef(colDef);
     }
 
-    GridColumn.prototype.updateDef = function(colDef, index) {
+    GridColumn.prototype.updateColumnDef = function(colDef, index) {
       var self = this;
 
       self.colDef = colDef;
