@@ -429,7 +429,7 @@
       this.excessRows = 4;
 
       // Extra columns to to render outside of the viewport
-      this.excessColumns = 6;
+      this.excessColumns = 8;
 
       this.scrollThreshold = 4;
 
@@ -546,6 +546,10 @@
             if (isNaN(percent)) {
               throw new Error(parseErrorMsg);
             }
+          }
+          // And see if it's a number string
+          else if (colDef.width.match(/^(\d+)$/)) {
+            self.width = parseFloat(colDef.width.match(/^(\d+)$/)[1]);
           }
           // Otherwise it should be a string of asterisks
           else if (! colDef.width.match(/^\*+$/)) {
@@ -824,6 +828,8 @@ module.directive('uiGrid',
               uiGridCtrl.grid.canvasWidth = uiGridCtrl.grid.gridWidth;
 
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
+              
+              uiGridCtrl.grid.columnOffset = 0;
 
               uiGridCtrl.refreshCanvas();
             }
