@@ -44,6 +44,7 @@
 1. Scrollbar not hiding on Mac OS?
 1. Border of scrollbar on hover doesn't appear darker than background
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
+1. [IDEA] - From s3shs on irc: add bootstrap2/3 less/css shims that will style the grid the same was a bootstrap table (similar to selectize: http://brianreavis.github.io/selectize.js/)
 
 
 # Done!
