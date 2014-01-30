@@ -14,7 +14,13 @@
     .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
 }
 
-.ui-grid-header {
+.ui-grid-header-viewport {
+  overflow: hidden;
+}
+
+.ui-grid-header-canvas {
+  position: relative;
+
   // Clearfix for floating header cells
   &:before, &:after {
     content: "";

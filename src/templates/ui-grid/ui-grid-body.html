@@ -2,12 +2,13 @@
   <div class="ui-grid-scrollbar-box">
     <div ui-grid-viewport class="ui-grid-viewport">
       <div class="ui-grid-canvas">
-        <div ng-repeat="row in grid.renderedRows track by $index" class="ui-grid-row" ng-style="rowStyle($index)">
+        <div ng-repeat="row in grid.renderedRows track by $index" class="ui-grid-row" ng-style="$index == 0 && rowStyle($index)">
           <div ui-grid-row="row" row-index="$index"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div ui-grid-scrollbar scrolling-class="ui-grid-scrolling"></div>
+  <div ui-grid-scrollbar type="vertical" scrolling-class="ui-grid-scrolling"></div>
+  <div ui-grid-scrollbar type="horizontal" scrolling-class="ui-grid-scrolling"></div>
 </div>

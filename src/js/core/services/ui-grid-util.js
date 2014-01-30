@@ -131,7 +131,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', function ($window, $document, $http, $templateCache) {
+module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '$timeout', function ($window, $document, $http, $templateCache, $timeout) {
   var s = {
 
     /**
@@ -450,7 +450,21 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', f
         return true;
       }
       return false;
-    }
+    },
+
+    endsWith: function(str, suffix) {
+      if (!str || !suffix || typeof str !== "string") {
+        return false;
+      }
+      return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    },
+
+    // Shim requestAnimationFrame
+    requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
+                           $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
+                           function(fn) {
+                             return $timeout(fn, 10, false);
+                           }
   };
 
   ['width', 'height'].forEach(function (name) {
