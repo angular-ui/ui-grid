@@ -112,7 +112,7 @@
             var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
 
             newRange = [rangeStart, rangeEnd];
-            // $log.debug(newRange);
+            $log.debug('newRange length', rangeEnd - rangeStart);
           }
           else {
             var maxLen = uiGridCtrl.grid.columns.length;
@@ -331,6 +331,7 @@
           // NOTE: without the $evalAsync the new rows don't show up
           $scope.$evalAsync(function() {
             uiGridCtrl.grid.setRenderedColumns(newColumns);
+            updateColumnOffset();
           });
         };
 
@@ -345,12 +346,12 @@
           setRenderedRows(rowArr);
         };
 
-        // Method for updating the visible rows
+        // Method for updating the visible columns
         var updateViewableColumnRange = function(renderedRange) {
           // Slice out the range of rows from the data
           var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
 
-          // Define the top-most rendered row
+          // Define the left-most rendered columns
           uiGridCtrl.currentFirstColumn = renderedRange[0];
 
           setRenderedColumns(columnArr);
@@ -372,54 +373,29 @@
 
             var offset = (uiGridCtrl.grid.options.offsetTop) - (uiGridCtrl.grid.options.rowHeight * (uiGridCtrl.grid.options.excessRows - extraRowOffset)) - mod;
 
-            // $log.debug('scrollTop, margin-top', uiGridCtrl.viewport[0].scrollTop, offset);
+            $log.debug(' margin-top', offset);
 
             return { 'margin-top': offset + 'px' };
           }
 
           return null;
         };
+        
+        var updateColumnOffset = function() {
+          // Calculate the width of the columns on the left side that are no longer rendered.
+          //  That will be the offset for the columns as we scroll horizontally.
+          var hiddenColumnsWidth = 0;
+          for (var i = 0; i < uiGridCtrl.currentFirstColumn; i++) {
+            hiddenColumnsWidth += $scope.grid.columns[i].drawnWidth;
+          }
+
+          uiGridCtrl.columnOffset = hiddenColumnsWidth;
+        };
 
         $scope.columnStyle = function (index) {
           if (index === 0 && uiGridCtrl.currentFirstColumn !== 0) {
-            // Here we need to add an extra bit on to our offset. We are calculating the offset below based on the number of rows
-            //   that will fit into the viewport. If it's not an even amount there will be a remainder and the viewport will not scroll far enough.
-            //   We add the remainder on by using the offset-able height's (canvas - viewport) modulus of the row height, and then we multiply
-            //   by the percentage of the index of the row we're scrolled to so the modulus is added increasingly the further on we scroll
-            var columnPercent = (uiGridCtrl.prevColumnScrollIndex / uiGridCtrl.maxColumnIndex);
-
-            // TODO(c0bra): WTF to do here? We can't modulus on rowheight because column widths are variable...
-            var totalWidth = 0;
-            var canvasWidth = uiGridCtrl.grid.getCanvasWidth();
-            $scope.grid.renderedColumns.forEach(function(column) {
-              totalWidth += column.drawnWidth;
-            });
-            var missingWidth = canvasWidth - totalWidth;
-            // $log.debug('columnWidths, missingWidth', totalWidth, missingWidth);
-            
-            var mod = Math.ceil( ((canvasWidth - uiGridCtrl.grid.getViewportWidth()) % uiGridCtrl.grid.options.columnWidth) * columnPercent);
-
-            // We need to add subtract a row from the offset at the beginning to prevent a "jump/snap" effect where the grid moves down an extra rowHeight of pixels, then
-            //   add it back until the offset is fully there are the bottom. Basically we add a percentage of a rowHeight back as we scroll down, from 0% at the top to 100%
-            //   at the bottom
-            var extraColumnOffset = (1 - columnPercent);
-            
-            // $log.debug('excessColumns', columnPercent, totalWidth, mod, extraColumnOffset, uiGridCtrl.grid.options.excessColumns);
-
-            var extraOffset = (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset)) - mod;
-            // $log.debug('subtract', extraOffset);
-            var offset = (uiGridCtrl.grid.options.offsetLeft) - extraOffset;
-            // var offset = (uiGridCtrl.grid.options.offsetLeft) - (uiGridCtrl.grid.options.columnWidth * (uiGridCtrl.grid.options.excessColumns - extraColumnOffset));
-
-            // $log.debug('scrollLeft, margin-left', uiGridCtrl.viewport[0].scrollLeft, offset);
-
-            var viewportWidth = uiGridCtrl.grid.getViewportWidth();
-
-            var newOffset = uiGridCtrl.grid.options.offsetLeft + viewportWidth - totalWidth;
-
-            $log.debug('col index', uiGridCtrl.prevColumnScrollIndex);
-
-            return { 'margin-left': newOffset + 'px' };
+            var offset = uiGridCtrl.columnOffset;
+            return { 'margin-left': offset + 'px' };
           }
 
           return null;
