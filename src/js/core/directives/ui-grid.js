@@ -828,8 +828,6 @@ module.directive('uiGrid',
               uiGridCtrl.grid.canvasWidth = uiGridCtrl.grid.gridWidth;
 
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
-              
-              uiGridCtrl.grid.columnOffset = 0;
 
               uiGridCtrl.refreshCanvas();
             }
