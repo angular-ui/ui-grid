@@ -35,6 +35,10 @@
 
     {{ columnStyles }}
 
+    /*.grid{{ grid.id }} .ui-grid-body .ui-grid-cell:first-child, .grid{{ grid.id }} .ui-grid-header .ui-grid-header-cell:first-child {
+      margin-left: {{ grid.columnOffset || 0 }}px;
+    }*/
+
     {{ grid.verticalScrollbarStyles }}
     {{ grid.horizontalScrollbarStyles }}
   </style>

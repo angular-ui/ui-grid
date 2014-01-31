@@ -10,13 +10,14 @@
       templateUrl: 'ui-grid/ui-grid-row',
       require: '?^uiGrid',
       scope: {
-        row: '=uiGridRow',
-        rowIndex: '='
+         row: '=uiGridRow',
+         rowIndex: '='
       },
       compile: function() {
         return {
           pre: function($scope, $elm, $attrs) {
-            $scope.columnStyle = $scope.$parent.columnStyle;
+            // Bring the columnstyle function down into our isolate scope
+            // $scope.columnStyle = $scope.$parent.columnStyle;
           },
           post: function($scope, $elm, $attrs, uiGridCtrl) {
             if (uiGridCtrl === undefined) {
@@ -25,6 +26,12 @@
 
             $scope.grid = uiGridCtrl.grid;
             $scope.getCellValue = uiGridCtrl.getCellValue;
+
+            // $attrs.$observe('rowIndex', function(n, o) {
+            //   if (n) {
+            //     $scope.rowIndex = $scope.$eval(n);
+            //   }
+            // });
           }
         };
       }

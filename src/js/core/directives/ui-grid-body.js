@@ -39,7 +39,8 @@
             return;
           }
 
-          scrollTop = uiGridCtrl.canvas[0].scrollHeight * scrollPercentage;
+          // scrollTop = uiGridCtrl.canvas[0].scrollHeight * scrollPercentage;
+          scrollTop = uiGridCtrl.grid.getCanvasHeight() * scrollPercentage;
 
           var minRows = uiGridCtrl.grid.minRowsToRender();
           var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
@@ -84,7 +85,8 @@
             return;
           }
 
-          scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
+          // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
+          scrollLeft = uiGridCtrl.grid.getCanvasWidth() * scrollPercentage;
 
           var minCols = uiGridCtrl.grid.minColumnsToRender();
           var maxColumnIndex = uiGridCtrl.grid.columns.length - minCols;
@@ -323,17 +325,19 @@
 
         var setRenderedRows = function (newRows) {
           // NOTE: without the $evalAsync the new rows don't show up
-          $scope.$evalAsync(function() {
+          // $scope.$evalAsync(function() {
             uiGridCtrl.grid.setRenderedRows(newRows);
-          });
+            $scope.grid.refreshCanvas();
+          // });
         };
 
         var setRenderedColumns = function (newColumns) {
           // NOTE: without the $evalAsync the new rows don't show up
-          $scope.$evalAsync(function() {
+          // $timeout(function() {
             uiGridCtrl.grid.setRenderedColumns(newColumns);
             updateColumnOffset();
-          });
+            $scope.grid.refreshCanvas();
+          // });
         };
 
         // Method for updating the visible rows
@@ -359,14 +363,21 @@
         };
 
         $scope.rowStyle = function (index) {
+          var styles = {};
+
           if (index === 0 && uiGridCtrl.currentTopRow !== 0) {
             // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
             var hiddenRowWidth = (uiGridCtrl.currentTopRow) * uiGridCtrl.grid.options.rowHeight;
 
-            return { 'margin-top': hiddenRowWidth + 'px' };
+            // return { 'margin-top': hiddenRowWidth + 'px' };
+            styles['margin-top'] = hiddenRowWidth + 'px';
           }
 
-          return null;
+          if (uiGridCtrl.currentFirstColumn !== 0) {
+            styles['margin-left'] = uiGridCtrl.columnOffset + 'px';
+          }
+
+          return styles;
         };
         
         var updateColumnOffset = function() {

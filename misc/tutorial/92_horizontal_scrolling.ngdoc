@@ -10,21 +10,28 @@ Demonstrating scrolling with large amount of columns
     var app = angular.module('app', ['ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {};
+    $scope.gridOptions = {};
+    $scope.gridOptions.columnDefs = [];
 
-      $http.get('/data/50_columns.json')
-        .success(function(data) {
-          $scope.gridOptions.columnDefs = [];
+    for(var colIndex=0; colIndex < 50; colIndex++) {
+    $scope.gridOptions.columnDefs.push({
+    name: 'col' + colIndex,
+    width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
+    });
+    }
 
-          angular.forEach(data[0], function(v, k) {
-            $scope.gridOptions.columnDefs.push({
-              field: k,
-              width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
-            });
-          });
 
-          $scope.gridOptions.data = data;
-        });
+
+    var data = [];
+    for(var rowIndex=0; rowIndex < 50; rowIndex++) {
+    var row = {};
+    for(var colIndex=0; colIndex < 50; colIndex++) {
+    row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+    }
+    data.push(row);
+    }
+
+    $scope.gridOptions.data = data;
     }]);
   </file>
   <file name="index.html">

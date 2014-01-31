@@ -1,9 +1,9 @@
 <div class="ui-grid-top-panel">
   <div class="ui-grid-header ui-grid-header-viewport">
     <div class="ui-grid-header-canvas">
-        <div ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-header-cell col{{ col.index }}" ng-style="columnStyle($index)">
+        <div ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-header-cell col{{ col.index }}" ng-style="$index === 0 && columnStyle($index)">
           <div class="ui-grid-vertical-bar">&nbsp;</div>
-          <div class="ui-grid-cell-contents">{{ col.displayName }}</span></div>
+          <div class="ui-grid-cell-contents" col-index="$index">{{ col.displayName }}</span></div>
         </div>
     </div>
   </div>
