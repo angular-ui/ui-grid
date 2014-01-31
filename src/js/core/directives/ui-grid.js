@@ -359,7 +359,29 @@
     };
 
     Grid.prototype.minColumnsToRender = function () {
-      return Math.ceil(this.getViewportWidth() / this.options.columnWidth);
+      var self = this;
+      var viewport = this.getViewportWidth();
+
+      var min = 0;
+      var totalWidth = 0;
+      self.columns.forEach(function(col, i) {
+        if (totalWidth < viewport) {
+          totalWidth += col.drawnWidth;
+          min++;
+        }
+        else {
+          var currWidth = 0;
+          for (var j = i; j >= i - min; j--) {
+            currWidth += self.columns[j].drawnWidth;
+          }
+          if (currWidth < viewport) {
+            min++;
+          }
+        }
+      });
+
+      return min;
+      // return Math.ceil(this.getViewportWidth() / this.options.columnWidth);
     };
 
     // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
@@ -439,12 +461,10 @@
 
       // Extra rows to to render outside of the viewport
       this.excessRows = 4;
-
-      // Extra columns to to render outside of the viewport
-      this.excessColumns = 8;
-
       this.scrollThreshold = 4;
 
+      // Extra columns to to render outside of the viewport
+      this.excessColumns = 2;
       this.horizontalScrollThreshold = 2;
 
       /**
@@ -636,7 +656,7 @@
               // Pre-compile
               preCompileCellTemplates($scope.grid.columns);
 
-              self.refreshCanvas();
+              self.refreshCanvas(true);
             });
         });
       }
@@ -664,7 +684,7 @@
               // self.renderedColumns = self.grid.columns;
               preCompileCellTemplates($scope.grid.columns);
 
-              self.refreshCanvas();
+              self.refreshCanvas(true);
             });
         }
       });
@@ -696,7 +716,7 @@
             }
 
             $scope.$evalAsync(function() {
-              self.refreshCanvas();
+              self.refreshCanvas(true);
             });
           });
         }
@@ -710,69 +730,14 @@
 
 
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
-        self.refreshCanvas();
+        self.refreshCanvas(true);
       });
 
       // Refresh the canvas drawable size
-      $scope.grid.refreshCanvas = self.refreshCanvas = function() {
-        // if (self.header) {
-        //   // If we haven't calculated the sizes of the columns, calculate them!
-        //   if (! self.columnSizeCalculated) {
-        //     // Total width of header
-        //     var totalWidth = 0;
-
-        //     // All the header cell elements
-        //     var headerColumnElms = self.header[0].getElementsByClassName('ui-grid-header-cell');
-            
-        //     if (headerColumnElms.length > 0) {
-        //       // Go through all the header column elements
-        //       for (var i = 0; i < headerColumnElms.length; i++) {
-        //         var columnElm = headerColumnElms[i];
-
-        //         // Get the related column definition
-        //         var column = angular.element(columnElm).scope().col;
-
-        //         // Save the width so we can reset it
-        //         var savedWidth = columnElm.style.width;
-
-        //         // Change the width to 'auto' so it will expand out
-        //         columnElm.style.width = 'auto';
-
-        //         // Get the "drawn" width
-        //         var drawnWidth = gridUtil.outerElementWidth(columnElm);
-
-        //         // Save it in the columns defs
-        //         column.drawnWidth = drawnWidth;
-
-        //         // Reset the column width
-        //         columnElm.style.width = savedWidth;
-
-        //         // Increment the total header width by this column's drawn width
-        //         totalWidth = totalWidth + drawnWidth;
-        //       }
-
-        //       // If the total width of the header would be larger than the viewport, use it as the canvas width
-        //       if (totalWidth > self.grid.getViewportWidth()) {
-        //         self.grid.canvasWidth = totalWidth;
-
-        //         // Tell the grid to use the column drawn widths, if available
-        //         self.grid.useColumnDrawnWidths = true;
-        //       }
-        //       else {
-        //         self.grid.canvasWidth = self.grid.getViewportWidth();
-        //       }
-
-        //       // Evaluate all the stylings in another digest cycle
-        //       $scope.$evalAsync(function() {
-        //         self.grid.buildStyles($scope);
-        //       });
-
-        //       self.columnSizeCalculated = true;
-        //     }
-        //   }
-        // }
-
-        self.grid.buildStyles($scope);
+      $scope.grid.refreshCanvas = self.refreshCanvas = function(buildStyles) {
+        if (buildStyles) {
+          self.grid.buildStyles($scope);
+        }
 
         if (self.header) {
           // Putting in a timeout as it's not calculating after the grid element is rendered and filled out

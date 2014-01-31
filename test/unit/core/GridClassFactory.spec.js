@@ -20,4 +20,10 @@ describe('gridClassFactory', function() {
       expect(grid.options).toBeDefined();
     });
   });
+
+  describe('minColumnsToRender', function() {
+    it('calculates the minimum number of columns to render, correctly', function() {
+      // TODO
+    });
+  });
 });
