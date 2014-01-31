@@ -1,9 +1,7 @@
 (function(){
   'use strict';
 
-  var app = angular.module('ui.grid.header', ['ui.grid']);
-
-  app.directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
+  angular.module('ui.grid').directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-header';
 
     return {

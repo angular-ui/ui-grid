@@ -1,8 +1,8 @@
-describe('ui.grid.util', function() {
+describe('ui.grid.utilService', function() {
   var gridUtil,
       $window;
 
-  beforeEach(module('ui.grid.util'));
+  beforeEach(module('ui.grid'));
 
   beforeEach(inject(function(_gridUtil_, _$window_) {
     gridUtil = _gridUtil_;

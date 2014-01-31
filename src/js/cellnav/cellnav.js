@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var module = angular.module('ui.grid.cellNav', ['ui.grid', 'ui.grid.util']);
+  var module = angular.module('ui.grid.cellNav', ['ui.grid']);
 
   function RowCol(row, col) {
     this.row = row;

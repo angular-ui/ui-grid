@@ -15,6 +15,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser (we add more dynamically in our tasks)
     files: [
       'bower_components/jquery/jquery.min.js',
+      'src/js/core/bootstrap.js',
       'src/js/**/*.js',
       'test/unit/**/*.spec.js'
     ],
