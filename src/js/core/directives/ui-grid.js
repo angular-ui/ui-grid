@@ -601,9 +601,9 @@
   }]);
 
   module.controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants',
-                    '$templateCache', 'gridClassFactory', '$timeout', '$parse',
+                    '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile',
     function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants,
-              $templateCache, gridClassFactory, $timeout, $parse) {
+              $templateCache, gridClassFactory, $timeout, $parse, $compile) {
       $log.debug('ui-grid controller');
 
       var self = this;
@@ -616,6 +616,15 @@
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
+      function preCompileCellTemplates(columns) {
+        columns.forEach(function (col) {
+          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
+          // console.log('col', col, html);
+          var compiledElementFn = $compile(html);
+          col.compiledElementFn = compiledElementFn;
+        });
+      }
+
       if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
           self.grid.options.columnDefs = value;
@@ -623,6 +632,10 @@
             .then(function(){
               // self.columnSizeCalculated = false;
               // self.renderedColumns = self.grid.columns;
+
+              // Pre-compile
+              preCompileCellTemplates($scope.grid.columns);
+
               self.refreshCanvas();
             });
         });
@@ -649,6 +662,8 @@
             .then(function(){
               // self.columnSizeCalculated = false;
               // self.renderedColumns = self.grid.columns;
+              preCompileCellTemplates($scope.grid.columns);
+
               self.refreshCanvas();
             });
         }
@@ -666,6 +681,8 @@
           promises.push(self.grid.buildColumns());
 
           $q.all(promises).then(function() {
+            preCompileCellTemplates($scope.grid.columns);
+
             //wrap data in a gridRow
             $log.debug('Modifying rows');
             self.grid.modifyRows(n);
@@ -761,15 +778,20 @@
           // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
           $timeout(function() {
             self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
-          }, 0);
+          });
+        }
+        else {
+          // Timeout still needs to be here to trigger digest after styles have been rebuilt
+          $timeout(function() {});
         }
       };
 
       var cellValueGetterCache = {};
-      self.getCellValue = function(row,col){
-        if(!cellValueGetterCache[col.colDef.name]){
+      $scope.getCellValue = self.getCellValue = function(row, col){
+        if (!cellValueGetterCache[col.colDef.name]) {
           cellValueGetterCache[col.colDef.name] = $parse(row.getEntityQualifiedColField(col));
         }
+
         return cellValueGetterCache[col.colDef.name](row);
       };
 
@@ -854,18 +876,19 @@ module.directive('uiGrid',
     var uiGridCell = {
       priority: 0,
       scope: false,
+      require: '^uiGrid',
       compile: function() {
         return {
-          pre: function($scope, $elm) {
-            // $log.debug('uiGridCell pre-link');
-            var html = $scope.col.cellTemplate
-              .replace(uiGridConstants.COL_FIELD, 'getCellValue(row,col)');
-            var cellElement = $compile(html)($scope);
-            $elm.append(cellElement);
-          },
-          post: function($scope, $elm, $attrs) {
+          pre: function($scope, $elm, $attrs, uiGridCtrl) {
+            var compiledElementFn = $scope.col.compiledElementFn;
 
+            $scope.getCellValue = uiGridCtrl.getCellValue;
+            
+            compiledElementFn($scope, function(clonedElement, scope) {
+              $elm.append(clonedElement);
+            });
           }
+          //post: function($scope, $elm, $attrs) {}
         };
       }
     };
