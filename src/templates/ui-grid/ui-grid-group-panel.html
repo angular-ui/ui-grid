@@ -1,6 +1,5 @@
 <div class="ui-grid-group-panel">
-    <!--ng-show="groupings.length == 0"-->
-    <div ui-t="group.panel.description" class="description"></div>
+    <div ui-t="groupPanel.description" class="description" ng-show="groupings.length == 0"></div>
     <ul ng-show="groupings.length > 0" class="ngGroupList">
         <li class="ngGroupItem" ng-repeat="group in configGroups">
                 <span class="ngGroupElement">

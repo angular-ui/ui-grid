@@ -17,6 +17,10 @@
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
+      //TODO: Move this.
+      $scope.groupings = [];
+
+
       if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
           self.grid.options.columnDefs = value;
