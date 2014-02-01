@@ -1,4 +1,5 @@
 <div class="ui-grid-top-panel">
+  <!--<div ui-grid-group-panel></div>-->
   <div class="ui-grid-header ui-grid-header-viewport">
     <div class="ui-grid-header-canvas">
         <div ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-header-cell col{{ col.index }}" ng-style="columnStyle($index)">
@@ -7,6 +8,5 @@
         </div>
     </div>
   </div>
-
   <div ui-grid-menu></div>
 </div>

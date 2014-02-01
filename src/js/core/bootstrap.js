@@ -1,4 +1,4 @@
 (function () {
   'use strict';
-   angular.module('ui.grid', []);
+   angular.module('ui.grid', ['ui.i18n']);
 })();
