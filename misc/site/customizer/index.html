@@ -73,7 +73,7 @@
     </div>
   </header>
   
-  <div ng-cloak class="container" ng-app="customizer" ng-controller='Main'>
+  <div ng-cloak class="container" id="customizerApp" ng-controller='Main'>
     <br>
 
     <h2 class="text-center">Grid Customizer</h2>
@@ -198,6 +198,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
 
   <script>
+    debugger;
     var s = document.createElement('script');
     if (window.location.href.match('ui-grid.info')) {
       s.src = '/release/ui-grid-unstable.js';
@@ -206,9 +207,23 @@
       // s.src = 'http://ui-grid.info/release/ui-grid-unstable.js';// '/release/ui-grid.js';
       s.src = '/release/ui-grid.js';
     }
-    document.write(outerHTML(s));
+
+    var customizerScript = document.createElement('script');
+    customizerScript.src = '/js/customizer.js';
+
+    customizerScript.onload = function() {
+      angular.bootstrap(document.getElementById('customizerApp'), ['customizer']);
+    }
+
+    s.onload = function() {
+      // document.write(outerHTML(customizerScript));
+      document.getElementsByTagName('head')[0].appendChild(customizerScript);
+    }
+
+    // document.write(outerHTML(s));
+    document.getElementsByTagName('head')[0].appendChild(s);
   </script>
 
-  <script src="/js/customizer.js"></script>
+  <!--<script src="/js/customizer.js"></script>-->
 </body>
 </html>

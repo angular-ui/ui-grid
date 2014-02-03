@@ -1,6 +1,6 @@
 (function() {
 
-var app = angular.module('customizer', ['ui.grid', 'ui.grid.style']);
+var app = angular.module('customizer', ['ui.grid']);
 
 app.run(function($log, $rootScope, $http) {
 });
