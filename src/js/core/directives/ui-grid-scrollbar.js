@@ -17,6 +17,8 @@
 
         $log.debug('ui-grid-scrollbar link', $scope.type);
 
+        uiGridCtrl.scrollbars.push($elm);
+
         /**
          * Link stuff
          */

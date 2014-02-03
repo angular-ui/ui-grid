@@ -213,6 +213,8 @@ angular.module('ui.grid').directive('uiGrid',
 
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
+              uiGridCtrl.scrollbars = [];
+
               uiGridCtrl.refreshCanvas();
             }
           };
