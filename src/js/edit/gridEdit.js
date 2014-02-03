@@ -17,7 +17,7 @@
    * <div doc-module-components="ui.grid.edit"></div>
    */
 
-  var module = angular.module('ui.grid.edit', ['ui.grid', 'ui.grid.util']);
+  var module = angular.module('ui.grid.edit', ['ui.grid']);
 
   /**
    *  @ngdoc object

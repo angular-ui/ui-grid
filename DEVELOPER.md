@@ -28,7 +28,7 @@ Everything else should be added as new angular modules unless the grid team agre
 ```javascript
 (function () {
   'use strict';
-  var module = angular.module('ui.grid.feature', ['ui.grid', 'ui.grid.util']);
+  var module = angular.module('ui.grid.feature', ['ui.grid']);
 })();
 
 ```

@@ -1,9 +1,7 @@
 (function(){
   'use strict';
 
-  var app = angular.module('ui.grid.row', []);
-
-  app.directive('uiGridRow', ['$log', function($log) {
+  angular.module('ui.grid').directive('uiGridRow', ['$log', function($log) {
     return {
       replace: true,
       // priority: 2001,

@@ -2,7 +2,7 @@
 describe('ui.grid.style', function() {
 
 
-  beforeEach(module('ui.grid.style'));
+  beforeEach(module('ui.grid'));
 
   beforeEach(module(function($sceProvider) {
     $sceProvider.enabled(true);

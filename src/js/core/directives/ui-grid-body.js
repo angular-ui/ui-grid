@@ -1,9 +1,8 @@
 (function(){
   'use strict';
 
-  var app = angular.module('ui.grid.body', []);
-
-  app.directive('uiGridBody', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil', function($log, $document, $timeout, uiGridConstants, GridUtil) {
+  angular.module('ui.grid').directive('uiGridBody', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil',
+    function($log, $document, $timeout, uiGridConstants, GridUtil) {
     return {
       replace: true,
       // priority: 1000,

@@ -10,33 +10,35 @@ Demonstrating scrolling with large amount of columns
     var app = angular.module('app', ['ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-    $scope.gridOptions = {};
-    $scope.gridOptions.columnDefs = [];
+      $scope.gridOptions = {};
+      $scope.gridOptions.columnDefs = [];
 
-    for(var colIndex=0; colIndex < 50; colIndex++) {
-    $scope.gridOptions.columnDefs.push({
-    name: 'col' + colIndex,
-    width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
-    });
-    }
+      var colCount = 500;
 
+      for (var colIndex = 0; colIndex < colCount; colIndex++) {
+        $scope.gridOptions.columnDefs.push({
+          name: 'col' + colIndex,
+          width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
+        });
+      }
 
+      var data = [];
+      for (var rowIndex = 0; rowIndex < 500; rowIndex++) {
+        var row = {};
 
-    var data = [];
-    for(var rowIndex=0; rowIndex < 50; rowIndex++) {
-    var row = {};
-    for(var colIndex=0; colIndex < 50; colIndex++) {
-    row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
-    }
-    data.push(row);
-    }
+        for (var colIndex = 0; colIndex < colCount; colIndex++) {
+          row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+        }
 
-    $scope.gridOptions.data = data;
+        data.push(row);
+      }
+
+      $scope.gridOptions.data = data;
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <strong>50 Columns with Random Widths</strong>
+      <strong>{{ gridOptions.columnDefs.length | number }} Columns with Random Widths</strong>
       <br>
       <br>
       <div ui-grid="gridOptions" class="grid"></div>

@@ -3,7 +3,6 @@ describe('ui-grid', function() {
     beforeEach(module('ui.grid'));
     // beforeEach(module('ui.grid.body'));
     // beforeEach(module('ui.grid.header'));
-    // beforeEach(module('ui.grid.util'));
     
     /*describe('ui-grid calculated columns', function() {
         var element, scope;

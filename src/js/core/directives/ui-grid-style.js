@@ -3,7 +3,7 @@
 
   /**
    * @ngdoc directive
-   * @name ui.grid.style.directive:uiGridStyle
+   * @name ui.grid.directive:uiGridStyle
    * @element style
    * @restrict A
    *
@@ -37,9 +37,8 @@
    </doc:example>
    */
 
-  var app = angular.module('ui.grid.style', []);
 
-  app.directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolate) {
+  angular.module('ui.grid').directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolate) {
     return {
       // restrict: 'A',
       // priority: 1000,

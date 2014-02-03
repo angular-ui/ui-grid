@@ -1,9 +1,7 @@
 (function(){
 // 'use strict';
 
-  var app = angular.module('ui.grid.scrollbar', []);
-
-  app.directive('uiGridScrollbar', ['$log', '$document', 'uiGridConstants', 'gridUtil', function($log, $document, uiGridConstants, gridUtil) {
+  angular.module('ui.grid').directive('uiGridScrollbar', ['$log', '$document', 'uiGridConstants', 'gridUtil', function($log, $document, uiGridConstants, gridUtil) {
     return {
       replace: true,
       // priority: 1000,

@@ -1,6 +1,6 @@
 (function() {
 
-var module = angular.module('ui.grid.util', []);
+var module = angular.module('ui.grid');
 
 function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
@@ -127,7 +127,7 @@ function getWidthOrHeight( elem, name, extra ) {
 
 /**
  *  @ngdoc service
- *  @name ui.grid.util.service:GridUtil
+ *  @name ui.grid.service:GridUtil
  *  
  *  @description Grid utility functions
  */
@@ -137,7 +137,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
      * @ngdoc method
      * @name readableColumnName
-     * @methodOf ui.grid.util.service:GridUtil
+     * @methodOf ui.grid.service:GridUtil
      *
      * @param {string} columnName Column name as a string
      * @returns {string} Column name appropriately capitalized and split apart
@@ -145,7 +145,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
        @example
        <example module="app">
         <file name="app.js">
-          var app = angular.module('app', ['ui.grid.util']);
+          var app = angular.module('app', ['ui.grid']);
 
           app.controller('MainCtrl', ['$scope', 'GridUtil', function ($scope, GridUtil) {
             $scope.name = 'firstName';
@@ -189,7 +189,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
      * @ngdoc method
      * @name getColumnsFromData
-     * @methodOf ui.grid.util.service:GridUtil
+     * @methodOf ui.grid.service:GridUtil
      * @description Return a list of column names, given a data set
      *
      * @param {string} data Data array for grid
@@ -235,7 +235,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
      * @ngdoc method
      * @name newId
-     * @methodOf ui.grid.util.service:GridUtil
+     * @methodOf ui.grid.service:GridUtil
      * @description Return a unique ID string
      *
      * @returns {string} Unique string
@@ -258,7 +258,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
      * @ngdoc method
      * @name getTemplate
-     * @methodOf ui.grid.util.service:GridUtil
+     * @methodOf ui.grid.service:GridUtil
      * @description Get's template from Url
      *
      * @returns {object} a promise resolving to template contents
@@ -285,7 +285,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
     * @ngdoc method
     * @name elementWidth
-    * @methodOf ui.grid.util.service:GridUtil
+    * @methodOf ui.grid.service:GridUtil
     *
     * @param {element} element DOM element
     * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
@@ -299,7 +299,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
     * @ngdoc method
     * @name elementHeight
-    * @methodOf ui.grid.util.service:GridUtil
+    * @methodOf ui.grid.service:GridUtil
     *
     * @param {element} element DOM element
     * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
@@ -350,7 +350,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     /**
     * @ngdoc method
     * @name normalizeWheelEvent
-    * @methodOf ui.grid.util.service:GridUtil
+    * @methodOf ui.grid.service:GridUtil
     *
     * @param {event} event A mouse wheel event
     *
