@@ -53,7 +53,7 @@
     "shelljs": "~0.2.6",
     "grunt-contrib-copy": "~0.4.1",
     "protractor": "~0.14.0",
-    "grunt-protractor-runner": "~0.2.0",
+    "grunt-protractor-runner": "0.2.0",
     "grunt-shell-spawn": "~0.3.0",
     "selenium-webdriver": "~2.39.0"
   }
