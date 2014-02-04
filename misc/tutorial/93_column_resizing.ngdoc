@@ -1,0 +1,37 @@
+@ngdoc overview
+@name Tutorial: Column Resizing
+@description
+
+Resize columns by dragging on the separators.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableColumnResizing: true
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      Drag on the column separator to resize
+      <br>
+      <br>
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

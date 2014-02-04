@@ -415,6 +415,9 @@
         this.excessColumns = 4;
         this.horizontalScrollThreshold = 2;
 
+        // Resizing columns, off by default
+        this.enableColumnResizing = false;
+
         /**
          * @ngdoc function
          * @name rowEquality

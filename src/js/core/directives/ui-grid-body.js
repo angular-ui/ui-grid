@@ -132,7 +132,6 @@
               var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
               var scrollYPercentage = args.y.percentage;
-              $log.debug('scrollYPercentage', scrollYPercentage);
               var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
               
               uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
@@ -273,10 +272,10 @@
           var moveYScale = deltaY / moveDuration;
           var moveXScale = deltaX / moveDuration;
 
-          var decelerateInterval = 125; // 1/8th second
-          var decelerateCount = 4; // == 1/2 second
-          var scrollYLength = 60 * directionY * moveYScale;
-          var scrollXLength = 60 * directionX * moveXScale;
+          var decelerateInterval = 63; // 1/16th second
+          var decelerateCount = 8; // == 1/2 second
+          var scrollYLength = 120 * directionY * moveYScale;
+          var scrollXLength = 120 * directionX * moveXScale;
 
           function decelerate() {
             $timeout(function() {
