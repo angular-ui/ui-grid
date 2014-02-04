@@ -63,7 +63,7 @@
                 return {
                     pre: function($scope, $elm, $attrs) {
                         var alias = LOCALE_DIRECTIVE_ALIAS;
-                        if (!uiI18n.$root) uiI18n.$root = $scope.$root;
+                        if (!uiI18n.$root) { uiI18n.$root = $scope.$root; }
                         // check for watchable property
                         var lang = $scope.$eval($attrs[alias]);
                         if (lang){
@@ -89,7 +89,7 @@
             compile: function(){
                 return {
                     pre: function($scope, $elm, $attrs) {
-                        if (!uiI18n.$root) uiI18n.$root = $scope.$root;
+                        if (!uiI18n.$root) { uiI18n.$root = $scope.$root; }
                         var alias1 = DIRECTIVE_ALIASES[0],
                             alias2 = DIRECTIVE_ALIASES[1];
                         var token = $attrs[alias1] || $attrs[alias2] || $elm.html();
@@ -135,17 +135,20 @@
         uiI18n.filter(alias,['$parse', uitFilter]);
     });
 })(function(destination, source) {
-    'user strict';
+    'use strict';
     // adding deep copy method until angularjs supports deep copy like everyone else.
     // https://github.com/angular/angular.js/pull/5059
-    for (var property in source) {
-        if (source[property] && source[property].constructor &&
-            source[property].constructor === Object) {
-            destination[property] = destination[property] || {};
-            arguments.callee(destination[property], source[property]);
-        } else {
-            destination[property] = source[property];
-        }
-    }
-    return destination;
+    // for (var property in source) {
+    //     if (source[property] && source[property].constructor &&
+    //         source[property].constructor === Object) {
+    //         destination[property] = destination[property] || {};
+    //         arguments.callee(destination[property], source[property]);
+    //     } else {
+    //         destination[property] = source[property];
+    //     }
+    // }
+
+    // return destination;
+
+    return angular.copy(source, destination);
 });
