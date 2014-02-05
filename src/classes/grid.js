@@ -660,27 +660,6 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
         });
 //        }
     };
-
-
-//            self.clearSortingData = function(col) {
-//                if (!col) {
-//                    angular.forEach(self.lastSortedColumns, function(c) {
-//                        c.sortDirection = "";
-//                        c.sortPriority = null;
-//                    });
-//                    self.lastSortedColumns = [];
-//                } else {
-//                    angular.forEach(self.lastSortedColumns, function(c) {
-//                        if (col.index !== c.index) {
-//                            c.sortDirection = "";
-//                            c.sortPriority = null;
-//                        }
-//                    });
-//                    self.lastSortedColumns[0] = col;
-//                    self.lastSortedColumns.length = 1;
-//                }
-//            };
-
     self.fixColumnIndexes = function() {
         //fix column indexes
         for (var i = 0; i < $scope.columns.length; i++) {
