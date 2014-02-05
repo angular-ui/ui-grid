@@ -301,7 +301,7 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
                 },
                 index: 0,
                 headerRowHeight: self.config.headerRowHeight,
-                sortCallback: self.sortData,
+                sortCallback: self.sort,
                 resizeOnDataCallback: self.resizeOnData,
                 enableResize: self.config.enableColumnResize,
                 enableSort: self.config.enableSorting,
@@ -319,7 +319,7 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
                     index: i + groupOffset,
                     originalIndex: i,
                     headerRowHeight: self.config.headerRowHeight,
-                    sortCallback: self.sortData,
+                    sortCallback: self.sort,
                     resizeOnDataCallback: self.resizeOnData,
                     enableResize: self.config.enableColumnResize,
                     enableSort: self.config.enableSorting,
@@ -517,33 +517,18 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
             });
             self.maxCanvasHt = self.calcMaxCanvasHeight();
 
-            if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                $scope.$watch(function() {
-                    return self.config.sortInfo;
-                }, function(sortInfo) {
-
-//                            //support user defined sortInfo (no columns). Add sortInfo columns if needed.
-//                            self.config.sortInfo.columns = self.config.sortInfo.columns || []
-//                            angular.forEach(self.config.sortInfo.fields, function(field, i) {
-////                        if (self.config.sortInfo.columns[i] == null) {
-//                                angular.forEach($scope.columns, function(col) {
-//                                    if (col.field == field) {
-//                                        col.sortDirection = self.config.sortInfo.directions[i]
-//                                        col.sortPriority = i
-////                                self.config.sortInfo.columns[i] = col
-//                                        self.config.sortInfo.columns.push(col)
-//                                    }
-//                                })
-////                        }
-//                            })
-
-
-                    if (!sortService.isSorting) {
-                        self.sortColumnsInit();
-                        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
-                    }
-                }, true);
+            if ((self.config.sortInfo == null || self.config.sortInfo.fields == null)) {
+                self.config.sortInfo = {fields: [], directions: []};
             }
+
+            $scope.$watch(function() {
+                return self.config.sortInfo;
+            }, function(sortInfo) {
+                if (!sortService.isSorting) {
+                    self.sort();
+                }
+            }, true);
+
         });
 
         // var p = $q.defer();
@@ -571,134 +556,143 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
         col.width = col.longest = Math.min(col.maxWidth, longest + 7); // + 7 px to make it look decent.
         domUtilityService.BuildStyles($scope, self, true);
     };
+    self.sortColumns = [];
+    self.sort = function(col, evt) {//don't pass sortInfo as parameter 
+        var len = self.config.sortInfo.fields.length
+        if (len === 0 && col == null) {
+            return
+        } else if (col == null) { // rebuild sortColumns by sortInfo
+            self.sortColumns.length = len
+            angular.forEach($scope.columns, function(c) {
+                var i = self.config.sortInfo.fields.indexOf(c.field);
+                if (i !== -1) {
+                    c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
+                    self.sortColumns[i] = c; //creates sparse array if invalid field names are present
+                }
+            });
+        } else if ($.isArray(col)) {//if array of columns rebuild sortInfo...when is this usefull?
 
-//            self.lastSortedColumns = [];
-    self.sortedColumns = [];
-
-    self.sortData = function(col, evt) {
-        if ($.isArray(col)) {
-            //what to do?
-            //I guess controling sort with sortInfo should suffice
-        } else {
-
-//                var indx = self.config.sortInfo.columns.indexOf(col);
-            var indx = self.sortedColumns.indexOf(col);
+        } else {// update both based on col and key
+            var indx = self.sortColumns.indexOf(col);
+//            var len = self.sortColumns.length
 
             if (evt && evt.ctrlKey && self.config.sortInfo) {
-                if (indx === -1) {
-                    if (sortedColumns.length === 1) {
-                        self.config.sortInfo.columns[0].sortPriority = 1;
-                    }
-                    self.config.sortInfo.columns.push(col);
-                    if (self.config.sortInfo.columns.length > 1) {
-                        col.sortPriority = self.config.sortInfo.columns.length;
+                if (indx === -1) { //add new column
+                    if (len === 1) { //previous single column woudn't have any priority defined
+                        self.sortColumns[0].sortPriority = 1;
                     }
 
+                    col.sortPriority = len + 1;
+                    self.sortColumns.push(col);
                     self.config.sortInfo.fields.push(col.field);
                     self.config.sortInfo.directions.push(col.sortDirection);
-                    self.lastSortedColumns.push(col);
-                } else {
 
+                } else { //remove the column
+                    col.sortPriority = null;
+                    col.sortDirection = "";
 
-                    self.config.sortInfo.columns.splice(indx, 1);
+                    self.sortColumns.splice(indx, 1);
                     self.config.sortInfo.fields.splice(indx, 1);
                     self.config.sortInfo.directions.splice(indx, 1);
 
-                    var colPriority = col.sortPriority;
-
-                    for (var i = self.lastSortedColumns.length - 1; i >= 0; i--) {
-                        var c = self.lastSortedColumns[i];
-                        if (col.index === c.index) {
-                            c.sortPriority = null;
-                            c.sortDirection = "";
-                            self.lastSortedColumns.splice(i, 1);
-                        } else if (c.sortPriority > colPriority) {
-                            c.sortPriority -= 1;
-                        }
+                    for (var i = indx; i < len - 1; i++) {
+                        var c = self.sortColumns[i];
+                        c.sortPriority = i + 1;
                     }
 
-                    if (self.config.sortInfo.columns.length === 1) {
-                        self.config.sortInfo.columns[0].sortPriority = null;
+                    if (len === 2) {
+                        self.sortColumns[0].sortPriority = null;
                     }
 
                 }
             } else {
                 //simple click
-                //if already sorted column reverse order
-                //else remove all sorting and create asc sort on current
-                if (indx === -1) {
-                    self.config.sortInfo.columns.length = 0;
+                if (indx === -1) { //remove previous and and column
+                    for (var i = 0; i < len; i++) {
+                        var c = self.sortColumns[i];
+                        c.sortPriority = null;
+                        c.sortDirection = "";
+                    }
+
+                    self.sortColumns.length = 0;
                     self.config.sortInfo.fields.length = 0;
                     self.config.sortInfo.directions.length = 0;
 
-                    self.clearSortingData(col);
-                    col.sortPriority = undefined;
-                    push(col);
+                    col.sortPriority = null;
+                    self.sortColumns.push(col);
+                    self.config.sortInfo.fields.push(col.field);
+                    self.config.sortInfo.directions.push(col.sortDirection);
 
-                } else {
-                    angular.forEach(self.config.sortInfo.columns, function(c, i) {
-                        if (col.index === c.index) {
-                            self.config.sortInfo.directions[i] = col.sortDirection;
-                        }
-                    });
+                } else { // invert direction
+                    //col is already inverted?
+                    self.config.sortInfo.directions[indx] = col.sortDirection;
                 }
-
             }
-
         }
 
-        self.sortActual();
+        if (!self.config.useExternalSorting) {
+            self.sortData();
+        }
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
-    self.sortColumnsInit = function() {
-        if (self.config.useExternalSorting) {
-            return;
-        }
 
-        if (self.config.sortInfo.columns) {
-            self.config.sortInfo.columns.length = 0;
-        } else {
-            self.config.sortInfo.columns = [];
-        }
+//    //leave this one in favor of more general sortData(maybe sortPrep and change sortActual to sortData)
+//    self.sortColumnsInit = function() {
+//        //reconstruct sortColumns
+//        if (self.sortColumns) {
+//            self.sortColumns.length = 0;
+//        } else {
+//            self.sortColumns = [];
+//        }
+//
+//        var cols = [];
+//        angular.forEach($scope.columns, function(c) {
+//            var i = self.config.sortInfo.fields.indexOf(c.field);
+//            if (i !== -1) {
+//                c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
+//                self.sortColumns[i]
+//            }
+//        });
+//
+//
+////        if (cols.length === 1) {
+////            self.sortData(cols[0]);
+////        } else {
+////            self.sortData(cols);
+////        }
+//
+//        if (!self.config.useExternalSorting) {
+//            self.sortActual();
+//            self.searchProvider.evalFilter();
+//            $scope.$emit('ngGridEventSorted', self.config.sortInfo);
+//        }
+//
+//    };
 
-        var cols = [];
-        angular.forEach($scope.columns, function(c) {
-            var i = self.config.sortInfo.fields.indexOf(c.field);
-            if (i !== -1) {
-                c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                cols[i] = c;
+    self.sortData = function() {
+//        if (!self.config.useExternalSorting) {
+        var tempData = self.data.slice(0);
+        angular.forEach(tempData, function(item, i) {
+            var e = self.rowMap[i];
+            if (e !== undefined) {
+                var v = self.rowCache[e];
+                if (v !== undefined) {
+                    item.preSortSelected = v.selected;
+                    item.preSortIndex = i;
+                }
             }
         });
-
-        if (cols.length === 1) {
-            self.sortData(cols[0]);
-        } else {
-            self.sortData(cols);
-        }
-    };
-    self.sortActual = function() {
-        if (!self.config.useExternalSorting) {
-            var tempData = self.data.slice(0);
-            angular.forEach(tempData, function(item, i) {
-                var e = self.rowMap[i];
-                if (e !== undefined) {
-                    var v = self.rowCache[e];
-                    if (v !== undefined) {
-                        item.preSortSelected = v.selected;
-                        item.preSortIndex = i;
-                    }
-                }
-            });
-            sortService.Sort(self.config.sortInfo, tempData);
-            angular.forEach(tempData, function(item, i) {
-                self.rowCache[i].entity = item;
-                self.rowCache[i].selected = item.preSortSelected;
-                self.rowMap[item.preSortIndex] = i;
-                delete item.preSortSelected;
-                delete item.preSortIndex;
-            });
-        }
+//            sortService.Sort(self.config.sortInfo, tempData);
+        sortService.Sort(self.sortColumns, tempData);
+        angular.forEach(tempData, function(item, i) {
+            self.rowCache[i].entity = item;
+            self.rowCache[i].selected = item.preSortSelected;
+            self.rowMap[item.preSortIndex] = i;
+            delete item.preSortSelected;
+            delete item.preSortIndex;
+        });
+//        }
     };
 
 
