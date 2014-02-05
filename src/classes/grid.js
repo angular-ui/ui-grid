@@ -636,40 +636,6 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
         self.searchProvider.evalFilter();
         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
-
-//    //leave this one in favor of more general sortData(maybe sortPrep and change sortActual to sortData)
-//    self.sortColumnsInit = function() {
-//        //reconstruct sortColumns
-//        if (self.sortColumns) {
-//            self.sortColumns.length = 0;
-//        } else {
-//            self.sortColumns = [];
-//        }
-//
-//        var cols = [];
-//        angular.forEach($scope.columns, function(c) {
-//            var i = self.config.sortInfo.fields.indexOf(c.field);
-//            if (i !== -1) {
-//                c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-//                self.sortColumns[i]
-//            }
-//        });
-//
-//
-////        if (cols.length === 1) {
-////            self.sortData(cols[0]);
-////        } else {
-////            self.sortData(cols);
-////        }
-//
-//        if (!self.config.useExternalSorting) {
-//            self.sortActual();
-//            self.searchProvider.evalFilter();
-//            $scope.$emit('ngGridEventSorted', self.config.sortInfo);
-//        }
-//
-//    };
-
     self.sortData = function() {
 //        if (!self.config.useExternalSorting) {
         var tempData = self.data.slice(0);
