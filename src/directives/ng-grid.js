@@ -66,15 +66,14 @@
                                 grid.configureColumnWidths();
                                 grid.refreshDomSizes();
                                 if (grid.config.sortInfo.fields.length > 0) {
-                                    grid.sortColumnsInit();
-                                    $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
+                                    grid.sort()
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
                             $scope.$parent.$watch(options.data, dataWatcher);
                             $scope.$parent.$watch(options.data + '.length', function() {
                                 dataWatcher($scope.$eval(options.data));
-								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
+				$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
                             });
                         }
                         
