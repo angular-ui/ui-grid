@@ -577,12 +577,15 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
 //            var len = self.sortColumns.length
 
             if (evt && evt.ctrlKey && self.config.sortInfo) {
-                if (indx === -1) { //add new column
+                if (indx === -1) { //add new column 
                     if (len === 1) { //previous single column woudn't have any priority defined
                         self.sortColumns[0].sortPriority = 1;
                     }
-
-                    col.sortPriority = len + 1;
+                    if (len === 0) {
+                        col.sortPriority = null;
+                    } else {
+                        col.sortPriority = len + 1;
+                    }
                     self.sortColumns.push(col);
                     self.config.sortInfo.fields.push(col.field);
                     self.config.sortInfo.directions.push(col.sortDirection);
