@@ -7,13 +7,21 @@
     var resizer = {
       priority: 0,
       scope: {
-        col: '='
+        col: '=',
+        position: '@'
       },
       require: '?^uiGrid',
       link: function ($scope, $elm, $attrs, uiGridCtrl) {
         var startX = 0,
             x = 0,
             gridLeft = 0;
+
+        if ($scope.position === 'left') {
+          $elm.addClass('left');
+        }
+        else if ($scope.position === 'right') {
+          $elm.addClass('right');
+        }
 
         function mousemove(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
@@ -36,6 +44,11 @@
           resizeOverlay.remove();
 
           // Resize the column
+          x = event.clientX - gridLeft;
+          var xDiff = x - startX;
+
+          var leftCol, rightCol;
+          // if (true) {}
 
           $document.off('mouseup', mouseup);
           $document.off('mousemove', mousemove);
