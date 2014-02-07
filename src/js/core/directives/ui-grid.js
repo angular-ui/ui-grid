@@ -210,7 +210,6 @@ angular.module('ui.grid').directive('uiGrid',
 
               // Default canvasWidth to the grid width, in case we don't get any column definitions to calculate it from
               uiGridCtrl.grid.canvasWidth = uiGridCtrl.grid.gridWidth;
-              $log.debug('setting canvasWidth', uiGridCtrl.grid.canvasWidth);
 
               uiGridCtrl.grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 

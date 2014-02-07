@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridColumnResizer', ['$log', '$document', function ($log, $document) {
+  angular.module('ui.grid').directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', function ($log, $document, gridUtil) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
@@ -24,9 +24,26 @@
           $elm.addClass('right');
         }
 
+        // Resize all the other columns around col
+        function resizeAroundColumn(col) {
+          uiGridCtrl.grid.columns.forEach(function (column) {
+            // Skip the column we just resized
+            if (column.index === col.index) { return; }
+            
+            var colDef = column.colDef;
+            if (!colDef.width || (angular.isString(colDef.width) && (colDef.width.indexOf('*') !== -1 || colDef.width.indexOf('%') !== -1))) {
+              colDef.width = column.drawnWidth;
+            }
+          });
+        }
+
         function mousemove(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
+
+          if (!uiGridCtrl.grid.element.hasClass('column-resizing')) {
+            uiGridCtrl.grid.element.addClass('column-resizing');
+          }
 
           x = event.clientX - gridLeft;
 
@@ -48,22 +65,32 @@
           x = event.clientX - gridLeft;
           var xDiff = x - startX;
 
+          if (xDiff === 0) {
+            $document.off('mouseup', mouseup);
+            $document.off('mousemove', mousemove);
+            return;
+          }
+
           // The other column to resize (the one next to this one)
+          var col = $scope.col;
           var otherCol, multiplier;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
-            multiplier = 1;
+            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            // otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            otherCol = $scope.col;
+            // multiplier = 1;
           }
           else if ($scope.position === 'right') {
             otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
-            multiplier = -1;
+            // multiplier = -1;
           }
           
-          $scope.col.colDef.width = $scope.col.drawnWidth - xDiff * multiplier;
-          otherCol.colDef.width = otherCol.drawnWidth + xDiff * multiplier;
+          col.colDef.width = col.drawnWidth + xDiff;
+          // otherCol.colDef.width = otherCol.drawnWidth + xDiff * -1;
 
-          $log.debug($scope.col, otherCol);
+          // All other columns because fixed to their drawn width, if they aren't already
+          resizeAroundColumn(col);
 
           uiGridCtrl.grid.buildColumns()
             .then(function() {
@@ -77,8 +104,6 @@
         $elm.on('mousedown', function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
-
-          uiGridCtrl.grid.element.addClass('column-resizing');
 
           // Get the left offset of the grid
           gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
@@ -99,7 +124,45 @@
 
         // On doubleclick, resize to fit all rendered cells
         $elm.on('dblclick', function() {
+          
+          var col = $scope.col;
+          var otherCol, multiplier;
 
+          // If we're the left-positioned resizer then we need to resize the column to the left of our column, and not our column itself
+          if ($scope.position === 'left') {
+            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            otherCol = $scope.col;
+            multiplier = 1;
+          }
+          else if ($scope.position === 'right') {
+            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            multiplier = -1;
+          }
+
+          // Go through the rendered rows and find out the max size for the data in this column
+          var maxWidth = 0;
+          var cells = uiGridCtrl.grid.element[0].querySelectorAll('.col' + col.index);
+          Array.prototype.forEach.call(cells, function (cell) {
+              // Get the cell width
+              // $log.debug('width', gridUtil.elementWidth(cell));
+
+              gridUtil.fakeElement(cell, {}, function(newElm) {
+                var width = gridUtil.elementWidth(newElm);
+                if (width > maxWidth) {
+                  maxWidth = width;
+                }
+              });
+            });
+
+          col.colDef.width = maxWidth;
+          
+          // All other columns because fixed to their drawn width, if they aren't already
+          resizeAroundColumn(col);
+
+          uiGridCtrl.grid.buildColumns()
+            .then(function() {
+              uiGridCtrl.refreshCanvas(true);
+            });
         });
 
         $elm.on('$destroy', function() {

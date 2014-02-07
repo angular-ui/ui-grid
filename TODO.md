@@ -29,17 +29,8 @@
    - Don't `copy` .jade files with the copy task.
 1. Naming inconsistencies - uiGridConstants vs gridUtil, etc.
 
-1. Horizontal scrolling
-   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
-   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and calculate the minimum number of rows to render.
-      - Basically find the set of smallest columns, according to their width, that still cover the viewport, and figure out how many are in the set, then set minCols to that
-      - Starting with the first column, add up the column widths until they are greater than the viewport width, then save that number of columns as the minimum. Continue going through the
-        column widths, subtracting the previous column's width and adding the next column's width. If at any point the total width is less than the viewport, increment the minimum number of columns.
-   - [IDEA] - Might need to dynamically set 'excessColumns'. With a 'scrollThreshold' of 4 and 'excessColumns' of 4, it was not rendering enough columns to the left of the viewport
-   - [TODO] - Figure out how to calculate the margin-left property on the columns when the columns have variable sizes. Might need to calc the widths of the rendered columns in order to get the offset adjustments
 
-
-
+1. Move column sizing stuff out of header directive.
 1. [IDEA] - Bind to 'resize' event and refresh grid on that
 1. Scrollbar not hiding on Mac OS?
 1. Border of scrollbar on hover doesn't appear darker than background
@@ -73,3 +64,11 @@
 1. [DONE] - [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
    - Was including wrong ui-grid.css file
 1. [DONE] - Make scrollbar look like chrome's?
+1. [DONE] - Horizontal scrolling
+   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
+   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and calculate the minimum number of rows to render.
+      - Basically find the set of smallest columns, according to their width, that still cover the viewport, and figure out how many are in the set, then set minCols to that
+      - Starting with the first column, add up the column widths until they are greater than the viewport width, then save that number of columns as the minimum. Continue going through the
+        column widths, subtracting the previous column's width and adding the next column's width. If at any point the total width is less than the viewport, increment the minimum number of columns.
+   - [IDEA] - Might need to dynamically set 'excessColumns'. With a 'scrollThreshold' of 4 and 'excessColumns' of 4, it was not rendering enough columns to the left of the viewport
+   - [TODO] - Figure out how to calculate the margin-left property on the columns when the columns have variable sizes. Might need to calc the widths of the rendered columns in order to get the offset adjustments

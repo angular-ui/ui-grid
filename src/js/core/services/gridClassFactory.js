@@ -349,7 +349,6 @@
       };
 
       Grid.prototype.getCanvasWidth = function () {
-        $log.debug('canvasWidth', this.canvasWidth);
         return this.canvasWidth;
       };
 
@@ -418,6 +417,9 @@
 
         // Resizing columns, off by default
         this.enableColumnResizing = false;
+
+        // Columns can't be smaller than 10 pixels
+        this.minimumColumnSize = 10;
 
         /**
          * @ngdoc function
@@ -526,14 +528,14 @@
             if (gridUtil.endsWith(colDef.width, '%')) {
               // If so we should be able to parse the non-percent-sign part to a number
               var percentStr = colDef.width.replace(/%/g, '');
-              var percent = parseFloat(percentStr);
+              var percent = parseInt(percentStr, 10);
               if (isNaN(percent)) {
                 throw new Error(parseErrorMsg);
               }
             }
             // And see if it's a number string
             else if (colDef.width.match(/^(\d+)$/)) {
-              self.width = parseFloat(colDef.width.match(/^(\d+)$/)[1]);
+              self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
             }
             // Otherwise it should be a string of asterisks
             else if (! colDef.width.match(/^\*+$/)) {

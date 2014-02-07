@@ -66,12 +66,14 @@
                 // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
                 // var equalWidth = availableWidth / equalWidthColumnCount;
 
+                // The last column we processed
+                var lastColumn;
+
                 var manualWidthSum = 0;
 
                 var canvasWidth = 0;
 
                 var ret = '';
-                debugger;
                 uiGridCtrl.grid.columns.forEach(function(column, i) {
                   // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
                   //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
@@ -87,7 +89,7 @@
                   }
 
                   if (angular.isString(column.width) && column.width.indexOf('*') !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
-                    asteriskNum += column.width.length;
+                    asteriskNum = parseInt(asteriskNum + column.width.length, 10);
                     
                     asterisksArray.push(column);
                   }
@@ -95,12 +97,14 @@
                     percentArray.push(column);
                   }
                   else if (angular.isNumber(column.width)) {
-                    manualWidthSum += column.width;
-                    canvasWidth += column.width;
+                    manualWidthSum = parseInt(manualWidthSum + column.width, 10);
+                    canvasWidth = parseInt(canvasWidth + column.width, 10);
 
                     column.drawnWidth = column.width;
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
+
+                    lastColumn = column;
                   }
                 });
   
@@ -109,7 +113,7 @@
 
                 if (percentArray.length > 0) {
                   percentArray.forEach(function(column) {
-                    var percent = parseFloat(column.width) / 100;
+                    var percent = parseInt(parseFloat(column.width) / 100, 10);
                     var colWidth = percent * remainingWidth;
 
                     canvasWidth = colWidth;
@@ -117,34 +121,39 @@
                     column.drawnWidth = colWidth;
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+
+                    lastColumn = column;
                   });
                 }
 
                 if (asterisksArray.length > 0) {
                   // Calculate the weight of each asterisk
-                  var asteriskVal = remainingWidth / asteriskNum;
+                  var asteriskVal = parseInt(remainingWidth / asteriskNum, 10);
 
                   asterisksArray.forEach(function(column) {
-                    var colWidth = asteriskVal * column.width.length;
+                    var colWidth = parseInt(asteriskVal * column.width.length, 10);
 
                     canvasWidth += colWidth;
 
                     column.drawnWidth = colWidth;
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+
+                    lastColumn = column;
                   });
                 }
-                
-                // uiGridCtrl.grid.options.columnDefs.forEach(function(c, i) {
-                //   if (typeof(c.width) !== 'undefined' && c.width !== undefined) {
-                //     availableWidth = availableWidth - c.width;
-                //     equalWidthColumnCount = equalWidthColumnCount - 1;
-                //   }
-                // });
+
+                // // If the total canvas width is less than the viewport width, the final column needs to 
+                // if (canvasWidth < uiGridCtrl.grid.getViewportWidth()) {
+                //   var diff = uiGridCtrl.grid.getViewportWidth() - canvasWidth;
+
+                //   column.width = column.width + diff;
+                //   column.drawnWidth = column.width +;
+                // }
 
                 $scope.columnStyles = ret;
 
-                uiGridCtrl.grid.canvasWidth = canvasWidth;
+                uiGridCtrl.grid.canvasWidth = parseInt(canvasWidth, 10);
               });
             }
 
