@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', function ($log, $document, gridUtil) {
+  angular.module('ui.grid').directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
@@ -35,6 +35,17 @@
               colDef.width = column.drawnWidth;
             }
           });
+        }
+
+        function buildColumnsAndRefresh() {
+          uiGridCtrl.grid.buildColumns()
+            .then(function() {
+              uiGridCtrl.refreshCanvas(true);
+
+              var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: 0 };
+
+              $scope.$emit(uiGridConstants.events.GRID_SCROLL, args);
+            });
         }
 
         function mousemove(event, args) {
@@ -92,10 +103,7 @@
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
 
-          uiGridCtrl.grid.buildColumns()
-            .then(function() {
-              uiGridCtrl.refreshCanvas(true);
-            });
+          buildColumnsAndRefresh();
 
           $document.off('mouseup', mouseup);
           $document.off('mousemove', mousemove);
@@ -159,10 +167,7 @@
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
 
-          uiGridCtrl.grid.buildColumns()
-            .then(function() {
-              uiGridCtrl.refreshCanvas(true);
-            });
+          buildColumnsAndRefresh();
         });
 
         $elm.on('$destroy', function() {

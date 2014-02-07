@@ -84,10 +84,16 @@
         }
 
         if ($scope.type === 'vertical') {
-          uiGridCtrl.grid.registerStyleComputation(updateVerticalScrollbar);
+          uiGridCtrl.grid.registerStyleComputation({
+            priority: 10,
+            func: updateVerticalScrollbar
+          });
         }
         else if ($scope.type === 'horizontal') {
-          uiGridCtrl.grid.registerStyleComputation(updateHorizontalScrollbar);
+          uiGridCtrl.grid.registerStyleComputation({
+            priority: 10,
+            func: updateHorizontalScrollbar
+          });
         }
 
         // Only show the scrollbar when the canvas height is less than the viewport height

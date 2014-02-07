@@ -159,6 +159,8 @@
               uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
             }
 
+            uiGridCtrl.prevScrollArgs = args;
+
             uiGridCtrl.fireScrollingEvent();
           // });
         });

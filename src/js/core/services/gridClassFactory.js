@@ -272,8 +272,8 @@
        * @description registered a styleComputation function
        * @param {function($scope)} styleComputation function
        */
-      Grid.prototype.registerStyleComputation = function (styleComputation) {
-        this.styleComputations.push(styleComputation);
+      Grid.prototype.registerStyleComputation = function (styleComputationInfo) {
+        this.styleComputations.push(styleComputationInfo);
       };
 
       Grid.prototype.setRenderedRows = function (newRows) {
@@ -298,9 +298,16 @@
        */
       Grid.prototype.buildStyles = function ($scope) {
         var self = this;
-        self.styleComputations.forEach(function (comp) {
-          comp.call(self, $scope);
-        });
+        self.styleComputations
+          .sort(function(a, b) {
+            if (a.priority === null) { return 1; }
+            if (b.priority === null) { return -1; }
+            if (a.priority === null && b.priority === null) { return 0; }
+            return a.priority - b.priority;
+          })
+          .forEach(function (compInfo) {
+            compInfo.func.call(self, $scope);
+          });
       };
 
       Grid.prototype.minRowsToRender = function () {

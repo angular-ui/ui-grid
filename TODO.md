@@ -1,5 +1,14 @@
 # TODO
 
+# CURRENT
+
+1. [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollLeft on the header ends up less than the viewport
+1. [TODO] - Add a `resizeEnabled` flag to colDef that ui-grid-column-resizer obeys
+1. [TODO] - Obey minWidth and maxWidth in colDef
+
+
+# MORE
+
 1. `readableColumnNames` need to be overrideable by i18n.
 1. Add banners to compiled .css files (grunt-banner?)
 1. Add grunt-nuget task to autodeploy builds to nuget
@@ -28,7 +37,6 @@
 1. Add jade processing for misc/site directory
    - Don't `copy` .jade files with the copy task.
 1. Naming inconsistencies - uiGridConstants vs gridUtil, etc.
-
 
 1. Move column sizing stuff out of header directive.
 1. [IDEA] - Bind to 'resize' event and refresh grid on that
