@@ -8,7 +8,8 @@
       priority: 0,
       scope: {
         col: '=',
-        position: '@'
+        position: '@',
+        renderIndex: '=',
       },
       require: '?^uiGrid',
       link: function ($scope, $elm, $attrs, uiGridCtrl) {
@@ -47,8 +48,27 @@
           x = event.clientX - gridLeft;
           var xDiff = x - startX;
 
-          var leftCol, rightCol;
-          // if (true) {}
+          // The other column to resize (the one next to this one)
+          var otherCol, multiplier;
+          if ($scope.position === 'left') {
+            // Get the column to the left of this one
+            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            multiplier = 1;
+          }
+          else if ($scope.position === 'right') {
+            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            multiplier = -1;
+          }
+          
+          $scope.col.colDef.width = $scope.col.drawnWidth - xDiff * multiplier;
+          otherCol.colDef.width = otherCol.drawnWidth + xDiff * multiplier;
+
+          $log.debug($scope.col, otherCol);
+
+          uiGridCtrl.grid.buildColumns()
+            .then(function() {
+              uiGridCtrl.refreshCanvas(true);
+            });
 
           $document.off('mouseup', mouseup);
           $document.off('mousemove', mousemove);

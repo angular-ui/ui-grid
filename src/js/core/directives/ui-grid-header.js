@@ -71,7 +71,7 @@
                 var canvasWidth = 0;
 
                 var ret = '';
-                // debugger;
+                debugger;
                 uiGridCtrl.grid.columns.forEach(function(column, i) {
                   // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
                   //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
@@ -110,7 +110,7 @@
                 if (percentArray.length > 0) {
                   percentArray.forEach(function(column) {
                     var percent = parseFloat(column.width) / 100;
-                    var colWidth = percent * availableWidth;
+                    var colWidth = percent * remainingWidth;
 
                     canvasWidth = colWidth;
 
@@ -122,7 +122,7 @@
 
                 if (asterisksArray.length > 0) {
                   // Calculate the weight of each asterisk
-                  var asteriskVal = availableWidth / asteriskNum;
+                  var asteriskVal = remainingWidth / asteriskNum;
 
                   asterisksArray.forEach(function(column) {
                     var colWidth = asteriskVal * column.width.length;

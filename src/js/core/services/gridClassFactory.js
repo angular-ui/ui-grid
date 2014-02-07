@@ -349,6 +349,7 @@
       };
 
       Grid.prototype.getCanvasWidth = function () {
+        $log.debug('canvasWidth', this.canvasWidth);
         return this.canvasWidth;
       };
 
