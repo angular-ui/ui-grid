@@ -42,9 +42,10 @@
             .then(function() {
               uiGridCtrl.refreshCanvas(true);
 
-              var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: 0 };
+              var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
 
-              $scope.$emit(uiGridConstants.events.GRID_SCROLL, args);
+              // $scope.$emit(uiGridConstants.events.GRID_SCROLL, args);
+              // uiGridCtrl.fireScrollingEvent(args);
             });
         }
 

@@ -247,6 +247,8 @@
 
           // Store the new top in the y value
 
+          $log.debug('newScrollPosition', newScrollPosition);
+
           if ($scope.type === 'vertical') {
             y = newScrollPosition;
 

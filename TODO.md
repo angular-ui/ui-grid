@@ -2,7 +2,7 @@
 
 # CURRENT
 
-1. [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollLeft on the header ends up less than the viewport
+1. [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollbar extends beyond the viewport...
 1. [TODO] - Add a `resizeEnabled` flag to colDef that ui-grid-column-resizer obeys
 1. [TODO] - Obey minWidth and maxWidth in colDef
 

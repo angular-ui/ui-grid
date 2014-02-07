@@ -146,8 +146,8 @@
       };
 
       //todo: throttle this event?
-      self.fireScrollingEvent = function() {
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLLING);
+      self.fireScrollingEvent = function(args) {
+        $scope.$broadcast(uiGridConstants.events.GRID_SCROLLING, args);
       };
 
     }]);
