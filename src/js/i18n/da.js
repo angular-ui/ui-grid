@@ -1,13 +1,14 @@
 ﻿(function(){
-    var uiI18n = angular.module('ui.i18n');
-    uiI18n.i18n.add('da',{
-        aggregate:{
+    angular.module('ui.i18n').service('ui-i18n-da', ['ui-i18nService',
+      function (i18nService) {
+        i18nService.add('da',{
+          aggregate:{
             label: 'artikler'
-        },
-        groupPanel:{
+          },
+          groupPanel:{
             description: 'Grupér rækker udfra en kolonne ved at trække dens overskift hertil.'
-        },
-        search:{
+          },
+          search:{
             placeholder: 'Søg...',
             showingItems: 'Viste rækker:',
             selectedItems: 'Valgte rækker:',
@@ -17,9 +18,10 @@
             next: 'Næste side',
             previous: 'Forrige side',
             last: 'Sidste side'
-        },
-        menu:{
+          },
+          menu:{
             text: 'Vælg kolonner:',
-        }
-    });
+          }
+        });
+      }]);
 })();
