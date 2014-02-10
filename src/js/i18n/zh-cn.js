@@ -1,7 +1,7 @@
 ﻿(function () {
-  angular.module('ui.i18n').service('ui-i18n-zh-cn', ['ui-i18nService',
-    function (i18nService) {
-      i18nService.add('zh-cn', {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('zh-cn', {
         aggregate: {
           label: '条目'
         },
@@ -23,5 +23,7 @@
           text: '数据分组与选择列：'
         }
       });
+      return $delegate;
     }]);
+}]);
 })();

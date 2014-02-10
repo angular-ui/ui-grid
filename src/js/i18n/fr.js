@@ -1,7 +1,7 @@
 ﻿(function () {
-  angular.module('ui.i18n').service('ui-i18n-fr', ['ui-i18nService',
-    function (i18nService) {
-      i18nService.add('fr', {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('fr', {
         aggregate: {
           label: 'articles'
         },
@@ -23,5 +23,7 @@
           text: 'Choisir des colonnes:'
         }
       });
+      return $delegate;
     }]);
+}]);
 })();

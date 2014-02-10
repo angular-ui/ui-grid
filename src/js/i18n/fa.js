@@ -1,7 +1,7 @@
 ﻿(function () {
-  angular.module('ui.i18n').service('ui-i18n-fa', ['ui-i18nService',
-    function (i18nService) {
-      i18nService.add('fa', {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('fa', {
         aggregate: {
           label: 'موردها'
         },
@@ -23,5 +23,7 @@
           text: 'انتخاب ستون\u200cها:'
         }
       });
+      return $delegate;
     }]);
+}]);
 })();

@@ -1,0 +1,33 @@
+@ngdoc overview
+@name Tutorial: i18n
+@description
+
+i18n
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+
+    app.controller('MainCtrl', ['$scope', function ($scope) {
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-i18n="en">
+         <p>Using attribute:</p>
+         <p ui-t="groupPanel.description"></p>
+         <br/>
+         <p>Using Filter:</p>
+         <p>{{"groupPanel.description" | t}}</p>
+      </div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+</example>

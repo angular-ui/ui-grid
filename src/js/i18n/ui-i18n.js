@@ -1,25 +1,28 @@
 /**
- * ui-i18n Created by Tim Sweet on 2/1/14.
+ * ui.i18n Created by Tim Sweet on 2/1/14.
  * https://github.com/timothyswt
  * MIT License
  */
 (function () {
   var DIRECTIVE_ALIASES = ['uiT', 'uiTranslate'];
-  var FILTER_ALIASES = ['t', 'translate'];
+  var FILTER_ALIASES = ['t', 'uiTranslate'];
 
-  var module = angular.module('ui.i18n');
+  var module = angular.module('ui.grid.i18n');
 
-  module.constant('ui-i18nConstants', {
+  module.constant('i18nConstants', {
     MISSING: '[MISSING]: ',
     UPDATE_EVENT: '$uiI18n',
 
     LOCALE_DIRECTIVE_ALIAS: 'uiI18n',
     // default to english
-    DEFAULT_LANG: 'en-US'
+    DEFAULT_LANG: 'en'
   });
 
 
-  module.service('ui-i18nService', ['$log', 'ui-i18nConstants', '$rootScope',
+//    module.config(['$provide', function($provide) {
+//        $provide.decorator('i18nService', ['$delegate', function($delegate) {}])}]);
+
+  module.service('i18nService', ['$log', 'i18nConstants', '$rootScope',
     function ($log, i18nConstants, $rootScope) {
 
       var langCache = {
@@ -31,13 +34,13 @@
         add: function (lang, strings) {
           var lower = lang.toLowerCase();
           var cache = this._langs;
-          cache[lower] = angular.copy(cache[lower] || {}, strings);
+          cache[lower] = angular.copy(strings);
         },
         setCurrent: function (lang) {
           this.current = lang.toLowerCase();
         },
-        getCurrent: function () {
-          return this.get(this.current);
+        getCurrentLang: function () {
+          return this.current;
         }
       };
 
@@ -71,15 +74,25 @@
           }
         },
 
-        set: function (lang) {
+        get: function (lang) {
+          var language = lang ? lang : service.getCurrentLang();
+          return langCache.get(language);
+        },
+
+        setCurrentLang: function (lang) {
           if (lang) {
             langCache.setCurrent(lang);
-            $rootScope.$broadcast(i18nConstants.UPDATE_EVENT, lang);
+            $rootScope.$broadcast(i18nConstants.UPDATE_EVENT);
           }
         },
 
-        getCurrent: function () {
-          return langCache.getCurrent();
+        getCurrentLang: function () {
+          var lang = langCache.getCurrentLang();
+          if(!lang){
+            lang = i18nConstants.DEFAULT_LANG;
+            langCache.setCurrent(lang);
+          }
+          return lang;
         }
 
       };
@@ -87,6 +100,8 @@
       return service;
 
     }]);
+
+
 
   var localeDirective = function (i18nService, i18nConstants) {
     return {
@@ -104,14 +119,14 @@
               // fall back to the string value
               lang = $attrs[alias];
             }
-            i18nService.set(lang || i18nConstants.DEFAULT_LANG);
+            i18nService.setCurrentLang(lang || i18nConstants.DEFAULT_LANG);
           }
         };
       }
     };
   };
 
-  module.directive('ui-i18n', ['ui-i18nService', 'ui-i18nConstants', localeDirective]);
+  module.directive('uiI18n', ['i18nService', 'i18nConstants', localeDirective]);
 
   // directive syntax
   var uitDirective = function ($parse, i18nService, i18nConstants) {
@@ -129,41 +144,45 @@
               var prop = $attrs[alias1] ? alias1 : alias2;
               observer = $attrs.$observe(prop, function (result) {
                 if (result) {
-                  $elm.html($parse(result)(i18nService.getCurrent()) || missing);
+                  $elm.html($parse(result)(i18nService.getCurrentLang()) || missing);
                 }
               });
             }
             var getter = $parse(token);
-            var listener = $scope.$on(i18nConstants.UPDATE_EVENT, function (evt, lang) {
+            var listener = $scope.$on(i18nConstants.UPDATE_EVENT, function (evt) {
               if (observer) {
                 observer($attrs[alias1] || $attrs[alias2]);
               } else {
                 // set text based on i18n current language
-                $elm.html(getter(i18nService.get(lang)) || missing);
+                $elm.html(getter(i18nService.get()) || missing);
               }
             });
             $scope.$on('$destroy', listener);
+
+            $elm.html(getter(i18nService.get()) || missing);
           }
         };
       }
     };
   };
 
+  DIRECTIVE_ALIASES.forEach(function (alias) {
+    module.directive(alias, ['$parse', 'i18nService', 'i18nConstants', uitDirective]);
+  });
+
   // optional filter syntax
   var uitFilter = function ($parse, i18nService, i18nConstants) {
     return function (data) {
       var getter = $parse(data);
       // set text based on i18n current language
-      return getter(i18nService.getCurrent()) || i18nConstants.MISSING + data;
+      return getter(i18nService.get()) || i18nConstants.MISSING + data;
     };
   };
 
-  DIRECTIVE_ALIASES.forEach(function (alias) {
-    module.directive(alias, ['$parse', 'ui-i18nService', 'ui-i18nConstants', uitDirective]);
-  });
+
 
   FILTER_ALIASES.forEach(function (alias) {
-    module.filter(alias, ['$parse', 'ui-i18nService', 'ui-i18nConstants', uitFilter]);
+    module.filter(alias, ['$parse', 'i18nService', 'i18nConstants', uitFilter]);
   });
 
 })();

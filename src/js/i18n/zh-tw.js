@@ -1,7 +1,7 @@
 ﻿(function () {
-  angular.module('ui.i18n').service('ui-i18n-zh-tw', ['ui-i18nService' ,
-    function (i18nService) {
-      i18nService.add('zh-tw', {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('zh-tw', {
         aggregate: {
           label: '筆'
         },
@@ -23,5 +23,7 @@
           text: '選擇欄位：'
         }
       });
+      return $delegate;
     }]);
+}]);
 })();

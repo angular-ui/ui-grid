@@ -1,7 +1,7 @@
 (function () {
-  angular.module('ui.i18n').service('ui-i18n-pt-br', ['ui-i18nService',
-    function (i18nService) {
-      i18nService.add('pt-br', {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('pt-br', {
         aggregate: {
           label: 'itens',
         },
@@ -23,5 +23,7 @@
           text: 'Selecione as colunas:'
         }
       });
+      return $delegate;
     }]);
+}]);
 })();

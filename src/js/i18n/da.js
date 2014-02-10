@@ -1,7 +1,7 @@
 ﻿(function(){
-    angular.module('ui.i18n').service('ui-i18n-da', ['ui-i18nService',
-      function (i18nService) {
-        i18nService.add('da',{
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('da', {
           aggregate:{
             label: 'artikler'
           },
@@ -23,5 +23,7 @@
             text: 'Vælg kolonner:',
           }
         });
-      }]);
+      return $delegate;
+    }]);
+  }]);
 })();
