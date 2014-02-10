@@ -22,7 +22,7 @@ Resize columns by dragging on the separators.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      Drag on the column separator to resize
+      Drag on the column separator to resize; double-click to size according to cell contents.
       <br>
       <br>
       <div ui-grid="gridOptions" class="grid"></div>

@@ -49,15 +49,21 @@ module.exports = function(grunt) {
 
     // Templates
     ngtemplates: {
-      'ui-grid': {
-        cwd: 'src/templates',
-        src: ['**/*.html'],
+      'uigrid': {
+        // Look for templates in src and in feature template directories
+        src: ['src/templates/**/*.html', 'src/features/*/templates/**/*.html'],
         dest: '.tmp/template.js',
         options: {
           module: 'ui.grid',
           htmlmin:  { collapseWhitespace: true, collapseBooleanAttributes: true },
           // Strip .html extension
-          url: function(url) { return url.replace('.html', ''); }
+          url: function(url) {
+            // Remove the src/templates/ prefix
+            url = url.replace(/^src\/templates\//, '');
+
+            // Remove the .html extension
+            return url.replace('.html', '');
+          }
         }
       }
     },
@@ -80,7 +86,7 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['src/js/core/bootstrap.js','src/js/**/*.js', '.tmp/template.js'],
+        src: ['src/js/core/bootstrap.js', 'src/js/**/*.js', 'src/features/*/js/**/*.js', '.tmp/template.js'],
         dest: '<%= dist %>/release/<%= pkg.name %>.js'
       },
 
@@ -101,12 +107,12 @@ module.exports = function(grunt) {
       dist: {
         // paths: ['/bower_components/bootstrap'],
         files: {
-          'dist/release/<%= pkg.name %>.css': 'src/less/main.less',
+          'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less'],
         }
       },
       min: {
         files: {
-          'dist/release/<%= pkg.name %>.min.css': 'src/less/main.less',
+          'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less']
         },
         options: {
           compress: true
@@ -245,7 +251,7 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       src_test: {
-        src: ['src/**/*.js', 'test/**/*.spec.js']
+        src: ['src/**/*.js', 'src/features/*/test/**/*.js', 'test/**/*.spec.js']
       }
     },
 
@@ -256,7 +262,8 @@ module.exports = function(grunt) {
       },
 
       ngtemplates: {
-        files: 'src/templates/**/*.html',
+        // files: ['src/templates/**/*.html', 'src/features/*/templates/**/*.html'],
+        files: '<%= ngtemplates.uigrid.src %>',
         tasks: ['ngtemplates']
       },
 

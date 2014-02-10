@@ -2,7 +2,6 @@
 
 # CURRENT
 
-1. [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollbar extends beyond the viewport...
 1. [TODO] - Add a `resizeEnabled` flag to colDef that ui-grid-column-resizer obeys
 1. [TODO] - Obey minWidth and maxWidth in colDef
 
@@ -48,6 +47,7 @@
 
 # Done!
 
+1. [DONE] - [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollbar extends beyond the viewport...
 1. [DONE] Figure out how to run e2e tests on docs (look at angularjs source / protractor?)
 1. [DONE] Add --browsers option for testing on saucelabs with specific browser(s)
 1. [DONE] Make karmangular run in `watch` mode and in singlerun too.
