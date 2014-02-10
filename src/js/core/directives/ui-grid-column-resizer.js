@@ -37,15 +37,32 @@
           });
         }
 
-        function buildColumnsAndRefresh() {
+        // Build the columns then refresh the grid canvas
+        //   takes an argument representing the diff along the X-axis that the resize had
+        function buildColumnsAndRefresh(xDiff) {
+          // Build the columns
           uiGridCtrl.grid.buildColumns()
             .then(function() {
-              uiGridCtrl.refreshCanvas(true);
+              // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
+              uiGridCtrl.refreshCanvas(true)
+                .then(function() {
+                  // Then fire a scroll event to put the scrollbar in the right place, so it doesn't end up too far ahead or behind
+                  var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
+                    
+                  // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
+                  if (xDiff && args.x.pixels) {
+                    var extraPercent = xDiff / uiGridCtrl.grid.getViewportWidth();
 
-              var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
+                    args.x.percentage = args.x.percentage - extraPercent;
 
-              // $scope.$emit(uiGridConstants.events.GRID_SCROLL, args);
-              // uiGridCtrl.fireScrollingEvent(args);
+                    // Can't be less than 0% or more than 100%
+                    if (args.x.percentage > 1) { args.x.percentage = 1; }
+                    else if (args.x.percentage < 0) { args.x.percentage = 0; }
+                  }
+                  
+                  // Fire the scroll event
+                  uiGridCtrl.fireScrollingEvent(args);
+                });
             });
         }
 
@@ -104,7 +121,7 @@
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
 
-          buildColumnsAndRefresh();
+          buildColumnsAndRefresh(xDiff);
 
           $document.off('mouseup', mouseup);
           $document.off('mousemove', mousemove);
@@ -150,6 +167,7 @@
 
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;
+          var xDiff = 0;
           var cells = uiGridCtrl.grid.element[0].querySelectorAll('.col' + col.index);
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
@@ -159,6 +177,7 @@
                 var width = gridUtil.elementWidth(newElm);
                 if (width > maxWidth) {
                   maxWidth = width;
+                  xDiff = maxWidth - width;
                 }
               });
             });
@@ -168,7 +187,7 @@
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
 
-          buildColumnsAndRefresh();
+          buildColumnsAndRefresh(xDiff);
         });
 
         $elm.on('$destroy', function() {

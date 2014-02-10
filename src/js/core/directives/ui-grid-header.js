@@ -144,7 +144,7 @@
 
               uiGridCtrl.grid.canvasWidth = parseInt(canvasWidth, 10);
 
-              uiGridCtrl.fireScrollingEvent();
+              // uiGridCtrl.fireScrollingEvent();
             }
 
             if (uiGridCtrl) {

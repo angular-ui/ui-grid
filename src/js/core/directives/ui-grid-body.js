@@ -128,6 +128,9 @@
         var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
           // GridUtil.requestAnimationFrame(function() {
             // Vertical scroll
+
+            uiGridCtrl.prevScrollArgs = args;
+
             if (args.y) {
               var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
@@ -139,6 +142,8 @@
               uiGridCtrl.viewport[0].scrollTop = newScrollTop;
               
               uiGridCtrl.grid.options.offsetTop = newScrollTop;
+
+              uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop;
             }
 
             // Horizontal scroll
@@ -157,11 +162,9 @@
               }
 
               uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
+
+              uiGridCtrl.prevScrollArgs.x.pixels = newScrollLeft;
             }
-
-            uiGridCtrl.prevScrollArgs = args;
-
-            uiGridCtrl.fireScrollingEvent();
           // });
         });
 
