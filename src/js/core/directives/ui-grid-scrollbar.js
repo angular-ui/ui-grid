@@ -111,7 +111,7 @@
           }
         };
 
-        self.getElmSize = function() {
+        var getElmSize = function() {
           if ($scope.type === 'vertical') {
             return gridUtil.elementHeight($elm, 'margin');
           }
@@ -120,12 +120,12 @@
           }
         };
 
-        self.getElmMaxBound = function() {
+        var getElmMaxBound = function() {
           if ($scope.type === 'vertical') {
-            return uiGridCtrl.grid.getViewportHeight() - self.getElmSize();
+            return uiGridCtrl.grid.getViewportHeight() - getElmSize();
           }
           else if ($scope.type === 'horizontal') {
-            return uiGridCtrl.grid.getViewportWidth() - self.getElmSize();
+            return uiGridCtrl.grid.getViewportWidth() - getElmSize();
           }
         };
 
@@ -148,7 +148,7 @@
         // Get the "bottom boundary" which the scrollbar cannot scroll past (which is the viewport height minus the height of the scrollbar)
         // var elmBottomBound = uiGridCtrl.grid.getViewportHeight() - elmHeight;
         // var elmSize = getElmSize();
-        var elmMaxBound = self.getElmMaxBound();
+        var elmMaxBound = getElmMaxBound();
         
 
         // On mousedown on the scrollbar, listen for mousemove events to scroll and mouseup events to unbind the move and mouseup event
@@ -166,7 +166,7 @@
 
           // Get the bottom boundary again
           // elmBottomBound = uiGridCtrl.grid.getViewportHeight() - elmHeight;
-          elmMaxBound = self.getElmMaxBound();
+          elmMaxBound = getElmMaxBound();
 
           // Store the Y value of where we're starting
           startY = event.screenY - y;
@@ -237,7 +237,7 @@
           // elmSize = getElmSize();
 
           // Get the bottom bound again
-          elmMaxBound = self.getElmMaxBound();
+          elmMaxBound = getElmMaxBound();
 
           // The new top value for the scrollbar is the percentage of scroll multiplied by the bottom boundary
           var newScrollPosition = scrollPercentage * elmMaxBound;
