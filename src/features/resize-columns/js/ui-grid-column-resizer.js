@@ -11,7 +11,7 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableResizeColumns) {
+            if (uiGridCtrl.grid.options.enableColumnResizing) {
               $attrs.$observe('renderIndex', function (n, o) {
                 // $log.debug('renderIndex', $scope.$eval(n));
                 $scope.renderIndex = $scope.$eval(n);
