@@ -154,6 +154,6 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
    function (uiGridCellNavService, $log){
    instead of
    function(uiGridCellNavService,$log){
-4. jshint rules are enforced.  run 'grunt dev --no-e2e' to see if your code passes
-
+4. jshint rules are enforced.  run 'grunt dev --no-e2e' to see if your code passes (the --no-e2e switch turns off end-to-end testing, which can making development slow. You should still run e2e tests before you push commits!)
+5. Module names should follow Angular's camelcase format, e.g. "resizeColumns", not "resize-columns".
 
