@@ -61,6 +61,9 @@ module.exports = function(grunt) {
             // Remove the src/templates/ prefix
             url = url.replace(/^src\/templates\//, '');
 
+            // Replace feature prefix with just 'ui-grid'
+            url = url.replace(/^src\/features\/[^\/]+?\/templates/, 'ui-grid');
+
             // Remove the .html extension
             return url.replace('.html', '');
           }
@@ -251,7 +254,7 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       src_test: {
-        src: ['src/**/*.js', 'src/features/*/test/**/*.js', 'test/**/*.spec.js']
+        src: ['src/**/*.js', 'src/features/*/js/**/*.js', 'src/features/*/test/**/*.spec.js', 'test/**/*.spec.js']
       }
     },
 

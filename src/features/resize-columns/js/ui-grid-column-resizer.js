@@ -1,8 +1,53 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid.resize-columns', [])
-  .directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
+  // Extend the uiGridHeaderCell directive
+  angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$templateCache', '$compile', function ($log, $templateCache, $compile) {
+    return {
+      // Run after the original uiGridHeaderCell
+      priority: -10,
+      require: '^uiGrid',
+      // scope: false,
+      compile: function() {
+        return {
+          post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            $attrs.$observe('renderIndex', function (n, o) {
+              // $log.debug('renderIndex', $scope.$eval(n));
+              $scope.renderIndex = $scope.$eval(n);
+            });
+
+            var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
+
+            var resizerLeft = angular.element(columnResizerElm).clone();
+            var resizerRight = angular.element(columnResizerElm).clone();
+
+            resizerLeft.attr('position', 'left');
+            resizerRight.attr('position', 'right');
+
+            // $log.debug('$scope', $scope);
+
+            // Don't append the left resizer if this is the first column
+            if ($scope.col.index !== 0) {
+              $elm.prepend(resizerLeft);
+            }
+            
+            // Don't append the right resizer if this is the last column
+            if ($scope.col.index !== $scope.grid.renderedColumns.length - 1) {
+              $elm.append(resizerRight);
+            }
+            
+
+            $compile(resizerLeft)($scope);
+            $compile(resizerRight)($scope);
+          }
+        };
+      }
+    };
+  }]);
+
+  var module = angular.module('ui.grid.resizeColumns', []);
+  
+  module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
