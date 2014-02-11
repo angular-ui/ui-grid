@@ -13,8 +13,6 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$parse', funct
     replace: true,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
       $scope.grid = uiGridCtrl.grid;
-
-      $log.debug('renderIndex', $scope.renderIndex);
     }
   };
 

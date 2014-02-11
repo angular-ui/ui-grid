@@ -11,41 +11,42 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            $attrs.$observe('renderIndex', function (n, o) {
-              // $log.debug('renderIndex', $scope.$eval(n));
-              $scope.renderIndex = $scope.$eval(n);
-            });
+            if (uiGridCtrl.grid.options.enableResizeColumns) {
+              $attrs.$observe('renderIndex', function (n, o) {
+                // $log.debug('renderIndex', $scope.$eval(n));
+                $scope.renderIndex = $scope.$eval(n);
+              });
 
-            var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
+              var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
 
-            var resizerLeft = angular.element(columnResizerElm).clone();
-            var resizerRight = angular.element(columnResizerElm).clone();
+              var resizerLeft = angular.element(columnResizerElm).clone();
+              var resizerRight = angular.element(columnResizerElm).clone();
 
-            resizerLeft.attr('position', 'left');
-            resizerRight.attr('position', 'right');
+              resizerLeft.attr('position', 'left');
+              resizerRight.attr('position', 'right');
 
-            // $log.debug('$scope', $scope);
+              // $log.debug('$scope', $scope);
 
-            // Don't append the left resizer if this is the first column
-            if ($scope.col.index !== 0) {
-              $elm.prepend(resizerLeft);
+              // Don't append the left resizer if this is the first column
+              if ($scope.col.index !== 0) {
+                $elm.prepend(resizerLeft);
+              }
+              
+              // Don't append the right resizer if this is the last column
+              if ($scope.col.index !== $scope.grid.renderedColumns.length - 1) {
+                $elm.append(resizerRight);
+              }
+
+              $compile(resizerLeft)($scope);
+              $compile(resizerRight)($scope);
             }
-            
-            // Don't append the right resizer if this is the last column
-            if ($scope.col.index !== $scope.grid.renderedColumns.length - 1) {
-              $elm.append(resizerRight);
-            }
-            
-
-            $compile(resizerLeft)($scope);
-            $compile(resizerRight)($scope);
           }
         };
       }
     };
   }]);
 
-  var module = angular.module('ui.grid.resizeColumns', []);
+  var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
   
   module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
