@@ -16,18 +16,18 @@ function ngGridCsvExportPlugin (opts) {
         self.scope = scope; 
         function showDs() {
             var keys = [];
-            var csvData = '';/**Kyle, moved so that it doesnt get reset before loop**/
+            var csvData = '';
             for (var f in grid.config.columnDefs) {
             	keys.push(grid.config.columnDefs[f].field);
             	
-            	csvData += '"' ;/**Kyle Added**/
+            	csvData += '"' ;
             	if(typeof grid.config.columnDefs[f].displayName !== 'undefined'){/** moved to reduce looping and capture the display name if it exists**/
-            		csvData += csvStringify(grid.config.columnDefs[f].displayName);/**Kyle Added**/
+            		csvData += csvStringify(grid.config.columnDefs[f].displayName);
             	}
-            	else{/**Kyle Added**/
-            		csvData += csvStringify(grid.config.columnDefs[f].field);/**Kyle Added**/
+            	else{
+            		csvData += csvStringify(grid.config.columnDefs[f].field);
             	}
-            	csvData +=  '",'; /**Kyle Added**/
+            	csvData +=  '",'; 
             }
             
             function csvStringify(str) {
@@ -50,7 +50,7 @@ function ngGridCsvExportPlugin (opts) {
                 var newStr = str.substr(0,str.length - 1);
                 return newStr + "\n";
             }
-            /**unnecessary loop**/
+            /**unnecessary loop??**/
             /**for (var k in keys) {
             	csvData += '"' + csvStringify(keys[k]) + '",';
             }**/
@@ -60,22 +60,22 @@ function ngGridCsvExportPlugin (opts) {
                 for ( k in keys) {
                     var curCellRaw;
                     /**this still needs a case for arrays**/
-                    if(keys[k]){/**Kyle added**/
+                    if(keys[k]){
                     	if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
 	                        curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
 	                    }
-	                    else if (opts != null && opts.columnOverrides != null && keys[k].indexOf(".") >= 0) {/**Kyle modified**/
-	                    	var tempObj = keys[k].substring(0, keys[k].indexOf("."));/**Kyle added**/
-	                    	var tempProp = keys[k].substring(keys[k].indexOf(".")+1, keys[k].length);/**Kyle added**/
-	                    	if(typeof gridData[gridRow][tempObj] !== 'undefined'){/**Kyle**/
-	                    		curCellRaw = opts.columnOverrides['object'](gridData[gridRow][tempObj], tempProp);/**Kyle modified**/
+	                    else if (opts != null && opts.columnOverrides != null && keys[k].indexOf(".") >= 0) {
+	                    	var tempObj = keys[k].substring(0, keys[k].indexOf("."));
+	                    	var tempProp = keys[k].substring(keys[k].indexOf(".")+1, keys[k].length);
+	                    	if(typeof gridData[gridRow][tempObj] !== 'undefined'){
+	                    		curCellRaw = opts.columnOverrides['object'](gridData[gridRow][tempObj], tempProp);
 	                    	}
 	                    }
 	                    else {
-	                        curCellRaw = gridData[gridRow][keys[k]];/**Kyle modified**/
+	                        curCellRaw = gridData[gridRow][keys[k]];
 	                    }
                     	csvData += '"' + csvStringify(curCellRaw) + '",';
-                    }/**Kyle added**/
+                    }
                 }
                 csvData = swapLastCommaForNewline(csvData);
             }
