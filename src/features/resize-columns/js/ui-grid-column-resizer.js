@@ -11,7 +11,7 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableColumnResizing) {
+            if (uiGridCtrl.grid.options.enableColumnResizing && $scope.col.colDef.enableColumnResizing !== false) {
               $attrs.$observe('renderIndex', function (n, o) {
                 // $log.debug('renderIndex', $scope.$eval(n));
                 $scope.renderIndex = $scope.$eval(n);
@@ -48,6 +48,46 @@
 
   var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
   
+  /**
+   * @ngdoc directive
+   * @name ui.grid.resizeColumns.directive:uiGridColumnResizer
+   * @element div
+   * @restrict A
+   *
+   * @description
+   * Draggable handle that controls column resizing.
+   * 
+   * @example
+   <doc:example module="app">
+     <doc:source>
+       <script>
+        var app = angular.module('app', ['ui.grid', 'ui.grid.resizeColumns']);
+
+        app.controller('MainCtrl', ['$scope', function ($scope) {
+          $scope.gridOpts = {
+            enableColumnResizing: true,
+            data: [
+              { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
+              { "name": "Claudine Neal", "gender": "female", "company": "Sealoud" },
+              { "name": "Beryl Rice", "gender": "female", "company": "Velity" },
+              { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
+            ]
+          };
+        }]);
+       </script>
+
+       <div ng-controller="MainCtrl">
+        <div class="testGrid" ui-grid="gridOpts"></div>
+       </div>
+     </doc:source>
+     <doc:scenario>
+      // TODO: e2e specs?
+        // TODO: Obey minWidth and maxWIdth;
+
+      // TODO: post-resize a horizontal scroll event should be fired
+     </doc:scenario>
+   </doc:example>
+   */  
   module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
@@ -221,7 +261,9 @@
               // $log.debug('width', gridUtil.elementWidth(cell));
 
               gridUtil.fakeElement(cell, {}, function(newElm) {
+                angular.element(newElm).attr('style', 'float: left');
                 var width = gridUtil.elementWidth(newElm);
+
                 if (width > maxWidth) {
                   maxWidth = width;
                   xDiff = maxWidth - width;

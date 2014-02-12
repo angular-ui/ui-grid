@@ -20,20 +20,26 @@ describe('ui.grid.resizeColumns', function () {
       data: data
     };
 
-    grid = angular.element('<div ui-grid="gridOpts"></div>');
+    grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
+    document.body.appendChild(grid[0]);
 
     recompile = function() {
-      $compile(grid)($scope);  
+      $compile(grid)($scope);
       $scope.$digest();
     };
 
     recompile();
   }));
 
+  afterEach(function() {
+    angular.element(grid).remove();
+    grid = null;
+  });
+
   describe('setting enableColumnResizing', function() {
     it('should by default cause resizer to be attached to the header elements', function() {
-      $scope.gridOpts.enableColumnResizing = true;
-      recompile();
+      // $scope.gridOpts.enableColumnResizing = true;
+      // recompile();
 
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
@@ -41,8 +47,8 @@ describe('ui.grid.resizeColumns', function () {
     });
 
     it('should only attach a right resizer to the first column', function() {
-      $scope.gridOpts.enableColumnResizing = true;
-      recompile();
+      // $scope.gridOpts.enableColumnResizing = true;
+      // recompile();
 
       var firstColumn = $(grid).find('[ui-grid-header-cell]').first();
 
@@ -55,8 +61,8 @@ describe('ui.grid.resizeColumns', function () {
     });
 
     it('should only attach a left resizer to the last column', function() {
-      $scope.gridOpts.enableColumnResizing = true;
-      recompile();
+      // $scope.gridOpts.enableColumnResizing = true;
+      // recompile();
 
       var firstColumn = $(grid).find('[ui-grid-header-cell]').last();
 
@@ -74,16 +80,46 @@ describe('ui.grid.resizeColumns', function () {
       $scope.gridOpts.enableColumnResizing = false;
       recompile();
 
-      var resizers = $(grid).find('.ui-grid-column-resizer');
+      var resizers = $(grid).find('[ui-grid-column-resizer]');
 
       expect(resizers.size()).toEqual(0);
     });
   });
 
-  // TODO: e2e specs?
+  describe('setting flag on colDef to false', function() {
+    it('should result in no resizer elements being attached to the column', function() {
+      $scope.gridOpts.columnDefs = [
+        { field: 'name' },
+        { field: 'gender', enableColumnResizing: false },
+        { field: 'company' }
+      ];
 
-  // TODO: setting flag on colDef to false should result in no resizer elements being attached to the column
+      recompile();
 
-  // TODO: post-resize a horizontal scroll event should be fired
+      var middleCol = $(grid).find('[ui-grid-header-cell]:nth-child(2)');
+      var resizer = middleCol.find('[ui-grid-column-resizer]');
 
+      expect(resizer.size()).toEqual(0);
+    });
+  });
+
+  describe('when double-clicking a resizer', function() {
+    iit('should resize the column to the maximum width of the rendered columns', function(done) {
+      var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+
+      var colWidth = $(grid).find('.col0').first().width();
+
+      expect(colWidth).toEqual(166);
+      
+      firstResizer.trigger('dblclick');
+
+      $scope.$digest();
+      
+      var newColWidth = $(grid).find('.col0').first().width();
+
+      expect(newColWidth).toEqual(100);
+    });
+  });
+
+  // TODO: click and move should result in the overlay being added, and following the mouse
 });
