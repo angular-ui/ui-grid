@@ -1,6 +1,6 @@
 # UI Grid : An Angular data grid
 
-[![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid)
+[![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/angular-ui/ng-grid/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
