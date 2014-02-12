@@ -103,8 +103,10 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
+
+  // NOTE: these pixel sizes might fail in other browsers, due to font differences!
   describe('when double-clicking a resizer', function() {
-    iit('should resize the column to the maximum width of the rendered columns', function(done) {
+    it('should resize the column to the maximum width of the rendered columns', function(done) {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
       var colWidth = $(grid).find('.col0').first().width();
@@ -118,6 +120,28 @@ describe('ui.grid.resizeColumns', function () {
       var newColWidth = $(grid).find('.col0').first().width();
 
       expect(newColWidth).toEqual(100);
+    });
+  });
+
+  describe('clicking on a resizer', function() {
+    it('should cause the column separator overlay to be added', function() {
+      var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+
+      firstResizer.trigger('mousedown');
+      $scope.$digest();
+
+      var overlay = $(grid).find('.ui-grid-resize-overlay');
+
+      expect(overlay.size()).toEqual(1);
+
+      // The grid shouldn't have the resizing class
+      expect(grid.hasClass('column-resizing')).toEqual(false);
+    });
+
+    describe('and moving the mouse', function() {
+      it('should cause the overlay to move', function() {
+        
+      });
     });
   });
 

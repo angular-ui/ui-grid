@@ -261,7 +261,9 @@
               // $log.debug('width', gridUtil.elementWidth(cell));
 
               gridUtil.fakeElement(cell, {}, function(newElm) {
+                // Make the element float since it's a div and can expand to fill its container
                 angular.element(newElm).attr('style', 'float: left');
+
                 var width = gridUtil.elementWidth(newElm);
 
                 if (width > maxWidth) {
