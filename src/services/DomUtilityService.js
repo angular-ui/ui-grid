@@ -45,9 +45,10 @@
     };
     domUtilityService.getRealWidth = function (obj) {
         var width = 0;
-        var props = { visibility: "hidden", display: "block" };
+        var props = { visibility: "hidden", display: "block", position: "absolute" };
         var hiddenParents = obj.parents().andSelf().not(':visible');
         $.swap(hiddenParents[0], props, function () {
+            hiddenParents[0].style.setProperty("display", "block", "important");
             width = obj.outerWidth();
         });
         return width;
