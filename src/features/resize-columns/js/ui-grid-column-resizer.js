@@ -137,7 +137,7 @@
                   var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
                     
                   // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
-                  if (xDiff && args.x.pixels) {
+                  if (xDiff && args.x && args.x.pixels) {
                     var extraPercent = xDiff / uiGridCtrl.grid.getViewportWidth();
 
                     args.x.percentage = args.x.percentage - extraPercent;
@@ -165,8 +165,8 @@
 
           if (x < 0) { x = 0; }
           else if (x > uiGridCtrl.grid.gridWidth) { x = uiGridCtrl.grid.gridWidth; }
-
-          resizeOverlay.css({ left: x });
+          
+          resizeOverlay.css({ left: x + 'px' });
         }
 
         function mouseup(event, args) {

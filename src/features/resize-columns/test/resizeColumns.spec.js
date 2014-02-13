@@ -119,7 +119,8 @@ describe('ui.grid.resizeColumns', function () {
       
       var newColWidth = $(grid).find('.col0').first().width();
 
-      expect(newColWidth).toEqual(100);
+      // How to handle this here?
+      expect(newColWidth).not.toEqual(colWidth);
     });
   });
 
@@ -139,11 +140,59 @@ describe('ui.grid.resizeColumns', function () {
     });
 
     describe('and moving the mouse', function() {
+      var xDiff, initialWidth, initialX, overlay, initialOverlayX;
+
+      beforeEach(function() {
+        var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+
+        // Get the initial width of the column
+        initialWidth = $(grid).find('.col0').first().width();
+
+        initialX = firstResizer.position().left;
+
+        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $scope.$digest();
+
+        // Get the overlay
+        overlay = $(grid).find('.ui-grid-resize-overlay');
+        initialOverlayX = $(overlay).position().left;
+
+        xDiff = 100;
+        $(document).simulate('mousemove', { clientX: initialX + xDiff });
+        $scope.$digest();
+      });
+
+      it('should add the column-resizing class to the grid', function() {
+        // The grid should have the resizing class
+        expect(grid.hasClass('column-resizing')).toEqual(true);
+      });
+
+      it('should cause the overlay to appear', function() {
+        expect(overlay.is(':visible')).toEqual(true);
+      });
+
       it('should cause the overlay to move', function() {
-        
+        expect($(overlay).position().left).toEqual( (initialX + xDiff + 1) ); // Extra one pixel here for grid border
+      });
+
+      describe('then releasing the mouse', function() {
+        beforeEach(function() {
+          $(document).simulate('mouseup', { clientX: initialX + xDiff });
+          $scope.$digest();
+        });
+
+        it('should cause the column to resize by the amount change in the X axis', function() {
+          var newWidth = $(grid).find('.col0').first().width();
+
+          expect(newWidth - initialWidth).toEqual(xDiff);
+        });
+
+        it('should remove the overlay', function() {
+          var overlay = $(grid).find('.ui-grid-resize-overlay');
+
+          expect(overlay.size()).toEqual(0);
+        });
       });
     });
   });
-
-  // TODO: click and move should result in the overlay being added, and following the mouse
 });

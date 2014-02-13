@@ -247,7 +247,12 @@ module.exports = function(grunt) {
           iit: false,
           module: false,
           debugger: false,
-          DocumentTouch: false
+          DocumentTouch: false,
+          runs: false,
+          waits: false,
+          waitsFor: false,
+          xit: false,
+          xdescribe: false
         }
       },
       gruntfile: {
@@ -480,7 +485,7 @@ module.exports = function(grunt) {
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server
-  grunt.registerTask('before-test', ['clean', 'jshint', 'ngtemplates']);
+  grunt.registerTask('before-test', ['clean', 'jshint', 'ngtemplates']); // Have to run less so CSS files are present
   grunt.registerTask('after-test', ['build']);
 
   // Default task.
