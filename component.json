@@ -1,5 +1,0 @@
-{
-  "name": "ng-grid",
-  "version": "1.6.3",
-  "main": ["./ng-grid.css", "ng-grid-1.6.3.debug.js"]
-}

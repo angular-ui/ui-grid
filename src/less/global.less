@@ -1,0 +1,58 @@
+
+@import 'colors';
+
+.ngGrid {
+  background-color: @backgroundColor;
+
+  input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+  }
+
+  input {
+    vertical-align:top;
+  }
+}
+
+.ngGrid.unselectable {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.ngViewport {
+  overflow: auto;
+  min-height: 20px;
+}
+
+.ngViewport:focus {
+    outline: none;
+}
+
+.ngCanvas {
+  position: relative;
+}
+
+.ngVerticalBar {
+  position: absolute;
+  right:0;
+  width:0;
+}
+
+.ngVerticalBarVisible {
+  width: 1px;
+  background-color: @borderColor;
+}
+
+@import 'header';
+@import 'menu';
+@import 'grouping';
+
+@import 'row';
+@import 'cell';
+@import 'selection';
+
+@import 'footer';
+@import 'paging';

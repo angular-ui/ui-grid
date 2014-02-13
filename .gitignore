@@ -1,4 +1,16 @@
 #################
+## Vim
+#################
+
+*.swp
+
+#################
+## node
+#################
+
+node_modules
+
+#################
 ## Eclipse
 #################
 
@@ -68,6 +80,11 @@ web.config
 *.vspscc
 .builds
 *.dotCover
+
+#################
+## Sublime Text
+#################
+*.sublime-*
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
@@ -166,3 +183,8 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+#################
+## JetBrains
+#################
+.idea

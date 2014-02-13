@@ -1,62 +1,74 @@
-/// <reference path="../../lib/jquery-1.8.2.min" />
-/// <reference path="../../lib/angular.js" />
-/// <reference path="../constants.js" />
-/// <reference path="../namespace.js" />
-/// <reference path="../navigation.js" />
-/// <reference path="../utils.js" />
-ng.Row = function(entity, config, selectionService) {
-    var self = this, // constant for the selection property that we add to each data item
-        canSelectRows = config.canSelectRows;
+var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
+	this.entity = entity;
+	this.config = config;
+	this.selectionProvider = selectionProvider;
+	this.rowIndex = rowIndex;
+	this.utils = $utils;
+	this.selected = selectionProvider.getSelection(entity);
+	this.cursor = this.config.enableRowSelection && !this.config.selectWithCheckboxOnly ? 'pointer' : 'default';
+	this.beforeSelectionChange = config.beforeSelectionChangeCallback;
+	this.afterSelectionChange = config.afterSelectionChangeCallback;
+	this.offsetTop = this.rowIndex * config.rowHeight;
+	this.rowDisplayIndex = 0;
+};
 
-    self.jqueryUITheme = config.jqueryUITheme;
-    self.rowClasses = config.rowClasses;
-    self.entity = entity;
-    self.selectionService = selectionService;
-	self.selected = null;
-    self.cursor = canSelectRows ? 'pointer' : 'default';
-    self.continueSelection = function(event) {
-        self.selectionService.ChangeSelection(self, event);
-    };
-    self.toggleSelected = function(event) {
-        if (!canSelectRows) {
-            return true;
-        }
-        var element = event.target || event;
-        //check and make sure its not the bubbling up of our checked 'click' event 
-        if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
-            return true;
-        }
-        if (config.selectWithCheckboxOnly && element.type != "checkbox") {
-            return true;
-        } else {
-            if (self.beforeSelectionChange(self)) {
-                self.continueSelection(event);
-                return self.afterSelectionChange();
-            }
-        }
-        return false;
-    };
-    self.rowIndex = 0;
-    self.offsetTop = 0;
-    self.rowDisplayIndex = 0;
-    self.alternatingRowClass = function () {
-        var isEven = (self.rowIndex % 2) === 0;
-        var classes = {
-            'selected': self.selected,
-            'ui-state-default': self.jqueryUITheme && isEven,
-            'ui-state-active': self.jqueryUITheme && !isEven,
-            'even': isEven,
-            'odd': !isEven
-        };
-        return classes;
-    };
-    self.beforeSelectionChange = config.beforeSelectionChangeCallback;
-    self.afterSelectionChange = config.afterSelectionChangeCallback;
-
-    self.getProperty = function(path) {
-        return ng.utils.evalProperty(self.entity, path);
-    };
-    //selectify the entity
-	var selected = self.selectionService.selectedItems.length > 0 && self.selectionService.selectedItems.indexOf(entity) != -1;
-	self.selectionService.setSelection(self, selected);
+ngRow.prototype.setSelection = function (isSelected) {
+	this.selectionProvider.setSelection(this, isSelected);
+	this.selectionProvider.lastClickedRow = this;
+};
+ngRow.prototype.continueSelection = function (event) {
+	this.selectionProvider.ChangeSelection(this, event);
+};
+ngRow.prototype.ensureEntity = function (expected) {
+	if (this.entity !== expected) {
+		// Update the entity and determine our selected property
+		this.entity = expected;
+		this.selected = this.selectionProvider.getSelection(this.entity);
+	}
+};
+ngRow.prototype.toggleSelected = function (event) {
+	if (!this.config.enableRowSelection && !this.config.enableCellSelection) {
+		return true;
+	}
+	var element = event.target || event;
+	//check and make sure its not the bubbling up of our checked 'click' event 
+	if (element.type === "checkbox" && element.parentElement.className !== "ngSelectionCell ng-scope") {
+		return true;
+	}
+	if (this.config.selectWithCheckboxOnly && element.type !== "checkbox") {
+		this.selectionProvider.lastClickedRow = this;
+		return true;
+	} 
+	if (this.beforeSelectionChange(this, event)) {
+		this.continueSelection(event);
+	}
+	return false;
+};
+ngRow.prototype.alternatingRowClass = function () {
+	var isEven = (this.rowIndex % 2) === 0;
+	var classes = {
+		'ngRow' : true,
+		'selected': this.selected,
+		'even': isEven,
+		'odd': !isEven,
+		'ui-state-default': this.config.jqueryUITheme && isEven,
+		'ui-state-active': this.config.jqueryUITheme && !isEven
+	};
+	return classes;
+};
+ngRow.prototype.getProperty = function (path) {
+	return this.utils.evalProperty(this.entity, path);
+};
+ngRow.prototype.copy = function () {
+	this.clone = new ngRow(this.entity, this.config, this.selectionProvider, this.rowIndex, this.utils);
+	this.clone.isClone = true;
+	this.clone.elm = this.elm;
+	this.clone.orig = this;
+	return this.clone;
+};
+ngRow.prototype.setVars = function (fromRow) {
+	fromRow.clone = this;
+	this.entity = fromRow.entity;
+	this.selected = fromRow.selected;
+    this.orig = fromRow;
 };

@@ -1,42 +1,71 @@
-﻿ng.Column = function(config, $scope, grid, domUtilityService) {
+﻿var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
         clicks = 0,
         timer = null;
+    self.colDef = config.colDef;
     self.width = colDef.width;
     self.groupIndex = 0;
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+
+    // TODO: Use the column's definition for enabling cell editing
+    // self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+    self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : (config.enableCellEdit || config.enableCellEditOnFocus);
+    
+    self.cellEditableCondition = colDef.cellEditableCondition || config.cellEditableCondition || 'true';
+
     self.headerRowHeight = config.headerRowHeight;
-    self.displayName = colDef.displayName || colDef.field;
+
+    // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
+    self.displayName = (colDef.displayName === undefined) ? colDef.field : colDef.displayName;
+
     self.index = config.index;
     self.isAggCol = config.isAggCol;
     self.cellClass = colDef.cellClass;
+    self.sortPriority = undefined;
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
     self.field = colDef.field;
-    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    self.visible = ng.utils.isNullOrUndefined(colDef.visible) || colDef.visible;
+    self.aggLabelFilter = colDef.aggLabelFilter || colDef.cellFilter;
+    self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
-    self.groupable = ng.utils.isNullOrUndefined(colDef.groupable) || colDef.sortable;
+    self.pinnable = false;
+    self.pinned = (config.enablePinning && colDef.pinned);
+    self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
+    self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
     if (config.enableSort) {
-        self.sortable = ng.utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
+        self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
     if (config.enableResize) {
-        self.resizable = ng.utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+        self.resizable = $utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+    }
+    if (config.enablePinning) {
+        self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
-    self.headerCellTemplate = colDef.headerCellTemplate || ng.defaultHeaderCellTemplate();
     self.cursor = self.sortable ? 'pointer' : 'default';
-    self.cellTemplate = colDef.cellTemplate || ng.defaultCellTemplate().replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+    self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
+    self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+    if(self.enableCellEdit) {
+        self.cellEditTemplate = colDef.cellEditTemplate || $templateCache.get('cellEditTemplate.html');
+        self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
+    }
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
             type: "GET",
             url: colDef.cellTemplate,
+            async: false
+        }).responseText;
+    }
+    if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+        self.editableCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.editableCellTemplate,
             async: false
         }).responseText;
     }
@@ -47,6 +76,14 @@
             async: false
         }).responseText;
     }
+    self.colIndex = function () {
+        var classes = self.pinned ? "pinned " : "";
+        classes += "col" + self.index + " colt" + self.index;
+        if (self.cellClass) {
+            classes += " " + self.cellClass;
+        }
+        return classes;
+    };
     self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
     };
@@ -62,13 +99,13 @@
     self.noSortVisible = function() {
         return !self.sortDirection;
     };
-    self.sort = function() {
+    self.sort = function(evt) {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
         var dir = self.sortDirection === ASC ? DESC : ASC;
         self.sortDirection = dir;
-        config.sortCallback(self);
+        config.sortCallback(self, evt);
         return false;
     };
     self.gripClick = function() {
@@ -85,7 +122,8 @@
         }
     };
     self.gripOnMouseDown = function(event) {
-        if (event.ctrlKey) {
+        $scope.isColumnResizing = true;
+        if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
             return true;
@@ -101,14 +139,47 @@
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        $scope.hasUserChangedGridColumnWidths = true;
         domUtilityService.BuildStyles($scope, grid);
         return false;
     };
-    self.gripOnMouseUp = function() {
-        $(document).off('mousemove');
-        $(document).off('mouseup');
+    self.gripOnMouseUp = function (event) {
+        $(document).off('mousemove', self.onMouseMove);
+        $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         domUtilityService.digest($scope);
+        $scope.isColumnResizing = false;
         return false;
+    };
+    self.copy = function() {
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        ret.isClone = true;
+        ret.orig = self;
+        return ret;
+    };
+    self.setVars = function (fromCol) {
+        self.orig = fromCol;
+        self.width = fromCol.width;
+        self.groupIndex = fromCol.groupIndex;
+        self.isGroupedBy = fromCol.isGroupedBy;
+        self.displayName = fromCol.displayName;
+        self.index = fromCol.index;
+        self.isAggCol = fromCol.isAggCol;
+        self.cellClass = fromCol.cellClass;
+        self.cellFilter = fromCol.cellFilter;
+        self.field = fromCol.field;
+        self.aggLabelFilter = fromCol.aggLabelFilter;
+        self.visible = fromCol.visible;
+        self.sortable = fromCol.sortable;
+        self.resizable = fromCol.resizable;
+        self.pinnable = fromCol.pinnable;
+        self.pinned = fromCol.pinned;
+        self.originalIndex = fromCol.originalIndex;
+        self.sortDirection = fromCol.sortDirection;
+        self.sortingAlgorithm = fromCol.sortingAlgorithm;
+        self.headerClass = fromCol.headerClass;
+        self.headerCellTemplate = fromCol.headerCellTemplate;
+        self.cellTemplate = fromCol.cellTemplate;
+        self.cellEditTemplate = fromCol.cellEditTemplate;
     };
 };

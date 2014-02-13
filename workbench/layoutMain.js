@@ -18,10 +18,10 @@ function userController($scope) {
         filterText: "",
         useExternalFilter: false,
     };
+    $scope.totalServerItems = 0;
     $scope.pagingOptions = {
         pageSizes: [250, 500, 1000], //page Sizes
         pageSize: 250, //Size of Paging data
-        totalServerItems: 0, //how many items are on the server (for paging)
         currentPage: 1 //what page they are currently on
     };
     self.getPagedDataAsync = function (pageSize, page, searchText) {
@@ -37,7 +37,7 @@ function userController($scope) {
             }
             var pagedData = data.slice((page - 1) * pageSize, page * pageSize);
             $scope.myData = pagedData;
-            $scope.pagingOptions.totalServerItems = data.length;
+            $scope.totalServerItems = data.length;
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -55,12 +55,16 @@ function userController($scope) {
 		jqueryUITheme: false,
 		jqueryUIDraggable: false,
         selectedItems: $scope.mySelections,
-        displaySelectionCheckbox: true,
-        multiSelect: false,
+        showSelectionCheckbox: true,
+        multiSelect: true,
         showGroupPanel: false,
         showColumnMenu: true,
+        enableCellSelection: true,
+        enableCellEditOnFocus: true,
 		plugins: [plugins.ngGridLayoutPlugin],
         enablePaging: true,
+        showFooter: true,
+        totalServerItems: 'totalServerItems',
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
         columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false},

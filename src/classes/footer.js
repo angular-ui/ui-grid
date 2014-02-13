@@ -1,18 +1,26 @@
-﻿ng.Footer = function($scope, grid) {
+﻿var ngFooter = function ($scope, grid) {
     $scope.maxRows = function () {
-        var ret = Math.max($scope.pagingOptions.totalServerItems, grid.sortedData.length);
+        var ret = Math.max($scope.totalServerItems, grid.data.length);
         return ret;
     };
     
-    $scope.multiSelect = (grid.config.canSelectRows && grid.config.multiSelect);
+    $scope.$watch('totalServerItems',function(n,o){
+        $scope.currentMaxPages = $scope.maxPages();
+    });
+
+    $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
+    
     $scope.maxPages = function () {
+        if($scope.maxRows() === 0) {
+            return 1;
+        }
         return Math.ceil($scope.maxRows() / $scope.pagingOptions.pageSize);
     };
 
     $scope.pageForward = function() {
         var page = $scope.pagingOptions.currentPage;
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if ($scope.totalServerItems > 0) {
             $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
         } else {
             $scope.pagingOptions.currentPage++;
@@ -36,15 +44,15 @@
     $scope.cantPageForward = function() {
         var curPage = $scope.pagingOptions.currentPage;
         var maxPages = $scope.maxPages();
-        if ($scope.pagingOptions.totalServerItems > 0) {
-            return !(curPage < maxPages);
+        if ($scope.totalServerItems > 0) {
+            return curPage >= maxPages;
         } else {
-            return grid.sortedData.length < 1;
+            return grid.data.length < 1;
         }
 
     };
     $scope.cantPageToLast = function() {
-        if ($scope.pagingOptions.totalServerItems > 0) {
+        if ($scope.totalServerItems > 0) {
             return $scope.cantPageForward();
         } else {
             return true;
@@ -53,6 +61,6 @@
     
     $scope.cantPageBackward = function() {
         var curPage = $scope.pagingOptions.currentPage;
-        return !(curPage > 1);
+        return curPage <= 1;
     };
 };

@@ -1,0 +1,140 @@
+.ngHeaderContainer {
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+    background-color: inherit;
+}
+
+.ngHeaderCell {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: inherit;
+}
+
+.ngHeaderCell.pinned {
+    z-index: 1;
+}
+
+.ngHeaderSortColumn {
+    position:absolute;
+    overflow: hidden;
+}
+
+.ngTopPanel {
+    position: relative;
+    z-index: 1;
+    background-color: @darkGray; // #EAEAEA
+    border-bottom: 1px solid @borderColor; // #D4D4D4
+}
+
+.ngSortButtonDown {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-color: gray transparent;
+    border-style: solid;
+    border-width: 0 5px 5px 5px;
+    height: 0;
+    width: 0;
+}
+
+.ngNoSort {
+    cursor:default;
+}
+
+.ngHeaderButton {
+    position: absolute;
+    right: 2px;
+    top: 8px;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    z-index: 1;
+    background-color: @darkGrayGreen;
+    cursor: pointer;
+}
+
+.ngSortButtonUp {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-color: gray transparent;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    height: 0;
+    width: 0;
+}
+
+.ngHeaderScroller {
+    position:absolute;
+    background-color: inherit;
+}
+
+.ngSortPriority {
+    position: absolute;
+    top: -5px;
+    left: 1px;
+    font-size: 6pt;
+    font-weight: bold;
+}
+
+.ngHeaderGrip {
+    cursor: col-resize;
+    width: 10px;
+    right: -5px;
+    top: 0;
+    height: 100%;
+    position: absolute;
+    background-color: transparent;
+}
+
+.ngHeaderText {
+    padding: 5px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.ngHeaderButtonArrow {
+    position: absolute;
+    top: 4px;
+    left: 3px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6.5px 4.5px 0 4.5px;
+    border-color: @buttonColor transparent transparent transparent;
+}
+
+.ngPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAmElEQVQoU33PQapBURjA8UtkwJuaWYGSgfQWYBMvczPmTCzAAGVuaA228BZhRCkDGSmE31FucuRfvzq3vr5zT/JSjSU7DsypEPXDkDVn2hSIytJhw4kWGaLCxgHh2gt/RBuLzNhz5caWPjnSqqw4EraFfwznf8qklWjwy4IRTerkiQoPGtPl40OehcEJvcfXl8LglLfBJLkDcMgbgHlHhK8AAAAASUVORK5CYII=);
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 10px;
+    width: 10px;
+}
+.ngUnPinnedIcon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAlElEQVQoU33PPQrCQBRF4fFnI2KfZVi5ARvdgo1l6mwmkCJVOgluwd5OwUoDtnoOxAei8cLXTN7cvEl/skCNDCMPfsUPO5zQwOHIDEvYtMURHe6wOVLgigvOePRyeDkyR4ln7wZ//7XfFBu8B23+aDJjrHGAwza7hjtHJvDmHg7b7Bru7AMjK7Rw2ObBVHDY5oGk9AKQNB2zy8MBTgAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    right: 5px;
+    top: 5px;
+}
