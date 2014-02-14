@@ -11,7 +11,12 @@ Resize columns by dragging on the separators.
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
-        enableColumnResizing: true
+        enableColumnResizing: true,
+        columnDefs: [
+          { field: 'name', minWidth: 200, width: '50%' },
+          { field: 'gender', width: '30%' },
+          { field: 'company', width: '20%' }
+        ]
       };
 
       $http.get('/data/100.json')

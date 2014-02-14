@@ -195,4 +195,6 @@ describe('ui.grid.resizeColumns', function () {
       });
     });
   });
+
+  // TODO(c0bra): add tests for minWidth and maxWidth. Need to test on double-click too, and on default 
 });

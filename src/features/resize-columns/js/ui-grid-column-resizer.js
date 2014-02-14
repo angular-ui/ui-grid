@@ -47,6 +47,10 @@
   }]);
 
   var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
+
+  module.constant('columnBounds', {
+    minWidth: 35
+  });
   
   /**
    * @ngdoc directive
@@ -88,7 +92,7 @@
      </doc:scenario>
    </doc:example>
    */  
-  module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', function ($log, $document, gridUtil, uiGridConstants) {
+  module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', 'columnBounds', function ($log, $document, gridUtil, uiGridConstants, columnBounds) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
@@ -165,6 +169,35 @@
 
           if (x < 0) { x = 0; }
           else if (x > uiGridCtrl.grid.gridWidth) { x = uiGridCtrl.grid.gridWidth; }
+
+          // The other column to resize (the one next to this one)
+          var col = $scope.col;
+          var otherCol;
+          if ($scope.position === 'left') {
+            // Get the column to the left of this one
+            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            otherCol = $scope.col;
+          }
+          else if ($scope.position === 'right') {
+            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+          }
+
+          // Get the diff along the X axis
+          var xDiff = x - startX;
+
+          // Get the width that this mouse would give the column
+          var newWidth = col.drawnWidth + xDiff;
+
+          // If the new width would be less than the column's allowably minimum width, don't allow it
+          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
+            x = x + (col.colDef.minWidth - newWidth);
+          }
+          else if (! col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
+            x = x + (col.colDef.minWidth - newWidth);
+          }
+          else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
+            x = x + (col.colDef.maxWidth - newWidth);
+          }
           
           resizeOverlay.css({ left: x + 'px' });
         }
@@ -189,21 +222,32 @@
 
           // The other column to resize (the one next to this one)
           var col = $scope.col;
-          var otherCol, multiplier;
+          var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
             col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
-            // otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
-            // multiplier = 1;
           }
           else if ($scope.position === 'right') {
             otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
-            // multiplier = -1;
+          }
+
+          // Get the new width
+          var newWidth = col.drawnWidth + xDiff;
+
+          // If the new width is less than the minimum width, make it the minimum width
+          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
+            newWidth = col.colDef.minWidth;
+          }
+          else if (! col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
+            newWidth = columnBounds.minWidth;
+          }
+          // 
+          if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
+            newWidth = col.colDef.maxWidth;
           }
           
-          col.colDef.width = col.drawnWidth + xDiff;
-          // otherCol.colDef.width = otherCol.drawnWidth + xDiff * -1;
+          col.colDef.width = newWidth;
 
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
@@ -237,7 +281,6 @@
 
         // On doubleclick, resize to fit all rendered cells
         $elm.on('dblclick', function() {
-          
           var col = $scope.col;
           var otherCol, multiplier;
 
@@ -272,6 +315,18 @@
                 }
               });
             });
+
+          // If the new width is less than the minimum width, make it the minimum width
+          if (col.colDef.minWidth && maxWidth < col.colDef.minWidth) {
+            maxWidth = col.colDef.minWidth;
+          }
+          else if (! col.colDef.minWidth && columnBounds.minWidth && maxWidth < columnBounds.minWidth) {
+            maxWidth = columnBounds.minWidth;
+          }
+          // 
+          if (col.colDef.maxWidth && maxWidth > col.colDef.maxWidth) {
+            maxWidth = col.colDef.maxWidth;
+          }
 
           col.colDef.width = maxWidth;
           
