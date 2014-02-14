@@ -63,6 +63,7 @@
               var canvasWidth = 0;
 
               var ret = '';
+
               uiGridCtrl.grid.columns.forEach(function(column, i) {
                 // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
                 //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
@@ -95,8 +96,6 @@
                   column.drawnWidth = column.width;
 
                   ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
-
-                  lastColumn = column;
                 }
               });
 
@@ -110,7 +109,8 @@
                 for (i = 0; i < percentArray.length; i++) {
                   column = percentArray[i];
 
-                  var percent = parseInt(parseFloat(column.width) / 100, 10);
+                  var percent = parseInt(column.width.replace(/%/g, ''), 10) / 100;
+
                   colWidth = percent * remainingWidth;
 
                   if (column.colDef.minWidth && colWidth < column.colDef.minWidth) {
@@ -123,8 +123,6 @@
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
-                    lastColumn = column;
-
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
                   }
@@ -132,13 +130,11 @@
                     colWidth = column.colDef.maxWidth;
 
                     remainingWidth = remainingWidth - colWidth;
-                    
+
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
-                    lastColumn = column;
 
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
@@ -146,7 +142,7 @@
                 }
 
                 percentArray.forEach(function(column) {
-                  var percent = parseInt(parseFloat(column.width) / 100, 10);
+                  var percent = parseInt(column.width.replace(/%/g, ''), 10) / 100;
                   var colWidth = percent * remainingWidth;
 
                   canvasWidth += colWidth;
@@ -154,8 +150,6 @@
                   column.drawnWidth = colWidth;
 
                   ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
-                  lastColumn = column;
                 });
               }
 
@@ -195,8 +189,6 @@
 
                     ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
-                    lastColumn = column;
-
                     // Remove this element from the percent array so it's not processed below
                     asterisksArray.splice(i, 1);
                   }
@@ -213,8 +205,6 @@
                   column.drawnWidth = colWidth;
 
                   ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
-                  lastColumn = column;
                 });
               }
 
