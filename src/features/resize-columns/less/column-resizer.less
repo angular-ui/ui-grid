@@ -5,7 +5,7 @@
   bottom: 0;
   width: 5px;
   position: absolute;
-  cursor: pointer;
+  cursor: col-resize;
 
   &.left {
     left: 0;
@@ -13,6 +13,12 @@
 
   &.right {
     right: 0;
+  }
+}
+
+.ui-grid {
+  &.column-resizing {
+    cursor: col-resize;
   }
 }
 
