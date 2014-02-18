@@ -2,7 +2,31 @@
 @name Tutorial: Column Resizing
 @description
 
-Resize columns by dragging on the separators.
+You can add column resizing by including the `ui.grid.resizeColumns` feature module in your application's dependencies.
+```
+angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
+```
+<br>
+<br>
+The `enableColumnResizing` option on your grid will enable resizing and turn it on for all columns by default.
+```
+$scope.gridOptions = {
+  enableColumnResizing: true
+};
+```
+<br>
+<br>
+You can disable it on a column by setting the `enableColumnResizing` property to false in its column definition.
+```
+$scope.gridOptions = {
+  enableColumnResizing: true,
+  columnDefs: [
+    { field: 'name' },
+    { field: 'gender', enableColumnResizing: false },
+    { field: 'company' }
+  ]
+};
+```
 
 @example
 <example module="app">
@@ -27,7 +51,10 @@ Resize columns by dragging on the separators.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      Drag on the column separator to resize; double-click to size according to cell contents.
+      <strong>Drag</strong> a the column separator to resize; <strong>double-click</strong> to size according to rendered column contents.
+      <br>
+      <br>
+      The column will obey any <i>minWidth</i> or <i>maxWidth</i> constraints you give it.
       <br>
       <br>
       <div ui-grid="gridOptions" class="grid"></div>
