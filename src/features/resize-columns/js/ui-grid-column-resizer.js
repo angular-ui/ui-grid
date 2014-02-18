@@ -2,7 +2,7 @@
   'use strict';
 
   // Extend the uiGridHeaderCell directive
-  angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$templateCache', '$compile', function ($log, $templateCache, $compile) {
+  angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$templateCache', '$compile', '$q', function ($log, $templateCache, $compile, $q) {
     return {
       // Run after the original uiGridHeaderCell
       priority: -10,
@@ -11,34 +11,43 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableColumnResizing && $scope.col.colDef.enableColumnResizing !== false) {
+            if (uiGridCtrl.grid.options.enableColumnResizing) {
+              var renderIndexDefer = $q.defer();
+
               $attrs.$observe('renderIndex', function (n, o) {
-                // $log.debug('renderIndex', $scope.$eval(n));
                 $scope.renderIndex = $scope.$eval(n);
+
+                renderIndexDefer.resolve();
               });
 
-              var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
+              renderIndexDefer.promise.then(function() {
+                var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
 
-              var resizerLeft = angular.element(columnResizerElm).clone();
-              var resizerRight = angular.element(columnResizerElm).clone();
+                var resizerLeft = angular.element(columnResizerElm).clone();
+                var resizerRight = angular.element(columnResizerElm).clone();
 
-              resizerLeft.attr('position', 'left');
-              resizerRight.attr('position', 'right');
+                resizerLeft.attr('position', 'left');
+                resizerRight.attr('position', 'right');
 
-              // $log.debug('$scope', $scope);
+                var col = $scope.col;
+                
+                // Get the column to the left of this one
+                var otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
 
-              // Don't append the left resizer if this is the first column
-              if ($scope.col.index !== 0) {
-                $elm.prepend(resizerLeft);
-              }
-              
-              // Don't append the right resizer if this is the last column
-              if ($scope.col.index !== $scope.grid.renderedColumns.length - 1) {
-                $elm.append(resizerRight);
-              }
+                // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
+                if ($scope.col.index !== 0 && otherCol.colDef.enableColumnResizing !== false) {
+                  $elm.prepend(resizerLeft);
+                }
+                
+                // Don't append the right resizer if this column has resizing disabled
+                //if ($scope.col.index !== $scope.grid.renderedColumns.length - 1 && $scope.col.colDef.enableColumnResizing !== false) {
+                if ($scope.col.colDef.enableColumnResizing !== false) {
+                  $elm.append(resizerRight);
+                }
 
-              $compile(resizerLeft)($scope);
-              $compile(resizerRight)($scope);
+                $compile(resizerLeft)($scope);
+                $compile(resizerRight)($scope);
+              });
             }
           }
         };
@@ -161,10 +170,6 @@
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
-          if (!uiGridCtrl.grid.element.hasClass('column-resizing')) {
-            uiGridCtrl.grid.element.addClass('column-resizing');
-          }
-
           x = event.clientX - gridLeft;
 
           if (x < 0) { x = 0; }
@@ -180,6 +185,15 @@
           }
           else if ($scope.position === 'right') {
             otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+          }
+
+          // Don't resize if it's disabled on this column
+          if (col.colDef.enableColumnResizing === false) {
+            return;
+          }
+
+          if (!uiGridCtrl.grid.element.hasClass('column-resizing')) {
+            uiGridCtrl.grid.element.addClass('column-resizing');
           }
 
           // Get the diff along the X axis
@@ -230,6 +244,11 @@
           }
           else if ($scope.position === 'right') {
             otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+          }
+
+          // Don't resize if it's disabled on this column
+          if (col.colDef.enableColumnResizing === false) {
+            return;
           }
 
           // Get the new width
