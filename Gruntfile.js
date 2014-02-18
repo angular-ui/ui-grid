@@ -373,11 +373,11 @@ module.exports = function(grunt) {
         },
         scripts: [
           '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js', // TODO(c0bra): REMOVE!
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js',
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-touch.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-touch.js',
         ],
         hiddenScripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],
