@@ -38,18 +38,12 @@ describe('ui.grid.resizeColumns', function () {
 
   describe('setting enableColumnResizing', function() {
     it('should by default cause resizer to be attached to the header elements', function() {
-      // $scope.gridOpts.enableColumnResizing = true;
-      // recompile();
-
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
       expect(resizers.size()).toEqual(4);
     });
 
     it('should only attach a right resizer to the first column', function() {
-      // $scope.gridOpts.enableColumnResizing = true;
-      // recompile();
-
       var firstColumn = $(grid).find('[ui-grid-header-cell]').first();
 
       var resizers = $(firstColumn).find('[ui-grid-column-resizer]');
@@ -61,9 +55,6 @@ describe('ui.grid.resizeColumns', function () {
     });
 
     it('should only attach a left resizer to the last column', function() {
-      // $scope.gridOpts.enableColumnResizing = true;
-      // recompile();
-
       var firstColumn = $(grid).find('[ui-grid-header-cell]').last();
 
       var resizers = $(firstColumn).find('[ui-grid-column-resizer]');
@@ -118,8 +109,8 @@ describe('ui.grid.resizeColumns', function () {
       $scope.$digest();
       
       var newColWidth = $(grid).find('.col0').first().width();
-
-      // How to handle this here?
+      
+      // Can't really tell how big the columns SHOULD be, we'll just expect them to be different in width now
       expect(newColWidth).not.toEqual(colWidth);
     });
   });
@@ -219,8 +210,6 @@ describe('ui.grid.resizeColumns', function () {
         $scope.$digest();
 
         var newWidth = $(grid).find('.col0').first().width();
-
-        dump(newWidth, minWidth);
 
         expect(newWidth >= minWidth).toEqual(true);
       });
