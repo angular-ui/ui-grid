@@ -464,7 +464,14 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
                            $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
                            function(fn) {
                              return $timeout(fn, 10, false);
-                           }
+                           },
+
+    numericAndNullSort: function (a, b) {
+      if (a === null) { return 1; }
+      if (b === null) { return -1; }
+      if (a === null && b === null) { return 0; }
+      return a - b;
+    }
   };
 
   ['width', 'height'].forEach(function (name) {

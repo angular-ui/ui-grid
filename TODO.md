@@ -1,14 +1,18 @@
 # TODO
 
+# CURRENT
+
+1. [TODO] - Add notes about browser version support and Angular version support to README.md
+
+
+# MORE
+
 1. `readableColumnNames` need to be overrideable by i18n.
 1. Add banners to compiled .css files (grunt-banner?)
 1. Add grunt-nuget task to autodeploy builds to nuget
-1. Try to reomve `npm install` commands from travis before-script
+1. Try to remove `npm install` commands from travis before-script
 1. e2e tests failing on travis, unable to connect to SauceLabs, or timing out?
   1. Maybe try BrowserStack?
-1. [DONE] Add util methods that will perform the same as jquery's .height() and .width() on elements.
-  1. Still need to test this with hidden elements, and add that functionality. We'll probably use that to calculate row height when possible.
-1. Need to make the docs pages allow the user to choose the unstable or stable release (or version) in a drop-down (like Angular does).
 1. Refactor elementHeight() calls in scrollbar code, shouldn't need to get it on every scroll event.
 1. [IDEA] - Plugin playground. Upload your own plugins and have live examples on a marketplace sort of thing.
 1. Make mouse wheel scroll N number of rows, not a specific amount of pixels.
@@ -29,26 +33,18 @@
    - Don't `copy` .jade files with the copy task.
 1. Naming inconsistencies - uiGridConstants vs gridUtil, etc.
 
-1. Horizontal scrolling
-   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
-   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and calculate the minimum number of rows to render.
-      - Basically find the set of smallest columns, according to their width, that still cover the viewport, and figure out how many are in the set, then set minCols to that
-      - Starting with the first column, add up the column widths until they are greater than the viewport width, then save that number of columns as the minimum. Continue going through the
-        column widths, subtracting the previous column's width and adding the next column's width. If at any point the total width is less than the viewport, increment the minimum number of columns.
-   - [IDEA] - Might need to dynamically set 'excessColumns'. With a 'scrollThreshold' of 4 and 'excessColumns' of 4, it was not rendering enough columns to the left of the viewport
-   - [TODO] - Figure out how to calculate the margin-left property on the columns when the columns have variable sizes. Might need to calc the widths of the rendered columns in order to get the offset adjustments
-
-
-
+1. Move column sizing stuff out of header directive.
 1. [IDEA] - Bind to 'resize' event and refresh grid on that
 1. Scrollbar not hiding on Mac OS?
 1. Border of scrollbar on hover doesn't appear darker than background
 1. Make a custom branch that adds requestAnimationFrame wrappers around anywhere we retrieve/modify reflow-triggering DOM values.
 1. [IDEA] - From s3shs on irc: add bootstrap2/3 less/css shims that will style the grid the same was a bootstrap table (similar to selectize: http://brianreavis.github.io/selectize.js/)
+1. [IDEA] - Use https://github.com/akoenig/imacss in a grunt task to turn the arrow svg to a data-uri and embed it in our css.
 
 
 # Done!
 
+1. [DONE] - [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollbar extends beyond the viewport...
 1. [DONE] Figure out how to run e2e tests on docs (look at angularjs source / protractor?)
 1. [DONE] Add --browsers option for testing on saucelabs with specific browser(s)
 1. [DONE] Make karmangular run in `watch` mode and in singlerun too.
@@ -73,3 +69,13 @@
 1. [DONE] - [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
    - Was including wrong ui-grid.css file
 1. [DONE] - Make scrollbar look like chrome's?
+1. [DONE] - Horizontal scrolling
+   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
+   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and calculate the minimum number of rows to render.
+      - Basically find the set of smallest columns, according to their width, that still cover the viewport, and figure out how many are in the set, then set minCols to that
+      - Starting with the first column, add up the column widths until they are greater than the viewport width, then save that number of columns as the minimum. Continue going through the
+        column widths, subtracting the previous column's width and adding the next column's width. If at any point the total width is less than the viewport, increment the minimum number of columns.
+   - [IDEA] - Might need to dynamically set 'excessColumns'. With a 'scrollThreshold' of 4 and 'excessColumns' of 4, it was not rendering enough columns to the left of the viewport
+   - [TODO] - Figure out how to calculate the margin-left property on the columns when the columns have variable sizes. Might need to calc the widths of the rendered columns in order to get the offset adjustments
+ 1. [DONE] - [IDEA] - Break out GridColumn into its own factory 
+ 1. [DONE] - [TODO] - Obey minWidth and maxWidth in colDef, in resizer [TODO] AND in the header width builder

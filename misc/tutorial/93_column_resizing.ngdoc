@@ -1,0 +1,69 @@
+@ngdoc overview
+@name Tutorial: Column Resizing
+@description
+
+You can add column resizing by including the `ui.grid.resizeColumns` feature module in your application's dependencies.
+```
+angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
+```
+<br>
+<br>
+The `enableColumnResizing` option on your grid will enable resizing and turn it on for all columns by default.
+```
+$scope.gridOptions = {
+  enableColumnResizing: true
+};
+```
+<br>
+<br>
+You can disable it on a column by setting the `enableColumnResizing` property to false in its column definition.
+```
+$scope.gridOptions = {
+  enableColumnResizing: true,
+  columnDefs: [
+    { field: 'name' },
+    { field: 'gender', enableColumnResizing: false },
+    { field: 'company' }
+  ]
+};
+```
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.resizeColumns']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableColumnResizing: true,
+        columnDefs: [
+          { field: 'name', minWidth: 200, width: '50%' },
+          { field: 'gender', width: '30%' },
+          { field: 'company', width: '20%' }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });gi
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>Drag</strong> a the column separator to resize; <strong>double-click</strong> to size according to rendered column contents.
+      <br>
+      <br>
+      The column will obey any <i>minWidth</i> or <i>maxWidth</i> constraints you give it.
+      <br>
+      <br>
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

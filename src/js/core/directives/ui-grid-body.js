@@ -128,11 +128,13 @@
         var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
           // GridUtil.requestAnimationFrame(function() {
             // Vertical scroll
+
+            uiGridCtrl.prevScrollArgs = args;
+
             if (args.y) {
               var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
               var scrollYPercentage = args.y.percentage;
-              $log.debug('scrollYPercentage', scrollYPercentage);
               var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
               
               uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
@@ -140,6 +142,8 @@
               uiGridCtrl.viewport[0].scrollTop = newScrollTop;
               
               uiGridCtrl.grid.options.offsetTop = newScrollTop;
+
+              uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop;
             }
 
             // Horizontal scroll
@@ -158,9 +162,9 @@
               }
 
               uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
-            }
 
-            uiGridCtrl.fireScrollingEvent();
+              uiGridCtrl.prevScrollArgs.x.pixels = newScrollLeft;
+            }
           // });
         });
 
@@ -273,10 +277,10 @@
           var moveYScale = deltaY / moveDuration;
           var moveXScale = deltaX / moveDuration;
 
-          var decelerateInterval = 125; // 1/8th second
-          var decelerateCount = 4; // == 1/2 second
-          var scrollYLength = 60 * directionY * moveYScale;
-          var scrollXLength = 60 * directionX * moveXScale;
+          var decelerateInterval = 63; // 1/16th second
+          var decelerateCount = 8; // == 1/2 second
+          var scrollYLength = 120 * directionY * moveYScale;
+          var scrollXLength = 120 * directionX * moveXScale;
 
           function decelerate() {
             $timeout(function() {

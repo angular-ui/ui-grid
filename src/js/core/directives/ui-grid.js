@@ -125,16 +125,23 @@
           self.grid.buildStyles($scope);
         }
 
+        var p = $q.defer();
+
         if (self.header) {
           // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
           $timeout(function() {
             self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+            p.resolve();
           });
         }
         else {
           // Timeout still needs to be here to trigger digest after styles have been rebuilt
-          $timeout(function() {});
+          $timeout(function() {
+            p.resolve();
+          });
         }
+
+        return p.promise;
       };
 
       var cellValueGetterCache = {};
@@ -146,8 +153,8 @@
       };
 
       //todo: throttle this event?
-      self.fireScrollingEvent = function() {
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLLING);
+      self.fireScrollingEvent = function(args) {
+        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
       };
 
     }]);

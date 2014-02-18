@@ -11,6 +11,8 @@
         'type': '@'
       },
       link: function($scope, $elm, $attrs, uiGridCtrl) {
+        var self = this;
+
         if (uiGridCtrl === undefined) {
           throw new Error('[ui-grid-scrollbar] uiGridCtrl is undefined!');
         }
@@ -27,6 +29,8 @@
           $elm.addClass('ui-grid-scrollbar-vertical');
         }
         else if ($scope.type === 'horizontal') {
+          uiGridCtrl.horizontalScrollbar = self;
+
           $elm.addClass('ui-grid-scrollbar-horizontal');
         }
 
@@ -84,10 +88,16 @@
         }
 
         if ($scope.type === 'vertical') {
-          uiGridCtrl.grid.registerStyleComputation(updateVerticalScrollbar);
+          uiGridCtrl.grid.registerStyleComputation({
+            priority: 10,
+            func: updateVerticalScrollbar
+          });
         }
         else if ($scope.type === 'horizontal') {
-          uiGridCtrl.grid.registerStyleComputation(updateHorizontalScrollbar);
+          uiGridCtrl.grid.registerStyleComputation({
+            priority: 10,
+            func: updateHorizontalScrollbar
+          });
         }
 
         // Only show the scrollbar when the canvas height is less than the viewport height
@@ -101,23 +111,23 @@
           }
         };
 
-        function getElmSize() {
+        var getElmSize = function() {
           if ($scope.type === 'vertical') {
             return gridUtil.elementHeight($elm, 'margin');
           }
           else if ($scope.type === 'horizontal') {
             return gridUtil.elementWidth($elm, 'margin');
           }
-        }
+        };
 
-        function getElmMaxBound() {
+        var getElmMaxBound = function() {
           if ($scope.type === 'vertical') {
             return uiGridCtrl.grid.getViewportHeight() - getElmSize();
           }
           else if ($scope.type === 'horizontal') {
             return uiGridCtrl.grid.getViewportWidth() - getElmSize();
           }
-        }
+        };
 
 
         /**
@@ -196,9 +206,7 @@
           }
 
           // The percentage that we've scrolled is the y axis delta divided by the total scrollable distance (which is the same as the bottom boundary)
-
-          //TODO: When this is part of ui.grid module, the event name should be a constant
-          // $log.debug('scrollArgs', scrollArgs);
+          
           $scope.$emit(uiGridConstants.events.GRID_SCROLL, scrollArgs);
         }
 
@@ -240,7 +248,6 @@
           // }
 
           // Store the new top in the y value
-
           if ($scope.type === 'vertical') {
             y = newScrollPosition;
 

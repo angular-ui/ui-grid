@@ -18,7 +18,7 @@ CONNECT_DOWNLOAD="Sauce_Connect.zip"
 
 if [ -z "$LOGS_DIR" ]
 then
-  $LOGS_DIR = "/tmp/angular-build/logs"
+  $LOGS_DIR="/tmp/angular-build/logs"
   mkdir -p $LOGS_DIR
 fi
 

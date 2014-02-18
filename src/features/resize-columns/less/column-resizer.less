@@ -1,0 +1,31 @@
+@import '../../../less/variables';
+
+.ui-grid-column-resizer {
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  position: absolute;
+  cursor: col-resize;
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+}
+
+.ui-grid {
+  &.column-resizing {
+    cursor: col-resize;
+  }
+}
+
+.ui-grid.column-resizing .ui-grid-resize-overlay {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: @gridBorderWidth;
+  background-color: darken(@verticalBarColor, 15%);
+}
