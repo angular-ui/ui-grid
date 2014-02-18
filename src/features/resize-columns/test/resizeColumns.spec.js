@@ -196,5 +196,105 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  // TODO(c0bra): add tests for minWidth and maxWidth. Need to test on double-click too, and on default 
+  describe('when a column has a minWidth', function() {
+    var minWidth;
+
+    beforeEach(function() {
+      minWidth = 200;
+
+      $scope.gridOpts.columnDefs = [
+        { field: 'name', minWidth: minWidth },
+        { field: 'gender' },
+        { field: 'company' }
+      ];
+
+      recompile();
+    });
+
+    describe('and you double-click its resizer, the column width', function() {
+      it('should not go below the minWidth', function() {
+        var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+
+        $(firstResizer).simulate('dblclick');
+        $scope.$digest();
+
+        var newWidth = $(grid).find('.col0').first().width();
+
+        dump(newWidth, minWidth);
+
+        expect(newWidth >= minWidth).toEqual(true);
+      });
+    });
+
+    describe('and you move its resizer left further than the minWidth, the column width', function() {
+      var initialX;
+
+      beforeEach(function() {
+        var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+        initialX = firstResizer.position().left;
+
+        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $scope.$digest();
+        
+        $(document).simulate('mouseup', { clientX: initialX - minWidth });
+        $scope.$digest();
+      });
+
+      it('should not go below the minWidth', function() {
+        var newWidth = $(grid).find('.col0').first().width();
+
+        expect(newWidth >= minWidth).toEqual(true);
+      });
+    });
+  });
+
+  describe('when a column has a maxWidth', function() {
+    var maxWidth;
+
+    beforeEach(function() {
+      maxWidth = 60;
+
+      $scope.gridOpts.columnDefs = [
+        { field: 'name', maxWidth: maxWidth },
+        { field: 'gender' },
+        { field: 'company' }
+      ];
+
+      recompile();
+    });
+
+    describe('and you double-click its resizer', function() {
+      it('the column width should not go above the maxWidth', function() {
+        var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+
+        $(firstResizer).simulate('dblclick');
+        $scope.$digest();
+
+        var newWidth = $(grid).find('.col0').first().width();
+
+        expect(newWidth <= maxWidth).toEqual(true);
+      });
+    });
+
+    describe('and you move its resizer right further than the maxWidth, the column width', function() {
+      var initialX;
+
+      beforeEach(function() {
+        var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
+        initialX = firstResizer.position().left;
+
+        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $scope.$digest();
+        
+        $(document).simulate('mouseup', { clientX: initialX + maxWidth });
+        $scope.$digest();
+      });
+
+      it('should not go above the maxWidth', function() {
+        var newWidth = $(grid).find('.col0').first().width();
+
+        expect(newWidth <= maxWidth).toEqual(true);
+      });
+    });
+  });
 });
