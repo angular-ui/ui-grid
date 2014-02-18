@@ -3,21 +3,21 @@
 @description
 
 You can add column resizing by including the `ui.grid.resizeColumns` feature module in your application's dependencies.
-```
+<pre>
 angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
-```
+</pre>
 <br>
 <br>
 The `enableColumnResizing` option on your grid will enable resizing and turn it on for all columns by default.
-```
+<pre>
 $scope.gridOptions = {
   enableColumnResizing: true
 };
-```
+</pre>
 <br>
 <br>
 You can disable it on a column by setting the `enableColumnResizing` property to false in its column definition.
-```
+<pre>
 $scope.gridOptions = {
   enableColumnResizing: true,
   columnDefs: [
@@ -26,7 +26,7 @@ $scope.gridOptions = {
     { field: 'company' }
   ]
 };
-```
+</pre>
 
 @example
 <example module="app">
