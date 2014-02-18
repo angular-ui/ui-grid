@@ -88,10 +88,8 @@
                 }
                 else if (angular.isNumber(column.width)) {
                   manualWidthSum = parseInt(manualWidthSum + column.width, 10);
-
-                  $log.debug('before', canvasWidth, column.width);
+                  
                   canvasWidth = parseInt(canvasWidth, 10) + parseInt(column.width, 10);
-                  $log.debug('manual new', canvasWidth, column.width);
 
                   column.drawnWidth = column.width;
 
