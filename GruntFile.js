@@ -151,8 +151,8 @@
         },
         ngtemplates: {
             ngGrid: {
-                options: { base: 'src/templates' },
-                src: ['src/templates/**.html'],
+                cwd: 'src/templates',
+                src: '*.html',
                 dest: 'build/templates.js'
             }
         },
