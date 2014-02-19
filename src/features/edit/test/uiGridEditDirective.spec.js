@@ -13,7 +13,7 @@ describe('uiGridEditDirective', function () {
     $templateCache.put('ui-grid/ui-grid', '<div/>');
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/uiGridHeaderCell', '<div/>');
-    $templateCache.put('ui-grid/edit/editableCell', '<div editable_cell_directive></div>');
+    $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
 
     scope = $rootScope.$new();
     scope.options = {};

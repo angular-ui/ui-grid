@@ -91,7 +91,7 @@
           col.cellEditableCondition = colDef.cellEditableCondition || gridOptions.cellEditableCondition || 'true';
 
           if (col.enableCellEdit) {
-            col.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('ui-grid/edit/editableCell');
+            col.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('ui-grid/editableCell');
             col.editableCellDirective = colDef.editableCellDirective || 'ui-grid-text-editor';
           }
 
@@ -329,7 +329,7 @@
               },
               post: function ($scope, $elm, $attrs) {
 
-                var html = $templateCache.get('ui-grid/edit/cellTextEditor');
+                var html = $templateCache.get('ui-grid/cellTextEditor');
                 html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
                 var cellElement = $compile(html)($scope);
                 $elm.append(cellElement);
