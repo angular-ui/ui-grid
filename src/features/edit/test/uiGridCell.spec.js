@@ -15,8 +15,8 @@ describe('ui.grid.edit GridCellDirective', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/edit/editableCell', '<div editable_cell_directive></div>');
-    $templateCache.put('ui-grid/edit/cellTextEditor', '<input ng-input="COL_FIELD" ng-model="COL_FIELD" ng-blur="stopEdit()" />');
+    $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
+    $templateCache.put('ui-grid/cellTextEditor', '<input ng-input="COL_FIELD" ng-model="COL_FIELD" ng-blur="stopEdit()" />');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();

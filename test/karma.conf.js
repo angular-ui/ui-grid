@@ -19,9 +19,13 @@ module.exports = function(config) {
       
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',
+      'src/features/**/js/**/*.js',
       'test/unit/**/*.spec.js',
+      'src/features/**/test/**/*.spec.js',
 
-      'dist/release/ui-grid.css'
+      'dist/release/ui-grid.css',
+
+      '.tmp/template.js' //templates
     ],
 
 
