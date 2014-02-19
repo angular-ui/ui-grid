@@ -36,6 +36,18 @@
           var cache = this._langs;
           cache[lower] = angular.copy(strings);
         },
+        getAllLangs: function () {
+          var langs = [];
+          if(!this._langs){
+            return langs;
+          }
+
+          for (var key in this._langs) {
+             langs.push(key);
+          }
+
+          return langs;
+        },
         setCurrent: function (lang) {
           this.current = lang.toLowerCase();
         },
@@ -72,6 +84,10 @@
           } else {
             langCache.add(langs, strings);
           }
+        },
+
+        getAllLangs: function () {
+          return langCache.getAllLangs();
         },
 
         get: function (lang) {
@@ -112,14 +128,14 @@
             // check for watchable property
             var lang = $scope.$eval($attrs[alias]);
             if (lang) {
-              // $scope.$watch($attrs[alias], i18nService.set);
+               $scope.$watch($attrs[alias], function(){
+                 i18nService.setCurrentLang(lang);
+               });
             } else if ($attrs.$$observers) {
-              // $scope.$on('$destroy', $attrs.$observe(alias, i18nService.set));
-            } else {
-              // fall back to the string value
-              lang = $attrs[alias];
+               $attrs.$observe(alias, function(){
+                 i18nService.setCurrentLang($attrs[alias] || i18nConstants.DEFAULT_LANG);
+               });
             }
-            i18nService.setCurrentLang(lang || i18nConstants.DEFAULT_LANG);
           }
         };
       }

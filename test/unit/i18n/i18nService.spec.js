@@ -21,6 +21,10 @@ describe('i18nService', function () {
       i18nService.setCurrentLang('tst');
       expect(i18nService.get().test).toBe('testlang');
     });
+    it('should return all langs', function () {
+      var langs = i18nService.getAllLangs();
+      expect(langs.length).toBeGreaterThan(8);
+    });
   });
 
 
