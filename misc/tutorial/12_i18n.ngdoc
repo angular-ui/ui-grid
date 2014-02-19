@@ -9,13 +9,16 @@ i18n
   <file name="app.js">
     var app = angular.module('app', ['ui.grid']);
 
-
-    app.controller('MainCtrl', ['$scope', function ($scope) {
+    app.controller('MainCtrl', ['$scope', 'i18nService', function ($scope, i18nService) {
+        $scope.langs = i18nService.getAllLangs();
+        $scope.lang = 'en';
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-i18n="en">
+      <select ng-model="lang" ng-options="l for l in langs"></select><br>
+
+      <div ui-i18n="{{lang}}">
          <p>Using attribute:</p>
          <p ui-t="groupPanel.description"></p>
          <br/>
