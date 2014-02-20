@@ -656,7 +656,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 self.config.sortInfo.columns[i] = c;
             }
         });
-        angular.forEach(self.config.sortInfo.columns, function(c){
+
+        var cols = angular.copy(self.config.sortInfo.columns);
+        angular.forEach(cols, function(c){
             self.sortData(c);
         });
     };
