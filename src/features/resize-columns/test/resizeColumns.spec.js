@@ -7,11 +7,11 @@ describe('ui.grid.resizeColumns', function () {
     { "name": "Beryl Rice", "gender": "female", "company": "Velity" },
     { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
   ];
-  
+
   beforeEach(module('ui.grid'));
   beforeEach(module('ui.grid.resizeColumns'));
 
-  beforeEach(inject(function(_$compile_, $rootScope) {
+  beforeEach(inject(function (_$compile_, $rootScope) {
     $scope = $rootScope;
     $compile = _$compile_;
 
@@ -20,10 +20,9 @@ describe('ui.grid.resizeColumns', function () {
       data: data
     };
 
-    grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
-    document.body.appendChild(grid[0]);
-
-    recompile = function() {
+    recompile = function () {
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
+      document.body.appendChild(grid[0]);
       $compile(grid)($scope);
       $scope.$digest();
     };
@@ -31,19 +30,19 @@ describe('ui.grid.resizeColumns', function () {
     recompile();
   }));
 
-  afterEach(function() {
+  afterEach(function () {
     angular.element(grid).remove();
     grid = null;
   });
 
-  describe('setting enableColumnResizing', function() {
-    it('should by default cause resizer to be attached to the header elements', function() {
+  describe('setting enableColumnResizing', function () {
+    it('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
       expect(resizers.size()).toEqual(5);
     });
 
-    it('should only attach a right resizer to the first column', function() {
+    it('should only attach a right resizer to the first column', function () {
       var firstColumn = $(grid).find('[ui-grid-header-cell]').first();
 
       var resizers = $(firstColumn).find('[ui-grid-column-resizer]');
@@ -54,7 +53,7 @@ describe('ui.grid.resizeColumns', function () {
       expect(resizers.first().hasClass('right')).toBe(true);
     });
 
-    xit('should only attach a left resizer to the last column', function() {
+    xit('should only attach a left resizer to the last column', function () {
       var firstColumn = $(grid).find('[ui-grid-header-cell]').last();
 
       var resizers = $(firstColumn).find('[ui-grid-column-resizer]');
@@ -66,8 +65,8 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('setting enableColumnResizing to false', function() {
-    it('should result in no resizer elements being attached to the column', function() {
+  describe('setting enableColumnResizing to false', function () {
+    it('should result in no resizer elements being attached to the column', function () {
       $scope.gridOpts.enableColumnResizing = false;
       recompile();
 
@@ -77,8 +76,8 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('setting flag on colDef to false', function() {
-    xit('should result in no resizer elements being attached to the column', function() {
+  describe('setting flag on colDef to false', function () {
+    xit('should result in no resizer elements being attached to the column', function () {
       $scope.gridOpts.columnDefs = [
         { field: 'name' },
         { field: 'gender', enableColumnResizing: false },
@@ -94,29 +93,28 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-
   // NOTE: these pixel sizes might fail in other browsers, due to font differences!
-  describe('when double-clicking a resizer', function() {
-    it('should resize the column to the maximum width of the rendered columns', function(done) {
+  describe('when double-clicking a resizer', function () {
+    it('should resize the column to the maximum width of the rendered columns', function (done) {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
       var colWidth = $(grid).find('.col0').first().width();
 
       expect(colWidth).toEqual(166);
-      
+
       firstResizer.trigger('dblclick');
 
       $scope.$digest();
-      
+
       var newColWidth = $(grid).find('.col0').first().width();
-      
+
       // Can't really tell how big the columns SHOULD be, we'll just expect them to be different in width now
       expect(newColWidth).not.toEqual(colWidth);
     });
   });
 
-  describe('clicking on a resizer', function() {
-    it('should cause the column separator overlay to be added', function() {
+  describe('clicking on a resizer', function () {
+    it('should cause the column separator overlay to be added', function () {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
       firstResizer.trigger('mousedown');
@@ -130,10 +128,10 @@ describe('ui.grid.resizeColumns', function () {
       expect(grid.hasClass('column-resizing')).toEqual(false);
     });
 
-    describe('and moving the mouse', function() {
+    describe('and moving the mouse', function () {
       var xDiff, initialWidth, initialX, overlay, initialOverlayX;
 
-      beforeEach(function() {
+      beforeEach(function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         // Get the initial width of the column
@@ -153,35 +151,35 @@ describe('ui.grid.resizeColumns', function () {
         $scope.$digest();
       });
 
-      it('should add the column-resizing class to the grid', function() {
+      it('should add the column-resizing class to the grid', function () {
         // The grid should have the resizing class
         expect(grid.hasClass('column-resizing')).toEqual(true);
       });
 
-      it('should cause the overlay to appear', function() {
+      it('should cause the overlay to appear', function () {
         expect(overlay.is(':visible')).toEqual(true);
       });
 
       // TODO(c0bra): This test is failing on Travis (PhantomJS on Linux).
-      xit('should cause the overlay to move', function() {
+      xit('should cause the overlay to move', function () {
         // TODO(c0bra): This tests fails on IE9 and Opera on linx. It gets 253 instead if 262 (9 pixels off)
         //expect($(overlay).position().left).toEqual( (initialX + xDiff + 1) ); // Extra one pixel here for grid border
         expect($(overlay).position().left).not.toEqual(initialX); // Extra one pixel here for grid border
       });
 
-      describe('then releasing the mouse', function() {
-        beforeEach(function() {
+      describe('then releasing the mouse', function () {
+        beforeEach(function () {
           $(document).simulate('mouseup', { clientX: initialX + xDiff });
           $scope.$digest();
         });
 
-        it('should cause the column to resize by the amount change in the X axis', function() {
+        it('should cause the column to resize by the amount change in the X axis', function () {
           var newWidth = $(grid).find('.col0').first().width();
 
           expect(newWidth - initialWidth).toEqual(xDiff);
         });
 
-        it('should remove the overlay', function() {
+        it('should remove the overlay', function () {
           var overlay = $(grid).find('.ui-grid-resize-overlay');
 
           expect(overlay.size()).toEqual(0);
@@ -190,10 +188,10 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('when a column has a minWidth', function() {
+  describe('when a column has a minWidth', function () {
     var minWidth;
 
-    beforeEach(function() {
+    beforeEach(function () {
       minWidth = 200;
 
       $scope.gridOpts.columnDefs = [
@@ -205,8 +203,8 @@ describe('ui.grid.resizeColumns', function () {
       recompile();
     });
 
-    describe('and you double-click its resizer, the column width', function() {
-      it('should not go below the minWidth', function() {
+    describe('and you double-click its resizer, the column width', function () {
+      it('should not go below the minWidth', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         $(firstResizer).simulate('dblclick');
@@ -218,21 +216,21 @@ describe('ui.grid.resizeColumns', function () {
       });
     });
 
-    describe('and you move its resizer left further than the minWidth, the column width', function() {
+    describe('and you move its resizer left further than the minWidth, the column width', function () {
       var initialX;
 
-      beforeEach(function() {
+      beforeEach(function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
         initialX = firstResizer.position().left;
 
         $(firstResizer).simulate('mousedown', { clientX: initialX });
         $scope.$digest();
-        
+
         $(document).simulate('mouseup', { clientX: initialX - minWidth });
         $scope.$digest();
       });
 
-      it('should not go below the minWidth', function() {
+      it('should not go below the minWidth', function () {
         var newWidth = $(grid).find('.col0').first().width();
 
         expect(newWidth >= minWidth).toEqual(true);
@@ -240,10 +238,10 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('when a column has a maxWidth', function() {
+  describe('when a column has a maxWidth', function () {
     var maxWidth;
 
-    beforeEach(function() {
+    beforeEach(function () {
       maxWidth = 60;
 
       $scope.gridOpts.columnDefs = [
@@ -255,8 +253,8 @@ describe('ui.grid.resizeColumns', function () {
       recompile();
     });
 
-    describe('and you double-click its resizer', function() {
-      it('the column width should not go above the maxWidth', function() {
+    describe('and you double-click its resizer', function () {
+      it('the column width should not go above the maxWidth', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         $(firstResizer).simulate('dblclick');
@@ -268,21 +266,21 @@ describe('ui.grid.resizeColumns', function () {
       });
     });
 
-    describe('and you move its resizer right further than the maxWidth, the column width', function() {
+    describe('and you move its resizer right further than the maxWidth, the column width', function () {
       var initialX;
 
-      beforeEach(function() {
+      beforeEach(function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
         initialX = firstResizer.position().left;
 
         $(firstResizer).simulate('mousedown', { clientX: initialX });
         $scope.$digest();
-        
+
         $(document).simulate('mouseup', { clientX: initialX + maxWidth });
         $scope.$digest();
       });
 
-      it('should not go above the maxWidth', function() {
+      it('should not go above the maxWidth', function () {
         var newWidth = $(grid).find('.col0').first().width();
 
         expect(newWidth <= maxWidth).toEqual(true);
