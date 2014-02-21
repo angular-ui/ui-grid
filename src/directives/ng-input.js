@@ -8,8 +8,8 @@ ngGridDirectives.directive('ngInput', [function() {
                 oldCellValue = ngModel.$modelValue;
                 dereg(); // only run this watch once, we don't want to overwrite our stored value when the input changes
             });
-            
-            elm.bind('keydown', function(evt) {
+
+            function keydown (evt) {
                 switch (evt.keyCode) {
                     case 37: // Left arrow
                     case 38: // Up arrow
@@ -33,15 +33,27 @@ ngGridDirectives.directive('ngInput', [function() {
                 }
 
                 return true;
+            }
+            
+            elm.bind('keydown', keydown);
+
+            function click (evt) {
+                evt.stopPropagation();
+            }
+
+            elm.bind('click', click); 
+
+            function mousedown (evt) {
+                evt.stopPropagation();
+            }
+
+            elm.bind('mousedown', mousedown);
+
+            elm.on('$destroy', function() {
+                elm.off('keydown', keydown);
+                elm.off('click', click);
+                elm.off('mousedown', mousedown);
             });
-
-            elm.bind('click', function(evt) {
-                evt.stopPropagation();
-            }); 
-
-            elm.bind('mousedown', function(evt) {
-                evt.stopPropagation();
-            }); 
 
             scope.$on('ngGridEventStartCellEdit', function () {
                 elm.focus();

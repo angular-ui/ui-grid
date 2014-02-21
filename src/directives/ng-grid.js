@@ -9,10 +9,27 @@
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+
+                    // Set up cleanup now in case something fails
+                    $scope.$on('$destroy', function cleanOptions() {
+                        delete options.gridDim;
+                        delete options.selectRow;
+                        delete options.selectItem;
+                        delete options.selectAll;
+                        delete options.selectVisible;
+                        delete options.groupBy;
+                        delete options.sortBy;
+                        delete options.gridId;
+                        delete options.ngGrid;
+                        delete options.$gridScope;
+                        delete options.$gridServices;
+                        // Plugins should already have been killed as they are children of $scope
+                    });
+
                     return grid.init().then(function() {
                         // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                         if (typeof options.columnDefs === "string") {
-                            $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
                                 if (!a) {
                                     grid.refreshDomSizes();
                                     grid.buildColumns();
@@ -25,7 +42,7 @@
                                 grid.buildColumns();
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
-                            }, true);
+                            }, true));
                         }
                         else {
                             grid.buildColumns();
@@ -33,7 +50,7 @@
 
                         // Watch totalServerItems if it's a string
                         if (typeof options.totalServerItems === "string") {
-                            $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
                                 // If the newTotal is not defined (like during init, set the value to 0)
                                 if (!angular.isDefined(newTotal)) {
                                     $scope.totalServerItems = 0;
@@ -42,7 +59,7 @@
                                 else {
                                     $scope.totalServerItems = newTotal;
                                 }
-                            });
+                            }));
                         }
                         // If it's NOT a string, then just set totalServerItems to 0 since they should only be setting this if using a string
                         else {
@@ -71,11 +88,11 @@
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data, dataWatcher));
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data + '.length', function() {
                                 dataWatcher($scope.$eval(options.data));
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
-                            });
+                            }));
                         }
                         
                         grid.footerController = new ngFooter($scope, grid);

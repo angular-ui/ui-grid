@@ -15,8 +15,21 @@
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+
+            grid.$groupPanel.on('$destroy', function() {
+                grid.$groupPanel.off('mousedown');
+            });
+
+            grid.$headerScroller.on('$destroy', function() {
+                grid.$headerScroller.off('mousedown');
+            });
+
             if (grid.config.enableColumnReordering) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
+
+                grid.$headerScroller.on('$destroy', function() {
+                    grid.$headerScroller.off('drop');
+                });
             }
         }
         $scope.$watch('renderedColumns', function() {
@@ -42,15 +55,23 @@
                     //See more here: http://api.jquery.com/category/events/event-object/
                     if (col.addEventListener) { //IE8 doesn't have drag drop or event listeners
                         col.addEventListener('dragstart', self.dragStart);
+
+                        angular.element(col).on('$destroy', function() {
+                            col.off('dragstart');
+                        });
                     }
                 }
             });
             if (navigator.userAgent.indexOf("MSIE") !== -1){
                 //call native IE dragDrop() to start dragging
-                grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+                var sortColumn = grid.$root.find('.ngHeaderSortColumn');
+                sortColumn.bind('selectstart', function () { 
                     this.dragDrop(); 
                     return false; 
-                });	
+                });
+                angular.element(sortColumn).on('$destroy', function() {
+                    sortColumn.off('selectstart');
+                });
             }
         } else {
             grid.$root.find('.ngHeaderSortColumn').draggable({
@@ -85,7 +106,11 @@
                         groupItem.bind('selectstart', function () { 
                             this.dragDrop(); 
                             return false; 
-                        });	
+                        });
+
+                        groupItem.on('$destroy', function() {
+                            groupItem.off('selectstart');
+                        });
                     }
                 }
                 // Save the column for later.
