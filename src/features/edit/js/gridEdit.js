@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-   /**
+  /**
    * @ngdoc overview
    * @name ui.grid.edit
    * @description
@@ -58,16 +58,16 @@
          */
         isStartEditKey: function (evt) {
           if (evt.keyCode === uiGridConstants.keymap.LEFT ||
-             (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey) ||
+            (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey) ||
 
-              evt.keyCode === uiGridConstants.keymap.RIGHT ||
-              evt.keyCode === uiGridConstants.keymap.TAB ||
+            evt.keyCode === uiGridConstants.keymap.RIGHT ||
+            evt.keyCode === uiGridConstants.keymap.TAB ||
 
-              evt.keyCode === uiGridConstants.keymap.UP ||
-             (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey) ||
+            evt.keyCode === uiGridConstants.keymap.UP ||
+            (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey) ||
 
-              evt.keyCode === uiGridConstants.keymap.DOWN ||
-              evt.keyCode === uiGridConstants.keymap.ENTER) {
+            evt.keyCode === uiGridConstants.keymap.DOWN ||
+            evt.keyCode === uiGridConstants.keymap.ENTER) {
             return false;
 
           }
@@ -215,27 +215,30 @@
             registerBeginEditEvents();
 
             function registerBeginEditEvents() {
-              $elm.on('dblclick', function () {
-                beginEdit();
-              });
-              $elm.on('keydown', function (evt) {
-                if (uiGridEditService.isStartEditKey(evt)) {
-                  beginEdit();
-                }
-              });
+              $elm.on('dblclick', beginEdit);
+              $elm.on('keydown', beginEditKeyDown);
               if ($scope.col.enableCellEditOnFocus) {
-                $elm.find('div').on('focus', function (evt) {
-                  evt.stopPropagation();
-                  beginEdit();
-                });
+                $elm.find('div').on('focus', beginEditFocus);
               }
             }
 
             function cancelBeginEditEvents() {
-              $elm.off('dblclick');
-              $elm.off('keydown');
+              $elm.off('dblclick', beginEdit);
+              $elm.off('keydown', beginEditKeyDown);
               if ($scope.col.enableCellEditOnFocus) {
-                $elm.find('div').off('focus');
+                $elm.find('div').off('focus', beginEditFocus);
+              }
+            }
+
+            function beginEditFocus(evt){
+              evt.stopPropagation();
+              beginEdit();
+            }
+
+
+            function beginEditKeyDown(evt){
+              if (uiGridEditService.isStartEditKey(evt)) {
+                beginEdit();
               }
             }
 
@@ -356,7 +359,6 @@
                       $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                       break;
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
-                      evt.stopPropagation();
                       $scope.stopEdit();
                       break;
                   }
