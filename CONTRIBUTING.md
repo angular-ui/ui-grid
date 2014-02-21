@@ -3,6 +3,8 @@
 Please take a moment to review this document in order to make the contribution
 process easy and effective for everyone involved.
 
+##Note: We are no longer accepting feature based pull requests based on the 2.* branch. All active feature development is happening in the 3.0 branch. PRs there are encouraged and will be celebrated with virtual high fives all around. 
+
 Following these guidelines helps to communicate that you respect the time of
 the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue or assessing
