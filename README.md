@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/angular-ui/ng-grid.png)](https://travis-ci.org/angular-ui/ng-grid)
 
+###Note: We are no longer accepting feature based pull requests based on the 2.* branch. All active feature development is happening in the [3.0 branch](https://github.com/angular-ui/ng-grid/tree/3.0). PRs there are encouraged and will be celebrated with virtual high fives all around. 
+
 __Contributors:__
 
 ng-grid Team:
