@@ -804,10 +804,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             $scope.$emit('ngGridEventScroll');
         }
         var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
+        var viewPortHeightInRow = Math.ceil(self.$viewport[0].offsetHeight / self.config.rowHeight);
         var newRange;
         if (self.filteredRows.length > self.config.virtualizationThreshold) {
             // Have we hit the threshold going down?
-            if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+            if (self.prevScrollTop < scrollTop && rowIndex + viewPortHeightInRow < self.prevScrollIndex + SCROLL_THRESHOLD) {
                 return;
             }
             //Have we hit the threshold going up?
