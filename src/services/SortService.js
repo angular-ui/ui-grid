@@ -82,6 +82,45 @@
         }
     };
     //#endregion
+    //precalculate the sort data for all objects to eliminate the need to do it
+    //in each call of arr.sort(function(){})
+    sortService.preCalcSortData = function(d, order, $parse){
+        var dLength = d.length,
+            l = order.length,
+            results = [],
+            item,
+            ii, jj,
+            orderItem;
+        for(ii = 0; ii < dLength; ii++){
+            item = d[ii];
+            var newItem = {
+                _orig: item,
+                _index: ii
+            };
+            for(jj = 0; jj < l; jj++){
+                orderItem = order[jj];
+                newItem[orderItem] = $parse(orderItem)(item);
+            }
+            results.push(newItem);
+        }
+        return results;
+    };
+    //pregather the sort functions into an object.  IE8 really struggles
+    //when there are lots of fn calls, even if the call doesn't do much.
+    //so pulling the getSortFn out of the arr.sort(function(){}) helps
+    sortService.preCalcSortFns = function(sortInfo, data){
+        var cols = sortInfo.columns,
+            len = cols.length,
+            result = {},
+            col;
+
+        for(var ii = 0; ii < len; ii++){
+            col = cols[ii];
+            result[ii] = sortService.getSortFn(col, data);
+        }
+
+        return result;
+    };
     // the core sorting logic trigger
     sortService.sortData = function(sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
@@ -90,23 +129,24 @@
         }
         var l = sortInfo.fields.length,
             order = sortInfo.fields,
-            col,
             direction,
+            precalcLn,
             // IE9 HACK.... omg, I can't reference data array within the sort fn below. has to be a separate reference....!!!!
-            d = data.slice(0);
+            d = data.slice(0),
+            precalc = sortService.preCalcSortData(data, order, $parse),
+            sortFns = sortService.preCalcSortFns(sortInfo, data);
         //now actually sort the data
-        data.sort(function (itemA, itemB) {
+        precalc.sort(function (itemA, itemB) {
             var tem = 0,
                 indx = 0,
                 sortFn;
             while (tem === 0 && indx < l) {
                 // grab the metadata for the rest of the logic
-                col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx];
-                sortFn = sortService.getSortFn(col, d);
-                
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
+                sortFn = sortFns[indx];
+
+                var propA = itemA[order[indx]];
+                var propB = itemB[order[indx]];
                 // we want to allow zero values to be evaluated in the sort function
                 if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
                     // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
@@ -132,6 +172,15 @@
                 return 0 - tem;
             }
         });
+
+        //clear the current array
+        data.length = 0;
+
+        precalcLn = precalc.length;
+        for(var ii = 0; ii < precalcLn; ii++){
+            data.push(d[precalc[ii]["_index"]]);
+        }
+
     };
     sortService.Sort = function(sortInfo, data) {
         if (sortService.isSorting) {
