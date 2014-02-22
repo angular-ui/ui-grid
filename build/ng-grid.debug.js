@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/19/2014 17:34
+* Compiled At: 02/21/2014 22:16
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3479,6 +3479,21 @@ window.ngGrid.i18n['fr'] = {
     ngPagerPrevTitle: 'Page précédente',
     ngPagerLastTitle: 'Dernière page'
 };
+window.ngGrid.i18n['nl'] = {
+    ngAggregateLabel: 'items',
+    ngGroupPanelDescription: 'Sleep hier een kolomkop om op te groeperen.',
+    ngSearchPlaceHolder: 'Zoeken...',
+    ngMenuText: 'Kies kolommen:',
+    ngShowingItemsLabel: 'Toon items:',
+    ngTotalItemsLabel: 'Totaal items:',
+    ngSelectedItemsLabel: 'Geselecteerde items:',
+    ngPageSizeLabel: 'Pagina grootte:, ',
+    ngPagerFirstTitle: 'Eerste pagina',
+    ngPagerNextTitle: 'Volgende pagina',
+    ngPagerPrevTitle: 'Vorige pagina',
+    ngPagerLastTitle: 'Laatste pagina'
+};
+
 window.ngGrid.i18n['pt-br'] = {
     ngAggregateLabel: 'itens',
     ngGroupPanelDescription: 'Arraste e solte uma coluna aqui para agrupar por essa coluna',
@@ -3727,7 +3742,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div ng-show=\"showFilter\">\r" +
     "\n" +
-    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterText\"/>\r" +
+    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterOptions.filterText\"/>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
@@ -3751,7 +3766,8 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    </div>\r" +
     "\n" +
-    "</div>"
+    "</div>\r" +
+    "\n"
   );
 
 
