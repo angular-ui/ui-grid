@@ -149,6 +149,23 @@
                 tasks: ['less']
             }
         },
+        'regex-replace': {
+            dist: {
+                src: ['src/templates/**.html'],
+                actions: [
+                    {
+                        search: '\{\{',
+                        replace: '<%= grunt.option("startSymbol") %>',
+                        flags: 'g'
+                    },
+                    {
+                        search: '\}\}',
+                        replace: '<%= grunt.option("endSymbol") %>',
+                        flags: 'g'
+                    }
+                ]
+            }
+        },
         ngtemplates: {
             ngGrid: {
                 options: { base: 'src/templates' },
@@ -296,16 +313,25 @@
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-regex-replace');
+
+    // Task to build templates with symbol replacements as needed
+    grunt.registerTask('buildtemplates', function() {
+        if (grunt.option('startSymbol') || grunt.option('endSymbol')) {
+            grunt.task.run('regex-replace');
+        }
+        grunt.task.run('ngtemplates');
+    });
 
     // Old default task
-    grunt.registerTask('build', ['less', 'ngtemplates', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('build', ['less', 'buildtemplates', 'concat', 'uglify', 'clean']);
 
     // Default task(s).
     grunt.registerTask('default', 'No default task', function() {
         grunt.log.write('The old default task has been moved to "build" to prevent accidental triggering');
     });
 
-    grunt.registerTask('debug', ['less', 'ngtemplates', 'concat:debug', 'clean']);
-    grunt.registerTask('prod', ['less', 'ngtemplates', 'concat:prod', 'uglify', 'clean']);
-    grunt.registerTask('version', ['ngtemplates', 'concat:version', 'uglify:version', 'clean']);
+    grunt.registerTask('debug', ['less', 'buildtemplates', 'concat:debug', 'clean']);
+    grunt.registerTask('prod', ['less', 'buildtemplates', 'concat:prod', 'uglify', 'clean']);
+    grunt.registerTask('version', ['buildtemplates', 'concat:version', 'uglify:version', 'clean']);
 };
