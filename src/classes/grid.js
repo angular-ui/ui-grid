@@ -39,6 +39,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enables cell editing on focus
         enableCellEditOnFocus: false,
+
+        //Disable EndCellEdit when input is invalid
+        disableEndCellEditWhenInvalidInput: false,
         
         //Enables cell selection.
         enableCellSelection: false,
@@ -735,6 +738,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
     $scope.enableCellSelection = self.config.enableCellSelection;
     $scope.enableCellEditOnFocus = self.config.enableCellEditOnFocus;
+    $scope.disableEndCellEditWhenInvalidInput = self.config.disableEndCellEditWhenInvalidInput;
     $scope.footer = null;
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
