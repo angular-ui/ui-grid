@@ -12,26 +12,35 @@
                     self.onGroupDrop(event);
                 }
             });
+
+            grid.$groupPanel.on('$destroy', function() {
+                grid.$groupPanel = null;
+            });
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
                 grid.$groupPanel.off('mousedown');
-            });
 
-            grid.$headerScroller.on('$destroy', function() {
-                grid.$headerScroller.off('mousedown');
+                grid.$groupPanel = null;
             });
 
             if (grid.config.enableColumnReordering) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
-
-                grid.$headerScroller.on('$destroy', function() {
-                    grid.$headerScroller.off('drop');
-                });
             }
+
+            grid.$headerScroller.on('$destroy', function() {
+                grid.$headerScroller.off('mousedown');
+
+                if (grid.config.enableColumnReordering) {
+                    grid.$headerScroller.off('drop');
+                }
+
+                grid.$headerScroller = null;
+            });
         }
+
         $scope.$on('$destroy', $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
         }));
@@ -75,19 +84,21 @@
                 });
             }
         } else {
-            grid.$root.find('.ngHeaderSortColumn').draggable({
-                helper: 'clone',
-                appendTo: 'body',
-                stack: 'div',
-                addClasses: false,
-                start: function(event) {
-                    self.onHeaderMouseDown(event);
-                }
-            }).droppable({
-                drop: function(event) {
-                    self.onHeaderDrop(event);
-                }
-            });
+            if (grid.$root) {
+                grid.$root.find('.ngHeaderSortColumn').draggable({
+                    helper: 'clone',
+                    appendTo: 'body',
+                    stack: 'div',
+                    addClasses: false,
+                    start: function(event) {
+                        self.onHeaderMouseDown(event);
+                    }
+                }).droppable({
+                    drop: function(event) {
+                        self.onHeaderDrop(event);
+                    }
+                });
+            }
         }
     };
     self.onGroupMouseDown = function(event) {
@@ -237,7 +248,7 @@
 
         $scope.$on('$destroy', function(){
             $(window).off('resize.nggrid', windowResize);
-            $(grid.$root.parent()).off('resize.nggrid', parentResize);
+            // $(grid.$root.parent()).off('resize.nggrid', parentResize);
         });
     };
     // In this example we want to assign grid events.
