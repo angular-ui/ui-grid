@@ -19,9 +19,9 @@
                     } else {
                         iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
                     }
-					$scope.$on('ngGridEventDigestRow', function(){
+					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
-					});
+					}));
                 }
             };
         }

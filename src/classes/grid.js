@@ -444,9 +444,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     totalWidth += ngColumn.width;
                     var temp = ngColumn;
 
-                    $scope.$on("ngGridEventData", function () {
+                    $scope.$on('$destroy', $scope.$on("ngGridEventData", function () {
                         self.resizeOnData(temp);
-                    });
+                    }));
+
                     return;
                 } else if (t.indexOf("*") !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
                     if (ngColumn.visible !== false) {
@@ -547,7 +548,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
             self.searchProvider = new ngSearchProvider($scope, self, $filter);
             self.styleProvider = new ngStyleProvider($scope, self);
-            $scope.$watch('configGroups', function(a) {
+            $scope.$on('$destroy', $scope.$watch('configGroups', function(a) {
               var tempArr = [];
               angular.forEach(a, function(item) {
                 tempArr.push(item.field || item);
@@ -555,29 +556,29 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               self.config.groups = tempArr;
               self.rowFactory.filteredRowsChanged();
               $scope.$emit('ngGridEventGroups', a);
-            }, true);
-            $scope.$watch('columns', function (a) {
+            }, true));
+             $scope.$on('$destroy', $scope.$watch('columns', function (a) {
                 if(!$scope.isColumnResizing){
                     domUtilityService.RebuildGrid($scope, self);
                 }
                 $scope.$emit('ngGridEventColumns', a);
-            }, true);
-            $scope.$watch(function() {
+            }, true));
+             $scope.$on('$destroy', $scope.$watch(function() {
                 return options.i18n;
             }, function(newLang) {
                 $utils.seti18n($scope, newLang);
-            });
+            }));
             self.maxCanvasHt = self.calcMaxCanvasHeight();
 
             if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                $scope.$watch(function() {
+                $scope.$on('$destroy', $scope.$watch(function() {
                     return self.config.sortInfo;
                 }, function(sortInfo){
                     if (!sortService.isSorting) {
                         self.sortColumnsInit();
                         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
                     }
-                },true);
+                }, true));
             }
         });
 

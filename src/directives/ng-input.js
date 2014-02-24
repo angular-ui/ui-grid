@@ -55,10 +55,10 @@ ngGridDirectives.directive('ngInput', [function() {
                 elm.off('mousedown', mousedown);
             });
 
-            scope.$on('ngGridEventStartCellEdit', function () {
+            scope.$on('$destroy', scope.$on('ngGridEventStartCellEdit', function () {
                 elm.focus();
                 elm.select();
-            });
+            }));
 
             angular.element(elm).bind('blur', function () {
                 scope.$emit('ngGridEventEndCellEdit');

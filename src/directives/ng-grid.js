@@ -12,18 +12,36 @@
 
                     // Set up cleanup now in case something fails
                     $scope.$on('$destroy', function cleanOptions() {
-                        delete options.gridDim;
-                        delete options.selectRow;
-                        delete options.selectItem;
-                        delete options.selectAll;
-                        delete options.selectVisible;
-                        delete options.groupBy;
-                        delete options.sortBy;
-                        delete options.gridId;
-                        delete options.ngGrid;
-                        delete options.$gridScope;
-                        delete options.$gridServices;
+                        // delete options.gridDim;
+                        // delete options.selectRow;
+                        // delete options.selectItem;
+                        // delete options.selectAll;
+                        // delete options.selectVisible;
+                        // delete options.groupBy;
+                        // delete options.sortBy;
+                        // delete options.gridId;
+                        // delete options.ngGrid;
+                        // delete options.$gridScope;
+                        // delete options.$gridServices;
+                        options.gridDim = null;
+                        options.selectRow = null;
+                        options.selectItem = null;
+                        options.selectAll = null;
+                        options.selectVisible = null;
+                        options.groupBy = null;
+                        options.sortBy = null;
+                        options.gridId = null;
+                        options.ngGrid = null;
+                        options.$gridScope = null;
+                        options.$gridServices = null;
+
+                        $scope.domAccessProvider.grid = null;
+
                         // Plugins should already have been killed as they are children of $scope
+
+                        // Remove the grid's stylesheet from dom
+                        angular.element(grid.styleSheet).remove();
+                        grid.styleSheet = null;
                     });
 
                     return grid.init().then(function() {
@@ -156,13 +174,14 @@
                         options.ngGrid = grid;
                         options.$gridScope = $scope;
                         options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
-                        $scope.$on('ngGridEventDigestGrid', function(){
+
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGrid', function(){
                             domUtilityService.digest($scope.$parent);
-                        });         
+                        }));
                         
-                        $scope.$on('ngGridEventDigestGridParent', function(){
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGridParent', function(){
                             domUtilityService.digest($scope.$parent);
-                        });
+                        }));
                         // set up the columns 
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
@@ -172,8 +191,13 @@
                             if (typeof p === "function") {
                                 p = new p(); //If p is a function, then we assume it is a class.
                             }
-                            p.init($scope.$new(), grid, options.$gridServices);
+                            var newScope = $scope.$new();
+                            p.init(newScope, grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;
+
+                            $scope.$on('$destroy', function() {
+                                newScope.destroy();
+                            });
                         });
                         //send initi finalize notification.
                         if (typeof options.init === "function") {

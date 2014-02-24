@@ -6,10 +6,10 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 
             $scope.$broadcast('ngGridEventStartCellEdit');
 
-            $scope.$on('ngGridEventEndCellEdit', function() {
+            $scope.$on('$destroy', $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
                 domUtilityService.digest($scope);
-            });
+            }));
         };
 
         return function($scope, elm) {

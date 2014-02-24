@@ -32,9 +32,9 @@
                 });
             }
         }
-        $scope.$watch('renderedColumns', function() {
+        $scope.$on('$destroy', $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
-        });
+        }));
     };
     self.dragStart = function(evt){		
       //FireFox requires there to be dataTransfer if you want to drag and drop.
@@ -57,7 +57,8 @@
                         col.addEventListener('dragstart', self.dragStart);
 
                         angular.element(col).on('$destroy', function() {
-                            col.off('dragstart');
+                            angular.element(col).off('dragstart', self.dragStart);
+                            col.removeEventListener(self.dragStart);
                         });
                     }
                 }
@@ -100,6 +101,10 @@
                     groupItem.attr('draggable', 'true');
                     if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
                         this.addEventListener('dragstart', self.dragStart); 
+
+                        angular.element(this).on('$destroy', function() {
+                            this.removeEventListener('dragstart', self.dragStart); 
+                        });
                     }
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging

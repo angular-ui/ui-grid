@@ -163,7 +163,7 @@
     };
 
     if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
+         $scope.$on('$destroy', $scope.$watch('columns', function (cs) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
@@ -183,23 +183,23 @@
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
                 }
             }
-        });
+        }));
     }
 
-    $scope.$watch(
+     $scope.$on('$destroy', $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
         },
         function (a) {
             $scope.filterText = a;
         }
-    );
+    ));
 
-    $scope.$watch('filterText', function(a){
+    $scope.$on('$destroy', $scope.$watch('filterText', function(a){
         if (!self.extFilter) {
             $scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+    }));
 };

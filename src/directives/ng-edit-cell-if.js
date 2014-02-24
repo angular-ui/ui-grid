@@ -15,7 +15,7 @@ ngGridDirectives.directive('ngEditCellIf', [function () {
         var childElement;
         var childScope;
  
-        scope.$watch(attr['ngEditCellIf'], function (newValue) {
+         scope.$on('$destroy', scope.$watch(attr['ngEditCellIf'], function (newValue) {
           if (childElement) {
             childElement.remove();
             childElement = undefined;
@@ -32,7 +32,7 @@ ngGridDirectives.directive('ngEditCellIf', [function () {
               element.after(clone);
             });
           }
-        });
+        }));
       };
     }
   };

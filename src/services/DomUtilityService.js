@@ -36,11 +36,11 @@
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
 
-        $scope.$watch(function () {
+        $scope.$on('$destroy', $scope.$watch(function () {
             return grid.$viewport.scrollLeft();
         }, function (newLeft) {
             return grid.$headerContainer.scrollLeft(newLeft);
-        });
+        }));
         domUtilityService.UpdateGridLayout($scope, grid);
     };
     domUtilityService.getRealWidth = function (obj) {

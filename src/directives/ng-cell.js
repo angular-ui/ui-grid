@@ -30,9 +30,9 @@
                         $scope.domAccessProvider.selectionHandlers($scope, iElement);
                     }
                     
-                    $scope.$on('ngGridEventDigestCell', function() {
+                    $scope.$on('$destroy', $scope.$on('ngGridEventDigestCell', function() {
                         domUtilityService.digest($scope);
-                    });
+                    }));
                 }
             };
         }
