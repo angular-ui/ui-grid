@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/19/2014 17:34
+* Compiled At: 02/24/2014 10:55
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -227,11 +227,25 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
 
-        $scope.$watch(function () {
+        var scopeDereg = $scope.$watch(function () {
             return grid.$viewport.scrollLeft();
         }, function (newLeft) {
             return grid.$headerContainer.scrollLeft(newLeft);
         });
+
+        $scope.$on('$destroy', function() {
+            grid.$root = null;
+            grid.$topPanel = null;
+            grid.$groupPanel = null;
+            grid.$headerContainer = null;
+            grid.$headerScroller = null;
+            grid.$headers = null;
+            grid.$canvas = null;
+            grid.$footerPanel = null;
+
+            scopeDereg();
+        });
+
         domUtilityService.UpdateGridLayout($scope, grid);
     };
     domUtilityService.getRealWidth = function (obj) {
@@ -502,7 +516,9 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
                         'font-size': $node.css('font-size'),
                         'font-family': $node.css('font-family')});
             elem.innerHTML = $node.text();
-            return elem.offsetWidth;
+            var width = elem.offsetWidth;
+            document.body.removeChild(elem);
+            return width;
         },
         forIn: function(obj, action) {
             for (var prop in obj) {
@@ -867,7 +883,8 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
 ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     var doingKeyDown = false;
     var self = this;
-    elm.bind('keydown', function (evt) {
+
+    function keydown (evt) {
         if (evt.keyCode === 16) { 
             self.changeUserSelect(elm, 'none', evt);
             return true;
@@ -878,12 +895,22 @@ ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
             return ret;
         }
         return true;
-    });
-    elm.bind('keyup', function (evt) {
+    }
+
+    elm.bind('keydown', keydown);
+
+    function keyup (evt) {
         if (evt.keyCode === 16) { 
             self.changeUserSelect(elm, 'text', evt);
         }
         return true;
+    }
+
+    elm.bind('keyup', keyup);
+
+    elm.on('$destroy', function() {
+        elm.off('keydown', keydown);
+        elm.off('keyup', keyup);
     });
 };
 var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
@@ -901,13 +928,26 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+
+            grid.$groupPanel.on('$destroy', function() {
+                grid.$groupPanel.off('mousedown');
+            });
+
+            grid.$headerScroller.on('$destroy', function() {
+                grid.$headerScroller.off('mousedown');
+            });
+
             if (grid.config.enableColumnReordering) {
                 grid.$headerScroller.on('drop', self.onHeaderDrop);
+
+                grid.$headerScroller.on('$destroy', function() {
+                    grid.$headerScroller.off('drop');
+                });
             }
         }
-        $scope.$watch('renderedColumns', function() {
+        $scope.$on('$destroy', $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
-        });
+        }));
     };
     self.dragStart = function(evt){
       evt.dataTransfer.setData('text', ''); 
@@ -923,14 +963,23 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
                     col.setAttribute('draggable', 'true');
                     if (col.addEventListener) { 
                         col.addEventListener('dragstart', self.dragStart);
+
+                        angular.element(col).on('$destroy', function() {
+                            angular.element(col).off('dragstart', self.dragStart);
+                            col.removeEventListener(self.dragStart);
+                        });
                     }
                 }
             });
             if (navigator.userAgent.indexOf("MSIE") !== -1){
-                grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+                var sortColumn = grid.$root.find('.ngHeaderSortColumn');
+                sortColumn.bind('selectstart', function () { 
                     this.dragDrop(); 
                     return false; 
-                });	
+                });
+                angular.element(sortColumn).on('$destroy', function() {
+                    sortColumn.off('selectstart');
+                });
             }
         } else {
             grid.$root.find('.ngHeaderSortColumn').draggable({
@@ -956,13 +1005,20 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
                     if(this.addEventListener){
-                        this.addEventListener('dragstart', self.dragStart); 
+                        this.addEventListener('dragstart', self.dragStart);
+                        angular.element(this).on('$destroy', function() {
+                            this.removeEventListener('dragstart', self.dragStart); 
+                        });
                     }
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         groupItem.bind('selectstart', function () { 
                             this.dragDrop(); 
                             return false; 
-                        });	
+                        });
+
+                        groupItem.on('$destroy', function() {
+                            groupItem.off('selectstart');
+                        });
                     }
                 }
                 self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
@@ -1042,18 +1098,25 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
         var windowThrottle;
-        $(window).resize(function(){
+        var windowResize = function(){
             clearTimeout(windowThrottle);
             windowThrottle = setTimeout(function() {
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
-        });
+        };
+        $(window).on('resize.nggrid', windowResize);
         var parentThrottle;
-        $(grid.$root.parent()).on('resize', function() {
+        var parentResize = function() {
             clearTimeout(parentThrottle);
             parentThrottle = setTimeout(function() {
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
+        };
+        $(grid.$root.parent()).on('resize.nggrid', parentResize);
+
+        $scope.$on('$destroy', function(){
+            $(window).off('resize.nggrid', windowResize);
+            $(grid.$root.parent()).off('resize.nggrid', parentResize);
         });
     };
     self.assignGridEventHandlers();
@@ -1065,9 +1128,9 @@ var ngFooter = function ($scope, grid) {
         var ret = Math.max($scope.totalServerItems, grid.data.length);
         return ret;
     };
-    $scope.$watch('totalServerItems',function(n,o){
+     $scope.$on('$destroy', $scope.$watch('totalServerItems',function(n,o){
         $scope.currentMaxPages = $scope.maxPages();
-    });
+    }));
 
     $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;
@@ -1423,9 +1486,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     totalWidth += ngColumn.width;
                     var temp = ngColumn;
 
-                    $scope.$on("ngGridEventData", function () {
+                    $scope.$on('$destroy', $scope.$on("ngGridEventData", function () {
                         self.resizeOnData(temp);
-                    });
+                    }));
+
                     return;
                 } else if (t.indexOf("*") !== -1) { 
                     if (ngColumn.visible !== false) {
@@ -1504,7 +1568,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
             self.searchProvider = new ngSearchProvider($scope, self, $filter);
             self.styleProvider = new ngStyleProvider($scope, self);
-            $scope.$watch('configGroups', function(a) {
+            $scope.$on('$destroy', $scope.$watch('configGroups', function(a) {
               var tempArr = [];
               angular.forEach(a, function(item) {
                 tempArr.push(item.field || item);
@@ -1512,29 +1576,29 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
               self.config.groups = tempArr;
               self.rowFactory.filteredRowsChanged();
               $scope.$emit('ngGridEventGroups', a);
-            }, true);
-            $scope.$watch('columns', function (a) {
+            }, true));
+             $scope.$on('$destroy', $scope.$watch('columns', function (a) {
                 if(!$scope.isColumnResizing){
                     domUtilityService.RebuildGrid($scope, self);
                 }
                 $scope.$emit('ngGridEventColumns', a);
-            }, true);
-            $scope.$watch(function() {
+            }, true));
+             $scope.$on('$destroy', $scope.$watch(function() {
                 return options.i18n;
             }, function(newLang) {
                 $utils.seti18n($scope, newLang);
-            });
+            }));
             self.maxCanvasHt = self.calcMaxCanvasHeight();
 
             if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                $scope.$watch(function() {
+                $scope.$on('$destroy', $scope.$watch(function() {
                     return self.config.sortInfo;
                 }, function(sortInfo){
                     if (!sortService.isSorting) {
                         self.sortColumnsInit();
                         $scope.$emit('ngGridEventSorted', self.config.sortInfo);
                     }
-                },true);
+                }, true));
             }
         });
     };
@@ -2332,7 +2396,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
     };
 
     if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
+         $scope.$on('$destroy', $scope.$watch('columns', function (cs) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
@@ -2352,25 +2416,25 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
                 }
             }
-        });
+        }));
     }
 
-    $scope.$watch(
+     $scope.$on('$destroy', $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
         },
         function (a) {
             $scope.filterText = a;
         }
-    );
+    ));
 
-    $scope.$watch('filterText', function(a){
+    $scope.$on('$destroy', $scope.$watch('filterText', function(a){
         if (!self.extFilter) {
             $scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+    }));
 };
 
 var ngSelectionProvider = function (grid, $scope, $parse) {
@@ -2569,10 +2633,10 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
 
             $scope.$broadcast('ngGridEventStartCellEdit');
 
-            $scope.$on('ngGridEventEndCellEdit', function() {
+            $scope.$on('$destroy', $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
                 domUtilityService.digest($scope);
-            });
+            }));
         };
 
         return function($scope, elm) {
@@ -2586,33 +2650,45 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                     }, 0);
                 }
             };
-            elm.bind('mousedown', function(evt) {
+
+            function mousedown (evt) {
                 if($scope.enableCellEditOnFocus) {
                     isCellEditableOnMouseDown = true;
                 } else {
                     elm.focus();
                 }
                 return true;
-            });
-            elm.bind('click', function(evt) {
+            }
+
+            function click (evt) {
                 if($scope.enableCellEditOnFocus) {
                     evt.preventDefault();
                     isCellEditableOnMouseDown = false;
                     focusOnInputElement($scope,elm);
                 }
-            }); 
-            elm.bind('focus', function(evt) {
+            }
+
+            elm.bind('mousedown', mousedown);
+
+            elm.bind('click', click);
+            function focus (evt) {
                 isFocused = true;
                 if($scope.enableCellEditOnFocus && !isCellEditableOnMouseDown) {
                     focusOnInputElement($scope,elm);
                 }
                 return true;
-            });
-            elm.bind('blur', function() {
+            }
+
+            elm.bind('focus', focus);
+
+            function blur() {
                 isFocused = false;
                 return true;
-            });
-            elm.bind('keydown', function(evt) {
+            }
+
+            elm.bind('blur', blur);
+
+            function keydown (evt) {
                 if(!$scope.enableCellEditOnFocus) {
                     if (isFocused && evt.keyCode !== 37 && evt.keyCode !== 38 && evt.keyCode !== 39 && evt.keyCode !== 40 && evt.keyCode !== 9 && !evt.shiftKey && evt.keyCode !== 13) {
                         focusOnInputElement($scope,elm);
@@ -2625,17 +2701,35 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                     }
                 }
                 return true;
+            }
+
+            elm.bind('keydown', keydown);
+
+            elm.on('$destroy', function() {
+                elm.off('mousedown', mousedown);
+                elm.off('click', click);
+                elm.off('focus', focus);
+                elm.off('blur', blur);
+                elm.off('keydown', keydown);
             });
         };
     }]);
 ngGridDirectives.directive('ngCellText',
   function () {
       return function(scope, elm) {
-          elm.bind('mouseover', function(evt) {
+          function mouseover (evt) {
               evt.preventDefault();
-          });
-          elm.bind('mouseleave', function(evt) {
+          }
+          elm.bind('mouseover', mouseover);
+
+          function mouseleave(evt) {
               evt.preventDefault();
+          }
+          elm.bind('mouseleave', mouseleave);
+
+          elm.on('$destroy', function() {
+            elm.off('mouseover', mouseover);
+            elm.off('mouseleave', mouseleave);
           });
       };
   });
@@ -2670,9 +2764,9 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
                     if ($scope.enableCellSelection) {
                         $scope.domAccessProvider.selectionHandlers($scope, iElement);
                     }
-                    $scope.$on('ngGridEventDigestCell', function() {
+                    $scope.$on('$destroy', $scope.$on('ngGridEventDigestCell', function() {
                         domUtilityService.digest($scope);
-                    });
+                    }));
                 }
             };
         }
@@ -2691,7 +2785,7 @@ ngGridDirectives.directive('ngEditCellIf', [function () {
 
         var childElement;
         var childScope;
-        scope.$watch(attr['ngEditCellIf'], function (newValue) {
+         scope.$on('$destroy', scope.$watch(attr['ngEditCellIf'], function (newValue) {
           if (childElement) {
             childElement.remove();
             childElement = undefined;
@@ -2708,7 +2802,7 @@ ngGridDirectives.directive('ngEditCellIf', [function () {
               element.after(clone);
             });
           }
-        });
+        }));
       };
     }
   };
@@ -2754,9 +2848,27 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+                    $scope.$on('$destroy', function cleanOptions() {
+                        options.gridDim = null;
+                        options.selectRow = null;
+                        options.selectItem = null;
+                        options.selectAll = null;
+                        options.selectVisible = null;
+                        options.groupBy = null;
+                        options.sortBy = null;
+                        options.gridId = null;
+                        options.ngGrid = null;
+                        options.$gridScope = null;
+                        options.$gridServices = null;
+
+                        $scope.domAccessProvider.grid = null;
+                        angular.element(grid.styleSheet).remove();
+                        grid.styleSheet = null;
+                    });
+
                     return grid.init().then(function() {
                         if (typeof options.columnDefs === "string") {
-                            $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
                                 if (!a) {
                                     grid.refreshDomSizes();
                                     grid.buildColumns();
@@ -2768,20 +2880,20 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 grid.buildColumns();
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
-                            }, true);
+                            }, true));
                         }
                         else {
                             grid.buildColumns();
                         }
                         if (typeof options.totalServerItems === "string") {
-                            $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
                                 if (!angular.isDefined(newTotal)) {
                                     $scope.totalServerItems = 0;
                                 }
                                 else {
                                     $scope.totalServerItems = newTotal;
                                 }
-                            });
+                            }));
                         }
                         else {
                             $scope.totalServerItems = 0;
@@ -2806,11 +2918,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data, dataWatcher));
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data + '.length', function() {
                                 dataWatcher($scope.$eval(options.data));
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
-                            });
+                            }));
                         }
                         grid.footerController = new ngFooter($scope, grid);
                         iElement.addClass("ngGrid").addClass(grid.gridId.toString());
@@ -2862,12 +2974,13 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         options.ngGrid = grid;
                         options.$gridScope = $scope;
                         options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
-                        $scope.$on('ngGridEventDigestGrid', function(){
+
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGrid', function(){
                             domUtilityService.digest($scope.$parent);
-                        });
-                        $scope.$on('ngGridEventDigestGridParent', function(){
+                        }));
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGridParent', function(){
                             domUtilityService.digest($scope.$parent);
-                        });
+                        }));
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
                         });
@@ -2875,8 +2988,13 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             if (typeof p === "function") {
                                 p = new p(); 
                             }
-                            p.init($scope.$new(), grid, options.$gridServices);
+                            var newScope = $scope.$new();
+                            p.init(newScope, grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;
+
+                            $scope.$on('$destroy', function() {
+                                newScope.destroy();
+                            });
                         });
                         if (typeof options.init === "function") {
                             options.init(grid, $scope);
@@ -2927,7 +3045,8 @@ ngGridDirectives.directive('ngInput', [function() {
                 oldCellValue = ngModel.$modelValue;
                 dereg(); 
             });
-            elm.bind('keydown', function(evt) {
+
+            function keydown (evt) {
                 switch (evt.keyCode) {
                     case 37: 
                     case 38: 
@@ -2951,18 +3070,30 @@ ngGridDirectives.directive('ngInput', [function() {
                 }
 
                 return true;
+            }
+            elm.bind('keydown', keydown);
+
+            function click (evt) {
+                evt.stopPropagation();
+            }
+
+            elm.bind('click', click);
+            function mousedown (evt) {
+                evt.stopPropagation();
+            }
+
+            elm.bind('mousedown', mousedown);
+
+            elm.on('$destroy', function() {
+                elm.off('keydown', keydown);
+                elm.off('click', click);
+                elm.off('mousedown', mousedown);
             });
 
-            elm.bind('click', function(evt) {
-                evt.stopPropagation();
-            });
-            elm.bind('mousedown', function(evt) {
-                evt.stopPropagation();
-            });
-            scope.$on('ngGridEventStartCellEdit', function () {
+            scope.$on('$destroy', scope.$on('ngGridEventStartCellEdit', function () {
                 elm.focus();
                 elm.select();
-            });
+            }));
 
             angular.element(elm).bind('blur', function () {
                 scope.$emit('ngGridEventEndCellEdit');
@@ -2992,9 +3123,9 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
                     } else {
                         iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
                     }
-					$scope.$on('ngGridEventDigestRow', function(){
+					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
-					});
+					}));
                 }
             };
         }
@@ -3012,7 +3143,8 @@ ngGridDirectives.directive('ngViewport', [function() {
             }
         };
         var scrollTimer;
-        elm.bind('scroll', function(evt) {
+
+        function scroll (evt) {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
             if ($scope.$headerContainer) {
@@ -3030,12 +3162,23 @@ ngGridDirectives.directive('ngViewport', [function() {
             prevScollTop = scrollTop;
             isMouseWheelActive = false;
             return true;
-        });
-        elm.bind("mousewheel DOMMouseScroll", function() {
+        }
+
+        elm.bind('scroll', scroll);
+
+        function mousewheel() {
             isMouseWheelActive = true;
             if (elm.focus) { elm.focus(); }
             return true;
+        }
+
+        elm.bind("mousewheel DOMMouseScroll", mousewheel);
+
+        elm.on('$destroy', function() {
+            elm.off('scroll', scroll);
+            elm.off('mousewheel DOMMouseScroll', mousewheel);
         });
+
         if (!$scope.enableCellSelection) {
             $scope.domAccessProvider.selectionHandlers($scope, elm);
         }
@@ -3126,6 +3269,21 @@ window.ngGrid.i18n['fr'] = {
     ngPagerPrevTitle: 'Page précédente',
     ngPagerLastTitle: 'Dernière page'
 };
+window.ngGrid.i18n['nl'] = {
+    ngAggregateLabel: 'items',
+    ngGroupPanelDescription: 'Sleep hier een kolomkop om op te groeperen.',
+    ngSearchPlaceHolder: 'Zoeken...',
+    ngMenuText: 'Kies kolommen:',
+    ngShowingItemsLabel: 'Toon items:',
+    ngTotalItemsLabel: 'Totaal items:',
+    ngSelectedItemsLabel: 'Geselecteerde items:',
+    ngPageSizeLabel: 'Pagina grootte:, ',
+    ngPagerFirstTitle: 'Eerste pagina',
+    ngPagerNextTitle: 'Volgende pagina',
+    ngPagerPrevTitle: 'Vorige pagina',
+    ngPagerLastTitle: 'Laatste pagina'
+};
+
 window.ngGrid.i18n['pt-br'] = {
     ngAggregateLabel: 'itens',
     ngGroupPanelDescription: 'Arraste e solte uma coluna aqui para agrupar por essa coluna',
