@@ -12,17 +12,6 @@
 
                     // Set up cleanup now in case something fails
                     $scope.$on('$destroy', function cleanOptions() {
-                        // delete options.gridDim;
-                        // delete options.selectRow;
-                        // delete options.selectItem;
-                        // delete options.selectAll;
-                        // delete options.selectVisible;
-                        // delete options.groupBy;
-                        // delete options.sortBy;
-                        // delete options.gridId;
-                        // delete options.ngGrid;
-                        // delete options.$gridScope;
-                        // delete options.$gridServices;
                         options.gridDim = null;
                         options.selectRow = null;
                         options.selectItem = null;
