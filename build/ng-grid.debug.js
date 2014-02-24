@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/24/2014 10:55
+* Compiled At: 02/24/2014 10:59
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3177,17 +3177,6 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
 
                     // Set up cleanup now in case something fails
                     $scope.$on('$destroy', function cleanOptions() {
-                        // delete options.gridDim;
-                        // delete options.selectRow;
-                        // delete options.selectItem;
-                        // delete options.selectAll;
-                        // delete options.selectVisible;
-                        // delete options.groupBy;
-                        // delete options.sortBy;
-                        // delete options.gridId;
-                        // delete options.ngGrid;
-                        // delete options.$gridScope;
-                        // delete options.$gridServices;
                         options.gridDim = null;
                         options.selectRow = null;
                         options.selectItem = null;
@@ -3904,7 +3893,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div ng-show=\"showFilter\">\r" +
     "\n" +
-    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterText\"/>\r" +
+    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterOptions.filterText\"/>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
@@ -3928,7 +3917,8 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    </div>\r" +
     "\n" +
-    "</div>"
+    "</div>\r" +
+    "\n"
   );
 
 
