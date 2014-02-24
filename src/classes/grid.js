@@ -574,8 +574,7 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
 
         } else {// update both based on col and key
             var indx = self.sortColumns.indexOf (col);
-//            var len = self.sortColumns.length
-
+            
             if (evt && evt.ctrlKey && self.config.sortInfo) {
                 if (indx === -1) { //add new column 
                     if (len === 1) { //previous single column woudn't have any priority defined
@@ -627,7 +626,7 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
                     self.config.sortInfo.directions.push (col.sortDirection);
 
                 } else { // invert direction
-                    //col is already inverted?
+                    //col is already inverted, just update sortInfo
                     self.config.sortInfo.directions[indx] = col.sortDirection;
                 }
             }
@@ -640,7 +639,6 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
         $scope.$emit ('ngGridEventSorted', self.config.sortInfo);
     };
     self.sortData = function() {
-//        if (!self.config.useExternalSorting) {
         var tempData = self.data.slice (0);
         angular.forEach (tempData, function(item, i) {
             var e = self.rowMap[i];
@@ -652,7 +650,6 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
                 }
             }
         });
-//            sortService.Sort(self.config.sortInfo, tempData);
         sortService.Sort (self.sortColumns, tempData);
         angular.forEach (tempData, function(item, i) {
             self.rowCache[i].entity = item;
@@ -661,7 +658,6 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
             delete item.preSortSelected;
             delete item.preSortIndex;
         });
-//        }
     };
     self.fixColumnIndexes = function() {
         //fix column indexes
