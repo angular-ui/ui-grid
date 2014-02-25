@@ -66,7 +66,7 @@
                                 grid.configureColumnWidths();
                                 grid.refreshDomSizes();
                                 if (grid.config.sortInfo.fields.length > 0) {
-                                    grid.sort()
+                                    grid.sort();
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };

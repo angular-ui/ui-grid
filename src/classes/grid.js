@@ -558,11 +558,12 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
     };
     self.sortColumns = [];
     self.sort = function(col, evt) {//don't pass sortInfo as parameter 
-        var len = self.config.sortInfo.fields.length
+        var len = self.config.sortInfo.fields.length;
+        var i,c;
         if (len === 0 && col == null) {
-            return
+            return;
         } else if (col == null) { // rebuild sortColumns by sortInfo
-            self.sortColumns.length = len
+            self.sortColumns.length = len;
             angular.forEach($scope.columns, function(c) {
                 var i = self.config.sortInfo.fields.indexOf(c.field);
                 if (i !== -1) {
@@ -597,8 +598,8 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
                     self.config.sortInfo.fields.splice(indx, 1);
                     self.config.sortInfo.directions.splice(indx, 1);
 
-                    for (var i = indx; i < len - 1; i++) {
-                        var c = self.sortColumns[i];
+                    for (i = indx; i < len - 1; i++) {
+                        c = self.sortColumns[i];
                         c.sortPriority = i + 1;
                     }
 
@@ -610,8 +611,8 @@ var ngGrid = function($scope, options, sortService, domUtilityService, $filter, 
             } else {
                 //simple click
                 if (indx === -1) { //remove previous and and column
-                    for (var i = 0; i < len; i++) {
-                        var c = self.sortColumns[i];
+                    for (i = 0; i < len; i++) {
+                        c = self.sortColumns[i];
                         c.sortPriority = null;
                         c.sortDirection = "";
                     }
