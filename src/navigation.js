@@ -96,7 +96,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     
     if (offset) {
         var r = items[rowIndex + offset];
-        if (r.beforeSelectionChange(r, evt)) {
+        if (r && r.beforeSelectionChange(r, evt)) {
             r.continueSelection(evt);
             $scope.$emit('ngGridEventDigestGridParent');
 

@@ -14,16 +14,16 @@
             });
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
             if (grid.config.enableColumnReordering) {
-                grid.$headerScroller.on('drop', self.onHeaderDrop);
+                grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
         }
         $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
         });
     };
-    self.dragStart = function(evt){		
+    self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
     };
@@ -173,37 +173,38 @@
     };
 
     self.assignGridEventHandlers = function() {
-        //Chrome and firefox both need a tab index so the grid can recieve focus.
-        //need to give the grid a tabindex if it doesn't already have one so
-        //we'll just give it a tab index of the corresponding gridcache index 
-        //that way we'll get the same result every time it is run.
-        //configurable within the options.
+        var windowThrottle;
+        var parentThrottle;
+
+        function onWindowResize(){
+            clearTimeout(windowThrottle);
+            windowThrottle = setTimeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
+        }
+
+        function onParentResize() {
+            clearTimeout(parentThrottle);
+            parentThrottle = setTimeout(function() {
+                domUtilityService.RebuildGrid($scope,grid);
+            }, 100);
+        }
+
         if (grid.config.tabIndex === -1) {
             grid.$viewport.attr('tabIndex', domUtilityService.numberOfGrids);
             domUtilityService.numberOfGrids++;
         } else {
             grid.$viewport.attr('tabIndex', grid.config.tabIndex);
         }
-        // resize on window resize
-        var windowThrottle;
-        $(window).resize(function(){
-            clearTimeout(windowThrottle);
-            windowThrottle = setTimeout(function() {
-                //in function for IE8 compatibility
-                domUtilityService.RebuildGrid($scope,grid);
-            }, 100);
-        });
-        // resize on parent resize as well.
-        var parentThrottle;
-        $(grid.$root.parent()).on('resize', function() {
-            clearTimeout(parentThrottle);
-            parentThrottle = setTimeout(function() {
-                //in function for IE8 compatibility
-                domUtilityService.RebuildGrid($scope,grid);
-            }, 100);
+
+        $(window).on('resize', onWindowResize);
+        $(grid.$root.parent()).on('resize', onParentResize);
+
+        $scope.$on('$destroy', function() {
+            $(grid.$root.parent()).off('resize', onParentResize);
+            $(window).off('resize', onWindowResize);
         });
     };
-    // In this example we want to assign grid events.
     self.assignGridEventHandlers();
     self.assignEvents();
 };
