@@ -188,3 +188,4 @@ pip-log.txt
 ## JetBrains
 #################
 .idea
+/nbproject/private/
