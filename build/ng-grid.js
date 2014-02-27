@@ -3003,7 +3003,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             options.plugins[$utils.getInstanceType(p)] = p;
 
                             $scope.$on('$destroy', function() {
-                                newScope.destroy();
+                                newScope.$destroy();
                             });
                         });
                         if (typeof options.init === "function") {
