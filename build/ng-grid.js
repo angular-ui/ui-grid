@@ -934,8 +934,9 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
-                grid.$groupPanel.off('mousedown');
-
+                if (grid.$groupPanel) {
+                    grid.$groupPanel.off('mousedown');
+                }
                 grid.$groupPanel = null;
             });
 
