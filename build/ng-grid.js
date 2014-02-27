@@ -934,9 +934,10 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
-                if (grid.$groupPanel) {
-                    grid.$groupPanel.off('mousedown');
+                if (!grid.$groupPanel) {
+                    return;
                 }
+                grid.$groupPanel.off('mousedown');
                 grid.$groupPanel = null;
             });
 
@@ -945,6 +946,9 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             }
 
             grid.$headerScroller.on('$destroy', function() {
+                if (!grid.$headerScroller) {
+                    return;
+                }
                 grid.$headerScroller.off('mousedown');
 
                 if (grid.config.enableColumnReordering) {
