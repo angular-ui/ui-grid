@@ -107,22 +107,7 @@
                 
                 var propA = $parse(order[indx])(itemA);
                 var propB = $parse(order[indx])(itemB);
-                // we want to allow zero values to be evaluated in the sort function
-                if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
-                    // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-                    if (!propB && !propA) {
-                        tem = 0;
-                    }
-                    else if (!propA) {
-                        tem = 1;
-                    }
-                    else if (!propB) {
-                        tem = -1;
-                    }
-                }
-                else {
-                    tem = sortFn(propA, propB);
-                }
+                tem = sortFn(propA, propB);
                 indx++;
             }
             //made it this far, we don't have to worry about null & undefined
@@ -157,14 +142,38 @@
                 return sortFn;
             }
             sortFn = sortService.guessSortFn($parse(col.field)(item));
+            var cache = false;
             //cache it
             if (sortFn) {
-                sortService.colSortFnCache[col.field] = sortFn;
+                cache = true;
             } else {
                 // we assign the alpha sort because anything that is null/undefined will never get passed to
                 // the actual sorting function. It will get caught in our null check and returned to be sorted
                 // down to the bottom
                 sortFn = sortService.sortAlpha;
+            }
+            var currentSortFn = sortFn;
+            sortFn = function(propA, propB) {
+                // we want to allow zero values to be evaluated in the sort function
+                if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
+                    // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
+                    if (!propB && !propA) {
+                        return 0;
+                    }
+                    else if (!propA) {
+                        return 1;
+                    }
+                    else if (!propB) {
+                        return -1;
+                    }
+                }
+                else {
+                    return currentSortFn(propA, propB);
+                } 
+            };
+
+            if (cache) {
+                sortService.colSortFnCache[col.field] = sortFn;
             }
         }
         return sortFn;
