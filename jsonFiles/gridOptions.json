@@ -262,5 +262,11 @@
 		"defaultValue": "function (itemIndex, state)",
 		"definition": "Function that is appended to the specifiec grid options for users to programatically select the row based on the index of the enitity in the data array option. ",
 		"plunker": "Link"
+	},
+	{
+		"id":"selectAll",
+		"defaultValue": "function (state)",
+		"definition": "Function that is appended to the specifiec grid options for users to programatically set the selected value all of the rows to the state passed. ",
+		"plunker": "Link"
 	}
 ]
