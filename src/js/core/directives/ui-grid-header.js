@@ -93,7 +93,7 @@
 
                   column.drawnWidth = column.width;
 
-                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
+                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
                 }
               });
 
@@ -119,7 +119,7 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
@@ -132,7 +132,7 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
@@ -147,7 +147,7 @@
 
                   column.drawnWidth = colWidth;
 
-                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                 });
               }
 
@@ -169,7 +169,7 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     lastColumn = column;
 
@@ -185,7 +185,7 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     // Remove this element from the percent array so it's not processed below
                     asterisksArray.splice(i, 1);
@@ -202,9 +202,31 @@
 
                   column.drawnWidth = colWidth;
 
-                  ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
+                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                 });
               }
+
+
+              // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
+              var leftoverWidth = uiGridCtrl.grid.gridWidth - parseInt(canvasWidth, 10);
+
+              if (leftoverWidth > 0 && canvasWidth > 0) {
+                var remFn = function (column) {
+                  if (leftoverWidth > 0) {
+                    column.drawnWidth = column.drawnWidth + 1;
+                    canvasWidth = canvasWidth + 1;
+                    leftoverWidth--;
+                  }
+                };
+                while (leftoverWidth > 0) {
+                  uiGridCtrl.grid.columns.forEach(remFn);
+                }
+              }
+
+              // Build the CSS
+              uiGridCtrl.grid.columns.forEach(function (column) {
+                ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.drawnWidth + 'px; }';
+              });
 
               $scope.columnStyles = ret;
 

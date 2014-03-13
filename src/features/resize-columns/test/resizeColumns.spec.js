@@ -94,13 +94,13 @@ describe('ui.grid.resizeColumns', function () {
   });
 
   // NOTE: these pixel sizes might fail in other browsers, due to font differences!
-  describe('when double-clicking a resizer', function () {
+  describe('double-clicking a resizer', function () {
     it('should resize the column to the maximum width of the rendered columns', function (done) {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
       var colWidth = $(grid).find('.col0').first().width();
 
-      expect(colWidth).toEqual(166);
+      expect(colWidth === 166 || colWidth === 167).toBe(true); // allow for column widths that don't equally divide 
 
       firstResizer.trigger('dblclick');
 
