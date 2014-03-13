@@ -739,7 +739,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.selectedItems = self.config.selectedItems;
     $scope.multiSelect = self.config.multiSelect;
     $scope.showFooter = self.config.showFooter;
-    $scope.footerRowHeight = $scope.showFooter ? self.config.footerRowHeight : 0;
     $scope.showColumnMenu = self.config.showColumnMenu;
     $scope.showMenu = false;
     $scope.configGroups = [];
@@ -747,6 +746,17 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
+
+    // resizable footers
+    $scope.footerRowHeight = $scope.showFooter ? self.config.footerRowHeight : 0;
+    if (typeof $scope.footerRowHeight === 'string') {
+        var strToWatch = $scope.footerRowHeight;
+        $scope.footerRowHeight = defaults.footerRowHeight;
+
+        $scope.$watch(strToWatch, function (newVal) {
+            $scope.footerRowHeight = newVal;
+        });
+    }
 
     //i18n support
     $scope.i18n = {};
