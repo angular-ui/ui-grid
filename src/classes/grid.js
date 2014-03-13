@@ -362,7 +362,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         if (columnDefs.length > 0) {
             var checkboxOffset = self.config.showSelectionCheckbox ? 1 : 0;
-            var groupOffset = $scope.configGroups.length;
+            var groupOffset = self.config.groups.length;
             $scope.configGroups.length = 0;
             angular.forEach(columnDefs, function(colDef, i) {
                 i += checkboxOffset;
@@ -382,8 +382,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
                     column.isGroupedBy = true;
-                    $scope.configGroups.splice(indx, 0, column);
-                    column.groupIndex = $scope.configGroups.length;
+                    $scope.configGroups[indx] = column;
+                    column.groupIndex = indx + 1;
                 }
                 cols.push(column);
             });
