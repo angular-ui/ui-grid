@@ -522,7 +522,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             // set the width of each column based on the number of stars
             angular.forEach(asterisksArray, function(colDef, i) {
                 // Get the ngColumn that matches the current column from columnDefs
-                var ngColumn = $scope.columns[indexMap[colDef.index]];                
+                var ngColumn = $scope.columns[indexMap[colDef.index]];  
+                if (!ngColumn) { return; }              
                 ngColumn.width = asteriskVal * colDef.width.length;
                 if (ngColumn.visible !== false) {
                     totalWidth += ngColumn.width;
