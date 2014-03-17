@@ -1507,7 +1507,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
                     return;
                 } else if (t.indexOf("*") !== -1) { 
-                    if (ngColumn.visible !== false) {
+                    if (ngColumn && ngColumn.visible !== false) {
                         asteriskNum += t.length;
                     }
                     asterisksArray.push(colDef);
@@ -1518,7 +1518,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 } else { 
                     throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
-            } else if (ngColumn.visible !== false) {
+            } else if (ngColumn && ngColumn.visible !== false) {
                 totalWidth += ngColumn.width = parseInt(ngColumn.width, 10);
             }
         });
@@ -1531,7 +1531,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var percent = parseFloat(colDef.width) / 100;
                 percentWidth += percent;
 
-                if (!ngColumn.visible) {
+                if (ngColumn && !ngColumn.visible) {
                     hiddenPercent += percent;
                 }
             });
@@ -1561,7 +1561,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(asterisksArray, function(colDef, i) {
                 var ngColumn = $scope.columns[indexMap[colDef.index]];
                 ngColumn.width = asteriskVal * colDef.width.length;
-                if (ngColumn.visible !== false) {
+                if (ngColumn && ngColumn.visible !== false) {
                     totalWidth += ngColumn.width;
                 }
 
