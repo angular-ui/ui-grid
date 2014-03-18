@@ -147,9 +147,9 @@
         $(document).off('mousemove', self.onMouseMove);
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
-        domUtilityService.digest($scope);
         $scope.isColumnResizing = false;
         this.isColumnResizing = false;
+        domUtilityService.digest($scope);
         return false;
     };
     self.copy = function() {
