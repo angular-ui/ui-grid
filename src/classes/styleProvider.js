@@ -16,15 +16,18 @@
         //Get highest row size
         for (var r = 0; r < cols; r++) {
             var newRowContentHeight = getRowContentHeight(row.elm.context.children[r]);
-            if (rowHeight < newRowContentHeight)
+            if (rowHeight < newRowContentHeight){
                 rowHeight = newRowContentHeight;
+            }
         }
         //Fix offsetTop of next cell
-        if (grid.rowCache[row.rowIndex + 1] != null)
+        if (grid.rowCache[row.rowIndex + 1] != null){
             grid.rowCache[row.rowIndex + 1].clone.offsetTop = row.offsetTop + rowHeight;
+        }
         else //Fix grid height
+        {
             grid.$viewport[0].style.height = row.offsetTop + rowHeight + 20 + "px";
-
+        }
         var ret = { "top": row.offsetTop + "px", "height": rowHeight + "px" };
         if (row.isAggRow) {
             ret.left = row.offsetLeft;
