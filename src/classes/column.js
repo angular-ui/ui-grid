@@ -30,6 +30,7 @@
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
+    self.isColumnResizing = false;
     self.pinnable = false;
     self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
@@ -121,6 +122,7 @@
     };
     self.gripOnMouseDown = function(event) {
         $scope.isColumnResizing = true;
+        this.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -147,6 +149,7 @@
         event.target.parentElement.style.cursor = 'default';
         domUtilityService.digest($scope);
         $scope.isColumnResizing = false;
+        this.isColumnResizing = false;
         return false;
     };
     self.copy = function() {
