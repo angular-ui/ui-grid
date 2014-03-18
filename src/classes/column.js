@@ -122,7 +122,7 @@
     };
     self.gripOnMouseDown = function(event) {
         $scope.isColumnResizing = true;
-        this.isColumnResizing = true;
+        self.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -148,7 +148,7 @@
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
         $scope.isColumnResizing = false;
-        this.isColumnResizing = false;
+        self.isColumnResizing = false;
         domUtilityService.digest($scope);
         return false;
     };
