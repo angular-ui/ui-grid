@@ -12,7 +12,7 @@
                 height = row.scrollHeight;
             });
             return height;
-        }
+        };
         //Get highest row size
         for (var r = 0; r < cols; r++) {
             var newRowContentHeight = getRowContentHeight(row.elm.context.children[r]);
