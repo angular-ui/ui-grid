@@ -842,7 +842,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     };
 
     $scope.viewportDimHeight = function() {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
+        //Return up to 20.000 records to be drawn, no need to find out how many can be visible since all will be if no paging is used
+        return 20000; //Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
     };
     $scope.groupBy = function (col) {
         if (self.data.length < 1 || !col.groupable  || !col.field) {

@@ -45,9 +45,10 @@
     };
     domUtilityService.getRealWidth = function (obj) {
         var width = 0;
-        var props = { visibility: "hidden", display: "block" };
+        var props = { visibility: "hidden", display: "block", position: "absolute" };
         var hiddenParents = obj.parents().andSelf().not(':visible');
         $.swap(hiddenParents[0], props, function () {
+            hiddenParents[0].style.setProperty("display", "block", "important");
             width = obj.outerWidth();
         });
         return width;
@@ -104,7 +105,7 @@
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
