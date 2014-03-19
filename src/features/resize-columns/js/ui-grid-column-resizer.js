@@ -146,22 +146,27 @@
               // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
               uiGridCtrl.refreshCanvas(true)
                 .then(function() {
-                  // Then fire a scroll event to put the scrollbar in the right place, so it doesn't end up too far ahead or behind
-                  var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
+                  // If virtual scrolling is turned on we need to update the scrollbar and stuff. The native scrollbars update automatically, of course
+                  if (uiGridCtrl.grid.options.enableVirtualScrolling) {
+                    // Then fire a scroll event to put the scrollbar in the right place, so it doesn't end up too far ahead or behind
+                    var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
+
+                    args.target = $elm;
+                      
+                    // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
+                    if (xDiff && args.x && args.x.pixels) {
+                      var extraPercent = xDiff / uiGridCtrl.grid.getHeaderViewportWidth();
+
+                      args.x.percentage = args.x.percentage - extraPercent;
+
+                      // Can't be less than 0% or more than 100%
+                      if (args.x.percentage > 1) { args.x.percentage = 1; }
+                      else if (args.x.percentage < 0) { args.x.percentage = 0; }
+                    }
                     
-                  // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
-                  if (xDiff && args.x && args.x.pixels) {
-                    var extraPercent = xDiff / uiGridCtrl.grid.getViewportWidth();
-
-                    args.x.percentage = args.x.percentage - extraPercent;
-
-                    // Can't be less than 0% or more than 100%
-                    if (args.x.percentage > 1) { args.x.percentage = 1; }
-                    else if (args.x.percentage < 0) { args.x.percentage = 0; }
+                    // Fire the scroll event
+                    uiGridCtrl.fireScrollingEvent(args);
                   }
-                  
-                  // Fire the scroll event
-                  uiGridCtrl.fireScrollingEvent(args);
                 });
             });
         }

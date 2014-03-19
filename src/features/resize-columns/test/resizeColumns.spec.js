@@ -17,6 +17,8 @@ describe('ui.grid.resizeColumns', function () {
 
     $scope.gridOpts = {
       enableColumnResizing: true,
+      enableNativeScrolling: false,
+      enableVirtualScrolling: true,
       data: data
     };
 

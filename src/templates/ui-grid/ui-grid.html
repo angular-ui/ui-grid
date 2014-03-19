@@ -6,11 +6,15 @@
     }
 
     .grid{{ grid.id }} .ui-grid-header {
-      width: {{ grid.getViewportWidth() }}px;
+      width: {{ grid.getHeaderViewportWidth() }}px;
     }
 
     .grid{{ grid.id }} .ui-grid-header-canvas {
       width: {{ grid.getCanvasWidth() }}px;
+    }
+
+    .grid{{ grid.id }} .ui-grid-body {
+      height: {{ grid.getBodyHeight() }}px;
     }
 
     .grid{{ grid.id }} .ui-grid-viewport {
@@ -41,6 +45,13 @@
 
     {{ grid.verticalScrollbarStyles }}
     {{ grid.horizontalScrollbarStyles }}
+
+    {{ grid.nativeVerticalScrollbarStyles }}
+    {{ grid.nativeHorizontalScrollbarStyles }}
+
+    .grid{{ grid.id }} .ui-grid-native-scrollbar.vertical {
+      height: {{ grid.getViewportHeight() }}px;
+    }
   </style>
 
   <div ui-grid-header></div>

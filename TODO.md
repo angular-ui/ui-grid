@@ -4,6 +4,12 @@
 
 1. [TODO] - Add notes about browser version support and Angular version support to README.md
 
+# Native scrolling
+
+1. [BUG] - Column resizing is broken
+1. [BUG] - Touch event deceleration goes backwards when scrolling up, but only with small amounts
+1. [TODO] - Take a look at Hamster.js for normalizing mouse wheel events, test on MacAir.
+
 
 # MORE
 

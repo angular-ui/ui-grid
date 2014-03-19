@@ -30,6 +30,8 @@
 
         uiGridCtrl.prevScrollTop = 0;
         uiGridCtrl.prevScrollLeft = 0;
+        uiGridCtrl.prevRowScrollIndex = 0;
+        uiGridCtrl.prevColumnScrollIndex = 0;
         uiGridCtrl.currentTopRow = 0;
         uiGridCtrl.currentFirstColumn = 0;
 
@@ -41,9 +43,17 @@
           // scrollTop = uiGridCtrl.canvas[0].scrollHeight * scrollPercentage;
           scrollTop = uiGridCtrl.grid.getCanvasHeight() * scrollPercentage;
 
+          uiGridCtrl.adjustRows(scrollTop, scrollPercentage);
+
+          uiGridCtrl.prevScrollTop = scrollTop;
+        };
+
+        uiGridCtrl.adjustRows = function(scrollTop, scrollPercentage) {
           var minRows = uiGridCtrl.grid.minRowsToRender();
           var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
+
+          var curRowIndex = uiGridCtrl.prevRowScrollIndex;
           
           var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
 
@@ -72,10 +82,16 @@
             var maxLen = uiGridCtrl.grid.rows.length;
             newRange = [0, Math.max(maxLen, minRows + uiGridCtrl.grid.options.excessRows)];
           }
-
-          uiGridCtrl.prevScrollTop = scrollTop;
+          
           updateViewableRowRange(newRange);
           uiGridCtrl.prevRowScrollIndex = rowIndex;
+
+          // uiGridCtrl.firePostScrollEvent({
+          //   rows: {
+          //     prevIndex: curRowIndex,
+          //     curIndex: uiGridCtrl.prevRowScrollIndex
+          //   }
+          // });
         };
 
         // Virtualization for horizontal scrolling
@@ -87,6 +103,12 @@
           // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
           scrollLeft = uiGridCtrl.grid.getCanvasWidth() * scrollPercentage;
 
+          uiGridCtrl.adjustColumns(scrollLeft, scrollPercentage);
+
+          uiGridCtrl.prevScrollLeft = scrollLeft;
+        };
+
+        uiGridCtrl.adjustColumns = function(scrollLeft, scrollPercentage) {
           var minCols = uiGridCtrl.grid.minColumnsToRender();
           var maxColumnIndex = uiGridCtrl.grid.columns.length - minCols;
           uiGridCtrl.maxColumnIndex = maxColumnIndex;
@@ -118,8 +140,7 @@
             var maxLen = uiGridCtrl.grid.columns.length;
             newRange = [0, Math.max(maxLen, minCols + uiGridCtrl.grid.options.excessColumns)];
           }
-
-          uiGridCtrl.prevScrollLeft = scrollLeft;
+          
           updateViewableColumnRange(newRange);
           uiGridCtrl.prevColumnScrollIndex = colIndex;
         };
@@ -127,33 +148,64 @@
         // Listen for scroll events
         var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
           // GridUtil.requestAnimationFrame(function() {
-            // Vertical scroll
-
             uiGridCtrl.prevScrollArgs = args;
 
+            // Vertical scroll
             if (args.y) {
               var scrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
 
-              var scrollYPercentage = args.y.percentage;
+              // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
+              if (uiGridCtrl.grid.horizontalScrollbarHeight && uiGridCtrl.grid.horizontalScrollbarHeight > 0) {
+                scrollLength = scrollLength + uiGridCtrl.grid.horizontalScrollbarHeight;
+              }
+
+              var oldScrollTop = uiGridCtrl.viewport[0].scrollTop;
+              
+              var scrollYPercentage;
+              if (typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
+                scrollYPercentage = args.y.percentage;
+              }
+              else if (typeof(args.y.pixels) !== 'undefined' && args.y.pixels !== undefined) {
+                scrollYPercentage = args.y.percentage = (oldScrollTop + args.y.pixels) / scrollLength;
+                // $log.debug('y.percentage', args.y.percentage);
+              }
+              else {
+                throw new Error("No percentage or pixel value provided for scroll event Y axis");
+              }
+
               var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
               
-              uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
+              // NOTE: uiGridBody catches this in its 'scroll' event handler. setting scrollTop fires a scroll event
+              // uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
 
               uiGridCtrl.viewport[0].scrollTop = newScrollTop;
               
               uiGridCtrl.grid.options.offsetTop = newScrollTop;
 
-              uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop;
+              uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
             }
 
             // Horizontal scroll
             if (args.x) {
               var scrollWidth = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
 
-              var scrollXPercentage = args.x.percentage;
+              var oldScrollLeft = uiGridCtrl.viewport[0].scrollLeft;
+
+              var scrollXPercentage;
+              if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
+                scrollXPercentage = args.x.percentage;
+              }
+              else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
+                scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
+                // $log.debug('x.percentage', args.x.percentage);
+              }
+              else {
+                throw new Error("No percentage or pixel value provided for scroll event X axis");
+              }
+
               var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
               
-              uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
+              // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
               uiGridCtrl.viewport[0].scrollLeft = newScrollLeft;
 
@@ -163,7 +215,7 @@
 
               uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
 
-              uiGridCtrl.prevScrollArgs.x.pixels = newScrollLeft;
+              uiGridCtrl.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
             }
           // });
         });
@@ -201,7 +253,9 @@
             args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
           }
 
-          $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+          // $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+
+          uiGridCtrl.fireScrollingEvent(args);
         });
 
         
@@ -220,7 +274,7 @@
           event.preventDefault();
 
           var deltaX, deltaY, newX, newY;
-          newX = event.targetTouches[0].pageX;
+          newX = event.targetTouches[0].screenX;
           newY = event.targetTouches[0].screenY;
           deltaX = -(newX - startX);
           deltaY = -(newY - startY);
@@ -314,6 +368,7 @@
               }
             }, decelerateInterval);
           }
+
           decelerate();
         }
 

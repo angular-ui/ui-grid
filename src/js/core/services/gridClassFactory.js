@@ -87,6 +87,15 @@
         this.rowBuilders = [];
         this.styleComputations = [];
 
+        // Validate options
+        if (this.options.enableNativeScrolling && this.options.enableVirtualScrolling) {
+          throw "Cannot use both native and virtual scrolling at the same time.";
+        }
+
+        if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
+          throw "Either native or virtual scrolling must be enabled.";
+        }
+
 
         //representation of the rows on the grid.
         //these are wrapped references to the actual data rows (options.data)
@@ -339,24 +348,69 @@
         return min;
       };
 
+      Grid.prototype.getBodyHeight = function () {
+        // Start with the viewportHeight
+        var bodyHeight = this.getViewportHeight();
+
+        // Add the horizontal scrollbar height if there is one
+        if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
+          bodyHeight = bodyHeight + this.horizontalScrollbarHeight;
+        }
+
+        return bodyHeight;
+      };
+
       // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
       // TODO(c0bra): account for footer height
       Grid.prototype.getViewportHeight = function () {
         var viewPortHeight = this.gridHeight - this.headerHeight;
+
+        // Account for native horizontal scrollbar, if present
+        if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
+          viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
+        }
+
         return viewPortHeight;
       };
 
       Grid.prototype.getViewportWidth = function () {
         var viewPortWidth = this.gridWidth;
+
+        if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
+          viewPortWidth = viewPortWidth - this.verticalScrollbarWidth;
+        }
+
+        return viewPortWidth;
+      };
+
+      Grid.prototype.getHeaderViewportWidth = function () {
+        var viewPortWidth = this.getViewportWidth();
+
+        if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
+          viewPortWidth = viewPortWidth + this.verticalScrollbarWidth;
+        }
+
         return viewPortWidth;
       };
 
       Grid.prototype.getCanvasHeight = function () {
-        return this.options.rowHeight * this.rows.length;
+        var ret =  this.options.rowHeight * this.rows.length;
+
+        if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
+          ret = ret - this.horizontalScrollbarHeight;
+        }
+
+        return ret;
       };
 
       Grid.prototype.getCanvasWidth = function () {
-        return this.canvasWidth;
+        var ret = this.canvasWidth;
+
+        if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
+          ret = ret - this.verticalScrollbarWidth;
+        }
+
+        return ret;
       };
 
       Grid.prototype.getTotalRowHeight = function () {
@@ -421,6 +475,12 @@
         // Extra columns to to render outside of the viewport
         this.excessColumns = 4;
         this.horizontalScrollThreshold = 2;
+
+        // Native scrolling on by default
+        this.enableNativeScrolling = true;
+
+        // Virtual scrolling off by default
+        this.enableVirtualScrolling = false;
 
         // Resizing columns, off by default
         this.enableColumnResizing = false;

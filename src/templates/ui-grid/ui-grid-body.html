@@ -9,6 +9,11 @@
     </div>
   </div>
 
-  <div ui-grid-scrollbar type="vertical" scrolling-class="ui-grid-scrolling"></div>
-  <div ui-grid-scrollbar type="horizontal" scrolling-class="ui-grid-scrolling"></div>
+  <!-- native scrolling -->
+  <div ui-grid-native-scrollbar ng-if="grid.options.enableNativeScrolling" type="vertical"></div>
+  <div ui-grid-native-scrollbar ng-if="grid.options.enableNativeScrolling" type="horizontal"></div>
+
+  <!-- virtual scrolling -->
+  <div ui-grid-scrollbar ng-if="grid.options.enableVirtualScrolling" type="vertical" scrolling-class="ui-grid-scrolling"></div>
+  <div ui-grid-scrollbar ng-if="grid.options.enableVirtualScrolling" type="horizontal" scrolling-class="ui-grid-scrolling"></div>
 </div>
