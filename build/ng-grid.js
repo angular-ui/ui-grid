@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/14/2014 10:43
+* Compiled At: 03/19/2014 08:21
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -691,6 +691,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
     self.sortable = false;
     self.resizable = false;
+    self.isColumnResizing = false;
     self.pinnable = false;
     self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
@@ -781,6 +782,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     };
     self.gripOnMouseDown = function(event) {
         $scope.isColumnResizing = true;
+        self.isColumnResizing = true;
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -805,8 +807,9 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         $(document).off('mousemove', self.onMouseMove);
         $(document).off('mouseup', self.gripOnMouseUp);
         event.target.parentElement.style.cursor = 'default';
-        domUtilityService.digest($scope);
         $scope.isColumnResizing = false;
+        self.isColumnResizing = false;
+        domUtilityService.digest($scope);
         return false;
     };
     self.copy = function() {
