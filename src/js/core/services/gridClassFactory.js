@@ -88,10 +88,6 @@
         this.styleComputations = [];
 
         // Validate options
-        if (this.options.enableNativeScrolling && this.options.enableVirtualScrolling) {
-          throw "Cannot use both native and virtual scrolling at the same time.";
-        }
-
         if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
           throw "Either native or virtual scrolling must be enabled.";
         }
@@ -479,7 +475,7 @@
         // Native scrolling on by default
         this.enableNativeScrolling = true;
 
-        // Virtual scrolling off by default
+        // Virtual scrolling off by default, overrides enableNativeScrolling if set
         this.enableVirtualScrolling = false;
 
         // Resizing columns, off by default
