@@ -180,7 +180,7 @@
        * validates that name or field is present
        */
       Grid.prototype.preprocessColDef = function (colDef) {
-        if (!colDef.field && !colDef.name) {
+        if (colDef.field === undefined && colDef.name === undefined) {
           throw new Error('colDef.name or colDef.field property is required');
         }
 
