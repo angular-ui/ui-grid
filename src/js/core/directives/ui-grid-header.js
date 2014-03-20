@@ -214,8 +214,6 @@
               var leftoverWidth = availableWidth - parseInt(canvasWidth, 10);
 
               if (leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
-                debugger;
-                
                 var variableColumn = false;
                 uiGridCtrl.grid.columns.forEach(function(col) {
                   if (col.width && ! angular.isNumber(col.width)) {
