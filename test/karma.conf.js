@@ -78,7 +78,7 @@ module.exports = function(config) {
 
     browserDisconnectTimeout: 10000,
     browserDisconnectTolerance: 2,
-    browserNoActivityTimeout: 20000,
+    browserNoActivityTimeout: 45000, // 20000,
 
     sauceLabs: {
       username: 'nggrid',
