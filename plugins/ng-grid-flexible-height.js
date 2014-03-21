@@ -11,7 +11,10 @@ function ngGridFlexibleHeightPlugin (opts) {
             var gridId = self.grid.gridId;
             var footerPanelSel = '.' + gridId + ' .ngFooterPanel';
             var extraHeight = self.grid.$topPanel.height() + $(footerPanelSel).height();
-            var naturalHeight = self.grid.$canvas.height() + 1;
+            var naturalHeight = self.grid.$canvas.prop('scrollHeight') + 1;
+            if ( self.grid.$topPanel.width() < grid.$canvas.prop('scrollWidth')) {
+                naturalHeight += 15;
+            }
             if (opts != null) {
                 if (opts.minHeight != null && (naturalHeight + extraHeight) < opts.minHeight) {
                     naturalHeight = opts.minHeight - extraHeight - 2;
@@ -34,7 +37,16 @@ function ngGridFlexibleHeightPlugin (opts) {
             }
             return hash;
         };
+
+        self.scope.sizeHash = function () {
+            var hash = '';
+            hash += grid.$canvas.prop('scrollWidth');
+            hash += grid.$canvas.prop('scrollHeight');
+            return hash;
+        };
+
         self.scope.$watch('catHashKeys()', innerRecalcForData);
+        self.scope.$watch('sizeHash()', innerRecalcForData);
         self.scope.$watch(self.grid.config.data, recalcHeightForData);
     };
 }
