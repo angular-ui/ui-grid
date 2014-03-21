@@ -1,21 +1,6 @@
 ﻿angular.module('ngGrid.services').factory('$utilityService', ['$parse', function ($parse) {
     var funcNameRegex = /function (.{1,})\(/;
     var utils = {
-        visualLength: function(node) {
-            var elem = document.getElementById('testDataLength');
-            if (!elem) {
-                elem = document.createElement('SPAN');
-                elem.id = "testDataLength";
-                elem.style.visibility = "hidden";
-                document.body.appendChild(elem);
-            }
-            var $node = $(node);
-            $(elem).css({'font': $node.css('font'),
-                        'font-size': $node.css('font-size'),
-                        'font-family': $node.css('font-family')});
-            elem.innerHTML = $node.text();
-            return elem.offsetWidth;
-        },
         forIn: function(obj, action) {
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
@@ -38,22 +23,22 @@
             }
             return false;
         },
-        getElementsByClassName: function(cl) {
-            if (document.getElementsByClassName) {
-                return document.getElementsByClassName(cl);
+        getElementsByClassName: function(cl, parent) {
+            parent = parent || window.document;
+            if (parent.querySelectorAll) {
+                return parent.querySelectorAll('.' + cl);
             }
-            else {
-                var retnode = [];
-                var myclass = new RegExp('\\b' + cl + '\\b');
-                var elem = document.getElementsByTagName('*');
-                for (var i = 0; i < elem.length; i++) {
-                    var classes = elem[i].className;
-                    if (myclass.test(classes)) {
-                        retnode.push(elem[i]);
-                    }
+            var retnode = [];
+            var myclass = new RegExp('\\b' + cl + '\\b', 'i') ;
+            var elem = parent.getElementsByTagName('*');
+            var classes;
+            for (var i = 0; i < elem.length; i+=1) {
+                classes = elem[i].className;
+                if (classes && myclass.test(classes)) {
+                    retnode.push(elem[i]);
                 }
-                return retnode;    
             }
+            return retnode;
         },
         newId: (function() {
             var seedId = new Date().getTime();

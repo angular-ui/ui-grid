@@ -180,17 +180,6 @@ describe('Utility Service', function () {
             expect($utils.evalProperty(obj, "foo.bar.omg")).toEqual(undefined);
         });
     });
-    // visualLength
-    describe('visualLength should return the correct visual length of text.', function () {
-        it('returns integer', function() {
-            var div = '<div style="line-height: 1; margin: 0; padding: 0; border: 0; vertical-align: baseline; width: 30px; font-family: Arial; font-size: 12pt">The quick brown fox jumped over the lazy dog.</div></body></html>';
-            var visualLength = $utils.visualLength(div);
-            // Was .toEqual(286) but was inconsistent across Browsers and operating systems. Firefox is 329, Chromium, Chrome, and PhantomJS are 286, Travis CI is 367!
-            //   CSS reset and forcing font family and physical font sizes does not help
-            expect(visualLength).toBeGreaterThan(285);
-            expect(visualLength).toBeLessThan(368);
-        });
-    });
     // forIn
     describe('forIn should execute the function for each key in an object.', function() {
         it('executes some code', function () {
