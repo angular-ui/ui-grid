@@ -5,4 +5,4 @@
     <div class="ngSortPriority">{{col.sortPriority}}</div>
     <div ng-class="{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }" ng-click="togglePin(col)" ng-show="col.pinnable"></div>
 </div>
-<div ng-show="col.resizable" class="ngHeaderGrip" ng-click="col.gripClick($event)" ng-mousedown="col.gripOnMouseDown($event)"></div>
+<div ng-show="col.resizable" class="ngHeaderGrip" ng-dblclick="col.gripDblClick()" ng-mousedown="col.gripOnMouseDown($event)"></div>

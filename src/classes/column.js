@@ -11,6 +11,8 @@
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
+    var $document = angular.element(window.document);
+
     // TODO: Use the column's definition for enabling cell editing
     // self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
     self.enableCellEdit = colDef.enableCellEdit !== undefined ? colDef.enableCellEdit : (config.enableCellEdit || config.enableCellEditOnFocus);
@@ -108,18 +110,8 @@
         config.sortCallback(self, evt);
         return false;
     };
-    self.gripClick = function() {
-        clicks++; //count clicks
-        if (clicks === 1) {
-            timer = setTimeout(function() {
-                //Here you can add a single click action.
-                clicks = 0; //after action performed, reset counter
-            }, delay);
-        } else {
-            clearTimeout(timer); //prevent single-click action
-            config.resizeOnDataCallback(self); //perform double-click action
-            clicks = 0; //after action performed, reset counter
-        }
+    self.gripDblClick = function() {
+        config.resizeOnDataCallback(self);
     };
     self.gripOnMouseDown = function(event) {
         $scope.isColumnResizing = true;
@@ -128,11 +120,10 @@
             domUtilityService.BuildStyles($scope, grid);
             return true;
         }
-        event.target.parentElement.style.cursor = 'col-resize';
         self.startMousePosition = event.clientX;
         self.origWidth = self.width;
-        $(document).mousemove(self.onMouseMove);
-        $(document).mouseup(self.gripOnMouseUp);
+        $document.on('mousemove', self.onMouseMove);
+        $document.on('mouseup', self.gripOnMouseUp);
         return false;
     };
     self.onMouseMove = function(event) {
@@ -144,9 +135,8 @@
         return false;
     };
     self.gripOnMouseUp = function (event) {
-        $(document).off('mousemove', self.onMouseMove);
-        $(document).off('mouseup', self.gripOnMouseUp);
-        event.target.parentElement.style.cursor = 'default';
+        $document.off('mousemove', self.onMouseMove);
+        $document.off('mouseup', self.gripOnMouseUp);
         domUtilityService.digest($scope);
         $scope.isColumnResizing = false;
         return false;
