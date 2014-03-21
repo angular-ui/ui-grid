@@ -92,7 +92,7 @@ function userController($scope) {
 
     $scope.myDefs2 = [{ field: 'Sku', displayName: 'My Sku', enableCellEdit: true },
         { field: 'Vendor', displayName: 'Supplier', enableCellEdit: true },
-        { field: 'SeasonCode', displayName: 'My SeasonCode', enableCellEdit: true },
+        { field: 'SeasonCode', displayName: 'My SeasonCode', enableCellEdit: true, dataType: 'numberString' },
         { field: 'Mfg_Id', displayName: 'Manufacturer ID', enableCellEdit: true },
         { field: 'UPC', displayName: 'Bar Code', enableCellEdit: true }];
     self.selectionchanging = function (a, b) {
@@ -129,8 +129,8 @@ function userController($scope) {
             scope.$parent.isFocused = false;
         });
     };
-    $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': null, 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
-                      { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': '', 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
+    $scope.myData2 = [{ 'Sku': 'C-2820164', 'Vendor': 'NEWB', 'SeasonCode': 'support_1', 'Mfg_Id': '573-9880954', 'UPC': '822860449228' },
+                      { 'Sku': 'J-8555462', 'Vendor': 'NIKE', 'SeasonCode': null, 'Mfg_Id': '780-8855467', 'UPC': '043208523549' },
                       { 'Sku': 'K-5312708', 'Vendor': 'REEB', 'SeasonCode': '1293', 'Mfg_Id': '355-6906843', 'UPC': '229487568922' },
                       { 'Sku': 'W-4295255', 'Vendor': 'REEB', 'SeasonCode': '6283', 'Mfg_Id': '861-4929378', 'UPC': '644134774391' },
                       { 'Sku': 'X-9829445', 'Vendor': 'DOCK', 'SeasonCode': '6670', 'Mfg_Id': '298-5235913', 'UPC': '872941679110' },
@@ -138,6 +138,7 @@ function userController($scope) {
                       { 'Sku': 'X-2718366', 'Vendor': 'MERR', 'SeasonCode': '4054', 'Mfg_Id': '920-2961971', 'UPC': '157891269493' },
                       { 'Sku': 'Q-1505237', 'Vendor': 'AX', 'SeasonCode': '9145', 'Mfg_Id': '371-6918101', 'UPC': '553657492213' },
                       { 'Sku': 'M-1626429', 'Vendor': 'REEB', 'SeasonCode': '1846', 'Mfg_Id': '242-5856618', 'UPC': '029388467459' },
+                      { 'Sku': 'N-1626429', 'Vendor': 'MOMO', 'SeasonCode': 'n334', 'Mfg_Id': '242-5856518', 'UPC': '329388467459' },
                       { 'Sku': 'Y-1914652', 'Vendor': 'LEVI', 'SeasonCode': '5553', 'Mfg_Id': '80-9194110', 'UPC': '433360049369' }];
     $scope.gridOptions2 = {
         data: 'myData2',

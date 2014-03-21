@@ -71,10 +71,10 @@ describe('Dom Utility Service', function () {
             var scrollTopCalled;
 
             $scope.columns = [
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, }];
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 },
+                { visible: true, pinned: false, width: 100 }];
             $scope.totalRowWidth = function() {
                 return 400;
             };
@@ -139,10 +139,15 @@ describe('Dom Utility Service', function () {
 });
 
 describe('Sort Service', function () {
-    var $sort;
+    var $sort,
+        sorterFn = function(a, b) {
+            return 0;
+        };
+
     beforeEach(module('ngGrid'));
     beforeEach(inject(function ($sortService) {
         $sort = $sortService;
+        $sort.addDataType('foo', sorterFn);
     }));
 
     describe('guessing the sort function', function() {
@@ -159,6 +164,39 @@ describe('Sort Service', function () {
             expect($sort.guessSortFn(foo)).toEqual($sort.basicSort);
           });
       });
+
+    describe('working with colDef dataType', function () {
+
+        it('should be able to define a custom dataType', function() {
+            $sort.addDataType('bar', sorterFn);
+
+            expect($sort.dataTypes.bar).toEqual('sortBar');
+            expect($sort.sortBar).toEqual(sorterFn);
+        });
+
+        it('should be able to de-register a custom dataType', function() {
+            $sort.removeDataType('foo');
+
+            expect($sort.dataTypes.foo).toBeUndefined();
+            expect($sort.sortFoo).toBeUndefined();
+        });
+
+        it('should prefer dataType rather than guessing', function() {
+            var col = {
+                colDef: {
+                    field: 'foo',
+                    displayName: 'Foo',
+                    dataType: 'foo'
+                }
+            }, data = [{
+                foo: 111
+            }];
+
+
+            expect($sort.getSortFn(col, data)).toEqual($sort.sortFoo);
+
+        });
+    });
 });
 
 describe('Utility Service', function () {
