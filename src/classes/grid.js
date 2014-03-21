@@ -515,6 +515,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 //compensate for scrollbar
                 remainingWidth -= domUtilityService.ScrollW;
             }
+
+            // prevent remainingWidth from becoming negative
+            remainingWidth = Math.max(0, remainingWidth);
+
             // calculate the weight of each asterisk rounded down
             var asteriskVal = Math.floor(remainingWidth / asteriskNum);
 
@@ -523,6 +527,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 // Get the ngColumn that matches the current column from columnDefs
                 var ngColumn = $scope.columns[indexMap[colDef.index]];                
                 ngColumn.width = asteriskVal * colDef.width.length;
+
+                // respect minWidth
+                ngColumn.width = Math.max(ngColumn.colDef.minWidth, ngColumn.width);
+
                 if (ngColumn.visible !== false) {
                     totalWidth += ngColumn.width;
                 }
