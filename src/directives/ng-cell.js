@@ -16,14 +16,14 @@
                         html = cellTemplate;
                     }
 
-                    var cellElement = $compile(html)($scope);
-
+                    var cellElement = $(html);
+                    iElement.append(cellElement);
+                    $compile(cellElement)($scope);
+					
                     if ($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') === -1) {
                         cellElement[0].setAttribute('tabindex', 0);
                         cellElement.addClass('ngCellElement');
                     }
-
-                    iElement.append(cellElement);
                 },
                 post: function($scope, iElement) {
                     if ($scope.enableCellSelection) {
