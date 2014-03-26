@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/24/2014 12:38
+* Compiled At: 03/26/2014 14:30
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -989,8 +989,10 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
+                if (!grid.$groupPanel) {
+                  return;
+                }
                 grid.$groupPanel.off('mousedown');
-
                 grid.$groupPanel = null;
             });
 
@@ -999,13 +1001,16 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             }
 
             grid.$headerScroller.on('$destroy', function() {
-                grid.$headerScroller.off('mousedown');
+              if (!grid.$headerScroller) {
+                return;
+              }
+              grid.$headerScroller.off('mousedown');
 
-                if (grid.config.enableColumnReordering) {
-                    grid.$headerScroller.off('drop');
-                }
+              if (grid.config.enableColumnReordering) {
+                  grid.$headerScroller.off('drop');
+              }
 
-                grid.$headerScroller = null;
+              grid.$headerScroller = null;
             });
         }
 
@@ -1013,7 +1018,7 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             $timeout(self.setDraggables);
         }));
     };
-    self.dragStart = function(evt){		
+    self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
     };
@@ -1043,9 +1048,9 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             if (navigator.userAgent.indexOf("MSIE") !== -1){
                 //call native IE dragDrop() to start dragging
                 var sortColumn = grid.$root.find('.ngHeaderSortColumn');
-                sortColumn.bind('selectstart', function () { 
-                    this.dragDrop(); 
-                    return false; 
+                sortColumn.bind('selectstart', function () {
+                    this.dragDrop();
+                    return false;
                 });
                 angular.element(sortColumn).on('$destroy', function() {
                     sortColumn.off('selectstart');
@@ -1079,17 +1084,17 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
                     if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
-                        this.addEventListener('dragstart', self.dragStart); 
+                        this.addEventListener('dragstart', self.dragStart);
 
                         angular.element(this).on('$destroy', function() {
-                            this.removeEventListener('dragstart', self.dragStart); 
+                            this.removeEventListener('dragstart', self.dragStart);
                         });
                     }
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging
-                        groupItem.bind('selectstart', function () { 
-                            this.dragDrop(); 
-                            return false; 
+                        groupItem.bind('selectstart', function () {
+                            this.dragDrop();
+                            return false;
                         });
 
                         groupItem.on('$destroy', function() {
@@ -1184,7 +1189,7 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     self.assignGridEventHandlers = function() {
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
-        //we'll just give it a tab index of the corresponding gridcache index 
+        //we'll just give it a tab index of the corresponding gridcache index
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1) {
@@ -1297,15 +1302,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
-        
+
         //Callback for when you want to validate something after selection.
         afterSelectionChange: function() {
-        }, 
+        },
 
         /* Callback if you want to inspect something before selection,
-        return false if you want to cancel the selection. return true otherwise. 
-        If you need to wait for an async call to proceed with selection you can 
-        use rowItem.changeSelection(event) method after returning false initially. 
+        return false if you want to cancel the selection. return true otherwise.
+        If you need to wait for an async call to proceed with selection you can
+        use rowItem.changeSelection(event) method after returning false initially.
         Note: when shift+ Selecting multiple items in the grid this will only get called
         once and the rowItem will be an array of items that are queued to be selected. */
         beforeSelectionChange: function() {
@@ -1315,13 +1320,13 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //checkbox templates.
         checkboxCellTemplate: undefined,
         checkboxHeaderTemplate: undefined,
-        
+
         //definitions of columns as an array [], if not defines columns are auto-generated. See github wiki for more details.
         columnDefs: undefined,
 
         //*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
         data: [],
-        
+
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
@@ -1331,7 +1336,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enables cell editing on focus
         enableCellEditOnFocus: false,
-        
+
         //Enables cell selection.
         enableCellSelection: false,
 
@@ -1349,7 +1354,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enable column pinning
         enablePinning: false,
-        
+
         //To be able to have selectable rows in grid.
         enableRowSelection: true,
 
@@ -1358,12 +1363,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Enables or disables text highlighting in grid by adding the "unselectable" class (See CSS file)
         enableHighlighting: false,
-        
+
         // string list of properties to exclude when auto-generating columns.
         excludeProperties: [],
-        
+
         /* filterOptions -
-        filterText: The text bound to the built-in search box. 
+        filterText: The text bound to the built-in search box.
         useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.
         */
         filterOptions: {
@@ -1373,27 +1378,27 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Defining the height of the footer in pixels.
         footerRowHeight: 55,
-        
+
         // the template for the column menu and filter, including the button.
         footerTemplate: undefined,
 
-        // Enables a trade off between refreshing the contents of the grid continuously while scrolling (behaviour when true) 
+        // Enables a trade off between refreshing the contents of the grid continuously while scrolling (behaviour when true)
         // and keeping the scroll bar button responsive at the expense of refreshing grid contents (behaviour when false)
         forceSyncScrolling: true,
 
         //Initial fields to group data by. Array of field names, not displayName.
         groups: [],
-        
+
         // set the initial state of aggreagate grouping. "true" means they will be collapsed when grouping changes, "false" means they will be expanded by default.
         groupsCollapsedByDefault: true,
-        
+
         //The height of the header row in pixels.
         headerRowHeight: 30,
 
         //Define a header row template for further customization. See github wiki for more details.
         headerRowTemplate: undefined,
 
-        /*Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled. 
+        /*Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.
         Useful if you want drag + drop but your users insist on crappy browsers. */
         jqueryUIDraggable: false,
 
@@ -1403,7 +1408,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Prevent unselections when in single selection mode.
         keepLastSelected: true,
 
-        /*Maintains the column widths while resizing. 
+        /*Maintains the column widths while resizing.
         Defaults to true when using *'s or undefined widths. Can be ovverriden by setting to false.*/
         maintainColumnRatios: undefined,
 
@@ -1416,13 +1421,13 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // pagingOptions -
         pagingOptions: {
             // pageSizes: list of available page sizes.
-            pageSizes: [250, 500, 1000], 
-            //pageSize: currently selected page size. 
+            pageSizes: [250, 500, 1000],
+            //pageSize: currently selected page size.
             pageSize: 250,
             //currentPage: the uhm... current page.
             currentPage: 1
         },
-        
+
         //the selection checkbox is pinned to the left side of the viewport or not.
         pinSelectionCheckbox: false,
 
@@ -1434,51 +1439,51 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Row height of rows in grid.
         rowHeight: 30,
-        
+
         //Define a row template to customize output. See github wiki for more details.
         rowTemplate: undefined,
-        
+
         //all of the items selected in the grid. In single select mode there will only be one item in the array.
         selectedItems: [],
-        
+
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false,
-        
-        /*Enables menu to choose which columns to display and group by. 
+
+        /*Enables menu to choose which columns to display and group by.
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showColumnMenu: false,
 
-        /*Enables display of the filterbox in the column menu. 
+        /*Enables display of the filterbox in the column menu.
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showFilter: false,
-        
+
         //Show or hide the footer alltogether the footer is enabled by default
         showFooter: false,
 
         //Show the dropzone for drag and drop grouping
         showGroupPanel: false,
-        
+
         //Row selection check boxes appear as the first column.
         showSelectionCheckbox: false,
-        
-        /*Define a sortInfo object to specify a default sorting state. 
+
+        /*Define a sortInfo object to specify a default sorting state.
         You can also observe this variable to utilize server-side sorting (see useExternalSorting).
         Syntax is sortinfo: { fields: ['fieldName1',' fieldName2'], direction: 'ASC'/'asc' || 'desc'/'DESC'}*/
         sortInfo: {fields: [], columns: [], directions: [] },
 
         //Set the tab index of the Vieport.
         tabIndex: -1,
-        
-        //totalServerItems: Total items are on the server. 
+
+        //totalServerItems: Total items are on the server.
         totalServerItems: 0,
-            
-        /*Prevents the internal sorting from executing. 
+
+        /*Prevents the internal sorting from executing.
         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
         useExternalSorting: false,
-        
+
         /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
         i18n: 'en',
-        
+
         //the threshold in rows to force virtualization on
         virtualizationThreshold: 50,
 
@@ -1525,7 +1530,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         return $q.all(promises);
     };
-    
+
     //Templates
     // test templates for urls and get the tempaltes via synchronous ajax calls
     self.getTemplate = function (key) {
@@ -1742,7 +1747,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
                     return;
                 } else if (t.indexOf("*") !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
-                    if (ngColumn.visible !== false) {
+                    if (ngColumn && ngColumn.visible !== false) {
                         asteriskNum += t.length;
                     }
                     asterisksArray.push(colDef);
@@ -1753,15 +1758,15 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 } else { // we can't parse the width so lets throw an error.
                     throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
                 }
-            } else if (ngColumn.visible !== false) {
+            } else if (ngColumn && ngColumn.visible !== false) {
                 totalWidth += ngColumn.width = parseInt(ngColumn.width, 10);
             }
         });
-        
+
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0) {
             //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
-            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
             // If any columns with % widths have been hidden, then let other % based columns use their width
             var percentWidth = 0; // The total % value for all columns setting their width using % (will e.g. be 40 for 2 columns with 20% each)
             var hiddenPercent = 0; // The total % value for all columns setting their width using %, but which have been hidden
@@ -1771,7 +1776,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var percent = parseFloat(colDef.width) / 100;
                 percentWidth += percent;
 
-                if (!ngColumn.visible) {
+                if (ngColumn && !ngColumn.visible) {
                     hiddenPercent += percent;
                 }
             });
@@ -1781,7 +1786,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(percentArray, function(colDef) {
                 // Get the ngColumn that matches the current column from columnDefs
                 var ngColumn = $scope.columns[indexMap[colDef.index]];
-                
+
                 // Calc the % relative to the amount of % reserved for the visible columns (that use % based widths)
                 var percent = parseFloat(colDef.width) / 100;
                 if (hiddenPercent > 0) {
@@ -1800,7 +1805,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // check if we saved any asterisk columns for calculating later
         if (asterisksArray.length > 0) {
             //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
-            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
             // get the remaining width
             var remainingWidth = self.rootDim.outerWidth - totalWidth;
             // are we overflowing vertically?
@@ -1814,9 +1819,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             // set the width of each column based on the number of stars
             angular.forEach(asterisksArray, function(colDef, i) {
                 // Get the ngColumn that matches the current column from columnDefs
-                var ngColumn = $scope.columns[indexMap[colDef.index]];                
+                var ngColumn = $scope.columns[indexMap[colDef.index]];
+                if (!ngColumn) { return; }
                 ngColumn.width = asteriskVal * colDef.width.length;
-                if (ngColumn.visible !== false) {
+                if (ngColumn && ngColumn.visible !== false) {
                     totalWidth += ngColumn.width;
                 }
 
@@ -1878,7 +1884,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // p.resolve();
         // return p.promise;
     };
-   
+
     self.resizeOnData = function(col) {
         // we calculate the longest data.
         var longest = col.minWidth;
@@ -3072,13 +3078,13 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
             return {
                 pre: function($scope, iElement) {
                     var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']');
 
                     if ($scope.col.enableCellEdit) {
                         html =  $scope.col.cellEditTemplate;
                         html = html.replace(CELL_EDITABLE_CONDITION, $scope.col.cellEditableCondition);
                         html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field));
+                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']'));
                     } else {
                         html = cellTemplate;
                     }
@@ -3096,7 +3102,7 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
                     if ($scope.enableCellSelection) {
                         $scope.domAccessProvider.selectionHandlers($scope, iElement);
                     }
-                    
+
                     $scope.$on('$destroy', $scope.$on('ngGridEventDigestCell', function() {
                         domUtilityService.digest($scope);
                     }));
@@ -3104,9 +3110,10 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
             };
         }
     };
-    
+
     return ngCell;
 }]);
+
 /*
  * Defines the ui-if tag. This removes/adds an element from the dom depending on a condition
  * Originally created by @tigbro, for the @jquery-mobile-angular-adapter
@@ -3250,7 +3257,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         else {
                             $scope.totalServerItems = 0;
                         }
-                        
+
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                         if (typeof options.data === "string") {
                             var dataWatcher = function (a) {
@@ -3279,7 +3286,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
                             }));
                         }
-                        
+
                         grid.footerController = new ngFooter($scope, grid);
                         //set the right styling on the container
                         iElement.addClass("ngGrid").addClass(grid.gridId.toString());
@@ -3300,7 +3307,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             if (grid.rowCache[rowIndex]) {
                                 if (grid.rowCache[rowIndex].clone) {
                                     grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
-                                } 
+                                }
                                 grid.rowCache[rowIndex].setSelection(state ? true : false);
                             }
                         };
@@ -3345,11 +3352,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         $scope.$on('$destroy', $scope.$on('ngGridEventDigestGrid', function(){
                             domUtilityService.digest($scope.$parent);
                         }));
-                        
+
                         $scope.$on('$destroy', $scope.$on('ngGridEventDigestGridParent', function(){
                             domUtilityService.digest($scope.$parent);
                         }));
-                        // set up the columns 
+                        // set up the columns
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
                         });
@@ -3363,7 +3370,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                             options.plugins[$utils.getInstanceType(p)] = p;
 
                             $scope.$on('$destroy', function() {
-                                newScope.destroy();
+                                newScope.$destroy();
                             });
                         });
                         //send initi finalize notification.
@@ -3707,32 +3714,21 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('aggregateTemplate.html',
-    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">\r" +
-    "\n" +
-    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>\r" +
-    "\n" +
-    "    <div class=\"{{row.aggClass()}}\"></div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n"
+    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">\n" +
+    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>\n" +
+    "    <div class=\"{{row.aggClass()}}\"></div>\n" +
+    "</div>\n"
   );
 
 
   $templateCache.put('cellEditTemplate.html',
-    "<div ng-cell-has-focus ng-dblclick=\"editCell()\">\r" +
-    "\n" +
-    "\t<div ng-edit-cell-if=\"!(isFocused && CELL_EDITABLE_CONDITION)\">\t\r" +
-    "\n" +
-    "\t\tDISPLAY_CELL_TEMPLATE\r" +
-    "\n" +
-    "\t</div>\r" +
-    "\n" +
-    "\t<div ng-edit-cell-if=\"isFocused && CELL_EDITABLE_CONDITION\">\r" +
-    "\n" +
-    "\t\tEDITABLE_CELL_TEMPLATE\r" +
-    "\n" +
-    "\t</div>\r" +
-    "\n" +
+    "<div ng-cell-has-focus ng-dblclick=\"editCell()\">\n" +
+    "\t<div ng-edit-cell-if=\"!(isFocused && CELL_EDITABLE_CONDITION)\">\t\n" +
+    "\t\tDISPLAY_CELL_TEMPLATE\n" +
+    "\t</div>\n" +
+    "\t<div ng-edit-cell-if=\"isFocused && CELL_EDITABLE_CONDITION\">\n" +
+    "\t\tEDITABLE_CELL_TEMPLATE\n" +
+    "\t</div>\n" +
     "</div>"
   );
 
@@ -3758,190 +3754,109 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('footerTemplate.html',
-    "<div ng-show=\"showFooter\" class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">\r" +
-    "\n" +
-    "    <div class=\"ngTotalSelectContainer\" >\r" +
-    "\n" +
-    "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >\r" +
-    "\n" +
-    "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "        <div class=\"ngFooterSelectedItems\" ng-show=\"multiSelect\">\r" +
-    "\n" +
-    "            <span class=\"ngLabel\">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">\r" +
-    "\n" +
-    "        <div style=\"float:left; margin-right: 10px;\" class=\"ngRowCountPicker\">\r" +
-    "\n" +
-    "            <span style=\"float: left; margin-top: 3px;\" class=\"ngLabel\">{{i18n.ngPageSizeLabel}}</span>\r" +
-    "\n" +
-    "            <select style=\"float: left;height: 27px; width: 100px\" ng-model=\"pagingOptions.pageSize\" >\r" +
-    "\n" +
-    "                <option ng-repeat=\"size in pagingOptions.pageSizes\">{{size}}</option>\r" +
-    "\n" +
-    "            </select>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "        <div style=\"float:left; margin-right: 10px; line-height:25px;\" class=\"ngPagerControl\" style=\"float: left; min-width: 135px;\">\r" +
-    "\n" +
-    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageToFirst()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerFirstTitle}}\"><div class=\"ngPagerFirstTriangle\"><div class=\"ngPagerFirstBar\"></div></div></button>\r" +
-    "\n" +
-    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>\r" +
-    "\n" +
-    "            <input class=\"ngPagerCurrent\" min=\"1\" max=\"{{currentMaxPages}}\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>\r" +
-    "\n" +
-    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>\r" +
-    "\n" +
-    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageToLast()\" ng-disabled=\"cantPageToLast()\" title=\"{{i18n.ngPagerLastTitle}}\"><div class=\"ngPagerLastTriangle\"><div class=\"ngPagerLastBar\"></div></div></button>\r" +
-    "\n" +
-    "        </div>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n"
+    "<div ng-show=\"showFooter\" class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">\n" +
+    "    <div class=\"ngTotalSelectContainer\" >\n" +
+    "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >\n" +
+    "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>\n" +
+    "        </div>\n" +
+    "        <div class=\"ngFooterSelectedItems\" ng-show=\"multiSelect\">\n" +
+    "            <span class=\"ngLabel\">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">\n" +
+    "        <div style=\"float:left; margin-right: 10px;\" class=\"ngRowCountPicker\">\n" +
+    "            <span style=\"float: left; margin-top: 3px;\" class=\"ngLabel\">{{i18n.ngPageSizeLabel}}</span>\n" +
+    "            <select style=\"float: left;height: 27px; width: 100px\" ng-model=\"pagingOptions.pageSize\" >\n" +
+    "                <option ng-repeat=\"size in pagingOptions.pageSizes\">{{size}}</option>\n" +
+    "            </select>\n" +
+    "        </div>\n" +
+    "        <div style=\"float:left; margin-right: 10px; line-height:25px;\" class=\"ngPagerControl\" style=\"float: left; min-width: 135px;\">\n" +
+    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageToFirst()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerFirstTitle}}\"><div class=\"ngPagerFirstTriangle\"><div class=\"ngPagerFirstBar\"></div></div></button>\n" +
+    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>\n" +
+    "            <input class=\"ngPagerCurrent\" min=\"1\" max=\"{{currentMaxPages}}\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>\n" +
+    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>\n" +
+    "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageToLast()\" ng-disabled=\"cantPageToLast()\" title=\"{{i18n.ngPagerLastTitle}}\"><div class=\"ngPagerLastTriangle\"><div class=\"ngPagerLastBar\"></div></div></button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>\n"
   );
 
 
   $templateCache.put('gridTemplate.html',
-    "<div class=\"ngTopPanel\" ng-class=\"{'ui-widget-header':jqueryUITheme, 'ui-corner-top': jqueryUITheme}\" ng-style=\"topPanelStyle()\">\r" +
-    "\n" +
-    "    <div class=\"ngGroupPanel\" ng-show=\"showGroupPanel()\" ng-style=\"groupPanelStyle()\">\r" +
-    "\n" +
-    "        <div class=\"ngGroupPanelDescription\" ng-show=\"configGroups.length == 0\">{{i18n.ngGroupPanelDescription}}</div>\r" +
-    "\n" +
-    "        <ul ng-show=\"configGroups.length > 0\" class=\"ngGroupList\">\r" +
-    "\n" +
-    "            <li class=\"ngGroupItem\" ng-repeat=\"group in configGroups\">\r" +
-    "\n" +
-    "                <span class=\"ngGroupElement\">\r" +
-    "\n" +
-    "                    <span class=\"ngGroupName\">{{group.displayName}}\r" +
-    "\n" +
-    "                        <span ng-click=\"removeGroup($index)\" class=\"ngRemoveGroup\">x</span>\r" +
-    "\n" +
-    "                    </span>\r" +
-    "\n" +
-    "                    <span ng-hide=\"$last\" class=\"ngGroupArrow\"></span>\r" +
-    "\n" +
-    "                </span>\r" +
-    "\n" +
-    "            </li>\r" +
-    "\n" +
-    "        </ul>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">\r" +
-    "\n" +
-    "        <div ng-header-row class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\"></div>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "    <div ng-grid-menu></div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n" +
-    "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">\r" +
-    "\n" +
-    "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">\r" +
-    "\n" +
-    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n" +
-    "<div ng-grid-footer></div>\r" +
-    "\n"
+    "<div class=\"ngTopPanel\" ng-class=\"{'ui-widget-header':jqueryUITheme, 'ui-corner-top': jqueryUITheme}\" ng-style=\"topPanelStyle()\">\n" +
+    "    <div class=\"ngGroupPanel\" ng-show=\"showGroupPanel()\" ng-style=\"groupPanelStyle()\">\n" +
+    "        <div class=\"ngGroupPanelDescription\" ng-show=\"configGroups.length == 0\">{{i18n.ngGroupPanelDescription}}</div>\n" +
+    "        <ul ng-show=\"configGroups.length > 0\" class=\"ngGroupList\">\n" +
+    "            <li class=\"ngGroupItem\" ng-repeat=\"group in configGroups\">\n" +
+    "                <span class=\"ngGroupElement\">\n" +
+    "                    <span class=\"ngGroupName\">{{group.displayName}}\n" +
+    "                        <span ng-click=\"removeGroup($index)\" class=\"ngRemoveGroup\">x</span>\n" +
+    "                    </span>\n" +
+    "                    <span ng-hide=\"$last\" class=\"ngGroupArrow\"></span>\n" +
+    "                </span>\n" +
+    "            </li>\n" +
+    "        </ul>\n" +
+    "    </div>\n" +
+    "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">\n" +
+    "        <div ng-header-row class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\"></div>\n" +
+    "    </div>\n" +
+    "    <div ng-grid-menu></div>\n" +
+    "</div>\n" +
+    "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">\n" +
+    "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">\n" +
+    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "<div ng-grid-footer></div>\n"
   );
 
 
   $templateCache.put('headerCellTemplate.html',
-    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{ 'ngSorted': !noSortVisible }\">\r" +
-    "\n" +
-    "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>\r" +
-    "\n" +
-    "    <div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div>\r" +
-    "\n" +
-    "    <div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div>\r" +
-    "\n" +
-    "    <div class=\"ngSortPriority\">{{col.sortPriority}}</div>\r" +
-    "\n" +
-    "    <div ng-class=\"{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }\" ng-click=\"togglePin(col)\" ng-show=\"col.pinnable\"></div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n" +
+    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{ 'ngSorted': !noSortVisible }\">\n" +
+    "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>\n" +
+    "    <div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div>\n" +
+    "    <div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div>\n" +
+    "    <div class=\"ngSortPriority\">{{col.sortPriority}}</div>\n" +
+    "    <div ng-class=\"{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }\" ng-click=\"togglePin(col)\" ng-show=\"col.pinnable\"></div>\n" +
+    "</div>\n" +
     "<div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>"
   );
 
 
   $templateCache.put('headerRowTemplate.html',
-    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\">\r" +
-    "\n" +
-    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: col.headerRowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
-    "\n" +
-    "\t<div ng-header-cell></div>\r" +
-    "\n" +
+    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\">\n" +
+    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: col.headerRowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\n" +
+    "\t<div ng-header-cell></div>\n" +
     "</div>"
   );
 
 
   $templateCache.put('menuTemplate.html',
-    "<div ng-show=\"showColumnMenu || showFilter\"  class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">\r" +
-    "\n" +
-    "    <div class=\"ngHeaderButtonArrow\"></div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n" +
-    "<div ng-show=\"showMenu\" class=\"ngColMenu\">\r" +
-    "\n" +
-    "    <div ng-show=\"showFilter\">\r" +
-    "\n" +
-    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterOptions.filterText\"/>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "    <div ng-show=\"showColumnMenu\">\r" +
-    "\n" +
-    "        <span class=\"ngMenuText\">{{i18n.ngMenuText}}</span>\r" +
-    "\n" +
-    "        <ul class=\"ngColList\">\r" +
-    "\n" +
-    "            <li class=\"ngColListItem\" ng-repeat=\"col in columns | ngColumns\">\r" +
-    "\n" +
-    "                <label><input ng-disabled=\"col.pinned\" type=\"checkbox\" class=\"ngColListCheckbox\" ng-model=\"col.visible\"/>{{col.displayName}}</label>\r" +
-    "\n" +
-    "\t\t\t\t<a title=\"Group By\" ng-class=\"col.groupedByClass()\" ng-show=\"col.groupable && col.visible\" ng-click=\"groupBy(col)\"></a>\r" +
-    "\n" +
-    "\t\t\t\t<span class=\"ngGroupingNumber\" ng-show=\"col.groupIndex > 0\">{{col.groupIndex}}</span>          \r" +
-    "\n" +
-    "            </li>\r" +
-    "\n" +
-    "        </ul>\r" +
-    "\n" +
-    "    </div>\r" +
-    "\n" +
-    "</div>\r" +
-    "\n"
+    "<div ng-show=\"showColumnMenu || showFilter\"  class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">\n" +
+    "    <div class=\"ngHeaderButtonArrow\"></div>\n" +
+    "</div>\n" +
+    "<div ng-show=\"showMenu\" class=\"ngColMenu\">\n" +
+    "    <div ng-show=\"showFilter\">\n" +
+    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterOptions.filterText\"/>\n" +
+    "    </div>\n" +
+    "    <div ng-show=\"showColumnMenu\">\n" +
+    "        <span class=\"ngMenuText\">{{i18n.ngMenuText}}</span>\n" +
+    "        <ul class=\"ngColList\">\n" +
+    "            <li class=\"ngColListItem\" ng-repeat=\"col in columns | ngColumns\">\n" +
+    "                <label><input ng-disabled=\"col.pinned\" type=\"checkbox\" class=\"ngColListCheckbox\" ng-model=\"col.visible\"/>{{col.displayName}}</label>\n" +
+    "\t\t\t\t<a title=\"Group By\" ng-class=\"col.groupedByClass()\" ng-show=\"col.groupable && col.visible\" ng-click=\"groupBy(col)\"></a>\n" +
+    "\t\t\t\t<span class=\"ngGroupingNumber\" ng-show=\"col.groupIndex > 0\">{{col.groupIndex}}</span>          \n" +
+    "            </li>\n" +
+    "        </ul>\n" +
+    "    </div>\n" +
+    "</div>\n"
   );
 
 
   $templateCache.put('rowTemplate.html',
-    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
-    "\n" +
-    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
-    "\n" +
-    "\t<div ng-cell></div>\r" +
-    "\n" +
+    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\n" +
+    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\n" +
+    "\t<div ng-cell></div>\n" +
     "</div>"
   );
 

@@ -21,8 +21,10 @@
             grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
+                if (!grid.$groupPanel) {
+                  return;
+                }
                 grid.$groupPanel.off('mousedown');
-
                 grid.$groupPanel = null;
             });
 
@@ -31,13 +33,16 @@
             }
 
             grid.$headerScroller.on('$destroy', function() {
-                grid.$headerScroller.off('mousedown');
+              if (!grid.$headerScroller) {
+                return;
+              }
+              grid.$headerScroller.off('mousedown');
 
-                if (grid.config.enableColumnReordering) {
-                    grid.$headerScroller.off('drop');
-                }
+              if (grid.config.enableColumnReordering) {
+                  grid.$headerScroller.off('drop');
+              }
 
-                grid.$headerScroller = null;
+              grid.$headerScroller = null;
             });
         }
 
@@ -45,7 +50,7 @@
             $timeout(self.setDraggables);
         }));
     };
-    self.dragStart = function(evt){		
+    self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
     };
@@ -75,9 +80,9 @@
             if (navigator.userAgent.indexOf("MSIE") !== -1){
                 //call native IE dragDrop() to start dragging
                 var sortColumn = grid.$root.find('.ngHeaderSortColumn');
-                sortColumn.bind('selectstart', function () { 
-                    this.dragDrop(); 
-                    return false; 
+                sortColumn.bind('selectstart', function () {
+                    this.dragDrop();
+                    return false;
                 });
                 angular.element(sortColumn).on('$destroy', function() {
                     sortColumn.off('selectstart');
@@ -111,17 +116,17 @@
                 if (!grid.config.jqueryUIDraggable) {
                     groupItem.attr('draggable', 'true');
                     if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
-                        this.addEventListener('dragstart', self.dragStart); 
+                        this.addEventListener('dragstart', self.dragStart);
 
                         angular.element(this).on('$destroy', function() {
-                            this.removeEventListener('dragstart', self.dragStart); 
+                            this.removeEventListener('dragstart', self.dragStart);
                         });
                     }
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging
-                        groupItem.bind('selectstart', function () { 
-                            this.dragDrop(); 
-                            return false; 
+                        groupItem.bind('selectstart', function () {
+                            this.dragDrop();
+                            return false;
                         });
 
                         groupItem.on('$destroy', function() {
@@ -216,7 +221,7 @@
     self.assignGridEventHandlers = function() {
         //Chrome and firefox both need a tab index so the grid can recieve focus.
         //need to give the grid a tabindex if it doesn't already have one so
-        //we'll just give it a tab index of the corresponding gridcache index 
+        //we'll just give it a tab index of the corresponding gridcache index
         //that way we'll get the same result every time it is run.
         //configurable within the options.
         if (grid.config.tabIndex === -1) {

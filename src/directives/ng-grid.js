@@ -72,7 +72,7 @@
                         else {
                             $scope.totalServerItems = 0;
                         }
-                        
+
                         // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                         if (typeof options.data === "string") {
                             var dataWatcher = function (a) {
@@ -101,7 +101,7 @@
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
                             }));
                         }
-                        
+
                         grid.footerController = new ngFooter($scope, grid);
                         //set the right styling on the container
                         iElement.addClass("ngGrid").addClass(grid.gridId.toString());
@@ -122,7 +122,7 @@
                             if (grid.rowCache[rowIndex]) {
                                 if (grid.rowCache[rowIndex].clone) {
                                     grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
-                                } 
+                                }
                                 grid.rowCache[rowIndex].setSelection(state ? true : false);
                             }
                         };
@@ -167,11 +167,11 @@
                         $scope.$on('$destroy', $scope.$on('ngGridEventDigestGrid', function(){
                             domUtilityService.digest($scope.$parent);
                         }));
-                        
+
                         $scope.$on('$destroy', $scope.$on('ngGridEventDigestGridParent', function(){
                             domUtilityService.digest($scope.$parent);
                         }));
-                        // set up the columns 
+                        // set up the columns
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
                         });
@@ -185,7 +185,7 @@
                             options.plugins[$utils.getInstanceType(p)] = p;
 
                             $scope.$on('$destroy', function() {
-                                newScope.destroy();
+                                newScope.$destroy();
                             });
                         });
                         //send initi finalize notification.
