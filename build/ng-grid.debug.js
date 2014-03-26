@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/26/2014 14:30
+* Compiled At: 03/26/2014 14:37
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3078,13 +3078,13 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
             return {
                 pre: function($scope, iElement) {
                     var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']');
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, $scope.row.getProperty($scope.col.field));
 
                     if ($scope.col.enableCellEdit) {
                         html =  $scope.col.cellEditTemplate;
                         html = html.replace(CELL_EDITABLE_CONDITION, $scope.col.cellEditableCondition);
                         html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']'));
+                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, $scope.row.getProperty($scope.col.field)));
                     } else {
                         html = cellTemplate;
                     }
