@@ -1,4 +1,4 @@
-ngGridDirectives.directive('ngViewport', [function() {
+ngGridDirectives.directive('ngViewport', ['$rtlUtilityService', function(rtlUtilityService) {
     return function($scope, elm) {
         var isMouseWheelActive;
         var prevScollLeft;
@@ -7,7 +7,12 @@ ngGridDirectives.directive('ngViewport', [function() {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
             if ($scope.$headerContainer) {
-                $scope.$headerContainer.scrollLeft(scrollLeft);
+		if(rtlUtilityService.isRtl && !rtlUtilityService.isAxisFlipped && $scope.renderedRows.length === 0){
+			// scroll back to the right so we can show some column headers
+			$scope.$headerContainer.scrollLeft($scope.headerScrollerDim().outerWidth);
+                } else {
+                    $scope.$headerContainer.scrollLeft(scrollLeft);
+                }
             }
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);

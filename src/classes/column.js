@@ -1,4 +1,4 @@
-﻿var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
+﻿var ngColumn = function (config, $scope, grid, domUtilityService, rtlUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -137,6 +137,9 @@
     };
     self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
+	if(rtlUtilityService.isRtl){
+            diff *= -1;
+        }
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         $scope.hasUserChangedGridColumnWidths = true;
@@ -153,7 +156,7 @@
         return false;
     };
     self.copy = function() {
-        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, rtlUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;
         return ret;

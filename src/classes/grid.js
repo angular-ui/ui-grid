@@ -1,7 +1,7 @@
 ﻿/// <reference path="footer.js" />
 /// <reference path="../services/SortService.js" />
 /// <reference path="../../lib/jquery-1.8.2.min" />
-var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
+var ngGrid = function ($scope, options, sortService, domUtilityService, rtlUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
     var defaults = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined,
@@ -351,7 +351,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 enableResize: self.config.enableColumnResize,
                 enableSort: self.config.enableSorting,
                 enablePinning: self.config.enablePinning
-            }, $scope, self, domUtilityService, $templateCache, $utils));
+            }, $scope, self, domUtilityService, rtlUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {
             var checkboxOffset = self.config.showSelectionCheckbox ? 1 : 0;
@@ -370,7 +370,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus
-                }, $scope, self, domUtilityService, $templateCache, $utils);
+                }, $scope, self, domUtilityService, rtlUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
                     column.isGroupedBy = true;
@@ -780,6 +780,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             r++;
         };
+
+	scrollLeft = rtlUtilityService.normalizeScrollLeft(scrollLeft, self.$viewport);
+
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible !== false) {
