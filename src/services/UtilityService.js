@@ -26,7 +26,7 @@
             }
         },
         evalProperty: function (entity, path) {
-            return $parse(path)(entity);
+            return $parse("entity." + path)({ entity: entity });
         },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {
