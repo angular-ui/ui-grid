@@ -1,4 +1,4 @@
-﻿angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService', function($utils) {
+﻿angular.module('ngGrid.services').factory('$domUtilityService',['$rtlUtilityService','$utilityService', function(rtlUtilityService, $utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {
@@ -81,15 +81,18 @@
         }
         $style.empty();
         var trw = $scope.totalRowWidth();
+	var ngHeaderScrollerWidth = trw + (rtlUtilityService.isRtl ? 0 : domUtilityService.ScrollH);
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
+            "." + gridId + " .ngHeaderScroller { width: " + ngHeaderScrollerWidth  + "px}";
 
+	//in RTL we need to attach to the right side
+        var side = rtlUtilityService.isRtl ? 'right' : 'left';
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; " + side + ": " + sumWidth + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
@@ -112,12 +115,14 @@
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
         if (grid.$styleSheet) {
+	    //in RTL we need to attach to the right side
+            var side = rtlUtilityService.isRtl ? 'right' : 'left';
             var regex = regexCache[col.index];
             if (!regex) {
-                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
+                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; " + side + ": [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; " + side + ": " + colLeft + "px");
             if ($utils.isIe) { // IE
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);

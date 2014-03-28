@@ -1,4 +1,4 @@
-﻿var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
+﻿var ngRowFactory = function (grid, $scope, domUtilityService, rtlUtilityService, $templateCache, $utils) {
     var self = this;
     // we cache rows when they are built, and then blow the cache away when sorting
     self.aggCache = {};
@@ -231,7 +231,7 @@
                         isAggCol: true,
                         headerRowHeight: grid.config.headerRowHeight
                         
-                    }, $scope, grid, domUtilityService, $templateCache, $utils));
+                    }, $scope, grid, domUtilityService, rtlUtilityService, $templateCache, $utils));
                 }
             }
         }
