@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/19/2014 08:21
+* Compiled At: 03/28/2014 14:30
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -199,7 +199,7 @@ ngGridFilters.filter('ngColumns', function() {
         });
     };
 });
-angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService', function($utils) {
+angular.module('ngGrid.services').factory('$domUtilityService',['$rtlUtilityService','$utilityService', function(rtlUtilityService, $utils) {
     var domUtilityService = {};
     var regexCache = {};
     var getWidths = function() {
@@ -271,15 +271,18 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
         }
         $style.empty();
         var trw = $scope.totalRowWidth();
+	var ngHeaderScrollerWidth = trw + (rtlUtilityService.isRtl ? 0 : domUtilityService.ScrollH);
         css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
+            "." + gridId + " .ngHeaderScroller { width: " + ngHeaderScrollerWidth  + "px}";
 
+	
+        var side = rtlUtilityService.isRtl ? 'right' : 'left';
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; " + side + ": " + sumWidth + "px; height: " + rowHeight + "px }" +
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
@@ -301,12 +304,13 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
         if (grid.$styleSheet) {
+            var side = rtlUtilityService.isRtl ? 'right' : 'left';
             var regex = regexCache[col.index];
             if (!regex) {
-                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
+                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; " + side + ": [0-9]+px");
             }
             var str = grid.$styleSheet.html();
-            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
+            var newStr = str.replace(regex, ".col" + col.index + " { width: " + col.width + "px; " + side + ": " + colLeft + "px");
             if ($utils.isIe) { 
                 setTimeout(function() {
                     grid.$styleSheet.html(newStr);
@@ -338,6 +342,46 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
     getWidths();
     return domUtilityService;
 }]);
+
+angular.module('ngGrid.services').factory('$rtlUtilityService',[function() {
+    var rtlUtilityService = {};
+
+    rtlUtilityService.init = function(element) {
+        rtlUtilityService.isRtl = (element.closest("*[dir]").attr('dir') || '').toLowerCase() === 'rtl';
+        if(rtlUtilityService.isRtl) {
+            var $testContainer = $('<div dir="rtl"></div>');
+            $testContainer.height(100).width(100).css("position", "absolute").css("overflow", "scroll");
+            $testContainer.appendTo('body');
+            var $content = $('<div id="content" style="width: 400px; height: 400px; position: relative"></div>');
+            var $topLeft = $('<div id="left" style="width: 1px; height: 1px; left: 0px; top: 0px; position: absolute;"></div>');
+            var $topRight = $('<div id="right" style="width: 1px; height: 1px; right: 0px; top: 0px; position: absolute;"></div>');
+            $content.append($topLeft);
+            $content.append($topRight);
+            $testContainer.append($content);
+            $('#left')[0].scrollIntoView(true);
+            var leftX = Math.abs($testContainer.scrollLeft());
+            $('#right')[0].scrollIntoView(true);
+            var rightX = Math.abs($testContainer.scrollLeft());
+            rtlUtilityService.isAxisFlipped = (leftX > rightX);
+            $testContainer.remove();
+        }
+    };
+
+    rtlUtilityService.normalizeScrollLeft = function(realScrollLeft, viewport) {
+        var normalizedScrollLeft = realScrollLeft;
+        if(rtlUtilityService.isRtl) {
+            if(rtlUtilityService.isAxisFlipped) {
+                normalizedScrollLeft = Math.abs(realScrollLeft);
+            } else {
+                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft
+            }
+        }
+        return normalizedScrollLeft;
+    };
+
+    return rtlUtilityService;
+}]);
+
 angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {};
@@ -664,7 +708,7 @@ ngAggregate.prototype.copy = function () {
     ret.orig = this;
     return ret;
 };
-var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
+var ngColumn = function (config, $scope, grid, domUtilityService, rtlUtilityService, $templateCache, $utils) {
     var self = this,
         colDef = config.colDef,
         delay = 500,
@@ -797,6 +841,9 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     };
     self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
+	if(rtlUtilityService.isRtl){
+            diff *= -1;
+        }
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
         $scope.hasUserChangedGridColumnWidths = true;
@@ -813,7 +860,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         return false;
     };
     self.copy = function() {
-        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, rtlUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;
         return ret;
@@ -1149,7 +1196,7 @@ var ngFooter = function ($scope, grid) {
 
 
 
-var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
+var ngGrid = function ($scope, options, sortService, domUtilityService, rtlUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
     var defaults = {
         aggregateTemplate: undefined,
         afterSelectionChange: function() {
@@ -1373,7 +1420,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 enableResize: self.config.enableColumnResize,
                 enableSort: self.config.enableSorting,
                 enablePinning: self.config.enablePinning
-            }, $scope, self, domUtilityService, $templateCache, $utils));
+            }, $scope, self, domUtilityService, rtlUtilityService, $templateCache, $utils));
         }
         if (columnDefs.length > 0) {
             var checkboxOffset = self.config.showSelectionCheckbox ? 1 : 0;
@@ -1392,7 +1439,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     enableSort: self.config.enableSorting,
                     enablePinning: self.config.enablePinning,
                     enableCellEdit: self.config.enableCellEdit || self.config.enableCellEditOnFocus
-                }, $scope, self, domUtilityService, $templateCache, $utils);
+                }, $scope, self, domUtilityService, rtlUtilityService, $templateCache, $utils);
                 var indx = self.config.groups.indexOf(colDef.field);
                 if (indx !== -1) {
                     column.isGroupedBy = true;
@@ -1523,7 +1570,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         return self.initTemplates().then(function(){
             $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
             $scope.domAccessProvider = new ngDomAccessProvider(self);
-            self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
+            self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, rtlUtilityService, $templateCache, $utils);
             self.searchProvider = new ngSearchProvider($scope, self, $filter);
             self.styleProvider = new ngStyleProvider($scope, self);
             $scope.$watch('configGroups', function(a) {
@@ -1754,6 +1801,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }
             r++;
         };
+
+	scrollLeft = rtlUtilityService.normalizeScrollLeft(scrollLeft, self.$viewport);
+
         for (var i = 0; i < x; i++) {
             var col = $scope.columns[i];
             if (col.visible !== false) {
@@ -1983,7 +2033,7 @@ ngRow.prototype.setVars = function (fromRow) {
 	this.selected = fromRow.selected;
     this.orig = fromRow;
 };
-var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
+var ngRowFactory = function (grid, $scope, domUtilityService, rtlUtilityService, $templateCache, $utils) {
     var self = this;
     self.aggCache = {};
     self.parentCache = []; 
@@ -2192,7 +2242,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
                         enablePinning: grid.config.enablePinning,
                         isAggCol: true,
                         headerRowHeight: grid.config.headerRowHeight
-                    }, $scope, grid, domUtilityService, $templateCache, $utils));
+                    }, $scope, grid, domUtilityService, rtlUtilityService, $templateCache, $utils));
                 }
             }
         }
@@ -2208,6 +2258,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
         self.getGrouping(grid.config.groups);
     }
 };
+
 var ngSearchProvider = function ($scope, grid, $filter) {
     var self = this,
         searchConditions = [];
@@ -2775,7 +2826,7 @@ ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function
     };
     return ngGridMenu;
 }]);
-ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$rtlUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, rtlUtilityService, $utils, $timeout, $parse, $http, $q) {
     var ngGridDirective = {
         scope: true,
         compile: function() {
@@ -2785,8 +2836,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     var options = $scope.$eval(iAttrs.ngGrid);
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 					options.watchData = typeof options.watchData !== 'undefined' ? options.watchData : true;
+					rtlUtilityService.init($element);
 
-                    var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+                    var grid = new ngGrid($scope, options, sortService, domUtilityService, rtlUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
                     return grid.init().then(function() {
                         if (typeof options.columnDefs === "string") {
                             $scope.$parent.$watch(options.columnDefs, function (a) {
@@ -3021,7 +3073,7 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
     };
     return ngRow;
 }]);
-ngGridDirectives.directive('ngViewport', [function() {
+ngGridDirectives.directive('ngViewport', ['$rtlUtilityService', function(rtlUtilityService) {
     return function($scope, elm) {
         var isMouseWheelActive;
         var prevScollLeft;
@@ -3030,7 +3082,11 @@ ngGridDirectives.directive('ngViewport', [function() {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
             if ($scope.$headerContainer) {
-                $scope.$headerContainer.scrollLeft(scrollLeft);
+		if(rtlUtilityService.isRtl && !rtlUtilityService.isAxisFlipped && $scope.renderedRows.length === 0){
+			$scope.$headerContainer.scrollLeft($scope.headerScrollerDim().outerWidth);
+                } else {
+                    $scope.$headerContainer.scrollLeft(scrollLeft);
+                }
             }
             $scope.adjustScrollLeft(scrollLeft);
             $scope.adjustScrollTop(scrollTop);
@@ -3052,6 +3108,7 @@ ngGridDirectives.directive('ngViewport', [function() {
         }
     };
 }]);
+
 window.ngGrid.i18n['da'] = {
     ngAggregateLabel: 'artikler',
     ngGroupPanelDescription: 'Grupér rækker udfra en kolonne ved at trække dens overskift hertil.',
