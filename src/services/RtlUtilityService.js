@@ -37,7 +37,6 @@ angular.module('ngGrid.services').factory('$rtlUtilityService',[function() {
                 normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft
             }
         }
-        console.log('scrollLeft (real|normalized): ' + realScrollLeft + '|' + normalizedScrollLeft);
         return normalizedScrollLeft;
     };
 
