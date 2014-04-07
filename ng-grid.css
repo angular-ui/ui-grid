@@ -185,11 +185,10 @@
 }
 .ngColList {
   list-style-type: none;
+  margin-top: 2px;
+  margin-left: 8px;
 }
 .ngColListItem {
-  position: relative;
-  right: 17px;
-  top: 2px;
   white-space: nowrap;
 }
 .ngMenuText {

@@ -67,7 +67,7 @@
 
                         angular.element(col).on('$destroy', function() {
                             angular.element(col).off('dragstart', self.dragStart);
-                            col.removeEventListener(self.dragStart);
+                            col.removeEventListener('dragstart', self.dragStart);
                         });
                     }
                 }
