@@ -6,6 +6,12 @@ You can add column resizing by including the `ui.grid.resizeColumns` feature mod
 <pre>
 angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
 </pre>
+
+Also, you must add the directive to your grid element.  We do this so that you can have several grids on a
+page and only pay the resizing overhead if the grid is actually using resizing.
+<pre>
+<div ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
+</pre>
 <br>
 <br>
 The `enableColumnResizing` option on your grid will enable resizing and turn it on for all columns by default.
@@ -58,7 +64,7 @@ $scope.gridOptions = {
       The column will obey any <i>minWidth</i> or <i>maxWidth</i> constraints you give it.
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
     </div>
   </file>
   <file name="main.css">
