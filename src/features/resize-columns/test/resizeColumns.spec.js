@@ -16,7 +16,7 @@ describe('ui.grid.resizeColumns', function () {
     $compile = _$compile_;
 
     $scope.gridOpts = {
-      enableColumnResizing: true,
+      enableColumnResize: true,
       enableNativeScrolling: false,
       enableVirtualScrolling: true,
       data: data
@@ -37,7 +37,7 @@ describe('ui.grid.resizeColumns', function () {
     grid = null;
   });
 
-  describe('setting enableColumnResizing', function () {
+  describe('setting enableColumnResize', function () {
     it('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
@@ -67,9 +67,9 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('setting enableColumnResizing to false', function () {
+  describe('setting enableColumnResize to false', function () {
     it('should result in no resizer elements being attached to the column', function () {
-      $scope.gridOpts.enableColumnResizing = false;
+      $scope.gridOpts.enableColumnResize = false;
       recompile();
 
       var resizers = $(grid).find('[ui-grid-column-resizer]');
@@ -82,7 +82,7 @@ describe('ui.grid.resizeColumns', function () {
     xit('should result in no resizer elements being attached to the column', function () {
       $scope.gridOpts.columnDefs = [
         { field: 'name' },
-        { field: 'gender', enableColumnResizing: false },
+        { field: 'gender', enableColumnResize: false },
         { field: 'company' }
       ];
 
