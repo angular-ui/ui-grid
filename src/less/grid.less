@@ -27,7 +27,7 @@
 }
 
 .ui-grid-header-cell:last-child .ui-grid-vertical-bar {
-  right: -1px;
+  right: -1px; // TODO(c0bra): Should this be grid width? Test column resizing with custom grid border width
   width: @gridBorderWidth;
   background-color: @headerVerticalBarColor;
 }
@@ -36,3 +36,14 @@
 //   width: 1px;
 //   background-color: @borderColor;
 // }
+
+.ui-grid-clearfix {
+  &:before, &:after {
+    content: "";
+    display: table;
+  }
+
+  &:after {
+    clear:both;
+  }
+}

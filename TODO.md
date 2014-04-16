@@ -2,14 +2,55 @@
 
 # CURRENT
 
+1. [BUG] -  Do we need to validate passed in grid 'id' property to make sure it can be in a CSS rule?
+1. [IDEA] - Hook the column menu button into the menu it activates so it can show/hide depending on the number of items it will show. Can we do that?
+  1. If sorting is enabled or the user / extension has supplied extra menu items, show the menu button. Otherwise don't show it.
+  1. We'll need a way to separate extension menu items from user menu items so the user doesn't override them.
+1. [IDEA] - Add an showColumnMenu option? Maybe you don't want it on mobile?
+1. [TODO] - Make HOME and END keys scroll to top/bottom if grid has focus...
+1. [IDEA] - Can we deselect any selected text when the grid is scrolled?
+1. [TODO] - Make row builders async with $q
+1. [TODO] - Make plnkr/jsfiddle ngdocs buttons work
+1. [TODO] - Remove IE11 cell selected weird green color...
+1. [IDEA] - Add gridOptions.options for all opts, and deep watch it then rebuild
+1. [IDEA] - Add version number to uiGrid module.
+
+1. [IDEA] - Might need to make dragging and reordering columns watch for a minimum pixel delta before starting drag, so it doesn't always cancel long-clicks
+1. [BUG] - Grid not redrawing properly when switching between tutorials. It still has the grid body height from the previous tutorial.
+   1. This is due to a combination of grunt-ngdocs and ngAnimate. ngAnimate is leaving two "page" (or whatever) elements on the page at the
+      same time. Both have a main.css which include styles for the grid. Having the old one on there at the same time as the new one makes
+      it use the height from the old one when calculating the grid height... *** Can we switch to Dgeni? ***
+1. [BUG] - Menu icon overlays menu text when column name is too long...
+   1. [IDEA] - Can we shrink the size of the header-cell-contents div and make it text-overflow: ellipsis?
+1. [TOFIX] - Menu icon vertical alignment off in IE11 (how does it look in FF?)
+1. [NOTE] - Use "-webkit-text-stroke: 0.3px" on icon font to fix jaggies in Chrome on Windows
+1. [TODO] - Add a failing test for the IE9-11 column sorting hack (columnSorter.js, line 229)
+1. [TODO] - Kendo Grid shows the column menu positioned OUTSIDE the grid for the final column, but it doesn't flow outside the window.
+    <!-- 1. It is positioned by specific pixel amount. We will need to measure the menu size in order to get it right under any menu button we use. -->
+
 1. [TODO] - Add row filtering
 1. [TODO] - Add notes about browser version support and Angular version support to README.md
+1. [TODO] - Add handling for sorting null values with columnDef sortingAlgorithm (PR #940)
+
+# Cleanup
+
+1. [TODO] - Rename gridUtil to uiGridUtil
+1. [TODO] - Rename GridUtil in uiGridBody to gridUtil or the above
+1. [TODO] - Move uiGridCell to its own file
+
+# Extras
+
+1. Add iit and ddescribe checks as commit hooks
 
 # Native scrolling
 
-1. [BUG] - Touch event deceleration goes backwards when scrolling up, but only with small amounts
+1. [BUG] - Touch event deceleration goes backwards when scrolling up, but only with small amounts.
+  1. [BUG] - Horizontal scrolling when emulating a touch device is weird too, scroll between grid canvas and header canvas is offset.
 1. [TODO] - Take a look at Hamster.js for normalizing mouse wheel events, test on MacAir.
 
+# Memory Issues
+1. [LEAKS] - Make sure stylesheets are being removed on $destroy, and anywhere that we might be doing manual appendChild, or other appending.
+1. [LEAKS] - Null out all references to DOM elements in $destroy handler
 
 # MORE
 
@@ -50,38 +91,3 @@
 
 # Done!
 
-1. [DONE] - [BUG] - When column resizing and you've scrolled to the end of the grid, the scrollbar extends beyond the viewport...
-1. [DONE] Figure out how to run e2e tests on docs (look at angularjs source / protractor?)
-1. [DONE] Add --browsers option for testing on saucelabs with specific browser(s)
-1. [DONE] Make karmangular run in `watch` mode and in singlerun too.
-1. [DONE] Make sure failing saucelabs tests don't cause the build to fail. Only if the normal test run fails
-1. [DONE] Add grunt task that will use ngdoc to build test specs from docs into .tmp/e2e/doc.spec.js
-   - It will need to run after ngdocs does. Maybe make a `gendocs` task that runs both serially.
-1. [DONE] Docs ref for ui-grid.js is pointing to localhost:9999 on travis.
-1. [DONE] Sometimes scrollbar snaps back to the top???
-  1. I think it's getting mousewheel events when the element doesn't have focus.
-  1. To reproduce, use mousewheel to scroll to bottom of grid, then move outside grid and scroll page to top. Use window scrollbar to move back down to show grid, then click on scrollbar. It will snap to the top.
-1. [DONE] elementHeight() (AND jQuery.height()) isn't working on the .ui-grid element. It's not accounting for the border when figuring out the canvas drawing space.
-  1. [NOTE] - I just had to subtract "1" from the canvas height. Not sure why. After that, any borders of any size on the grid element are accounted for correctly.
-   1 [NOTE] - It was because of the top-panel bottom border, which is 1px by default
-1. [DONE] Looks like the canvas needs to be the height of all the elements (rowheight * data length) in order for the scroll to work right
-1. [DONE] Add 'track by $index' to ng-repeats?
-1. [DONE] Add virtual repeat functionality
-1. [DONE] Scrollbar should only show up when there's elements to scroll.
-  1. i.e. add ng-show based on canvasHeight > gridbody height
-1. [DONE] Copy angular-animate, prettify.js and marked.js into the docs/js dir separately from grunt-ngdocs. It's causing them to show up in `<script>` tags in the Examples which isn't what we want  
-1. [DONE] Mouse wheel should work in viewport (almost done)
-1. [DONE] - [BUG] - Hidden grid doesn't calculate height of header correctly
-1. [DONE] - [BUG] - Viewport is calcuating too small on customizer page on ui-grid.info ONLY.
-   - Was including wrong ui-grid.css file
-1. [DONE] - Make scrollbar look like chrome's?
-1. [DONE] - Horizontal scrolling
-   - [DONE] - [NOTE] - The header will need to be able to scroll as well. It will need to be able to overflow
-   - [IDEA] - We'll need to iterate through the columnDefs in the style computation, and calculate the minimum number of rows to render.
-      - Basically find the set of smallest columns, according to their width, that still cover the viewport, and figure out how many are in the set, then set minCols to that
-      - Starting with the first column, add up the column widths until they are greater than the viewport width, then save that number of columns as the minimum. Continue going through the
-        column widths, subtracting the previous column's width and adding the next column's width. If at any point the total width is less than the viewport, increment the minimum number of columns.
-   - [IDEA] - Might need to dynamically set 'excessColumns'. With a 'scrollThreshold' of 4 and 'excessColumns' of 4, it was not rendering enough columns to the left of the viewport
-   - [TODO] - Figure out how to calculate the margin-left property on the columns when the columns have variable sizes. Might need to calc the widths of the rendered columns in order to get the offset adjustments
- 1. [DONE] - [IDEA] - Break out GridColumn into its own factory 
- 1. [DONE] - [TODO] - Obey minWidth and maxWidth in colDef, in resizer [TODO] AND in the header width builder

@@ -219,6 +219,8 @@
           }
           
           resizeOverlay.css({ left: x + 'px' });
+
+          uiGridCtrl.fireEvent(uiGridConstants.events.ITEM_DRAGGING);
         }
 
         function mouseup(event, args) {
@@ -284,7 +286,7 @@
 
         $elm.on('mousedown', function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
-          event.preventDefault();
+          event.stopPropagation();
 
           // Get the left offset of the grid
           gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
@@ -304,7 +306,9 @@
         });
 
         // On doubleclick, resize to fit all rendered cells
-        $elm.on('dblclick', function() {
+        $elm.on('dblclick', function(event, args) {
+          event.stopPropagation();
+
           var col = $scope.col;
           var otherCol, multiplier;
 

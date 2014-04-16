@@ -1,4 +1,12 @@
-<div class="ui-grid-header-cell col{{ col.index }}">
-    <div class="ui-grid-vertical-bar">&nbsp;</div>
-    <div class="ui-grid-cell-contents" col-index="renderIndex">{{ col.displayName }}</span></div>
+<div class="ui-grid-header-cell col{{ col.index }} clearfix" ng-class="{ 'sortable': sortable }">
+  <div class="ui-grid-vertical-bar">&nbsp;</div>
+  <div class="ui-grid-cell-contents" col-index="renderIndex">
+    {{ col.displayName }}
+
+    <span ng-show="col.sort.direction" ng-class="{ 'ui-grid-icon-up-dir': col.sort.direction == asc, 'ui-grid-icon-down-dir': col.sort.direction == desc }"></span>
+  </div>
+
+  <div ng-if="grid.options.enableColumnMenu" class="ui-grid-column-menu-button" ng-click="toggleMenu($event)">
+    <span class="ui-grid-icon-angle-down">&nbsp;<span>
+  </div>
 </div>

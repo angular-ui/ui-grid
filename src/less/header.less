@@ -6,7 +6,7 @@
     // background-color: @darkGray; // #EAEAEA
     border-bottom: 1px solid @borderColor; // #D4D4D4
 
-    overflow: hidden;
+    overflow: hidden;  // Disable so menus show up
     font-weight: bold;
 
     .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
@@ -25,7 +25,7 @@
   }
 
 .ui-grid-header-viewport {
-  overflow: hidden;
+  overflow: hidden; // Disable so menus show up
 }
 
 .ui-grid-header-canvas {
@@ -52,15 +52,54 @@
   bottom: 0;
   background-color: inherit;
 
+  .user-select(none);
+
   // Default to width 0 so header height can calculate right. Otherwise
   //  the header cells will flow onto the next line of the header container
   //  and cause the header height to be calculated as twice the height
   //  it should be. The column widths are calculated dynamically
   width: 0;
+
+  &.sortable {
+    cursor: pointer;
+  }
 }
 
 // Make vertical bar in header row fill the height of the cell completely
 .ui-grid-header .ui-grid-vertical-bar {
   top: 0;
   bottom: 0;
+}
+
+.ui-grid-column-menu-button {
+  position: absolute;
+  right: @gridBorderWidth; // So it doesn't overlay the vertical bar
+  top: 0;
+  bottom: 0;
+
+  .ui-grid-icon-angle-down {
+    vertical-align: sub;
+  }
+}
+
+.ui-grid-column-menu {
+  position: absolute;
+}
+
+/* Slide up/down animations */
+.ui-grid-column-menu .ui-grid-menu .ui-grid-menu-inner {
+  &.ng-hide-add, &.ng-hide-remove {
+    .transition(all, 0.05s, linear);
+    display: block !important;
+  }
+  
+  &.ng-hide-add.ng-hide-add-active,
+  &.ng-hide-remove {
+    .transform(translateY(-100%));
+  }
+   
+  &.ng-hide-add,
+  &.ng-hide-remove.ng-hide-remove-active {
+    .transform(translateY(0));
+  }
 }

@@ -131,7 +131,7 @@ function getWidthOrHeight( elem, name, extra ) {
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '$timeout', function ($window, $document, $http, $templateCache, $timeout) {
+module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '$timeout', '$injector', function ($window, $document, $http, $templateCache, $timeout, $injector) {
   var s = {
 
     /**
@@ -497,6 +497,25 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
       if (b === null) { return -1; }
       if (a === null && b === null) { return 0; }
       return a - b;
+    },
+
+    // Disable ngAnimate animations on an element
+    disableAnimations: function (element) {
+      var $animate;
+      try {
+        $animate = $injector.get('$animate');
+        $animate.enabled(false, element);
+      }
+      catch (e) {}
+    },
+
+    enableAnimations: function (element) {
+      var $animate;
+      try {
+        $animate = $injector.get('$animate');
+        $animate.enabled(true, element);
+      }
+      catch (e) {}
     }
   };
 

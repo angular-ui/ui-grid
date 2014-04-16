@@ -1,0 +1,84 @@
+@ngdoc overview
+@name Tutorial: Customizing Column Menu
+@description
+
+You can customize a column's menu and provide your own functionality.
+
+By default, the `action` and `shown`'s' contexts will have a reference to the grid added as the property `grid` (accessible through `this.grid`.
+You can pass in your own context by supplying the `context` property to your menu item. It will be accessible through `this.context`.
+
+The column menu will add the column's `GridColumn` object to the context as `this.context.col`. You can then show/hide the the menu item based
+on conditions that use the grid and column.  You could also use a custom column builder to add some item to the every column definition.
+
+You can supply an icon class with the `icon` property.
+
+See the example below for usage.
+
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.blargh = function() {
+        alert("I'm in the outer scope!");
+      };
+
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          { field: 'name' },
+          { field: 'gender' },
+          {
+            field: 'company',
+            menuItems: [
+              {
+                title: 'Outer Scope Alert',
+                icon: 'ui-grid-icon-info-circled',
+                action: function($event) {
+                  this.context.blargh(); // $scope.blargh() would work too, this is just an example
+                },
+                context: $scope
+              },
+              {
+                title: 'Grid ID',
+                action: function() {
+                  alert('Grid ID: ' + this.grid.id);
+                }
+              },
+              {
+                title: 'Column Title Alert',
+                shown: function () {
+                  return this.context.col.displayName === 'Company';
+                },
+                action: function() {
+                  alert(this.context.col.displayName);
+                }
+              }
+            ]
+          }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      Click on the third column header to test custom menu items.
+      <br>
+      <br>
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

@@ -25,6 +25,7 @@ angular.module('ui.grid')
    <br/>see angular docs on binding expressions
    </li>
    <li>displayName - column name when displayed on screen.  defaults to name</li>
+   <li>sortingAlgorithm - Algorithm to use for sorting this column. Takes 'a' and 'b' parameters like any normal sorting function.</li>
    <li>todo: add other optional fields as implementation matures</li>
    </ul>
    *
@@ -84,6 +85,11 @@ angular.module('ui.grid')
       }
     }
 
+    // Remove this column from the grid sorting
+    GridColumn.prototype.unsort = function () {
+      this.sort = {};
+    };
+
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
@@ -104,6 +110,26 @@ angular.module('ui.grid')
     //self.cursor = self.sortable ? 'pointer' : 'default';
 
     self.visible = true;
+
+    // Turn on sorting by default
+    self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
+
+    self.sortingAlgorithm = colDef.sortingAlgorithm;
+
+    self.menuItems = colDef.menuItems;
+
+    // Use the column definition sort if we were passed it
+    if (typeof(colDef.sort) !== 'undefined' && colDef.sort) {
+      self.sort = colDef.sort;
+    }
+    // Otherwise use our own if it's set
+    else if (typeof(self.sort) !== 'undefined') {
+      self.sort = self.sort;
+    }
+    // Default to empty object for the sort
+    else {
+      self.sort = {};
+    }
   };
 
   return GridColumn;

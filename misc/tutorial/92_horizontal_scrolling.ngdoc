@@ -10,7 +10,9 @@ Demonstrating scrolling with large amount of columns
     var app = angular.module('app', ['ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {};
+      $scope.gridOptions = {
+        enableSorting: true
+      };
       $scope.gridOptions.columnDefs = [];
 
       var colCount = 500;

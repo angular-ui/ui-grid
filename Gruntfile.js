@@ -110,15 +110,49 @@ module.exports = function(grunt) {
       dist: {
         // paths: ['/bower_components/bootstrap'],
         files: {
-          'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less'],
+          // 'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/icon/icons.data.svg.css'],
+          'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
         }
       },
       min: {
         files: {
-          'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less']
+          // 'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/icon/icons.data.svg.css']
+          'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
         },
         options: {
           compress: true
+        }
+      }
+    },
+
+    // grunticon: {
+    //   icons: {
+    //     files: [{
+    //       expand: true,
+    //       cwd: 'src/img',
+    //       src: ['*.svg'],
+    //       dest: '.tmp/icon'
+    //     }],
+    //     options: {
+    //       cssprefix: '.ui-grid-icon-',
+    //       colors: {
+    //         'default': '#2c3e50'
+    //       }
+    //     }
+    //   }
+    // },
+
+    fontello: {
+      options: {
+        sass: false
+      },
+      dist: {
+        options: {
+          config  : 'src/font/config.json',
+          fonts   : 'dist/release',
+          styles  : '.tmp/font',
+          scss    : false
+          // force   : true
         }
       }
     },
@@ -234,6 +268,7 @@ module.exports = function(grunt) {
           require: false,
 
           /* Jasmine */
+          jasmine: false,
           after: false,
           afterEach: false,
           before: false,
@@ -252,7 +287,8 @@ module.exports = function(grunt) {
           waits: false,
           waitsFor: false,
           xit: false,
-          xdescribe: false
+          xdescribe: false,
+          spyOn: false
         }
       },
       gruntfile: {
@@ -294,6 +330,15 @@ module.exports = function(grunt) {
       less: {
         files: 'src/**/*.less',
         tasks: ['less', 'ngdocs', 'concat:customizer_less']
+      },
+
+      // grunticon: {
+      //   files: 'src/img/**/*.svg',
+      //   tasks: ['grunticon', 'less']
+      // },
+      fontello: {
+        files: 'src/font/config.json',
+        tasks: ['fontello', 'less']
       },
 
       docs: {
@@ -373,11 +418,12 @@ module.exports = function(grunt) {
         },
         scripts: [
           '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js', // TODO(c0bra): REMOVE!
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.js',
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-touch.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-touch.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.js',
         ],
         hiddenScripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],
@@ -463,6 +509,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-shell-spawn');
+  // grunt.loadNpmTasks('grunt-grunticon');
+  grunt.loadNpmTasks('grunt-fontello');
 
   // grunt.renameTask('protractor', 'protractor-old');
   grunt.registerTask('protractor-watch', function () {
@@ -493,7 +541,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
-  grunt.registerTask('build', ['concat', 'uglify', 'less', 'ngdocs', 'copy']);
+  grunt.registerTask('build', ['concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy']);
 
   // Auto-test tasks for development
   grunt.registerTask('autotest:unit', ['karmangular:start']);

@@ -102,7 +102,6 @@
 
         // Only show the scrollbar when the canvas height is less than the viewport height
         $scope.showScrollbar = function() {
-          // TODO: handle type
           if ($scope.type === 'vertical') {
             return uiGridCtrl.grid.getCanvasHeight() > uiGridCtrl.grid.getViewportHeight();
           }

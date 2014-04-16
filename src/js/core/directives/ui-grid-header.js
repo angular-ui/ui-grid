@@ -41,6 +41,9 @@
 
             $log.debug('ui-grid-header link');
 
+            // Don't animate header cells
+            gridUtil.disableAnimations($elm);
+
             function updateColumnWidths() {
               var asterisksArray = [],
                   percentArray = [],

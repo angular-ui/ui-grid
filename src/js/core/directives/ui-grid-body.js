@@ -16,6 +16,9 @@
 
         $log.debug('ui-grid-body link');
 
+        // Disable animations on the grid body so ngAnimate, if present, doesn't ruin performance by toggling classes on all the elements
+        GridUtil.disableAnimations($elm);
+
         // Stick the canvas in the controller
         uiGridCtrl.canvas = angular.element( $elm[0].getElementsByClassName('ui-grid-canvas')[0] );
         // uiGridCtrl.viewport = elm; //angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
@@ -29,6 +32,7 @@
         uiGridCtrl.viewport[0].scrollLeft = 0;
 
         uiGridCtrl.prevScrollTop = 0;
+        uiGridCtrl.prevScrolltopPercentage = 0;
         uiGridCtrl.prevScrollLeft = 0;
         uiGridCtrl.prevRowScrollIndex = 0;
         uiGridCtrl.prevColumnScrollIndex = 0;
@@ -46,11 +50,13 @@
           uiGridCtrl.adjustRows(scrollTop, scrollPercentage);
 
           uiGridCtrl.prevScrollTop = scrollTop;
+          uiGridCtrl.prevScrolltopPercentage = scrollPercentage;
         };
 
         uiGridCtrl.adjustRows = function(scrollTop, scrollPercentage) {
           var minRows = uiGridCtrl.grid.minRowsToRender();
-          var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
+          // var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
+          var maxRowIndex = uiGridCtrl.grid.visibleRowCache.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
 
           var curRowIndex = uiGridCtrl.prevRowScrollIndex;
@@ -63,7 +69,7 @@
           }
           
           var newRange = [];
-          if (uiGridCtrl.grid.rows.length > uiGridCtrl.grid.options.virtualizationThreshold) {
+          if (uiGridCtrl.grid.visibleRowCache.length > uiGridCtrl.grid.options.virtualizationThreshold) {
             // Have we hit the threshold going down?
             if (uiGridCtrl.prevScrollTop < scrollTop && rowIndex < uiGridCtrl.prevRowScrollIndex + uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
               return;
@@ -74,12 +80,12 @@
             }
 
             var rangeStart = Math.max(0, rowIndex - uiGridCtrl.grid.options.excessRows);
-            var rangeEnd = Math.min(uiGridCtrl.grid.rows.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
+            var rangeEnd = Math.min(uiGridCtrl.grid.visibleRowCache.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
 
             newRange = [rangeStart, rangeEnd];
           }
           else {
-            var maxLen = uiGridCtrl.grid.rows.length;
+            var maxLen = uiGridCtrl.grid.visibleRowCache.length;
             newRange = [0, Math.max(maxLen, minRows + uiGridCtrl.grid.options.excessRows)];
           }
           
@@ -92,6 +98,10 @@
           //     curIndex: uiGridCtrl.prevRowScrollIndex
           //   }
           // });
+        };
+
+        uiGridCtrl.redrawRows = function() {
+          uiGridCtrl.adjustRows(uiGridCtrl.prevScrollTop, uiGridCtrl.prevScrolltopPercentage);
         };
 
         // Virtualization for horizontal scrolling
@@ -433,7 +443,8 @@
         // Method for updating the visible rows
         var updateViewableRowRange = function(renderedRange) {
           // Slice out the range of rows from the data
-          var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
+          // var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
+          var rowArr = uiGridCtrl.grid.visibleRowCache.slice(renderedRange[0], renderedRange[1]);
 
           // Define the top-most rendered row
           uiGridCtrl.currentTopRow = renderedRange[0];

@@ -1,0 +1,50 @@
+@ngdoc overview
+@name Tutorial: Sorting
+@description
+
+UI-Grid allows you to sort rows. Just set the `enableSorting` flag in your grid options.
+
+<span class="span8 alert alert-warning">
+  <strong>Note:</strong> You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.
+</span>
+
+Sorting can be disabled at the column level by setting `enableSorting: false` in the column def. See the last column below for an example.
+
+Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it in action, sort Gender then shift-click Name.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          { field: 'name' },
+          { field: 'gender' },
+          { field: 'company',enableSorting: false  }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      Click on a column header to sort by that column.
+      <br>
+      <br>
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

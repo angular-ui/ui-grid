@@ -9,10 +9,10 @@
 
       var self = this;
 
-      self.grid = gridClassFactory.createGrid();
-
       // Extend options with ui-grid attribute reference
-      angular.extend(self.grid.options, $scope.uiGrid);
+      self.grid = gridClassFactory.createGrid($scope.uiGrid);
+      
+      // angular.extend(self.grid.options, );
 
       //all properties of grid are available on scope
       $scope.grid = self.grid;
@@ -91,19 +91,20 @@
 
             //wrap data in a gridRow
             $log.debug('Modifying rows');
-            self.grid.modifyRows(n);
+            self.grid.modifyRows(n)
+              .then(function () {
+                //todo: move this to the ui-body-directive and define how we handle ordered event registration
+                if (self.viewport) {
+                  var scrollTop = self.viewport[0].scrollTop;
+                  var scrollLeft = self.viewport[0].scrollLeft;
+                  self.adjustScrollVertical(scrollTop, 0, true);
+                  self.adjustScrollHorizontal(scrollLeft, 0, true);
+                }
 
-            //todo: move this to the ui-body-directive and define how we handle ordered event registration
-            if (self.viewport) {
-              var scrollTop = self.viewport[0].scrollTop;
-              var scrollLeft = self.viewport[0].scrollLeft;
-              self.adjustScrollVertical(scrollTop, 0, true);
-              self.adjustScrollHorizontal(scrollLeft, 0, true);
-            }
-
-            $scope.$evalAsync(function() {
-              self.refreshCanvas(true);
-            });
+                $scope.$evalAsync(function() {
+                  self.refreshCanvas(true);
+                });
+              });
           });
         }
       }
@@ -114,7 +115,7 @@
         columnDefWatchDereg();
       });
 
-
+      // TODO(c0bra): Do we need to destroy this watch on $destroy?
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
         self.refreshCanvas(true);
       });
@@ -144,17 +145,42 @@
         return p.promise;
       };
 
-      var cellValueGetterCache = {};
-      self.getCellValue = function(row,col){
-        if(!cellValueGetterCache[col.colDef.name]){
-          cellValueGetterCache[col.colDef.name] = $parse(row.getEntityQualifiedColField(col));
-        }
-        return cellValueGetterCache[col.colDef.name](row);
+      self.getCellValue = function(row, col) {
+        return $scope.grid.getCellValue(row, col);
       };
+
+      $scope.grid.refreshRows = self.refreshRows = function () {
+        self.grid.processRowsProcessors(self.grid.rows)
+          .then(function (renderableRows) {
+            self.grid.setVisibleRows(renderableRows);
+
+            self.redrawRows();
+
+            self.refreshCanvas();
+          });
+      };
+
+      /* Sorting Methods */
+      
+
+      /* Event Methods */
 
       //todo: throttle this event?
       self.fireScrollingEvent = function(args) {
         $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+      };
+
+      self.fireEvent = function(eventName, args) {
+        // Add the grid to the event arguments if it's not there
+        if (typeof(args) === 'undefined' || args === undefined) {
+          args = {};
+        }
+        
+        if (typeof(args.grid) === 'undefined' || args.grid === undefined) {
+          args.grid = self.grid;
+        }
+
+        $scope.$broadcast(eventName, args);
       };
 
     }]);
@@ -205,6 +231,7 @@ angular.module('ui.grid').directive('uiGrid',
           uiGrid: '='
         },
         replace: true,
+        transclude: true,
         controller: 'uiGridController',
         compile: function () {
           return {
@@ -231,7 +258,7 @@ angular.module('ui.grid').directive('uiGrid',
   ]);
 
   //todo: move to separate file once Brian has finished committed work in progress
-  angular.module('ui.grid').directive('uiGridCell', ['$compile', 'uiGridConstants', '$log', '$parse', function ($compile, uiGridConstants, $log, $parse) {
+  angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $log, $parse, gridUtil, uiGridConstants) {
     var uiGridCell = {
       priority: 0,
       scope: false,
@@ -252,7 +279,7 @@ angular.module('ui.grid').directive('uiGrid',
             // No controller, compile the element manually
             else {
               var html = $scope.col.cellTemplate
-                .replace(uiGridConstants.COL_FIELD, 'getCellValue(row,col)');
+                .replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
               var cellElement = $compile(html)($scope);
               $elm.append(cellElement);
             }
