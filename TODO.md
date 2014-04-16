@@ -2,6 +2,9 @@
 
 # CURRENT
 
+1. [TODO] - Does rowsProcessors make sense for external sorting??? It would be downstream from the rows being added/modified, and would ITSELF be modifying the rows...
+  1. Would probably be an infinite loop. External sorting needs to be able to hook in further upstream.
+
 1. [TODO] - Do rows processors need to be able to modify the count of of rows? As it is the documentation says the count needs to stay the same... but searching would affect that
 
 1. [BUG] -  Do we need to validate passed in grid 'id' property to make sure it can be in a CSS rule?
