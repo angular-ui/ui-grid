@@ -3,12 +3,12 @@
   <div class="ui-grid-header ui-grid-header-viewport">
     <div class="ui-grid-header-canvas">
         <div ng-repeat="col in grid.renderedColumns track by $index" ui-grid-header-cell col="col" render-index="$index" ng-style="$index === 0 && columnStyle($index)"> <!-- class="ui-grid-header-cell col{{ col.index }}" ng-style="$index === 0 && columnStyle($index)" -->
-          <!-- <div ng-if="grid.options.enableColumnResize && col.index != 0" class="ui-grid-column-resizer" ui-grid-column-resizer col="col" position="left" render-index="$index">&nbsp;</div>
+          <!-- <div ng-if="grid.options.enableColumnResizing && col.index != 0" class="ui-grid-column-resizer" ui-grid-column-resizer col="col" position="left" render-index="$index">&nbsp;</div>
 
           <div class="ui-grid-vertical-bar">&nbsp;</div>
           <div class="ui-grid-cell-contents" col-index="$index">{{ col.displayName }}</span></div>
 
-          <div ng-if="grid.options.enableColumnResize && col.index != grid.renderedColumns.length - 1" class="ui-grid-column-resizer" ui-grid-column-resizer col="col" position="right"  render-index="$index">&nbsp;</div> -->
+          <div ng-if="grid.options.enableColumnResizing && col.index != grid.renderedColumns.length - 1" class="ui-grid-column-resizer" ui-grid-column-resizer col="col" position="right"  render-index="$index">&nbsp;</div> -->
         </div>
     </div>
 

@@ -65,7 +65,7 @@ angular.module('ui.grid')
     this.enableVirtualScrolling = false;
 
     // Resizing columns, off by default
-    this.enableColumnResize = false;
+    this.enableColumnResizing = false;
 
     // Columns can't be smaller than 10 pixels
     this.minimumColumnSize = 10;

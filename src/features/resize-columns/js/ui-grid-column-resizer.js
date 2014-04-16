@@ -11,7 +11,7 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableColumnResize) {
+            if (uiGridCtrl.grid.options.enableColumnResizing) {
               var renderIndexDefer = $q.defer();
 
               $attrs.$observe('renderIndex', function (n, o) {
@@ -35,13 +35,13 @@
                 var otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
 
                 // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
-                if ($scope.col.index !== 0 && otherCol.colDef.enableColumnResize !== false) {
+                if ($scope.col.index !== 0 && otherCol.colDef.enableColumnResizing !== false) {
                   $elm.prepend(resizerLeft);
                 }
                 
                 // Don't append the right resizer if this column has resizing disabled
-                //if ($scope.col.index !== $scope.grid.renderedColumns.length - 1 && $scope.col.colDef.enableColumnResize !== false) {
-                if ($scope.col.colDef.enableColumnResize !== false) {
+                //if ($scope.col.index !== $scope.grid.renderedColumns.length - 1 && $scope.col.colDef.enableColumnResizing !== false) {
+                if ($scope.col.colDef.enableColumnResizing !== false) {
                   $elm.append(resizerRight);
                 }
 
@@ -78,7 +78,7 @@
 
         app.controller('MainCtrl', ['$scope', function ($scope) {
           $scope.gridOpts = {
-            enableColumnResize: true,
+            enableColumnResizing: true,
             data: [
               { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
               { "name": "Claudine Neal", "gender": "female", "company": "Sealoud" },
@@ -193,7 +193,7 @@
           }
 
           // Don't resize if it's disabled on this column
-          if (col.colDef.enableColumnResize === false) {
+          if (col.colDef.enableColumnResizing === false) {
             return;
           }
 
@@ -254,7 +254,7 @@
           }
 
           // Don't resize if it's disabled on this column
-          if (col.colDef.enableColumnResize === false) {
+          if (col.colDef.enableColumnResizing === false) {
             return;
           }
 
