@@ -8,7 +8,6 @@ angular.module('ui.grid')
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
    * over this object.
-   * @param {string} id id to assign to grid
    */
   function GridOptions() {
     /**

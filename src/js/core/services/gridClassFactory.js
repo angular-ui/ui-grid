@@ -16,6 +16,7 @@
          * @name createGrid
          * @methodOf ui.grid.service:gridClassFactory
          * @description Creates a new grid instance. Each instance will have a unique id
+         * @param {object} options An object map of options to pass into the created grid instance.
          * @returns {Grid} grid
          */
         createGrid : function(options) {

@@ -8,7 +8,7 @@ angular.module('ui.grid')
    * @name ui.grid.class:Grid
    * @description Grid defines a logical grid.  Any non-dom properties and elements needed by the grid should
    *              be defined in this class
-   * @param {string} id id to assign to grid
+   * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
   var Grid = function (options) {
     // Get the id out of the options, then remove it

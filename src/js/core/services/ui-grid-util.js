@@ -147,10 +147,10 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
         <file name="app.js">
           var app = angular.module('app', ['ui.grid']);
 
-          app.controller('MainCtrl', ['$scope', 'GridUtil', function ($scope, GridUtil) {
+          app.controller('MainCtrl', ['$scope', 'gridUtil', function ($scope, gridUtil) {
             $scope.name = 'firstName';
             $scope.columnName = function(name) {
-              return GridUtil.readableColumnName(name);
+              return gridUtil.readableColumnName(name);
             };
           }]);
         </file>
@@ -388,7 +388,7 @@ module.service('gridUtil', ['$window', '$document', '$http', '$templateCache', '
     * `wheel, mousewheel, DomMouseScroll, MozMousePixelScroll`
     *
     * "normalize" it
-    * so that it stays consistent no matter what browser it comes from (i.e. scale it correctl and make sure the direction is right.)
+    * so that it stays consistent no matter what browser it comes from (i.e. scale it correctly and make sure the direction is right.)
     */
     normalizeWheelEvent: function (event) {
       // var toFix = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
