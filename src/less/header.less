@@ -1,4 +1,8 @@
 
+.ui-grid-top-panel-background {
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+}
+
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
 .ui-grid-top-panel {
     position: relative;
@@ -9,7 +13,8 @@
     overflow: hidden;  // Disable so menus show up
     font-weight: bold;
 
-    .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+    // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+    .ui-grid-top-panel-background;
 
     .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
 }
@@ -76,6 +81,8 @@
   right: @gridBorderWidth; // So it doesn't overlay the vertical bar
   top: 0;
   bottom: 0;
+
+  .ui-grid-top-panel-background;
 
   .ui-grid-icon-angle-down {
     vertical-align: sub;

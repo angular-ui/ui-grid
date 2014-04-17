@@ -377,16 +377,29 @@
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;
           var xDiff = 0;
-          var cells = uiGridCtrl.grid.element[0].querySelectorAll('.col' + col.index);
+          // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
+          var cells = uiGridCtrl.grid.element[0].querySelectorAll('.col' + col.index + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
               // $log.debug('width', gridUtil.elementWidth(cell));
 
+              // Account for the menu button if it exists
+              var menuButton;
+              if (angular.element(cell).parent().hasClass('ui-grid-header-cell')) {
+                menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
+              }
+
               gridUtil.fakeElement(cell, {}, function(newElm) {
                 // Make the element float since it's a div and can expand to fill its container
-                angular.element(newElm).attr('style', 'float: left');
+                var e = angular.element(newElm);
+                e.attr('style', 'float: left');
 
-                var width = gridUtil.elementWidth(newElm);
+                var width = gridUtil.elementWidth(e);
+
+                if (menuButton) {
+                  var menuButtonWidth = gridUtil.elementWidth(menuButton);
+                  width = width + menuButtonWidth;
+                }
 
                 if (width > maxWidth) {
                   maxWidth = width;
