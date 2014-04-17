@@ -30,12 +30,11 @@
 1. [TOFIX] - Menu icon vertical alignment off in IE11 (how does it look in FF?)
 1. [NOTE] - Use "-webkit-text-stroke: 0.3px" on icon font to fix jaggies in Chrome on Windows
 1. [TODO] - Add a failing test for the IE9-11 column sorting hack (columnSorter.js, line 229)
-1. [TODO] - Kendo Grid shows the column menu positioned OUTSIDE the grid for the final column, but it doesn't flow outside the window.
-    <!-- 1. It is positioned by specific pixel amount. We will need to measure the menu size in order to get it right under any menu button we use. -->
 
 1. [TODO] - Add row filtering
 1. [TODO] - Add notes about browser version support and Angular version support to README.md
 1. [TODO] - Add handling for sorting null values with columnDef sortingAlgorithm (PR #940)
+1. [TODO] - Currently uiGridColumnMenu uses i18n to create the menu item text on link. If the language is changed, they won't update because they're not bound...
 
 # Cleanup
 

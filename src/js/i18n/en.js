@@ -24,6 +24,11 @@
         },
         menu: {
           text: 'Choose Columns:'
+        },
+        sort: {
+          ascending: 'Sort Ascending',
+          descending: 'Sort Descending',
+          remove: 'Remove Sort'
         }
       });
       return $delegate;

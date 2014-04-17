@@ -35,7 +35,7 @@ Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it 
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      Click on a column header to sort by that column.
+      Click on a column header to sort by that column. (The third column has sorting disabled.)
       <br>
       <br>
       <div ui-grid="gridOptions" class="grid"></div>

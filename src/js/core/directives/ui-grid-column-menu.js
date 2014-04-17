@@ -1,6 +1,6 @@
 (function(){
 
-angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$window', '$document', '$injector', 'gridUtil', 'uiGridConstants', function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstants) {
+angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$window', '$document', '$injector', 'gridUtil', 'uiGridConstants', 'i18nService', function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstants, i18nService) {
 
   var uiGridColumnMenu = {
     priority: 0,
@@ -25,6 +25,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
       $scope.asc = uiGridConstants.ASC;
       $scope.desc = uiGridConstants.DESC;
 
+      // $scope.i18n = i18nService;
+
       // Get the grid menu element. We'll use it to calculate positioning
       var menu = $elm[0].querySelectorAll('.ui-grid-menu');
 
@@ -42,7 +44,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
       
       var defaultMenuItems = [
         {
-          title: 'Sort Ascending',
+          title: i18nService.get().sort.ascending,
           icon: 'ui-grid-icon-sort-alt-up',
           action: function($event) {
             $event.stopPropagation();
@@ -56,7 +58,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           }
         },
         {
-          title: 'Sort Descending',
+          title: i18nService.get().sort.descending,
           icon: 'ui-grid-icon-sort-alt-down',
           action: function($event) {
             $event.stopPropagation();
@@ -70,7 +72,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           }
         },
         {
-          title: 'Remove Sort',
+          title: i18nService.get().sort.remove,
           icon: 'ui-grid-icon-cancel',
           action: function ($event) {
             $event.stopPropagation();
