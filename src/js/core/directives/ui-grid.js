@@ -87,15 +87,17 @@
         var promises = [];
 
         if (n) {
-          //load columns if needed
-          if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
+          if(self.grid.columns.length === 0){
+            $log.debug('loading cols in dataWatchFunction');
+            if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
               self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n);
+            }
+            promises.push(self.grid.buildColumns()
+              .then(function() {
+                preCompileCellTemplates($scope.grid.columns);}
+            ));
           }
-          promises.push(self.grid.buildColumns());
-
           $q.all(promises).then(function() {
-            preCompileCellTemplates($scope.grid.columns);
-
             //wrap data in a gridRow
             $log.debug('Modifying rows');
             self.grid.modifyRows(n)
