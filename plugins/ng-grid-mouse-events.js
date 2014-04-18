@@ -1,4 +1,4 @@
-function ngGridDoubleClickPlugin() {
+function ngMouseEventsPlugin() {
     var self = this;
     self.$scope = null;
     self.grid = null;
