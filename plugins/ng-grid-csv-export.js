@@ -18,7 +18,12 @@ function ngGridCsvExportPlugin (opts) {
 
         function showDs() {
             var keys = [];
-            for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
+            for (var f in grid.config.columnDefs) { 
+                if (grid.config.columnDefs.hasOwnProperty(f))
+                {   
+                    keys.push(grid.config.columnDefs[f].field);
+                }   
+            }   
             var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
