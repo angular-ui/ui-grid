@@ -43,3 +43,31 @@ For arrays and objects you may want to override the default `JSON.stringify`
 conversion into strings.
 
 
+
+Mouse Events
+============
+This simple plugin for ng-grid allows you to bind multiple mouse events (`onClick`, `onDblClick`, `onRightClick`) to rows.
+
+Usage
+-----
+Include the plugin in the grid options, and the binding methods become available
+            plugins: [new ngMouseEventsPlugin()]
+
+Options
+-------
+```javascript
+function MyCtrl($scope) {
+  $scope.myOptions = {
+    onClick: function(row) {
+      // Row was clicked
+    },
+    onRightClick: function(row) {
+      // Row was right-clicked
+    },
+    onDblClick: function(row) {
+      // Row was double clicked
+    }
+  }
+}
+```
+
