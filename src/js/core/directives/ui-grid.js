@@ -11,6 +11,11 @@
 
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
+
+
+      //add optional reference to externalScopes function to controller
+      //so it can be retrieved in lower elements that have isolate scope
+      self.getExternalScopes = $scope.getExternalScopes;
       
       // angular.extend(self.grid.options, );
 
@@ -60,7 +65,9 @@
         dataWatchCollectionDereg = $scope.$parent.$watchCollection(function() { return $scope.uiGrid.data; }, dataWatchFunction);
       }
 
-      var columnDefWatchDereg = $scope.$parent.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, function(n, o) {
+      var columnDefWatchCollectionDereg = $scope.$parent.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction);
+
+      function columnDefsWatchFunction(n, o) {
         if (n && n !== o) {
           self.grid.options.columnDefs = n;
           self.grid.buildColumns()
@@ -73,7 +80,7 @@
               self.refreshCanvas(true);
             });
         }
-      });
+      }
 
       function dataWatchFunction(n) {
         $log.debug('dataWatch fired');
@@ -112,7 +119,7 @@
 
       $scope.$on('$destroy', function() {
         dataWatchCollectionDereg();
-        columnDefWatchDereg();
+        columnDefWatchCollectionDereg();
       });
 
       // TODO(c0bra): Do we need to destroy this watch on $destroy?
@@ -191,6 +198,8 @@
  *  @element div
  *  @restrict EA
  *  @param {Object} uiGrid Options for the grid to use
+ *  @param {Object=} external-scopes Add external-scopes='someScopeObjectYouNeed' attribute so you can access
+ *            your scopes from within any custom templatedirective.  You access by $scope.getExternalScopes() function
  *  
  *  @description Create a very basic grid.
  *
@@ -228,7 +237,8 @@ angular.module('ui.grid').directive('uiGrid',
       return {
         templateUrl: 'ui-grid/ui-grid',
         scope: {
-          uiGrid: '='
+          uiGrid: '=',
+          getExternalScopes: '&?externalScopes' //optional functionwrapper around any needed external scope instances
         },
         replace: true,
         transclude: true,
@@ -256,40 +266,5 @@ angular.module('ui.grid').directive('uiGrid',
       };
     }
   ]);
-
-  //todo: move to separate file once Brian has finished committed work in progress
-  angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $log, $parse, gridUtil, uiGridConstants) {
-    var uiGridCell = {
-      priority: 0,
-      scope: false,
-      require: '?^uiGrid',
-      compile: function() {
-        return {
-          pre: function($scope, $elm, $attrs, uiGridCtrl) {
-            // If the grid controller is present, use it to get the compiled cell template function
-            if (uiGridCtrl) {
-              var compiledElementFn = $scope.col.compiledElementFn;
-
-              $scope.getCellValue = uiGridCtrl.getCellValue;
-              
-              compiledElementFn($scope, function(clonedElement, scope) {
-                $elm.append(clonedElement);
-              });
-            }
-            // No controller, compile the element manually
-            else {
-              var html = $scope.col.cellTemplate
-                .replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-              var cellElement = $compile(html)($scope);
-              $elm.append(cellElement);
-            }
-          }
-          //post: function($scope, $elm, $attrs) {}
-        };
-      }
-    };
-
-    return uiGridCell;
-  }]);
 
 })();

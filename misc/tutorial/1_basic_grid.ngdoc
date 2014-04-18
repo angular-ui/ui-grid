@@ -2,7 +2,10 @@
 @name Tutorial: Basic Grid
 @description
 
-In this example we create the most basic grid possible. Our 
+In this example we create the most basic grid possible.
+
+<br> We are using the optional <code>external-scopes="{myViewModel:myViewModel}"</code> attribute
+to give us access to the view model via $scope.getExternalScopes() function.
 
 @example
 <example module="app">
@@ -10,6 +13,8 @@ In this example we create the most basic grid possible. Our
     var app = angular.module('app', ['ui.grid']);
 
     app.controller('MainCtrl', ['$scope', function ($scope) {
+      $scope.myViewModel = {code:'abc'};
+
       $scope.data = [
         {
             "firstName": "Cox",
@@ -316,7 +321,7 @@ In this example we create the most basic grid possible. Our
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="{ data: data }" class="grid"></div>
+      <div ui-grid="{ data: data }" external-scopes="{myViewModel:myViewModel}" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
