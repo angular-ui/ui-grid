@@ -2,7 +2,27 @@
 @name Tutorial: Editable Grid
 @description
 
-You can use the `enableCellEdit` options in your column definitions to allow a column to be editable. Double click in a cell to edit it.
+You can use the `enableCellEdit` options in your column definitions to allow a column to be editable.
+
+Editing is invoked via double-click, f2, or start typing any non-navigable key. Custom edit templates should be used for any editor other than the default text editor.
+
+ColumnDef Options:
+<br/><code>editableCellTemplate</code> (default: undefined) - valid html to be compiled when edit mode is invoked. Overrides editableCellTemplateUrl
+<br/><code>enableCellEdit</code> (default: false) - true to edit a column.
+<br/><code>editableCellTemplateUrl</code> (default: 'ui-grid/cellTextEditor') - templateCache Id or valid url that returns html content to be compiled when edit mode is invoked
+<br/><code>cellEditableCondition</code>  (default: true)  Can be set to a boolean or a function that will be called with the cellScope to determine if the cell should be invoked in edit mode.
+<br/>
+The following option is available only if using cellNav feature
+<br/><code>enableCellEditOnFocus</code> - true to invoke editor as soon as cell has focus
+
+<pre>
+$scope.gridOptions.columnDefs = [
+   { name: 'name', enableCellEdit: true, editableCellTemplate },
+   { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)',
+                cellEditableCondition: function($scope){return $scope.rowIndex%2} }
+]
+</pre>
+
 
 @example
 <example module="app">
@@ -16,7 +36,8 @@ You can use the `enableCellEdit` options in your column definitions to allow a c
         { name: 'id' },
         { name: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
         { name: 'age' },
-        { name: 'address.city' }
+        { name: 'address.city',enableCellEdit: true, displayName: 'Address (even rows editable)',
+             cellEditableCondition: function($scope){return $scope.rowIndex%2} }
       ];
 
       $http.get('/data/500_complex.json')
@@ -35,7 +56,7 @@ You can use the `enableCellEdit` options in your column definitions to allow a c
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 600px;
       height: 450px;
     }
   </file>

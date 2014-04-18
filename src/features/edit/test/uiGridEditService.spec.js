@@ -19,20 +19,26 @@ describe('ui.grid.edit uiGridEditService', function () {
 
   describe('editColumnBuilder function', function () {
 
-    it('should create additional edit properties', function () {
+    it('should create additional edit properties', inject(function ($timeout) {
       var  grid = gridClassFactory.createGrid();
       grid.options.columnDefs = [
         {field: 'col1', enableCellEdit: true}
       ];
-      grid.buildColumns();
+      $timeout(function(){
+        grid.buildColumns();
+      });
+      $timeout.flush();
 
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
-      expect(col.enableCellEdit).toBe(true);
+      $timeout(function(){
+        uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      });
+      $timeout.flush();
+
+       expect(col.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBeDefined();
-      expect(col.editableCellDirective).toBeDefined();
-    });
+    }));
 
     it('should not create additional edit properties if edit is not enabled for a column', function () {
       var  grid = gridClassFactory.createGrid();
@@ -47,10 +53,9 @@ describe('ui.grid.edit uiGridEditService', function () {
       uiGridEditService.editColumnBuilder(colDef,col,grid.options);
       expect(col.enableCellEdit).toBe(false);
       expect(col.editableCellTemplate).not.toBeDefined();
-      expect(col.editableCellDirective).not.toBeDefined();
     });
 
-    it('should not create additional edit properties if global enableCellEdit is true', function () {
+    it('should not create additional edit properties if global enableCellEdit is true', inject(function ($timeout) {
       var  grid = gridClassFactory.createGrid();
       grid.options.enableCellEdit = true;
       grid.options.columnDefs = [
@@ -60,11 +65,13 @@ describe('ui.grid.edit uiGridEditService', function () {
 
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      $timeout(function(){
+        uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      });
+      $timeout.flush();
       expect(col.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBeDefined();
-      expect(col.editableCellDirective).toBeDefined();
-    });
+    }));
 
     it('should not create additional edit properties if global enableCellEdit is false', function () {
       var  grid = gridClassFactory.createGrid();
@@ -79,10 +86,9 @@ describe('ui.grid.edit uiGridEditService', function () {
       uiGridEditService.editColumnBuilder(colDef,col,grid.options);
       expect(col.enableCellEdit).toBe(false);
       expect(col.editableCellTemplate).not.toBeDefined();
-      expect(col.editableCellDirective).not.toBeDefined();
     });
 
-    it('should override enableCellEdit for each coldef if global enableCellEdit is false', function () {
+    it('should override enableCellEdit for each coldef if global enableCellEdit is false', inject(function ($timeout) {
       var  grid = gridClassFactory.createGrid();
       grid.options.enableCellEdit = false;
       grid.options.columnDefs = [
@@ -93,20 +99,21 @@ describe('ui.grid.edit uiGridEditService', function () {
 
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      $timeout(function(){
+        uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      });
+      $timeout.flush();
       expect(col.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBeDefined();
-      expect(col.editableCellDirective).toBeDefined();
 
       colDef = grid.options.columnDefs[1];
       col = grid.columns[1];
       uiGridEditService.editColumnBuilder(colDef,col,grid.options);
       expect(col.enableCellEdit).toBe(false);
       expect(col.editableCellTemplate).not.toBeDefined();
-      expect(col.editableCellDirective).not.toBeDefined();
-    });
+    }));
 
-    it('should override enableCellEdit for each coldef if global enableCellEdit is true', function () {
+    it('should override enableCellEdit for each coldef if global enableCellEdit is true', inject(function($timeout) {
       var  grid = gridClassFactory.createGrid();
       grid.options.enableCellEdit = true;
       grid.options.columnDefs = [
@@ -117,18 +124,22 @@ describe('ui.grid.edit uiGridEditService', function () {
 
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      $timeout(function(){
+        uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      });
+      $timeout.flush();
       expect(col.enableCellEdit).toBe(false);
       expect(col.editableCellTemplate).not.toBeDefined();
-      expect(col.editableCellDirective).not.toBeDefined();
 
       colDef = grid.options.columnDefs[1];
       col = grid.columns[1];
-      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      $timeout(function(){
+        uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      });
+      $timeout.flush();
       expect(col.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBeDefined();
-      expect(col.editableCellDirective).toBeDefined();
-    });
+    }));
 
   });
 

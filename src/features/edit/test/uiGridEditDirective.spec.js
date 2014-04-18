@@ -2,7 +2,7 @@ describe('uiGridEditDirective', function () {
   var gridUtil;
   var scope;
   var element;
-  var uiGridController;
+  var cellTextEditorHtml = '<div><input ng-model="COL_FIELD" ui-grid-text-editor/></div>';
   var recompile;
 
   beforeEach(module('ui.grid.edit'));
@@ -13,7 +13,7 @@ describe('uiGridEditDirective', function () {
     $templateCache.put('ui-grid/ui-grid', '<div/>');
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/uiGridHeaderCell', '<div/>');
-    $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
+    $templateCache.put('ui-grid/cellTextEditor', cellTextEditorHtml);
 
     scope = $rootScope.$new();
     scope.options = {};
@@ -46,14 +46,12 @@ describe('uiGridEditDirective', function () {
       var col = gridScope.grid.getColumn('col1');
       expect(col).not.toBeNull();
       expect(col.enableCellEdit).toBe(true);
-      expect(col.editableCellTemplate).toBe('<div editable_cell_directive></div>');
-      expect(col.editableCellDirective).toBe('ui-grid-text-editor');
+      expect(col.editableCellTemplate).toBe(cellTextEditorHtml);
 
       col = gridScope.grid.getColumn('col2');
       expect(col).not.toBeNull();
       expect(col.enableCellEdit).toBe(false);
       expect(col.editableCellTemplate).not.toBeDefined();
-      expect(col.editableCellDirective).not.toBeDefined();
 
     });
   });
