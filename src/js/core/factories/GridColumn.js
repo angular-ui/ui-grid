@@ -39,6 +39,23 @@ angular.module('ui.grid')
     self.updateColumnDef(colDef);
   }
 
+  GridColumn.prototype.setPropertyOrDefault = function (colDef, propName, defaultValue) {
+    var self = this;
+
+    // Use the column definition filter if we were passed it
+    if (typeof(colDef[propName]) !== 'undefined' && colDef[propName]) {
+      self[propName] = colDef[propName];
+    }
+    // Otherwise use our own if it's set
+    else if (typeof(self[propName]) !== 'undefined') {
+      self[propName] = self[propName];
+    }
+    // Default to empty object for the filter
+    else {
+      self[propName] = defaultValue ? defaultValue : {};
+    }
+  };
+
   GridColumn.prototype.updateColumnDef = function(colDef, index) {
     var self = this;
 
@@ -113,23 +130,29 @@ angular.module('ui.grid')
 
     // Turn on sorting by default
     self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
-
     self.sortingAlgorithm = colDef.sortingAlgorithm;
+
+    // Turn on filtering by default (it's disabled by default at the Grid level)
+    self.enableFiltering = typeof(colDef.enableFiltering) !== 'undefined' ? colDef.enableFiltering : true;
 
     self.menuItems = colDef.menuItems;
 
     // Use the column definition sort if we were passed it
-    if (typeof(colDef.sort) !== 'undefined' && colDef.sort) {
-      self.sort = colDef.sort;
-    }
-    // Otherwise use our own if it's set
-    else if (typeof(self.sort) !== 'undefined') {
-      self.sort = self.sort;
-    }
-    // Default to empty object for the sort
-    else {
-      self.sort = {};
-    }
+    self.setPropertyOrDefault(colDef, 'sort');
+
+    /*
+
+      self.filters = [
+        {
+          term: 'search term'
+          condition: uiGridContants.filter.CONTAINS
+        }
+      ]
+
+    */
+
+    self.setPropertyOrDefault(colDef, 'filter');
+    self.setPropertyOrDefault(colDef, 'filters', []);
   };
 
   return GridColumn;

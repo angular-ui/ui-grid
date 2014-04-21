@@ -1,13 +1,24 @@
 # TODO
 
-# CURRENT
+# CURRENT (row filtering)
+
+1. [TODO] - Make 'No Rows' message i18n
+1. [BUG] - i18n causes an exception if a given value is not present.
+  1. I think we need a function that will look for a translation in the current or given language and then return the value for the default language if not present
+  1. It could also take a flag and return null if not present
+  1. Need to add a test for this...
+
+1. [TODO] - Does rowSearcher need to allow for custom equality comparators in colDef?
+1. [IDEA] - Should RegExps be allowed as search terms? We could test for whether the filter value starts and ends with '/'
+
+1. [TODO] - Document the autoHide feature for uiGridMenu. Probably need to rename it to hideOnResize
 
 1. [TODO] - Does rowsProcessors make sense for external sorting??? It would be downstream from the rows being added/modified, and would ITSELF be modifying the rows...
   1. Would probably be an infinite loop. External sorting needs to be able to hook in further upstream.
+  1. Sorting a column prompts a call to refreshRows(). Could we have a hook in there to run BEFORE rowsProcessors?
 
 1. [TODO] - Do rows processors need to be able to modify the count of of rows? As it is the documentation says the count needs to stay the same... but searching would affect that
 
-1. [BUG] -  Do we need to validate passed in grid 'id' property to make sure it can be in a CSS rule?
 1. [IDEA] - Hook the column menu button into the menu it activates so it can show/hide depending on the number of items it will show. Can we do that?
   1. If sorting is enabled or the user / extension has supplied extra menu items, show the menu button. Otherwise don't show it.
   1. We'll need a way to separate extension menu items from user menu items so the user doesn't override them.
@@ -31,20 +42,20 @@
 1. [NOTE] - Use "-webkit-text-stroke: 0.3px" on icon font to fix jaggies in Chrome on Windows
 1. [TODO] - Add a failing test for the IE9-11 column sorting hack (columnSorter.js, line 229)
 
-1. [TODO] - Add row filtering
 1. [TODO] - Add notes about browser version support and Angular version support to README.md
 1. [TODO] - Add handling for sorting null values with columnDef sortingAlgorithm (PR #940)
 1. [TODO] - Currently uiGridColumnMenu uses i18n to create the menu item text on link. If the language is changed, they won't update because they're not bound...
 
 # Cleanup
 
+1. [TODO] - Remove commented-out dumps from gridUtil
 1. [TODO] - Rename gridUtil to uiGridUtil
 1. [TODO] - Rename GridUtil in uiGridBody to gridUtil or the above
 1. [TODO] - Move uiGridCell to its own file
 
 # Extras
 
-1. Add iit and ddescribe checks as commit hooks
+<!-- 1. Add iit and ddescribe checks as commit hooks -->
 
 # Native scrolling
 

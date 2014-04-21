@@ -27,12 +27,21 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$timeout', '$w
       // Store a reference to menu element
       var $colMenu = angular.element( $elm[0].querySelectorAll('.ui-grid-header-cell-menu') );
 
+      var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
+
       // Figure out whether this column is sortable or not
       if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
         $scope.sortable = true;
       }
       else {
         $scope.sortable = false;
+      }
+
+      if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
+        $scope.filterable = true;
+      }
+      else {
+        $scope.filterable = false;
       }
 
       function handleClick(evt) {
@@ -53,7 +62,7 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$timeout', '$w
       // Long-click (for mobile)
       var cancelMousedownTimeout;
       var mousedownStartTime = 0;
-      $elm.on('mousedown', function(event) {
+      $contentsElm.on('mousedown', function(event) {
         if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
           event = event.originalEvent;
         }
@@ -72,7 +81,7 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$timeout', '$w
         });
       });
 
-      $elm.on('mouseup', function () {
+      $contentsElm.on('mouseup', function () {
         $timeout.cancel(cancelMousedownTimeout);
       });
 
@@ -101,7 +110,7 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$timeout', '$w
       
       // If this column is sortable, add a click event handler
       if ($scope.sortable) {
-        $elm.on('click', function(evt) {
+        $contentsElm.on('click', function(evt) {
           evt.stopPropagation();
 
           $timeout.cancel(cancelMousedownTimeout);
@@ -122,6 +131,18 @@ angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$timeout', '$w
           // Cancel any pending long-click timeout
           $timeout.cancel(cancelMousedownTimeout);
         });
+      }
+
+      if ($scope.filterable) {
+        $scope.$on('$destroy', $scope.$watch('col.filter.term', function(n, o) {
+          uiGridCtrl.refreshRows()
+            .then(function () {
+              if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
+                 uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
+              }
+              // uiGridCtrl.fireEvent('force-vertical-scroll');
+            });
+        }));
       }
     }
   };

@@ -16,4 +16,8 @@
   <!-- virtual scrolling -->
   <div ui-grid-scrollbar ng-if="grid.options.enableVirtualScrolling" type="vertical" scrolling-class="ui-grid-scrolling"></div>
   <div ui-grid-scrollbar ng-if="grid.options.enableVirtualScrolling" type="horizontal" scrolling-class="ui-grid-scrolling"></div>
+
+  <div class="ui-grid-no-row-overlay" ng-show="!grid.renderedRows.length">
+    <span>No Rows</span>
+  </div>
 </div>

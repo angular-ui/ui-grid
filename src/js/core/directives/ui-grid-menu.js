@@ -36,7 +36,7 @@
  */
 angular.module('ui.grid')
 
-.directive('uiGridMenu', ['$log', '$timeout', '$window', '$document', 'gridUtil', function ($log, $timeout, $window, $document, gridUtil) {
+.directive('uiGridMenu', ['$log', '$compile', '$timeout', '$window', '$document', 'gridUtil', function ($log, $compile, $timeout, $window, $document, gridUtil) {
   var uiGridMenu = {
     priority: 0,
     scope: {
@@ -105,7 +105,7 @@ angular.module('ui.grid')
   return uiGridMenu;
 }])
 
-.directive('uiGridMenuItem', ['$log', function ($log) {
+.directive('uiGridMenuItem', ['$log', 'gridUtil', '$compile', 'i18nService', function ($log, gridUtil, $compile, i18nService) {
   var uiGridMenuItem = {
     priority: 0,
     scope: {
@@ -114,55 +114,76 @@ angular.module('ui.grid')
       action: '=',
       icon: '=',
       shown: '=',
-      context: '='
+      context: '=',
+      templateUrl: '='
     },
     require: ['?^uiGrid', '^uiGridMenu'],
     templateUrl: 'ui-grid/uiGridMenuItem',
     replace: true,
-    link: function ($scope, $elm, $attrs, controllers) {
-      var uiGridCtrl = controllers[0],
-          uiGridMenuCtrl = controllers[1];
+    compile: function($elm, $attrs) {
+      return {
+        pre: function ($scope, $elm, $attrs, controllers) {
+          var uiGridCtrl = controllers[0],
+              uiGridMenuCtrl = controllers[1];
+          
+          if ($scope.templateUrl) {
+            gridUtil.getTemplate($scope.templateUrl)
+                .then(function (contents) {
+                  var template = angular.element(contents);
+                    
+                  var newElm = $compile(template)($scope);
+                  $elm.replaceWith(newElm);
+                });
+          }
+        },
+        post: function ($scope, $elm, $attrs, controllers) {
+          var uiGridCtrl = controllers[0],
+              uiGridMenuCtrl = controllers[1];
 
-      // TODO(c0bra): validate that shown and active are function if they're defined. An exception is already thrown above this though
-      // if (typeof($scope.shown) !== 'undefined' && $scope.shown && typeof($scope.shown) !== 'function') {
-      //   throw new TypeError("$scope.shown is defined but not a function");
-      // }
-
-      if (typeof($scope.shown) === 'undefined' || $scope.shown === null) {
-        $scope.shown = function() { return true; };
-      }
-
-      $scope.itemShown = function () {
-        var context = {};
-        if ($scope.context) {
-          context.context = $scope.context;
-        }
-
-        if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
-          context.grid = uiGridCtrl.grid;
-        }
-
-        return $scope.shown.call(context);
-      };
-
-      $scope.itemAction = function($event) {
-        $event.stopPropagation();
-
-        if (typeof($scope.action) === 'function') {
-          var context = {};
-
-          if ($scope.context) {
-            context.context = $scope.context;
+          // TODO(c0bra): validate that shown and active are functions if they're defined. An exception is already thrown above this though
+          // if (typeof($scope.shown) !== 'undefined' && $scope.shown && typeof($scope.shown) !== 'function') {
+          //   throw new TypeError("$scope.shown is defined but not a function");
+          // }
+          if (typeof($scope.shown) === 'undefined' || $scope.shown === null) {
+            $scope.shown = function() { return true; };
           }
 
-          // Add the grid to the function call context if the uiGrid controller is present
-          if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
-            context.grid = uiGridCtrl.grid;
-          }
+          $scope.itemShown = function () {
+            var context = {};
+            if ($scope.context) {
+              context.context = $scope.context;
+            }
 
-          $scope.action.call(context, $event);
+            if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
+              context.grid = uiGridCtrl.grid;
+            }
 
-          uiGridMenuCtrl.hideMenu();
+            return $scope.shown.call(context);
+          };
+
+          $scope.itemAction = function($event) {
+            $log.debug('itemAction');
+            $event.stopPropagation();
+
+            if (typeof($scope.action) === 'function') {
+              var context = {};
+
+              if ($scope.context) {
+                context.context = $scope.context;
+              }
+
+              // Add the grid to the function call context if the uiGrid controller is present
+              if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
+                context.grid = uiGridCtrl.grid;
+              }
+
+              $scope.action.call(context, $event);
+
+              uiGridMenuCtrl.hideMenu();
+            }
+          };
+
+          $scope.i18n = i18nService.get();
         }
       };
     }

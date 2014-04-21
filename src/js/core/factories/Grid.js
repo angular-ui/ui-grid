@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'rowSorter', function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, rowSorter) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'rowSorter', 'rowSearcher', function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, rowSorter, rowSearcher) {
 
 /**
    * @ngdoc function
@@ -10,8 +10,14 @@ angular.module('ui.grid')
    *              be defined in this class
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
-  var Grid = function (options) {
+  var Grid = function Grid(options) {
     // Get the id out of the options, then remove it
+    if (typeof(options.id) !== 'undefined' && options.id) {
+      if (! /^[_a-zA-Z0-9-]+$/.test(options.id)) {
+        throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
+      }
+    }
+
     this.id = options.id;
     delete options.id;
 
@@ -61,7 +67,7 @@ angular.module('ui.grid')
    * additional properties to the column.
    * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
    */
-  Grid.prototype.registerColumnBuilder = function (columnsProcessor) {
+  Grid.prototype.registerColumnBuilder = function registerColumnBuilder(columnsProcessor) {
     this.columnBuilders.push(columnsProcessor);
   };
 
@@ -73,7 +79,7 @@ angular.module('ui.grid')
    * additional properties to the row.
    * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
    */
-  Grid.prototype.registerRowBuilder = function (rowBuilder) {
+  Grid.prototype.registerRowBuilder = function registerRowBuilder(rowBuilder) {
     this.rowBuilders.push(rowBuilder);
   };
 
@@ -84,7 +90,7 @@ angular.module('ui.grid')
    * @description returns a grid column for the column name
    * @param {string} name column name
    */
-  Grid.prototype.getColumn = function (name) {
+  Grid.prototype.getColumn = function getColumn(name) {
     var columns = this.columns.filter(function (column) {
       return column.colDef.name === name;
     });
@@ -99,7 +105,7 @@ angular.module('ui.grid')
    * columnBuilder to further process the column
    * @returns {Promise} a promise to load any needed column resources
    */
-  Grid.prototype.buildColumns = function () {
+  Grid.prototype.buildColumns = function buildColumns() {
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
@@ -132,7 +138,7 @@ angular.module('ui.grid')
    * @description defaults the name property from field to maintain backwards compatibility with 2.x
    * validates that name or field is present
    */
-  Grid.prototype.preprocessColDef = function (colDef) {
+  Grid.prototype.preprocessColDef = function preprocessColDef(colDef) {
     if (!colDef.field && !colDef.name) {
       throw new Error('colDef.name or colDef.field property is required');
     }
@@ -153,7 +159,7 @@ angular.module('ui.grid')
    *
    * Rows are identified using the gridOptions.rowEquality function
    */
-  Grid.prototype.modifyRows = function(newRawData) {
+  Grid.prototype.modifyRows = function modifyRows(newRawData) {
     var self = this;
 
     if (self.rows.length === 0 && newRawData.length > 0) {
@@ -182,15 +188,11 @@ angular.module('ui.grid')
         self.rows.splice( self.rows.indexOf(deletedRows[i] ), 1 );
       }
     }
-
-    // Make a reference copy that we can alter (sort, etc)
-    // var renderableRows = self.processRowsProcessors(self.rows);
+    
     return $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
       });
-
-    // self.setVisibleRows(renderableRows);
   };
 
   /**
@@ -200,7 +202,7 @@ angular.module('ui.grid')
    * @description adds the newRawData array of rows to the grid and calls all registered
    * rowBuilders. this keyword will reference the grid
    */
-  Grid.prototype.addRows = function(newRawData) {
+  Grid.prototype.addRows = function addRows(newRawData) {
     var self = this;
 
     for (var i=0; i < newRawData.length; i++) {
@@ -216,7 +218,7 @@ angular.module('ui.grid')
    * @param {GridRow} gridRow reference to gridRow
    * @returns {GridRow} the gridRow with all additional behavior added
    */
-  Grid.prototype.processRowBuilders = function(gridRow) {
+  Grid.prototype.processRowBuilders = function processRowBuilders(gridRow) {
     var self = this;
 
     self.rowBuilders.forEach(function (builder) {
@@ -233,7 +235,7 @@ angular.module('ui.grid')
    * @description registered a styleComputation function
    * @param {function($scope)} styleComputation function
    */
-  Grid.prototype.registerStyleComputation = function (styleComputationInfo) {
+  Grid.prototype.registerStyleComputation = function registerStyleComputation(styleComputationInfo) {
     this.styleComputations.push(styleComputationInfo);
   };
 
@@ -274,7 +276,7 @@ angular.module('ui.grid')
      to alter the set of rows (sorting, etc) as long as the count is not
      modified.
    */
-  Grid.prototype.registerRowsProcessor = function(processor) {
+  Grid.prototype.registerRowsProcessor = function registerRowsProcessor(processor) {
     if (! angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
     }
@@ -289,7 +291,7 @@ angular.module('ui.grid')
    * @param {function(renderableRows)} rows processor function
    * @description Remove a registered rows processor
    */
-  Grid.prototype.removeRowsProcessor = function(processor) {
+  Grid.prototype.removeRowsProcessor = function removeRowsProcessor(processor) {
     var idx = this.rowsProcessors.indexOf(processor);
 
     if (typeof(idx) !== 'undefined' && idx !== undefined) {
@@ -305,7 +307,7 @@ angular.module('ui.grid')
    * @param {Array[GridColumn]} The array of columns
    * @description Run all the registered rows processors on the array of renderable rows
    */
-  Grid.prototype.processRowsProcessors = function(renderableRows) {
+  Grid.prototype.processRowsProcessors = function processRowsProcessors(renderableRows) {
     var self = this;
 
     // Create a shallow copy of the rows so that we can safely sort them without altering the original grid.rows sort order
@@ -349,7 +351,7 @@ angular.module('ui.grid')
       // Call the processor, passing in the rows to process and the current columns
       //   (note: it's wrapped in $q.when() in case the processor does not return a promise)
       return $q.when( processor.call(self, renderedRowsToProcess, self.columns) )
-        .then(function(processedRows) {
+        .then(function handleProcessedRows(processedRows) {
           // Check for errors
           if (! processedRows) {
             throw "Processor at index " + i + " did not return a set of renderable rows";
@@ -379,7 +381,7 @@ angular.module('ui.grid')
     return finished.promise;
   };
 
-  Grid.prototype.setVisibleRows = function(rows) {
+  Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
     var newVisibleRowCache = [];
     
     rows.forEach(function (row) {
@@ -392,14 +394,14 @@ angular.module('ui.grid')
   };
 
 
-  Grid.prototype.setRenderedRows = function (newRows) {
+  Grid.prototype.setRenderedRows = function setRenderedRows(newRows) {
     this.renderedRows.length = newRows.length;
     for (var i = 0; i < newRows.length; i++) {
       this.renderedRows[i] = newRows[i];
     }
   };
 
-  Grid.prototype.setRenderedColumns = function (newColumns) {
+  Grid.prototype.setRenderedColumns = function setRenderedColumns(newColumns) {
     this.renderedColumns.length = newColumns.length;
     for (var i = 0; i < newColumns.length; i++) {
       this.renderedColumns[i] = newColumns[i];
@@ -412,7 +414,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description calls each styleComputation function
    */
-  Grid.prototype.buildStyles = function ($scope) {
+  Grid.prototype.buildStyles = function buildStyles($scope) {
     var self = this;
     self.styleComputations
       .sort(function(a, b) {
@@ -426,11 +428,11 @@ angular.module('ui.grid')
       });
   };
 
-  Grid.prototype.minRowsToRender = function () {
+  Grid.prototype.minRowsToRender = function minRowsToRender() {
     return Math.ceil(this.getViewportHeight() / this.options.rowHeight);
   };
 
-  Grid.prototype.minColumnsToRender = function () {
+  Grid.prototype.minColumnsToRender = function minColumnsToRender() {
     var self = this;
     var viewport = this.getViewportWidth();
 
@@ -455,7 +457,7 @@ angular.module('ui.grid')
     return min;
   };
 
-  Grid.prototype.getBodyHeight = function () {
+  Grid.prototype.getBodyHeight = function getBodyHeight() {
     // Start with the viewportHeight
     var bodyHeight = this.getViewportHeight();
 
@@ -469,7 +471,7 @@ angular.module('ui.grid')
 
   // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
   // TODO(c0bra): account for footer height
-  Grid.prototype.getViewportHeight = function () {
+  Grid.prototype.getViewportHeight = function getViewportHeight() {
     var viewPortHeight = this.gridHeight - this.headerHeight;
 
     // Account for native horizontal scrollbar, if present
@@ -480,7 +482,7 @@ angular.module('ui.grid')
     return viewPortHeight;
   };
 
-  Grid.prototype.getViewportWidth = function () {
+  Grid.prototype.getViewportWidth = function getViewportWidth() {
     var viewPortWidth = this.gridWidth;
 
     if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
@@ -490,7 +492,7 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
-  Grid.prototype.getHeaderViewportWidth = function () {
+  Grid.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
     var viewPortWidth = this.getViewportWidth();
 
     if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
@@ -500,8 +502,20 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
-  Grid.prototype.getCanvasHeight = function () {
-    var ret =  this.options.rowHeight * this.rows.length;
+  Grid.prototype.getVisibleRowCount = function getVisibleRowCount() {
+    // var count = 0;
+
+    // this.rows.forEach(function (row) {
+    //   if (row.visible) {
+    //     count++;
+    //   }
+    // });
+
+    return this.visibleRowCache.length;
+  };
+
+  Grid.prototype.getCanvasHeight = function getCanvasHeight() {
+    var ret =  this.options.rowHeight * this.getVisibleRowCount();
 
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
       ret = ret - this.horizontalScrollbarHeight;
@@ -510,7 +524,7 @@ angular.module('ui.grid')
     return ret;
   };
 
-  Grid.prototype.getCanvasWidth = function () {
+  Grid.prototype.getCanvasWidth = function getCanvasWidth() {
     var ret = this.canvasWidth;
 
     if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
@@ -520,21 +534,21 @@ angular.module('ui.grid')
     return ret;
   };
 
-  Grid.prototype.getTotalRowHeight = function () {
-    return this.options.rowHeight * this.rows.length;
+  Grid.prototype.getTotalRowHeight = function getTotalRowHeight() {
+    return this.options.rowHeight * this.getVisibleRowCount();
   };
 
   // Is the grid currently scrolling?
-  Grid.prototype.isScrolling = function() {
+  Grid.prototype.isScrolling = function isScrolling() {
     return this.scrolling ? true : false;
   };
 
-  Grid.prototype.setScrolling = function(scrolling) {
+  Grid.prototype.setScrolling = function setScrolling(scrolling) {
     this.scrolling = scrolling;
   };
 
-  Grid.prototype.rowSearcher = function rowSearcher(rows) {
-    var grid = this;
+  Grid.prototype.searchRows = function searchRows(renderableRows) {
+    return rowSearcher.search(this, renderableRows, this.columns);
   };
 
   Grid.prototype.sortByColumn = function sortByColumn(renderableRows) {
@@ -552,7 +566,7 @@ angular.module('ui.grid')
   };
 
   // Reset all sorting on the grid
-  Grid.prototype.getNextColumnSortPriority = function () {
+  Grid.prototype.getNextColumnSortPriority = function getNextColumnSortPriority() {
     var self = this,
         p = 0;
 
@@ -572,7 +586,7 @@ angular.module('ui.grid')
    * @description Return the columns that the grid is currently being sorted by
    * @param {GridColumn} [excludedColumn] Optional GridColumn to exclude from having its sorting reset
    */
-  Grid.prototype.resetColumnSorting = function (excludeCol) {
+  Grid.prototype.resetColumnSorting = function resetColumnSorting(excludeCol) {
     var self = this;
 
     self.columns.forEach(function (col) {
@@ -589,7 +603,7 @@ angular.module('ui.grid')
    * @description Return the columns that the grid is currently being sorted by
    * @returns {Array[GridColumn]} An array of GridColumn objects
    */
-  Grid.prototype.getColumnSorting = function() {
+  Grid.prototype.getColumnSorting = function getColumnSorting() {
     var self = this;
 
     var sortedCols = [];
@@ -616,7 +630,7 @@ angular.module('ui.grid')
    *   by this column only
    * @returns {Promise} A resolved promise that supplies the column.
    */
-  Grid.prototype.sortColumn = function (column, directionOrAdd, add) {
+  Grid.prototype.sortColumn = function sortColumn(column, directionOrAdd, add) {
     var self = this,
         direction = null;
 

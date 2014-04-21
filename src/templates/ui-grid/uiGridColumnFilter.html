@@ -1,0 +1,15 @@
+<li class="ui-grid-menu-item ui-grid-clearfix ui-grid-column-filter" ng-show="itemShown()" ng-click="$event.stopPropagation();">
+  <div class="input-container">
+    <input class="column-filter-input" type="text" ng-model="item.model" placeholder="{{ i18n.search.placeholder }}" />
+
+    <div class="column-filter-cancel-icon-container">
+      <i class="ui-grid-filter-cancel ui-grid-icon-cancel column-filter-cancel-icon">&nbsp;</i>
+    </div>
+  </div>
+
+  <div style="button-container" ng-click="item.action($event)">
+    <div class="ui-grid-button">
+      <i class="ui-grid-icon-search">&nbsp;</i>
+    </div>
+  </div>
+</li>

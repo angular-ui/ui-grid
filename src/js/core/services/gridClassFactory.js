@@ -43,14 +43,25 @@
 
           grid.registerColumnBuilder(service.defaultColumnBuilder);
 
-          grid.registerRowBuilder(grid.rowSearcher);
+          // Reset all rows to visible initially
+          grid.registerRowsProcessor(function allRowsVisible(rows) {
+            rows.forEach(function (row) {
+              row.visible = true;
+            });
+
+            return rows;
+          });
+
+          if (grid.options.enableFiltering) {
+            grid.registerRowsProcessor(grid.searchRows);
+          }
 
           // Register the default row processor, it sorts rows by selected columns
-          if (!grid.options.externalSort && angular.isFunction) {
-            grid.registerRowsProcessor(grid.sortByColumn);
+          if (grid.options.externalSort && angular.isFunction(grid.options.externalSort)) {
+            grid.registerRowsProcessor(grid.options.externalSort);
           }
           else {
-            grid.registerRowsProcessor(grid.options.externalSort);
+            grid.registerRowsProcessor(grid.sortByColumn);
           }
 
           return grid;

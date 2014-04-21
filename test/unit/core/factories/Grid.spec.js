@@ -33,6 +33,14 @@ describe('Grid factory', function () {
     $scope.$digest();
   }
 
+  describe('constructor', function() {
+    it('should throw an exception if the provided id is invalid', function() {
+      expect(function() {
+        var grid = new Grid({ id: 'blah blah' });
+      }).toThrow();
+    });
+  });
+
   describe('row processors', function () {
     var proc1, proc2, returnedRows;
 

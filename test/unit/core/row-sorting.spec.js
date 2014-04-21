@@ -254,7 +254,11 @@ describe('rowSorter', function() {
             returnedRows = newRows;
           });
 
-        $timeout.flush();
+        // Have to flush $timeout once per processor, as they run consecutively
+        for (var i = 0; i < grid.rowsProcessors.length; i++) {
+          $timeout.flush();
+        }
+        
         $scope.$digest();
       });
 

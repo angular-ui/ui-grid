@@ -159,7 +159,7 @@
       };
 
       $scope.grid.refreshRows = self.refreshRows = function () {
-        self.grid.processRowsProcessors(self.grid.rows)
+        return self.grid.processRowsProcessors(self.grid.rows)
           .then(function (renderableRows) {
             self.grid.setVisibleRows(renderableRows);
 

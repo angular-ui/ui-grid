@@ -5,12 +5,12 @@
     function($log, $document, $timeout, uiGridConstants, GridUtil) {
       return {
         // priority: 1000,
-        require: '?^uiGrid',
+        require: '^uiGrid',
         scope: false,
         link: function($scope, $elm, $attrs, uiGridCtrl) {
-          if (uiGridCtrl === undefined) {
-            throw new Error('[ui-grid-body] uiGridCtrl is undefined!');
-          }
+          // if (uiGridCtrl === undefined) {
+          //   throw new Error('[ui-grid-body] uiGridCtrl is undefined!');
+          // }
 
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;

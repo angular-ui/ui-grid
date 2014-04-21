@@ -54,6 +54,9 @@ angular.module('ui.grid')
     // Sorting on by default
     this.enableSorting = true;
 
+    // Filtering off by default
+    this.enableFiltering = false;
+
     // Column menu can be used by default
     this.enableColumnMenu = true;
 

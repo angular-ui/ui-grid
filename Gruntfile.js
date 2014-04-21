@@ -16,7 +16,7 @@ module.exports = function(grunt) {
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= pkg.license %> */\n',
+      ' License: <%= pkg.license %> */\n',
 
     shell: {
       options: {
@@ -418,12 +418,12 @@ module.exports = function(grunt) {
         },
         scripts: [
           '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js', // TODO(c0bra): REMOVE!
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.js',
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-touch.js',
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
         ],
         hiddenScripts: [
-          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.js',
+          '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
           'bower_components/google-code-prettify/src/prettify.js',
           'node_modules/marked/lib/marked.js'
         ],

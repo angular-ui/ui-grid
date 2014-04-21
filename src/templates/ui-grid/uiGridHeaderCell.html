@@ -11,4 +11,12 @@
   <div ng-if="grid.options.enableColumnMenu" class="ui-grid-column-menu-button" ng-click="toggleMenu($event)">
     <i class="ui-grid-icon-angle-down">&nbsp;<i>
   </div>
+
+  <div ng-if="filterable" class="ui-grid-filter-container">
+    <input type="text" class="ui-grid-filter-input" ng-model="col.filter.term" ng-click="$event.stopPropagation()" />
+
+    <div class="ui-grid-filter-button" ng-click="col.filter.term = null">
+      <i class="ui-grid-icon-cancel right" ng-show="!!col.filter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
+    </div>
+  </div>
 </div>
