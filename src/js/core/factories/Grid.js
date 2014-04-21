@@ -32,6 +32,9 @@ angular.module('ui.grid')
 
     this.cellValueGetterCache = {};
 
+    // Cached function to use with custom row templates
+    this.getRowTemplateFn = null;
+
     // Validate options
     if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
       throw "Either native or virtual scrolling must be enabled.";

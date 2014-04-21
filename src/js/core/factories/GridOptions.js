@@ -84,6 +84,9 @@ angular.module('ui.grid')
 
     // Custom template for header row
     this.headerTemplate = null;
+
+    // Template for rows
+    this.rowTemplate = 'ui-grid/ui-grid-row';
   }
 
   return GridOptions;

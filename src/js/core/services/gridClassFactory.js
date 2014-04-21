@@ -7,8 +7,8 @@
    *  @description factory to return dom specific instances of a grid
    *
    */
-  angular.module('ui.grid').service('gridClassFactory', ['gridUtil', '$q', '$templateCache', 'uiGridConstants', '$log', 'Grid', 'GridColumn', 'GridRow',
-    function (gridUtil, $q, $templateCache, uiGridConstants, $log, Grid, GridColumn, GridRow) {
+  angular.module('ui.grid').service('gridClassFactory', ['gridUtil', '$q', '$compile', '$templateCache', 'uiGridConstants', '$log', 'Grid', 'GridColumn', 'GridRow',
+    function (gridUtil, $q, $compile, $templateCache, uiGridConstants, $log, Grid, GridColumn, GridRow) {
 
       var service = {
         /**
@@ -23,6 +23,23 @@
           options = (typeof(options) !== 'undefined') ? options: {};
           options.id = gridUtil.newId();
           var grid = new Grid(options);
+
+          // NOTE/TODO: rowTemplate should always be defined...
+          if (grid.options.rowTemplate) {
+            var rowTemplateFnPromise = $q.defer();
+            grid.getRowTemplateFn = rowTemplateFnPromise.promise;
+            
+            gridUtil.getTemplate(grid.options.rowTemplate)
+              .then(
+                function (template) {
+                  var rowTemplateFn = $compile(template);
+                  rowTemplateFnPromise.resolve(rowTemplateFn);
+                },
+                function (res) {
+                  // Todo handle response error here?
+                  throw new Error("Couldn't fetch/use row template '" + grid.options.rowTemplate + "'");
+                });
+          }
 
           grid.registerColumnBuilder(service.defaultColumnBuilder);
 

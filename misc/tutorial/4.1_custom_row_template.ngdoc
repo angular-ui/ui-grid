@@ -1,0 +1,56 @@
+@ngdoc overview
+@name Tutorial: Custom Row Template
+@description
+
+Create a grid almost the same as the most basic one, but with a custom row template.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
+      var start = new Date();
+      var sec = $interval(function () {
+        var wait = parseInt(((new Date()) - start) / 1000, 10);
+        $scope.wait = wait + 's';
+      }, 1000);
+
+      function rowTemplate() {
+        return $timeout(function() {
+          $scope.waiting = 'Done!';
+          $interval.cancel(sec);
+          $scope.wait = '';
+
+          return '<div><div style="background-color: aquamarine" ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-cell col{{ col.index }}"><div class="ui-grid-vertical-bar">&nbsp;</div><div ui-grid-cell col="col" row="row" row-index="row.index" col-index="col.colDef.index" /></div></div>';
+        }, 6000);
+      }
+
+      $scope.waiting = 'Waiting for row template...';
+
+      $http.get('/data/100.json')
+        .success(function (data) {
+          $scope.data = data;
+        });
+
+      $scope.gridOptions = {
+        rowTemplate: rowTemplate(),
+        data: 'data'
+      };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong ng-bind="waiting"></strong> <strong>{{ wait }}</strong>
+      <br>
+      <br>
+      <div class="grid" ui-grid="gridOptions"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 300px;
+    }
+  </file>
+</example>
