@@ -86,22 +86,25 @@
           var promises = [];
 
           col.enableCellEdit = colDef.enableCellEdit !== undefined ?
-            colDef.enableCellEdit : gridOptions.enableCellEdit;
+            colDef.enableCellEdit : gridOptions.enableCellEdit; 
 
           col.cellEditableCondition = colDef.cellEditableCondition || gridOptions.cellEditableCondition || 'true';
 
           // allow for editableCellTemplate html or editableCellTemplateUrl
           if (col.enableCellEdit) {
-            if (colDef.editableCellTemplate) {
-              col.editableCellTemplate = colDef.editableCellTemplate;
+            if (!colDef.editableCellTemplate) {
+              colDef.editableCellTemplate = 'ui-grid/cellTextEditor';
             }
-            else {
-              var promise = colDef.editableCellTemplateUrl ? gridUtil.getTemplate(colDef.editableCellTemplateUrl)
-                : gridUtil.getTemplate('ui-grid/cellTextEditor');
-              promise.then(function (html) {
-                col.editableCellTemplate = html;
+
+            gridUtil.getTemplate(colDef.editableCellTemplate)
+              .then(
+              function (template) {
+                col.editableCellTemplate = template;
+              },
+              function (res) {
+                // Todo handle response error here?
+                throw new Error("Couldn't fetch/use colDef.editableCellTemplate '" + colDef.editableCellTemplate + "'");
               });
-            }
           }
 
           //enableCellEditOnFocus can only be used if cellnav module is used
