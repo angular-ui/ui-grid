@@ -16,6 +16,7 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight, groupInitState) {
     this.isAggRow = true;
     this.offsetLeft = aggEntity.gDepth * 25;
     this.aggLabelFilter = aggEntity.aggLabelFilter;
+    this.scope = null;
 };
 
 ngAggregate.prototype.toggleExpand = function () {
@@ -73,5 +74,6 @@ ngAggregate.prototype.totalChildren = function () {
 ngAggregate.prototype.copy = function () {
     var ret = new ngAggregate(this.entity, this.rowFactory, this.rowHeight, this.groupInitState);
     ret.orig = this;
+    ret.scope = this.scope;
     return ret;
 };

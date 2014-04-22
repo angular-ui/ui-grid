@@ -37,6 +37,7 @@
         if (!agg) {
             // build the row
             agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
+            agg.scope = $scope;
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
