@@ -5,6 +5,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             domUtilityService.digest($scope);
 
             $scope.$broadcast('ngGridEventStartCellEdit');
+            $scope.$emit('ngGridEventStartCellEdit');
 
             $scope.$on('$destroy', $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
