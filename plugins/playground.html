@@ -15,12 +15,22 @@
             ; height: 1400px
             ; width: 80%
           }
+          .csv-data-link-span > a {
+            margin-right: 10px;
+          }
         </style>
         <script type="text/javascript">
             // main.js
             var app = angular.module('myApp', ['ngGrid']);
             app.controller('MyCtrl', function($scope) {
-                csvOpts = { columnOverrides: { obj: function(o) { return o.a + '|' +  o.b; } } }
+                csvOpts = { 
+                  columnOverrides: { obj: function(o) { return o.a + '|' +  o.b; } },
+                  enableSelectionExporting: true,
+                  template: '<span class="csv-data-link-span"><br>Export CSV: ' +
+                            '<a href="data:text/csv;charset=UTF-8,{{__SELECTED_ITEMS__}}">Selected only</a>' + 
+                            '<a href="data:text/csv;charset=UTF-8,{{__ALL__}}">All</a>' +
+                            '</span>'
+                }
                 hgtOpts = { minHeight: 200 }  ;
                 $scope.myDataSmall = [ {hasThing: false,  obj: {a:5, b:6}, name: "Moroni", age: 50, ln: 'sdf'}
                                      , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
