@@ -38,7 +38,7 @@ describe('ui.grid.utilService', function() {
         ['a__property', 'A Property'],
         ['another_property', 'Another Property'],
         ['ALLCAPS', 'Allcaps'],
-        ['address.city', 'Address.City'],
+        ['address.city', 'Address.City']
       ];
 
       angular.forEach(translationExpects, function (set) {
@@ -158,5 +158,63 @@ describe('ui.grid.utilService', function() {
         expect(w).toEqual(202);
       });
     });
+
+    describe('getTemplate', function () {
+      it('should work with url', inject(function ($httpBackend, $timeout) {
+        var html = '<div/>';
+        var url = 'someUrl.html';
+        $httpBackend.expectGET(url)
+          .respond(html);
+
+        var result;
+        gridUtil.getTemplate(url).then(function (r) {
+          result = r
+        });
+        $httpBackend.flush();
+
+        $httpBackend.verifyNoOutstandingRequest();
+        expect(result).toEqual(html);
+
+        //call again should not do any http
+        result = null;
+        $timeout(function () {
+          gridUtil.getTemplate(url).then(function (r) {
+            result = r
+          });
+        });
+        $timeout.flush();
+
+        $httpBackend.verifyNoOutstandingRequest();
+        expect(result).toEqual(html);
+
+      }));
+
+      it('should work with html', inject(function ($timeout) {
+        var html = '<div></div>';
+        var result = null;
+        $timeout(function () {
+          gridUtil.getTemplate(html).then(function (r) {
+            result = r
+          });
+        });
+        $timeout.flush();
+        expect(result).toEqual(html);
+      }));
+
+      it('should work with promise', inject(function ($timeout, $q) {
+        var html = '<div></div>';
+        var promise = $q.when(html);
+        var result = null;
+        $timeout(function () {
+          gridUtil.getTemplate(promise).then(function (r) {
+            result = r
+          });
+        });
+        $timeout.flush();
+        expect(result).toEqual(html);
+      }));
+
+    });
+
   });
 });
