@@ -8,7 +8,7 @@ ngGridDirectives.directive('ngInput', [function() {
                 oldCellValue = ngModel.$modelValue;
                 dereg(); // only run this watch once, we don't want to overwrite our stored value when the input changes
             });
-            
+
             elm.bind('keydown', function(evt) {
                 switch (evt.keyCode) {
                     case 37: // Left arrow
@@ -21,6 +21,7 @@ ngGridDirectives.directive('ngInput', [function() {
                         if (!scope.$$phase) {
                             scope.$apply(function() {
                                 ngModel.$setViewValue(oldCellValue);
+                                ngModel.$render();
                                 elm.blur();
                             });
                         }
@@ -37,11 +38,11 @@ ngGridDirectives.directive('ngInput', [function() {
 
             elm.bind('click', function(evt) {
                 evt.stopPropagation();
-            }); 
+            });
 
             elm.bind('mousedown', function(evt) {
                 evt.stopPropagation();
-            }); 
+            });
 
             scope.$on('ngGridEventStartCellEdit', function () {
                 elm.focus();
