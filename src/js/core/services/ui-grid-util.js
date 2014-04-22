@@ -284,8 +284,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // If the template is an element, return the element
-      if (angular.element(template).length > 0) {
-        return $q.when(template);
+      try{
+        if (angular.element(template).length > 0) {
+          return $q.when(template);
+        }
+      }
+      catch(err){
+        //do nothing; not valid html
       }
 
       $log.debug('Fetching url', template);

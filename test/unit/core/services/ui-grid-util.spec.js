@@ -160,9 +160,9 @@ describe('ui.grid.utilService', function() {
     });
 
     describe('getTemplate', function () {
-      it('should work with url', inject(function ($httpBackend, $timeout) {
+      it('should work with url and cache on 2nd call', inject(function ($httpBackend, $timeout) {
         var html = '<div/>';
-        var url = 'someUrl.html';
+        var url = '/someUrl.html';
         $httpBackend.expectGET(url)
           .respond(html);
 
@@ -182,12 +182,42 @@ describe('ui.grid.utilService', function() {
             result = r;
           });
         });
-        $timeout.flush(); 
+        $timeout.flush();
 
         $httpBackend.verifyNoOutstandingRequest();
         expect(result).toEqual(html);
 
       }));
+
+      it('should work with many different urls', inject(function ($httpBackend, $timeout) {
+        var html = '<div/>';
+        var url = 'http://someUrl.html';
+        $httpBackend.expectGET(url)
+          .respond(html);
+
+        var result;
+        gridUtil.getTemplate(url).then(function (r) {
+          result = r;
+        });
+        $httpBackend.flush();
+
+        $httpBackend.verifyNoOutstandingRequest();
+        expect(result).toEqual(html);
+
+        //call again should not do any http
+        result = null;
+        $timeout(function () {
+          gridUtil.getTemplate(url).then(function (r) {
+            result = r;
+          });
+        });
+        $timeout.flush();
+
+        $httpBackend.verifyNoOutstandingRequest();
+        expect(result).toEqual(html);
+
+      }));
+
 
       it('should work with html', inject(function ($timeout) {
         var html = '<div></div>';
