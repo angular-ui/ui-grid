@@ -10,6 +10,8 @@ ng-grid Team:
 * [Tim Sweet](http://ornerydevelopment.blogspot.com/)
 * [Jonathon Ricaurte](https://github.com/jonricaurte)
 * [Brian Hann](https://github.com/c0bra)
+* [Rob Larsen](https://github.com/roblarsen)
+* [Shane Walters](https://github.com/swalters)
 
 License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 
@@ -20,7 +22,7 @@ Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant b
 ## About
 __ng-grid__ Originally built on knockout we wanted to port it to angular.
 
-version 2.0.7
+version 2.0.8
 
 [nuGet](https://nuget.org/packages/ng-grid)
 

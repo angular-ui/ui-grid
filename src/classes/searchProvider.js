@@ -8,6 +8,16 @@
 
     self.fieldMap = {};
 
+    var convertToFieldMap = function(obj) {
+        var fieldMap = {};
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                fieldMap[prop.toLowerCase()] = obj[prop];
+            }
+        }
+        return fieldMap;
+    };
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -17,8 +27,9 @@
                     continue;
                 }
                 var pVal = item[prop];
-                if(typeof pVal === 'object'){
-                    result = searchEntireRow(condition, pVal, c);
+                if(typeof pVal === 'object' && !(pVal instanceof Date)) {
+                    var objectFieldMap = convertToFieldMap(c);
+                    result = searchEntireRow(condition, pVal, objectFieldMap);
                     if (result) {
                         return true;
                     }
@@ -31,7 +42,8 @@
                     }
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
-                            var filterRes = f(pVal, s[1]).toString();
+                            // Have to slice off the quotes the parser would have removed
+                            var filterRes = f(pVal, s[1].slice(1,-1)).toString();
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());
@@ -79,10 +91,10 @@
                 result = searchEntireRow(condition, item, self.fieldMap);
             } else {
                 result = searchColumn(condition, item);
-            }     
+            }
             if(!result) {
                 return false;
-            }      
+            }
         }
         return true;
     };
@@ -98,7 +110,7 @@
         for (var i = 0; i < grid.filteredRows.length; i++)
         {
             grid.filteredRows[i].rowIndex = i;
-            
+
         }
         grid.rowFactory.filteredRowsChanged();
     };
@@ -162,7 +174,7 @@
     };
 
     if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
+         $scope.$on('$destroy', $scope.$watch('columns', function (cs) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
                 if (col.field) {
@@ -182,23 +194,23 @@
                     self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
                 }
             }
-        });
+        }));
     }
 
-    $scope.$watch(
+     $scope.$on('$destroy', $scope.$watch(
         function () {
             return grid.config.filterOptions.filterText;
         },
         function (a) {
             $scope.filterText = a;
         }
-    );
+    ));
 
-    $scope.$watch('filterText', function(a){
+    $scope.$on('$destroy', $scope.$watch('filterText', function(a){
         if (!self.extFilter) {
             $scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+    }));
 };

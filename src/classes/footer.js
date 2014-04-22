@@ -4,9 +4,9 @@
         return ret;
     };
     
-    $scope.$watch('totalServerItems',function(n,o){
+     $scope.$on('$destroy', $scope.$watch('totalServerItems',function(n,o){
         $scope.currentMaxPages = $scope.maxPages();
-    });
+    }));
 
     $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
     $scope.selectedItemCount = grid.selectedItemCount;

@@ -9,12 +9,21 @@ function ngGridCsvExportPlugin (opts) {
     var self = this;
     self.grid = null;
     self.scope = null;
+    self.services = null;
+
     self.init = function(scope, grid, services) {
         self.grid = grid;
         self.scope = scope;
+        self.services = services;
+
         function showDs() {
             var keys = [];
-            for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
+            for (var f in grid.config.columnDefs) { 
+                if (grid.config.columnDefs.hasOwnProperty(f))
+                {   
+                    keys.push(grid.config.columnDefs[f].field);
+                }   
+            }   
             var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
@@ -44,12 +53,14 @@ function ngGridCsvExportPlugin (opts) {
             for (var gridRow in gridData) {
                 for ( k in keys) {
                     var curCellRaw;
+
                     if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
-                        curCellRaw = opts.columnOverrides[keys[k]](gridData[gridRow][keys[k]]);
+                        curCellRaw = opts.columnOverrides[keys[k]](
+                            self.services.UtilityService.evalProperty(gridData[gridRow], keys[k]));
+                    } else {
+                        curCellRaw = self.services.UtilityService.evalProperty(gridData[gridRow], keys[k]);
                     }
-                    else {
-                        curCellRaw = gridData[gridRow][keys[k]];
-                    }
+
                     csvData += '"' + csvStringify(curCellRaw) + '",';
                 }
                 csvData = swapLastCommaForNewline(csvData);
@@ -71,7 +82,7 @@ function ngGridCsvExportPlugin (opts) {
             }
             return hash;
         };
-        if (opts.customDataWatcher) {
+        if (opts && opts.customDataWatcher) {
             scope.$watch(opts.customDataWatcher, showDs);
         } else {
             scope.$watch(scope.catHashKeys, showDs);

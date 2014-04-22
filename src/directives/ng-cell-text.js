@@ -1,17 +1,19 @@
 ngGridDirectives.directive('ngCellText',
   function () {
       return function(scope, elm) {
-          elm.bind('mouseover', function(evt) {
+          function mouseover (evt) {
               evt.preventDefault();
-              elm.css({
-                  'cursor': 'text'
-              });
-          });
-          elm.bind('mouseleave', function(evt) {
+          }
+          elm.bind('mouseover', mouseover);
+
+          function mouseleave(evt) {
               evt.preventDefault();
-              elm.css({
-                  'cursor': 'default'
-              });
+          }
+          elm.bind('mouseleave', mouseleave);
+
+          elm.on('$destroy', function() {
+            elm.off('mouseover', mouseover);
+            elm.off('mouseleave', mouseleave);
           });
       };
   });

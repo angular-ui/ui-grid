@@ -8,6 +8,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
         <script type="text/javascript" src="../build/ng-grid.debug.js"></script>
         <script type="text/javascript" src="ng-grid-csv-export.js"></script>
+        <script type="text/javascript" src="jspdf/jspdf.source.js"></script>
+        <script type="text/javascript" src="ng-grid-pdf-export.js"></script>
         <script type="text/javascript" src="ng-grid-flexible-height.js"></script>
         <style type="text/css">
           .gridStyle 
@@ -22,6 +24,7 @@
             app.controller('MyCtrl', function($scope) {
                 csvOpts = { columnOverrides: { obj: function(o) { return o.a + '|' +  o.b; } } }
                 hgtOpts = { minHeight: 200 }  ;
+                pdfOpts = {} ;
                 $scope.myDataSmall = [ {hasThing: false,  obj: {a:5, b:6}, name: "Moroni", age: 50, ln: 'sdf'}
                                      , {hasThing:  true,  obj: {a:6, b:7}, ln: "Tiasdfsdfnd", age: 43}
                                      ]
@@ -57,13 +60,13 @@
                                    ];
                 $scope.gridOptionsBig = {
                     data: 'myDataBig',
-                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin(hgtOpts)],
+                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin(hgtOpts),new ngGridPdfExportPlugin(pdfOpts)],
                     showGroupPanel: true,
 					showFooter: true
                 };
                 $scope.gridOptionsSmall = {
                     data: 'myDataSmall',
-                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin()],
+                    plugins: [new ngGridCsvExportPlugin(csvOpts),new ngGridFlexibleHeightPlugin(),new ngGridPdfExportPlugin(pdfOpts)],
                     showGroupPanel: true,
 					showFooter: true
                 };

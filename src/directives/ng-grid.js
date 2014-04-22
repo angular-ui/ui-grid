@@ -9,10 +9,34 @@
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+
+                    // Set up cleanup now in case something fails
+                    $scope.$on('$destroy', function cleanOptions() {
+                        options.gridDim = null;
+                        options.selectRow = null;
+                        options.selectItem = null;
+                        options.selectAll = null;
+                        options.selectVisible = null;
+                        options.groupBy = null;
+                        options.sortBy = null;
+                        options.gridId = null;
+                        options.ngGrid = null;
+                        options.$gridScope = null;
+                        options.$gridServices = null;
+
+                        $scope.domAccessProvider.grid = null;
+
+                        // Plugins should already have been killed as they are children of $scope
+
+                        // Remove the grid's stylesheet from dom
+                        angular.element(grid.styleSheet).remove();
+                        grid.styleSheet = null;
+                    });
+
                     return grid.init().then(function() {
                         // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                         if (typeof options.columnDefs === "string") {
-                            $scope.$parent.$watch(options.columnDefs, function (a) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
                                 if (!a) {
                                     grid.refreshDomSizes();
                                     grid.buildColumns();
@@ -25,7 +49,7 @@
                                 grid.buildColumns();
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
-                            }, true);
+                            }, true));
                         }
                         else {
                             grid.buildColumns();
@@ -33,7 +57,7 @@
 
                         // Watch totalServerItems if it's a string
                         if (typeof options.totalServerItems === "string") {
-                            $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.totalServerItems, function (newTotal, oldTotal) {
                                 // If the newTotal is not defined (like during init, set the value to 0)
                                 if (!angular.isDefined(newTotal)) {
                                     $scope.totalServerItems = 0;
@@ -42,7 +66,7 @@
                                 else {
                                     $scope.totalServerItems = newTotal;
                                 }
-                            });
+                            }));
                         }
                         // If it's NOT a string, then just set totalServerItems to 0 since they should only be setting this if using a string
                         else {
@@ -71,11 +95,11 @@
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data, dataWatcher));
+                            $scope.$on('$destroy', $scope.$parent.$watch(options.data + '.length', function() {
                                 dataWatcher($scope.$eval(options.data));
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
-                            });
+                            }));
                         }
                         
                         grid.footerController = new ngFooter($scope, grid);
@@ -139,13 +163,14 @@
                         options.ngGrid = grid;
                         options.$gridScope = $scope;
                         options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService, UtilityService: $utils };
-                        $scope.$on('ngGridEventDigestGrid', function(){
+
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGrid', function(){
                             domUtilityService.digest($scope.$parent);
-                        });         
+                        }));
                         
-                        $scope.$on('ngGridEventDigestGridParent', function(){
+                        $scope.$on('$destroy', $scope.$on('ngGridEventDigestGridParent', function(){
                             domUtilityService.digest($scope.$parent);
-                        });
+                        }));
                         // set up the columns 
                         $scope.$evalAsync(function() {
                             $scope.adjustScrollLeft(0);
@@ -155,8 +180,13 @@
                             if (typeof p === "function") {
                                 p = new p(); //If p is a function, then we assume it is a class.
                             }
-                            p.init($scope.$new(), grid, options.$gridServices);
+                            var newScope = $scope.$new();
+                            p.init(newScope, grid, options.$gridServices);
                             options.plugins[$utils.getInstanceType(p)] = p;
+
+                            $scope.$on('$destroy', function() {
+                                newScope.$destroy();
+                            });
                         });
                         //send initi finalize notification.
                         if (typeof options.init === "function") {

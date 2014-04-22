@@ -14,7 +14,9 @@
                         'font-size': $node.css('font-size'),
                         'font-family': $node.css('font-family')});
             elem.innerHTML = $node.text();
-            return elem.offsetWidth;
+            var width = elem.offsetWidth;
+            document.body.removeChild(elem);
+            return width;
         },
         forIn: function(obj, action) {
             for (var prop in obj) {
@@ -24,7 +26,7 @@
             }
         },
         evalProperty: function (entity, path) {
-            return $parse(path)(entity);
+            return $parse("entity." + path)({ entity: entity });
         },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {

@@ -36,11 +36,28 @@
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
 
-        $scope.$watch(function () {
+        var scopeDereg = $scope.$watch(function () {
             return grid.$viewport.scrollLeft();
         }, function (newLeft) {
             return grid.$headerContainer.scrollLeft(newLeft);
         });
+
+        $scope.$on('$destroy', function() {
+            // Remove all references to DOM elements, otherwise we get memory leaks
+            $(grid.$root.parent()).off('resize.nggrid');
+
+            grid.$root = null;
+            grid.$topPanel = null;
+            // grid.$groupPanel = null;
+            grid.$headerContainer = null;
+            // grid.$headerScroller = null;
+            grid.$headers = null;
+            grid.$canvas = null;
+            grid.$footerPanel = null;
+
+            scopeDereg();
+        });
+
         domUtilityService.UpdateGridLayout($scope, grid);
     };
     domUtilityService.getRealWidth = function (obj) {

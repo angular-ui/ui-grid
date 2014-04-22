@@ -34,7 +34,8 @@ ngDomAccessProvider.prototype.focusCellElement = function ($scope, index) {
 ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
     var doingKeyDown = false;
     var self = this;
-    elm.bind('keydown', function (evt) {
+
+    function keydown (evt) {
         if (evt.keyCode === 16) { //shift key
             self.changeUserSelect(elm, 'none', evt);
             return true;
@@ -45,11 +46,21 @@ ngDomAccessProvider.prototype.selectionHandlers = function ($scope, elm) {
             return ret;
         }
         return true;
-    });
-    elm.bind('keyup', function (evt) {
+    }
+
+    elm.bind('keydown', keydown);
+
+    function keyup (evt) {
         if (evt.keyCode === 16) { //shift key
             self.changeUserSelect(elm, 'text', evt);
         }
         return true;
+    }
+
+    elm.bind('keyup', keyup);
+
+    elm.on('$destroy', function() {
+        elm.off('keydown', keydown);
+        elm.off('keyup', keyup);
     });
 };

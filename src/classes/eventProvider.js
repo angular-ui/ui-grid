@@ -12,16 +12,38 @@
                     self.onGroupDrop(event);
                 }
             });
+
+            grid.$groupPanel.on('$destroy', function() {
+                grid.$groupPanel = null;
+            });
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
+
+            grid.$groupPanel.on('$destroy', function() {
+                grid.$groupPanel.off('mousedown');
+
+                grid.$groupPanel = null;
+            });
+
             if (grid.config.enableColumnReordering) {
-                grid.$headerScroller.on('drop', self.onHeaderDrop);
+                grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
+
+            grid.$topPanel.on('$destroy', function() {
+                grid.$topPanel.off('mousedown');
+
+                if (grid.config.enableColumnReordering) {
+                    grid.$topPanel.off('drop');
+                }
+
+                grid.$topPanel = null;
+            });
         }
-        $scope.$watch('renderedColumns', function() {
+
+        $scope.$on('$destroy', $scope.$watch('renderedColumns', function() {
             $timeout(self.setDraggables);
-        });
+        }));
     };
     self.dragStart = function(evt){		
       //FireFox requires there to be dataTransfer if you want to drag and drop.
@@ -42,30 +64,41 @@
                     //See more here: http://api.jquery.com/category/events/event-object/
                     if (col.addEventListener) { //IE8 doesn't have drag drop or event listeners
                         col.addEventListener('dragstart', self.dragStart);
+
+                        angular.element(col).on('$destroy', function() {
+                            angular.element(col).off('dragstart', self.dragStart);
+                            col.removeEventListener('dragstart', self.dragStart);
+                        });
                     }
                 }
             });
             if (navigator.userAgent.indexOf("MSIE") !== -1){
                 //call native IE dragDrop() to start dragging
-                grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+                var sortColumn = grid.$root.find('.ngHeaderSortColumn');
+                sortColumn.bind('selectstart', function () { 
                     this.dragDrop(); 
                     return false; 
-                });	
+                });
+                angular.element(sortColumn).on('$destroy', function() {
+                    sortColumn.off('selectstart');
+                });
             }
         } else {
-            grid.$root.find('.ngHeaderSortColumn').draggable({
-                helper: 'clone',
-                appendTo: 'body',
-                stack: 'div',
-                addClasses: false,
-                start: function(event) {
-                    self.onHeaderMouseDown(event);
-                }
-            }).droppable({
-                drop: function(event) {
-                    self.onHeaderDrop(event);
-                }
-            });
+            if (grid.$root) {
+                grid.$root.find('.ngHeaderSortColumn').draggable({
+                    helper: 'clone',
+                    appendTo: 'body',
+                    stack: 'div',
+                    addClasses: false,
+                    start: function(event) {
+                        self.onHeaderMouseDown(event);
+                    }
+                }).droppable({
+                    drop: function(event) {
+                        self.onHeaderDrop(event);
+                    }
+                });
+            }
         }
     };
     self.onGroupMouseDown = function(event) {
@@ -79,13 +112,21 @@
                     groupItem.attr('draggable', 'true');
                     if(this.addEventListener){//IE8 doesn't have drag drop or event listeners
                         this.addEventListener('dragstart', self.dragStart); 
+
+                        angular.element(this).on('$destroy', function() {
+                            this.removeEventListener('dragstart', self.dragStart); 
+                        });
                     }
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging
                         groupItem.bind('selectstart', function () { 
                             this.dragDrop(); 
                             return false; 
-                        });	
+                        });
+
+                        groupItem.on('$destroy', function() {
+                            groupItem.off('selectstart');
+                        });
                     }
                 }
                 // Save the column for later.
@@ -186,21 +227,28 @@
         }
         // resize on window resize
         var windowThrottle;
-        $(window).resize(function(){
+        var windowResize = function(){
             clearTimeout(windowThrottle);
             windowThrottle = setTimeout(function() {
                 //in function for IE8 compatibility
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
-        });
+        };
+        $(window).on('resize.nggrid', windowResize);
         // resize on parent resize as well.
         var parentThrottle;
-        $(grid.$root.parent()).on('resize', function() {
+        var parentResize = function() {
             clearTimeout(parentThrottle);
             parentThrottle = setTimeout(function() {
                 //in function for IE8 compatibility
                 domUtilityService.RebuildGrid($scope,grid);
             }, 100);
+        };
+        $(grid.$root.parent()).on('resize.nggrid', parentResize);
+
+        $scope.$on('$destroy', function(){
+            $(window).off('resize.nggrid', windowResize);
+            // $(grid.$root.parent()).off('resize.nggrid', parentResize);
         });
     };
     // In this example we want to assign grid events.

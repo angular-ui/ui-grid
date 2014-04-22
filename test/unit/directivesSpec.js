@@ -35,7 +35,7 @@ describe('directives', function () {
         $compile(elm)(scope);
         scope.$digest();
     }));
-    
+
     describe('ng-cell-has-focus', function() {
         it('should do something', function() {
             //add work here
@@ -126,7 +126,7 @@ describe('directives', function () {
                     });
                 }));
             });
-            
+
             describe('column', function () {
                 describe('cell editing', function () {
                     var elm, element, $scope, $compile, $sniffer;
@@ -194,14 +194,14 @@ describe('directives', function () {
                         );
 
                         $scope.myData = [
-                            { 
+                            {
                                 address: '123 Main St',
                                 person: {
                                     name: 'Bob',
                                     age: 20
                                 }
                             },
-                            { 
+                            {
                                 address: '1600 Pennsylvania Ave.',
                                 person: {
                                     name: 'Barack',
@@ -321,7 +321,7 @@ describe('directives', function () {
                                          {name: "Jacob", age: 27},
                                          {name: "Nephi", age: 29},
                                          {name: "Enos", age: 34}];
-                
+
                     scope.gridOptions = {
                         data: 'myData',
                         totalServerItems: 357
@@ -374,7 +374,56 @@ describe('directives', function () {
                         // dump(Array.prototype.forEach.mostRecentCall);
 
                         expect(angular.forEach).toHaveBeenCalled();
-                        expect(Array.prototype.forEach).not.toHaveBeenCalled();
+                    }));
+                });
+
+                describe('sortData', function (){
+                    it('should properly sort even when no event is passed ( programatically )', inject(function($rootScope, $compile) {
+                        var sortOptions = angular.extend( scope.gridOptions, {
+                            useExternalSorting: true,
+                            columnDefs: [
+                                { field:'name' },
+                                { field:'age' }
+                            ],
+                            sortInfo: { fields: ['name'], directions: [ 'asc' ] }
+                        });
+
+                        var elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+                        $compile(elm)($rootScope);
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( false ); //the first column ( name ) show be sorted asc
+
+                        //programatically trigger sort
+                        sortOptions.sortInfo.fields[0] = 'age';
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( false ); //the second column ( age ) show be sorted asc
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+
+                        //programatically trigger sort
+                        sortOptions.sortInfo.fields[0] = 'name';
+                        sortOptions.sortInfo.directions[0] = 'desc';
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( false ); //the first column ( name ) show be sorted desc
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+
                     }));
                 });
 
@@ -429,11 +478,12 @@ describe('directives', function () {
                     filterText: ''
                     };
 
-                    scope.myData = [{name: "Moroni", obj1: {age: 50}, obj2: {grade: 'one'} },
-                                    {name: "Tiancum", obj1: {age: 43}, obj2: {grade: 'two'} },
-                                    {name: "Jacob", obj1: {age: 27}, obj2: {grade: 'three'} },
-                                    {name: "Nephi", obj1: {age: 29}, obj2: {grade: 'four'} },
-                                    {name: "Enos", obj1: {age: 34}, obj2: {grade: 'five'} }];
+                    scope.myData = [
+                        {name: "Moroni",  obj1: {age: 50}, birthdate: new Date(1963, 9, 13, 5,6,7,0), obj2: {grade: 'one'} },
+                        {name: "Tiancum", obj1: {age: 43}, birthdate: new Date(1970, 2, 13, 8,5,4,0), obj2: {grade: 'two'} },
+                        {name: "Jacob",   obj1: {age: 27}, birthdate: new Date(1989, 3, 13, 4,4,3,0), obj2: {grade: 'three'} },
+                        {name: "Nephi",   obj1: {age: 29}, birthdate: new Date(1987, 4, 13, 7,3,2,0), obj2: {grade: 'four'} },
+                        {name: "Enos",    obj1: {age: 34}, birthdate: new Date(1979, 5, 13, 9,2,1,0), obj2: {grade: 'five'} }];
 
                     scope.gridOptions = {
                     data: 'myData',
@@ -442,21 +492,42 @@ describe('directives', function () {
                     columnDefs: [
                                  { field: 'name' },
                                  { field: 'obj1.age' },
-                                 { field: 'obj2.grade' }
+                                 { field: 'birthdate', cellFilter: "date:'MM-dd-yyyy'" },
+                                 { field: 'obj2.grade'}
                                  ]
                     };
-					
+
                     $compile(elm)(scope);
                     scope.$digest();
                 }));
 
                 it('should find values in properties that come after the first object', function() {
                     expect(elm.find('.ngFooterTotalItems').text()).toContain(5);
-                    
+
                     // Enter search text
                     scope.filterOptions.filterText = 'two';
                     scope.$digest();
                     expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 1');
+                });
+                it('should find formatted dates', function() {
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = '10-13-1963';
+                    scope.$digest();
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 1');
+
+                    scope.filterOptions.filterText = '-13-';
+                    scope.$digest();
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 5');
+                });
+                it('should find values string fields case insensitively', function() {
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text (should find enos and nephi) + (one and three)
+                    scope.filterOptions.filterText = 'E';
+                    scope.$digest();
+                    expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 4');
                 });
             });
             describe('selectionProvider', function () {

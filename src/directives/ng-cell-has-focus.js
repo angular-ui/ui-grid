@@ -5,11 +5,12 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             domUtilityService.digest($scope);
 
             $scope.$broadcast('ngGridEventStartCellEdit');
+            $scope.$emit('ngGridEventStartCellEdit');
 
-            $scope.$on('ngGridEventEndCellEdit', function() {
+            $scope.$on('$destroy', $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
                 domUtilityService.digest($scope);
-            });
+            }));
         };
 
         return function($scope, elm) {
@@ -23,33 +24,46 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                     }, 0);
                 }
             };
-            elm.bind('mousedown', function(evt) {
+
+            function mousedown (evt) {
                 if($scope.enableCellEditOnFocus) {
                     isCellEditableOnMouseDown = true;
                 } else {
                     elm.focus();
                 }
                 return true;
-            });
-            elm.bind('click', function(evt) {
+            }
+
+            function click (evt) {
                 if($scope.enableCellEditOnFocus) {
                     evt.preventDefault();
                     isCellEditableOnMouseDown = false;
                     focusOnInputElement($scope,elm);
                 }
-            }); 
-            elm.bind('focus', function(evt) {
+            }
+
+            elm.bind('mousedown', mousedown);
+
+            elm.bind('click', click); 
+
+            function focus (evt) {
                 isFocused = true;
                 if($scope.enableCellEditOnFocus && !isCellEditableOnMouseDown) {
                     focusOnInputElement($scope,elm);
                 }
                 return true;
-            });
-            elm.bind('blur', function() {
+            }
+
+            elm.bind('focus', focus);
+
+            function blur() {
                 isFocused = false;
                 return true;
-            });
-            elm.bind('keydown', function(evt) {
+            }
+
+            elm.bind('blur', blur);
+
+            function keydown (evt) {
                 if(!$scope.enableCellEditOnFocus) {
                     if (isFocused && evt.keyCode !== 37 && evt.keyCode !== 38 && evt.keyCode !== 39 && evt.keyCode !== 40 && evt.keyCode !== 9 && !evt.shiftKey && evt.keyCode !== 13) {
                         focusOnInputElement($scope,elm);
@@ -62,6 +76,16 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
                     }
                 }
                 return true;
+            }
+
+            elm.bind('keydown', keydown);
+
+            elm.on('$destroy', function() {
+                elm.off('mousedown', mousedown);
+                elm.off('click', click);
+                elm.off('focus', focus);
+                elm.off('blur', blur);
+                elm.off('keydown', keydown);
             });
         };
     }]);

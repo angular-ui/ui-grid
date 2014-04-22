@@ -9,7 +9,8 @@ ngGridDirectives.directive('ngViewport', [function() {
             }
         };
         var scrollTimer;
-        elm.bind('scroll', function(evt) {
+
+        function scroll (evt) {
             var scrollLeft = evt.target.scrollLeft,
                 scrollTop = evt.target.scrollTop;
             if ($scope.$headerContainer) {
@@ -27,12 +28,23 @@ ngGridDirectives.directive('ngViewport', [function() {
             prevScollTop = scrollTop;
             isMouseWheelActive = false;
             return true;
-        });
-        elm.bind("mousewheel DOMMouseScroll", function() {
+        }
+
+        elm.bind('scroll', scroll);
+
+        function mousewheel() {
             isMouseWheelActive = true;
             if (elm.focus) { elm.focus(); }
             return true;
+        }
+
+        elm.bind("mousewheel DOMMouseScroll", mousewheel);
+
+        elm.on('$destroy', function() {
+            elm.off('scroll', scroll);
+            elm.off('mousewheel DOMMouseScroll', mousewheel);
         });
+
         if (!$scope.enableCellSelection) {
             $scope.domAccessProvider.selectionHandlers($scope, elm);
         }
