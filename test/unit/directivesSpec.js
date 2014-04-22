@@ -377,6 +377,56 @@ describe('directives', function () {
                     }));
                 });
 
+                describe('sortData', function (){
+                    it('should properly sort even when no event is passed ( programatically )', inject(function($rootScope, $compile) {
+                        var sortOptions = angular.extend( scope.gridOptions, {
+                            useExternalSorting: true,
+                            columnDefs: [
+                                { field:'name' },
+                                { field:'age' }
+                            ],
+                            sortInfo: { fields: ['name'], directions: [ 'asc' ] }
+                        });
+
+                        var elm = angular.element(
+                            '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                        );
+                        $compile(elm)($rootScope);
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( false ); //the first column ( name ) show be sorted asc
+
+                        //programatically trigger sort
+                        sortOptions.sortInfo.fields[0] = 'age';
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( false ); //the second column ( age ) show be sorted asc
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+
+                        //programatically trigger sort
+                        sortOptions.sortInfo.fields[0] = 'name';
+                        sortOptions.sortInfo.directions[0] = 'desc';
+                        $rootScope.$digest();
+
+                        //checking that the arrow is displayed on the correct row in the correct orientation
+                        //and the other columns are not changed
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonUp').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonUp').hasClass('ng-hide')).toBe( false ); //the first column ( name ) show be sorted desc
+                        expect( elm.find('.ngHeaderSortColumn:last .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+                        expect( elm.find('.ngHeaderSortColumn:first .ngSortButtonDown').hasClass('ng-hide')).toBe( true );
+
+                    }));
+                });
+
                 describe('sortActual', function(){
                     it('should maintain row selection post-sort', function(){
                         scope.gridOptions.selectItem(0, true);
