@@ -1,5 +1,18 @@
 {
   "name": "ng-grid",
   "version": "2.0.7",
-  "main": ["./ng-grid.min.css", "./build/ng-grid.min.js"]
+  "main": ["./ng-grid.min.css", "./build/ng-grid.min.js"],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "config",
+    "lib",
+    "scripts",
+    "src",
+    "test",
+    "workbench",
+    "conf.js",
+    "GruntFile.js"
+  ]
 }
