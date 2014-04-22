@@ -77,7 +77,7 @@ function ngGridCsvExportPlugin (opts) {
             }
             return hash;
         };
-        if (opts && opts.customDataWatcher) {
+        if (opts != null && opts.customDataWatcher != null) {
             scope.$watch(opts.customDataWatcher, showDs);
         } else {
             scope.$watch(scope.catHashKeys, showDs);
