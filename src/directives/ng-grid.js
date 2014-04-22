@@ -155,7 +155,7 @@
                             if (typeof p === "function") {
                                 p = new p(); //If p is a function, then we assume it is a class.
                             }
-                            p.init($scope.$new(), grid, options.$gridServices);
+                            p.init($scope.$new(), grid, options.$gridServices, $filter);
                             options.plugins[$utils.getInstanceType(p)] = p;
                         });
                         //send initi finalize notification.

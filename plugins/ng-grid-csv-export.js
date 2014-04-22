@@ -9,12 +9,20 @@ function ngGridCsvExportPlugin (opts) {
     var self = this;
     self.grid = null;
     self.scope = null;
-    self.init = function(scope, grid, services) {
+    self.init = function(scope, grid, services, $filter) {
         self.grid = grid;
         self.scope = scope;
         function showDs() {
             var keys = [];
-            for (var f in grid.config.columnDefs) { keys.push(grid.config.columnDefs[f].field);}
+            var gridFilters = {};
+
+            for (var f in grid.config.columnDefs) {
+                keys.push(grid.config.columnDefs[f].field);
+
+                if (grid.config.columnDefs[f].cellFilter) {
+                    gridFilters[grid.config.columnDefs[f].field] = grid.config.columnDefs[f].cellFilter;
+                }
+            }
             var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
@@ -36,6 +44,26 @@ function ngGridCsvExportPlugin (opts) {
                 var newStr = str.substr(0,str.length - 1);
                 return newStr + "\n";
             }
+            function applyFilters(filters, value) {
+                filters = filters.replace(/[\"\'\s]+/g, "");
+                var result = null;
+                var filterList = filters.split("|") ? filters.split("|") : filters;
+
+                for (var filter in filterList) {
+                    var functionSplit = null;
+
+                    functionSplit = filterList[filter].split(":");
+                    var filterFunction = $filter(functionSplit[0]);
+
+                    if (typeof(filterFunction) === "function") {
+                        result = filterFunction(value, functionSplit[1]).toString();
+                        value = result;
+                    }
+                }
+
+                return result;
+            }
+
             for (var k in keys) {
                 csvData += '"' + csvStringify(keys[k]) + '",';
             }
@@ -50,6 +78,11 @@ function ngGridCsvExportPlugin (opts) {
                     else {
                         curCellRaw = gridData[gridRow][keys[k]];
                     }
+
+                    if (gridFilters[keys[k]]) {
+                        curCellRaw = applyFilters(gridFilters[keys[k]], curCellRaw);
+                    }
+
                     csvData += '"' + csvStringify(curCellRaw) + '",';
                 }
                 csvData = swapLastCommaForNewline(csvData);
