@@ -168,7 +168,7 @@ describe('ui.grid.utilService', function() {
 
         var result;
         gridUtil.getTemplate(url).then(function (r) {
-          result = r
+          result = r;
         });
         $httpBackend.flush();
 
@@ -179,10 +179,10 @@ describe('ui.grid.utilService', function() {
         result = null;
         $timeout(function () {
           gridUtil.getTemplate(url).then(function (r) {
-            result = r
+            result = r;
           });
         });
-        $timeout.flush();
+        $timeout.flush(); 
 
         $httpBackend.verifyNoOutstandingRequest();
         expect(result).toEqual(html);
@@ -194,7 +194,7 @@ describe('ui.grid.utilService', function() {
         var result = null;
         $timeout(function () {
           gridUtil.getTemplate(html).then(function (r) {
-            result = r
+            result = r;
           });
         });
         $timeout.flush();
@@ -207,7 +207,7 @@ describe('ui.grid.utilService', function() {
         var result = null;
         $timeout(function () {
           gridUtil.getTemplate(promise).then(function (r) {
-            result = r
+            result = r;
           });
         });
         $timeout.flush();
