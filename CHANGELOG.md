@@ -1,3 +1,8 @@
+<a name="2.0.9"></a>
+## 2.0.9 *(2014-04-23)*
+
+* Fix broken AngularJS bower dependency.
+
 <a name="2.0.8"></a>
 ## 2.0.8 *(2014-04-22)*
 
