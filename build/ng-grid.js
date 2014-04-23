@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/07/2014 16:55
+* Compiled At: 04/22/2014 16:27
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -352,7 +352,8 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
 }]);
 angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
-    sortService.colSortFnCache = {};
+    sortService.colSortFnCache = {}; 
+    sortService.isCustomSort = false;
     sortService.guessSortFn = function(item) {
         var itemType = typeof(item);
         switch (itemType) {
@@ -436,6 +437,7 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
         data.sort(function (itemA, itemB) {
             var tem = 0,
                 indx = 0,
+                res,
                 sortFn;
             while (tem === 0 && indx < l) {
                 col = sortInfo.columns[indx];
@@ -443,27 +445,29 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
                 sortFn = sortService.getSortFn(col, d);
                 var propA = $parse(order[indx])(itemA);
                 var propB = $parse(order[indx])(itemB);
-                if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
-                    if (!propB && !propA) {
-                        tem = 0;
+                if (sortService.isCustomSort) {
+                    res = sortFn(propA, propB);
+                    tem = direction === ASC ? res : 0 - res;
+                } else {
+                    if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
+                        if (!propB && !propA) {
+                            tem = 0;
+                        }
+                        else if (!propA) {
+                            tem = 1;
+                        }
+                        else if (!propB) {
+                            tem = -1;
+                        }
                     }
-                    else if (!propA) {
-                        tem = 1;
+                    else {
+                        res = sortFn(propA, propB);
+                        tem = direction === ASC ? res : 0 - res;
                     }
-                    else if (!propB) {
-                        tem = -1;
-                    }
-                }
-                else {
-                    tem = sortFn(propA, propB);
                 }
                 indx++;
             }
-            if (direction === ASC) {
-                return tem;
-            } else {
-                return 0 - tem;
-            }
+            return tem;
         });
     };
     sortService.Sort = function(sortInfo, data) {
@@ -482,6 +486,7 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
         else if (col.sortingAlgorithm !== undefined) {
             sortFn = col.sortingAlgorithm;
             sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
+            sortService.isCustomSort = true;
         }
         else { 
             item = data[0];
@@ -528,7 +533,7 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
             }
         },
         evalProperty: function (entity, path) {
-            return $parse(path)(entity);
+            return $parse("entity." + path)({ entity: entity });
         },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {
@@ -810,7 +815,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         return false;
     };
     self.copy = function() {
-        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache, $utils);
         ret.isClone = true;
         ret.orig = self;
         return ret;
@@ -931,7 +936,7 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             });
         } else {
             grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
                 grid.$groupPanel.off('mousedown');
@@ -940,17 +945,17 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             });
 
             if (grid.config.enableColumnReordering) {
-                grid.$headerScroller.on('drop', self.onHeaderDrop);
+                grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
 
-            grid.$headerScroller.on('$destroy', function() {
-                grid.$headerScroller.off('mousedown');
+            grid.$topPanel.on('$destroy', function() {
+                grid.$topPanel.off('mousedown');
 
                 if (grid.config.enableColumnReordering) {
-                    grid.$headerScroller.off('drop');
+                    grid.$topPanel.off('drop');
                 }
 
-                grid.$headerScroller = null;
+                grid.$topPanel = null;
             });
         }
 
@@ -1647,7 +1652,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             } else {
                 self.config.sortInfo.directions[indx] = col.sortDirection;
             }
-        } else if (!self.config.useExternalSorting || (self.config.useExternalSorting && evt && self.config.sortInfo )) {
+        } else if (!self.config.useExternalSorting || (self.config.useExternalSorting && self.config.sortInfo )) {
             var isArr = $.isArray(col);
             self.config.sortInfo.columns.length = 0;
             self.config.sortInfo.fields.length = 0;
@@ -2256,6 +2261,16 @@ var ngSearchProvider = function ($scope, grid, $filter) {
 
     self.fieldMap = {};
 
+    var convertToFieldMap = function(obj) {
+        var fieldMap = {};
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                fieldMap[prop.toLowerCase()] = obj[prop];
+            }
+        }
+        return fieldMap;
+    };
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -2266,7 +2281,8 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 }
                 var pVal = item[prop];
                 if(typeof pVal === 'object' && !(pVal instanceof Date)) {
-                    result = searchEntireRow(condition, pVal, c);
+                    var objectFieldMap = convertToFieldMap(c);
+                    result = searchEntireRow(condition, pVal, objectFieldMap);
                     if (result) {
                         return true;
                     }
@@ -2642,6 +2658,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             domUtilityService.digest($scope);
 
             $scope.$broadcast('ngGridEventStartCellEdit');
+            $scope.$emit('ngGridEventStartCellEdit');
 
             $scope.$on('$destroy', $scope.$on('ngGridEventEndCellEdit', function() {
                 $scope.isFocused = false;
@@ -2724,6 +2741,7 @@ ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
             });
         };
     }]);
+
 ngGridDirectives.directive('ngCellText',
   function () {
       return function(scope, elm) {
@@ -3352,7 +3370,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n"
   );
   $templateCache.put('cellEditTemplate.html',
-    "<div ng-cell-has-focus ng-dblclick=\"editCell()\">\r" +
+    "<div ng-cell-has-focus ng-dblclick=\"CELL_EDITABLE_CONDITION && editCell()\">\r" +
     "\n" +
     "\t<div ng-edit-cell-if=\"!(isFocused && CELL_EDITABLE_CONDITION)\">\t\r" +
     "\n" +
@@ -3366,7 +3384,8 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "\t</div>\r" +
     "\n" +
-    "</div>"
+    "</div>\r" +
+    "\n"
   );
   $templateCache.put('cellTemplate.html',
     "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
@@ -3420,6 +3439,8 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>\r" +
     "\n" +
     "            <input class=\"ngPagerCurrent\" min=\"1\" max=\"{{currentMaxPages}}\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>\r" +
+    "\n" +
+    "            <span class=\"ngGridMaxPagesNumber\" ng-show=\"maxPages() > 0\">/ {{maxPages()}}</span>\r" +
     "\n" +
     "            <button type=\"button\" class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>\r" +
     "\n" +
@@ -3489,9 +3510,9 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>\r" +
     "\n" +
-    "    <div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div>\r" +
+    "    <div class=\"ngSortButtonDown\" ng-click=\"col.sort($event)\" ng-show=\"col.showSortButtonDown()\"></div>\r" +
     "\n" +
-    "    <div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div>\r" +
+    "    <div class=\"ngSortButtonUp\" ng-click=\"col.sort($event)\" ng-show=\"col.showSortButtonUp()\"></div>\r" +
     "\n" +
     "    <div class=\"ngSortPriority\">{{col.sortPriority}}</div>\r" +
     "\n" +
@@ -3499,7 +3520,8 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "</div>\r" +
     "\n" +
-    "<div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>"
+    "<div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>\r" +
+    "\n"
   );
   $templateCache.put('headerRowTemplate.html',
     "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\">\r" +

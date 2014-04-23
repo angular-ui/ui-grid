@@ -1,4 +1,13 @@
-<a name="2.0.6"></a>
+<a name="2.0.8"></a>
+## 2.0.8 *(2014-04-22)*
+
+* Release 2.0.8 is the last release before 3.0.
+
+### Changes
+
+* Many community-provided fixes and features.
+
+<a name="2.0.7"></a>
 ## 2.0.7 *(2013-07-01)*
 
 ### Features
