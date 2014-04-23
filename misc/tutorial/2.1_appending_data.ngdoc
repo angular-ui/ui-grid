@@ -1,0 +1,81 @@
+@ngdoc overview
+@name Tutorial: Kitchen Sink
+@description
+
+Appends data to the grid every .2 seconds for 15 seconds.  This emulates loading pages of data from the server. It's also an example
+of setting gridOptions.data to a string value that specifies an object on your scope to watch.
+<br>
+
+All features are enabled to get an idea of performance
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns']);
+
+    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
+
+      $scope.gridOptions = {};
+      $scope.gridOptions.data = 'myData';
+      $scope.gridOptions.enableColumnResizing = true;
+
+      $scope.gridOptions.columnDefs = [
+             {name:'id', width:50},
+             {name:'name', width:100},
+             {name:'age', width:100, enableCellEdit: true },
+             {name:'address.street', width:150, enableCellEdit: true },
+             {name:'address.city', width:150, enableCellEdit: true},
+             {name:'address.state', width:50, enableCellEdit: true},
+             {name:'address.zip', width:50, enableCellEdit: true},
+             {name:'company', width:100, enableCellEdit: true},
+             {name:'email', width:100, enableCellEdit: true},
+             {name:'phone', width:200, enableCellEdit: true},
+             {name:'about', width:300, enableCellEdit: true},
+             {name:'friends[0].name', displayName:'1st friend', width:150, enableCellEdit: true},
+           ];
+
+
+      $scope.refreshData = function(){
+        $scope.myData = [];
+
+        var start = new Date();
+        var i = 0;
+        var sec = $interval(function () {
+          var wait = parseInt(((new Date()) - start) / 1000, 10);
+          $scope.wait = wait + 's';
+          $http.get('/data/500_complex.json')
+            .success(function(data) {
+              data.forEach(function(row){
+                row.name = row.name + ' iter ' + i;
+                $scope.myData.push(row);
+              });
+            });
+           i++;
+        }, 200);
+
+
+        $timeout(function() {
+           $interval.cancel(sec);
+           $scope.wait = '';
+        }, 15000);
+
+      };
+
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>
+      <br>
+      <strong>{{ myData.length }} rows</strong>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 500px;
+    }
+  </file>
+</example>
