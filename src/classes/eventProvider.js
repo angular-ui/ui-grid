@@ -21,7 +21,9 @@
             grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
-                grid.$groupPanel.off('mousedown');
+                if (grid.$groupPanel){
+                    grid.$groupPanel.off('mousedown');
+                }
 
                 grid.$groupPanel = null;
             });
@@ -31,9 +33,11 @@
             }
 
             grid.$topPanel.on('$destroy', function() {
-                grid.$topPanel.off('mousedown');
+                if (grid.$topPanel){
+                    grid.$topPanel.off('mousedown');
+                }
 
-                if (grid.config.enableColumnReordering) {
+                if (grid.config.enableColumnReordering && grid.$topPanel) {
                     grid.$topPanel.off('drop');
                 }
 
