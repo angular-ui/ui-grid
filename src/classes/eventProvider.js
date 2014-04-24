@@ -20,20 +20,21 @@
             }
         }
         
-        // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
+         // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
         // nothing with it.
-        if (grid.config.enableColumnReordering ||
-            grid.config.showGroupPanel ||
-            grid.config.jqueryUIDraggable) {
-            $scope.$watch('renderedColumns', function() {
+        $scope.$watch('renderedColumns', function() {
+            if (grid.config.enableColumnReordering ||
+                grid.config.showGroupPanel ||
+                grid.config.jqueryUIDraggable) {
                 // Don't $apply after setting the draggables.  With large scopes, and lots of grids, the performance
                 // is horrible!
                 // 2nd param is to use the default timeout for setTimeout
                 // 3rd param is to not call $scope.$apply, since it doesn't appear to be needed
                 $timeout(self.setDraggables, undefined, false);
-            });
-        }
-    };
+            }
+        });
+    }
+    
     self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
