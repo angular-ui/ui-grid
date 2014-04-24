@@ -26,11 +26,11 @@
             grid.config.showGroupPanel ||
             grid.config.jqueryUIDraggable) {
             $scope.$watch('renderedColumns', function() {
-                    // Don't $apply after setting the draggables.  With large scopes, and lots of grids, the performance
-                    // is horrible!
-                    // 2nd param is to use the default timeout for setTimeout
-                    // 3rd param is to not call $scope.$apply, since it doesn't appear to be needed
-                    $timeout(self.setDraggables, undefined, false);
+                // Don't $apply after setting the draggables.  With large scopes, and lots of grids, the performance
+                // is horrible!
+                // 2nd param is to use the default timeout for setTimeout
+                // 3rd param is to not call $scope.$apply, since it doesn't appear to be needed
+                $timeout(self.setDraggables, undefined, false);
             });
         }
     };
