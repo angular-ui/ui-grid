@@ -8,16 +8,18 @@ angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
 </pre>
 
 Also, you must add the directive to your grid element.  We do this so that you can have several grids on a
-page and only pay the resizing overhead if the grid is actually using resizing.
+page and only pay the resizing overhead if the grid is actually using resizing.  Once you use this directive, all
+columns automatically allow resizing
 <pre>
 <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
 </pre>
 <br>
 <br>
-The `enableColumnResizing` option on your grid will enable resizing and turn it on for all columns by default.
+If, for some reason, you want to use the ui-grid-resize-columns directive, but not allow column resizing, you can explicitly set the
+option to false. This prevents resizing for the entire grid, regardless of individual colDef options.
 <pre>
 $scope.gridOptions = {
-  enableColumnResizing: true
+  enableColumnResizing: false
 };
 </pre>
 <br>
@@ -41,7 +43,6 @@ $scope.gridOptions = {
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
-        enableColumnResizing: true,
         enableSorting: true,
         columnDefs: [
           { field: 'name', minWidth: 200, width: '50%' },

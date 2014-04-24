@@ -123,7 +123,7 @@
    *  @ngdoc directive
    *  @name ui.grid.edit.directive:uiGridEdit
    *  @element div
-   *  @restrict EA
+   *  @restrict A
    *
    *  @description Adds editing features to the ui-grid directive.
    *
