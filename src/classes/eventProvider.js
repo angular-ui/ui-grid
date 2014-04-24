@@ -19,9 +19,18 @@
                 grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
         }
-        $scope.$watch('renderedColumns', function() {
-            $timeout(self.setDraggables);
-        });
+        
+        // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
+        // nothing with it.
+        if (grid.config.enableColumnReordering ||
+            grid.config.showGroupPanel ||
+            grid.config.jqueryUIDraggable) {
+            $scope.$watch('renderedColumns', function() {
+                // Don't $apply after setting the draggables.  With large scopes, and lots of grids, the performance
+                // is horrible!
+                $timeout(self.setDraggables, undefined, false);
+            });
+        }
     };
     self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
