@@ -20,7 +20,7 @@
             }
         }
         
-         // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
+        // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
         // nothing with it.
         $scope.$watch('renderedColumns', function() {
             if (grid.config.enableColumnReordering ||
