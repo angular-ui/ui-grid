@@ -250,6 +250,9 @@ angular.module('ui.grid').directive('uiGrid',
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $log.debug('ui-grid postlink');
 
+              //todo: assume it is ok to communicate that rendering is complete??
+              uiGridCtrl.grid.renderingComplete();
+
               uiGridCtrl.grid.element = $elm;
 
               uiGridCtrl.grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);

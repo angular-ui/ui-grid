@@ -19,9 +19,10 @@ Everything else should be added as new angular modules unless the grid team agre
 * unit test your code! not that hard. see test/unit for examples. Features will be rejected if the test coverage isn't adequate.
 * use ngDoc to document how to use your feature.  see examples in existing code.
 * New module should be named ui.grid.feature
-* feature folder is added below src/js
+* feature folder is added below src
 * One js file per feature
 * no global variables
+* public events are registered in grid.events (more on that later)
 * design and code the angular way. What do we main by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!
 * feature.js contains an enclosure:
 
@@ -32,8 +33,24 @@ Everything else should be added as new angular modules unless the grid team agre
 })();
 
 ```
-
 * Constants should be added to module.constants.  Anytime a value is used in more than one place, consider a constant.
+
+### Folder layout
+This folder layout is required to work with build tools
+<br/>src/featureName
+<br/>      /js
+<br/>      /less
+<br/>      /test
+
+### File patterns
+All test files must be name.spec.js to get picked up by our grunt tasks
+
+
+## Feature module pattern
+This pattern has been used in several features and seems to work well.
+
+### Constants
+Any magic strings, etc.
 
 ```javascript
   module.constant('uiGridFeatureConstants', {
@@ -41,15 +58,119 @@ Everything else should be added as new angular modules unless the grid team agre
     featureGroupConstant: {
       GROUP_ONE: 'somevalue',
       GROUP_TWO: 'a'
+    },
+    //available public events; listed here for convenience and IDE's use it for smart completion
+    publicEvents: {
+      featureName : {
+        event1 : function(scope, newRowCol, oldRowCol){},
+        event2 : function(scope){}
+      }
     }
   });
 ```
+### Service
+Anything suited to an angular service. So much easier to unit test logic here than logic in a directive or controller.
+```javascript
+  module.service('uiGridFeatureService', ['uiGridFeatureConstants'
+    function (uiGridFeatureConstants) {
+      var service = {
+        somethingUseful: function () {}
+     }
+     return service;
+   }]);
+```
+### Feature Directive
+The main entry point for your feature.
+```javascript
+  module.directive('uiGridFeature', ['uiGridFeatureService', 'uiGridFeatureConstants',
+   function (uiGridEditService, uiGridFeatureConstants) {
+    return {
+      restrict: 'A',
+      replace: true,
+      priority: 0, // this could be tweaked to fire your directive before/after other features
+      require: 'uiGrid',
+      scope: false,
+      compile: function () {
+        return {
+          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+            //register your feature cols and row processors with uiGridCtrl.gri
+            //do anything else you can safely do here
+            //!! of course, don't stomp on core grid logic or data
+          }
+        };
+      }
+    };
+  }]);
+```
 
-* To add functionality to the core, there are several extension points
+### Directives stacked on core directives
+Extend a core directive
+```javascript
+module.directive('uiGridCell', ['uiGridFeatureService',
+  function (uiGridCellNavService) {
+    return {
+      priority: -500, // run after default uiGridCell directive
+      restrict: 'A',
+      require: '^uiGrid',
+      scope: false,
+      link: function ($scope, $elm, $attrs, uiGridCtrl) {
+        //add whatever dom binding, manipulation,etc that is safe to do and performs well
+      }
+    };
+  }]);
+```
+### Directives unique to your feature
+If necessary...
+```javascript
+module.directive('uiGridFeatureDirective', ['uiGridFeatureService',
+  function (uiGridFeatureService) {
+    return {
+      link: function ($scope, $elm, $attrs) {
+      }
+    };
+  }]);
+```
 
-#####During Grid controller initialization
-Here you can do the following:
-######columnBuilder 
+## Grid Feature directive
+Each feature should implement a directive that enables the feature for the ui-grid element. This is the main entry point
+of your feature and allows a developer to use multiple grids on a page and include your feature on some grids and not on
+others.
+<br>
+```
+<div ui-grid='options' ui-grid-your-feature></div>
+```
+<br/>
+
+Require the uiGrid controller. In the preLink function, register your
+column and row builders (see below).  See ui.grid.edit unit tests on how to easily test your directive
+
+```javascript
+  module.directive('uiGridFeature', ['uiGridFeatureService', 'uiGridFeatureConstants',
+   function (uiGridEditService, uiGridFeatureConstants) {
+    return {
+      replace: true,
+      priority: 0, // this could be tweaked to fire your directive before/after other features
+      require: 'uiGrid',
+      scope: false,
+      compile: function () {
+        return {
+          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+            uiGridCtrl.grid.events.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
+            uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
+            uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
+            uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
+            //do anything else you can safely do here
+            //!! of course, don't stomp on core grid logic or data
+          }
+        };
+      }
+    };
+  }]);
+```
+
+
+The grid provides calls different processors for rows and cols that you can implement for your feature.
+## ColumnBuilder
 ColumnBuilder functions allow you to add your own properties / functions to each GridCol object. for
 testing ease, it's best to create a service that returns the function.  See ui.grid.edit unit tests on how to easily test your function
 
@@ -69,9 +190,12 @@ testing ease, it's best to create a service that returns the function.  See ui.g
      }
      return service;
    }]);
+
+   //from feature directive pre-link
+   uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
 ```
 
-######rowBuilder 
+## RowBuilder
 RowBuilder functions allow you to add your own properties / functions to each GridRow object. Again, it's
  best to implement function in a service.  See ui.grid.edit unit tests on how to easily test your function
 
@@ -87,36 +211,49 @@ RowBuilder functions allow you to add your own properties / functions to each Gr
           return $q.all(promises);
         }
         ....
+        //from feature directive pre-link
+        uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
 ```
 
-###### Create a directive that will be added to the same element as ui-grid
-<div ui-grid ui-grid-feature></div>
-
-Require the uiGrid controller from a parent directive. in the preLink function, register your
-column and row builders.  See ui.grid.edit unit tests on how to easily test your directive
-
+## RowsProcessor
+RowsProcessor allows your feature to affect the entire rows collections.  Gives you the ability to sort, group, etc. the row.
 ```javascript
-  module.directive('uiGridFeature', ['uiGridFeatureService', function (uiGridEditService) {
-    return {
-      replace: true,
-      priority: 0, // this could be tweaked to fire your directive before/after other features
-      require: '^uiGrid',
-      scope: false,
-      compile: function () {
-        return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
-            uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
-            //do anything else you can safely do here
-            //!! of course, don't stomp on core grid logic or data
-          }
-        };
-      }
-    };
-  }]);
+        ....
+       function featureRowsProcessor(renderableRows) {
+           return rowSorter.sort(this, renderableRows, this.columns);
+        ....
+
+        //from feature directive pre-link
+        uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
 ```
 
-#####Directive Stacking
+## Public Events
+The grid provides public events via the GridEvents object.  This object allows you to register your feature's public
+events and raise/consume events.  It guarantees that your events are specific to a grid instance.  Internally, angular
+scope $broadcast and $on are used.
+```javascript
+       //preferred method is to use a publicEvents map from constants
+         module.constant('uiGridFeatureConstants', {
+           publicEvents: {
+             featureName : {
+               event1 : function(scope, function(newRowCol, oldRowCol)){},
+               event2 : function(scope, function(){}){}
+             }
+           }
+         });
+
+       //from feature directive pre-link
+       uiGridCtrl.grid.events.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
+
+       //raise event
+       uiGridCtrl.grid.events.featureName.event1(newRowCol, oldRowCol);
+
+       //subscribe to event. You must provide a scope object so the listener will be destroyed when scope is destroyed
+       uiGridCtrl.grid.events.featureName.on.event1($scope, function(newRowCol, oldRowCol){});
+
+```
+
+## Directive Stacking
 The next extension point requires some knowledge of the core grid directives. Thanks to a little known feature in angular,
 you can stack your feature directives before or after one of the core grid directives.  Simply use the same directive name
 and change the priority to a negative number (to execute after) or a positive number (to execute before)
@@ -142,7 +279,12 @@ module.directive('uiGridCell', ['uiGridFeatureService',
   }]);
 ```
 
-##### Tutorials
+## Documentation
+At the very least, document your main feature directive using jsDoc comment so it's visible in the api docs.
+Specify all options available to the feature.
+See other features for jsdocs examples.
+
+## Tutorials
 Add a tutorial showing how to use your feature. Copy one of the existing misc/tutorial files, change the name at the top and configure it for your feature.  'grunt dev' and your tutorial is available on http://localhost:9003/docs/#/tutorial.
 Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid github.
 

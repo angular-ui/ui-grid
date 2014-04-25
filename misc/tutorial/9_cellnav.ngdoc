@@ -2,14 +2,16 @@
 @name Tutorial: Cell Navigation (WIP)
 @description
 
-This grid example uses the ui-grid-cellNav directive to add cell navigation
+This grid example uses the ui-grid-cellNav directive to add cell navigation.
+
+Uses the gridOptions.onRegisterEvents callback to register the on_cellNav event and log when the cell is navigated.
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {};
 
       $scope.gridOptions.columnDefs = [
@@ -23,6 +25,20 @@ This grid example uses the ui-grid-cellNav directive to add cell navigation
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
+
+        $scope.info = {};
+
+        $scope.gridOptions.onRegisterEvents = function(gridEvents){
+         gridEvents.gridCellNav.on.cellNav($scope,function(newRowCol, oldRowCol){
+                  var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
+                  var msg = 'New RowCol is ' + angular.toJson(rowCol);
+                  if(oldRowCol){
+                     rowCol = {row: oldRowCol.row.index, col:oldRowCol.col.colDef.name};
+                     msg += ' Old RowCol is ' + angular.toJson(rowCol);
+                  }
+                  $log.log(msg);
+                });
+        };
     }]);
   </file>
   <file name="index.html">

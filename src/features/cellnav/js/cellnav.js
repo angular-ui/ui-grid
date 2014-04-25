@@ -14,8 +14,15 @@
    *  @description constants available in cellNav
    */
   module.constant('uiGridCellNavConstants', {
-    CELL_NAV_EVENT: 'uiGridCellNav',
-    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3}
+    FEATURE_NAME : 'gridCellNav',
+    CELL_NAV_EVENT: 'cellNav',
+    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3},
+    //available public events; listed here for convenience and IDE's use it for smart completion
+    publicEvents: {
+      gridCellNav : {
+        cellNav : function(scope, newRowCol, oldRowCol){}
+      }
+    }
   });
 
   /**
@@ -254,8 +261,20 @@
               //  $log.debug('uiGridEdit preLink');
               uiGridCtrl.grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
 
-              uiGridCtrl.broadcastCellNav = function(rowCol){
-                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, rowCol);
+              uiGridCtrl.grid.events.registerEventsFromObject(uiGridCellNavConstants.publicEvents);
+
+              var oldRowCol = null;
+              uiGridCtrl.broadcastCellNav = function (newRowCol) {
+                $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
+                uiGridCtrl.broadcastFocus(newRowCol.row, newRowCol.col);
+              };
+
+              uiGridCtrl.broadcastFocus = function (row, col) {
+                if (oldRowCol === null || (oldRowCol.row !== row || oldRowCol.col !== col)) {
+                  var newRowCol = new RowCol(row, col);
+                  uiGridCtrl.grid.events.gridCellNav.cellNav(newRowCol, oldRowCol);
+                  oldRowCol = newRowCol;
+                }
               };
 
             },
@@ -303,11 +322,15 @@
             return false;
           });
 
+          $elm.find('div').on('focus', function (evt) {
+            uiGridCtrl.broadcastFocus($scope.row, $scope.col);
+          });
+
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt,rowCol){
              if(rowCol.row === $scope.row &&
-                rowCol.col === $scope.col){
-               $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
-               setFocused();
+               rowCol.col === $scope.col){
+                $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
+                setFocused();
              }
           });
 

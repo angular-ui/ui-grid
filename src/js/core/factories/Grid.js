@@ -1,7 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'rowSorter', 'rowSearcher', function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, rowSorter, rowSearcher) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher',
+    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher) {
 
 /**
    * @ngdoc function
@@ -57,6 +58,8 @@ angular.module('ui.grid')
     //current rows that are rendered on the DOM
     this.renderedRows = [];
     this.renderedColumns = [];
+
+    this.events = new GridEvents(this);
   };
 
   /**
@@ -672,6 +675,15 @@ angular.module('ui.grid')
     }
 
     return $q.when(column);
+  };
+
+      /**
+       * communicate to outside world that we are done with initial rendering
+       */
+  Grid.prototype.renderingComplete = function(){
+    if(angular.isFunction(this.options.onRegisterEvents)){
+      this.options.onRegisterEvents(this.events);
+    }
   };
 
   return Grid;
