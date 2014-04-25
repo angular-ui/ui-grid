@@ -24,6 +24,7 @@
 
       // Function to pre-compile all the cell templates when the column definitions change
       function preCompileCellTemplates(columns) {
+        $log.info('pre-compiling cell templates');
         columns.forEach(function (col) {
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
           

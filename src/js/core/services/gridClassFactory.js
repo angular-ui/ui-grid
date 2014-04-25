@@ -81,29 +81,33 @@
 
           var templateGetPromises = [];
 
-          col.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('ui-grid/uiGridHeaderCell');
-
-          col.cellTemplate = colDef.cellTemplate ||
-            $templateCache.get('ui-grid/uiGridCell')
-              .replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
-
-          if (colDef.cellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.cellTemplate)
-                .then(function (contents) {
-                  col.cellTemplate = contents;
-                })
-            );
+          if (!colDef.headerCellTemplate) {
+            colDef.headerCellTemplate = 'ui-grid/uiGridHeaderCell';
           }
 
-          if (colDef.headerCellTemplate && !uiGridConstants.TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-            templateGetPromises.push(
-              gridUtil.getTemplate(colDef.headerCellTemplate)
-                .then(function (contents) {
-                  col.headerCellTemplate = contents;
-                })
-            );
+          if (!colDef.cellTemplate) {
+            colDef.cellTemplate = 'ui-grid/uiGridCell';
           }
+
+          templateGetPromises.push(gridUtil.getTemplate(colDef.cellTemplate)
+            .then(
+              function (template) {
+                col.cellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
+              },
+              function (res) {
+                throw new Error("Couldn't fetch/use colDef.cellTemplate '" + colDef.cellTemplate + "'");
+              })
+          );
+
+          templateGetPromises.push(gridUtil.getTemplate(colDef.headerCellTemplate)
+              .then(
+              function (template) {
+                col.headerCellTemplate = template;
+              },
+              function (res) {
+                throw new Error("Couldn't fetch/use colDef.headerCellTemplate '" + colDef.headerCellTemplate + "'");
+              })
+          );
 
           return $q.all(templateGetPromises);
         }

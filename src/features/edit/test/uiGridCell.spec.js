@@ -35,10 +35,14 @@ describe('ui.grid.edit GridCellDirective', function () {
 
     scope.getCellValue = function(row,col){return 'val';};
 
-    recompile = function () {
-      $compile(element)(scope);
-      $rootScope.$digest();
-    };
+    $timeout(function(){
+      recompile = function () {
+        $compile(element)(scope);
+        $rootScope.$digest();
+      };
+    });
+    $timeout.flush();
+
   }));
 
   describe('ui.grid.edit uiGridCell start editing', function () {

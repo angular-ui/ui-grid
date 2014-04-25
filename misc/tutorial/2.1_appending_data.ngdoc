@@ -23,6 +23,7 @@ All features are enabled to get an idea of performance
              {name:'id', width:50},
              {name:'name', width:100},
              {name:'age', width:100, enableCellEdit: true },
+             {name:'agetemplate',field:'age', width:100, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age:{{COL_FIELD}}</span></div>' },
              {name:'address.street', width:150, enableCellEdit: true },
              {name:'address.city', width:150, enableCellEdit: true},
              {name:'address.state', width:50, enableCellEdit: true},
