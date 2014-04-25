@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/23/2014 09:12
+* Compiled At: 04/25/2014 12:13
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -278,6 +278,9 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
         return width;
     };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
+        if (!grid.$root){
+            return;
+        }
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
@@ -995,7 +998,9 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             grid.$topPanel.on('mousedown', '.ngHeaderScroller', self.onHeaderMouseDown).on('dragover', '.ngHeaderScroller', self.dragOver);
 
             grid.$groupPanel.on('$destroy', function() {
-                grid.$groupPanel.off('mousedown');
+                if (grid.$groupPanel){
+                    grid.$groupPanel.off('mousedown');
+                }
 
                 grid.$groupPanel = null;
             });
@@ -1005,9 +1010,11 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             }
 
             grid.$topPanel.on('$destroy', function() {
-                grid.$topPanel.off('mousedown');
+                if (grid.$topPanel){
+                    grid.$topPanel.off('mousedown');
+                }
 
-                if (grid.config.enableColumnReordering) {
+                if (grid.config.enableColumnReordering && grid.$topPanel) {
                     grid.$topPanel.off('drop');
                 }
 

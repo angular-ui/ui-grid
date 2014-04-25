@@ -1,3 +1,8 @@
+<a name="2.0.10"></a>
+## 2.0.10 *(2014-04-25)*
+
+* Fix bug with $groupPanel $destroy handler (thanks @mikeromano38) (52de35530360d51).
+
 <a name="2.0.9"></a>
 ## 2.0.9 *(2014-04-23)*
 
