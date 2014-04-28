@@ -6,14 +6,24 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, uiGridCtrl) {
-          // If the grid controller is present, use it to get the compiled cell template function
-          if (uiGridCtrl) {
+          function compileTemplate() {
             var compiledElementFn = $scope.col.compiledElementFn;
 
+            compiledElementFn($scope, function(clonedElement, scope) {
+              $elm.empty().append(clonedElement);
+            });
+          }
+
+          // If the grid controller is present, use it to get the compiled cell template function
+          if (uiGridCtrl) {
             $scope.getCellValue = uiGridCtrl.getCellValue;
 
-            compiledElementFn($scope, function(clonedElement, scope) {
-              $elm.append(clonedElement);
+            compileTemplate();
+
+            $scope.$watch('col.cellTemplate', function (n, o) {
+              if (n !== o) {
+                compileTemplate();
+              }
             });
           }
           // No controller, compile the element manually
