@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/25/2014 12:13
+* Compiled At: 04/29/2014 10:21
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3550,7 +3550,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div ng-show=\"showFilter\">\r" +
     "\n" +
-    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterOptions.filterText\"/>\r" +
+    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterText\"/>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
@@ -3574,8 +3574,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    </div>\r" +
     "\n" +
-    "</div>\r" +
-    "\n"
+    "</div>"
   );
   $templateCache.put('rowTemplate.html',
     "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
