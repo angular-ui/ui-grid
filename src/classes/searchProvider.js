@@ -30,7 +30,7 @@
 		else {
 			return [value];
 		}
-	}
+	};
 	
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
