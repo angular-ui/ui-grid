@@ -1,0 +1,4 @@
+{
+  "disallowKeywords": ["with"],
+  "disallowTrailingWhitespace": true
+}

@@ -56,6 +56,7 @@
     "protractor": "~0.14.0",
     "grunt-protractor-runner": "0.2.0",
     "grunt-shell-spawn": "~0.3.0",
-    "selenium-webdriver": "~2.39.0"
+    "selenium-webdriver": "~2.39.0",
+    "grunt-jscs-checker": "^0.4.1"
   }
 }

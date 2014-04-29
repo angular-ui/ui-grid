@@ -299,6 +299,13 @@ module.exports = function(grunt) {
       }
     },
 
+    jscs: {
+      src: ['src/**/*.js', 'src/features/*/js/**/*.js', 'src/features/*/test/**/*.spec.js', 'test/**/*.spec.js'],
+      options: {
+        config: '.jscs.json'
+      }
+    },
+
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
@@ -317,7 +324,7 @@ module.exports = function(grunt) {
       // },
       rebuild: {
         files: util.testFiles.unit,
-        tasks: ['jshint:src_test', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
+        tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
         options: {
           // livereload: true
         }
@@ -511,6 +518,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell-spawn');
   // grunt.loadNpmTasks('grunt-grunticon');
   grunt.loadNpmTasks('grunt-fontello');
+  grunt.loadNpmTasks('grunt-jscs-checker');
 
   // grunt.renameTask('protractor', 'protractor-old');
   grunt.registerTask('protractor-watch', function () {
@@ -533,7 +541,7 @@ module.exports = function(grunt) {
 
   // register before and after test tasks so we don't have to change cli
   // options on the CI server
-  grunt.registerTask('before-test', ['clean', 'jshint', 'ngtemplates']); // Have to run less so CSS files are present
+  grunt.registerTask('before-test', ['clean', 'jshint', 'jscs', 'ngtemplates']); // Have to run less so CSS files are present
   grunt.registerTask('after-test', ['build']);
 
   // Default task.
@@ -561,7 +569,7 @@ module.exports = function(grunt) {
 
   // Testing tasks
   // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
-  grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'serialsauce']);
+  grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
   grunt.registerTask('test:e2e:ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
