@@ -4,7 +4,6 @@
 // that correct the existing code base issues and make the new check pass.
 
 {
-  "requireSpaceBeforeBlockStatements": true,
   "disallowLeftStickedOperators": ["?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
   "disallowRightStickedOperators": ["?", "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
   "disallowImplicitTypeConversion": ["string"],
@@ -21,4 +20,7 @@
 
   // (c0bra): Dunno about this one... it doesn't allow blank lines with whitespace
   "disallowTrailingWhitespace": true
+
+  // (c0bra): Not supported in jscs yet (currently 1.3.0)
+  // "requireSpaceBeforeBlockStatements": true
 }

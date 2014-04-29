@@ -3,5 +3,6 @@
   "requireRightStickedOperators": ["!"],
   "requireLeftStickedOperators": [","],
   "requireCurlyBraces": ["if", "else", "for", "while", "do", "try", "catch"],
-  "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"]
+  "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
+  "disallowImplicitTypeConversion": ["string"]
 }
