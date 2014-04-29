@@ -18,14 +18,25 @@
         return fieldMap;
     };
 
+	var getAllPrimitiveValues = function(value) {
+		if(typeof value === "object") {
+            var arr = [];
+			for(var prop in value) {
+				arr = arr.concat(getAllPrimitiveValues(value[prop]));
+			}
+            
+            return arr;
+		}
+		else {
+			return [value];
+		}
+	}
+	
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
             if (item.hasOwnProperty(prop)) {
                 var c = fieldMap[prop.toLowerCase()];
-                if (!c) {
-                    continue;
-                }
                 var pVal = item[prop];
                 if(typeof pVal === 'object' && !(pVal instanceof Date)) {
                     var objectFieldMap = convertToFieldMap(c);
@@ -75,7 +86,10 @@
             result = condition.regex.test(filterResults);
         }
         else {
-            result = condition.regex.test(typeof value === "object" ? evalObject(value, col.field).toString() : value.toString());
+            var primitiveValues = getAllPrimitiveValues(evalObject(value, col.field));
+			for(var prop in primitiveValues) {
+				result |= condition.regex.test(primValues[prop]);
+			}
         }
         if (result) {
             return true;
