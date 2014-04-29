@@ -18,7 +18,7 @@
 
           //legacy support
           //use old name if it is explicitly false
-          if(gridOptions.enableColumnResize === false){
+          if (gridOptions.enableColumnResize === false){
             gridOptions.enableColumnResizing = false;
           }
         },
@@ -32,7 +32,7 @@
 
 
           //legacy support of old option name
-          if(colDef.enableColumnResize === false){
+          if (colDef.enableColumnResize === false){
             colDef.enableColumnResizing = false;
           }
 

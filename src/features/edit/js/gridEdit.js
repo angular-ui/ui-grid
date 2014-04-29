@@ -314,7 +314,7 @@
               //remove edit element
               angular.element($elm.children()[1]).remove();
               gridCellContentsEl.removeClass('ui-grid-cell-contents-hidden');
-              if(retainFocus && isFocusedBeforeEdit){
+              if (retainFocus && isFocusedBeforeEdit){
                 gridCellContentsEl.focus();
               }
               isFocusedBeforeEdit = false;

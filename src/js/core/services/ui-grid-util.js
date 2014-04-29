@@ -287,12 +287,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // If the template is an element, return the element
-      try{
+      try {
         if (angular.element(template).length > 0) {
           return $q.when(template);
         }
       }
-      catch(err){
+      catch (err){
         //do nothing; not valid html
       }
 
@@ -554,7 +554,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var index = uid.length;
       var digit;
 
-      while(index) {
+      while (index) {
         index--;
         digit = uid[index].charCodeAt(0);
         if (digit === 57 /*'9'*/) {

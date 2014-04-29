@@ -54,7 +54,7 @@ describe('ui.grid.controller', function() {
       });
 
       it('has 1 rows after delete', function() {
-        scope.options.data.splice(1 , 1 );
+        scope.options.data.splice(1, 1 );
         scope.$apply();
         expect(uiGridController.grid.rows.length).toBe(1);
       });

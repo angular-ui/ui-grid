@@ -38,7 +38,7 @@
         },
         getAllLangs: function () {
           var langs = [];
-          if(!this._langs){
+          if (!this._langs){
             return langs;
           }
 
@@ -104,7 +104,7 @@
 
         getCurrentLang: function () {
           var lang = langCache.getCurrentLang();
-          if(!lang){
+          if (!lang){
             lang = i18nConstants.DEFAULT_LANG;
             langCache.setCurrent(lang);
           }
