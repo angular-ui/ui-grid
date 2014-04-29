@@ -2,12 +2,6 @@
 
 # CURRENT
 
-1. [TODO] - Whens scrolled to the right and we update data, it doesn't re-render the rows. Only the left-most ones...
-1. [BUG] - Rows change odd/even class if we add data and the grid is scrolled down... This is because the size of the data-set is changing, I think.
-1. [TODO] - Change the deleted row check to use for newInN() instead of forEach().
-<!-- 1. [TODO] - Allow identity function for row data, rather than using $$hashKey. -->
-1. [TODO] - Check out using grunt-jscs-checker for js style checks
-
 1. [TODO] - Move row filtering to feature module.
 
 1. [TODO] - Make 'No Rows' message i18n
@@ -53,6 +47,10 @@
 1. [TODO] - Add notes about browser version support and Angular version support to README.md
 1. [TODO] - Add handling for sorting null values with columnDef sortingAlgorithm (PR #940)
 1. [TODO] - Currently uiGridColumnMenu uses i18n to create the menu item text on link. If the language is changed, they won't update because they're not bound...
+1. [BUG] - Rows change odd/even class if we add data and the grid is scrolled down...
+  -  This is because the range size is changing and the top-most row is disappearing/appearing, altering the odd/even-ness of the rows below it.
+     The CSS is done by nth-child so there's no way around it with pure CSS unfortunately
+1. [TODO] - Change the deleted row check to use for newInN() instead of forEach().
 
 # Grid Menu
 

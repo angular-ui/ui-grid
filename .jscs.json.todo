@@ -6,7 +6,6 @@
 {
   "disallowLeftStickedOperators": ["?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
   "disallowRightStickedOperators": ["?", "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
-  "disallowImplicitTypeConversion": ["string"],
   "disallowMultipleLineBreaks": true,
 
   "disallowKeywordsOnNewLine": ["else"],
