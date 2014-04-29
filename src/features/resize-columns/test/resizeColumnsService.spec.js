@@ -14,13 +14,13 @@ describe('uiGridResizeColumnsService', function () {
       expect(gridOptions.enableColumnResizing).toBe(true);
     });
 
-    it('should not override false gridOptions.enableColumnResizing' , function () {
+    it('should not override false gridOptions.enableColumnResizing', function () {
       var gridOptions = {enableColumnResizing:false};
       uiGridResizeColumnsService.defaultGridOptions(gridOptions);
       expect(gridOptions.enableColumnResizing).toBe(false);
     });
 
-    it('should not override false gridOptions.enableColumnResize (legacy support)' , function () {
+    it('should not override false gridOptions.enableColumnResize (legacy support)', function () {
       var gridOptions = {enableColumnResize:false};
       uiGridResizeColumnsService.defaultGridOptions(gridOptions);
       expect(gridOptions.enableColumnResizing).toBe(false);
