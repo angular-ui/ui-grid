@@ -541,7 +541,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
-  grunt.registerTask('build', ['concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy']);
+  grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy']);
 
   // Auto-test tasks for development
   grunt.registerTask('autotest:unit', ['karmangular:start']);

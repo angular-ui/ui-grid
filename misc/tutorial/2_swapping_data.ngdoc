@@ -30,10 +30,17 @@ You can swap out data in the grid by simply providing a different reference.
       };
 
       $scope.removeFirstRow = function() {
-        if($scope.gridOpts.data.length > 0){
+        //if($scope.gridOpts.data.length > 0){
            $scope.gridOpts.data.splice(0,1);
-        }
+        //}
       };
+
+      $scope.reset = function () {
+        data1 = angular.copy(origdata1);
+        data2 = angular.copy(origdata2);
+
+        $scope.gridOpts.data = data1;
+      }
 
       var data1 = [
         {
@@ -61,6 +68,8 @@ You can swap out data in the grid by simply providing a different reference.
           "employed": false
         }
       ];
+
+      var origdata1 = angular.copy(data1);
 
       var data2 = [
         {
@@ -101,6 +110,8 @@ You can swap out data in the grid by simply providing a different reference.
         }
       ];
 
+      var origdata2 = angular.copy(data2);
+
       $scope.gridOpts = {
         data: data1
       };
@@ -111,6 +122,7 @@ You can swap out data in the grid by simply providing a different reference.
       <button type="button" class="btn btn-success" ng-click="swapData()">Swap Data</button>
       <button type="button" class="btn btn-success" ng-click="addData()">Add Data</button>
       <button type="button" class="btn btn-success" ng-click="removeFirstRow()">Remove First Row</button>
+      <button type="button" class="btn btn-success" ng-click="reset()">Reset</button>
       <br>
       <br>
       <div ui-grid="gridOpts" class="grid"></div>

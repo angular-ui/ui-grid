@@ -69,6 +69,7 @@ describe('ui.grid.controller', function() {
         scope.uiGrid = {data:scope.options.data};
         scope.$apply();
         expect(uiGridController.grid.rows.length).toBe(4);
+        //dump('r', uiGridController.grid.rows[3]);
         expect(uiGridController.grid.rows[0].entity.col1).toBe('row1Swapped');
       });
     });

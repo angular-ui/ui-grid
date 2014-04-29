@@ -84,7 +84,7 @@
       }
 
       function dataWatchFunction(n) {
-        $log.debug('dataWatch fired');
+        // $log.debug('dataWatch fired');
         var promises = [];
 
         if (n) {
@@ -100,15 +100,19 @@
           }
           $q.all(promises).then(function() {
             //wrap data in a gridRow
-            $log.debug('Modifying rows');
+            // $log.debug('Modifying rows');
             self.grid.modifyRows(n)
               .then(function () {
                 //todo: move this to the ui-body-directive and define how we handle ordered event registration
+                
                 if (self.viewport) {
-                  var scrollTop = self.viewport[0].scrollTop;
-                  var scrollLeft = self.viewport[0].scrollLeft;
-                  self.adjustScrollVertical(scrollTop, 0, true);
-                  self.adjustScrollHorizontal(scrollLeft, 0, true);
+                  // Re-draw our rows but stay in the same scrollTop location
+                  // self.redrawRowsByScrolltop();
+
+                  // Adjust the horizontal scroll back to 0 (TODO(c0bra): Do we need this??)
+                  // self.adjustScrollHorizontal(self.prevScollLeft, 0, true);
+
+                  self.redrawInPlace();
                 }
 
                 $scope.$evalAsync(function() {

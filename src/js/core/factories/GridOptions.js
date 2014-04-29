@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridOptions', [function() {
+.factory('GridOptions', ['gridUtil', function(gridUtil) {
 
   /**
    * @ngdoc function
@@ -30,6 +30,44 @@ angular.module('ui.grid')
 
      */
     this.columnDefs = [];
+
+    /**
+     * @ngdoc boolean
+     * @name enableRowHashing
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) True by default. When enabled, this setting allows uiGrid to add
+     * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
+     * the grid to maintain state while vastly speeding up the process of altering `data` by adding/moving/removing rows.
+     * 
+     * Note that this DOES add properties to your data that you may not want, but they are stripped out when using `angular.toJson()`. IF
+     * you do not want this at all you can disable this setting but you will take a performance hit if you are using large numbers of rows
+     * and are altering the data set often.
+     */
+    this.enableRowHashing = true;
+
+    /**
+     * @ngdoc function
+     * @name rowIdentity
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
+     * 
+     * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
+     */
+    this.rowIdentity = function rowIdentity(row) {
+        return gridUtil.hashKey(row);
+    };
+
+    /**
+     * @ngdoc function
+     * @name getRowIdentity
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) This function returns the identity value uniquely identifying this row.
+     * 
+     * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
+     */
+    this.getRowIdentity = function rowIdentity(row) {
+        return row.$$hashKey;
+    };
 
     this.headerRowHeight = 30;
     this.rowHeight = 30;

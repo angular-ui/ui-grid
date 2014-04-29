@@ -1,6 +1,14 @@
 # TODO
 
-# CURRENT (row filtering)
+# CURRENT
+
+1. [TODO] - Whens scrolled to the right and we update data, it doesn't re-render the rows. Only the left-most ones...
+1. [BUG] - Rows change odd/even class if we add data and the grid is scrolled down... This is because the size of the data-set is changing, I think.
+1. [TODO] - Change the deleted row check to use for newInN() instead of forEach().
+<!-- 1. [TODO] - Allow identity function for row data, rather than using $$hashKey. -->
+1. [TODO] - Check out using grunt-jscs-checker for js style checks
+
+1. [TODO] - Move row filtering to feature module.
 
 1. [TODO] - Make 'No Rows' message i18n
 1. [BUG] - i18n causes an exception if a given value is not present.
@@ -46,8 +54,16 @@
 1. [TODO] - Add handling for sorting null values with columnDef sortingAlgorithm (PR #940)
 1. [TODO] - Currently uiGridColumnMenu uses i18n to create the menu item text on link. If the language is changed, they won't update because they're not bound...
 
+# Grid Menu
+
+1. [TODO] - Add "master" grid menu that overlays the whole grid when open (should have a decent-size padding that leaves and overlay with high opacity).
+1. [TODO] - Make a master grid menu button using the font-awesome menu icon (add to fontello conf) that lives... somewhere... that won't move when columns scroll...
+
 # Cleanup
 
+1. [TODO] - Rename tutorials so they're consistent
+1. [TODO] - Re-order tutorials
+1. [TODO] - Build a tutorial index page.
 1. [TODO] - Remove commented-out dumps from gridUtil
 1. [TODO] - Rename gridUtil to uiGridUtil
 1. [TODO] - Rename GridUtil in uiGridBody to gridUtil or the above
