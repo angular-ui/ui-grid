@@ -222,7 +222,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     getColumnsFromData: function (data) {
       var columnDefs = [];
 
-      if (! data || typeof(data[0]) === 'undefined' || data[0] === undefined) { return []; }
+      if (!data || typeof(data[0]) === 'undefined' || data[0] === undefined) { return []; }
 
       var item = data[0];
       

@@ -76,12 +76,12 @@
                 //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
 
                 // Skip hidden columns
-                if (! column.visible) { return; }
+                if (!column.visible) { return; }
 
                 var colWidth,
                     isPercent = false;
 
-                if (! angular.isNumber(column.width)) {
+                if (!angular.isNumber(column.width)) {
                   isPercent = isNaN(column.width) ? gridUtil.endsWith(column.width, "%") : false;
                 }
 
@@ -219,7 +219,7 @@
               if (leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
                 var variableColumn = false;
                 uiGridCtrl.grid.columns.forEach(function(col) {
-                  if (col.width && ! angular.isNumber(col.width)) {
+                  if (col.width && !angular.isNumber(col.width)) {
                     variableColumn = true;
                   }
                 });

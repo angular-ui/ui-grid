@@ -55,7 +55,7 @@
 
         function gridMouseLeave() {
           mouseInGrid = false;
-          if (! uiGridCtrl.grid.isScrolling()) {
+          if (!uiGridCtrl.grid.isScrolling()) {
             $elm.removeClass('ui-grid-scrollbar-visible');
           }
         }
@@ -216,14 +216,14 @@
           var scrollPercentage;
           if ($scope.type === 'vertical') {
             // Skip if no scroll on Y axis
-            if (! args.y) {
+            if (!args.y) {
               return;
             }
             scrollPercentage = args.y.percentage;
           }
           else if ($scope.type === 'horizontal') {
             // Skip if no scroll on X axis
-            if (! args.x) {
+            if (!args.x) {
               return;
             }
             scrollPercentage = args.x.percentage;
@@ -268,7 +268,7 @@
           // Remove the "scrolling" class, if any
           $elm.removeClass(scrollingClass);
 
-          if (! mouseInGrid) {
+          if (!mouseInGrid) {
             $elm.removeClass('ui-grid-scrollbar-visible');
           }
 
@@ -286,7 +286,7 @@
          *
          */
         
-        // if (! gridUtil.isTouchEnabled()) {
+        // if (!gridUtil.isTouchEnabled()) {
         //   $scope.grid.element.on('mouseenter mouseleave', function() {
         //     $elm.toggleClass('in');
         //   });

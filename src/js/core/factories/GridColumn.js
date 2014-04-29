@@ -76,7 +76,7 @@ angular.module('ui.grid')
     }
     else {
       // If the width is not a number
-      if (! angular.isNumber(colDef.width)) {
+      if (!angular.isNumber(colDef.width)) {
         // See if it ends with a percent
         if (gridUtil.endsWith(colDef.width, '%')) {
           // If so we should be able to parse the non-percent-sign part to a number
@@ -92,7 +92,7 @@ angular.module('ui.grid')
           self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
         }
         // Otherwise it should be a string of asterisks
-        else if (! colDef.width.match(/^\*+$/)) {
+        else if (!colDef.width.match(/^\*+$/)) {
           throw new Error(parseErrorMsg);
         }
       }

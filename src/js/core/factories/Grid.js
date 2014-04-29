@@ -14,7 +14,7 @@ angular.module('ui.grid')
   var Grid = function Grid(options) {
     // Get the id out of the options, then remove it
     if (typeof(options.id) !== 'undefined' && options.id) {
-      if (! /^[_a-zA-Z0-9-]+$/.test(options.id)) {
+      if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
         throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
       }
     }
@@ -235,7 +235,7 @@ angular.module('ui.grid')
 
           // Flag this row as needing to be manually found if it didn't come in with a $$hashKey
           var mustFind = false;
-          if (! self.options.getRowIdentity(newRow)) {
+          if (!self.options.getRowIdentity(newRow)) {
             mustFind = true;
           }
 
@@ -416,7 +416,7 @@ angular.module('ui.grid')
      modified.
    */
   Grid.prototype.registerRowsProcessor = function registerRowsProcessor(processor) {
-    if (! angular.isFunction(processor)) {
+    if (!angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
     }
 
@@ -455,7 +455,7 @@ angular.module('ui.grid')
     // self.rowsProcessors.forEach(function (processor) {
     //   myRenderableRows = processor.call(self, myRenderableRows, self.columns);
 
-    //   if (! renderableRows) {
+    //   if (!renderableRows) {
     //     throw "Processor at index " + i + " did not return a set of renderable rows";
     //   }
 
@@ -492,7 +492,7 @@ angular.module('ui.grid')
       return $q.when( processor.call(self, renderedRowsToProcess, self.columns) )
         .then(function handleProcessedRows(processedRows) {
           // Check for errors
-          if (! processedRows) {
+          if (!processedRows) {
             throw "Processor at index " + i + " did not return a set of renderable rows";
           }
 
@@ -697,7 +697,7 @@ angular.module('ui.grid')
   Grid.prototype.getCellValue = function getCellValue(row, col){
     var self = this;
 
-    if (! self.cellValueGetterCache[col.colDef.name]) {
+    if (!self.cellValueGetterCache[col.colDef.name]) {
       self.cellValueGetterCache[col.colDef.name] = $parse(row.getEntityQualifiedColField(col));
     }
 

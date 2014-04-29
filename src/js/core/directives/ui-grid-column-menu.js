@@ -225,12 +225,12 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
         self.hideMenu();
-        // if (! $scope.$$phase) { $scope.$apply(); }
+        // if (!$scope.$$phase) { $scope.$apply(); }
       }));
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, function(evt, args) {
         self.hideMenu();
-        // if (! $scope.$$phase) { $scope.$apply(); }
+        // if (!$scope.$$phase) { $scope.$apply(); }
       }));
 
       $scope.$on('$destroy', function() {

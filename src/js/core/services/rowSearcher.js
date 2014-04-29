@@ -186,35 +186,35 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
 
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {
-      if (! filter.condition.test(value)) {
+      if (!filter.condition.test(value)) {
         return false;
       }
     }
     else if (filter.condition === uiGridConstants.filter.STARTS_WITH) {
       var startswithRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId, new RegExp('^' + term, regexpFlags));
 
-      if (! startswithRE.test(value)) {
+      if (!startswithRE.test(value)) {
         return false;
       }
     }
     else if (filter.condition === uiGridConstants.filter.ENDS_WITH) {
       var endswithRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId, new RegExp(term + '$', regexpFlags));
 
-      if (! endswithRE.test(value)) {
+      if (!endswithRE.test(value)) {
         return false;
       }
     }
     else if (filter.condition === uiGridConstants.filter.CONTAINS) {
       var containsRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId, new RegExp(term, regexpFlags));
 
-      if (! containsRE.test(value)) {
+      if (!containsRE.test(value)) {
         return false;
       }
     }
     else if (filter.condition === uiGridConstants.filter.EXACT) {
       var exactRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId,  new RegExp('^' + term + '$', regexpFlags));
 
-      if (! exactRE.test(value)) {
+      if (!exactRE.test(value)) {
         return false;
       }
     }
@@ -239,7 +239,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
       }
     }
     else if (filter.condition === uiGridConstants.filter.NOT_EQUAL) {
-      if (! angular.equals(value, term)) {
+      if (!angular.equals(value, term)) {
         return false;
       }
     }
@@ -291,7 +291,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
       */
 
       var ret = rowSearcher.runColumnFilter(grid, row, column, termCache, i, filter);
-      if (! ret) {
+      if (!ret) {
         return false;
       }
     }
@@ -336,7 +336,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     if (filterCols.length > 0) {
       filterCols.forEach(function foreachFilterCol(col) {
         rows.forEach(function foreachRow(row) {
-          if (! rowSearcher.searchColumn(grid, row, col, termCache)) {
+          if (!rowSearcher.searchColumn(grid, row, col, termCache)) {
             row.visible = false;
           }
         });
@@ -348,7 +348,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
       //   for (var i in filterCols) {
       //     var col = filterCols[i];
 
-      //     if (! rowSearcher.searchColumn(grid, row, col, termCache)) {
+      //     if (!rowSearcher.searchColumn(grid, row, col, termCache)) {
       //       matchesAllColumns = false;
 
       //       // Stop processing other terms

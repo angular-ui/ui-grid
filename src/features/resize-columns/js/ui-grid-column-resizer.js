@@ -308,7 +308,7 @@
           if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
             x = x + (col.colDef.minWidth - newWidth);
           }
-          else if (! col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
+          else if (!col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
             x = x + (col.colDef.minWidth - newWidth);
           }
           else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
@@ -362,7 +362,7 @@
           if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
             newWidth = col.colDef.minWidth;
           }
-          else if (! col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
+          else if (!col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
             newWidth = columnBounds.minWidth;
           }
           // 
@@ -458,7 +458,7 @@
           if (col.colDef.minWidth && maxWidth < col.colDef.minWidth) {
             maxWidth = col.colDef.minWidth;
           }
-          else if (! col.colDef.minWidth && columnBounds.minWidth && maxWidth < columnBounds.minWidth) {
+          else if (!col.colDef.minWidth && columnBounds.minWidth && maxWidth < columnBounds.minWidth) {
             maxWidth = columnBounds.minWidth;
           }
           // 
