@@ -37,8 +37,12 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
 
+    preprocessors: {
+      // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
+      'src/**/!(*.spec)+(.js)': ['coverage']
+    },
 
     // web server port
     port: 9876,

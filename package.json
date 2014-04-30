@@ -58,6 +58,7 @@
     "grunt-shell-spawn": "~0.3.0",
     "selenium-webdriver": "~2.39.0",
     "grunt-jscs-checker": "^0.4.1",
-    "jshint-stylish": "^0.2.0"
+    "jshint-stylish": "^0.2.0",
+    "karma-coverage": "^0.2.1"
   }
 }
