@@ -10,6 +10,12 @@ function ngGridCsvExportPlugin (opts) {
     self.grid = null;
     self.scope = null;
     self.services = null;
+    
+    opts = opts || {};
+    opts.containerPanel = opts.containerPanel || '.ngFooterPanel';
+    opts.linkClass = opts.linkCss || 'csv-data-link-span'; 
+    opts.linkLabel = opts.linkLabel || 'CSV Export';
+    opts.fileName = opts.fileName || 'Export.csv';
 
     self.init = function(scope, grid, services) {
         self.grid = grid;
@@ -65,13 +71,13 @@ function ngGridCsvExportPlugin (opts) {
                 }
                 csvData = swapLastCommaForNewline(csvData);
             }
-            var fp = grid.$root.find(".ngFooterPanel");
-            var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
+            var fp = grid.$root.find(opts.containerPanel);
+            var csvDataLinkPrevious = grid.$root.find(opts.containerPanel + ' .' + opts.linkClass);
             if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
-            var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
-            csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
+            var csvDataLinkHtml = '<span class="' + opts.linkClass + '">';
+            csvDataLinkHtml += '<br><a href="data:text/csv;charset=UTF-8,';
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
+            csvDataLinkHtml += '" download="' + opts.fileName + '">' + opts.linkLabel + '</a></br></span>' ;
             fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
