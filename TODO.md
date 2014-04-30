@@ -2,7 +2,10 @@
 
 # CURRENT
 
+1. [TODO] - remove gridBorderWidth on column menu top-left, top-right
 1. [TODO] - Move row filtering to feature module.
+
+1. [IDEA] - Look at using Istanbul for code coverage reporting.
 
 1. [TODO] - Make 'No Rows' message i18n
 1. [BUG] - i18n causes an exception if a given value is not present.
