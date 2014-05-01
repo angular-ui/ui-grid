@@ -10,7 +10,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         firstInRow = false,
         rowIndex = $scope.selectionProvider.lastClickedRow === undefined ? 1 : $scope.selectionProvider.lastClickedRow.rowIndex,
         visibleCols = $scope.columns.filter(function(c) {
-	         return c.visible && c.width > 0;
+             return c.visible && c.width > 0;
         }),
         pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
 
