@@ -9,7 +9,9 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         lastInRow = false,
         firstInRow = false,
         rowIndex = $scope.selectionProvider.lastClickedRow === undefined ? 1 : $scope.selectionProvider.lastClickedRow.rowIndex,
-        visibleCols = $scope.columns.filter(function(c) { return c.visible; }),
+        visibleCols = $scope.columns.filter(function(c) {
+	         return c.visible && c.width > 0;
+        }),
         pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
 
     if ($scope.col) {
@@ -25,9 +27,9 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
             evt.preventDefault();
         }
 
-        var focusedOnFirstColumn = $scope.showSelectionCheckbox ? $scope.col.index === 1 : $scope.col.index === 0;
-        var focusedOnFirstVisibleColumns = $scope.$index === 1 || $scope.$index === 0;
-        var focusedOnLastVisibleColumns = $scope.$index === ($scope.renderedColumns.length - 1) || $scope.$index === ($scope.renderedColumns.length - 2);
+        var focusedOnFirstColumn = $scope.showSelectionCheckbox ? newColumnIndex === 1 : newColumnIndex === 0;
+        var focusedOnFirstVisibleColumns = newColumnIndex === 1 || newColumnIndex === 0;
+        var focusedOnLastVisibleColumns = newColumnIndex === (visibleCols.length - 1) || newColumnIndex === (visibleCols.length - 2);
         var focusedOnLastColumn = visibleCols.indexOf($scope.col) === (visibleCols.length - 1);
         var focusedOnLastPinnedColumn = pinnedCols.indexOf($scope.col) === (pinnedCols.length - 1);
         
