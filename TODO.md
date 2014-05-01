@@ -2,7 +2,9 @@
 
 # CURRENT
 
+1. [PERF] - Try to improve horizontal scroll performance with cellTemplates
 1. [TODO] - remove gridBorderWidth on column menu top-left, top-right
+1. [TODO] - Try using a $cacheFactory for the cellValueGetterCache.
 1. [TODO] - Move row filtering to feature module.
 
 1. [IDEA] - Look at using Istanbul for code coverage reporting.
