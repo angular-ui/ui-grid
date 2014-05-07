@@ -44,16 +44,18 @@
 
         $scope.$on('$destroy', function() {
             // Remove all references to DOM elements, otherwise we get memory leaks
-            $(grid.$root.parent()).off('resize.nggrid');
+            if(grid.$root) {
+                $(grid.$root.parent()).off('resize.nggrid');
 
-            grid.$root = null;
-            grid.$topPanel = null;
-            // grid.$groupPanel = null;
-            grid.$headerContainer = null;
-            // grid.$headerScroller = null;
-            grid.$headers = null;
-            grid.$canvas = null;
-            grid.$footerPanel = null;
+                grid.$root = null;
+                grid.$topPanel = null;
+                // grid.$groupPanel = null;
+                grid.$headerContainer = null;
+                // grid.$headerScroller = null;
+                grid.$headers = null;
+                grid.$canvas = null;
+                grid.$footerPanel = null;
+            }
 
             scopeDereg();
         });
