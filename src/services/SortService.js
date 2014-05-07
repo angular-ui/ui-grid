@@ -115,15 +115,15 @@
                     tem = direction === ASC ? res : 0 - res;
                 } else {
                     // we want to allow zero values to be evaluated in the sort function
-                    if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
+                    if (propA == null || propB == null) {
                         // we want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-                        if (!propB && !propA) {
+                        if (propB == null && propA == null) {
                             tem = 0;
                         }
-                        else if (!propA) {
+                        else if (propA == null) {
                             tem = 1;
                         }
-                        else if (!propB) {
+                        else if (propB == null) {
                             tem = -1;
                         }
                     }
