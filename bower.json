@@ -23,7 +23,7 @@
     "GruntFile.js"
   ],
   "dependencies": {
-    "jquery": "^1.8.0",
+    "jquery": ">=1.8.0",
     "angular": "^1.0.8"
   }
 }
