@@ -17,14 +17,6 @@ function ngGridCsvExportPlugin (opts) {
         self.services = services;
 
         function showDs() {
-            var keys = [];
-            for (var f in grid.config.columnDefs) { 
-                if (grid.config.columnDefs.hasOwnProperty(f))
-                {   
-                    keys.push(grid.config.columnDefs[f].field);
-                }   
-            }   
-            var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
                     return '';
@@ -41,13 +33,29 @@ function ngGridCsvExportPlugin (opts) {
 
                 return JSON.stringify(str).replace(/"/g,'""');
             }
+
+            var keys = [];
+            var csvData = '';
+            for (var f in grid.config.columnDefs) { 
+                if (grid.config.columnDefs.hasOwnProperty(f))
+                {   
+                    keys.push(grid.config.columnDefs[f].field);
+                    csvData += '"' ;
+                    if(typeof grid.config.columnDefs[f].displayName !== 'undefined'){/** moved to reduce looping and capture the display name if it exists**/
+                        csvData += csvStringify(grid.config.columnDefs[f].displayName);
+                    }
+                    else{
+                        csvData += csvStringify(grid.config.columnDefs[f].field);
+                    }
+                    csvData +=  '",';
+                }   
+            }   
+            
             function swapLastCommaForNewline(str) {
                 var newStr = str.substr(0,str.length - 1);
                 return newStr + "\n";
             }
-            for (var k in keys) {
-                csvData += '"' + csvStringify(keys[k]) + '",';
-            }
+            
             csvData = swapLastCommaForNewline(csvData);
             var gridData = grid.data;
             for (var gridRow in gridData) {
