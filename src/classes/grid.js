@@ -546,7 +546,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
             $scope.domAccessProvider = new ngDomAccessProvider(self);
             self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
-            self.searchProvider = new ngSearchProvider($scope, self, $filter);
+            self.searchProvider = new ngSearchProvider($scope, self, $filter, $utils);
             self.styleProvider = new ngStyleProvider($scope, self);
             $scope.$on('$destroy', $scope.$watch('configGroups', function(a) {
               var tempArr = [];
