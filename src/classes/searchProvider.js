@@ -1,4 +1,4 @@
-﻿var ngSearchProvider = function ($scope, grid, $filter) {
+﻿var ngSearchProvider = function ($scope, grid, $filter, $utils) {
     var self = this,
         searchConditions = [];
 
@@ -66,7 +66,7 @@
         }
         var sp = col.cellFilter.split(':');
         var filter = col.cellFilter ? $filter(sp[0]) : null;
-        var value = item[condition.column] || item[col.field.split('.')[0]];
+        var value = item[condition.column] || item[col.field.split('.')[0]] || $utils.evalProperty(item, col.field);
         if (value === null || value === undefined) {
             return false;
         }
