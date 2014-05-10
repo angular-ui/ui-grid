@@ -262,7 +262,7 @@
             }
 
             function beginEdit() {
-              if(!shouldEdit($scope.col)){
+              if (!shouldEdit($scope.col)) {
                 return;
               }
 
@@ -356,7 +356,7 @@
   module.directive('uiGridTextEditor',
     ['uiGridConstants', 'uiGridEditConstants',
       function (uiGridConstants, uiGridEditConstants) {
-        return{
+        return {
           scope: true,
           compile: function () {
             return {

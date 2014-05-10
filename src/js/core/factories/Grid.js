@@ -817,7 +817,7 @@ angular.module('ui.grid')
    * communicate to outside world that we are done with initial rendering
    */
   Grid.prototype.renderingComplete = function(){
-    if(angular.isFunction(this.options.onRegisterEvents)){
+    if (angular.isFunction(this.options.onRegisterEvents)) {
       this.options.onRegisterEvents(this.events);
     }
   };

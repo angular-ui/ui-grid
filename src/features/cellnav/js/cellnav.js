@@ -55,12 +55,12 @@
 
           if (evt.keyCode === uiGridConstants.keymap.UP ||
             (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey)) {
-            return  uiGridCellNavConstants.direction.UP;
+            return uiGridCellNavConstants.direction.UP;
           }
 
           if (evt.keyCode === uiGridConstants.keymap.DOWN ||
             evt.keyCode === uiGridConstants.keymap.ENTER) {
-            return  uiGridCellNavConstants.direction.DOWN;
+            return uiGridCellNavConstants.direction.DOWN;
           }
 
           return null;
@@ -327,7 +327,7 @@
           });
 
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt,rowCol){
-             if(rowCol.row === $scope.row &&
+             if (rowCol.row === $scope.row &&
                rowCol.col === $scope.col){
                 $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
                 setFocused();
