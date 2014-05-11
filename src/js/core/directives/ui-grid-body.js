@@ -56,8 +56,11 @@
 
         uiGridCtrl.adjustRows = function(scrollTop, scrollPercentage) {
           var minRows = uiGridCtrl.grid.minRowsToRender();
-          // var maxRowIndex = uiGridCtrl.grid.rows.length - minRows;
-          var maxRowIndex = uiGridCtrl.grid.visibleRowCache.length - minRows;
+          // var maxRowIndex = uiGridCtrl.grid.visibleRowCache.length - minRows;
+
+          var rowCache = uiGridCtrl.grid.renderContainers.body.rowCache;
+
+          var maxRowIndex = rowCache.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
 
           var curRowIndex = uiGridCtrl.prevRowScrollIndex;
@@ -75,7 +78,7 @@
           }
           
           var newRange = [];
-          if (uiGridCtrl.grid.visibleRowCache.length > uiGridCtrl.grid.options.virtualizationThreshold) {
+          if (rowCache.length > uiGridCtrl.grid.options.virtualizationThreshold) {
             // Have we hit the threshold going down?
             if (uiGridCtrl.prevScrollTop < scrollTop && rowIndex < uiGridCtrl.prevRowScrollIndex + uiGridCtrl.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
               return;
@@ -86,12 +89,12 @@
             }
 
             var rangeStart = Math.max(0, rowIndex - uiGridCtrl.grid.options.excessRows);
-            var rangeEnd = Math.min(uiGridCtrl.grid.visibleRowCache.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
+            var rangeEnd = Math.min(rowCache.length, rowIndex + minRows + uiGridCtrl.grid.options.excessRows);
 
             newRange = [rangeStart, rangeEnd];
           }
           else {
-            var maxLen = uiGridCtrl.grid.visibleRowCache.length;
+            var maxLen = rowCache.length;
             newRange = [0, Math.max(maxLen, minRows + uiGridCtrl.grid.options.excessRows)];
           }
           
@@ -448,7 +451,7 @@
         var updateViewableRowRange = function(renderedRange) {
           // Slice out the range of rows from the data
           // var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
-          var rowArr = uiGridCtrl.grid.visibleRowCache.slice(renderedRange[0], renderedRange[1]);
+          var rowArr = uiGridCtrl.grid.renderContainers.body.rowCache.slice(renderedRange[0], renderedRange[1]);
 
           // Define the top-most rendered row
           uiGridCtrl.currentTopRow = renderedRange[0];

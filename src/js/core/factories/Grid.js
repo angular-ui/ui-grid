@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher',
-    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
+    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer) {
 
 /**
    * @ngdoc function
@@ -35,7 +35,14 @@ angular.module('ui.grid')
     this.rowBuilders = [];
     this.rowsProcessors = [];
     this.styleComputations = [];
-    this.visibleRowCache = [];
+
+    // this.visibleRowCache = [];
+
+    // Set of 'render' containers for this grid, which can render sets of rows
+    this.renderContainers = {};
+
+    // Create a 
+    this.renderContainers.body = new GridRenderContainer(this);
 
     this.cellValueGetterCache = {};
 
@@ -521,15 +528,35 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    var newVisibleRowCache = [];
+    var self = this;
+
+    //var newVisibleRowCache = [];
+
+    // Reset all the render container row caches
+    for (var i in self.renderContainers) {
+      var container = self.renderContainers[i];
+
+      container.rowCache.length = 0;
+    }
     
     rows.forEach(function (row) {
+      // If the row is visible
       if (row.visible) {
-        newVisibleRowCache.push(row);
+        // newVisibleRowCache.push(row);
+
+        // If the row has a container specified
+        if (typeof(row.renderContainer) !== 'undefined' && row.renderContainer) {
+          self.renderContainers[row.renderContainer].rowCache.push(row);
+        }
+        // If not, put it into the body container
+        else {
+          self.renderContainers.body.rowCache.push(row);
+        }
       }
     });
 
-    this.visibleRowCache = newVisibleRowCache;
+    // this.visibleRowCache = newVisibleRowCache;
+    //this.renderContainers.body.rowCache = newVisibleRowCache;
   };
 
 
@@ -650,7 +677,8 @@ angular.module('ui.grid')
     //   }
     // });
 
-    return this.visibleRowCache.length;
+    // return this.visibleRowCache.length;
+    return this.renderContainers.body.rowCache.length;
   };
 
   Grid.prototype.getCanvasHeight = function getCanvasHeight() {

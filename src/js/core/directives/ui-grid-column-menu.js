@@ -255,7 +255,12 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         uiGridCtrl.refreshRows();
         self.hideMenu();
       };
-    }
+    },
+    controller: ['$scope', function ($scope) {
+      var self = this;
+
+      self.menuItems = $scope.menuItems;
+    }]
   };
 
   return uiGridColumnMenu;
