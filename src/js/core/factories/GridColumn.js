@@ -135,7 +135,8 @@ angular.module('ui.grid')
     // Turn on filtering by default (it's disabled by default at the Grid level)
     self.enableFiltering = typeof(colDef.enableFiltering) !== 'undefined' ? colDef.enableFiltering : true;
 
-    self.menuItems = colDef.menuItems;
+    // self.menuItems = colDef.menuItems;
+    self.setPropertyOrDefault(colDef, 'menuItems', []);
 
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');

@@ -258,8 +258,10 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
     },
     controller: ['$scope', function ($scope) {
       var self = this;
-
-      self.menuItems = $scope.menuItems;
+      
+      $scope.$watch('menuItems', function (n, o) {
+        self.menuItems = n;
+      });
     }]
   };
 

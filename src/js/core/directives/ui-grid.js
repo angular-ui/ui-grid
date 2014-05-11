@@ -174,6 +174,8 @@
           });
       };
 
+      // TODO(c0bra): add a "refresh" method that refreshes both the rows and columns
+
       /* Sorting Methods */
       
 
