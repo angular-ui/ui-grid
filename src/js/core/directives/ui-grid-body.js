@@ -94,7 +94,7 @@
             newRange = [rangeStart, rangeEnd];
           }
           else {
-            var maxLen = rowCache.length;
+            var maxLen = uiGridCtrl.grid.rows.length;
             newRange = [0, Math.max(maxLen, minRows + uiGridCtrl.grid.options.excessRows)];
           }
           
@@ -104,6 +104,15 @@
 
         uiGridCtrl.redrawRows = function redrawRows() {
           uiGridCtrl.adjustRows(uiGridCtrl.prevScrollTop, uiGridCtrl.prevScrolltopPercentage);
+        };
+
+        uiGridCtrl.redrawColumns = function redrawColumns() {
+          uiGridCtrl.adjustColumns(uiGridCtrl.prevScrollLeft, uiGridCtrl.prevScrollleftPercentage);
+        };
+
+        uiGridCtrl.redraw = function redraw() {
+          uiGridCtrl.redrawRows();
+          uiGridCtrl.redrawColumns();
         };
 
         // Redraw the rows and columns based on our current scroll position
@@ -124,13 +133,17 @@
           uiGridCtrl.adjustColumns(scrollLeft, scrollPercentage);
 
           uiGridCtrl.prevScrollLeft = scrollLeft;
+          uiGridCtrl.prevScrollleftPercentage = scrollPercentage;
 
           $scope.grid.refreshCanvas();
         };
 
         uiGridCtrl.adjustColumns = function(scrollLeft, scrollPercentage) {
           var minCols = uiGridCtrl.grid.minColumnsToRender();
-          var maxColumnIndex = uiGridCtrl.grid.columns.length - minCols;
+
+          var columnCache = uiGridCtrl.grid.renderContainers.body.columnCache;
+          var maxColumnIndex = columnCache.length - minCols;
+
           uiGridCtrl.maxColumnIndex = maxColumnIndex;
 
           // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
@@ -146,7 +159,7 @@
           }
           
           var newRange = [];
-          if (uiGridCtrl.grid.columns.length > uiGridCtrl.grid.options.columnVirtualizationThreshold && uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth()) {
+          if (columnCache.length > uiGridCtrl.grid.options.columnVirtualizationThreshold && uiGridCtrl.grid.getCanvasWidth() > uiGridCtrl.grid.getViewportWidth()) {
             // Have we hit the threshold going down?
             if (uiGridCtrl.prevScrollLeft < scrollLeft && colIndex < uiGridCtrl.prevColumnScrollIndex + uiGridCtrl.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
               return;
@@ -157,7 +170,7 @@
             }
 
             var rangeStart = Math.max(0, colIndex - uiGridCtrl.grid.options.excessColumns);
-            var rangeEnd = Math.min(uiGridCtrl.grid.columns.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
+            var rangeEnd = Math.min(columnCache.length, colIndex + minCols + uiGridCtrl.grid.options.excessColumns);
 
             newRange = [rangeStart, rangeEnd];
           }
@@ -422,9 +435,9 @@
         }
 
         // TODO(c0bra): Scroll the viewport when the up and down arrow keys are used? This would interfere with cell navigation
-        $elm.bind('keydown', function(evt, args) {
+        // $elm.bind('keydown', function(evt, args) {
 
-        });
+        // });
 
         // Unbind all $watches and events on $destroy
         $elm.bind('$destroy', function() {
@@ -462,7 +475,8 @@
         // Method for updating the visible columns
         var updateViewableColumnRange = function(renderedRange) {
           // Slice out the range of rows from the data
-          var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
+          // var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
+          var columnArr = uiGridCtrl.grid.renderContainers.body.columnCache.slice(renderedRange[0], renderedRange[1]);
 
           // Define the left-most rendered columns
           uiGridCtrl.currentFirstColumn = renderedRange[0];

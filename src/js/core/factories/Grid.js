@@ -34,6 +34,7 @@ angular.module('ui.grid')
     this.columnBuilders = [];
     this.rowBuilders = [];
     this.rowsProcessors = [];
+    this.columnsProcessors = [];
     this.styleComputations = [];
 
     // this.visibleRowCache = [];
@@ -77,8 +78,8 @@ angular.module('ui.grid')
    * additional properties to the column.
    * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
    */
-  Grid.prototype.registerColumnBuilder = function registerColumnBuilder(columnsProcessor) {
-    this.columnBuilders.push(columnsProcessor);
+  Grid.prototype.registerColumnBuilder = function registerColumnBuilder(columnBuilder) {
+    this.columnBuilders.push(columnBuilder);
   };
 
   /**
@@ -87,7 +88,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description When the build creates rows from gridOptions.data, the rowBuilders will be called to add
    * additional properties to the row.
-   * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
+   * @param {function(colDef, col, gridOptions)} rowBuilder function to be called
    */
   Grid.prototype.registerRowBuilder = function registerRowBuilder(rowBuilder) {
     this.rowBuilders.push(rowBuilder);
@@ -313,10 +314,17 @@ angular.module('ui.grid')
       self.rows.length = 0;
     }
     
-    return $q.when(self.processRowsProcessors(self.rows))
+    var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
       });
+
+    var p2 = $q.when(self.processColumnsProcessors(self.columns))
+      .then(function (renderableColumns) {
+        return self.setVisibleColumns(renderableColumns);
+      });
+
+    return $q.all([p1, p2]);
   };
 
   Grid.prototype.getDeletedRows = function(oldRows, newRows) {
@@ -559,6 +567,110 @@ angular.module('ui.grid')
     //this.renderContainers.body.rowCache = newVisibleRowCache;
   };
 
+  Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor) {
+    if (!angular.isFunction(processor)) {
+      throw 'Attempt to register non-function rows processor: ' + processor;
+    }
+
+    this.columnsProcessors.push(processor);
+  };
+
+  Grid.prototype.removeColumnsProcessor = function removeColumnsProcessor(processor) {
+    var idx = this.columnsProcessors.indexOf(processor);
+
+    if (typeof(idx) !== 'undefined' && idx !== undefined) {
+      this.columnsProcessors.splice(idx, 1);
+    }
+  };
+
+  Grid.prototype.processColumnsProcessors = function processColumnsProcessors(renderableColumns) {
+    var self = this;
+
+    // Create a shallow copy of the rows so that we can safely sort them without altering the original grid.rows sort order
+    var myRenderableColumns = renderableColumns.slice(0);
+
+    // Return myRenderableRows with no processing if we have no rows processors 
+    if (self.columnsProcessors.length === 0) {
+      return $q.when(myRenderableColumns);
+    }
+  
+    // Counter for iterating through rows processors
+    var i = 0;
+    
+    // Promise for when we're done with all the processors
+    var finished = $q.defer();
+
+    // This function will call the processor in self.rowsProcessors at index 'i', and then
+    //   when done will call the next processor in the list, using the output from the processor
+    //   at i as the argument for 'renderedRowsToProcess' on the next iteration.
+    //  
+    //   If we're at the end of the list of processors, we resolve our 'finished' callback with
+    //   the result.
+    function startProcessor(i, renderedColumnsToProcess) {
+      // Get the processor at 'i'
+      var processor = self.columnsProcessors[i];
+
+      // Call the processor, passing in the rows to process and the current columns
+      //   (note: it's wrapped in $q.when() in case the processor does not return a promise)
+      return $q.when( processor.call(self, renderedColumnsToProcess, self.rows) )
+        .then(function handleProcessedRows(processedColumns) {
+          // Check for errors
+          if (!processedColumns) {
+            throw "Processor at index " + i + " did not return a set of renderable rows";
+          }
+
+          if (!angular.isArray(processedColumns)) {
+            throw "Processor at index " + i + " did not return an array";
+          }
+
+          // Processor is done, increment the counter
+          i++;
+
+          // If we're not done with the processors, call the next one
+          if (i <= self.columnsProcessors.length - 1) {
+            return startProcessor(i, myRenderableColumns);
+          }
+          // We're done! Resolve the 'finished' promise
+          else {
+            finished.resolve(myRenderableColumns);
+          }
+        });
+    }
+
+    // Start on the first processor
+    startProcessor(0, myRenderableColumns);
+    
+    return finished.promise;
+  };
+
+  Grid.prototype.setVisibleColumns = function setVisibleColumns(columns) {
+    var self = this;
+
+    // Reset all the render container row caches
+    for (var i in self.renderContainers) {
+      var container = self.renderContainers[i];
+
+      container.columnCache.length = 0;
+    }
+    
+    columns.forEach(function (column) {
+      // If the column is visible
+      if (column.visible) {
+        // If the column has a container specified
+        if (typeof(column.renderContainer) !== 'undefined' && column.renderContainer) {
+          self.renderContainers[column.renderContainer].columnCache.push(column);
+        }
+        // If not, put it into the body container
+        else {
+          self.renderContainers.body.columnCache.push(column);
+        }
+      }
+    });
+
+    // this.visibleRowCache = newVisibleRowCache;
+    //this.renderContainers.body.rowCache = newVisibleRowCache;
+  };
+
 
   Grid.prototype.setRenderedRows = function setRenderedRows(newRows) {
     this.renderedRows.length = newRows.length;
@@ -679,6 +791,19 @@ angular.module('ui.grid')
 
     // return this.visibleRowCache.length;
     return this.renderContainers.body.rowCache.length;
+  };
+
+  Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {
+    // var count = 0;
+
+    // this.rows.forEach(function (row) {
+    //   if (row.visible) {
+    //     count++;
+    //   }
+    // });
+
+    // return this.visibleRowCache.length;
+    return this.renderContainers.body.columnCache.length;
   };
 
   Grid.prototype.getCanvasHeight = function getCanvasHeight() {

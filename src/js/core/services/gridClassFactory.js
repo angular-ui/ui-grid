@@ -52,6 +52,14 @@
             return rows;
           });
 
+          grid.registerColumnsProcessor(function allColumnsVisible(columns) {
+            columns.forEach(function (column) {
+              column.visible = true;
+            });
+
+            return columns;
+          });
+
           if (grid.options.enableFiltering) {
             grid.registerRowsProcessor(grid.searchRows);
           }

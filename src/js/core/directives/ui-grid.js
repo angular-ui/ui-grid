@@ -163,7 +163,7 @@
         return $scope.grid.getCellValue(row, col);
       };
 
-      $scope.grid.refreshRows = self.refreshRows = function () {
+      $scope.grid.refreshRows = self.refreshRows = function refreshRows() {
         return self.grid.processRowsProcessors(self.grid.rows)
           .then(function (renderableRows) {
             self.grid.setVisibleRows(renderableRows);
@@ -174,7 +174,21 @@
           });
       };
 
-      // TODO(c0bra): add a "refresh" method that refreshes both the rows and columns
+      $scope.grid.refresh = self.refresh = function refresh() {
+        var p1 = self.grid.processRowsProcessors(self.grid.rows).then(function (renderableRows) {
+          self.grid.setVisibleRows(renderableRows);
+        });
+
+        var p2 = self.grid.processColumnProcessors(self.grid.columns).then(function (renderableColumns) {
+          self.grid.setVisibleColumns(renderableColumns);
+        });
+        
+        return $q.all([p1, p2], function () {
+          self.redraw();
+
+          self.refreshCanvas();
+        });
+      };
 
       /* Sorting Methods */
       
