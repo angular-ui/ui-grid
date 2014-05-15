@@ -17,7 +17,9 @@ function ngGridCsvExportPlugin (opts) {
         self.services = services;
 
         function showDs() {
-        	var separator = opts.separator ? opts.separator : ','; 
+        	var separator = opts.separator ? opts.separator : ',';
+        	var filename = opts.filename ? opts.filename : "Export.csv";
+        	
             var keys = [];
             for (var f in grid.config.columnDefs) { 
                 if (grid.config.columnDefs.hasOwnProperty(f))
@@ -72,7 +74,7 @@ function ngGridCsvExportPlugin (opts) {
             var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
             csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
+            csvDataLinkHtml += "\" download=\"" + filename + "\">CSV Export</a></br></span>" ;
             fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
