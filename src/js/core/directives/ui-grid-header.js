@@ -183,7 +183,7 @@
                     // Remove this element from the percent array so it's not processed below
                     asterisksArray.splice(i, 1);
                   }
-                  else  if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
+                  else if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
                     colWidth = column.colDef.maxWidth;
 
                     remainingWidth = remainingWidth - colWidth;
