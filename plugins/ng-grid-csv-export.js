@@ -19,6 +19,7 @@ function ngGridCsvExportPlugin (opts) {
         function showDs() {
             var separator = opts.separator ? opts.separator : ',';
             var filename = opts.filename ? opts.filename : "Export.csv";
+            var linkHtmlTemplate = opts.linkHtmlTemplate ? opts.linkHtmlTemplate : "CSV Export";
             var keys = [];
             for (var f in grid.config.columnDefs) { 
                 if (grid.config.columnDefs.hasOwnProperty(f))
@@ -71,9 +72,9 @@ function ngGridCsvExportPlugin (opts) {
             var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
             if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
             var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
-            csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
+            csvDataLinkHtml += "<a href=\"data:text/csv;charset=UTF-8,";
             csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += "\" download=\"" + filename + "\">CSV Export</a></br></span>" ;
+            csvDataLinkHtml += "\" download=\"" + filename + "\">" + linkHtmlTemplate + "</a></span>" ;
             fp.append(csvDataLinkHtml);
         }
         setTimeout(showDs, 0);
