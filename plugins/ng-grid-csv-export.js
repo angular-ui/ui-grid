@@ -17,9 +17,8 @@ function ngGridCsvExportPlugin (opts) {
         self.services = services;
 
         function showDs() {
-        	var separator = opts.separator ? opts.separator : ',';
-        	var filename = opts.filename ? opts.filename : "Export.csv";
-        	
+            var separator = opts.separator ? opts.separator : ',';
+            var filename = opts.filename ? opts.filename : "Export.csv";
             var keys = [];
             for (var f in grid.config.columnDefs) { 
                 if (grid.config.columnDefs.hasOwnProperty(f))
