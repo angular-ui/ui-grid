@@ -17,6 +17,7 @@ function ngGridCsvExportPlugin (opts) {
         self.services = services;
 
         function showDs() {
+        	var separator = opts.separator ? opts.separator : ','; 
             var keys = [];
             for (var f in grid.config.columnDefs) { 
                 if (grid.config.columnDefs.hasOwnProperty(f))
@@ -46,7 +47,7 @@ function ngGridCsvExportPlugin (opts) {
                 return newStr + "\n";
             }
             for (var k in keys) {
-                csvData += '"' + csvStringify(keys[k]) + '",';
+                csvData += '"' + csvStringify(keys[k]) + '"' + separator;
             }
             csvData = swapLastCommaForNewline(csvData);
             var gridData = grid.data;
@@ -61,7 +62,7 @@ function ngGridCsvExportPlugin (opts) {
                         curCellRaw = self.services.UtilityService.evalProperty(gridData[gridRow], keys[k]);
                     }
 
-                    csvData += '"' + csvStringify(curCellRaw) + '",';
+                    csvData += '"' + csvStringify(curCellRaw) + '"' + separator;
                 }
                 csvData = swapLastCommaForNewline(csvData);
             }
