@@ -2,6 +2,8 @@
 
 # CURRENT
 
+1. [TODO] - header-cell and thus .ui-grid-vertical-bar not filling the full vertical space when a column has filtering disabled but its neighbors DON'T.
+
 1. [PERF] - Try to improve horizontal scroll performance with cellTemplates
 1. [TODO] - remove gridBorderWidth on column menu top-left, top-right
 1. [TODO] - Try using a $cacheFactory for the cellValueGetterCache.
