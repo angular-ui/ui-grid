@@ -4,11 +4,16 @@
 
 # Render containers
 
-1. [TODO] - uiGridRow needs to take render container so it knows which column cache to look in
 1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the viewports
    a controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
    - Render containers need to have max and min width/height values, and they need to be able to take percentages (i.e. make the left pinned container 30% of the total grid 
-   width).
+     width).
+   - Need to somehow keep pinned viewports from listening to scroll events that they should ignore, like left/right-pinned containers shouldn't scroll left/right when the
+     body scrolls, but it DOES need to listen to vertical scroll events.
+     - I guess we can just add attributes like `bind-scroll-vertical` + `bind-scroll-horizontal` to make them both fire those events and listen for them... That ought to be
+       the RIGHT thing (yay).
+
+1. [TODO] - uiGridRow needs to take render container so it knows which column cache to look in
 1. [TODO] - Within column resizer we need to only account for columns within OUR render container, which means we need to be able to access the contain details from its    
    controller, which will be above us.
 
