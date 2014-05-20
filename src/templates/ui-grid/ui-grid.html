@@ -56,7 +56,11 @@
 
   <div ui-grid-header></div>
 
-  <div ui-grid-body></div>
+  <div ui-grid-body>
+    <div class="ui-grid-no-row-overlay" ng-show="!grid.renderedRows.length">
+      <span>No Rows</span>
+    </div>
+  </div>
 
   <div ui-grid-footer></div>
 

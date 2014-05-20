@@ -6,9 +6,6 @@
       return {
         // priority: 1000,
         require: '^uiGrid',
-        scope: {
-          viewport: '@'
-        },
         link: function($scope, $elm, $attrs, uiGridCtrl) {
           // if (uiGridCtrl === undefined) {
           //   throw new Error('[ui-grid-body] uiGridCtrl is undefined!');
@@ -16,7 +13,7 @@
 
           $log.debug('viewport link', $scope.viewport);
 
-          $scope.uiGridCtrl = uiGridCtrl;
+          $scope.grid = uiGridCtrl.grid;
 
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;
@@ -48,9 +45,6 @@
         },
         controller: ['$scope', function ($scope) {
           var self = this;
-
-          // Set the row and column caches for this viewport
-          this.renderedRows = $scope.uiGridCtrl.grid.renderContainers[$scope.viewport].rowCache;
         }]
       };
     }

@@ -5,6 +5,7 @@
     function($log, $document, $timeout, uiGridConstants, GridUtil) {
     return {
       replace: true,
+      transclude: true,
       // priority: 1000,
       templateUrl: 'ui-grid/ui-grid-body',
       require: '?^uiGrid',
