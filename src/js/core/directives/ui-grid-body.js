@@ -507,7 +507,7 @@
           //  That will be the offset for the columns as we scroll horizontally.
           var hiddenColumnsWidth = 0;
           for (var i = 0; i < uiGridCtrl.currentFirstColumn; i++) {
-            hiddenColumnsWidth += $scope.grid.columns[i].drawnWidth;
+            hiddenColumnsWidth += uiGridCtrl.grid.renderContainers.body.columnCache[i].drawnWidth;
           }
 
           uiGridCtrl.columnOffset = hiddenColumnsWidth;
