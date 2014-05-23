@@ -5,7 +5,7 @@
 
   module.directive('uiGrid', ['$log', 'GridRenderContainer', function ($log, GridRenderContainer) {
     return {
-      priority: 0,
+      priority: -1,
       require: 'uiGrid',
       scope: false,
       compile: function () {
@@ -48,6 +48,7 @@
             uiGridCtrl.grid.renderContainers.right = new GridRenderContainer(uiGridCtrl.grid);
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            uiGridCtrl.body.append(angular.element('<div ui-grid-render-container></div>'));
           }
         };
       }

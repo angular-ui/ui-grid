@@ -16,8 +16,6 @@
 
           $log.debug('viewport link', $scope.viewport);
 
-          $scope.uiGridCtrl = uiGridCtrl;
-
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = $elm[0].scrollLeft;
@@ -45,13 +43,7 @@
               uiGridCtrl.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
           });
-        },
-        controller: ['$scope', function ($scope) {
-          var self = this;
-
-          // Set the row and column caches for this viewport
-          this.renderedRows = $scope.uiGridCtrl.grid.renderContainers[$scope.viewport].rowCache;
-        }]
+        }
       };
     }
   ]);
