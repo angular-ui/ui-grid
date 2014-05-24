@@ -13,8 +13,6 @@
 
           $log.debug('viewport link', $scope.viewport);
 
-          $scope.grid = uiGridCtrl.grid;
-
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = $elm[0].scrollLeft;
@@ -42,10 +40,7 @@
               uiGridCtrl.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
           });
-        },
-        controller: ['$scope', function ($scope) {
-          var self = this;
-        }]
+        }
       };
     }
   ]);

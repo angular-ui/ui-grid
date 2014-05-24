@@ -7,6 +7,11 @@ angular.module('ui.grid')
     
     this.rowCache = [];
     this.columnCache = [];
+
+    this.visibleRowCache = [];
+    this.visibleColumnCache = [];
+
+    this.prevScrollArgs = null;
   }
 
   // GridRenderContainer.prototype.addRenderable = function addRenderable(renderable) {
@@ -16,6 +21,9 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.reset = function reset() {
     this.rowCache.length = 0;
     this.columnCache.length = 0;
+
+    this.visibleColumnCache.length = 0;
+    this.visibleRowCache.length = 0;
   };
 
   // TODO(c0bra): calculate size?? Should this be in a stackable directive?

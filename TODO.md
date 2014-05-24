@@ -4,6 +4,9 @@
 
 # Render containers
 
+* Maybe we need something like https://github.com/daniellmb/MinPubSub for grid-specific pub-sub. Stupid $emit/$broadcast isn't working. You can't $on() to events that
+  are broadcast at the grid level.
+
 1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the viewports
    a controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
    - Render containers need to have max and min width/height values, and they need to be able to take percentages (i.e. make the left pinned container 30% of the total grid 
@@ -12,6 +15,13 @@
      body scrolls, but it DOES need to listen to vertical scroll events.
      - I guess we can just add attributes like `bind-scroll-vertical` + `bind-scroll-horizontal` to make them both fire those events and listen for them... That ought to be
        the RIGHT thing (yay).
+   - Create a registry of functions that alter the grid viewport's dimensions. For instance, a left-pinned render container will need to substract its own width from the width
+     of the main (body) viewport. Basically the body's viewport has to resize around any other viewport inside the main render area, the scrollbar-box or whatever you want to call it.
+
+  ** uiGridRenderContainer **
+  - Needs to register to the specific renderContainer to get its rows and columns
+  - Needs to find its canvas, and its viewport. Or maybe the render container IS a viewport. That's probably easier
+  - Needs to get its canvas height
 
 1. [TODO] - uiGridRow needs to take render container so it knows which column cache to look in
 1. [TODO] - Within column resizer we need to only account for columns within OUR render container, which means we need to be able to access the contain details from its    

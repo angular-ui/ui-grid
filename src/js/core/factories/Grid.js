@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
-    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer', 'GridPubSub',
+    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer, GridPubSub) {
 
 /**
    * @ngdoc function
@@ -68,6 +68,8 @@ angular.module('ui.grid')
     this.renderedColumns = [];
 
     this.events = new GridEvents(this);
+
+    this.pubsub = new GridPubSub(this.id);
   };
 
   /**

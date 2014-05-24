@@ -20,6 +20,9 @@
         // Disable animations on the grid body so ngAnimate, if present, doesn't ruin performance by toggling classes on all the elements
         GridUtil.disableAnimations($elm);
 
+        // Store the body in the controller
+        uiGridCtrl.body = $elm;
+
         // Stick the canvas in the controller
         uiGridCtrl.canvas = angular.element( $elm[0].getElementsByClassName('ui-grid-canvas')[0] );
         // uiGridCtrl.viewport = elm; //angular.element( elm[0].getElementsByClassName('ui-grid-viewport')[0] );
@@ -523,6 +526,8 @@
 
           return null;
         };
+
+        uiGridCtrl.fireEvent('body-post-link');
       }
     };
   }]);
