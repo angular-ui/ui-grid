@@ -6,7 +6,7 @@
     return {
       replace: true,
       templateUrl: 'ui-grid/uiGridRenderContainer',
-      require: '?^uiGrid',
+      require: '^uiGrid',
       scope: {
         container: '=uiGridRenderContainer',
         bindScrollLeft: '=',

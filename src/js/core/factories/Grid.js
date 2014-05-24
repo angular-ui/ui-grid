@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer', 'GridPubSub',
-    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer, GridPubSub) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
+    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer) {
 
 /**
    * @ngdoc function
@@ -36,6 +36,7 @@ angular.module('ui.grid')
     this.rowsProcessors = [];
     this.columnsProcessors = [];
     this.styleComputations = [];
+    this.viewportAdjusters = [];
 
     // this.visibleRowCache = [];
 
@@ -68,8 +69,6 @@ angular.module('ui.grid')
     this.renderedColumns = [];
 
     this.events = new GridEvents(this);
-
-    this.pubsub = new GridPubSub(this.id);
   };
 
   /**
@@ -389,6 +388,8 @@ angular.module('ui.grid')
    * @name registerStyleComputation
    * @methodOf ui.grid.class:Grid
    * @description registered a styleComputation function
+   * 
+   * If the function returns a value it will be appended into the grid's `<style>` block
    * @param {function($scope)} styleComputation function
    */
   Grid.prototype.registerStyleComputation = function registerStyleComputation(styleComputationInfo) {
@@ -696,6 +697,9 @@ angular.module('ui.grid')
    */
   Grid.prototype.buildStyles = function buildStyles($scope) {
     var self = this;
+    
+    self.customStyles = '';
+
     self.styleComputations
       .sort(function(a, b) {
         if (a.priority === null) { return 1; }
@@ -704,7 +708,11 @@ angular.module('ui.grid')
         return a.priority - b.priority;
       })
       .forEach(function (compInfo) {
-        compInfo.func.call(self, $scope);
+        var ret = compInfo.func.call(self, $scope);
+
+        if (angular.isString(ret)) {
+          self.customStyles += '\n' + ret;
+        }
       });
   };
 
@@ -746,18 +754,25 @@ angular.module('ui.grid')
       bodyHeight = bodyHeight + this.horizontalScrollbarHeight;
     }
 
+    $log.debug('bodyHeight', bodyHeight);
+
     return bodyHeight;
   };
 
   // NOTE: viewport drawable height is the height of the grid minus the header row height (including any border)
   // TODO(c0bra): account for footer height
   Grid.prototype.getViewportHeight = function getViewportHeight() {
+    var self = this;
+
     var viewPortHeight = this.gridHeight - this.headerHeight;
 
     // Account for native horizontal scrollbar, if present
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
       viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
     }
+
+    var adjustment = self.getViewportAdjustment();
+    // TODO: update height based on height prop in adjustment
 
     return viewPortHeight;
   };
@@ -780,6 +795,30 @@ angular.module('ui.grid')
     }
 
     return viewPortWidth;
+  };
+
+  Grid.prototype.registerViewportAdjuster = function registerViewportAdjuster(func) {
+    this.viewportAdjusters.push(func);
+  };
+
+  Grid.prototype.removeViewportAdjuster = function registerViewportAdjuster(func) {
+    var idx = this.viewportAdjusters.indexOf(func);
+
+    if (typeof(idx) !== 'undefined' && idx !== undefined) {
+      this.viewportAdjusters.splice(idx, 1);
+    }
+  };
+
+  Grid.prototype.getViewportAdjustment = function getViewportAdjustment() {
+    var self = this;
+
+    var adjustment = { height: 0, width: 0 };
+
+    self.viewportAdjusters.forEach(function (func) {
+      adjustment = func.call(this, adjustment);
+    });
+
+    return adjustment;
   };
 
   Grid.prototype.getVisibleRowCount = function getVisibleRowCount() {

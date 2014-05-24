@@ -46,11 +46,67 @@
 
             uiGridCtrl.grid.renderContainers.left = new GridRenderContainer(uiGridCtrl.grid);
             uiGridCtrl.grid.renderContainers.right = new GridRenderContainer(uiGridCtrl.grid);
-          },
-          post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            uiGridCtrl.body.append(angular.element('<div ui-grid-render-container></div>'));
           }
         };
+      }
+    };
+  }]);
+
+  module.directive('uiGridBody', ['$log', '$compile', function ($log, $compile) {
+    return {
+      link: function ($scope, $elm, $attrs) {
+
+        var left = angular.element('<div ui-grid-pinned-container="\'left\'"></div>');
+        $elm.append(left);
+        $compile(left)($scope);
+
+        // var right = angular.element('<div ui-grid-pinned-container="\'right\'"></div>');
+        // $compile(right)($scope);
+        // $elm.append(right);
+      }
+    };
+  }]);
+
+  module.directive('uiGridPinnedContainer', ['$log', function ($log) {
+    return {
+      replace: true,
+      template: '<div><div ui-grid-render-container="side" class="ui-grid-pinned-container left"></div></div>',
+      scope: {
+        side: '=uiGridPinnedContainer'
+      },
+      require: '^uiGrid',
+      link: function ($scope, $elm, $attrs, uiGridCtrl) {
+        $log.debug('ui-grid-pinned-container link');
+
+        var grid = uiGridCtrl.grid;
+
+        function updateContainerDimensions() {
+          $log.debug('update ' + $scope.side + ' dimensions');
+
+          var ret = '';
+
+          // Column containers
+          if ($scope.side === 'left' || $scope.side === 'right') {
+            var cols = grid.renderContainers[$scope.side].visibleColumnCache;
+            var width = 0;
+            for (var i in cols) {
+              var col = cols[i];
+              width += col.drawnWidth;
+            }
+
+            // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
+
+            ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: 150px; height: ' + grid.getViewportHeight() + 'px; } ';
+          }
+
+          return ret;
+        }
+
+        // Register style computation to adjust for columns in `side`'s render container
+        grid.registerStyleComputation({
+          priority: 6,
+          func: updateContainerDimensions
+        });
       }
     };
   }]);

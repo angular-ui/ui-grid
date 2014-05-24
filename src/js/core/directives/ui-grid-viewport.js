@@ -4,14 +4,9 @@
   angular.module('ui.grid').directive('uiGridViewport', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil',
     function($log, $document, $timeout, uiGridConstants, GridUtil) {
       return {
-        // priority: 1000,
         require: '^uiGrid',
         link: function($scope, $elm, $attrs, uiGridCtrl) {
-          // if (uiGridCtrl === undefined) {
-          //   throw new Error('[ui-grid-body] uiGridCtrl is undefined!');
-          // }
-
-          $log.debug('viewport link', $scope.viewport);
+          $log.debug('viewport link');
 
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;

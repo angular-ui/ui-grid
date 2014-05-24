@@ -1,6 +1,6 @@
 <div class="ui-grid-body">
   <div class="ui-grid-scrollbar-box">
-    <div class="ui-grid-viewport">
+    <div ui-grid-viewport class="ui-grid-viewport">
       <div class="ui-grid-canvas">
         <div ng-repeat="row in grid.renderedRows track by $index" class="ui-grid-row" ng-style="rowStyle($index)">
           <div ui-grid-row="row" row-index="row.index"></div>
