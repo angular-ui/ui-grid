@@ -18,7 +18,7 @@
                 //alert(this.context.col.displayName);
                 this.context.col.renderContainer = 'left';
 
-                uiGridCtrl.refreshRows();
+                uiGridCtrl.refresh();
                 // this.hideMenu();
               }
             };
@@ -29,7 +29,7 @@
                 //alert(this.context.col.displayName);
                 this.context.col.renderContainer = 'right';
                 
-                uiGridCtrl.refreshRows();
+                uiGridCtrl.refresh();
                 // this.hideMenu();
               }
             };
@@ -80,6 +80,8 @@
 
         var grid = uiGridCtrl.grid;
 
+        var myWidth = 0;
+
         function updateContainerDimensions() {
           $log.debug('update ' + $scope.side + ' dimensions');
 
@@ -94,17 +96,26 @@
               width += col.drawnWidth;
             }
 
+            myWidth = width;
+
             // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
 
-            ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: 150px; height: ' + grid.getViewportHeight() + 'px; } ';
+            ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
           }
 
           return ret;
         }
 
+         grid.registerViewportAdjuster(function (adjustment) {
+          // Subtract our own width
+          adjustment.width -= myWidth;
+
+          return adjustment;
+        });
+
         // Register style computation to adjust for columns in `side`'s render container
         grid.registerStyleComputation({
-          priority: 6,
+          priority: 15,
           func: updateContainerDimensions
         });
       }

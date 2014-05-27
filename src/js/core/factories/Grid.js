@@ -754,8 +754,6 @@ angular.module('ui.grid')
       bodyHeight = bodyHeight + this.horizontalScrollbarHeight;
     }
 
-    $log.debug('bodyHeight', bodyHeight);
-
     return bodyHeight;
   };
 
@@ -772,17 +770,26 @@ angular.module('ui.grid')
     }
 
     var adjustment = self.getViewportAdjustment();
-    // TODO: update height based on height prop in adjustment
+    
+    viewPortHeight = viewPortHeight + adjustment.height;
+
+    $log.debug('viewPortHeight', viewPortHeight);
 
     return viewPortHeight;
   };
 
   Grid.prototype.getViewportWidth = function getViewportWidth() {
+    var self = this;
+
     var viewPortWidth = this.gridWidth;
 
     if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
       viewPortWidth = viewPortWidth - this.verticalScrollbarWidth;
     }
+
+    var adjustment = self.getViewportAdjustment();
+    
+    viewPortWidth = viewPortWidth + adjustment.width;
 
     return viewPortWidth;
   };

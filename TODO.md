@@ -4,9 +4,14 @@
 
 # Render containers
 
-* Maybe we need something like https://github.com/daniellmb/MinPubSub for grid-specific pub-sub. Stupid $emit/$broadcast isn't working. You can't $on() to events that
-  are broadcast at the grid level.
-
+1. [BUG] - The pinning menu actions ARE putting the columns into the renderContainer caches, but it's not immediately updating (re-rendering) the grid. If I then scroll I
+   see the column is gone, but it's also still accounts for the column's width when setting the canvas width (so two separate bugs).
+1. [IDEA] - Should grid have an `addRenderContainer` method? Rather than just popping them in to the renderContainers properties with no validation?
+1. [NOTE] - We can add headerHeight back into the left/right-pinned containers if we don't want a scrollbar at the bottom (we probably don't).
+1. [NOTE] - We probably need getAdjustedViewportWidth/Height() methods, the idea being that the normal methods return the full width/height and the others return the adjusted value.
+   The pinned containers will need the FULL value so they can fill out the body's width or height based on which side they're pinned to, and then the viewport will use the adjusted
+   value to render smaller to make room for the other one.
+1. [TODO] - Main viewport will need top/left CSS positioning values to adjust for the left/top-pinned containers (right?)
 1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the viewports
    a controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
    - Render containers need to have max and min width/height values, and they need to be able to take percentages (i.e. make the left pinned container 30% of the total grid 
@@ -17,6 +22,9 @@
        the RIGHT thing (yay).
    - Create a registry of functions that alter the grid viewport's dimensions. For instance, a left-pinned render container will need to substract its own width from the width
      of the main (body) viewport. Basically the body's viewport has to resize around any other viewport inside the main render area, the scrollbar-box or whatever you want to call it.
+     - Almost done, just need to split the functionality out so there are "normal" methods and "adjusted" methods.
+   - Need to flesh out update() method in ui-grid-render-container to update the renderContainer canvas/viewport styles.
+     - i.e. canvas width = sum of columnCache widths, canvas height = sum of rowCache heights
 
   ** uiGridRenderContainer **
   - Needs to register to the specific renderContainer to get its rows and columns

@@ -69,12 +69,14 @@
             uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
           }
         });
-
-        function update() {
-
-        }
-
+        
         // TODO(c0bra): Handle resizing the inner canvas based on the number of elements
+        function update() {
+          // TODO(c0bra): set canvas width based on sum of columnCache widths
+
+          // TODO(c0bra): set viewport vidth based on sum of visibleColumnCache widths, up to max-width
+        }
+        
         uiGridCtrl.grid.registerStyleComputation({
           priority: 6,
           func: update

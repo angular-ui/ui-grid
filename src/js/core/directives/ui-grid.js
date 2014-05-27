@@ -145,7 +145,15 @@
         if (self.header) {
           // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
           $timeout(function() {
+            var oldHeaderHeight = self.grid.headerHeight;
             self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+
+            // Rebuild styles if the header height has changed
+            //   The header height is used in body/viewport calculations and those are then used in other styles so we need it to be available
+            if (buildStyles && oldHeaderHeight !== self.grid.headerHeight) {
+              self.grid.buildStyles($scope);
+            }
+
             p.resolve();
           });
         }
@@ -179,12 +187,12 @@
           self.grid.setVisibleRows(renderableRows);
         });
 
-        var p2 = self.grid.processColumnProcessors(self.grid.columns).then(function (renderableColumns) {
+        var p2 = self.grid.processColumnsProcessors(self.grid.columns).then(function (renderableColumns) {
           self.grid.setVisibleColumns(renderableColumns);
         });
         
         return $q.all([p1, p2], function () {
-          self.redraw();
+          self.redrawInPlace();
 
           self.refreshCanvas();
         });
