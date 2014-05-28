@@ -417,6 +417,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     origIndex--;
                 }
                 indexMap[origIndex] = i;
+            } else if (ngCol.isAggCol && ngCol.visible){ // aggregate columns are 25px in length. 
+                totalWidth += 25;
             }
         });
 
