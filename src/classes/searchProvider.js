@@ -41,7 +41,7 @@
                         f = $filter(s[0]);
                     }
                     if (pVal !== null && pVal !== undefined) {
-                        if (typeof f === "function") {
+                        if (typeof f === "function" && s !== null && s[1] !== undefined) {
                             // Have to slice off the quotes the parser would have removed
                             var filterRes = f(pVal, s[1].slice(1,-1)).toString();
                             result = condition.regex.test(filterRes);
