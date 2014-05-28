@@ -576,6 +576,23 @@ describe('directives', function () {
                     scope.$digest();
                     expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 5');
                 });
+
+                it('should find values filtered through a $filter without parameters', function() {
+                    var element = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope.gridOptions.columnDefs[1].cellFilter = 'date';
+                    $linker(element)(scope);
+                    scope.$digest();
+
+                    // verify everything is right
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = '-13-';
+                    scope.$digest();
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 5');
+                });
             });
 
             describe('selectionProvider', function () {
