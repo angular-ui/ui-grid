@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/29/2014 10:21
+* Compiled At: 05/29/2014 17:52
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2585,6 +2585,38 @@ var ngSearchProvider = function ($scope, grid, $filter) {
         return fieldMap;
     };
 
+
+    var evaluateCellFilter = function(condition, column, propertyValue) {
+        var result = false,
+            filter = null,
+            cellFilterValue = null;
+
+        if (propertyValue === null || propertyValue === undefined) {
+            return false;
+        }
+
+        if (column && column.cellFilter) {
+            cellFilterValue = column.cellFilter.split(':');
+            filter = $filter(cellFilterValue[0]);
+        }
+
+        if (propertyValue !== null && propertyValue !== undefined) {
+            if (typeof filter === "function") {
+                var filterParam, filterResult;
+                if (cellFilterValue[1] !== undefined) {
+                    // remove single or double quotes, if any
+                    filterParam = cellFilterValue[1].replace(/['"]/g, '');
+                }
+
+                filterResult = filter(propertyValue, filterParam).toString();
+                result = condition.regex.test(filterResult);
+            } else {
+                result = condition.regex.test(propertyValue.toString());
+            }
+        }
+        return result;
+    };
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -2597,28 +2629,12 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                 if(typeof pVal === 'object' && !(pVal instanceof Date)) {
                     var objectFieldMap = convertToFieldMap(c);
                     result = searchEntireRow(condition, pVal, objectFieldMap);
-                    if (result) {
-                        return true;
-                    }
                 } else {
-                    var f = null,
-                        s = null;
-                    if (c && c.cellFilter) {
-                        s = c.cellFilter.split(':');
-                        f = $filter(s[0]);
-                    }
-                    if (pVal !== null && pVal !== undefined) {
-                        if (typeof f === "function") {
-                            // Have to slice off the quotes the parser would have removed
-                            var filterRes = f(pVal, s[1].slice(1,-1)).toString();
-                            result = condition.regex.test(filterRes);
-                        } else {
-                            result = condition.regex.test(pVal.toString());
-                        }
-                        if (result) {
-                            return true;
-                        }
-                    }
+                    result = evaluateCellFilter(condition, c, pVal);
+                }
+
+                if (result) {
+                    return true;
                 }
             }
         }

@@ -530,6 +530,97 @@ describe('directives', function () {
                     expect(elm.find('.ngFooterTotalItems').text()).toContain('Showing Items: 4');
                 });
             });
+
+            describe('searchProvider cellFilter bug #1170', function () {
+                beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
+                    $linker = $compile;
+
+                    scope = $rootScope;
+                    scope.filterOptions = {
+                        filterText: ''
+                    };
+
+                    scope.myData = [
+                        {name: "Moroni",  birthdate: new Date(1963, 9, 13, 5,6,7,0) },
+                        {name: "Tiancum", birthdate: new Date(1970, 2, 13, 8,5,4,0) },
+                        {name: "Jacob",   birthdate: new Date(1989, 3, 13, 4,4,3,0) },
+                        {name: "Nephi",   birthdate: new Date(1987, 4, 13, 7,3,2,0) },
+                        {name: "Enos",    birthdate: new Date(1979, 5, 13, 9,2,1,0) }
+                    ];
+
+                    scope.gridOptions = {
+                        data: 'myData',
+                        filterOptions: scope.filterOptions,
+                        showFooter: true,
+                        columnDefs: [
+                            { field: 'name' },
+                            { field: 'birthdate' }
+                        ]
+                    };
+
+                    // install filter that accepts a no-quoted param. param must be true or false
+                    angular.module('ngGrid').filter('reverse', function() {
+                        return function(value, param) {
+                            if (param === 'true') {
+                                return value.split('').reverse().join('');
+                            }
+                            return value;
+                        };
+                    });
+                }));
+
+                it('should find values filtered through a $filter with quoted parameter', function() {
+                    var element = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope.gridOptions.columnDefs[1].cellFilter = "date:'MM-dd-yyyy'";
+                    $linker(element)(scope);
+                    scope.$digest();
+
+                    // verify everything is right
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = '-13-197'; // XX-13-197X
+                    scope.$digest();
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 2');
+                });
+
+                it('should find values filtered through a $filter without parameters', function() {
+                    var element = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope.gridOptions.columnDefs[1].cellFilter = 'date';
+                    $linker(element)(scope);
+                    scope.$digest();
+
+                    // verify everything is right
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = '197'; // looking for year 197X
+                    scope.$digest();
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 2');
+                });
+
+                it('should find values filtered through a $filter with no-quoted parameter', function() {
+                    var element = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope.gridOptions.columnDefs[0].cellFilter = 'reverse:true';
+                    $linker(element)(scope);
+                    scope.$digest();
+
+                    // verify everything is right
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = 'mucnaiT'; // looking for year 197X
+                    scope.$digest();
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 1');
+                });
+            });
+
             describe('selectionProvider', function () {
                 it('should do something', function () {
                     //add work here
