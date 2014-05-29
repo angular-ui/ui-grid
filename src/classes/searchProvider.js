@@ -18,6 +18,16 @@
         return fieldMap;
     };
 
+    var evaluateCellFilter = function(filter, cellFilterValue, propertyValue) {
+        var filterParam;
+        if (cellFilterValue[1] !== undefined) {
+            // remove single or double quotes, if any
+            filterParam = cellFilterValue[1].replace(/['"]/g, '');
+        }
+
+        return filter(propertyValue, filterParam).toString();
+    }
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -42,9 +52,7 @@
                     }
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
-                            // Have to slice off the quotes the parser would have removed
-                            var filterParam = (s[1] !== undefined) ? s[1].slice(1, -1) : undefined,
-                                filterRes = f(pVal, filterParam).toString();
+                            var filterRes = evaluateCellFilter(f, s, pVal);
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());

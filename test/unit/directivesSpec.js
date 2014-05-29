@@ -562,7 +562,7 @@ describe('directives', function () {
                     // install filter that accepts a no-quoted param. param must be true or false
                     angular.module('ngGrid').filter('reverse', function() {
                         return function(value, param) {
-                            if (param === true) {
+                            if (param === 'true') {
                                 return value.split('').reverse().join('');
                             };
                             return value;

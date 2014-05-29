@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/29/2014 09:18
+* Compiled At: 05/29/2014 09:49
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2585,6 +2585,16 @@ var ngSearchProvider = function ($scope, grid, $filter) {
         return fieldMap;
     };
 
+    var evaluateCellFilter = function(filter, cellFilterValue, propertyValue) {
+        var filterParam;
+        if (cellFilterValue[1] !== undefined) {
+            // remove single or double quotes, if any
+            filterParam = cellFilterValue[1].replace(/['"]/g, '');
+        }
+
+        return filter(propertyValue, filterParam).toString();
+    }
+
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -2609,9 +2619,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                     }
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
-                            // Have to slice off the quotes the parser would have removed
-                            var filterParam = (s[1] !== undefined) ? s[1].slice(1, -1) : undefined,
-                                filterRes = f(pVal, filterParam).toString();
+                            var filterRes = evaluateCellFilter(f, s, pVal);
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());
