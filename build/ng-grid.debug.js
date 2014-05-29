@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/29/2014 17:50
+* Compiled At: 05/29/2014 17:52
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2591,6 +2591,10 @@ var ngSearchProvider = function ($scope, grid, $filter) {
             filter = null,
             cellFilterValue = null;
 
+        if (propertyValue === null || propertyValue === undefined) {
+            return false;
+        }
+
         if (column && column.cellFilter) {
             cellFilterValue = column.cellFilter.split(':');
             filter = $filter(cellFilterValue[0]);
@@ -2598,14 +2602,14 @@ var ngSearchProvider = function ($scope, grid, $filter) {
 
         if (propertyValue !== null && propertyValue !== undefined) {
             if (typeof filter === "function") {
-                var filterParam;
+                var filterParam, filterResult;
                 if (cellFilterValue[1] !== undefined) {
                     // remove single or double quotes, if any
                     filterParam = cellFilterValue[1].replace(/['"]/g, '');
                 }
 
-                var filterRes = filter(propertyValue, filterParam).toString();
-                result = condition.regex.test(filterRes);
+                filterResult = filter(propertyValue, filterParam).toString();
+                result = condition.regex.test(filterResult);
             } else {
                 result = condition.regex.test(propertyValue.toString());
             }
