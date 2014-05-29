@@ -572,9 +572,9 @@ describe('directives', function () {
                     expect(element.find('.ngFooterTotalItems').text()).toContain(5);
 
                     // Enter search text
-                    scope.filterOptions.filterText = '-13-';
+                    scope.filterOptions.filterText = '-13-197'; // XX-13-197X
                     scope.$digest();
-                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 5');
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 2');
                 });
 
                 it('should find values filtered through a $filter without parameters', function() {
@@ -589,9 +589,9 @@ describe('directives', function () {
                     expect(element.find('.ngFooterTotalItems').text()).toContain(5);
 
                     // Enter search text
-                    scope.filterOptions.filterText = '-13-';
+                    scope.filterOptions.filterText = '197'; // looking for year 197X
                     scope.$digest();
-                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 5');
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 2');
                 });
             });
 

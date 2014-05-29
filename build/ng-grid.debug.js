@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/28/2014 00:45
+* Compiled At: 05/29/2014 09:18
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2610,7 +2610,8 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
                             // Have to slice off the quotes the parser would have removed
-                            var filterRes = f(pVal, s[1].slice(1,-1)).toString();
+                            var filterParam = (s[1] !== undefined) ? s[1].slice(1, -1) : undefined,
+                                filterRes = f(pVal, filterParam).toString();
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());
