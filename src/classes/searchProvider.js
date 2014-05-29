@@ -20,15 +20,23 @@
 
     var evalCellFilter = function(condition, column, propertyValue) {
         var result = false,
-            f = null,
-            s = null;
+            filter = null,
+            cellFilterValue = null;
+
         if (column && column.cellFilter) {
-            s = column.cellFilter.split(':');
-            f = $filter(s[0]);
+            cellFilterValue = column.cellFilter.split(':');
+            filter = $filter(cellFilterValue[0]);
         }
+
         if (propertyValue !== null && propertyValue !== undefined) {
-            if (typeof f === "function") {
-                var filterRes = evaluateCellFilter(f, s, propertyValue);
+            if (typeof filter === "function") {
+                var filterParam;
+                if (cellFilterValue[1] !== undefined) {
+                    // remove single or double quotes, if any
+                    filterParam = cellFilterValue[1].replace(/['"]/g, '');
+                }
+
+                var filterRes = filter(propertyValue, filterParam).toString();
                 result = condition.regex.test(filterRes);
             } else {
                 result = condition.regex.test(propertyValue.toString());

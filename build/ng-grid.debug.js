@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 05/29/2014 17:40
+* Compiled At: 05/29/2014 17:48
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2587,15 +2587,23 @@ var ngSearchProvider = function ($scope, grid, $filter) {
 
     var evalCellFilter = function(condition, column, propertyValue) {
         var result = false,
-            f = null,
-            s = null;
+            filter = null,
+            cellFilterValue = null;
+
         if (column && column.cellFilter) {
-            s = column.cellFilter.split(':');
-            f = $filter(s[0]);
+            cellFilterValue = column.cellFilter.split(':');
+            filter = $filter(cellFilterValue[0]);
         }
+
         if (propertyValue !== null && propertyValue !== undefined) {
-            if (typeof f === "function") {
-                var filterRes = evaluateCellFilter(f, s, propertyValue);
+            if (typeof filter === "function") {
+                var filterParam;
+                if (cellFilterValue[1] !== undefined) {
+                    // remove single or double quotes, if any
+                    filterParam = cellFilterValue[1].replace(/['"]/g, '');
+                }
+
+                var filterRes = filter(propertyValue, filterParam).toString();
                 result = condition.regex.test(filterRes);
             } else {
                 result = condition.regex.test(propertyValue.toString());
@@ -2628,24 +2636,8 @@ var ngSearchProvider = function ($scope, grid, $filter) {
                     result = searchEntireRow(condition, pVal, objectFieldMap);
                 } else {
                     result = evalCellFilter(condition, c, pVal);
-                    // var f = null,
-                    //     s = null;
-                    // if (c && c.cellFilter) {
-                    //     s = c.cellFilter.split(':');
-                    //     f = $filter(s[0]);
-                    // }
-                    // if (pVal !== null && pVal !== undefined) {
-                    //     if (typeof f === "function") {
-                    //         var filterRes = evaluateCellFilter(f, s, pVal);
-                    //         result = condition.regex.test(filterRes);
-                    //     } else {
-                    //         result = condition.regex.test(pVal.toString());
-                    //     }
-                    //     if (result) {
-                    //         return true;
-                    //     }
-                    // }
                 }
+
                 if (result) {
                     return true;
                 }
