@@ -558,9 +558,19 @@ describe('directives', function () {
                             { field: 'birthdate' }
                         ]
                     };
+
+                    // install filter that accepts a no-quoted param. param must be true or false
+                    angular.module('ngGrid').filter('reverse', function() {
+                        return function(value, param) {
+                            if (param === true) {
+                                return value.split('').reverse().join('');
+                            };
+                            return value;
+                        };
+                    });
                 }));
 
-                it('should find values filtered through a $filter with commas delimited parameter', function() {
+                it('should find values filtered through a $filter with quoted parameter', function() {
                     var element = angular.element(
                         '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
                     );
@@ -592,6 +602,23 @@ describe('directives', function () {
                     scope.filterOptions.filterText = '197'; // looking for year 197X
                     scope.$digest();
                     expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 2');
+                });
+
+                it('should find values filtered through a $filter with no-quoted parameter', function() {
+                    var element = angular.element(
+                        '<div ng-grid="gridOptions" style="width: 1000px; height: 1000px"></div>'
+                    );
+                    scope.gridOptions.columnDefs[0].cellFilter = 'reverse:true';
+                    $linker(element)(scope);
+                    scope.$digest();
+
+                    // verify everything is right
+                    expect(element.find('.ngFooterTotalItems').text()).toContain(5);
+
+                    // Enter search text
+                    scope.filterOptions.filterText = 'mucnaiT'; // looking for year 197X
+                    scope.$digest();
+                    expect(element.find('.ngFooterTotalItems').text()).toContain('Showing Items: 1');
                 });
             });
 
