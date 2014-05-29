@@ -18,6 +18,25 @@
         return fieldMap;
     };
 
+    var evalCellFilter = function(condition, column, propertyValue) {
+        var result = false,
+            f = null,
+            s = null;
+        if (column && column.cellFilter) {
+            s = column.cellFilter.split(':');
+            f = $filter(s[0]);
+        }
+        if (propertyValue !== null && propertyValue !== undefined) {
+            if (typeof f === "function") {
+                var filterRes = evaluateCellFilter(f, s, propertyValue);
+                result = condition.regex.test(filterRes);
+            } else {
+                result = condition.regex.test(propertyValue.toString());
+            }
+        }
+        return result;
+    };
+
     var evaluateCellFilter = function(filter, cellFilterValue, propertyValue) {
         var filterParam;
         if (cellFilterValue[1] !== undefined) {
@@ -26,7 +45,7 @@
         }
 
         return filter(propertyValue, filterParam).toString();
-    }
+    };
 
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
@@ -40,27 +59,12 @@
                 if(typeof pVal === 'object' && !(pVal instanceof Date)) {
                     var objectFieldMap = convertToFieldMap(c);
                     result = searchEntireRow(condition, pVal, objectFieldMap);
-                    if (result) {
-                        return true;
-                    }
                 } else {
-                    var f = null,
-                        s = null;
-                    if (c && c.cellFilter) {
-                        s = c.cellFilter.split(':');
-                        f = $filter(s[0]);
-                    }
-                    if (pVal !== null && pVal !== undefined) {
-                        if (typeof f === "function") {
-                            var filterRes = evaluateCellFilter(f, s, pVal);
-                            result = condition.regex.test(filterRes);
-                        } else {
-                            result = condition.regex.test(pVal.toString());
-                        }
-                        if (result) {
-                            return true;
-                        }
-                    }
+                    result = evalCellFilter(condition, c, pVal);
+                }
+
+                if (result) {
+                    return true;
                 }
             }
         }
