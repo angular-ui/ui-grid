@@ -18,7 +18,8 @@
         return fieldMap;
     };
 
-    var evalCellFilter = function(condition, column, propertyValue) {
+
+    var evaluateCellFilter = function(condition, column, propertyValue) {
         var result = false,
             filter = null,
             cellFilterValue = null;
@@ -45,16 +46,6 @@
         return result;
     };
 
-    var evaluateCellFilter = function(filter, cellFilterValue, propertyValue) {
-        var filterParam;
-        if (cellFilterValue[1] !== undefined) {
-            // remove single or double quotes, if any
-            filterParam = cellFilterValue[1].replace(/['"]/g, '');
-        }
-
-        return filter(propertyValue, filterParam).toString();
-    };
-
     var searchEntireRow = function(condition, item, fieldMap){
         var result;
         for (var prop in item) {
@@ -68,7 +59,7 @@
                     var objectFieldMap = convertToFieldMap(c);
                     result = searchEntireRow(condition, pVal, objectFieldMap);
                 } else {
-                    result = evalCellFilter(condition, c, pVal);
+                    result = evaluateCellFilter(condition, c, pVal);
                 }
 
                 if (result) {
