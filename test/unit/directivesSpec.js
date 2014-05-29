@@ -531,8 +531,7 @@ describe('directives', function () {
                 });
             });
 
-            // TODO find and write bug number
-            describe('searchProvider cellFilter bug #TODO', function () {
+            describe('searchProvider cellFilter bug #1170', function () {
                 beforeEach(inject(function ($rootScope, $domUtilityService, $templateCache, $compile) {
                     $linker = $compile;
 
@@ -564,7 +563,7 @@ describe('directives', function () {
                         return function(value, param) {
                             if (param === 'true') {
                                 return value.split('').reverse().join('');
-                            };
+                            }
                             return value;
                         };
                     });
