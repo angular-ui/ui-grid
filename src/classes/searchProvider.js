@@ -19,7 +19,7 @@
     };
 
 
-    var evaluateCellFilter = function(condition, column, propertyValue) {
+    var evaluateCellFilter = function(condition, propertyValue, column) {
         var result = false,
             filter = null,
             cellFilterValue = null;
@@ -61,7 +61,7 @@
                     var objectFieldMap = convertToFieldMap(c);
                     result = searchEntireRow(condition, pVal, objectFieldMap);
                 } else {
-                    result = evaluateCellFilter(condition, c, pVal);
+                    result = evaluateCellFilter(condition, pVal, c);
                 }
 
                 if (result) {
