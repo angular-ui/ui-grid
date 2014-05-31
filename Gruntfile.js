@@ -563,7 +563,8 @@ module.exports = function(grunt) {
 
     var tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
     if (e2e === false) {
-      tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
+      // tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
+      tasks = ['before-test', 'after-test', 'connect', 'watch'];
     }
 
     grunt.task.run(tasks);

@@ -5,14 +5,15 @@
     function($log, $document, $timeout, uiGridConstants, GridUtil) {
     return {
       replace: true,
+      transclude: true,
       templateUrl: 'ui-grid/uiGridRenderContainer',
-      require: '^uiGrid',
+      require: ['^uiGrid', 'uiGridRenderContainer'],
       scope: {
         container: '=uiGridRenderContainer',
-        bindScrollLeft: '=',
-        bindScrollRight: '='
+        bindScrollHorizontal: '=',
+        bindScrollVertical: '='
       },
-      link: function ($scope, $elm, $attrs, uiGridCtrl) {
+      link: function ($scope, $elm, $attrs, uiGridCtrl, uiGridRenderContainerCtrl) {
         // Verify that the render container for this element exists
         if (!$scope.container) {
           throw "No render container specified";
@@ -22,11 +23,11 @@
           throw "Render container '" + $scope.container + "' is not registered.";
         }
 
-        var grid = uiGridCtrl.grid;
+        var grid = $scope.grid = uiGridCtrl.grid;
         var container = uiGridCtrl.grid.renderContainers[$scope.container];
 
-        // Bind to left-scroll events
-        if ($scope.bindScrollLeft) {
+        // Bind to left/right-scroll events
+        if ($scope.bindScrollHorizontal) {
           
         }
 
@@ -74,14 +75,37 @@
         function update() {
           // TODO(c0bra): set canvas width based on sum of columnCache widths
 
-          // TODO(c0bra): set viewport vidth based on sum of visibleColumnCache widths, up to max-width
+          // TODO(c0bra): set viewport vidth based on sum of visibleColumnCache widths, up to max-width or uiGridCtrl.gridWidth, whichever is lower
+
+          // TODO(c0bra): set canvas height based on sum of rowCache heights
+
+          // TODO(c0bra): set viewport height based on sum of rowCache heights, , up to max-height or uiGridCtrl.gridHeight, whichever is lower
         }
         
         uiGridCtrl.grid.registerStyleComputation({
           priority: 6,
           func: update
         });
-      }
+      },
+      controller: ['$scope', function ($scope) {
+        var self = this;
+        // Our child components will need:
+
+        // Viewport height
+        self.getViewportHeight = function getViewportHeight() {
+
+        };
+
+        // Viewport width
+
+        // Header height
+        // Header width
+
+        // Canvas height
+        // Canvas width
+
+        // Whether to show scrollbars? Both? Just one?
+      }]
     };
 
   }]);
