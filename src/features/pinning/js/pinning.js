@@ -70,7 +70,7 @@
   module.directive('uiGridPinnedContainer', ['$log', function ($log) {
     return {
       replace: true,
-      template: '<div><div ui-grid-render-container="side" class="ui-grid-pinned-container left"></div></div>',
+      template: '<div><div ui-grid-render-container="side" class="ui-grid-pinned-container"></div></div>',
       scope: {
         side: '=uiGridPinnedContainer'
       },
@@ -82,6 +82,8 @@
 
         var myWidth = 0;
 
+        $elm.addClass($scope.side);
+
         function updateContainerDimensions() {
           $log.debug('update ' + $scope.side + ' dimensions');
 
@@ -89,7 +91,7 @@
 
           // Column containers
           if ($scope.side === 'left' || $scope.side === 'right') {
-            var cols = grid.renderContainers[$scope.side].visibleColumnCache;
+            var cols = grid.renderContainers[$scope.side].columnCache;
             var width = 0;
             for (var i in cols) {
               var col = cols[i];
@@ -97,6 +99,8 @@
             }
 
             myWidth = width;
+
+            $log.debug('myWidth', myWidth);
 
             // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
 
@@ -106,7 +110,7 @@
           return ret;
         }
 
-         grid.registerViewportAdjuster(function (adjustment) {
+        grid.registerViewportAdjuster(function (adjustment) {
           // Subtract our own width
           adjustment.width -= myWidth;
 

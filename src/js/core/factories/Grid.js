@@ -539,6 +539,8 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
+    $log.debug('setVisibleRows');
+
     var self = this;
 
     //var newVisibleRowCache = [];
@@ -647,6 +649,8 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleColumns = function setVisibleColumns(columns) {
+    $log.debug('setVisibleColumns');
+
     var self = this;
 
     // Reset all the render container row caches
@@ -683,10 +687,34 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setRenderedColumns = function setRenderedColumns(newColumns) {
+    var self = this;
+
+    // OLD:
     this.renderedColumns.length = newColumns.length;
     for (var i = 0; i < newColumns.length; i++) {
       this.renderedColumns[i] = newColumns[i];
     }
+
+    // Reset all the render container row caches
+    // for (var i in self.renderContainers) {
+    //   var container = self.renderContainers[i];
+
+    //   container.columnCache.length = 0;
+    // }
+
+    // newColumns.forEach(function (column) {
+    //   // If the column is visible
+    //   if (column.visible) {
+    //     // If the column has a container specified
+    //     if (typeof(column.renderContainer) !== 'undefined' && column.renderContainer) {
+    //       self.renderContainers[column.renderContainer].columnCache.push(column);
+    //     }
+    //     // If not, put it into the body container
+    //     else {
+    //       self.renderContainers.body.columnCache.push(column);
+    //     }
+    //   }
+    // });
   };
 
   /**
@@ -696,6 +724,8 @@ angular.module('ui.grid')
    * @description calls each styleComputation function
    */
   Grid.prototype.buildStyles = function buildStyles($scope) {
+    $log.debug('buildStyles');
+
     var self = this;
     
     self.customStyles = '';
@@ -773,7 +803,7 @@ angular.module('ui.grid')
     
     viewPortHeight = viewPortHeight + adjustment.height;
 
-    $log.debug('viewPortHeight', viewPortHeight);
+    // $log.debug('viewPortHeight', viewPortHeight);
 
     return viewPortHeight;
   };
@@ -790,6 +820,8 @@ angular.module('ui.grid')
     var adjustment = self.getViewportAdjustment();
     
     viewPortWidth = viewPortWidth + adjustment.width;
+
+    // $log.debug('getviewPortWidth', viewPortWidth);
 
     return viewPortWidth;
   };
@@ -870,6 +902,8 @@ angular.module('ui.grid')
     if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
       ret = ret - this.verticalScrollbarWidth;
     }
+
+    $log.debug('canvasWidth', ret);
 
     return ret;
   };

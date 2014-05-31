@@ -58,6 +58,8 @@
                 availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;
               }
 
+              $log.debug('availableWidth', availableWidth);
+
               // The total number of columns
               // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
               // var equalWidth = availableWidth / equalWidthColumnCount;
@@ -71,7 +73,12 @@
 
               var ret = '';
 
-              uiGridCtrl.grid.columns.forEach(function(column, i) {
+
+              // uiGridCtrl.grid.columns.forEach(function(column, i) {
+
+              var columnCache = uiGridCtrl.grid.renderContainers.body.columnCache;
+
+              columnCache.forEach(function(column, i) {
                 // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
                 //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
 
@@ -218,7 +225,8 @@
 
               if (leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
                 var variableColumn = false;
-                uiGridCtrl.grid.columns.forEach(function(col) {
+                // uiGridCtrl.grid.columns.forEach(function(col) {
+                columnCache.forEach(function(col) {
                   if (col.width && !angular.isNumber(col.width)) {
                     variableColumn = true;
                   }
@@ -243,7 +251,8 @@
               }
 
               // Build the CSS
-              uiGridCtrl.grid.columns.forEach(function (column) {
+              // uiGridCtrl.grid.columns.forEach(function (column) {
+              columnCache.forEach(function (column) {
                 ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.drawnWidth + 'px; }';
               });
 

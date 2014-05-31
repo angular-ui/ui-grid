@@ -4,8 +4,17 @@
 
 # Render containers
 
+1. [IDEA] - 
 1. [BUG] - The pinning menu actions ARE putting the columns into the renderContainer caches, but it's not immediately updating (re-rendering) the grid. If I then scroll I
    see the column is gone, but it's also still accounts for the column's width when setting the canvas width (so two separate bugs).
+   - NOTE - The viewport width adjustment needs to subtract the pinned viewports' dimensions from the main viewport
+   - NOTE - Is the canvasWidth updating running in uiGridHeader BEFORE the visible/renderContainer updates which columns are in the body container?
+   - NOTE - The main viewport and main header will need their left/right dimensions updated as well as their width/height. The header isn't being updated at all!
+   - NOTE - We'd need to subtract the cumulative horizontal-pinned containers width from the top-panel and offset the header's left position based on the left container
+
+1. [TODO] - Horizontal-pinned container will need their OWN header... sigh.
+   - Their repeater will need to be based on their render container
+
 1. [IDEA] - Should grid have an `addRenderContainer` method? Rather than just popping them in to the renderContainers properties with no validation?
 1. [NOTE] - We can add headerHeight back into the left/right-pinned containers if we don't want a scrollbar at the bottom (we probably don't).
 1. [NOTE] - We probably need getAdjustedViewportWidth/Height() methods, the idea being that the normal methods return the full width/height and the others return the adjusted value.

@@ -183,6 +183,8 @@
       };
 
       $scope.grid.refresh = self.refresh = function refresh() {
+        $log.debug('grid refresh');
+
         var p1 = self.grid.processRowsProcessors(self.grid.rows).then(function (renderableRows) {
           self.grid.setVisibleRows(renderableRows);
         });
@@ -191,10 +193,10 @@
           self.grid.setVisibleColumns(renderableColumns);
         });
         
-        return $q.all([p1, p2], function () {
+        return $q.all([p1, p2]).then(function () {
           self.redrawInPlace();
 
-          self.refreshCanvas();
+          self.refreshCanvas(true);
         });
       };
 
