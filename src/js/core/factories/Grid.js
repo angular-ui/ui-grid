@@ -549,24 +549,27 @@ angular.module('ui.grid')
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
-      container.rowCache.length = 0;
+      container.visibleRowCache.length = 0;
     }
     
-    rows.forEach(function (row) {
+    // rows.forEach(function (row) {
+    for (var ri in rows) {
+      var row = rows[ri];
+
       // If the row is visible
       if (row.visible) {
         // newVisibleRowCache.push(row);
 
         // If the row has a container specified
         if (typeof(row.renderContainer) !== 'undefined' && row.renderContainer) {
-          self.renderContainers[row.renderContainer].rowCache.push(row);
+          self.renderContainers[row.renderContainer].visibleRowCache.push(row);
         }
         // If not, put it into the body container
         else {
-          self.renderContainers.body.rowCache.push(row);
+          self.renderContainers.body.visibleRowCache.push(row);
         }
       }
-    });
+    }
 
     // this.visibleRowCache = newVisibleRowCache;
     //this.renderContainers.body.rowCache = newVisibleRowCache;
@@ -657,25 +660,24 @@ angular.module('ui.grid')
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
-      container.columnCache.length = 0;
+      container.visibleColumnCache.length = 0;
     }
     
-    columns.forEach(function (column) {
+    for (var ci in columns) {
+      var column = columns[ci];
+
       // If the column is visible
       if (column.visible) {
         // If the column has a container specified
         if (typeof(column.renderContainer) !== 'undefined' && column.renderContainer) {
-          self.renderContainers[column.renderContainer].columnCache.push(column);
+          self.renderContainers[column.renderContainer].visibleColumnCache.push(column);
         }
         // If not, put it into the body container
         else {
-          self.renderContainers.body.columnCache.push(column);
+          self.renderContainers.body.visibleColumnCache.push(column);
         }
       }
-    });
-
-    // this.visibleRowCache = newVisibleRowCache;
-    //this.renderContainers.body.rowCache = newVisibleRowCache;
+    }
   };
 
 
@@ -870,7 +872,7 @@ angular.module('ui.grid')
     // });
 
     // return this.visibleRowCache.length;
-    return this.renderContainers.body.rowCache.length;
+    return this.renderContainers.body.visibleRowCache.length;
   };
 
   Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {
@@ -883,7 +885,7 @@ angular.module('ui.grid')
     // });
 
     // return this.visibleRowCache.length;
-    return this.renderContainers.body.columnCache.length;
+    return this.renderContainers.body.visibleColumnCache.length;
   };
 
   Grid.prototype.getCanvasHeight = function getCanvasHeight() {

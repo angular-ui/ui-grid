@@ -40,6 +40,39 @@ angular.module('ui.grid')
 
   // TODO(c0bra): calculate size?? Should this be in a stackable directive?
 
+  GridRenderContainer.prototype.minRowsToRender = function minRowsToRender() {
+    var self = this;
+    return Math.ceil(self.getViewportHeight() / self.grid.options.rowHeight);
+  };
+
+  GridRenderContainer.prototype.minColumnsToRender = function minColumnsToRender() {
+    var self = this;
+    var viewportWidth = this.getViewportWidth();
+
+    var min = 0;
+    var totalWidth = 0;
+    // self.columns.forEach(function(col, i) {
+    for (var i = 0; i < self.visibleColumnCache.length; i++) {
+      var col = self.visibleColumnCache[i];
+
+      if (totalWidth < viewportWidth) {
+        totalWidth += col.drawnWidth;
+        min++;
+      }
+      else {
+        var currWidth = 0;
+        for (var j = i; j >= i - min; j--) {
+          currWidth += self.visibleColumnCache[j].drawnWidth;
+        }
+        if (currWidth < viewportWidth) {
+          min++;
+        }
+      }
+    }
+
+    return min;
+  };
+
   GridRenderContainer.prototype.getVisibleRowCount = function getVisibleRowCount() {
     return this.visibleRowCache.length;
   };
@@ -72,7 +105,7 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret =  self.options.rowHeight * self.getVisibleRowCount();
+    var ret =  self.grid.options.rowHeight * self.getVisibleRowCount();
 
     if (typeof(self.horizontalScrollbarHeight) !== 'undefined' && self.horizontalScrollbarHeight !== undefined && self.horizontalScrollbarHeight > 0) {
       ret = ret - self.horizontalScrollbarHeight;
@@ -135,7 +168,7 @@ angular.module('ui.grid')
     this.prevScrollTop = scrollTop;
     this.prevScrolltopPercentage = scrollPercentage;
 
-    this.grid.refreshCanvas();
+    this.grid.queueRefresh();
   };
 
   GridRenderContainer.prototype.adjustScrollHorizontal = function adjustScrollHorizontal(scrollLeft, scrollPercentage, force) {
@@ -151,7 +184,57 @@ angular.module('ui.grid')
     this.prevScrollLeft = scrollLeft;
     this.prevScrollleftPercentage = scrollPercentage;
 
-    this.grid.refreshCanvas();
+    this.grid.queueRefresh();
+  };
+
+  GridRenderContainer.prototype.adjustRows = function adjustRows(scrollTop, scrollPercentage) {
+    var self = this;
+
+    var minRows = self.minRowsToRender();
+
+    var rowCache = self.rowCache;
+
+    var maxRowIndex = rowCache.length - minRows;
+    self.maxRowIndex = maxRowIndex;
+
+    var curRowIndex = self.prevRowScrollIndex;
+
+    // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
+    if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
+      scrollPercentage = scrollTop / self.getCanvasHeight();
+    }
+    
+    var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
+
+    // Define a max row index that we can't scroll past
+    if (rowIndex > maxRowIndex) {
+      rowIndex = maxRowIndex;
+    }
+    
+    var newRange = [];
+    if (rowCache.length > self.grid.options.virtualizationThreshold) {
+      // Have we hit the threshold going down?
+      if (self.prevScrollTop < scrollTop && rowIndex < self.prevRowScrollIndex + self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+        return;
+      }
+      //Have we hit the threshold going up?
+      if (self.prevScrollTop > scrollTop && rowIndex > self.prevRowScrollIndex - self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+        return;
+      }
+
+      var rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows);
+      var rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
+
+      newRange = [rangeStart, rangeEnd];
+    }
+    else {
+      var maxLen = self.visibleRowCache.length;
+      newRange = [0, Math.max(maxLen, minRows + self.grid.options.excessRows)];
+    }
+    
+    self.updateViewableRowRange(newRange);
+
+    self.prevRowScrollIndex = rowIndex;
   };
 
   GridRenderContainer.prototype.adjustColumns = function adjustColumns(scrollLeft, scrollPercentage) {
@@ -193,14 +276,70 @@ angular.module('ui.grid')
       newRange = [rangeStart, rangeEnd];
     }
     else {
-      var maxLen = self.columnCache.length;
+      var maxLen = self.visibleColumnCache.length;
       newRange = [0, Math.max(maxLen, minCols + self.grid.options.excessColumns)];
     }
     
-    // TODO(c0bra): make this method!
     self.updateViewableColumnRange(newRange);
 
     self.prevColumnScrollIndex = colIndex;
+  };
+
+  // Method for updating the visible rows
+  GridRenderContainer.prototype.updateViewableRowRange = function updateViewableRowRange(renderedRange) {
+    // Slice out the range of rows from the data
+    // var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
+    var rowArr = this.visibleRowCache.slice(renderedRange[0], renderedRange[1]);
+
+    // Define the top-most rendered row
+    this.currentTopRow = renderedRange[0];
+
+    // TODO(c0bra): make this method!
+    this.setRenderedRows(rowArr);
+  };
+
+  // Method for updating the visible columns
+  GridRenderContainer.prototype.updateViewableColumnRange = function updateViewableColumnRange(renderedRange) {
+    // Slice out the range of rows from the data
+    // var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
+    var columnArr = this.visibleColumnCache.slice(renderedRange[0], renderedRange[1]);
+
+    // Define the left-most rendered columns
+    this.currentFirstColumn = renderedRange[0];
+
+    this.setRenderedColumns(columnArr);
+  };
+
+  GridRenderContainer.prototype.rowStyle = function (index) {
+    var self = this;
+
+    var styles = {};
+
+    if (index === 0 && self.currentTopRow !== 0) {
+      // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
+      var hiddenRowWidth = (self.currentTopRow) * self.grid.options.rowHeight;
+
+      // return { 'margin-top': hiddenRowWidth + 'px' };
+      styles['margin-top'] = hiddenRowWidth + 'px';
+    }
+
+    if (self.currentFirstColumn !== 0) {
+      styles['margin-left'] = self.columnOffset + 'px';
+    }
+
+    return styles;
+  };
+
+  GridRenderContainer.prototype.columnStyle = function (index) {
+    var self = this;
+    
+    if (index === 0 && self.currentFirstColumn !== 0) {
+      var offset = self.columnOffset;
+
+      return { 'margin-left': offset + 'px' };
+    }
+
+    return null;
   };
 
   return GridRenderContainer;

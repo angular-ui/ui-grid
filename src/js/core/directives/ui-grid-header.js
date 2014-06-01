@@ -58,7 +58,7 @@
                   totalWidth = 0;
 
               // Get the width of the viewport
-              var availableWidth = containerCtrl.getViewportWidth();
+              var availableWidth = containerCtrl.container.getViewportWidth();
 
               if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
                 availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;

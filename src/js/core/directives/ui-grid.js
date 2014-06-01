@@ -99,21 +99,11 @@
             ));
           }
           $q.all(promises).then(function() {
-            //wrap data in a gridRow
-            // $log.debug('Modifying rows');
             self.grid.modifyRows(n)
               .then(function () {
-                //todo: move this to the ui-body-directive and define how we handle ordered event registration
-                
-                if (self.viewport) {
-                  // Re-draw our rows but stay in the same scrollTop location
-                  // self.redrawRowsByScrolltop();
-
-                  // Adjust the horizontal scroll back to 0 (TODO(c0bra): Do we need this??)
-                  // self.adjustScrollHorizontal(self.prevScollLeft, 0, true);
-
+                // if (self.viewport) {
                   self.redrawInPlace();
-                }
+                // }
 
                 $scope.$evalAsync(function() {
                   self.refreshCanvas(true);
@@ -167,6 +157,20 @@
         return p.promise;
       };
 
+      $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
+        if (self.refreshCanceler) {
+          $timeout.cancel(self.refreshCanceler);
+        }
+
+        self.refreshCanceler = $timeout(function () {
+          self.refreshCanvas(true);
+        });
+
+        self.refreshCanceler.then(function () {
+          self.refreshCanceler = null;
+        });
+      };
+
       self.getCellValue = function(row, col) {
         return $scope.grid.getCellValue(row, col);
       };
@@ -198,6 +202,20 @@
 
           self.refreshCanvas(true);
         });
+      };
+
+      // Redraw the rows and columns based on our current scroll position
+      self.redrawInPlace = function redrawInPlace() {
+        $log.debug('redrawInPlace');
+        
+        for (var i in self.grid.renderContainers) {
+          var container = self.grid.renderContainers[i];
+
+          $log.debug('redrawing container', i);
+
+          container.adjustRows(self.prevScrollTop, null);
+          container.adjustColumns(self.prevScrollLeft, null);
+        }
       };
 
       /* Sorting Methods */

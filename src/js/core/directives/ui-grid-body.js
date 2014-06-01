@@ -62,7 +62,7 @@
           var minRows = uiGridCtrl.grid.minRowsToRender();
           // var maxRowIndex = uiGridCtrl.grid.visibleRowCache.length - minRows;
 
-          var rowCache = uiGridCtrl.grid.renderContainers.body.rowCache;
+          var rowCache = uiGridCtrl.grid.renderContainers.body.visibleRowCache;
 
           var maxRowIndex = rowCache.length - minRows;
           uiGridCtrl.maxRowIndex = maxRowIndex;
@@ -119,16 +119,6 @@
           uiGridCtrl.redrawColumns();
         };
 
-        // Redraw the rows and columns based on our current scroll position
-        uiGridCtrl.redrawInPlace = function redrawInPlace() {
-          $log.debug('redrawInPlace');
-
-          // TODO(c0bra): adjust the rows and columns of all registered render containers
-
-          uiGridCtrl.adjustRows(uiGridCtrl.prevScrollTop, null);
-          uiGridCtrl.adjustColumns(uiGridCtrl.prevScrollLeft, null);
-        };
-
         // Virtualization for horizontal scrolling
         uiGridCtrl.adjustScrollHorizontal = function (scrollLeft, scrollPercentage, force) {
           if (uiGridCtrl.prevScrollLeft === scrollLeft && !force) {
@@ -149,7 +139,7 @@
         uiGridCtrl.adjustColumns = function(scrollLeft, scrollPercentage) {
           var minCols = uiGridCtrl.grid.minColumnsToRender();
 
-          var columnCache = uiGridCtrl.grid.renderContainers.body.columnCache;
+          var columnCache = uiGridCtrl.grid.renderContainers.body.visibleColumnCache;
           var maxColumnIndex = columnCache.length - minCols;
 
           uiGridCtrl.maxColumnIndex = maxColumnIndex;
@@ -472,7 +462,7 @@
         var updateViewableRowRange = function(renderedRange) {
           // Slice out the range of rows from the data
           // var rowArr = uiGridCtrl.grid.rows.slice(renderedRange[0], renderedRange[1]);
-          var rowArr = uiGridCtrl.grid.renderContainers.body.rowCache.slice(renderedRange[0], renderedRange[1]);
+          var rowArr = uiGridCtrl.grid.renderContainers.body.visibleRowCache.slice(renderedRange[0], renderedRange[1]);
 
           // Define the top-most rendered row
           uiGridCtrl.currentTopRow = renderedRange[0];
@@ -484,7 +474,7 @@
         var updateViewableColumnRange = function(renderedRange) {
           // Slice out the range of rows from the data
           // var columnArr = uiGridCtrl.grid.columns.slice(renderedRange[0], renderedRange[1]);
-          var columnArr = uiGridCtrl.grid.renderContainers.body.columnCache.slice(renderedRange[0], renderedRange[1]);
+          var columnArr = uiGridCtrl.grid.renderContainers.body.visibleColumnCache.slice(renderedRange[0], renderedRange[1]);
 
           // Define the left-most rendered columns
           uiGridCtrl.currentFirstColumn = renderedRange[0];
@@ -515,7 +505,7 @@
           //  That will be the offset for the columns as we scroll horizontally.
           var hiddenColumnsWidth = 0;
           for (var i = 0; i < uiGridCtrl.currentFirstColumn; i++) {
-            hiddenColumnsWidth += uiGridCtrl.grid.renderContainers.body.columnCache[i].drawnWidth;
+            hiddenColumnsWidth += uiGridCtrl.grid.renderContainers.body.visibleColumnCache[i].drawnWidth;
           }
 
           uiGridCtrl.columnOffset = hiddenColumnsWidth;
