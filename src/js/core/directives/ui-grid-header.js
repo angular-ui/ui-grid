@@ -10,7 +10,7 @@
       replace: true,
       // priority: 1000,
       require: ['^uiGrid', '^uiGridRenderContainer'],
-      scope: false,
+      scope: true,
       compile: function($elm, $attrs) {
         return {
           pre: function ($scope, $elm, $attrs, controllers) {
@@ -18,6 +18,7 @@
             var containerCtrl = controllers[1];
 
             $scope.grid = uiGridCtrl.grid;
+            $scope.container = containerCtrl.container;
 
             var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 
@@ -80,7 +81,7 @@
 
               // uiGridCtrl.grid.columns.forEach(function(column, i) {
 
-              var columnCache = containerCtrl.container.columnCache;
+              var columnCache = containerCtrl.container.visibleColumnCache;
 
               columnCache.forEach(function(column, i) {
                 // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';

@@ -91,7 +91,7 @@
 
           // Column containers
           if ($scope.side === 'left' || $scope.side === 'right') {
-            var cols = grid.renderContainers[$scope.side].columnCache;
+            var cols = grid.renderContainers[$scope.side].visibleColumnCache;
             var width = 0;
             for (var i in cols) {
               var col = cols[i];

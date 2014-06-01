@@ -5,8 +5,8 @@ angular.module('ui.grid')
   function GridRenderContainer(grid) {
     this.grid = grid;
     
-    this.rowCache = [];
-    this.columnCache = [];
+    // this.rowCache = [];
+    // this.columnCache = [];
 
     this.visibleRowCache = [];
     this.visibleColumnCache = [];
@@ -28,8 +28,8 @@ angular.module('ui.grid')
   // };
 
   GridRenderContainer.prototype.reset = function reset() {
-    this.rowCache.length = 0;
-    this.columnCache.length = 0;
+    // this.rowCache.length = 0;
+    // this.columnCache.length = 0;
 
     this.visibleColumnCache.length = 0;
     this.visibleRowCache.length = 0;
@@ -102,6 +102,16 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
+  GridRenderContainer.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
+    var viewPortWidth = this.getViewportWidth();
+
+    if (typeof(this.grid.verticalScrollbarWidth) !== 'undefined' && this.grid.verticalScrollbarWidth !== undefined && this.grid.verticalScrollbarWidth > 0) {
+      viewPortWidth = viewPortWidth + this.grid.verticalScrollbarWidth;
+    }
+
+    return viewPortWidth;
+  };
+
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
@@ -150,7 +160,7 @@ angular.module('ui.grid')
     //  That will be the offset for the columns as we scroll horizontally.
     var hiddenColumnsWidth = 0;
     for (var i = 0; i < this.currentFirstColumn; i++) {
-      hiddenColumnsWidth += this.columnCache[i].drawnWidth;
+      hiddenColumnsWidth += this.visibleColumnCache[i].drawnWidth;
     }
 
     this.columnOffset = hiddenColumnsWidth;
@@ -192,7 +202,7 @@ angular.module('ui.grid')
 
     var minRows = self.minRowsToRender();
 
-    var rowCache = self.rowCache;
+    var rowCache = self.visibleRowCache;
 
     var maxRowIndex = rowCache.length - minRows;
     self.maxRowIndex = maxRowIndex;
@@ -242,7 +252,7 @@ angular.module('ui.grid')
 
     var minCols = self.minColumnsToRender();
 
-    var columnCache = self.columnCache;
+    var columnCache = self.visibleColumnCache;
     var maxColumnIndex = columnCache.length - minCols;
 
     self.maxColumnIndex = maxColumnIndex;

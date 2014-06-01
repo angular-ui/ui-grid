@@ -570,9 +570,6 @@ angular.module('ui.grid')
         }
       }
     }
-
-    // this.visibleRowCache = newVisibleRowCache;
-    //this.renderContainers.body.rowCache = newVisibleRowCache;
   };
 
   Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor) {

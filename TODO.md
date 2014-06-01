@@ -6,6 +6,10 @@
 
 *** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
 
+1. [TODO] - Render containers aren't responding to / firing scroll events. No scrolling is happening.
+1. [TODO] - Render container header viewport (and maybe main viewport) are too wide. Also the vertical scrollbar is too high. If the header is present the scrollbar needs   
+   to size down...
+
 1. [NOTE] - refreshCanvas() needs to QUEUE a refresh. It cannot directly call one. We need to debounce it somehow. Otherwise every render container refresh call will 
    make the grid refresh itself WAY too much. Can we just use $timeout() and $timeout.cancel() with no delay?
    - Maybe make a `queueRefresh` method that GridRenderContainer can call...

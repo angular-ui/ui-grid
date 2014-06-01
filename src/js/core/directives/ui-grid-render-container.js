@@ -39,8 +39,6 @@
 
             containerCtrl.container = container;
             containerCtrl.containerName = $scope.containerName;
-
-            $log.debug('containerCtrl.container 1', containerCtrl.container);
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
             $log.debug('render container post-link');
@@ -131,13 +129,23 @@
             // TODO(c0bra): Handle resizing the inner canvas based on the number of elements
             function update() {
               var ret = '';
+
+              var canvasWidth = container.getCanvasWidth();
+              var viewportWidth = container.getViewportWidth();
+
+              var canvasHeight = container.getCanvasHeight();
+              var viewportHeight = container.getViewportHeight();
+
+              var headerViewportWidth = container.getHeaderViewportWidth();
               
               // Set canvas dimensions
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-canvas { width: ' + container.getCanvasWidth() + 'px; height: ' + container.getCanvasHeight() + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-header-canvas { width: ' + canvasWidth + 'px; }';
               
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-viewport { width: ' + container.getViewportWidth() + 'px; height: ' + container.getViewportHeight() + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
 
-              // Update column offset
+              // Update 
 
               return ret;
             }

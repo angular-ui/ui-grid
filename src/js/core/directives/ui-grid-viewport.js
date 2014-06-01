@@ -9,8 +9,6 @@
         templateUrl: 'ui-grid/uiGridViewport',
         require: ['^uiGrid', '^uiGridRenderContainer'],
         link: function($scope, $elm, $attrs, controllers) {
-          debugger;
-
           $log.debug('viewport post-link');
 
           var uiGridCtrl = controllers[0];
@@ -19,7 +17,6 @@
           var grid = uiGridCtrl.grid;
 
           // Put the container in scope so we can get rows and columns from it
-          $log.debug('containerCtrl.container 2', containerCtrl.container);
           $scope.container = containerCtrl.container;
 
           // Register this viewport with its container 
