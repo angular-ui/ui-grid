@@ -1,50 +1,58 @@
 (function () {
   'use strict';
+
+  var module = angular.module('ui.grid');
   
-  angular.module('ui.grid').directive('uiGridRenderContainer', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil',
-    function($log, $document, $timeout, uiGridConstants, GridUtil) {
+  module.directive('uiGridRenderContainer', ['$log', '$timeout', 'uiGridConstants', 'gridUtil',
+    function($log, $timeout, uiGridConstants, GridUtil) {
     return {
       replace: true,
       transclude: true,
       templateUrl: 'ui-grid/uiGridRenderContainer',
       require: ['^uiGrid', 'uiGridRenderContainer'],
       scope: {
-        container: '=uiGridRenderContainer',
+        containerName: '=containerName',
         bindScrollHorizontal: '=',
         bindScrollVertical: '='
       },
-      link: function ($scope, $elm, $attrs, uiGridCtrl, uiGridRenderContainerCtrl) {
+      controller: 'uiGridRenderContainer',
+      link: function ($scope, $elm, $attrs, controllers) {
+        var uiGridCtrl = controllers[0];
+        var containerCtrl = controllers[1];
+
         // Verify that the render container for this element exists
-        if (!$scope.container) {
-          throw "No render container specified";
+        if (!$scope.containerName) {
+          throw "No render container name specified";
         }
 
-        if (!uiGridCtrl.grid.renderContainers[$scope.container]) {
-          throw "Render container '" + $scope.container + "' is not registered.";
+        if (!uiGridCtrl.grid.renderContainers[$scope.containerName]) {
+          throw "Render container '" + $scope.containerName + "' is not registered.";
         }
 
         var grid = $scope.grid = uiGridCtrl.grid;
-        var container = uiGridCtrl.grid.renderContainers[$scope.container];
+        var container = grid.renderContainers[$scope.containerName];
+
+        containerCtrl.container = container;
+        containerCtrl.containerName = $scope.containerName;
 
         // Bind to left/right-scroll events
-        if ($scope.bindScrollHorizontal) {
-          
+        if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
+          $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
         }
 
-        var scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
-          // GridUtil.requestAnimationFrame(function() {
+        function scrollHandler (evt, args) {
           container.prevScrollArgs = args;
 
           // Vertical scroll
           if (args.y) {
-            var scrollLength = (grid.getCanvasHeight() - grid.getViewportHeight());
+            var scrollLength = (container.getCanvasHeight() - container.getViewportHeight());
 
             // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
-            if (uiGridCtrl.grid.horizontalScrollbarHeight && uiGridCtrl.grid.horizontalScrollbarHeight > 0) {
-              scrollLength = scrollLength + uiGridCtrl.grid.horizontalScrollbarHeight;
+            if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
+              scrollLength = scrollLength + grid.horizontalScrollbarHeight;
             }
 
-            var oldScrollTop = uiGridCtrl.viewport[0].scrollTop;
+            var oldScrollTop = containerCtrl.viewport[0].scrollTop;
             
             var scrollYPercentage;
             if (typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
@@ -59,17 +67,47 @@
             }
 
             var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
-            
-            // NOTE: uiGridBody catches this in its 'scroll' event handler. setting scrollTop fires a scroll event
-            // uiGridCtrl.adjustScrollVertical(newScrollTop, scrollYPercentage);
 
-            uiGridCtrl.viewport[0].scrollTop = newScrollTop;
+            containerCtrl.viewport[0].scrollTop = newScrollTop;
             
-            uiGridCtrl.grid.options.offsetTop = newScrollTop;
+            // TOOD(c0bra): what's this for?
+            // grid.options.offsetTop = newScrollTop;
 
-            uiGridCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
+            containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
           }
-        });
+
+          // Horizontal scroll
+          if (args.x) {
+            var scrollWidth = (container.getCanvasWidth() - container.getViewportWidth());
+
+            var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
+
+            var scrollXPercentage;
+            if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
+              scrollXPercentage = args.x.percentage;
+            }
+            else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
+              scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
+            }
+            else {
+              throw new Error("No percentage or pixel value provided for scroll event X axis");
+            }
+
+            var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
+            
+            // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
+
+            containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+
+            if (containerCtrl.headerViewport) {
+              containerCtrl.headerViewport.scrollLeft = newScrollLeft;
+            }
+
+            // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
+
+            container.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
+          }
+        }
         
         // TODO(c0bra): Handle resizing the inner canvas based on the number of elements
         function update() {
@@ -86,27 +124,14 @@
           priority: 6,
           func: update
         });
-      },
-      controller: ['$scope', function ($scope) {
-        var self = this;
-        // Our child components will need:
-
-        // Viewport height
-        self.getViewportHeight = function getViewportHeight() {
-
-        };
-
-        // Viewport width
-
-        // Header height
-        // Header width
-
-        // Canvas height
-        // Canvas width
-
-        // Whether to show scrollbars? Both? Just one?
-      }]
+      }
     };
+
+  }]);
+
+  module.controller('uiGridRenderContainer', ['$scope', function ($scope) {
+    var self = this;
+    
 
   }]);
 

@@ -4,7 +4,13 @@
 
 # Render containers
 
-1. [IDEA] - 
+*** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
+
+1. [NOTE] - refreshCanvas() needs to QUEUE a refresh. It cannot directly call one. We need to debounce it somehow. Otherwise every render container refresh call will 
+   make the grid refresh itself WAY too much. Can we just use $timeout() and $timeout.cancel() with no delay?
+   - Maybe make a `queueRefresh` method that GridRenderContainer can call...
+
+1. [NOTE] - On grid init we need to redrawInPlace all containers, or rather update the scrollTop and scrollLeft of all registered container to '0' pixels.
 1. [BUG] - The pinning menu actions ARE putting the columns into the renderContainer caches, but it's not immediately updating (re-rendering) the grid. If I then scroll I
    see the column is gone, but it's also still accounts for the column's width when setting the canvas width (so two separate bugs).
    - NOTE - The viewport width adjustment needs to subtract the pinned viewports' dimensions from the main viewport

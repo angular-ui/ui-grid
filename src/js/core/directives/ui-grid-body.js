@@ -122,6 +122,9 @@
         // Redraw the rows and columns based on our current scroll position
         uiGridCtrl.redrawInPlace = function redrawInPlace() {
           $log.debug('redrawInPlace');
+
+          // TODO(c0bra): adjust the rows and columns of all registered render containers
+
           uiGridCtrl.adjustRows(uiGridCtrl.prevScrollTop, null);
           uiGridCtrl.adjustColumns(uiGridCtrl.prevScrollLeft, null);
         };

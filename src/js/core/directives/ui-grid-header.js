@@ -9,11 +9,16 @@
       // templateUrl: 'ui-grid/ui-grid-header',
       replace: true,
       // priority: 1000,
-      require: '?^uiGrid',
+      require: ['^uiGrid', '^uiGridRenderContainer'],
       scope: false,
       compile: function($elm, $attrs) {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+          pre: function ($scope, $elm, $attrs, controllers) {
+            var uiGridCtrl = controllers[0];
+            var containerCtrl = controllers[1];
+
+            $scope.grid = uiGridCtrl.grid;
+
             var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 
              gridUtil.getTemplate(headerTemplate)
@@ -34,12 +39,13 @@
               });
           },
 
-          post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl === undefined) {
-              throw new Error('[ui-grid-header] uiGridCtrl is undefined!');
-            }
+          post: function ($scope, $elm, $attrs, controllers) {
+            var uiGridCtrl = controllers[0];
+            var containerCtrl = controllers[1];
 
             $log.debug('ui-grid-header link');
+
+            var grid = uiGridCtrl.grid;
 
             // Don't animate header cells
             gridUtil.disableAnimations($elm);
@@ -52,13 +58,11 @@
                   totalWidth = 0;
 
               // Get the width of the viewport
-              var availableWidth = uiGridCtrl.grid.getViewportWidth();
+              var availableWidth = containerCtrl.getViewportWidth();
 
               if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
                 availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;
               }
-
-              $log.debug('availableWidth', availableWidth);
 
               // The total number of columns
               // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
@@ -76,7 +80,7 @@
 
               // uiGridCtrl.grid.columns.forEach(function(column, i) {
 
-              var columnCache = uiGridCtrl.grid.renderContainers.body.columnCache;
+              var columnCache = containerCtrl.container.columnCache;
 
               columnCache.forEach(function(column, i) {
                 // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
@@ -241,7 +245,7 @@
                     }
                   };
                   while (leftoverWidth > 0) {
-                    uiGridCtrl.grid.columns.forEach(remFn);
+                    columnCache.forEach(remFn);
                   }
                 }
               }
@@ -256,24 +260,23 @@
                 ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.drawnWidth + 'px; }';
               });
 
-              $scope.columnStyles = ret;
-
               // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth
-              if (uiGridCtrl.grid.verticalScrollbarWidth) {
-                canvasWidth = canvasWidth + uiGridCtrl.grid.verticalScrollbarWidth;
+              if (grid.verticalScrollbarWidth) {
+                canvasWidth = canvasWidth + grid.verticalScrollbarWidth;
               }
               // canvasWidth = canvasWidth + 1;
 
-              uiGridCtrl.grid.canvasWidth = parseInt(canvasWidth, 10);
-            }
+              containerCtrl.container.canvasWidth = parseInt(canvasWidth, 10);
 
-            if (uiGridCtrl) {
-              uiGridCtrl.header = $elm;
+              // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
+              return ret;
+            }
+            
+            containerCtrl.header = $elm;
               
-              var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
-              if (headerViewport) {
-                uiGridCtrl.headerViewport = headerViewport;
-              }
+            var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
+            if (headerViewport) {
+              containerCtrl.headerViewport = headerViewport;
             }
 
             //todo: remove this if by injecting gridCtrl into unit tests
