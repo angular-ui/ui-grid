@@ -1680,11 +1680,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 col.sortPriority = undefined;
                 push(col);
             }
-
-            self.sortActual();
-            self.searchProvider.evalFilter();
-            $scope.$emit('ngGridEventSorted', self.config.sortInfo);
         }
+        self.sortActual();
+        self.searchProvider.evalFilter();
+        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
     };
     self.sortColumnsInit = function() {
         if (self.config.sortInfo.columns) {
