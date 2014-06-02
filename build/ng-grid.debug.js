@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/29/2014 10:21
+* Compiled At: 06/02/2014 18:01
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -332,8 +332,12 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                var rightPad = 0;
+                if ((i === cols.length - 1) && (sumWidth + col.width < grid.elementDims.rootMaxW)) {
+                    rightPad = grid.elementDims.rootMaxW - sumWidth - col.width;
+                }
+                css += "." + gridId + " .col" + i + " { width: " + (col.width + rightPad) + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + (col.width + rightPad) + "px; }";
                 sumWidth += col.width;
             }
         }
@@ -375,6 +379,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
     getWidths();
     return domUtilityService;
 }]);
+
 angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
