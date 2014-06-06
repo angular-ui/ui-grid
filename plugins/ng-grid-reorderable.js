@@ -1,5 +1,5 @@
 ﻿/* 
- Reorderablr row plugin
+ Reorderable row plugin
 */
 
 function ngGridReorderable () {
