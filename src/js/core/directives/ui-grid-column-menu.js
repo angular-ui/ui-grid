@@ -244,7 +244,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
         uiGridCtrl.grid.sortColumn($scope.col, dir, true)
           .then(function () {
-            uiGridCtrl.refreshRows();
+            uiGridCtrl.refresh();
             self.hideMenu();
           });
       };
@@ -252,7 +252,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
       $scope.unsortColumn = function () {
         $scope.col.unsort();
 
-        uiGridCtrl.refreshRows();
+        uiGridCtrl.refresh();
         self.hideMenu();
       };
     },

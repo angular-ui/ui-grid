@@ -6,6 +6,8 @@
 
 *** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
 
+1. [TODO] - headerHeight when vertical scrollbar renders doesn't include the border width.
+   - Somehow need a way to re-run buildStyles after any header height updates...
 1. [TODO] - Render containers aren't responding to / firing scroll events. No scrolling is happening.
 1. [TODO] - Render container header viewport (and maybe main viewport) are too wide. Also the vertical scrollbar is too high. If the header is present the scrollbar needs   
    to size down...

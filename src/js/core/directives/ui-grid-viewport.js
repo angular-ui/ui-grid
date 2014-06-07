@@ -13,6 +13,7 @@
 
           var uiGridCtrl = controllers[0];
           var containerCtrl = controllers[1];
+          var container = containerCtrl.container;
 
           var grid = uiGridCtrl.grid;
 
@@ -26,27 +27,27 @@
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = $elm[0].scrollLeft;
 
-            if (newScrollLeft !== containerCtrl.prevScrollLeft) {
-              var xDiff = newScrollLeft - containerCtrl.prevScrollLeft;
+            if (newScrollLeft !== container.prevScrollLeft) {
+              var xDiff = newScrollLeft - container.prevScrollLeft;
 
-              var horizScrollLength = (containerCtrl.getCanvasWidth() - containerCtrl.getViewportWidth());
+              var horizScrollLength = (container.getCanvasWidth() - container.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 
               uiGridCtrl.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
 
-            if (newScrollTop !== containerCtrl.prevScrollTop) {
-              var yDiff = newScrollTop - containerCtrl.prevScrollTop;
+            if (newScrollTop !== container.prevScrollTop) {
+              var yDiff = newScrollTop - container.prevScrollTop;
 
               // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
-              var vertScrollLength = (containerCtrl.getCanvasHeight() - containerCtrl.getViewportHeight());
+              var vertScrollLength = (container.getCanvasHeight() - container.getViewportHeight());
               // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
               var vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
               if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
               
-              containerCtrl.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+              container.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
           });
         }

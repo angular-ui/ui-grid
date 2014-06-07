@@ -46,8 +46,8 @@
     {{ grid.verticalScrollbarStyles }}
     {{ grid.horizontalScrollbarStyles }}
 
-    {{ grid.nativeVerticalScrollbarStyles }}
-    {{ grid.nativeHorizontalScrollbarStyles }}
+    /*{{ grid.nativeVerticalScrollbarStyles }}
+    {{ grid.nativeHorizontalScrollbarStyles }}*/
 
     .grid{{ grid.id }} .ui-grid-native-scrollbar.vertical {
       height: {{ grid.getViewportHeight() }}px;
@@ -64,7 +64,7 @@
     </div>
   </div> -->
 
-  <div ui-grid-render-container container-name="'body'"></div>
+  <div ui-grid-render-container container-name="'body'" bind-scroll-horizontal="true" bind-scroll-vertical="true"></div>
 
   <div ui-grid-footer></div>
 

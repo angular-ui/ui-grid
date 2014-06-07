@@ -2,7 +2,9 @@
 
 angular.module('ui.grid')
 .factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
-  function GridRenderContainer(grid) {
+  function GridRenderContainer(name, grid) {
+    this.name = name;
+
     this.grid = grid;
     
     // this.rowCache = [];
@@ -95,7 +97,7 @@ angular.module('ui.grid')
 
     var viewPortWidth = self.grid.gridWidth;
 
-    if (typeof(self.verticalScrollbarWidth) !== 'undefined' && self.verticalScrollbarWidth !== undefined && self.verticalScrollbarWidth > 0) {
+    if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
       viewPortWidth = viewPortWidth - self.verticalScrollbarWidth;
     }
 
@@ -103,10 +105,12 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
+    var self = this;
+    
     var viewPortWidth = this.getViewportWidth();
 
-    if (typeof(this.grid.verticalScrollbarWidth) !== 'undefined' && this.grid.verticalScrollbarWidth !== undefined && this.grid.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth + this.grid.verticalScrollbarWidth;
+    if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
+      viewPortWidth = viewPortWidth + self.grid.verticalScrollbarWidth;
     }
 
     return viewPortWidth;

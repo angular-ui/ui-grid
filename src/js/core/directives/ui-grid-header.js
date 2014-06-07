@@ -20,6 +20,8 @@
             $scope.grid = uiGridCtrl.grid;
             $scope.container = containerCtrl.container;
 
+            containerCtrl.header = $elm;            
+
             var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 
              gridUtil.getTemplate(headerTemplate)

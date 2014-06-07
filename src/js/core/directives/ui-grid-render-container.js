@@ -61,7 +61,7 @@
               container.prevScrollArgs = args;
 
               // Vertical scroll
-              if (args.y) {
+              if (args.y && $scope.bindScrollVertical) {
                 var scrollLength = (container.getCanvasHeight() - container.getViewportHeight());
 
                 // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
@@ -90,11 +90,11 @@
                 // TOOD(c0bra): what's this for?
                 // grid.options.offsetTop = newScrollTop;
 
-                containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
+                container.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
               }
 
               // Horizontal scroll
-              if (args.x) {
+              if (args.x && $scope.bindScrollHorizontal) {
                 var scrollWidth = (container.getCanvasWidth() - container.getViewportWidth());
 
                 var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;

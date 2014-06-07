@@ -44,7 +44,7 @@ angular.module('ui.grid')
     this.renderContainers = {};
 
     // Create a 
-    this.renderContainers.body = new GridRenderContainer(this);
+    this.renderContainers.body = new GridRenderContainer('body', this);
 
     this.cellValueGetterCache = {};
 
