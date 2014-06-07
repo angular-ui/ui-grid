@@ -31,12 +31,12 @@
                 var newElm = $compile(template)($scope);
                 $elm.append(newElm);
 
-                if (uiGridCtrl) {
+                if (containerCtrl) {
                   // Inject a reference to the header viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
                   var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
 
                   if (headerViewport) {
-                    uiGridCtrl.headerViewport = headerViewport;
+                    containerCtrl.headerViewport = headerViewport;
                   }
                 }
               });
@@ -276,7 +276,7 @@
             }
             
             containerCtrl.header = $elm;
-              
+            
             var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
             if (headerViewport) {
               containerCtrl.headerViewport = headerViewport;

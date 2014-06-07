@@ -33,7 +33,7 @@
               var horizScrollLength = (container.getCanvasWidth() - container.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 
-              uiGridCtrl.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
+              container.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
 
             if (newScrollTop !== container.prevScrollTop) {

@@ -616,7 +616,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       if (e) {
-        // debugger;
         var styles = getStyles(e);
         return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
                   s.fakeElement(e, cssShow, function(newElm) {

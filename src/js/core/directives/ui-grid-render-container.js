@@ -125,6 +125,44 @@
                 container.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
               }
             }
+
+            // Scroll the render container viewport when the mousewheel is used
+            $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
+              // use wheelDeltaY
+              evt.preventDefault();
+
+              var newEvent = GridUtil.normalizeWheelEvent(evt);
+
+              var args = { target: $elm };
+              if (newEvent.deltaY !== 0) {
+                var scrollYAmount = newEvent.deltaY * -120;
+
+                // Get the scroll percentage
+                var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYAmount) / (container.getCanvasHeight() - container.getViewportHeight());
+
+                // Keep scrollPercentage within the range 0-1.
+                if (scrollYPercentage < 0) { scrollYPercentage = 0; }
+                else if (scrollYPercentage > 1) { scrollYPercentage = 1; }
+
+                args.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
+              }
+              if (newEvent.deltaX !== 0) {
+                var scrollXAmount = newEvent.deltaX * -120;
+
+                // Get the scroll percentage
+                var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXAmount) / (container.getCanvasWidth() - container.getViewportWidth());
+
+                // Keep scrollPercentage within the range 0-1.
+                if (scrollXPercentage < 0) { scrollXPercentage = 0; }
+                else if (scrollXPercentage > 1) { scrollXPercentage = 1; }
+
+                args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
+              }
+
+              // $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+
+              uiGridCtrl.fireScrollingEvent(args);
+            });
             
             // TODO(c0bra): Handle resizing the inner canvas based on the number of elements
             function update() {

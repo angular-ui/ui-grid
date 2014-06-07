@@ -98,7 +98,7 @@ angular.module('ui.grid')
     var viewPortWidth = self.grid.gridWidth;
 
     if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth - self.verticalScrollbarWidth;
+      viewPortWidth = viewPortWidth - self.grid.verticalScrollbarWidth;
     }
 
     return viewPortWidth;
@@ -106,7 +106,7 @@ angular.module('ui.grid')
 
   GridRenderContainer.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
     var self = this;
-    
+
     var viewPortWidth = this.getViewportWidth();
 
     if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
@@ -121,8 +121,8 @@ angular.module('ui.grid')
 
     var ret =  self.grid.options.rowHeight * self.getVisibleRowCount();
 
-    if (typeof(self.horizontalScrollbarHeight) !== 'undefined' && self.horizontalScrollbarHeight !== undefined && self.horizontalScrollbarHeight > 0) {
-      ret = ret - self.horizontalScrollbarHeight;
+    if (typeof(self.grid.horizontalScrollbarHeight) !== 'undefined' && self.grid.horizontalScrollbarHeight !== undefined && self.grid.horizontalScrollbarHeight > 0) {
+      ret = ret - self.grid.horizontalScrollbarHeight;
     }
 
     return ret;
