@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/11/2014 18:48
+* Compiled At: 06/11/2014 19:20
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -23,6 +23,7 @@ var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
 var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var CELL_EDITABLE_CONDITION = /CELL_EDITABLE_CONDITION/g;
 var TEMPLATE_REGEXP = /<.+>/;
+var DOT_REGEXP = /\./g;
 window.ngGrid = {};
 window.ngGrid.i18n = {};
 
@@ -3098,13 +3099,13 @@ ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function
             return {
                 pre: function($scope, iElement) {
                     var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']');
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field.replace(DOT_REGEXP, '\'][\'') + '\']');
 
                     if ($scope.col.enableCellEdit) {
                         html =  $scope.col.cellEditTemplate;
                         html = html.replace(CELL_EDITABLE_CONDITION, $scope.col.cellEditableCondition);
                         html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field + '\']'));
+                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field.replace(DOT_REGEXP, '\'][\'') + '\']'));
                     } else {
                         html = cellTemplate;
                     }
