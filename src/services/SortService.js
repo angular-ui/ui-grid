@@ -107,8 +107,8 @@
                 direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
                 
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
+                var propA = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemA});
+                var propB = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemB});
                 // if user provides custom sort, we want them to have full control of the sort
                 if (sortService.isCustomSort) {
                     res = sortFn(propA, propB);
@@ -162,7 +162,7 @@
             if (!item) {
                 return sortFn;
             }
-            sortFn = sortService.guessSortFn($parse(col.field)(item));
+            sortFn = sortService.guessSortFn($parse('entity[\''+col.field.replace(DOT_REGEXP, '\'][\'')+'\']')({entity:item}));
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;

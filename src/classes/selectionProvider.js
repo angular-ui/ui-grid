@@ -5,7 +5,11 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
-    self.pKeyParser = $parse(grid.config.primaryKey);
+    var pKeyExpression = grid.config.primaryKey;
+    if(pKeyExpression) {
+      pKeyExpression = 'entity[\''+grid.config.primaryKey.replace(DOT_REGEXP, '\'][\'')+'\']';
+    }
+    self.pKeyParser = $parse(pKeyExpression);
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (rowItem, evt) {
@@ -97,9 +101,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.getSelectionIndex = function (entity) {
         var index = -1;
         if (grid.config.primaryKey) {
-            var val = self.pKeyParser(entity);
+            var val = self.pKeyParser({entity: entity});
             angular.forEach(self.selectedItems, function (c, k) {
-                if (val === self.pKeyParser(c)) {
+                if (val === self.pKeyParser({entity: c})) {
                     index = k;
                 }
             });

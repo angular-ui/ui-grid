@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/11/2014 19:20
+* Compiled At: 06/11/2014 23:47
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -485,8 +485,8 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
                 direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
                 
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
+                var propA = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemA});
+                var propB = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemB});
                 // if user provides custom sort, we want them to have full control of the sort
                 if (sortService.isCustomSort) {
                     res = sortFn(propA, propB);
@@ -540,7 +540,7 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
             if (!item) {
                 return sortFn;
             }
-            sortFn = sortService.guessSortFn($parse(col.field)(item));
+            sortFn = sortService.guessSortFn($parse('entity[\''+col.field.replace(DOT_REGEXP, '\'][\'')+'\']')({entity:item}));
             //cache it
             if (sortFn) {
                 sortService.colSortFnCache[col.field] = sortFn;
@@ -584,7 +584,7 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
             }
         },
         evalProperty: function (entity, path) {
-            return $parse("entity." + path)({ entity: entity });
+            return $parse("entity[\'" + path.replace(DOT_REGEXP, '\'][\'')+'\']')({ entity: entity });
         },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {
@@ -2790,7 +2790,11 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.selectedIndex = grid.config.selectedIndex;
     self.lastClickedRow = undefined;
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
-    self.pKeyParser = $parse(grid.config.primaryKey);
+    var pKeyExpression = grid.config.primaryKey;
+    if(pKeyExpression) {
+      pKeyExpression = 'entity[\''+grid.config.primaryKey.replace(DOT_REGEXP, '\'][\'')+'\']';
+    }
+    self.pKeyParser = $parse(pKeyExpression);
 
     // function to manage the selection action of a data item (entity)
     self.ChangeSelection = function (rowItem, evt) {
@@ -2882,9 +2886,9 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.getSelectionIndex = function (entity) {
         var index = -1;
         if (grid.config.primaryKey) {
-            var val = self.pKeyParser(entity);
+            var val = self.pKeyParser({entity: entity});
             angular.forEach(self.selectedItems, function (c, k) {
-                if (val === self.pKeyParser(c)) {
+                if (val === self.pKeyParser({entity: c})) {
                     index = k;
                 }
             });
