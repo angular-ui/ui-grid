@@ -34,7 +34,7 @@ angular.module('ngGrid.services').factory('$rtlUtilityService',[function() {
             if(rtlUtilityService.isAxisFlipped) {
                 normalizedScrollLeft = Math.abs(realScrollLeft);
             } else {
-                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft
+                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft;
             }
         }
         return normalizedScrollLeft;
