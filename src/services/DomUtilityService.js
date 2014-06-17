@@ -87,7 +87,7 @@
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + ngHeaderScrollerWidth  + "px}";
 
-	//in RTL we need to attach to the right side
+        //in RTL we need to attach to the right side
         var side = rtlUtilityService.isRtl ? 'right' : 'left';
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
@@ -115,7 +115,7 @@
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
         if (grid.$styleSheet) {
-	    //in RTL we need to attach to the right side
+            //in RTL we need to attach to the right side
             var side = rtlUtilityService.isRtl ? 'right' : 'left';
             var regex = regexCache[col.index];
             if (!regex) {
