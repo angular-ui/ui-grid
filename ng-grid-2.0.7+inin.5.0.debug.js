@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/16/2014 22:25
+* Compiled At: 03/28/2014 14:30
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -294,7 +294,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$rtlUtilityServ
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + ngHeaderScrollerWidth  + "px}";
 
-        //in RTL we need to attach to the right side
+	//in RTL we need to attach to the right side
         var side = rtlUtilityService.isRtl ? 'right' : 'left';
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
@@ -322,7 +322,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$rtlUtilityServ
     };
     domUtilityService.setColLeft = function(col, colLeft, grid) {
         if (grid.$styleSheet) {
-            //in RTL we need to attach to the right side
+	    //in RTL we need to attach to the right side
             var side = rtlUtilityService.isRtl ? 'right' : 'left';
             var regex = regexCache[col.index];
             if (!regex) {
@@ -398,7 +398,7 @@ angular.module('ngGrid.services').factory('$rtlUtilityService',[function() {
             if(rtlUtilityService.isAxisFlipped) {
                 normalizedScrollLeft = Math.abs(realScrollLeft);
             } else {
-                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft;
+                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft
             }
         }
         return normalizedScrollLeft;
@@ -1034,22 +1034,10 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
                 grid.$topPanel.on('drop', '.ngHeaderScroller', self.onHeaderDrop);
             }
         }
-        
-        // Only allow dragging if the grid is configured for it.  Otherwise you can drag the column and do
-        // nothing with it.
         $scope.$watch('renderedColumns', function() {
-            if (grid.config.enableColumnReordering ||
-                grid.config.showGroupPanel ||
-                grid.config.jqueryUIDraggable) {
-                // Don't $apply after setting the draggables.  With large scopes, and lots of grids, the performance
-                // is horrible!
-                // 2nd param is to use the default timeout for setTimeout
-                // 3rd param is to not call $scope.$apply, since it doesn't appear to be needed
-                $timeout(self.setDraggables, undefined, false);
-            }
+            $timeout(self.setDraggables);
         });
     };
-    
     self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
