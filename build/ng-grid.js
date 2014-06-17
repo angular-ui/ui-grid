@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/28/2014 14:30
+* Compiled At: 06/16/2014 22:12
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -276,8 +276,6 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$rtlUtilityServ
             "." + gridId + " .ngRow { width: " + trw + "px; }" +
             "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
             "." + gridId + " .ngHeaderScroller { width: " + ngHeaderScrollerWidth  + "px}";
-
-	
         var side = rtlUtilityService.isRtl ? 'right' : 'left';
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
@@ -373,7 +371,7 @@ angular.module('ngGrid.services').factory('$rtlUtilityService',[function() {
             if(rtlUtilityService.isAxisFlipped) {
                 normalizedScrollLeft = Math.abs(realScrollLeft);
             } else {
-                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft
+                normalizedScrollLeft = viewport[0].scrollWidth - viewport[0].clientWidth - realScrollLeft;
             }
         }
         return normalizedScrollLeft;
@@ -972,7 +970,11 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
             }
         }
         $scope.$watch('renderedColumns', function() {
-            $timeout(self.setDraggables);
+            if (grid.config.enableColumnReordering ||
+                grid.config.showGroupPanel ||
+                grid.config.jqueryUIDraggable) {
+                $timeout(self.setDraggables, undefined, false);
+            }
         });
     };
     self.dragStart = function(evt){
