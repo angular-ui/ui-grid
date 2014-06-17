@@ -88,16 +88,50 @@
         if (searchConditions.length === 0) {
             grid.filteredRows = grid.rowCache;
         } else {
-            grid.filteredRows = grid.rowCache.filter(function(row) {
-                return filterFunc(row.entity);
-            });
+            var row;
+            var filterFlags = [];
+            filterFlags.length = grid.rowCache.length;
+
+            //check filter for each row individually (no impact from children)
+            for (var i = 0; i < grid.rowCache.length; ++i) {
+                row = grid.rowCache[i];
+                filterFlags[i] = filterFunc(row.entity);
+            }
+
+            //check if a child makes the row visible
+            //start with the last item so we only have to check the items of depth+1 for each selected row
+            for (var j = filterFlags.length - 1; j >= 0; --j) {
+                //if it matches the filter condition, no need to check its children, it's already visible
+                if (filterFlags[j]) {
+                    continue;
+                }
+
+                //not visible through the filter, try to find a direct child that is visible
+                row = grid.rowCache[j];
+                var childIndex = j + 1;
+                while (grid.rowCache[childIndex] && grid.rowCache[childIndex].depth > row.depth) {
+                    if (grid.rowCache[childIndex].depth === row.depth + 1) {
+                        filterFlags[j] |= filterFlags[childIndex];
+                    }
+                    ++childIndex;
+                }
+            }
+
+            //fill filteredRows with visible rows (filter flag set to 'true')
+            grid.filteredRows = [];
+            for (var k = 0; k < grid.rowCache.length; ++k) {
+                if (filterFlags[k]) {
+                    grid.filteredRows.push(grid.rowCache[k]);
+                }
+            }
+
+            //fix index for filtered (visible) rows
+            for (var l = 0; l < grid.filteredRows.length; l++)
+            {
+                grid.filteredRows[l].rowIndex = l;
+            }
+            grid.rowFactory.filteredRowsChanged();
         }
-        for (var i = 0; i < grid.filteredRows.length; i++)
-        {
-            grid.filteredRows[i].rowIndex = i;
-            
-        }
-        grid.rowFactory.filteredRowsChanged();
     };
 
     //Traversing through the object to find the value that we want. If fail, then return the original object.

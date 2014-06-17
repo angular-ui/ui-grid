@@ -67,6 +67,11 @@
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
 
+                            //The 'public' interface of gridOptions does not expose the 'watchData' property
+                            //this property must be set to 'deep' in order for a hierarchical data structure to
+                            //be shown and updated correctly in ng-grid.
+                            //If this implementation changes, we will need to make sure we can still support this.
+                            //Or, if we need higher performance, alternatives will have to be developed.
                             if (options.watchData === 'deep') {
                                 $scope.$parent.$watch(options.data, dataWatcher, true);
                             }

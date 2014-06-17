@@ -67,6 +67,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, rtlUtili
         //Enables or disables text highlighting in grid by adding the "unselectable" class (See CSS file)
         enableHighlighting: false,
         
+        //Defining the property containing the child items (hierarchical data structure)
+        entryChildProperty: undefined,
+
         // string list of properties to exclude when auto-generating columns.
         excludeProperties: [],
         
@@ -295,6 +298,13 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, rtlUtili
             $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
             $scope.renderedRows[i].selected = newRows[i].selected;
             newRows[i].renderedRowIndex = i;
+
+            //renderedRows reuses the same set of existing ngRow when updating the data,
+            //as for the three line above (rowIndex, offsetTop, selected), we need to
+            //copy over information related to hierarchy in those rows
+            $scope.renderedRows[i].hasChildren = newRows[i].hasChildren;
+            $scope.renderedRows[i].isExpanded = newRows[i].isExpanded;
+            $scope.renderedRows[i].depth = newRows[i].depth;
         }
         self.refreshDomSizes();
         $scope.$emit('ngGridEventRows', newRows);

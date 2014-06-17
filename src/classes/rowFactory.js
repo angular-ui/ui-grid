@@ -27,13 +27,13 @@
 
     // @entity - the data item
     // @rowIndex - the index of the row
-    self.buildEntityRow = function(entity, rowIndex) {
+    self.buildEntityRow = function(entity, rowIndex, depth, hasChildren, isExpanded) {
         // build the row
-        return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
+        return new ngRow(entity, self.renderedChange, self.rowConfig, self.selectionProvider, rowIndex, $utils, depth, hasChildren, isExpanded);
     };
 
     self.buildAggregateRow = function(aggEntity, rowIndex) {
-        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
+        var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it
         if (!agg) {
             // build the row
             agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
@@ -97,24 +97,90 @@
     };
 
     self.renderedChangeNoGroups = function () {
-        var rowArr = [];
-        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
-            if (grid.filteredRows[i]) {
-                grid.filteredRows[i].rowIndex = i;
-                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(grid.filteredRows[i]);
+        var numberOfRowsToRender = self.renderedRange.bottomRow - self.renderedRange.topRow;
+        //Number of rows picked up for rendering (note that only top level rows are considered)
+        var topRowsCount = 0;
+        var rowIndex = self.renderedRange.topRow;
+        var renderedRowIndex = 0;
+
+        var rowsToRender = [];
+
+        while (topRowsCount < numberOfRowsToRender) {
+            var row = grid.filteredRows[rowIndex];
+            if (row) {
+                row.offsetTop = renderedRowIndex * grid.config.rowHeight;
+                rowsToRender.push(row);
+                ++renderedRowIndex;
+
+                if (row.isExpanded === true) {
+                    //check children (increment to next line)
+                    ++rowIndex;
+                } else if (row.isExpanded === false) {
+                    //skip children (skip until a row with equal or lower depth is found (sibbling or parent))
+                    ++rowIndex;
+                    while(grid.filteredRows[rowIndex] && grid.filteredRows[rowIndex].depth > row.depth) {
+                        ++rowIndex;
+                    }
+                } else {
+                    //check sibblings (this row does not have a 'isExpanded' property and therefore has no children)
+                    ++rowIndex;
+                }
+
+                if (row.depth === 0) {
+                    ++topRowsCount;
+                }
+            } else {
+                break;
             }
         }
-        grid.setRenderedRows(rowArr);
+
+        grid.setRenderedRows(rowsToRender);
     };
 
     self.fixRowCache = function () {
-        var newLen = grid.data.length;
-        grid.rowCache.length = grid.rowMap.length = newLen;
-        for (var i = 0; i < newLen; i++) {
-            grid.rowMap[i] = i;
-            grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
+        var hierarchySize = self.getHierarchySize(grid.data);
+
+        grid.rowCache.length = hierarchySize;
+        grid.rowMap.length = hierarchySize;
+
+        var index = 0;
+        _.each(grid.data, function(entry){
+            index = self.fixHierarchyCache(entry, index, 0);
+        });
+    };
+
+    self.getHierarchySize = function(hierarchy) {
+        var size = hierarchy.length;
+        _.each(hierarchy, function(entry) {
+            size += self.getHierarchySize(self.getChildren(entry));
+        });
+
+        return size;
+    };
+
+    self.fixHierarchyCache = function(entry, index, depth) {
+        var children = self.getChildren(entry);
+
+        grid.rowMap[index] = index;
+        grid.rowCache[index] = grid.rowFactory.buildEntityRow(entry, index, depth, children.length !== 0, false, depth === 0 ? true : false);
+
+        ++index;
+        _.each(children, function(child) {
+            index = self.fixHierarchyCache(child, index, depth + 1);
+        });
+
+        return index;
+    };
+
+    self.getChildren = function(entry) {
+        if (grid.config.entryChildProperty) {
+            var children = entry[grid.config.entryChildProperty];
+            if (children && Array.isArray(children)) {
+                return children;
+            }
         }
+
+        return [];
     };
 
     //magical recursion. it works. I swear it. I figured it out in the shower one day.

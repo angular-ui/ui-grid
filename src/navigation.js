@@ -95,7 +95,40 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     }
     
     if (offset) {
-        var r = items[rowIndex + offset];
+        //Arrow up or down has been pressed
+        //Determining what is the next visible row to select.
+        //This operation is done on the rowCache (items), not renderedRows or filteredRows,
+        //so lots of items are not valid selection.
+        var row = items[rowIndex];
+        var r;
+
+        if (offset === 1) { //+1 (going down the list)
+            if (row.isExpanded) {
+                r = items[rowIndex + offset];
+            } else {
+                //find the first non-child row
+                while(items[rowIndex + offset] && items[rowIndex + offset].depth > row.depth) {
+                    ++offset;
+                }
+
+                r = items[rowIndex + offset] || row;
+            }
+        } else { //-1 (going up the list)
+            //start with the next item up the list (might be a parent of the candidate (r))
+            r = items[rowIndex + offset];
+            var index = rowIndex + offset;
+
+            var item = r;
+            while (item.depth !== 0) {
+                item = items[--index];
+                if (item.depth === r.depth - 1) { //it's a parent, process it!
+                    if (!item.isExpanded) { //its child is not visible, it's the new candidate (r)
+                        r = item;
+                    }
+                }
+            }
+        }
+	r = items[rowIndex + offset];
         if (r && r.beforeSelectionChange(r, evt)) {
             r.continueSelection(evt);
             $scope.$emit('ngGridEventDigestGridParent');
