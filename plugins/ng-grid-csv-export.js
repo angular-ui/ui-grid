@@ -51,6 +51,7 @@ function ngGridCsvExportPlugin (opts) {
             csvData = swapLastCommaForNewline(csvData);
             var gridData = grid.data;
             for (var gridRow in gridData) {
+                var rowData = '';
                 for ( k in keys) {
                     var curCellRaw;
 
@@ -61,9 +62,9 @@ function ngGridCsvExportPlugin (opts) {
                         curCellRaw = self.services.UtilityService.evalProperty(gridData[gridRow], keys[k]);
                     }
 
-                    csvData += '"' + csvStringify(curCellRaw) + '",';
+                    rowData += '"' + csvStringify(curCellRaw) + '",';
                 }
-                csvData = swapLastCommaForNewline(csvData);
+                csvData = swapLastCommaForNewline(rowData);
             }
             var fp = grid.$root.find(".ngFooterPanel");
             var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
