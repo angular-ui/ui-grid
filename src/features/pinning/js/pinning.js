@@ -52,7 +52,7 @@
     };
   }]);
 
-  module.directive('uiGridBody', ['$log', '$compile', function ($log, $compile) {
+  module.directive('uiGrid', ['$log', '$compile', function ($log, $compile) {
     return {
       link: function ($scope, $elm, $attrs) {
 
@@ -70,58 +70,62 @@
   module.directive('uiGridPinnedContainer', ['$log', function ($log) {
     return {
       replace: true,
-      template: '<div><div ui-grid-render-container="side" class="ui-grid-pinned-container"></div></div>',
+      template: '<div><div ui-grid-render-container container-name="side" bind-scroll-vertical="true" class="ui-grid-pinned-container"></div></div>',
       scope: {
         side: '=uiGridPinnedContainer'
       },
       require: '^uiGrid',
-      link: function ($scope, $elm, $attrs, uiGridCtrl) {
-        $log.debug('ui-grid-pinned-container link');
+      compile: function compile() {
+        return {
+          post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            $log.debug('ui-grid-pinned-container link');
 
-        var grid = uiGridCtrl.grid;
+            var grid = uiGridCtrl.grid;
 
-        var myWidth = 0;
+            var myWidth = 0;
 
-        $elm.addClass($scope.side);
+            $elm.addClass($scope.side);
 
-        function updateContainerDimensions() {
-          $log.debug('update ' + $scope.side + ' dimensions');
+            function updateContainerDimensions() {
+              $log.debug('update ' + $scope.side + ' dimensions');
 
-          var ret = '';
+              var ret = '';
 
-          // Column containers
-          if ($scope.side === 'left' || $scope.side === 'right') {
-            var cols = grid.renderContainers[$scope.side].visibleColumnCache;
-            var width = 0;
-            for (var i in cols) {
-              var col = cols[i];
-              width += col.drawnWidth;
+              // Column containers
+              if ($scope.side === 'left' || $scope.side === 'right') {
+                var cols = grid.renderContainers[$scope.side].visibleColumnCache;
+                var width = 0;
+                for (var i in cols) {
+                  var col = cols[i];
+                  width += col.drawnWidth;
+                }
+
+                myWidth = width;
+
+                $log.debug('myWidth', myWidth);
+
+                // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
+
+                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
+              }
+
+              return ret;
             }
 
-            myWidth = width;
+            grid.registerViewportAdjuster(function (adjustment) {
+              // Subtract our own width
+              adjustment.width -= myWidth;
 
-            $log.debug('myWidth', myWidth);
+              return adjustment;
+            });
 
-            // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
-
-            ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
+            // Register style computation to adjust for columns in `side`'s render container
+            grid.registerStyleComputation({
+              priority: 15,
+              func: updateContainerDimensions
+            });
           }
-
-          return ret;
-        }
-
-        grid.registerViewportAdjuster(function (adjustment) {
-          // Subtract our own width
-          adjustment.width -= myWidth;
-
-          return adjustment;
-        });
-
-        // Register style computation to adjust for columns in `side`'s render container
-        grid.registerStyleComputation({
-          priority: 15,
-          func: updateContainerDimensions
-        });
+        };
       }
     };
   }]);
