@@ -4,6 +4,25 @@
 
 Thanks for considering contributions to the ui-grid project. This doc will give you a jump start on the development standards we use.
 
+# Running Dev Server
+Grunt task dev will run jshint, compile less, run fontella, run unit tests, run protractor tests, and start a local
+webserver on port 9003.  A watch is started to rerun all the tasks if any source file changes.
+
+<br>
+```
+grunt dev
+```
+<br>
+http://localhost:9003/docs/#/tutorial to browse each tutorial. 
+
+<br/>options
+<br/> no-e2e - eliminate protractor tests
+<br/> angular=n.n.n - specify a specify angular version to run unit tests against
+
+```
+grunt dev --no-e2e --angular=1.2.16
+```
+
 # Code Structure
 The development goal of ui-grid (ng-grid 3.0) is a fast, testable, and extensible grid component.
 
