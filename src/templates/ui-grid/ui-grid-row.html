@@ -1,5 +1,5 @@
 <div>
-  <div ng-repeat="col in container.renderedColumns track by $index" class="ui-grid-cell col{{ col.index }}">
+  <div ng-repeat="col in container.renderedColumns track by $index" class="ui-grid-cell" ui-grid-col>
     <div class="ui-grid-vertical-bar">&nbsp;</div>
     <div class="ui-grid-inner-cell-contents" ui-grid-cell col="col" row="row" row-index="row.index" col-index="col.colDef.index" />
   </div>
