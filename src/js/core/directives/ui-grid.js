@@ -11,12 +11,13 @@
 
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
+      $elm.addClass('grid' + self.grid.id);
 
 
       //add optional reference to externalScopes function to controller
       //so it can be retrieved in lower elements that have isolate scope
       self.getExternalScopes = $scope.getExternalScopes;
-      
+
       // angular.extend(self.grid.options, );
 
       //all properties of grid are available on scope
@@ -27,7 +28,7 @@
         $log.info('pre-compiling cell templates');
         columns.forEach(function (col) {
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-          
+
           var compiledElementFn = $compile(html);
           col.compiledElementFn = compiledElementFn;
         });
@@ -196,7 +197,7 @@
         var p2 = self.grid.processColumnsProcessors(self.grid.columns).then(function (renderableColumns) {
           self.grid.setVisibleColumns(renderableColumns);
         });
-        
+
         return $q.all([p1, p2]).then(function () {
           self.redrawInPlace();
 
@@ -207,7 +208,7 @@
       // Redraw the rows and columns based on our current scroll position
       self.redrawInPlace = function redrawInPlace() {
         $log.debug('redrawInPlace');
-        
+
         for (var i in self.grid.renderContainers) {
           var container = self.grid.renderContainers[i];
 
@@ -219,7 +220,7 @@
       };
 
       /* Sorting Methods */
-      
+
 
       /* Event Methods */
 
@@ -233,7 +234,7 @@
         if (typeof(args) === 'undefined' || args === undefined) {
           args = {};
         }
-        
+
         if (typeof(args.grid) === 'undefined' || args.grid === undefined) {
           args.grid = self.grid;
         }
@@ -251,7 +252,7 @@
  *  @param {Object} uiGrid Options for the grid to use
  *  @param {Object=} external-scopes Add external-scopes='someScopeObjectYouNeed' attribute so you can access
  *            your scopes from within any custom templatedirective.  You access by $scope.getExternalScopes() function
- *  
+ *
  *  @description Create a very basic grid.
  *
  *  @example
