@@ -43,7 +43,7 @@
                     if (pVal !== null && pVal !== undefined) {
                         if (typeof f === "function") {
                             // Have to slice off the quotes the parser would have removed
-                            var filterRes = f(pVal, s[1].slice(1,-1)).toString();
+                            var filterRes = f(pVal, s.length > 1 ? s[1].slice(1,-1) : null).toString();
                             result = condition.regex.test(filterRes);
                         } else {
                             result = condition.regex.test(pVal.toString());
