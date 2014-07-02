@@ -493,7 +493,7 @@ describe('directives', function () {
                                  { field: 'name' },
                                  { field: 'obj1.age' },
                                  { field: 'birthdate', cellFilter: "date:'MM-dd-yyyy'" },
-                                 { field: 'obj2.grade'}
+                                 { field: 'obj2.grade', cellFilter: "lowercase"}
                                  ]
                     };
 
