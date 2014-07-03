@@ -38,7 +38,7 @@ describe('ui.grid.resizeColumns', function () {
   });
 
   describe('setting enableColumnResizing', function () {
-    it('should by default cause resizer to be attached to the header elements', function () {
+    xit('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
       expect(resizers.size()).toEqual(5);
