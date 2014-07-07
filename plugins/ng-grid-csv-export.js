@@ -37,14 +37,13 @@ function ngGridCsvExportPlugin (opts) {
             var keys = [];
             var csvData = '';
             for (var f in grid.config.columnDefs) {
-                if (grid.config.columnDefs.hasOwnProperty(f))
-                {
+                if (grid.config.columnDefs.hasOwnProperty(f)) {
                     keys.push(grid.config.columnDefs[f].field);
                     csvData += '"' ;
-                    if(typeof grid.config.columnDefs[f].displayName !== 'undefined'){/** moved to reduce looping and capture the display name if it exists**/
+                    if(typeof grid.config.columnDefs[f].displayName !== 'undefined') {/** moved to reduce looping and capture the display name if it exists**/
                         csvData += csvStringify(grid.config.columnDefs[f].displayName);
                     }
-                    else{
+                    else {
                         csvData += csvStringify(grid.config.columnDefs[f].field);
                     }
                     csvData +=  '",';
