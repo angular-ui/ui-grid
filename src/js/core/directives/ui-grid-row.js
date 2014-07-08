@@ -20,7 +20,7 @@
             var grid = uiGridCtrl.grid;
 
             $scope.grid = uiGridCtrl.grid;
-            $scope.container = containerCtrl.container;
+            $scope.colContainer = containerCtrl.colContainer;
 
             grid.getRowTemplateFn.then(function (templateFn) {
               templateFn($scope, function(clonedElement, scope) {

@@ -15,22 +15,28 @@
             var pinColumnLeftAction = {
               title: 'Pin Left',
               action: function() {
-                //alert(this.context.col.displayName);
                 this.context.col.renderContainer = 'left';
 
-                uiGridCtrl.refresh();
-                // this.hideMenu();
+                // Need to call refresh twice; once to move our column over to the new render container and then
+                //   a second time to update the grid viewport dimensions with our adjustments
+                uiGridCtrl.refresh()
+                  .then(function () {
+                    uiGridCtrl.refresh();
+                  });
               }
             };
 
             var pinColumnRightAction = {
               title: 'Pin Right',
               action: function() {
-                //alert(this.context.col.displayName);
                 this.context.col.renderContainer = 'right';
                 
-                uiGridCtrl.refresh();
-                // this.hideMenu();
+                // Need to call refresh twice; once to move our column over to the new render container and then
+                //   a second time to update the grid viewport dimensions with our adjustments
+                uiGridCtrl.refresh()
+                  .then(function () {
+                    uiGridCtrl.refresh();
+                  });
               }
             };
 
@@ -56,13 +62,17 @@
     return {
       link: function ($scope, $elm, $attrs) {
 
-        var left = angular.element('<div ui-grid-pinned-container="\'left\'"></div>');
-        $elm.append(left);
+        var left = angular.element('<div style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
+        $elm.prepend(left);
         $compile(left)($scope);
 
-        // var right = angular.element('<div ui-grid-pinned-container="\'right\'"></div>');
-        // $compile(right)($scope);
-        // $elm.append(right);
+        var right = angular.element('<div style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
+        $elm.append(right);
+        $compile(right)($scope);
+
+        var bodyContainer = angular.element( $elm[0].querySelectorAll('[container-id="body"]') );
+
+        bodyContainer.attr('style', 'float: left; position: inherit');
       }
     };
   }]);
@@ -70,7 +80,7 @@
   module.directive('uiGridPinnedContainer', ['$log', function ($log) {
     return {
       replace: true,
-      template: '<div><div ui-grid-render-container container-name="side" bind-scroll-vertical="true" class="ui-grid-pinned-container"></div></div>',
+      template: '<div><div ui-grid-render-container container-id="side" row-container-name="\'body\'" col-container-name="side" bind-scroll-vertical="true" class="ui-grid-pinned-container {{ side }}"></div></div>',
       scope: {
         side: '=uiGridPinnedContainer'
       },
@@ -83,11 +93,11 @@
             var grid = uiGridCtrl.grid;
 
             var myWidth = 0;
-
-            $elm.addClass($scope.side);
+            
+            // $elm.addClass($scope.side);
 
             function updateContainerDimensions() {
-              $log.debug('update ' + $scope.side + ' dimensions');
+              // $log.debug('update ' + $scope.side + ' dimensions');
 
               var ret = '';
 
@@ -102,17 +112,18 @@
 
                 myWidth = width;
 
-                $log.debug('myWidth', myWidth);
+                // $log.debug('myWidth', myWidth);
 
                 // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
+                $elm.attr('style', null);
 
-                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.left { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
+                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.' + $scope.side + ', .ui-grid-pinned-container.' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
               }
 
               return ret;
             }
 
-            grid.registerViewportAdjuster(function (adjustment) {
+            grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
               // Subtract our own width
               adjustment.width -= myWidth;
 

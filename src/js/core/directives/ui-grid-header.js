@@ -18,9 +18,9 @@
             var containerCtrl = controllers[1];
 
             $scope.grid = uiGridCtrl.grid;
-            $scope.container = containerCtrl.container;
+            $scope.colContainer = containerCtrl.colContainer;
 
-            containerCtrl.header = $elm;            
+            containerCtrl.header = $elm;
 
             var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 
@@ -61,7 +61,7 @@
                   totalWidth = 0;
 
               // Get the width of the viewport
-              var availableWidth = containerCtrl.container.getViewportWidth();
+              var availableWidth = containerCtrl.colContainer.getViewportWidth();
 
               if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
                 availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;
@@ -83,7 +83,7 @@
 
               // uiGridCtrl.grid.columns.forEach(function(column, i) {
 
-              var columnCache = containerCtrl.container.visibleColumnCache;
+              var columnCache = containerCtrl.colContainer.visibleColumnCache;
 
               columnCache.forEach(function(column, i) {
                 // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
@@ -269,7 +269,7 @@
               }
               // canvasWidth = canvasWidth + 1;
 
-              containerCtrl.container.canvasWidth = parseInt(canvasWidth, 10);
+              containerCtrl.colContainer.canvasWidth = parseInt(canvasWidth, 10);
 
               // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
               return ret;

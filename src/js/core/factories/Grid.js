@@ -539,7 +539,7 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    $log.debug('setVisibleRows');
+    // $log.debug('setVisibleRows');
 
     var self = this;
 
@@ -649,7 +649,7 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleColumns = function setVisibleColumns(columns) {
-    $log.debug('setVisibleColumns');
+    // $log.debug('setVisibleColumns');
 
     var self = this;
 
@@ -723,7 +723,7 @@ angular.module('ui.grid')
    * @description calls each styleComputation function
    */
   Grid.prototype.buildStyles = function buildStyles($scope) {
-    $log.debug('buildStyles');
+    // $log.debug('buildStyles');
 
     var self = this;
     
@@ -902,7 +902,7 @@ angular.module('ui.grid')
       ret = ret - this.verticalScrollbarWidth;
     }
 
-    $log.debug('canvasWidth', ret);
+    // $log.debug('canvasWidth', ret);
 
     return ret;
   };

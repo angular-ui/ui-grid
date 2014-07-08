@@ -13,7 +13,8 @@
       link: function ($scope, $elm, $attrs, controllers) {
         var uiGridCtrl = controllers[0];
         var containerCtrl = controllers[1];
-        var container = containerCtrl.container;
+        var rowContainer = containerCtrl.rowContainer;
+        var colContainer = containerCtrl.colContainer;
         var grid = uiGridCtrl.grid;
 
         var contents = angular.element('<div class="contents">&nbsp;</div>');
@@ -61,17 +62,17 @@
         
         function updateNativeVerticalScrollbar() {
           // Update the vertical scrollbar's content height so it's the same as the canvas
-          var h = container.getCanvasHeight();
+          var h = rowContainer.getCanvasHeight();
 
           // TODO(c0bra): set scrollbar `top` by height of header row
           // var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
           var headerHeight = grid.headerHeight;
 
-          $log.debug('headerHeight in scrollbar', headerHeight);
+          // $log.debug('headerHeight in scrollbar', headerHeight);
 
           // var ret = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
-          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + container.name + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
-          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + container.name + ' .ui-grid-native-scrollbar.vertical { top: ' + headerHeight + 'px}';
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
+          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { top: ' + headerHeight + 'px}';
 
           elmMaxScroll = h;
 
@@ -79,9 +80,9 @@
         }
 
         function updateNativeHorizontalScrollbar() {
-          var w = container.getCanvasWidth();
+          var w = colContainer.getCanvasWidth();
 
-          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + container.name + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
           elmMaxScroll = w;
 
           return ret;
@@ -111,7 +112,7 @@
 
             var yDiff = previousScrollPosition - newScrollTop;
 
-            var vertScrollLength = (container.getCanvasHeight() - container.getViewportHeight());
+            var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
             // Subtract the h. scrollbar height from the vertical length if it's present
             if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
@@ -146,7 +147,7 @@
 
             var xDiff = previousScrollPosition - newScrollLeft;
 
-            var horizScrollLength = (container.getCanvasWidth() - container.getViewportWidth());
+            var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
             var horizScrollPercentage = newScrollLeft / horizScrollLength;
 
             var xArgs = {
@@ -186,7 +187,7 @@
 
           if ($scope.type === 'vertical') {
             if (args.y && typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
-              var vertScrollLength = (container.getCanvasHeight() - container.getViewportHeight());
+              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
               var newScrollTop = Math.max(0, args.y.percentage * vertScrollLength);
               
@@ -195,7 +196,7 @@
           }
           else if ($scope.type === 'horizontal') {
             if (args.x && typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
-              var horizScrollLength = (container.getCanvasWidth() - container.getViewportWidth());
+              var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
               var newScrollLeft = Math.max(0, args.x.percentage * horizScrollLength);
               

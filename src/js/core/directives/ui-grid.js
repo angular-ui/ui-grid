@@ -207,12 +207,12 @@
 
       // Redraw the rows and columns based on our current scroll position
       self.redrawInPlace = function redrawInPlace() {
-        $log.debug('redrawInPlace');
+        // $log.debug('redrawInPlace');
 
         for (var i in self.grid.renderContainers) {
           var container = self.grid.renderContainers[i];
 
-          $log.debug('redrawing container', i);
+          // $log.debug('redrawing container', i);
 
           container.adjustRows(self.prevScrollTop, null);
           container.adjustColumns(self.prevScrollLeft, null);

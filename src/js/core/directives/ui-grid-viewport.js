@@ -13,12 +13,14 @@
 
           var uiGridCtrl = controllers[0];
           var containerCtrl = controllers[1];
-          var container = containerCtrl.container;
+          var rowContainer = containerCtrl.rowContainer;
+          var colContainer = containerCtrl.colContainer;
 
           var grid = uiGridCtrl.grid;
 
-          // Put the container in scope so we can get rows and columns from it
-          $scope.container = containerCtrl.container;
+          // Put the container sin scope so we can get rows and columns from them
+          $scope.rowContainer = containerCtrl.rowContainer;
+          $scope.colContainer = containerCtrl.colContainer;
 
           // Register this viewport with its container 
           containerCtrl.viewport = $elm;
@@ -27,27 +29,27 @@
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = $elm[0].scrollLeft;
 
-            if (newScrollLeft !== container.prevScrollLeft) {
-              var xDiff = newScrollLeft - container.prevScrollLeft;
+            if (newScrollLeft !== colContainer.prevScrollLeft) {
+              var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
-              var horizScrollLength = (container.getCanvasWidth() - container.getViewportWidth());
+              var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 
-              container.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
+              colContainer.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
 
-            if (newScrollTop !== container.prevScrollTop) {
-              var yDiff = newScrollTop - container.prevScrollTop;
+            if (newScrollTop !== rowContainer.prevScrollTop) {
+              var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
               // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
-              var vertScrollLength = (container.getCanvasHeight() - container.getViewportHeight());
+              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
               // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
               var vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
               if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
               
-              container.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+              rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
           });
         }

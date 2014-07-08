@@ -1,15 +1,31 @@
 @import '../../../less/variables';
 
-[ui-grid-pinned-container] {
-  position: absolute;
+.ui-grid-pinned-container {
+  // position: absolute;
+  float: left;
+
+  &.left .ui-grid-header-cell:last-child .ui-grid-vertical-bar {
+    right: 0;
+    width: @gridBorderWidth;
+    background-color: darken(@headerVerticalBarColor, 15%);
+  }
+
+  &.left .ui-grid-cell:last-child .ui-grid-vertical-bar {
+    width: @gridBorderWidth;
+    background-color: darken(@verticalBarColor, 15%);
+  }
 }
 
-[ui-grid-pinned-container].left {
-  top: 0;
-  left: 0;
+.ui-grid-render-container-body {
+  float: left;
 }
 
-[ui-grid-pinned-container].right {
-  top: 0;
-  right: 0;
-}
+// [ui-grid-pinned-container].left {
+//   top: 0;
+//   left: 0;
+// }
+
+// [ui-grid-pinned-container].right {
+//   top: 0;
+//   right: 0;
+// }

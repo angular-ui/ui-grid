@@ -11,9 +11,12 @@
       templateUrl: 'ui-grid/uiGridRenderContainer',
       require: ['^uiGrid', 'uiGridRenderContainer'],
       scope: {
-        containerName: '=containerName',
+        containerId: '=',
+        rowContainerName: '=',
+        colContainerName: '=',
         bindScrollHorizontal: '=',
-        bindScrollVertical: '='
+        bindScrollVertical: '=',
+        enableScrollbars: '='
       },
       controller: 'uiGridRenderContainer',
       compile: function () {
@@ -27,18 +30,26 @@
             var grid = $scope.grid = uiGridCtrl.grid;
 
             // Verify that the render container for this element exists
-            if (!$scope.containerName) {
-              throw "No render container name specified";
+            if (!$scope.rowContainerName) {
+              throw "No row render container name specified";
+            }
+            if (!$scope.colContainerName) {
+              throw "No column render container name specified";
             }
 
-            if (!grid.renderContainers[$scope.containerName]) {
-              throw "Render container '" + $scope.containerName + "' is not registered.";
+            if (!grid.renderContainers[$scope.rowContainerName]) {
+              throw "Row render container '" + $scope.rowContainerName + "' is not registered.";
+            }
+            if (!grid.renderContainers[$scope.colContainerName]) {
+              throw "Column render container '" + $scope.colContainerName + "' is not registered.";
             }
 
-            var container = grid.renderContainers[$scope.containerName];
-
-            containerCtrl.container = container;
-            containerCtrl.containerName = $scope.containerName;
+            var rowContainer = grid.renderContainers[$scope.rowContainerName];
+            var colContainer = grid.renderContainers[$scope.colContainerName];
+            
+            containerCtrl.containerId = $scope.containerId;
+            containerCtrl.rowContainer = rowContainer;
+            containerCtrl.colContainer = colContainer;
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
             $log.debug('render container post-link');
@@ -47,10 +58,11 @@
             var containerCtrl = controllers[1];
 
             var grid = uiGridCtrl.grid;
-            var container = containerCtrl.container;
+            var rowContainer = containerCtrl.rowContainer;
+            var colContainer = containerCtrl.colContainer;
 
             // Put the container name on this element as a class
-            $elm.addClass('ui-grid-render-container-' + $scope.containerName);
+            $elm.addClass('ui-grid-render-container-' + $scope.containerId);
 
             // Bind to left/right-scroll events
             if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
@@ -58,11 +70,11 @@
             }
 
             function scrollHandler (evt, args) {
-              container.prevScrollArgs = args;
-
               // Vertical scroll
               if (args.y && $scope.bindScrollVertical) {
-                var scrollLength = (container.getCanvasHeight() - container.getViewportHeight());
+                containerCtrl.prevScrollArgs = args;
+
+                var scrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
                 // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
                 if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
@@ -90,12 +102,14 @@
                 // TOOD(c0bra): what's this for?
                 // grid.options.offsetTop = newScrollTop;
 
-                container.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
+                containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
               }
 
               // Horizontal scroll
               if (args.x && $scope.bindScrollHorizontal) {
-                var scrollWidth = (container.getCanvasWidth() - container.getViewportWidth());
+                containerCtrl.prevScrollArgs = args;
+
+                var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
 
@@ -122,7 +136,7 @@
 
                 // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
 
-                container.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
+                containerCtrl.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
               }
             }
 
@@ -138,7 +152,7 @@
                 var scrollYAmount = newEvent.deltaY * -120;
 
                 // Get the scroll percentage
-                var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYAmount) / (container.getCanvasHeight() - container.getViewportHeight());
+                var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYAmount) / (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollYPercentage < 0) { scrollYPercentage = 0; }
@@ -150,7 +164,7 @@
                 var scrollXAmount = newEvent.deltaX * -120;
 
                 // Get the scroll percentage
-                var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXAmount) / (container.getCanvasWidth() - container.getViewportWidth());
+                var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollXPercentage < 0) { scrollXPercentage = 0; }
@@ -168,20 +182,20 @@
             function update() {
               var ret = '';
 
-              var canvasWidth = container.getCanvasWidth();
-              var viewportWidth = container.getViewportWidth();
+              var canvasWidth = colContainer.getCanvasWidth();
+              var viewportWidth = colContainer.getViewportWidth();
 
-              var canvasHeight = container.getCanvasHeight();
-              var viewportHeight = container.getViewportHeight();
+              var canvasHeight = rowContainer.getCanvasHeight();
+              var viewportHeight = rowContainer.getViewportHeight();
 
-              var headerViewportWidth = container.getHeaderViewportWidth();
+              var headerViewportWidth = colContainer.getHeaderViewportWidth();
               
               // Set canvas dimensions
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-header-canvas { width: ' + canvasWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { width: ' + canvasWidth + 'px; }';
               
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerName + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
 
               // Update 
 
@@ -200,7 +214,7 @@
   }]);
 
   module.controller('uiGridRenderContainer', ['$scope', function ($scope) {
-    var self = this;
+    // var self = this;
   }]);
 
 })();
