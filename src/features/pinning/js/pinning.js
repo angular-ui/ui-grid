@@ -40,11 +40,31 @@
               }
             };
 
+            var removePinAction = {
+              title: 'Unpin',
+              icon: 'ui-grid-icon-info-circled',
+              shown: function () {
+                return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
+                // return false;
+              },
+              action: function() {
+                this.context.col.renderContainer = null;
+                
+                // Need to call refresh twice; once to move our column over to the new render container and then
+                //   a second time to update the grid viewport dimensions with our adjustments
+                uiGridCtrl.refresh()
+                  .then(function () {
+                    uiGridCtrl.refresh();
+                  });
+              }
+            };
+
             function pinnableColumnBuilder(colDef, col, gridOptions) {
               col.enablePinning = (typeof(colDef.enablePinning) !== 'undefined' && colDef.enablePinning) ? colDef.enablePinning : gridOptions.enablePinning;
 
               col.menuItems.push(pinColumnLeftAction);
               col.menuItems.push(pinColumnRightAction);
+              col.menuItems.push(removePinAction);
             }
 
             // Register a column builder to add new menu items for pinning left and right
