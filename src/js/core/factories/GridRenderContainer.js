@@ -162,9 +162,8 @@ angular.module('ui.grid')
       viewPortWidth = viewPortWidth + self.grid.verticalScrollbarWidth;
     }
 
-    var adjustment = self.getViewportAdjustment();
-    
-    viewPortWidth = viewPortWidth + adjustment.width;
+    // var adjustment = self.getViewportAdjustment();
+    // viewPortWidth = viewPortWidth + adjustment.width;
 
     return viewPortWidth;
   };

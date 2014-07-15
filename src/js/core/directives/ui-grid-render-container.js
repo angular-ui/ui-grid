@@ -22,7 +22,7 @@
       compile: function () {
         return {
           pre: function prelink($scope, $elm, $attrs, controllers) {
-            $log.debug('render container pre-link');
+            $log.debug('render container ' + $scope.containerId + ' pre-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -52,7 +52,7 @@
             containerCtrl.colContainer = colContainer;
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
-            $log.debug('render container post-link');
+            $log.debug('render container ' + $scope.containerId + ' post-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -236,19 +236,19 @@
       return styles;
     };
 
-  self.columnStyle = function (index) {
-    var self = this;
-    
-    if (!$scope.disableColumnOffset) {
-      if (index === 0 && $scope.colContainer.currentFirstColumn !== 0) {
-        var offset = $scope.colContainer.columnOffset;
+    self.columnStyle = function (index) {
+      var self = this;
+      
+      if (!$scope.disableColumnOffset) {
+        if (index === 0 && $scope.colContainer.currentFirstColumn !== 0) {
+          var offset = $scope.colContainer.columnOffset;
 
-        return { 'margin-left': offset + 'px' };
+          return { 'margin-left': offset + 'px' };
+        }
       }
-    }
 
-    return null;
-  };
+      return null;
+    };
   }]);
 
 })();

@@ -14,6 +14,9 @@
 
             var pinColumnLeftAction = {
               title: 'Pin Left',
+              shown: function () {
+                return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'left';
+              },
               action: function() {
                 this.context.col.renderContainer = 'left';
 
@@ -28,6 +31,9 @@
 
             var pinColumnRightAction = {
               title: 'Pin Right',
+              shown: function () {
+                return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'right';
+              },
               action: function() {
                 this.context.col.renderContainer = 'right';
                 
@@ -45,7 +51,6 @@
               icon: 'ui-grid-icon-info-circled',
               shown: function () {
                 return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
-                // return false;
               },
               action: function() {
                 this.context.col.renderContainer = null;
@@ -99,6 +104,7 @@
 
   module.directive('uiGridPinnedContainer', ['$log', function ($log) {
     return {
+      restrict: 'EA',
       replace: true,
       template: '<div><div ui-grid-render-container container-id="side" row-container-name="\'body\'" col-container-name="side" bind-scroll-vertical="true" class="ui-grid-pinned-container {{ side }}"></div></div>',
       scope: {
@@ -108,7 +114,7 @@
       compile: function compile() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            $log.debug('ui-grid-pinned-container link');
+            $log.debug('ui-grid-pinned-container ' + $scope.side + ' link');
 
             var grid = uiGridCtrl.grid;
 
@@ -137,7 +143,9 @@
                 // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
                 $elm.attr('style', null);
 
-                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.' + $scope.side + ', .ui-grid-pinned-container.' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + grid.getViewportHeight() + 'px; } ';
+                var myHeight = grid.getViewportHeight() + grid.horizontalScrollbarHeight;
+
+                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.' + $scope.side + ', .ui-grid-pinned-container.' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + myHeight + 'px; } ';
               }
 
               return ret;
