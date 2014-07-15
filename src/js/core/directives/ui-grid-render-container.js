@@ -18,7 +18,7 @@
         bindScrollVertical: '=',
         enableScrollbars: '='
       },
-      controller: 'uiGridRenderContainer',
+      controller: 'uiGridRenderContainer as RenderContainer',
       compile: function () {
         return {
           pre: function prelink($scope, $elm, $attrs, controllers) {
@@ -44,8 +44,8 @@
               throw "Column render container '" + $scope.colContainerName + "' is not registered.";
             }
 
-            var rowContainer = grid.renderContainers[$scope.rowContainerName];
-            var colContainer = grid.renderContainers[$scope.colContainerName];
+            var rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];
+            var colContainer = $scope.colContainer = grid.renderContainers[$scope.colContainerName];
             
             containerCtrl.containerId = $scope.containerId;
             containerCtrl.rowContainer = rowContainer;
@@ -214,7 +214,41 @@
   }]);
 
   module.controller('uiGridRenderContainer', ['$scope', function ($scope) {
-    // var self = this;
+    var self = this;
+
+    self.rowStyle = function (index) {
+      var styles = {};
+      
+      if (!$scope.disableRowOffset) {
+        if (index === 0 && self.currentTopRow !== 0) {
+          // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
+          var hiddenRowWidth = ($scope.rowContainer.currentTopRow) * $scope.grid.options.rowHeight;
+
+          // return { 'margin-top': hiddenRowWidth + 'px' };
+          styles['margin-top'] = hiddenRowWidth + 'px';
+        }
+      }
+      
+      if (!$scope.disableColumnOffset && $scope.colContainer.currentFirstColumn !== 0) {
+        styles['margin-left'] = $scope.colContainer.columnOffset + 'px';
+      }
+
+      return styles;
+    };
+
+  self.columnStyle = function (index) {
+    var self = this;
+    
+    if (!$scope.disableColumnOffset) {
+      if (index === 0 && $scope.colContainer.currentFirstColumn !== 0) {
+        var offset = $scope.colContainer.columnOffset;
+
+        return { 'margin-left': offset + 'px' };
+      }
+    }
+
+    return null;
+  };
   }]);
 
 })();

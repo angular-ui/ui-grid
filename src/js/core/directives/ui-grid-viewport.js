@@ -13,6 +13,9 @@
 
           var uiGridCtrl = controllers[0];
           var containerCtrl = controllers[1];
+
+          $scope.containerCtrl = containerCtrl;
+
           var rowContainer = containerCtrl.rowContainer;
           var colContainer = containerCtrl.colContainer;
 

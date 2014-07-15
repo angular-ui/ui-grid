@@ -50,8 +50,8 @@
             // Register a column builder to add new menu items for pinning left and right
             uiGridCtrl.grid.registerColumnBuilder(pinnableColumnBuilder);
 
-            uiGridCtrl.grid.renderContainers.left = new GridRenderContainer('left', uiGridCtrl.grid);
-            uiGridCtrl.grid.renderContainers.right = new GridRenderContainer('right', uiGridCtrl.grid);
+            uiGridCtrl.grid.renderContainers.left = new GridRenderContainer('left', uiGridCtrl.grid, { disableColumnOffset: true });
+            uiGridCtrl.grid.renderContainers.right = new GridRenderContainer('right', uiGridCtrl.grid, { disableColumnOffset: true });
           }
         };
       }

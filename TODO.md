@@ -6,6 +6,10 @@
 
 *** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
 
+1. [BUG] - Header isn't offsetting right during pinning.
+1. [BUG] - Pinned container only shows initial rows, it doesn't update during render. Either the scroll event isn't being captured or it is but the margin isn't updating or the scrollTop isn't or something.
+1. [TODO] - Add "Remove Pin" option to menu when column is pinned
+
 1. [TODO] - headerHeight when vertical scrollbar renders doesn't include the border width.
    - Somehow need a way to re-run buildStyles after any header height updates...
 1. [TODO] - Render containers aren't responding to / firing scroll events. No scrolling is happening.

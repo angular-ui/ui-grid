@@ -2,7 +2,7 @@
 
 angular.module('ui.grid')
 .factory('GridRenderContainer', ['$log', 'gridUtil', function($log, gridUtil) {
-  function GridRenderContainer(name, grid) {
+  function GridRenderContainer(name, grid, options) {
     var self = this;
 
     self.name = name;
@@ -29,6 +29,10 @@ angular.module('ui.grid')
     self.columnStyles = "";
 
     self.viewportAdjusters = [];
+
+    if (options && angular.isObject(options)) {
+      angular.extend(self, options);
+    }
 
     grid.registerStyleComputation({
       priority: 5,
@@ -376,7 +380,7 @@ angular.module('ui.grid')
     var self = this;
 
     var styles = {};
-
+    
     if (index === 0 && self.currentTopRow !== 0) {
       // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
       var hiddenRowWidth = (self.currentTopRow) * self.grid.options.rowHeight;
