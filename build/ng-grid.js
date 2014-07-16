@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/29/2014 10:21
+* Compiled At: 07/16/2014 05:43
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -3185,7 +3185,7 @@ ngGridDirectives.directive('ngViewport', [function() {
                 $scope.$headerContainer.scrollLeft(scrollLeft);
             }
             $scope.adjustScrollLeft(scrollLeft);
-            $scope.adjustScrollTop(scrollTop);
+            $scope.adjustScrollTop(10,true);
             if ($scope.forceSyncScrolling) {
                 ensureDigest();
             } else {
@@ -3202,7 +3202,6 @@ ngGridDirectives.directive('ngViewport', [function() {
 
         function mousewheel() {
             isMouseWheelActive = true;
-            if (elm.focus) { elm.focus(); }
             return true;
         }
 
