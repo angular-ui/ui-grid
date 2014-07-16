@@ -85,19 +85,24 @@
 
   module.directive('uiGrid', ['$log', '$compile', function ($log, $compile) {
     return {
-      link: function ($scope, $elm, $attrs) {
+      require: 'uiGrid',
+      compile: function compile() {
+        return {
+          post: function ($scope, $elm, $attrs, uiGridCtrl) {
 
-        var left = angular.element('<div style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
-        $elm.prepend(left);
-        $compile(left)($scope);
+            var left = angular.element('<div style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
+            $elm.prepend(left);
+            uiGridCtrl.innerCompile(left);
 
-        var right = angular.element('<div style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
-        $elm.append(right);
-        $compile(right)($scope);
+            var right = angular.element('<div style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
+            $elm.append(right);
+            uiGridCtrl.innerCompile(right);
 
-        var bodyContainer = angular.element( $elm[0].querySelectorAll('[container-id="body"]') );
+            var bodyContainer = angular.element( $elm[0].querySelectorAll('[container-id="body"]') );
 
-        bodyContainer.attr('style', 'float: left; position: inherit');
+            bodyContainer.attr('style', 'float: left; position: inherit');
+          }
+        };
       }
     };
   }]);

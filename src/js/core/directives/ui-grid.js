@@ -242,6 +242,9 @@
         $scope.$broadcast(eventName, args);
       };
 
+      self.innerCompile = function (elm) {
+        $compile(elm)($scope);
+      };
     }]);
 
 /**
