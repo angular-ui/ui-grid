@@ -4,6 +4,13 @@
   position: relative;
   float: left;
   background-color: inherit;
+  border-right: @gridBorderWidth solid;
+  border-color: @borderColor;
+  box-sizing: border-box;
+
+  &:last-child {
+    border-right: 0;
+  }
 }
 
 .ui-grid-inner-cell-contents {
