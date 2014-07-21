@@ -1,0 +1,55 @@
+@ngdoc overview
+@name Tutorial: Selection
+@description
+
+This grid example uses the ui-grid-selection directive to row selection.
+
+Uses the gridOptions.onRegisterEvents callback to register the rowSelectionChanged event and log when the row is selected.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+      $scope.gridOptions.columnDefs = [
+        { name: 'id' },
+        { name: 'name'},
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
+        { name: 'address.city' }
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+
+        $scope.info = {};
+
+        $scope.gridOptions.onRegisterEvents = function(gridEvents){
+         gridEvents.selection.on.rowSelectionChanged($scope,function(row){
+
+                  var msg = 'row selected ' + row.isSelected;
+
+                  $log.log(msg);
+                });
+        };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <br>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

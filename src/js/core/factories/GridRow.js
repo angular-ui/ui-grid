@@ -17,6 +17,8 @@ angular.module('ui.grid')
 
     // Default to true
     this.visible = true;
+
+    this.isSelected = false;
   }
 
   /**
