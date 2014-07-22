@@ -27,11 +27,20 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
 
   describe('toggleSelection function', function () {
     it('should toggle selected', function () {
-      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0]);
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true);
       expect(grid.rows[0].isSelected).toBe(true);
 
-      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0]);
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true);
       expect(grid.rows[0].isSelected).toBe(false);
+    });
+
+    it('should toggle selected', function () {
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], false);
+      expect(grid.rows[0].isSelected).toBe(true);
+
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], false);
+      expect(grid.rows[0].isSelected).toBe(false);
+      expect(grid.rows[1].isSelected).toBe(true);
     });
 
     it('should clear selected', function () {

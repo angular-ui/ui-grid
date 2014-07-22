@@ -21,12 +21,18 @@ Uses the gridOptions.onRegisterEvents callback to register the rowSelectionChang
         { name: 'address.city' }
       ];
 
+      $scope.gridOptions.multiSelect = false;
+
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
 
         $scope.info = {};
+
+        $scope.toggleMultiSelect = function() {
+           $scope.gridOptions.multiSelect = !$scope.gridOptions.multiSelect;
+        }
 
         $scope.gridOptions.onRegisterEvents = function(gridEvents){
          gridEvents.selection.on.rowSelectionChanged($scope,function(row){
@@ -40,8 +46,7 @@ Uses the gridOptions.onRegisterEvents callback to register the rowSelectionChang
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
-      <br>
+     <button type="button" class="btn btn-success" ng-click="toggleMultiSelect()">Toggle multiSelect</button>  <strong>MultiSelect:</strong> <span ng-bind="gridOptions.multiSelect"></span>
       <br>
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
     </div>

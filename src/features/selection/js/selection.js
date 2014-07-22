@@ -7,7 +7,7 @@
    * @description
    *
    *  # ui.grid.selection
-   * This module provides row, column, or cell selection
+   * This module provides row selection
    * <br/>
    * <br/>
    *
@@ -34,7 +34,7 @@
 
   /**
    *  @ngdoc service
-   *  @name ui.grid.selection.service:uiGridEditService
+   *  @name ui.grid.selection.service:uiGridSelectionService
    *
    *  @description Services for selection features
    */
@@ -42,23 +42,37 @@
     function ($log, $q, $templateCache, uiGridConstants, gridUtil) {
 
       var service = {
+
+        defaultGridOptions: function (gridOptions) {
+          //default option to true unless it was explicitly set to false
+          gridOptions.enableRowSelection = gridOptions.enableRowSelection !== false;
+          gridOptions.multiSelect = gridOptions.multiSelect !== false;
+        },
+
         /**
          * @ngdoc function
          * @name toggleRowSelection
-         * @methodOf ui.grid.class:Grid
+         * @methodOf  ui.grid.selection.service:uiGridSelectionService
          * @description Toggles row as selected or unselected
+         * @param {Grid} grid grid object
          * @param {GridRow} row row to select or deselect
+         * @param {bool} multiSelect if false, only one row at time can be selected
          */
-        toggleRowSelection: function (grid, row) {
-          row.isSelected = !row.isSelected;
+        toggleRowSelection: function (grid, row, multiSelect) {
+          var selected = row.isSelected;
+          if (!multiSelect && !selected) {
+            service.clearSelectedRows(grid);
+          }
+          row.isSelected = !selected;
           grid.events.selection.rowSelectionChanged(row);
         },
 
         /**
          * @ngdoc function
          * @name getSelectedRows
-         * @methodOf ui.grid.class:Grid
+         * @methodOf  ui.grid.selection.service:uiGridSelectionService
          * @description Returns all the selected rows
+         * @param {Grid} grid grid object
          */
         getSelectedRows: function (grid) {
           return grid.rows.filter(function (row) {
@@ -66,12 +80,12 @@
           });
         },
 
-
         /**
          * @ngdoc function
          * @name clearSelectedRows
-         * @methodOf ui.grid.class:Grid
+         * @methodOf  ui.grid.selection.service:uiGridSelectionService
          * @description Clears all selected rows
+         * @param {Grid} grid grid object
          */
         clearSelectedRows: function (grid) {
           service.getSelectedRows(grid).forEach(function (row) {
@@ -93,7 +107,7 @@
    *  @element div
    *  @restrict A
    *
-   *  @description Adds editing features to the ui-grid directive.
+   *  @description Adds selection features to grid
    *
    *  @example
    <example module="app">
@@ -114,44 +128,54 @@
    </file>
    <file name="index.html">
    <div ng-controller="MainCtrl">
-   <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-edit></div>
+   <div ui-grid="{ data: data, columnDefs: columnDefs }" ui-grid-selection></div>
    </div>
    </file>
    </example>
    */
-  module.directive('uiGridSelection', ['$log', 'uiGridSelectionConstants', function ($log, uiGridSelectionConstants) {
-    return {
-      replace: true,
-      priority: 0,
-      require: '^uiGrid',
-      scope: false,
-      compile: function () {
-        return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            //  uiGridCtrl.grid.registerColumnBuilder(uiGridEditService.editColumnBuilder);
-            uiGridCtrl.grid.events.registerEventsFromObject(uiGridSelectionConstants.publicEvents);
-          },
-          post: function ($scope, $elm, $attrs, uiGridCtrl) {
-          }
-        };
-      }
-    };
-  }]);
+  module.directive('uiGridSelection', ['$log', 'uiGridSelectionConstants', 'uiGridSelectionService',
+    function ($log, uiGridSelectionConstants, uiGridSelectionService) {
+      return {
+        replace: true,
+        priority: 0,
+        require: '^uiGrid',
+        scope: false,
+        compile: function () {
+          return {
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+              uiGridSelectionService.defaultGridOptions(uiGridCtrl.grid.options);
+              uiGridCtrl.grid.events.registerEventsFromObject(uiGridSelectionConstants.publicEvents);
+            },
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            }
+          };
+        }
+      };
+    }]);
 
-  module.directive('uiGridRenderCanvas',
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.selection.directive:uiGridViewport
+   *  @element div
+   *
+   *  @description Stacks on top of ui.grid.uiGridViewport to alter the attributes used
+   *  for the grid row
+   */
+  module.directive('uiGridViewport',
     ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', '$log', '$parse', 'uiGridSelectionService',
       function ($compile, uiGridConstants, uiGridSelectionConstants, $log, $parse, uiGridSelectionService) {
         return {
-          priority: 2000, // run before default  directive
-          restrict: 'A',
+          priority: -200, // run after default  directive
           scope: false,
-          compile: function() {
+          compile: function ($elm, $attrs) {
+            var rowRepeatDiv = angular.element($elm.children().children()[0]);
+            rowRepeatDiv.removeClass('ui-grid-row');
+            rowRepeatDiv.attr("ng-class", "{'ui-grid-row-selected': row.isSelected, 'ui-grid-row' : !row.isSelected }");
             return {
-              pre: function($scope, $elm, $attrs, controllers) {
-                  $elm.removeClass('ui-grid-row');
-                  $elm.attr("ng-class", "{'ui-grid-row-selected': row.isSelected, 'ui-grid-row' : !row.isSelected }");
+              pre: function ($scope, $elm, $attrs, controllers) {
+
               },
-              post: function($scope, $elm, $attrs, controllers) {
+              post: function ($scope, $elm, $attrs, controllers) {
               }
             };
           }
@@ -160,41 +184,11 @@
 
   /**
    *  @ngdoc directive
-   *  @name ui.grid.edit.directive:uiGridCell
+   *  @name ui.grid.selection.directive:uiGridCell
    *  @element div
    *  @restrict A
    *
-   *  @description Stacks on top of ui.grid.uiGridCell to provide in-line editing capabilities to the cell
-   *  Editing Actions.
-   *
-   *  Binds edit start events to the uiGridCell element.  When the events fire, the gridCell element is appended
-   *  with the columnDef.editableCellTemplate element ('cellTextEditor.html' by default).
-   *
-   *  The editableCellTemplate should respond to uiGridEditConstants.events.BEGIN\_CELL\_EDIT angular event
-   *  and do the initial steps needed to edit the cell (setfocus on input element, etc).
-   *
-   *  When the editableCellTemplate recognizes that the editing is ended (blur event, Enter key, etc.)
-   *  it should emit the uiGridEditConstants.events.END\_CELL\_EDIT event.
-   *
-   *  If editableCellTemplate recognizes that the editing has been cancelled (esc key)
-   *  it should emit the uiGridEditConstants.events.CANCEL\_CELL\_EDIT event.  The original value
-   *  will be set back on the model by the uiGridCell directive.
-   *
-   *  Events that invoke editing:
-   *    - dblclick
-   *    - F2 keydown (when using cell selection)
-   *
-   *  Events that end editing:
-   *    - Dependent on the specific editableCellTemplate
-   *    - Standards should be blur and enter keydown
-   *
-   *  Events that cancel editing:
-   *    - Dependent on the specific editableCellTemplate
-   *    - Standards should be Esc keydown
-   *
-   *  Grid Events that end editing:
-   *    - uiGridConstants.events.GRID_SCROLL
-   *
+   *  @description Stacks on top of ui.grid.uiGridCell to provide selection feature
    */
   module.directive('uiGridCell',
     ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', '$log', '$parse', 'uiGridSelectionService',
@@ -204,11 +198,13 @@
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
-            registerRowSelectionEvents();
+            if ($scope.grid.options.enableRowSelection) {
+              registerRowSelectionEvents();
+            }
 
             function registerRowSelectionEvents() {
               $elm.on('click', function () {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row);
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                 $scope.$apply();
               });
             }
