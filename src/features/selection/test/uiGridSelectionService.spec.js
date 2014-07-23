@@ -17,7 +17,7 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
       {field: 'col1', enableCellEdit: true}
     ];
 
-    grid.events.registerEventsFromObject(_uiGridSelectionConstants_.publicEvents);
+    _uiGridSelectionService_.initializeGrid(grid);
     grid.options.data = [{col1:'a'},{col1:'b'}];
 
     grid.buildColumns();
@@ -47,6 +47,13 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
       uiGridSelectionService.toggleRowSelection(grid, grid.rows[0]);
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);
       uiGridSelectionService.clearSelectedRows(grid);
+      expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
+    });
+
+    it('should utilize public apis', function () {
+      grid.events.selection.toggleRowSelection(grid.rows[0]);
+      expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);
+      grid.events.selection.clearSelectedRows();
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
     });
   });

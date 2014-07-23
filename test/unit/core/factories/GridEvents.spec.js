@@ -35,7 +35,7 @@ describe('GridEvent factory', function () {
         pubArg2Val = arg2;
       });
 
-      gridEvents.testFeature.testEvent('123', '456');
+      gridEvents.testFeature.raise.testEvent('123', '456');
 
     });
     $timeout.flush();
@@ -73,8 +73,8 @@ describe('GridEvent factory', function () {
         grid2arg = arg1;
       });
 
-      gridEvents1.testFeature.testEvent('grid1');
-      gridEvents2.testFeature.testEvent('grid2');
+      gridEvents1.testFeature.raise.testEvent('grid1');
+      gridEvents2.testFeature.raise.testEvent('grid2');
 
     });
     $timeout.flush();
@@ -100,11 +100,34 @@ describe('GridEvent factory', function () {
     gridEvents.registerEventsFromObject(publicEvents);
 
     expect(gridEvents.gridCellNav).toBeDefined();
-    expect(gridEvents.gridCellNav.cellNav).toBeDefined();
+    expect(gridEvents.gridCellNav.raise.cellNav).toBeDefined();
     expect(gridEvents.gridCellNav.on.cellNav).toBeDefined();
+    expect(gridEvents.someOtherFeature.raise.someEvent).toBeDefined();
+    expect(gridEvents.someOtherFeature.raise.someOtherEvent).toBeDefined();
+  }));
+
+  it('should register methods from object', inject(function($timeout, $rootScope) {
+    var publicMethods = {
+      gridCellNav : {
+        cellNav : function(scope, newRowCol, oldRowCol){}
+      },
+      someOtherFeature: {
+        someEvent : function(){},
+        someOtherEvent : function(){}
+      }
+    };
+
+    var grid = new Grid({ id: 1 });
+    var gridEvents = new GridEvents(grid);
+
+    gridEvents.registerMethodsFromObject(publicMethods);
+
+    expect(gridEvents.gridCellNav).toBeDefined();
+    expect(gridEvents.gridCellNav.cellNav).toBeDefined();
     expect(gridEvents.someOtherFeature.someEvent).toBeDefined();
     expect(gridEvents.someOtherFeature.someOtherEvent).toBeDefined();
   }));
+
 
 
 

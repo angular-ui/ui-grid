@@ -23,13 +23,7 @@
    *  @description constants available in selection module
    */
   module.constant('uiGridSelectionConstants', {
-    //available public events; listed here for convenience and IDE's use it for smart completion
-    publicEvents: {
-      selection: {
-        rowSelectionChanged: function (scope, row) {
-        }
-      }
-    }
+    featureName: "selection"
   });
 
   /**
@@ -38,10 +32,43 @@
    *
    *  @description Services for selection features
    */
-  module.service('uiGridSelectionService', ['$log', '$q', '$templateCache', 'uiGridConstants', 'gridUtil',
-    function ($log, $q, $templateCache, uiGridConstants, gridUtil) {
+  module.service('uiGridSelectionService', ['$log', '$q', '$templateCache', 'uiGridSelectionConstants', 'gridUtil',
+    function ($log, $q, $templateCache, uiGridSelectionConstants, gridUtil) {
 
       var service = {
+
+        initializeGrid: function (grid) {
+          service.defaultGridOptions(grid.options);
+
+
+          var events =  {
+            selection: {
+              rowSelectionChanged: function (scope, row) {
+              }
+            }
+          };
+
+          grid.events.registerEventsFromObject(events);
+
+          //public methods
+          var methods = {
+            selection: {
+              toggleRowSelection: function (row) {
+                service.toggleRowSelection(grid, row, grid.options.multiSelect);
+              },
+              clearSelectedRows: function () {
+                service.clearSelectedRows(grid);
+              },
+              getSelectedRows: function() {
+                service.getSelectedRows(grid);
+              }
+            }
+          };
+
+          grid.events.registerMethodsFromObject(methods);
+
+
+        },
 
         defaultGridOptions: function (gridOptions) {
           //default option to true unless it was explicitly set to false
@@ -64,7 +91,7 @@
             service.clearSelectedRows(grid);
           }
           row.isSelected = !selected;
-          grid.events.selection.rowSelectionChanged(row);
+          grid.events.selection.raise.rowSelectionChanged(row);
         },
 
         /**
@@ -90,7 +117,7 @@
         clearSelectedRows: function (grid) {
           service.getSelectedRows(grid).forEach(function (row) {
             row.isSelected = false;
-            grid.events.selection.rowSelectionChanged(row);
+            grid.events.selection.raise.rowSelectionChanged(row);
           });
         }
 
@@ -143,8 +170,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              uiGridSelectionService.defaultGridOptions(uiGridCtrl.grid.options);
-              uiGridCtrl.grid.events.registerEventsFromObject(uiGridSelectionConstants.publicEvents);
+              uiGridSelectionService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
             }

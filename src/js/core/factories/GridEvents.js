@@ -31,12 +31,13 @@
           var feature = this[featureName];
           if (!feature.on) {
             feature.on = {};
+            feature.raise = {};
           }
 
           var eventId = this.grid.id + featureName + eventName;
 
-          $log.log('Creating raise event method ' + featureName + '.' + eventName);
-          feature[eventName] = function () {
+          $log.log('Creating raise event method ' + featureName + '.raise.' + eventName);
+          feature.raise[eventName] = function () {
             $rootScope.$broadcast.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
           };
 
@@ -82,6 +83,36 @@
           });
 
         };
+
+        GridEvents.prototype.registerMethod = function (featureName, methodName, callBackFn) {
+          if (!this[featureName]) {
+            this[featureName] = {};
+          }
+
+          var feature = this[featureName];
+          feature[methodName] = callBackFn;
+
+        };
+
+        GridEvents.prototype.registerMethodsFromObject = function (methodMap) {
+          var self = this;
+          var features = [];
+          angular.forEach(methodMap, function (featProp, featPropName) {
+            var feature = {name: featPropName, methods: []};
+            angular.forEach(featProp, function (prop, propName) {
+              feature.methods.push({name:propName,fn:prop});
+            });
+            features.push(feature);
+          });
+
+          features.forEach(function (feature) {
+            feature.methods.forEach(function (method) {
+              self.registerMethod(feature.name, method.name, method.fn);
+            });
+          });
+
+        };
+
 
         return GridEvents;
 
