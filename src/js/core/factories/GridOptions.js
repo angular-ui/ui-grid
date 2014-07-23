@@ -10,6 +10,9 @@ angular.module('ui.grid')
    * over this object.
    */
   function GridOptions() {
+
+    this.onRegisterApi = angular.noop();
+
     /**
      * @ngdoc object
      * @name data

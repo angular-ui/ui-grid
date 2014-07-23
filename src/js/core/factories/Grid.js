@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridEvents', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
-    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridEvents, rowSorter, rowSearcher, GridRenderContainer) {
+.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
+    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer) {
 
 /**
    * @ngdoc function
@@ -68,7 +68,7 @@ angular.module('ui.grid')
     this.renderedRows = [];
     this.renderedColumns = [];
 
-    this.events = new GridEvents(this);
+    this.api = new GridApi(this);
   };
 
   /**
@@ -186,7 +186,22 @@ angular.module('ui.grid')
     return t;
   };
 
-  /**
+    /**
+     * @ngdoc function
+     * @name getRow
+     * @methodOf ui.grid.class:Grid
+     * @description returns the GridRow that contains the rowEntity
+     * @param {object} rowEntity the gridOptions.data array element instance
+     */
+    Grid.prototype.getRow = function getRow(rowEntity) {
+      var rows = this.rows.filter(function (row) {
+        return row.entity === rowEntity;
+      });
+      return rows.length > 0 ? rows[0] : null;
+    };
+
+
+      /**
    * @ngdoc function
    * @name modifyRows
    * @methodOf ui.grid.class:Grid
@@ -1051,8 +1066,8 @@ angular.module('ui.grid')
    * communicate to outside world that we are done with initial rendering
    */
   Grid.prototype.renderingComplete = function(){
-    if (angular.isFunction(this.options.onRegisterEvents)) {
-      this.options.onRegisterEvents(this.events);
+    if (angular.isFunction(this.options.onRegisterApi)) {
+      this.options.onRegisterApi(this.api);
     }
   };
 

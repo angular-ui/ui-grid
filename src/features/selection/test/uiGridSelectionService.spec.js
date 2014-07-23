@@ -51,9 +51,9 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
     });
 
     it('should utilize public apis', function () {
-      grid.events.selection.toggleRowSelection(grid.rows[0]);
+      grid.api.selection.toggleRowSelection(grid.rows[0].entity);
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);
-      grid.events.selection.clearSelectedRows();
+      grid.api.selection.clearSelectedRows();
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
     });
   });

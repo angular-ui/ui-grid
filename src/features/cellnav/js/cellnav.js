@@ -261,7 +261,7 @@
               //  $log.debug('uiGridEdit preLink');
               uiGridCtrl.grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
 
-              uiGridCtrl.grid.events.registerEventsFromObject(uiGridCellNavConstants.publicEvents);
+              uiGridCtrl.grid.api.registerEventsFromObject(uiGridCellNavConstants.publicEvents);
 
               var oldRowCol = null;
               uiGridCtrl.broadcastCellNav = function (newRowCol) {
@@ -272,7 +272,7 @@
               uiGridCtrl.broadcastFocus = function (row, col) {
                 if (oldRowCol === null || (oldRowCol.row !== row || oldRowCol.col !== col)) {
                   var newRowCol = new RowCol(row, col);
-                  uiGridCtrl.grid.events.gridCellNav.cellNav(newRowCol, oldRowCol);
+                  uiGridCtrl.grid.api.gridCellNav.raise.cellNav(newRowCol, oldRowCol);
                   oldRowCol = newRowCol;
                 }
               };

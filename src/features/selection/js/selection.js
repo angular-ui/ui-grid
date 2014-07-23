@@ -40,33 +40,112 @@
         initializeGrid: function (grid) {
           service.defaultGridOptions(grid.options);
 
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.selection.api:PublicApi
+           *
+           *  @description Public Api for selection feature
+           */
+          var publicApi = {
+            events: {
+              selection: {
+                rowSelectionChanged: function (scope, row) {
+                }
+              }
+            },
+            methods: {
+              selection: {
+                /**
+                 * @ngdoc function
+                 * @name toggleRowSelection
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Toggles data row as selected or unselected
+                 * @param {object} rowEntity gridOptions.data[] array instance
+                 */
+                toggleRowSelection: function (rowEntity) {
+                  var row = grid.getRow(rowEntity);
+                  if (row !== null) {
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name selectRow
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Select the data row
+                 * @param {object} rowEntity gridOptions.data[] array instance
+                 */
+                selectRow: function (rowEntity) {
+                  var row = grid.getRow(rowEntity);
+                  if (row !== null && !row.isSelected) {
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name unSelectRow
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description UnSelect the data row
+                 * @param {object} rowEntity gridOptions.data[] array instance
+                 */
+                unSelectRow: function (rowEntity) {
+                  var row = grid.getRow(rowEntity);
+                  if (row !== null && row.isSelected) {
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name selectAllRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Selects all rows.  Does nothing if multiSelect = false
+                 */
+                selectAllRows: function () {
+                  if (grid.options.multiSelect === false) {
+                    return;
+                  }
 
-          var events =  {
-            selection: {
-              rowSelectionChanged: function (scope, row) {
+                  grid.rows.forEach(function (row) {
+                    row.isSelected = true;
+                  });
+                },
+                /**
+                 * @ngdoc function
+                 * @name clearSelectedRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Unselects all rows
+                 */
+                clearSelectedRows: function () {
+                  service.clearSelectedRows(grid);
+                },
+                /**
+                 * @ngdoc function
+                 * @name getSelectedRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description returns all selectedRow's entity references
+                 */
+                getSelectedRows: function () {
+                  return service.getSelectedRows(grid).map(function (gridRow) {
+                    return gridRow.entity;
+                  });
+                },
+                /**
+                 * @ngdoc function
+                 * @name setMultiSelect
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Sets the current gridOption.multiSelect to true or false
+                 * @param {bool} multiSelect true to allow multiple rows
+                 */
+                setMultiSelect: function (multiSelect) {
+                  grid.options.multiSelect = multiSelect;
+                }
               }
             }
           };
 
-          grid.events.registerEventsFromObject(events);
+          grid.api.registerEventsFromObject(publicApi.events);
 
-          //public methods
-          var methods = {
-            selection: {
-              toggleRowSelection: function (row) {
-                service.toggleRowSelection(grid, row, grid.options.multiSelect);
-              },
-              clearSelectedRows: function () {
-                service.clearSelectedRows(grid);
-              },
-              getSelectedRows: function() {
-                service.getSelectedRows(grid);
-              }
-            }
-          };
-
-          grid.events.registerMethodsFromObject(methods);
-
+          grid.api.registerMethodsFromObject(publicApi.methods);
 
         },
 
@@ -91,7 +170,7 @@
             service.clearSelectedRows(grid);
           }
           row.isSelected = !selected;
-          grid.events.selection.raise.rowSelectionChanged(row);
+          grid.api.selection.raise.rowSelectionChanged(row);
         },
 
         /**
@@ -117,7 +196,7 @@
         clearSelectedRows: function (grid) {
           service.getSelectedRows(grid).forEach(function (row) {
             row.isSelected = false;
-            grid.events.selection.raise.rowSelectionChanged(row);
+            grid.api.selection.raise.rowSelectionChanged(row);
           });
         }
 
