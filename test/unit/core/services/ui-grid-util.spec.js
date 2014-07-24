@@ -78,6 +78,32 @@ describe('ui.grid.utilService', function() {
       ]);
     });
   });
+  
+  describe('getColumnsFromData', function() {
+    it('should create column defs from a data array omitting $$hashKey', function() {
+      var data = [
+        {
+          firstName: 'Bob',
+          lastName: 'Smith',
+          $$hashKey: '00A'
+        }
+      ];
+      
+      var excludeProperties = ['$$hashKey'];
+
+      var columns = gridUtil.getColumnsFromData(data, excludeProperties);
+
+      expect(columns)
+      .toEqual([
+        {
+          name: 'firstName'
+        },
+        {
+          name: 'lastName'
+        }
+      ]);
+    });
+  });
 
   describe('element calculations', function() {
     var elm;
