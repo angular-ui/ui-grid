@@ -48,6 +48,9 @@
       var service = {
 
         initializeGrid: function(grid){
+
+          service.defaultGridOptions(grid.options);
+
           grid.registerColumnBuilder(service.editColumnBuilder);
 
           /**
@@ -84,6 +87,11 @@
           grid.api.registerEventsFromObject(publicApi.events);
           //grid.api.registerMethodsFromObject(publicApi.methods);
 
+        },
+
+        defaultGridOptions: function (gridOptions) {
+          //default option to true unless it was explicitly set to false
+          gridOptions.enableCellEdit = gridOptions.enableCellEdit !== false;
         },
 
         /**
@@ -254,7 +262,7 @@
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
-            if (!$scope.col.colDef.enableCellEdit) {
+            if (!$scope.col.enableCellEdit) {
               return;
             }
 
