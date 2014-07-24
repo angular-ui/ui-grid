@@ -29,7 +29,7 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
         $scope.info = {};
 
         $scope.gridOptions.onRegisterApi = function(gridApi){
-         gridApi.gridCellNav.on.cellNav($scope,function(newRowCol, oldRowCol){
+         gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
                   var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
                   var msg = 'New RowCol is ' + angular.toJson(rowCol);
                   if(oldRowCol){

@@ -17,6 +17,33 @@
           this.listeners = [];
         };
 
+        /**
+         * @ngdoc function
+         * @name ui.grid.class:suppressEvents
+         * @methodOf ui.grid.class:GridApi
+         * @description Used to execute a function while disabling the specified event listeners.
+         * Disables the listenerFunctions, executes the callbackFn, and then enables
+         * the listenerFunctions again
+         * @param {object} listenerFuncs listenerFunc or array of listenerFuncs to suppress. These must be the same
+         * functions that were used in the .on.eventName method
+         * @param {object} callBackFn function to execute
+         * @example
+         * <pre>
+         *    var navigate = function (newRowCol, oldRowCol){
+         *       //do something on navigate
+         *    }
+         *
+         *    gridApi.cellNav.on.navigate(scope,navigate);
+         *
+         *
+         *    //call the scrollTo event and suppress our navigate listener
+         *    //scrollTo will still raise the event for other listeners
+         *    gridApi.suppressEvents(navigate, function(){
+         *       gridApi.cellNav.scrollTo(aRow, aCol);
+         *    });
+         *
+         * </pre>
+         */
         GridApi.prototype.suppressEvents = function (listenerFuncs, callBackFn) {
           var self = this;
           var listeners = angular.isArray(listenerFuncs) ? listenerFuncs : [listenerFuncs];
@@ -104,12 +131,14 @@
          * @methodOf ui.grid.class:GridApi
          * @description Registers features and events from a simple objectMap.
          * eventObjectMap must be in this format (multiple features allowed)
-         * <br>
+         * <pre>
          * {featureName:
          *        {
          *          eventNameOne:function(args){},
          *          eventNameTwo:function(args){}
          *        }
+         *  }
+         * </pre>
          * @param {object} eventObjectMap map of feature/event names
          */
         GridApi.prototype.registerEventsFromObject = function (eventObjectMap) {
@@ -131,6 +160,15 @@
 
         };
 
+        /**
+         * @ngdoc function
+         * @name registerMethod
+         * @methodOf ui.grid.class:GridApi
+         * @description Registers a new event for the given feature
+         * @param {string} featureName name of the feature
+         * @param {string} methodName  name of the method
+         * @param {object} callBackFn function to execute
+         */
         GridApi.prototype.registerMethod = function (featureName, methodName, callBackFn) {
           if (!this[featureName]) {
             this[featureName] = {};
@@ -141,6 +179,20 @@
 
         };
 
+        /**
+         * @ngdoc function
+         * @name registerMethodsFromObject
+         * @methodOf ui.grid.class:GridApi
+         * @description Registers features and methods from a simple objectMap.
+         * eventObjectMap must be in this format (multiple features allowed)
+         * <br>
+         * {featureName:
+         *        {
+         *          methodNameOne:function(args){},
+         *          methodNameTwo:function(args){}
+         *        }
+         * @param {object} eventObjectMap map of feature/event names
+         */
         GridApi.prototype.registerMethodsFromObject = function (methodMap) {
           var self = this;
           var features = [];

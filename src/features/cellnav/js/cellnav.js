@@ -16,13 +16,7 @@
   module.constant('uiGridCellNavConstants', {
     FEATURE_NAME : 'gridCellNav',
     CELL_NAV_EVENT: 'cellNav',
-    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3},
-    //available public events; listed here for convenience and IDE's use it for smart completion
-    publicEvents: {
-      gridCellNav : {
-        cellNav : function(scope, newRowCol, oldRowCol){}
-      }
-    }
+    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3}
   });
 
   /**
@@ -36,6 +30,59 @@
     function ($log, uiGridConstants, uiGridCellNavConstants, $q) {
 
       var service = {
+
+        initializeGrid: function (grid) {
+          grid.registerColumnBuilder(service.cellNavColumnBuilder);
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav.api:PublicApi
+           *
+           *  @description Public Api for cellNav feature
+           */
+          var publicApi = {
+            events: {
+              cellNav : {
+                /**
+                 * @ngdoc event
+                 * @name navigate
+                 * @eventOf  ui.grid.cellNav.api:PublicApi
+                 * @description raised when the active cell is changed
+                 * <br>
+                 *      gridApi.cellNav.on.navigate(scope,function(newRowcol, oldRowCol){})
+                 * @param {object} newRowCol new position
+                 * @param {object} oldRowCol old position
+                 */
+                navigate : function(newRowCol, oldRowCol){}
+              }
+            },
+            methods: {
+              cellNav: {
+                /**
+                 * @ngdoc function
+                 * @name scrollTo
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description brings the row and column into view
+                 * @param {object} rowEntity gridOptions.data[] array instance to make visible
+                 * @param {object} colDef to make visible
+                 */
+                scrollTo: function (rowEntity, colDef) {
+                  var row = grid.getRow(rowEntity);
+                  if (row !== null) {
+                    //todo: scroll into view
+                  }
+                }
+              }
+            }
+          };
+
+          grid.api.registerEventsFromObject(publicApi.events);
+
+          grid.api.registerMethodsFromObject(publicApi.methods);
+
+        },
+
+
         /**
          * @ngdoc service
          * @name getDirection
@@ -258,11 +305,10 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+              uiGridCellNavService.initializeGrid(uiGridCtrl.grid);
+
               //  $log.debug('uiGridEdit preLink');
-              uiGridCtrl.grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
-
-              uiGridCtrl.grid.api.registerEventsFromObject(uiGridCellNavConstants.publicEvents);
-
               var oldRowCol = null;
               uiGridCtrl.broadcastCellNav = function (newRowCol) {
                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
@@ -272,7 +318,7 @@
               uiGridCtrl.broadcastFocus = function (row, col) {
                 if (oldRowCol === null || (oldRowCol.row !== row || oldRowCol.col !== col)) {
                   var newRowCol = new RowCol(row, col);
-                  uiGridCtrl.grid.api.gridCellNav.raise.cellNav(newRowCol, oldRowCol);
+                  uiGridCtrl.grid.api.cellNav.raise.navigate(newRowCol, oldRowCol);
                   oldRowCol = newRowCol;
                 }
               };
