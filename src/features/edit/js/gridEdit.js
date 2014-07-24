@@ -69,8 +69,8 @@
                  * </pre>
                  * @param {object} rowEntity the options.data element that was edited
                  * @param {object} colDef the column that was edited
-                 * @param {object} newValue
-                 * @param {object} oldValue
+                 * @param {object} newValue new value
+                 * @param {object} oldValue old value
                  */
                 afterCellEdit: function (rowEntity, colDef, newValue, oldValue) {
                 }
