@@ -246,7 +246,7 @@ RowsProcessor allows your feature to affect the entire rows collections.  Gives 
         uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
 ```
 
-## Public Methods Events
+## Public Methods and Events
 The grid provides public api via the GridApi object.  This object allows you to register your feature's public
 api methods and events.  It guarantees that your events are specific to a grid instance.  Internally, angular
 scope $broadcast and $on are used.
@@ -270,6 +270,7 @@ scope $broadcast and $on are used.
        uiGridCtrl.grid.api.featureName.raise.event1(newRowCol, oldRowCol);
 
        //subscribe to event. You must provide a scope object so the listener will be destroyed when scope is destroyed
+       //function's this variable will be grid.api
        uiGridCtrl.grid.api.featureName.on.event1($scope, function(newRowCol, oldRowCol){});
 
        //register methods
@@ -294,6 +295,7 @@ scope $broadcast and $on are used.
 
           //subscribe to event
           gridApi.feature.on.event1($scope,function(scope, function(newRowCol, oldRowCol)){
+             var self = this; //grid.api
              var msg = 'row selected ' + row.isSelected;
              $log.log(msg);
            });
