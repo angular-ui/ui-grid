@@ -65,7 +65,7 @@
 
           //reregister all the listeners
           foundListeners.forEach(function(l){
-              l.dereg = registerEventWithAngular(l.scope, l.eventId, l.handler);
+              l.dereg = registerEventWithAngular(l.scope, l.eventId, l.handler, self.grid);
           });
 
         };
@@ -99,7 +99,7 @@
 
           $log.log('Creating on event method ' + featureName + '.on.' + eventName);
           feature.on[eventName] = function (scope, handler) {
-            var dereg = registerEventWithAngular(scope, eventId, handler);
+            var dereg = registerEventWithAngular(scope, eventId, handler, self.grid);
 
             //track our listener so we can turn off and on
             var listener = {handler: handler, dereg: dereg, eventId: eventId, scope: scope};
@@ -117,11 +117,11 @@
           };
         };
 
-        function registerEventWithAngular(scope, eventId, handler) {
+        function registerEventWithAngular(scope, eventId, handler, grid) {
           return scope.$on(eventId, function (event) {
             var args = Array.prototype.slice.call(arguments);
             args.splice(0, 1); //remove evt argument
-            handler.apply(this.grid, args);
+            handler.apply(grid.api, args);
           });
         }
 
