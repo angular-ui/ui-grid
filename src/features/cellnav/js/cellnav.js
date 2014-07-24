@@ -48,8 +48,9 @@
                  * @name navigate
                  * @eventOf  ui.grid.cellNav.api:PublicApi
                  * @description raised when the active cell is changed
-                 * <br>
+                 * <pre>
                  *      gridApi.cellNav.on.navigate(scope,function(newRowcol, oldRowCol){})
+                 * </pre>
                  * @param {object} newRowCol new position
                  * @param {object} oldRowCol old position
                  */

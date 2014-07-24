@@ -47,6 +47,45 @@
 
       var service = {
 
+        initializeGrid: function(grid){
+          grid.registerColumnBuilder(service.editColumnBuilder);
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.edit.api:PublicApi
+           *
+           *  @description Public Api for edit feature
+           */
+          var publicApi = {
+            events: {
+              edit: {
+                /**
+                 * @ngdoc event
+                 * @name afterCellEdit
+                 * @eventOf  ui.grid.edit.api:PublicApi
+                 * @description raised when cell editing is complete
+                 * <pre>
+                 *      gridApi.edit.on.afterCellEdit(scope,function(rowEntity, colDef){})
+                 * </pre>
+                 * @param {object} rowEntity the options.data element that was edited
+                 * @param {object} colDef the column that was edited
+                 * @param {object} newValue
+                 * @param {object} oldValue
+                 */
+                afterCellEdit: function (rowEntity, colDef, newValue, oldValue) {
+                }
+              }
+            },
+            methods: {
+              edit: { }
+            }
+          };
+
+          grid.api.registerEventsFromObject(publicApi.events);
+          //grid.api.registerMethodsFromObject(publicApi.methods);
+
+        },
+
         /**
          * @ngdoc service
          * @name isStartEditKey
@@ -160,7 +199,7 @@
       compile: function () {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            uiGridCtrl.grid.registerColumnBuilder(uiGridEditService.editColumnBuilder);
+            uiGridEditService.initializeGrid(uiGridCtrl.grid);
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
           }
@@ -288,12 +327,14 @@
               //stop editing when grid is scrolled
               var deregOnGridScroll = $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
                 endEdit(true);
+                $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnGridScroll();
               });
 
               //end editing
               var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function (evt,retainFocus) {
                 endEdit(retainFocus);
+                $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnEndCellEdit();
               });
 
