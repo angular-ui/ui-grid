@@ -45,13 +45,13 @@ describe('uiGridEditDirective', function () {
 
       var col = gridScope.grid.getColumn('col1');
       expect(col).not.toBeNull();
-      expect(col.enableCellEdit).toBe(true);
+      expect(col.colDef.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBe(cellTextEditorHtml);
 
       col = gridScope.grid.getColumn('col2');
       expect(col).not.toBeNull();
-      expect(col.enableCellEdit).toBe(false);
-      expect(col.editableCellTemplate).not.toBeDefined();
+      expect(col.colDef.enableCellEdit).toBe(false);
+      expect(col.colDef.editableCellTemplate).not.toBeDefined();
 
     });
   });

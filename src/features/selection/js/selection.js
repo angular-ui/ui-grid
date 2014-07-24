@@ -151,7 +151,26 @@
 
         defaultGridOptions: function (gridOptions) {
           //default option to true unless it was explicitly set to false
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.selection.api:GridOptions
+           *
+           *  @description GridOptions for selection feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name enableRowSelection
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable row selection. <br/>Defaults to true
+           */
           gridOptions.enableRowSelection = gridOptions.enableRowSelection !== false;
+          /**
+           *  @ngdoc object
+           *  @name multiSelect
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable multiple row selection. <br/>Defaults to true
+           */
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
         },
 

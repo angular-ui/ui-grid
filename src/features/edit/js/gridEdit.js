@@ -47,7 +47,7 @@
 
       var service = {
 
-        initializeGrid: function(grid){
+        initializeGrid: function (grid) {
 
           service.defaultGridOptions(grid.options);
 
@@ -90,8 +90,131 @@
         },
 
         defaultGridOptions: function (gridOptions) {
-          //default option to true unless it was explicitly set to false
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.edit.api:GridOptions
+           *
+           *  @description Options for edit feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name enableCellEdit
+           *  @propertyOf  ui.grid.edit.api:GridOptions
+           *  @description Default value that colDefs will take if their enableCellEdit is undefined. Defaults to true.
+           */
+            //default option to true unless it was explicitly set to false
           gridOptions.enableCellEdit = gridOptions.enableCellEdit !== false;
+
+          /**
+           *  @ngdoc object
+           *  @name cellEditableCondition
+           *  @propertyOf  ui.grid.edit.api:GridOptions
+           *  @description If specified, either a value or function to be used by all columns before editing.  If falsy, then editing of cell is not allowed
+           *  <pre>
+           *  function($scope){
+           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *    return true;
+           *  }
+           *  </pre>
+           */
+          gridOptions.cellEditableCondition = gridOptions.cellEditableCondition === undefined ? true : gridOptions.cellEditableCondition;
+
+          /**
+           *  @ngdoc object
+           *  @name editableCellTemplate
+           *  @propertyOf  ui.grid.edit.api:GridOptions
+           *  @description If specified, cellTemplate to use as the editor for all columns.
+           *  <br/> default to 'ui-grid/cellTextEditor'
+           */
+          gridOptions.editableCellTemplate = gridOptions.editableCellTemplate || 'ui-grid/cellTextEditor';
+
+          /**
+           *  @ngdoc object
+           *  @name enableCellEditOnFocus
+           *  @propertyOf  ui.grid.edit.api:GridOptions
+           *  @description If true, then editor is invoked as soon as cell receives focus. Default false
+           *  <br>!! requires cellNav feature !!
+           */
+            //enableCellEditOnFocus can only be used if cellnav module is used
+          gridOptions.enableCellEditOnFocus = gridOptions.enableCellEditOnFocus === undefined ?
+            false: gridOptions.enableCellEditOnFocus;
+        },
+
+        /**
+         * @ngdoc service
+         * @name editColumnBuilder
+         * @methodOf ui.grid.edit.service:uiGridEditService
+         * @description columnBuilder function that adds edit properties to grid column
+         * @returns {promise} promise that will load any needed templates when resolved
+         */
+        editColumnBuilder: function (colDef, col, gridOptions) {
+
+          var promises = [];
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.edit.api:ColDef
+           *
+           *  @description Column Definitions for edit feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name enableCellEdit
+           *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @description enable editing on column
+           */
+          colDef.enableCellEdit = colDef.enableCellEdit === undefined ? gridOptions.enableCellEdit : colDef.enableCellEdit;
+
+          /**
+           *  @ngdoc object
+           *  @name cellEditableCondition
+           *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed
+           *  <pre>
+           *  function($scope){
+           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *    return true;
+           *  }
+           *  </pre>
+           */
+          colDef.cellEditableCondition = colDef.cellEditableCondition === undefined ? gridOptions.cellEditableCondition :  colDef.cellEditableCondition;
+
+          /**
+           *  @ngdoc object
+           *  @name editableCellTemplate
+           *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @description cell template to used when editing this column. can be Url or text template
+           *  <br/>Defaults to gridOptions.editableCellTemplate
+           */
+          if (colDef.enableCellEdit) {
+            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate;
+
+            promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
+              .then(
+              function (template) {
+                col.editableCellTemplate = template;
+              },
+              function (res) {
+                // Todo handle response error here?
+                throw new Error("Couldn't fetch/use colDef.editableCellTemplate '" + colDef.editableCellTemplate + "'");
+              }));
+          }
+
+          /**
+           *  @ngdoc object
+           *  @name enableCellEditOnFocus
+           *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @requires ui.grid.cellNav
+           *  @description If true, then editor is invoked as soon as cell receives focus. Default false
+           *  <br>!! requires cellNav feature !!
+           */
+            //enableCellEditOnFocus can only be used if cellnav module is used
+          colDef.enableCellEditOnFocus = colDef.enableCellEditOnFocus === undefined ? gridOptions.enableCellEditOnFocus : colDef.enableCellEditOnFocus;
+
+          return $q.all(promises);
         },
 
         /**
@@ -100,7 +223,7 @@
          * @methodOf ui.grid.edit.service:uiGridEditService
          * @description  Determines if a keypress should start editing.  Decorate this service to override with your
          * own key events.  See service decorator in angular docs.
-         * @parm {Event} evt keydown event
+         * @param {Event} evt keydown event
          * @returns {boolean} true if an edit should start
          */
         isStartEditKey: function (evt) {
@@ -119,47 +242,9 @@
 
           }
           return true;
-        },
-
-        /**
-         * @ngdoc service
-         * @name editColumnBuilder
-         * @methodOf ui.grid.edit.service:uiGridEditService
-         * @description columnBuilder function that adds edit properties to grid column
-         * @returns {promise} promise that will load any needed templates when resolved
-         */
-        editColumnBuilder: function (colDef, col, gridOptions) {
-
-          var promises = [];
-
-          col.enableCellEdit = colDef.enableCellEdit !== undefined ?
-            colDef.enableCellEdit : gridOptions.enableCellEdit; 
-
-          col.cellEditableCondition = colDef.cellEditableCondition || gridOptions.cellEditableCondition || 'true';
-
-          // allow for editableCellTemplate html or editableCellTemplateUrl
-          if (col.enableCellEdit) {
-            if (!colDef.editableCellTemplate) {
-              colDef.editableCellTemplate = 'ui-grid/cellTextEditor';
-            }
-
-            promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
-              .then(
-              function (template) {
-                col.editableCellTemplate = template;
-              },
-              function (res) {
-                // Todo handle response error here?
-                throw new Error("Couldn't fetch/use colDef.editableCellTemplate '" + colDef.editableCellTemplate + "'");
-              }));
-          }
-
-          //enableCellEditOnFocus can only be used if cellnav module is used
-          col.enableCellEditOnFocus = colDef.enableCellEditOnFocus !== undefined ?
-            colDef.enableCellEditOnFocus : gridOptions.enableCellEditOnFocus;
-
-          return $q.all(promises);
         }
+
+
       };
 
       return service;
@@ -262,7 +347,7 @@
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
-            if (!$scope.col.enableCellEdit) {
+            if (!$scope.col.colDef.enableCellEdit) {
               return;
             }
 
@@ -277,7 +362,7 @@
             function registerBeginEditEvents() {
               $elm.on('dblclick', beginEdit);
               $elm.on('keydown', beginEditKeyDown);
-              if ($scope.col.enableCellEditOnFocus) {
+              if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').on('focus', beginEditFocus);
               }
             }
@@ -285,27 +370,26 @@
             function cancelBeginEditEvents() {
               $elm.off('dblclick', beginEdit);
               $elm.off('keydown', beginEditKeyDown);
-              if ($scope.col.enableCellEditOnFocus) {
+              if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').off('focus', beginEditFocus);
               }
             }
 
-            function beginEditFocus(evt){
+            function beginEditFocus(evt) {
               evt.stopPropagation();
               beginEdit();
             }
 
-
-            function beginEditKeyDown(evt){
+            function beginEditKeyDown(evt) {
               if (uiGridEditService.isStartEditKey(evt)) {
                 beginEdit();
               }
             }
 
             function shouldEdit(col) {
-              return angular.isFunction(col.cellEditableCondition) ?
-                  col.cellEditableCondition($scope) :
-                  col.cellEditableCondition;
+              return angular.isFunction(col.colDef.cellEditableCondition) ?
+                col.colDef.cellEditableCondition($scope) :
+                col.colDef.cellEditableCondition;
             }
 
             function beginEdit() {
@@ -340,7 +424,7 @@
               });
 
               //end editing
-              var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function (evt,retainFocus) {
+              var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function (evt, retainFocus) {
                 endEdit(retainFocus);
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnEndCellEdit();
@@ -363,7 +447,7 @@
               //remove edit element
               angular.element($elm.children()[1]).remove();
               gridCellContentsEl.removeClass('ui-grid-cell-contents-hidden');
-              if (retainFocus && isFocusedBeforeEdit){
+              if (retainFocus && isFocusedBeforeEdit) {
                 gridCellContentsEl.focus();
               }
               isFocusedBeforeEdit = false;
@@ -423,7 +507,7 @@
                   });
                 });
 
-                $scope.stopEdit = function() {
+                $scope.stopEdit = function () {
                   $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                 };
 

@@ -48,14 +48,14 @@ describe('uiGridResizeColumnsService', function () {
       expect(gridOptions.colDefs[0].enableColumnResizing).toBe(false);
     }));
 
-    it('should not override gridOptions enableColumnResizing', inject(function ($timeout) {
+    it('should override gridOptions enableColumnResizing', inject(function ($timeout) {
       var colDef = {name:'col1', enableColumnResizing:true};
       var gridOptions = {enableColumnResizing:false, colDefs:[colDef]};
       $timeout(function(){
         uiGridResizeColumnsService.colResizerColumnBuilder(colDef,null, gridOptions);
       });
       $timeout.flush();
-      expect(gridOptions.colDefs[0].enableColumnResizing).toBe(false);
+      expect(gridOptions.colDefs[0].enableColumnResizing).toBe(true);
     }));
 
     it('should default enableColumnResizing to false if gridOptions is false', inject(function ($timeout) {

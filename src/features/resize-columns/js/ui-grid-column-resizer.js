@@ -14,6 +14,19 @@
       var service = {
         defaultGridOptions: function(gridOptions){
           //default option to true unless it was explicitly set to false
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.resizeColumns.api:GridOptions
+           *
+           *  @description GridOptions for resizeColumns feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name enableColumnResizing
+           *  @propertyOf  ui.grid.resizeColumns.api:GridOptions
+           *  @description Enable column resizing <br/>Defaults to true
+           */
           gridOptions.enableColumnResizing = gridOptions.enableColumnResizing !== false;
 
           //legacy support
@@ -26,9 +39,21 @@
         colResizerColumnBuilder: function (colDef, col, gridOptions) {
 
           var promises = [];
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.resizeColumns.api:ColDef
+           *
+           *  @description ColDef for resizeColumns feature
+           */
 
+          /**
+           *  @ngdoc object
+           *  @name enableColumnResizing
+           *  @propertyOf  ui.grid.resizeColumns.api:ColDef
+           *  @description Enable column resizing <br/>Defaults to GridOptions.enableColumnResizing
+           */
           //default to true unless gridOptions or colDef is explicitly false
-          colDef.enableColumnResizing = gridOptions.enableColumnResizing && colDef.enableColumnResizing !== false;
+          colDef.enableColumnResizing = colDef.enableColumnResizing === undefined ? gridOptions.enableColumnResizing : colDef.enableColumnResizing;
 
 
           //legacy support of old option name

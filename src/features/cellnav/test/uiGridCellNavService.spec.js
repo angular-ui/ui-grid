@@ -40,17 +40,17 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(true);
+      expect(col.colDef.allowCellFocus).toBe(true);
 
       colDef = grid.options.columnDefs[1];
       col = grid.columns[1];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(false);
+      expect(col.colDef.allowCellFocus).toBe(false);
 
       colDef = grid.options.columnDefs[2];
       col = grid.columns[2];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(true);
+      expect(col.colDef.allowCellFocus).toBe(true);
     });
   });
 
