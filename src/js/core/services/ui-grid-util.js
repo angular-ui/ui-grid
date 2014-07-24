@@ -205,7 +205,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
            { firstName: 'Frank', lastName: 'Smith' }
          ];
 
-         var columnDefs = GridUtil.getColumnsFromData(data);
+         var columnDefs = GridUtil.getColumnsFromData(data, excludeProperties);
 
          columnDefs == [
           {
@@ -219,17 +219,20 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
          ];
        </pre>
      */
-    getColumnsFromData: function (data) {
+    getColumnsFromData: function (data, excludeProperties) {
       var columnDefs = [];
 
       if (!data || typeof(data[0]) === 'undefined' || data[0] === undefined) { return []; }
+      if (angular.isUndefined(excludeProperties)) { excludeProperties = []; }
 
       var item = data[0];
       
       angular.forEach(item,function (prop, propName) {
-        columnDefs.push({
-          name: propName
-        });
+        if ( excludeProperties.indexOf(propName) === -1){
+          columnDefs.push({
+            name: propName
+          });
+        }
       });
 
       return columnDefs;

@@ -33,6 +33,16 @@ angular.module('ui.grid')
 
      */
     this.columnDefs = [];
+    
+    /**
+     * @ngdoc array
+     * @name excludeProperties
+     * @propertyOf  ui.grid.class:GridOptions
+     * @description (optional) Array of property names in data to ignore when auto-generating column names. defaults to ['$$hashKey']
+     * If columnDefs is defined, this will be ignored.
+     */
+    
+    this.excludeProperties = ['$$hashKey'];
 
     /**
      * @ngdoc boolean
