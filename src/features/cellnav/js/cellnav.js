@@ -180,7 +180,7 @@
           //find first focusable column to the left
           //circle around to the end of the array if no col is found
           while (i !== curCol.index) {
-            if (cols[i].allowCellFocus) {
+            if (cols[i].colDef.allowCellFocus) {
               break;
             }
             i--;
@@ -200,7 +200,7 @@
           //find first focusable column to the right
           //circle around to the beginning of the array if no col is found
           while (i !== curCol.index) {
-            if (cols[i].allowCellFocus) {
+            if (cols[i].colDef.allowCellFocus) {
               break;
             }
             i++;
@@ -216,7 +216,7 @@
         getRowColUp: function (rows, cols, curRow, curCol) {
           //if curCol is not focusable, then we need to find a focusable column to the right
           //this shouldn't ever happen in the grid, but we handle it anyway
-          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+          var colIndex = curCol.colDef.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
 
 
           if (curRow.index === 0) {
@@ -231,7 +231,7 @@
         getRowColDown: function (rows, cols, curRow, curCol) {
           //if curCol is not focusable, then we need to find a focusable column to the right
           //this shouldn't ever happen in the grid, but we handle it anyway
-          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+          var colIndex = curCol.colDef.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
 
 
           if (curRow.index === rows.length - 1) {
@@ -253,8 +253,20 @@
         cellNavColumnBuilder: function (colDef, col, gridOptions) {
           var promises = [];
 
-          col.allowCellFocus = colDef.allowCellFocus !== undefined ?
-            colDef.allowCellFocus : true;
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav.api:ColDef
+           *
+           *  @description Column Definitions for cellNav feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name allowCellFocus
+           *  @propertyOf  ui.grid.cellNav.api:ColDef
+           *  @description Enable focus on a cell.<br/>Defaults to true
+           */
+          colDef.allowCellFocus = colDef.allowCellFocus === undefined ? true : colDef.allowCellFocus ;
 
           return $q.all(promises);
         }
@@ -348,7 +360,7 @@
         require: '^uiGrid',
         scope: false,
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
-          if (!$scope.col.allowCellFocus) {
+          if (!$scope.col.colDef.allowCellFocus) {
              return;
           }
 
