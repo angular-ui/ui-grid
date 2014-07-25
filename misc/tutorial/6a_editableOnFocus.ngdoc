@@ -28,11 +28,24 @@ See api docs for default navigation keys and how you can override.
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
+
+        $scope.currentFocused = "";
+
+        $scope.getCurrentFocus = function(){
+          var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+          if(rowCol !== null) {
+              $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+          }
+        }
+
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+           $scope.gridApi = gridApi;
+        };
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
       <div ui-grid="gridOptions" ui-grid-edit ui-grid-cellnav class="grid"></div>

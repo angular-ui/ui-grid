@@ -34,6 +34,10 @@
         initializeGrid: function (grid) {
           grid.registerColumnBuilder(service.cellNavColumnBuilder);
 
+          //create variables for state
+          grid.cellNav = {};
+          grid.cellNav.lastRowCol = null;
+
           /**
            *  @ngdoc object
            *  @name ui.grid.cellNav.api:PublicApi
@@ -63,7 +67,7 @@
                  * @ngdoc function
                  * @name scrollTo
                  * @methodOf  ui.grid.cellNav.api:PublicApi
-                 * @description brings the row and column into view
+                 * @description (TODO) brings the row and column into view
                  * @param {object} rowEntity gridOptions.data[] array instance to make visible
                  * @param {object} colDef to make visible
                  */
@@ -72,6 +76,16 @@
                   if (row !== null) {
                     //todo: scroll into view
                   }
+                },
+                /**
+                 * @ngdoc function
+                 * @name getFocusedCell
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description returns the current (or last if Grid does not have focus) focused row and column
+                 * <br> value is null if no selection has occurred
+                 */
+                getFocusedCell: function () {
+                  return grid.cellNav.lastRowCol;
                 }
               }
             }
@@ -319,20 +333,22 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
 
-              uiGridCellNavService.initializeGrid(uiGridCtrl.grid);
+              var grid = uiGridCtrl.grid;
+              uiGridCellNavService.initializeGrid(grid);
+
+              uiGridCtrl.cellNav = {};
 
               //  $log.debug('uiGridEdit preLink');
-              var oldRowCol = null;
-              uiGridCtrl.broadcastCellNav = function (newRowCol) {
+              uiGridCtrl.cellNav.broadcastCellNav = function (newRowCol) {
                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
-                uiGridCtrl.broadcastFocus(newRowCol.row, newRowCol.col);
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol.row, newRowCol.col);
               };
 
-              uiGridCtrl.broadcastFocus = function (row, col) {
-                if (oldRowCol === null || (oldRowCol.row !== row || oldRowCol.col !== col)) {
+              uiGridCtrl.cellNav.broadcastFocus = function (row, col) {
+                if (grid.cellNav.lastRowCol === null || (grid.cellNav.lastRowCol.row !== row || grid.cellNav.lastRowCol.col !== col)) {
                   var newRowCol = new RowCol(row, col);
-                  uiGridCtrl.grid.api.cellNav.raise.navigate(newRowCol, oldRowCol);
-                  oldRowCol = newRowCol;
+                  grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
+                  grid.cellNav.lastRowCol = newRowCol;
                 }
               };
 
@@ -375,14 +391,14 @@
             var rowCol = uiGridCellNavService.getNextRowCol(direction, $scope.grid, $scope.row, $scope.col);
 
             $log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
-            uiGridCtrl.broadcastCellNav(rowCol);
+            uiGridCtrl.cellNav.broadcastCellNav(rowCol);
             setTabEnabled();
 
             return false;
           });
 
           $elm.find('div').on('focus', function (evt) {
-            uiGridCtrl.broadcastFocus($scope.row, $scope.col);
+            uiGridCtrl.cellNav.broadcastFocus($scope.row, $scope.col);
           });
 
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt,rowCol){
