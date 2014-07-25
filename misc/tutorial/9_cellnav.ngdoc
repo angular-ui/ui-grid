@@ -28,8 +28,18 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
 
         $scope.info = {};
 
+        $scope.currentFocused = "";
+
+        $scope.getCurrentFocus = function(){
+          var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+          if(rowCol !== null) {
+              $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+          }
+        }
+
         $scope.gridOptions.onRegisterApi = function(gridApi){
-         gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
+           $scope.gridApi = gridApi;
+           gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
                   var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
                   var msg = 'New RowCol is ' + angular.toJson(rowCol);
                   if(oldRowCol){
@@ -43,7 +53,7 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
       <div ui-grid="gridOptions" ui-grid-cellNav class="grid"></div>
