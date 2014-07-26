@@ -19,12 +19,6 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             $scope.getCellValue = uiGridCtrl.getCellValue;
 
             compileTemplate();
-
-            $scope.$watch('col.cellTemplate', function (n, o) {
-              if (n !== o) {
-                compileTemplate();
-              }
-            });
           }
           // No controller, compile the element manually
           else {
