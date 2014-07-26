@@ -390,7 +390,7 @@
 
             var rowCol = uiGridCellNavService.getNextRowCol(direction, $scope.grid, $scope.row, $scope.col);
 
-            $log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
+            //$log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
             uiGridCtrl.cellNav.broadcastCellNav(rowCol);
             setTabEnabled();
 
@@ -404,7 +404,7 @@
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt,rowCol){
              if (rowCol.row === $scope.row &&
                rowCol.col === $scope.col){
-                $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
+               // $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
                 setFocused();
              }
           });
