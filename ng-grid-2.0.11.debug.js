@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/11/2014 23:47
+* Compiled At: 07/25/2014 23:37
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -23,7 +23,9 @@ var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
 var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var CELL_EDITABLE_CONDITION = /CELL_EDITABLE_CONDITION/g;
 var TEMPLATE_REGEXP = /<.+>/;
+var FUNC_REGEXP = /(\([^)]*\))?$/;
 var DOT_REGEXP = /\./g;
+var APOS_REGEXP = /'/g;
 window.ngGrid = {};
 window.ngGrid.i18n = {};
 
@@ -376,7 +378,7 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
     getWidths();
     return domUtilityService;
 }]);
-angular.module('ngGrid.services').factory('$sortService', ['$parse', function($parse) {
+angular.module('ngGrid.services').factory('$sortService', ['$parse', '$utilityService', function($parse, $utils) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     sortService.isCustomSort = false; // track if we're using an internal sort or a user provided sort
@@ -485,8 +487,8 @@ angular.module('ngGrid.services').factory('$sortService', ['$parse', function($p
                 direction = sortInfo.directions[indx];
                 sortFn = sortService.getSortFn(col, d);
                 
-                var propA = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemA});
-                var propB = $parse('entity[\''+order[indx].replace(DOT_REGEXP, '\'][\'')+'\']')({entity:itemB});
+                var propA = $utils.evalProperty(itemA, order[indx]);
+                var propB = $utils.evalProperty(itemB, order[indx]);
                 // if user provides custom sort, we want them to have full control of the sort
                 if (sortService.isCustomSort) {
                     res = sortFn(propA, propB);
@@ -583,9 +585,6 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
                 }
             }
         },
-        evalProperty: function (entity, path) {
-            return $parse("entity[\'" + path.replace(DOT_REGEXP, '\'][\'')+'\']')({ entity: entity });
-        },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {
                 return false;
@@ -636,8 +635,24 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
             else {
                 return "";
             }
+        },
+        preEval: function (path) {
+            path = path.replace(APOS_REGEXP, '\\\'');
+            var parts = path.split(DOT_REGEXP);
+            var preparsed = [parts.shift()];    // first item must be var notation, thus skip
+            angular.forEach(parts, function(part) {
+                preparsed.push(part.replace(FUNC_REGEXP, '\']$1'));
+            });
+            return preparsed.join('[\'');
+        },
+        init: function() {
+            this.evalProperty = function(entity, path) {
+                return $parse(this.preEval('entity.' + path))({ entity: entity });
+            };
+            delete this.init;
+            return this;
         }
-    };
+    }.init();
 
     return utils;
 }]);
@@ -1849,7 +1864,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.init = function() {
         return self.initTemplates().then(function(){
             //factories and services
-            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
+            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse, $utils);
             $scope.domAccessProvider = new ngDomAccessProvider(self);
             self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
             self.searchProvider = new ngSearchProvider($scope, self, $filter);
@@ -2783,7 +2798,7 @@ var ngSearchProvider = function ($scope, grid, $filter) {
     }));
 };
 
-var ngSelectionProvider = function (grid, $scope, $parse) {
+var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
@@ -2792,7 +2807,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
     var pKeyExpression = grid.config.primaryKey;
     if(pKeyExpression) {
-      pKeyExpression = 'entity[\''+grid.config.primaryKey.replace(DOT_REGEXP, '\'][\'')+'\']';
+      pKeyExpression = $utils.preEval('entity.' + grid.config.primaryKey);
     }
     self.pKeyParser = $parse(pKeyExpression);
 
@@ -3096,20 +3111,20 @@ ngGridDirectives.directive('ngCellText',
           });
       };
   });
-ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function ($compile, domUtilityService) {
+ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', '$utilityService', function ($compile, domUtilityService, utilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
             return {
                 pre: function($scope, iElement) {
                     var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field.replace(DOT_REGEXP, '\'][\'') + '\']');
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, utilityService.preEval('row.entity.' + $scope.col.field) );
 
                     if ($scope.col.enableCellEdit) {
                         html =  $scope.col.cellEditTemplate;
                         html = html.replace(CELL_EDITABLE_CONDITION, $scope.col.cellEditableCondition);
                         html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity[\'' + $scope.col.field.replace(DOT_REGEXP, '\'][\'') + '\']'));
+                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, utilityService.preEval('row.entity.' + $scope.col.field)));
                     } else {
                         html = cellTemplate;
                     }

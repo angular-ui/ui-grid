@@ -1,4 +1,4 @@
-var ngSelectionProvider = function (grid, $scope, $parse) {
+var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
     var self = this;
     self.multi = grid.config.multiSelect;
     self.selectedItems = grid.config.selectedItems;
@@ -7,7 +7,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
     self.ignoreSelectedItemChanges = false; // flag to prevent circular event loops keeping single-select var in sync
     var pKeyExpression = grid.config.primaryKey;
     if(pKeyExpression) {
-      pKeyExpression = 'entity[\''+grid.config.primaryKey.replace(DOT_REGEXP, '\'][\'')+'\']';
+      pKeyExpression = $utils.preEval('entity.' + grid.config.primaryKey);
     }
     self.pKeyParser = $parse(pKeyExpression);
 

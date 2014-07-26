@@ -543,7 +543,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.init = function() {
         return self.initTemplates().then(function(){
             //factories and services
-            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
+            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse, $utils);
             $scope.domAccessProvider = new ngDomAccessProvider(self);
             self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
             self.searchProvider = new ngSearchProvider($scope, self, $filter);

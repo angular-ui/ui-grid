@@ -25,9 +25,6 @@
                 }
             }
         },
-        evalProperty: function (entity, path) {
-            return $parse("entity[\'" + path.replace(DOT_REGEXP, '\'][\'')+'\']')({ entity: entity });
-        },
         endsWith: function(str, suffix) {
             if (!str || !suffix || typeof str !== "string") {
                 return false;
@@ -78,8 +75,24 @@
             else {
                 return "";
             }
+        },
+        preEval: function (path) {
+            path = path.replace(APOS_REGEXP, '\\\'');
+            var parts = path.split(DOT_REGEXP);
+            var preparsed = [parts.shift()];    // first item must be var notation, thus skip
+            angular.forEach(parts, function(part) {
+                preparsed.push(part.replace(FUNC_REGEXP, '\']$1'));
+            });
+            return preparsed.join('[\'');
+        },
+        init: function() {
+            this.evalProperty = function(entity, path) {
+                return $parse(this.preEval('entity.' + path))({ entity: entity });
+            };
+            delete this.init;
+            return this;
         }
-    };
+    }.init();
 
     return utils;
 }]);
