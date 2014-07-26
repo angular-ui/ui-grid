@@ -8,6 +8,18 @@ angular.module('ui.grid')
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
    * over this object.
+   *
+   * @example To provide default options for all of the grids within your application, use an angular
+   * decorator to modify the GridOptions factory.
+   * <pre>app.config(function($provide){
+   *    $provide.decorator('GridOptions',function($delegate){
+   *      return function(){
+   *        var defaultOptions = new $delegate();
+   *        defaultOptions.excludeProperties = ['id' ,'$$hashKey'];
+   *        return defaultOptions;
+   *      };
+   *    })
+   *  })</pre>
    */
   function GridOptions() {
 
