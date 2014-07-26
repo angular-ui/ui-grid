@@ -1,4 +1,4 @@
-(function(){
+  (function(){
 
 angular.module('ui.grid')
 .factory('GridOptions', ['gridUtil', function(gridUtil) {

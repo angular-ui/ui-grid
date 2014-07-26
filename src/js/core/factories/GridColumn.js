@@ -6,8 +6,8 @@ angular.module('ui.grid')
   /**
    * @ngdoc function
    * @name ui.grid.class:GridColumn
-   * @description Wrapper for the GridOptions.colDefs items.  Allows for needed properties and functions
-   * to be assigned to a grid column
+   * @description Represents the viewModel for each column.  Any state or methods needed for a Grid Column
+   * are defined on this prototype
    * @param {ColDef} colDef Column definition.
    <br/>Required properties
    <ul>

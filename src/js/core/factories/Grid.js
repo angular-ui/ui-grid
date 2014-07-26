@@ -7,8 +7,8 @@ angular.module('ui.grid')
 /**
    * @ngdoc function
    * @name ui.grid.class:Grid
-   * @description Grid defines a logical grid.  Any non-dom properties and elements needed by the grid should
-   *              be defined in this class
+   * @description Grid is the main viewModel.  Any properties or methods needed to maintain state are defined in
+ * * this prototype.  One instance of Grid is created per Grid directive instance.
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
   var Grid = function Grid(options) {

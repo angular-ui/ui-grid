@@ -3,8 +3,6 @@
   angular.module('ui.grid')
     .factory('GridApi', ['$log', '$q', '$rootScope', 'gridUtil', 'uiGridConstants',
       function ($log, $q, $rootScope, gridUtil, uiGridConstants) {
-
-
         /**
          * @ngdoc function
          * @name ui.grid.class:GridApi
