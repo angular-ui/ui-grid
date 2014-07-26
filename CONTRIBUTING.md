@@ -104,7 +104,7 @@ included in the project:
    # Navigate to the newly cloned directory
    cd ng-grid
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/ng-grid.git
+   git remote add upstream https://github.com/angular-ui/ng-grid.git
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
