@@ -18,7 +18,7 @@ The following option is available only if using cellNav feature
 $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
    { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)',
-                cellEditableCondition: function($scope){return $scope.rowIndex%2} }
+                cellEditableCondition: function($scope){return $scope.row.index%2} }
 ]
 </pre>
 
@@ -36,7 +36,7 @@ $scope.gridOptions.columnDefs = [
         { name: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
         { name: 'age' },
         { name: 'address.city',enableCellEdit: true, displayName: 'Address (even rows editable)',
-             cellEditableCondition: function($scope){return $scope.rowIndex%2} }
+             cellEditableCondition: function($scope){return $scope.row.index%2} }
       ];
 
 
