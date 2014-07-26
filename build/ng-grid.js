@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 07/25/2014 23:37
+* Compiled At: 07/26/2014 02:07
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -26,6 +26,7 @@ var TEMPLATE_REGEXP = /<.+>/;
 var FUNC_REGEXP = /(\([^)]*\))?$/;
 var DOT_REGEXP = /\./g;
 var APOS_REGEXP = /'/g;
+var BRACKET_REGEXP = /^(.*)((?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/;
 window.ngGrid = {};
 window.ngGrid.i18n = {};
 
@@ -592,18 +593,25 @@ angular.module('ngGrid.services').factory('$utilityService', ['$parse', function
                 return "";
             }
         },
-        preEval: function (path) {
-            path = path.replace(APOS_REGEXP, '\\\'');
-            var parts = path.split(DOT_REGEXP);
-            var preparsed = [parts.shift()];
-            angular.forEach(parts, function(part) {
-                preparsed.push(part.replace(FUNC_REGEXP, '\']$1'));
-            });
-            return preparsed.join('[\'');
-        },
         init: function() {
+            function preEval (path) {
+                var m = BRACKET_REGEXP.exec(path);
+                if(m) {
+                    return (m[1]?preEval(m[1]):m[1]) + m[2] + (m[3]?preEval(m[3]):m[3]);
+                } else {
+                    path = path.replace(APOS_REGEXP, '\\\'');
+                    var parts = path.split(DOT_REGEXP);
+                    var preparsed = [parts.shift()];
+                    angular.forEach(parts, function(part) {
+                        preparsed.push(part.replace(FUNC_REGEXP, '\']$1'));
+                    });
+                    return preparsed.join('[\'');
+                }
+
+            }
+            this.preEval = preEval;
             this.evalProperty = function(entity, path) {
-                return $parse(this.preEval('entity.' + path))({ entity: entity });
+                return $parse(preEval('entity.' + path))({ entity: entity });
             };
             delete this.init;
             return this;
