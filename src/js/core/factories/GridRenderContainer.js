@@ -245,6 +245,8 @@ angular.module('ui.grid')
     // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
     scrollLeft = this.getCanvasWidth() * scrollPercentage;
 
+    $log.debug('scrollPercentage', scrollPercentage);
+
     this.adjustColumns(scrollLeft, scrollPercentage);
 
     this.prevScrollLeft = scrollLeft;

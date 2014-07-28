@@ -32,6 +32,7 @@
           $elm.addClass('vertical');
 
           grid.verticalScrollbarWidth = scrollBarWidth;
+          colContainer.verticalScrollbarWidth = scrollBarWidth;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollTop;
@@ -44,6 +45,7 @@
 
           // Save this scrollbar's dimension in the grid properties
           grid.horizontalScrollbarHeight = scrollBarWidth;
+          rowContainer.horizontalScrollbarHeight = scrollBarWidth;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollLeft;
