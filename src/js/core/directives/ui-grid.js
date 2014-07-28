@@ -214,8 +214,8 @@
 
           // $log.debug('redrawing container', i);
 
-          container.adjustRows(self.prevScrollTop, null);
-          container.adjustColumns(self.prevScrollLeft, null);
+          container.adjustRows(container.prevScrollTop, null);
+          container.adjustColumns(container.prevScrollLeft, null);
         }
       };
 
