@@ -9,6 +9,6 @@ ngGridDirectives.directive('ngOnFinishRender', [
                     });
                 }
             }
-        }
+        };
     }
 ]);
