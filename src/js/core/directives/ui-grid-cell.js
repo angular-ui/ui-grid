@@ -27,8 +27,10 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           }
+        },
+        post: function($scope, $elm, $attrs) {
+          $elm.addClass($scope.col.getColClass(false));
         }
-        //post: function($scope, $elm, $attrs) {}
       };
     }
   };

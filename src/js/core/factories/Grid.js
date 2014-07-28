@@ -127,7 +127,7 @@ angular.module('ui.grid')
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index);
+        col = new GridColumn(colDef, index, self);
         self.columns.push(col);
       }
       else {
