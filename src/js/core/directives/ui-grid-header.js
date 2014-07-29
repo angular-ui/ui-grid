@@ -260,7 +260,7 @@
               // Build the CSS
               // uiGridCtrl.grid.columns.forEach(function (column) {
               columnCache.forEach(function (column) {
-                ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.drawnWidth + 'px; }';
+                ret = ret + column.getColClassDefinition();
               });
 
               // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth

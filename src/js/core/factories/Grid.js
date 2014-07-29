@@ -127,7 +127,7 @@ angular.module('ui.grid')
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index);
+        col = new GridColumn(colDef, index, self);
         self.columns.push(col);
       }
       else {
@@ -366,8 +366,9 @@ angular.module('ui.grid')
   Grid.prototype.addRows = function addRows(newRawData) {
     var self = this;
 
+    var existingRowCount = self.rows.length;
     for (var i=0; i < newRawData.length; i++) {
-      var newRow = self.processRowBuilders(new GridRow(newRawData[i], i));
+      var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount));
 
       if (self.options.enableRowHashing) {
         var found = self.rowHashMap.get(newRow.entity);

@@ -245,7 +245,7 @@ angular.module('ui.grid')
     // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
     scrollLeft = this.getCanvasWidth() * scrollPercentage;
 
-    $log.debug('scrollPercentage', scrollPercentage);
+    //$log.debug('scrollPercentage', scrollPercentage);
 
     this.adjustColumns(scrollLeft, scrollPercentage);
 
@@ -617,7 +617,7 @@ angular.module('ui.grid')
 
     // Build the CSS
     columnCache.forEach(function (column) {
-      ret = ret + ' .grid' + self.grid.id + ' .col' + column.index + ' { width: ' + column.drawnWidth + 'px; }';
+      ret = ret + column.getColClassDefinition();
     });
 
     // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth

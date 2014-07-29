@@ -25,7 +25,7 @@ angular.module('ui.grid')
       *  @ngdoc object
       *  @name index
       *  @propertyOf  ui.grid.class:GridRow
-      *  @description the index of the row
+      *  @description the index of the GridRow. It should always be unique and immutable
       */
     this.index = index;
 

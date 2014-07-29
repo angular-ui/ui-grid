@@ -15,9 +15,10 @@ describe('Grid factory', function () {
       new GridRow({ a: 'two' }, 1)
     ];
 
-    column = new GridColumn({ name: 'a' }, 0);
-
     grid = new Grid({ id: 1 });
+    column = new GridColumn({ name: 'a' }, 0, grid);
+
+
     grid.rows = rows;
     grid.columns = [column];
 

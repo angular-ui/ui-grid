@@ -18,13 +18,14 @@
       link: function ($scope, $elm, $attrs, uiGridCtrl) {
         $scope.grid = uiGridCtrl.grid;
 
-        $elm.addClass('col' + $scope.col.index);
-        $scope.$watch('col.index', function (newValue, oldValue) {
-          if (newValue === oldValue) { return; }
-          var className = $elm.attr('class');
-          className = className.replace('col' + oldValue, 'col' + newValue);
-          $elm.attr('class', className);
-        });
+        $elm.addClass($scope.col.getColClass(false));
+// shane - No need for watch now that we trackby col name
+//        $scope.$watch('col.index', function (newValue, oldValue) {
+//          if (newValue === oldValue) { return; }
+//          var className = $elm.attr('class');
+//          className = className.replace(uiGridConstants.COL_CLASS_PREFIX + oldValue, uiGridConstants.COL_CLASS_PREFIX + newValue);
+//          $elm.attr('class', className);
+//        });
 
         // Hide the menu by default
         $scope.menuShown = false;
