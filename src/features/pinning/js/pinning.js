@@ -16,7 +16,22 @@
 
   var module = angular.module('ui.grid.pinning', ['ui.grid']);
 
-  module.service('uiGridPinningService', ['$log', 'GridRenderContainer', function ($log, GridRenderContainer) {
+  module.config(['$provide', function ($provide) {
+    $provide.decorator('i18nService', ['$delegate', function ($delegate) {
+      $delegate.add('en',
+        { pinning: {
+            pinLeft: 'Pin Left',
+            pinRight: 'Pin Right',
+            unpin: 'Unpin'
+          }
+        }
+      );
+
+      return $delegate;
+    }]);
+  }]);
+
+  module.service('uiGridPinningService', ['$log', 'GridRenderContainer', 'i18nService', function ($log, GridRenderContainer, i18nService) {
     var service = {
 
       initializeGrid: function (grid) {
@@ -72,7 +87,7 @@
         }
 
         var pinColumnLeftAction = {
-          title: 'Pin Left',
+          title: i18nService.get().pinning.pinLeft,
           shown: function () {
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'left';
           },
@@ -89,7 +104,7 @@
         };
 
         var pinColumnRightAction = {
-          title: 'Pin Right',
+          title: i18nService.get().pinning.pinRight,
           shown: function () {
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'right';
           },
@@ -106,7 +121,7 @@
         };
 
         var removePinAction = {
-          title: 'Unpin',
+          title: i18nService.get().pinning.unpin,
           icon: 'ui-grid-icon-info-circled',
           shown: function () {
             return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
@@ -160,7 +175,6 @@
         }
       };
     }]);
-
 
   module.directive('uiGridPinnedContainer', ['$log', function ($log) {
     return {

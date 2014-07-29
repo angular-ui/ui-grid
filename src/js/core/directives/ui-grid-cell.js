@@ -10,7 +10,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             var compiledElementFn = $scope.col.compiledElementFn;
 
             compiledElementFn($scope, function(clonedElement, scope) {
-              $elm.html(clonedElement);
+              $elm.append(clonedElement);
             });
           }
 

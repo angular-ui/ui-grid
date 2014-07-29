@@ -18,7 +18,6 @@
     DEFAULT_LANG: 'en'
   });
 
-
 //    module.config(['$provide', function($provide) {
 //        $provide.decorator('i18nService', ['$delegate', function($delegate) {}])}]);
 
@@ -33,17 +32,19 @@
         },
         add: function (lang, strings) {
           var lower = lang.toLowerCase();
-          var cache = this._langs;
-          cache[lower] = angular.copy(strings);
+          if (!this._langs[lower]) {
+            this._langs[lower] = {};
+          }
+          angular.extend(this._langs[lower], strings);
         },
         getAllLangs: function () {
           var langs = [];
-          if (!this._langs){
+          if (!this._langs) {
             return langs;
           }
 
           for (var key in this._langs) {
-             langs.push(key);
+            langs.push(key);
           }
 
           return langs;
@@ -104,7 +105,7 @@
 
         getCurrentLang: function () {
           var lang = langCache.getCurrentLang();
-          if (!lang){
+          if (!lang) {
             lang = i18nConstants.DEFAULT_LANG;
             langCache.setCurrent(lang);
           }
@@ -117,8 +118,6 @@
 
     }]);
 
-
-
   var localeDirective = function (i18nService, i18nConstants) {
     return {
       compile: function () {
@@ -128,13 +127,13 @@
             // check for watchable property
             var lang = $scope.$eval($attrs[alias]);
             if (lang) {
-               $scope.$watch($attrs[alias], function(){
-                 i18nService.setCurrentLang(lang);
-               });
+              $scope.$watch($attrs[alias], function () {
+                i18nService.setCurrentLang(lang);
+              });
             } else if ($attrs.$$observers) {
-               $attrs.$observe(alias, function(){
-                 i18nService.setCurrentLang($attrs[alias] || i18nConstants.DEFAULT_LANG);
-               });
+              $attrs.$observe(alias, function () {
+                i18nService.setCurrentLang($attrs[alias] || i18nConstants.DEFAULT_LANG);
+              });
             }
           }
         };
@@ -194,8 +193,6 @@
       return getter(i18nService.get()) || i18nConstants.MISSING + data;
     };
   };
-
-
 
   FILTER_ALIASES.forEach(function (alias) {
     module.filter(alias, ['$parse', 'i18nService', 'i18nConstants', uitFilter]);
