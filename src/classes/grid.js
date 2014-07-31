@@ -623,6 +623,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             } else {
                 self.config.sortInfo.directions[indx] = col.sortDirection;
             }
+            $scope.$emit('ngGridEventSorted', self.config.sortInfo);
         } else if (!self.config.useExternalSorting || (self.config.useExternalSorting && self.config.sortInfo )) {
             var isArr = $.isArray(col);
             self.config.sortInfo.columns.length = 0;
