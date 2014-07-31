@@ -23,7 +23,7 @@
         for (var prop in item) {
             if (item.hasOwnProperty(prop)) {
                 var c = fieldMap[prop.toLowerCase()];
-                if (!c||!c.visible) {
+                if ( !c||!c.visible ) {
                     continue;
                 }
                 var pVal = item[prop];
