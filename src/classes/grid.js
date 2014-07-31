@@ -562,6 +562,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     domUtilityService.RebuildGrid($scope, self);
                 }
                 $scope.$emit('ngGridEventColumns', a);
+                $scope.$emit('ngGridEventFilter', $scope.filterText);
+                self.searchProvider.evalFilter();
             }, true));
              $scope.$on('$destroy', $scope.$watch(function() {
                 return options.i18n;
