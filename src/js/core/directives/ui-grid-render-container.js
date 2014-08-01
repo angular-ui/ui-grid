@@ -129,6 +129,7 @@
                 // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
                 containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+                containerCtrl.prevScrollLeft = newScrollLeft;
 
                 if (containerCtrl.headerViewport) {
                   containerCtrl.headerViewport.scrollLeft = newScrollLeft;
@@ -175,6 +176,7 @@
 
               // $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
 
+              $log.debug(containerCtrl.containerId, 'firing scroll');
               uiGridCtrl.fireScrollingEvent(args);
             });
             

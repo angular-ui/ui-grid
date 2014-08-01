@@ -173,15 +173,22 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
               angular.element(inner).removeClass('ng-hide');
             }
 
+            // var containerScrollLeft = $columnelement
+            var containerId = column.renderContainer ? column.renderContainer : 'body';
+            var renderContainer = $scope.grid.renderContainers[containerId];
+            var containerScrolLeft = renderContainer.prevScrollLeft;
+
             var myWidth = gridUtil.elementWidth(menu, true);
 
             // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
             // Get the column menu right padding
             var paddingRight = parseInt(angular.element(menu).css('padding-right'), 10);
 
-            // $log.debug('position', left + ' - ' + offset + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
+            $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
 
-            $elm.css('left', (left - offset + width - myWidth + paddingRight) + 'px');
+            // $elm.css('left', (left - offset + width - myWidth + paddingRight) + 'px');
+            // $elm.css('left', (left + width - myWidth + paddingRight) + 'px');
+            $elm.css('left', (left - containerScrolLeft + width - myWidth + paddingRight) + 'px');
             $elm.css('top', (top + height) + 'px');
 
             // Hide the menu on a click on the document

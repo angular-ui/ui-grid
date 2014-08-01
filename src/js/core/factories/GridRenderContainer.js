@@ -23,7 +23,7 @@ angular.module('ui.grid')
     self.prevRowScrollIndex = 0;
 
     self.prevScrollLeft = 0;
-    self.prevScrollLeftPercentage = 0;
+    self.prevScrollleftPercentage = 0;
     self.prevColumnScrollIndex = 0;
 
     self.columnStyles = "";
@@ -227,11 +227,13 @@ angular.module('ui.grid')
       return;
     }
 
+    this.prevScrollTop = scrollTop;
+
     scrollTop = this.getCanvasHeight() * scrollPercentage;
 
     this.adjustRows(scrollTop, scrollPercentage);
 
-    this.prevScrollTop = scrollTop;
+    // this.prevScrollTop = scrollTop;
     this.prevScrolltopPercentage = scrollPercentage;
 
     this.grid.queueRefresh();
@@ -242,6 +244,8 @@ angular.module('ui.grid')
       return;
     }
 
+    this.prevScrollLeft = scrollLeft;
+
     // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
     scrollLeft = this.getCanvasWidth() * scrollPercentage;
 
@@ -249,7 +253,7 @@ angular.module('ui.grid')
 
     this.adjustColumns(scrollLeft, scrollPercentage);
 
-    this.prevScrollLeft = scrollLeft;
+    // this.prevScrollLeft = scrollLeft;
     this.prevScrollleftPercentage = scrollPercentage;
 
     this.grid.queueRefresh();
