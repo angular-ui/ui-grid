@@ -5,12 +5,14 @@
   float: left;
 
   &.left .ui-grid-header-cell:last-child {
+    box-sizing: border-box;
     border-right: @gridBorderWidth solid;
     border-width: @gridBorderWidth;
     border-color: darken(@headerVerticalBarColor, 15%);
   }
 
   &.left .ui-grid-cell:last-child {
+    box-sizing: border-box;
     border-right: @gridBorderWidth solid;
     border-width: @gridBorderWidth;
     border-color: darken(@verticalBarColor, 15%);
@@ -21,7 +23,7 @@
   }
 
   &.left .ui-grid-header-cell:not(:last-child) .ui-grid-vertical-bar {
-    background-color: darken(@headerVerticalBarColor, 15%);
+    background-color: @headerVerticalBarColor;
   }
 
   &.left .ui-grid-cell:not(:last-child) .ui-grid-vertical-bar {

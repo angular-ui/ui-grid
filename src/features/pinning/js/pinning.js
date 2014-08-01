@@ -88,6 +88,7 @@
 
         var pinColumnLeftAction = {
           title: i18nService.get().pinning.pinLeft,
+          icon: 'ui-grid-icon-left-open',
           shown: function () {
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'left';
           },
@@ -105,6 +106,7 @@
 
         var pinColumnRightAction = {
           title: i18nService.get().pinning.pinRight,
+          icon: 'ui-grid-icon-right-open',
           shown: function () {
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'right';
           },
@@ -122,7 +124,7 @@
 
         var removePinAction = {
           title: i18nService.get().pinning.unpin,
-          icon: 'ui-grid-icon-info-circled',
+          icon: 'ui-grid-icon-cancel',
           shown: function () {
             return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
           },

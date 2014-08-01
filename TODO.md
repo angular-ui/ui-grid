@@ -2,14 +2,19 @@
 
 # CURRENT
 
+# Pinning
+
+1. [TODO] - Add tests for new getBorderSize() and closestElm() methods in gridUtil
+1. [BUG] - With multiple columns left-pinned, they are wrapping as it appears the render container is 1px too small
+1. [BUG] - Column menu not in right place when grid is horizontally scrolled
+1. [BUG/MINOR] - If you pin one column and then use the scrollbar to scroll quickly scroll down, the body container will scroll correctly but the pinned container will be missing some rows, visibly.
+   - Also it seems like the scroll amount can get out of sync by a few pixels.
+1. Right-pinned container needs to have a vertical-scrollbar, if visible then the body should hide its own scrollbar, however we determine to handle that.
+
+
 # Render containers
 
 *** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
-
-1. [BUG] - Header isn't offsetting right during pinning.
-1. [BUG] - Column menu not in right place when grid is horizontally scrolled
-1. [BUG/MINOR] - If you pin one column and then use the scrollbar to scroll quickly scroll down, the body container will scroll correctly but the pinned container will be missing 
-some rows, visibly.
 
 1. [TODO] - headerHeight when vertical scrollbar renders doesn't include the border width.
    - Somehow need a way to re-run buildStyles after any header height updates...
@@ -37,8 +42,8 @@ some rows, visibly.
    The pinned containers will need the FULL value so they can fill out the body's width or height based on which side they're pinned to, and then the viewport will use the adjusted
    value to render smaller to make room for the other one.
 1. [TODO] - Main viewport will need top/left CSS positioning values to adjust for the left/top-pinned containers (right?)
-1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the viewports
-   a controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
+1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the a
+   viewports controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
    - Render containers need to have max and min width/height values, and they need to be able to take percentages (i.e. make the left pinned container 30% of the total grid 
      width).
    - Need to somehow keep pinned viewports from listening to scroll events that they should ignore, like left/right-pinned containers shouldn't scroll left/right when the

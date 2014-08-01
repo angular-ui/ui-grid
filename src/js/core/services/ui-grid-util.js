@@ -636,7 +636,59 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     };
   });
 
+  // http://stackoverflow.com/a/24107550/888165
+  s.closestElm = function closestElm(el, selector) {
+    if (typeof(el.length) !== 'undefined' && el.length) {
+      el = el[0];
+    }
 
+    var matchesFn;
+
+    // find vendor prefix
+    ['matches','webkitMatchesSelector','mozMatchesSelector','msMatchesSelector','oMatchesSelector'].some(function(fn) {
+        if (typeof document.body[fn] === 'function') {
+            matchesFn = fn;
+            return true;
+        }
+        return false;
+    });
+
+    // traverse parents
+    var parent;
+    while (el !== null) {
+      parent = el.parentElement;
+      if (parent !== null && parent[matchesFn](selector)) {
+          return parent;
+      }
+      el = parent;
+    }
+
+    return null;
+  };
+
+  s.getBorderSize = function getBorderSize(elem, borderType) {
+    if (typeof(elem.length) !== 'undefined' && elem.length) {
+      elem = elem[0];
+    }
+
+    var styles = getStyles(elem);
+
+    if (borderType) {
+      borderType = 'border-' + borderType;
+    }
+    else {
+      borderType = 'border';
+    }
+
+    var val = parseInt(styles[borderType], 10);
+
+    if (isNaN(val)) {
+      return 0;
+    }
+    else {
+      return val;
+    }
+  };
 
   return s;
 }]);

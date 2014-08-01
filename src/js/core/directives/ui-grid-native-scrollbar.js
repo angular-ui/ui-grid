@@ -81,10 +81,19 @@
           return ret;
         }
 
+        // Get the grid's bottom border height (TODO(c0bra): need to account for footer here!)
+        var gridElm = gridUtil.closestElm($elm, '.ui-grid');
+        var gridBottomBorder = gridUtil.getBorderSize(gridElm, 'bottom');
+
         function updateNativeHorizontalScrollbar() {
           var w = colContainer.getCanvasWidth();
 
-          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
+          // Scrollbar needs to be negatively positioned beyond the bottom of the relatively-positioned render container
+          var bottom = (scrollBarWidth * -1) + gridBottomBorder;
+
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px; }';
+          ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
+
           elmMaxScroll = w;
 
           return ret;
@@ -151,6 +160,8 @@
 
             var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
             var horizScrollPercentage = newScrollLeft / horizScrollLength;
+
+            $log.debug('horizScrollPercentage', horizScrollPercentage);
 
             var xArgs = {
               target: $elm,
