@@ -10,9 +10,7 @@
     var app = angular.module('app', ['ui.grid', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {
-        enablePinning: true
-      };
+      $scope.gridOptions = {};
 
       $scope.gridOptions.columnDefs = [
         { name:'id', width:50 },
@@ -39,7 +37,7 @@
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div ui-grid="gridOptions" class="grid" ui-grid-pinning></div>
     </div>
   </file>
   <file name="main.css">
