@@ -27,6 +27,9 @@ ngAggregate.prototype.toggleExpand = function () {
 };
 ngAggregate.prototype.setExpand = function (state) {
     this.collapsed = state;
+    if (this.orig) {
+        this.orig.collapsed = state;
+    }
     this.notifyChildren();
 };
 ngAggregate.prototype.notifyChildren = function () {
