@@ -100,5 +100,5 @@ function ngGridCsvExportPlugin (opts) {
              target: '_blank',
              download: opts.downloadFileName ? opts.downloadFileName : 'csvFile.csv'
          })[0].click();
-    }
+    };
 }
