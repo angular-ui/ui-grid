@@ -149,6 +149,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //all of the items selected in the grid. In single select mode there will only be one item in the array.
         selectedItems: [],
         
+        //Width of row selection checkbox column
+        selectionCheckboxColumnWidth: 25,
+
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false,
         
@@ -280,8 +283,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     self.elementDims = {
         scrollW: 0,
         scrollH: 0,
-        rowIndexCellW: 25,
-        rowSelectedCellW: 25,
+        rowIndexCellW: self.config.selectionCheckboxColumnWidth,
+        rowSelectedCellW: self.config.selectionCheckboxColumnWidth,
         rootMaxW: 0,
         rootMaxH: 0
     };
@@ -411,7 +414,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 if (self.config.showSelectionCheckbox) {
                     //if visible, takes up 25 pixels
                     if(ngCol.originalIndex === 0 && ngCol.visible){
-                        totalWidth += 25;
+                        totalWidth += self.config.selectionCheckboxColumnWidth;
                     }
                     // The originalIndex will be offset 1 when including the selection column
                     origIndex--;
