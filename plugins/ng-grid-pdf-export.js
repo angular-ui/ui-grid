@@ -45,8 +45,9 @@ function ngGridPdfExportPlugin (options) {
         var doc = new jsPDF('landscape','mm','a4');
         doc.setFontStyle('bold');
         doc.setFontSize(12);
-        if (self.scope.reportSchema && self.scope.reportSchema.title)
+        if (self.scope.reportSchema && self.scope.reportSchema.title) {
             doc.text(self.scope.reportSchema.title,margin,margin);
+        }
         doc.setFontStyle('normal');
         doc.setFontSize(12);
         doc.cellInitialize();
