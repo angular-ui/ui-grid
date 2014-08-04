@@ -195,7 +195,7 @@
                 var col = filterCols(cols, group)[0];
 
                 var val = $utils.evalProperty(model, group);
-                val = val != null? val.toString() : 'null';
+                val = (val === '' || val === null) ? 'null' : val.toString();
                 if (!ptr[val]) {
                     ptr[val] = {};
                 }
