@@ -4,6 +4,25 @@
 
 Thanks for considering contributions to the ui-grid project. This doc will give you a jump start on the development standards we use.
 
+# Running Dev Server
+Grunt task dev will run jshint, compile less, run fontella, run unit tests, run protractor tests, and start a local
+webserver on port 9003.  A watch is started to rerun all the tasks if any source file changes.
+
+<br>
+```
+grunt dev
+```
+<br>
+http://localhost:9003/docs/#/tutorial to browse each tutorial. 
+
+<br/>options
+<br/> no-e2e - eliminate protractor tests
+<br/> angular=n.n.n - specify a specify angular version to run unit tests against
+
+```
+grunt dev --no-e2e --angular=1.2.16
+```
+
 # Code Structure
 The development goal of ui-grid (ng-grid 3.0) is a fast, testable, and extensible grid component.
 
@@ -22,7 +41,7 @@ Everything else should be added as new angular modules unless the grid team agre
 * feature folder is added below src
 * One js file per feature
 * no global variables
-* public events are registered in grid.events (more on that later)
+* public methods and events are registered in grid.api (more on that later)
 * design and code the angular way. What do we main by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!
 * feature.js contains an enclosure:
 
@@ -155,7 +174,7 @@ column and row builders (see below).  See ui.grid.edit unit tests on how to easi
       compile: function () {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            uiGridCtrl.grid.events.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
+            uiGridCtrl.grid.api.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
             uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
             uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
             uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
@@ -227,14 +246,13 @@ RowsProcessor allows your feature to affect the entire rows collections.  Gives 
         uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
 ```
 
-## Public Events
-The grid provides public events via the GridEvents object.  This object allows you to register your feature's public
-events and raise/consume events.  It guarantees that your events are specific to a grid instance.  Internally, angular
+## Public Methods and Events
+The grid provides public api via the GridApi object.  This object allows you to register your feature's public
+api methods and events.  It guarantees that your events are specific to a grid instance.  Internally, angular
 scope $broadcast and $on are used.
 ```javascript
-       //preferred method is to use a publicEvents map from constants
-         module.constant('uiGridFeatureConstants', {
-           publicEvents: {
+       //preferred method is to use a map so ide's can pick up on the signatures
+       var publicEvents = {
              featureName : {
                event1 : function(scope, function(newRowCol, oldRowCol)){},
                event2 : function(scope, function(){}){}
@@ -243,13 +261,48 @@ scope $broadcast and $on are used.
          });
 
        //from feature directive pre-link
-       uiGridCtrl.grid.events.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
+       uiGridCtrl.grid.api.registerEventsFromObject(publicEvents);
+
+       //more stringy registration
+       uiGridCtrl.grid.api.registerEvents('featureName', 'eventName');
 
        //raise event
-       uiGridCtrl.grid.events.featureName.event1(newRowCol, oldRowCol);
+       uiGridCtrl.grid.api.featureName.raise.event1(newRowCol, oldRowCol);
 
        //subscribe to event. You must provide a scope object so the listener will be destroyed when scope is destroyed
-       uiGridCtrl.grid.events.featureName.on.event1($scope, function(newRowCol, oldRowCol){});
+       //function's this variable will be grid.api
+       uiGridCtrl.grid.api.featureName.on.event1($scope, function(newRowCol, oldRowCol){});
+
+       //register methods
+       var methods = {
+          featureName : {
+            methodName1 : function(yourVar1, yourVar2){
+                //whatever you method needs to do
+            },
+            methodName2 : function(var2){
+                //do something else
+            }
+          }
+       }
+
+       uiGridCtrl.grid.api.registerMethodsFromObject(uiGridFeatureConstants.publicEvents);
+
+       //way of the string
+       uiGridCtrl.grid.api.registerMethod('featureName', 'methodName', function(yourVar){//do something});
+
+       //external use
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+
+          //subscribe to event
+          gridApi.feature.on.event1($scope,function(scope, function(newRowCol, oldRowCol)){
+             var self = this; //grid.api
+             var msg = 'row selected ' + row.isSelected;
+             $log.log(msg);
+           });
+
+           //call method
+           gridApi.featureName.methodName1('abc','123');
+        };
 
 ```
 

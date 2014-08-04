@@ -139,7 +139,7 @@ describe('rowSorter', function() {
             direction: uiGridConstants.ASC,
             priority: 0
           }
-        }, 0)
+        }, 0, grid)
       ];
     });
 
@@ -171,7 +171,7 @@ describe('rowSorter', function() {
             direction: uiGridConstants.ASC,
             priority: 0
           }
-        }, 0);
+        }, 0, grid);
 
         rowSorter.sort(grid, rows, cols);
 
@@ -200,7 +200,7 @@ describe('rowSorter', function() {
             direction: uiGridConstants.ASC,
             priority: 0
           }
-        }, 0);
+        }, 0, grid);
 
         var ret = rowSorter.sort(grid, rows, cols);
 
@@ -240,7 +240,7 @@ describe('rowSorter', function() {
 
       column = new GridColumn({
         name: 'name'
-      }, 0);
+      }, 0, grid);
 
       cols = grid.columns = [column];
     }));

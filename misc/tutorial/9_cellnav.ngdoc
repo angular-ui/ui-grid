@@ -4,7 +4,7 @@
 
 This grid example uses the ui-grid-cellNav directive to add cell navigation.
 
-Uses the gridOptions.onRegisterEvents callback to register the on_cellNav event and log when the cell is navigated.
+Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
 
 @example
 <example module="app">
@@ -28,22 +28,32 @@ Uses the gridOptions.onRegisterEvents callback to register the on_cellNav event 
 
         $scope.info = {};
 
-        $scope.gridOptions.onRegisterEvents = function(gridEvents){
-         gridEvents.gridCellNav.on.cellNav($scope,function(newRowCol, oldRowCol){
-                  var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
-                  var msg = 'New RowCol is ' + angular.toJson(rowCol);
-                  if(oldRowCol){
-                     rowCol = {row: oldRowCol.row.index, col:oldRowCol.col.colDef.name};
-                     msg += ' Old RowCol is ' + angular.toJson(rowCol);
-                  }
-                  $log.log(msg);
+        $scope.currentFocused = "";
+
+        $scope.getCurrentFocus = function(){
+          var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+          if(rowCol !== null) {
+              $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+          }
+        }
+
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+           $scope.gridApi = gridApi;
+           gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
+                 // var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
+                 // var msg = 'New RowCol is ' + angular.toJson(rowCol);
+                 // if(oldRowCol){
+                 //    rowCol = {row: oldRowCol.row.index, col:oldRowCol.col.colDef.name};
+                 //    msg += ' Old RowCol is ' + angular.toJson(rowCol);
+                 // }
+                  $log.log('navigation event');
                 });
         };
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+      <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
       <div ui-grid="gridOptions" ui-grid-cellNav class="grid"></div>

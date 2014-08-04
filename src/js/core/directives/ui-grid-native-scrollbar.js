@@ -9,8 +9,14 @@
       scope: {
         type: '@'
       },
-      require: '?^uiGrid',
-      link: function ($scope, $elm, $attrs, uiGridCtrl) {
+      require: ['^uiGrid', '^uiGridRenderContainer'],
+      link: function ($scope, $elm, $attrs, controllers) {
+        var uiGridCtrl = controllers[0];
+        var containerCtrl = controllers[1];
+        var rowContainer = containerCtrl.rowContainer;
+        var colContainer = containerCtrl.colContainer;
+        var grid = uiGridCtrl.grid;
+
         var contents = angular.element('<div class="contents">&nbsp;</div>');
 
         $elm.addClass('ui-grid-native-scrollbar');
@@ -25,7 +31,8 @@
 
           $elm.addClass('vertical');
 
-          uiGridCtrl.grid.verticalScrollbarWidth = scrollBarWidth;
+          grid.verticalScrollbarWidth = scrollBarWidth;
+          colContainer.verticalScrollbarWidth = scrollBarWidth;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollTop;
@@ -37,7 +44,8 @@
           $elm.addClass('horizontal');
 
           // Save this scrollbar's dimension in the grid properties
-          uiGridCtrl.grid.horizontalScrollbarHeight = scrollBarWidth;
+          grid.horizontalScrollbarHeight = scrollBarWidth;
+          rowContainer.horizontalScrollbarHeight = scrollBarWidth;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollLeft;
@@ -56,29 +64,51 @@
         
         function updateNativeVerticalScrollbar() {
           // Update the vertical scrollbar's content height so it's the same as the canvas
-          var h = uiGridCtrl.grid.getCanvasHeight();
-          uiGridCtrl.grid.nativeVerticalScrollbarStyles = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
+          var h = rowContainer.getCanvasHeight();
+
+          // TODO(c0bra): set scrollbar `top` by height of header row
+          // var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
+          var headerHeight = grid.headerHeight;
+
+          // $log.debug('headerHeight in scrollbar', headerHeight);
+
+          // var ret = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
+          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { top: ' + headerHeight + 'px}';
 
           elmMaxScroll = h;
+
+          return ret;
         }
 
+        // Get the grid's bottom border height (TODO(c0bra): need to account for footer here!)
+        var gridElm = gridUtil.closestElm($elm, '.ui-grid');
+        var gridBottomBorder = gridUtil.getBorderSize(gridElm, 'bottom');
+
         function updateNativeHorizontalScrollbar() {
-          var w = uiGridCtrl.grid.getCanvasWidth();
-          uiGridCtrl.grid.nativeHorizontalScrollbarStyles = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
+          var w = colContainer.getCanvasWidth();
+
+          // Scrollbar needs to be negatively positioned beyond the bottom of the relatively-positioned render container
+          var bottom = (scrollBarWidth * -1) + gridBottomBorder;
+
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px; }';
+          ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
 
           elmMaxScroll = w;
+
+          return ret;
         }
 
         // NOTE: priority 6 so they run after the column widths update, which in turn update the canvas width
-        if (uiGridCtrl.grid.options.enableNativeScrolling) {
+        if (grid.options.enableNativeScrolling) {
           if ($scope.type === 'vertical') {
-            uiGridCtrl.grid.registerStyleComputation({
+            grid.registerStyleComputation({
               priority: 6,
               func: updateNativeVerticalScrollbar
             });
           }
           else if ($scope.type === 'horizontal') {
-            uiGridCtrl.grid.registerStyleComputation({
+            grid.registerStyleComputation({
               priority: 6,
               func: updateNativeHorizontalScrollbar
             });
@@ -93,10 +123,10 @@
 
             var yDiff = previousScrollPosition - newScrollTop;
 
-            var vertScrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+            var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
             // Subtract the h. scrollbar height from the vertical length if it's present
-            if (uiGridCtrl.grid.horizontalScrollbarHeight && uiGridCtrl.grid.horizontalScrollbarHeight > 0) {
+            if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
               vertScrollLength = vertScrollLength - uiGridCtrl.grid.horizontalScrollbarHeight;
             }
 
@@ -128,8 +158,10 @@
 
             var xDiff = previousScrollPosition - newScrollLeft;
 
-            var horizScrollLength = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+            var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
             var horizScrollPercentage = newScrollLeft / horizScrollLength;
+
+            $log.debug('horizScrollPercentage', horizScrollPercentage);
 
             var xArgs = {
               target: $elm,
@@ -168,7 +200,7 @@
 
           if ($scope.type === 'vertical') {
             if (args.y && typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
-              var vertScrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
               var newScrollTop = Math.max(0, args.y.percentage * vertScrollLength);
               
@@ -177,7 +209,7 @@
           }
           else if ($scope.type === 'horizontal') {
             if (args.x && typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
-              var horizScrollLength = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+              var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
               var newScrollLeft = Math.max(0, args.x.percentage * horizScrollLength);
               

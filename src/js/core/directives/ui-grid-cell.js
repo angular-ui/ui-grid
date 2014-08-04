@@ -10,7 +10,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             var compiledElementFn = $scope.col.compiledElementFn;
 
             compiledElementFn($scope, function(clonedElement, scope) {
-              $elm.html(clonedElement);
+              $elm.append(clonedElement);
             });
           }
 
@@ -19,12 +19,6 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             $scope.getCellValue = uiGridCtrl.getCellValue;
 
             compileTemplate();
-
-            $scope.$watch('col.cellTemplate', function (n, o) {
-              if (n !== o) {
-                compileTemplate();
-              }
-            });
           }
           // No controller, compile the element manually
           else {
@@ -33,8 +27,10 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
           }
+        },
+        post: function($scope, $elm, $attrs) {
+          $elm.addClass($scope.col.getColClass(false));
         }
-        //post: function($scope, $elm, $attrs) {}
       };
     }
   };

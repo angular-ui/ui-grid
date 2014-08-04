@@ -16,13 +16,7 @@
   module.constant('uiGridCellNavConstants', {
     FEATURE_NAME : 'gridCellNav',
     CELL_NAV_EVENT: 'cellNav',
-    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3},
-    //available public events; listed here for convenience and IDE's use it for smart completion
-    publicEvents: {
-      gridCellNav : {
-        cellNav : function(scope, newRowCol, oldRowCol){}
-      }
-    }
+    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3}
   });
 
   /**
@@ -36,6 +30,74 @@
     function ($log, uiGridConstants, uiGridCellNavConstants, $q) {
 
       var service = {
+
+        initializeGrid: function (grid) {
+          grid.registerColumnBuilder(service.cellNavColumnBuilder);
+
+          //create variables for state
+          grid.cellNav = {};
+          grid.cellNav.lastRowCol = null;
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav.api:PublicApi
+           *
+           *  @description Public Api for cellNav feature
+           */
+          var publicApi = {
+            events: {
+              cellNav : {
+                /**
+                 * @ngdoc event
+                 * @name navigate
+                 * @eventOf  ui.grid.cellNav.api:PublicApi
+                 * @description raised when the active cell is changed
+                 * <pre>
+                 *      gridApi.cellNav.on.navigate(scope,function(newRowcol, oldRowCol){})
+                 * </pre>
+                 * @param {object} newRowCol new position
+                 * @param {object} oldRowCol old position
+                 */
+                navigate : function(newRowCol, oldRowCol){}
+              }
+            },
+            methods: {
+              cellNav: {
+                /**
+                 * @ngdoc function
+                 * @name scrollTo
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description (TODO) brings the row and column into view
+                 * @param {object} rowEntity gridOptions.data[] array instance to make visible
+                 * @param {object} colDef to make visible
+                 */
+                scrollTo: function (rowEntity, colDef) {
+                  var row = grid.getRow(rowEntity);
+                  if (row !== null) {
+                    //todo: scroll into view
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name getFocusedCell
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description returns the current (or last if Grid does not have focus) focused row and column
+                 * <br> value is null if no selection has occurred
+                 */
+                getFocusedCell: function () {
+                  return grid.cellNav.lastRowCol;
+                }
+              }
+            }
+          };
+
+          grid.api.registerEventsFromObject(publicApi.events);
+
+          grid.api.registerMethodsFromObject(publicApi.methods);
+
+        },
+
+
         /**
          * @ngdoc service
          * @name getDirection
@@ -132,7 +194,7 @@
           //find first focusable column to the left
           //circle around to the end of the array if no col is found
           while (i !== curCol.index) {
-            if (cols[i].allowCellFocus) {
+            if (cols[i].colDef.allowCellFocus) {
               break;
             }
             i--;
@@ -152,7 +214,7 @@
           //find first focusable column to the right
           //circle around to the beginning of the array if no col is found
           while (i !== curCol.index) {
-            if (cols[i].allowCellFocus) {
+            if (cols[i].colDef.allowCellFocus) {
               break;
             }
             i++;
@@ -168,7 +230,7 @@
         getRowColUp: function (rows, cols, curRow, curCol) {
           //if curCol is not focusable, then we need to find a focusable column to the right
           //this shouldn't ever happen in the grid, but we handle it anyway
-          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+          var colIndex = curCol.colDef.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
 
 
           if (curRow.index === 0) {
@@ -183,7 +245,7 @@
         getRowColDown: function (rows, cols, curRow, curCol) {
           //if curCol is not focusable, then we need to find a focusable column to the right
           //this shouldn't ever happen in the grid, but we handle it anyway
-          var colIndex = curCol.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
+          var colIndex = curCol.colDef.allowCellFocus ? curCol.index : service.getNextColIndexRight(cols, curCol);
 
 
           if (curRow.index === rows.length - 1) {
@@ -205,8 +267,20 @@
         cellNavColumnBuilder: function (colDef, col, gridOptions) {
           var promises = [];
 
-          col.allowCellFocus = colDef.allowCellFocus !== undefined ?
-            colDef.allowCellFocus : true;
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav.api:ColDef
+           *
+           *  @description Column Definitions for cellNav feature
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name allowCellFocus
+           *  @propertyOf  ui.grid.cellNav.api:ColDef
+           *  @description Enable focus on a cell.<br/>Defaults to true
+           */
+          colDef.allowCellFocus = colDef.allowCellFocus === undefined ? true : colDef.allowCellFocus ;
 
           return $q.all(promises);
         }
@@ -258,22 +332,23 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+              var grid = uiGridCtrl.grid;
+              uiGridCellNavService.initializeGrid(grid);
+
+              uiGridCtrl.cellNav = {};
+
               //  $log.debug('uiGridEdit preLink');
-              uiGridCtrl.grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
-
-              uiGridCtrl.grid.events.registerEventsFromObject(uiGridCellNavConstants.publicEvents);
-
-              var oldRowCol = null;
-              uiGridCtrl.broadcastCellNav = function (newRowCol) {
+              uiGridCtrl.cellNav.broadcastCellNav = function (newRowCol) {
                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
-                uiGridCtrl.broadcastFocus(newRowCol.row, newRowCol.col);
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol.row, newRowCol.col);
               };
 
-              uiGridCtrl.broadcastFocus = function (row, col) {
-                if (oldRowCol === null || (oldRowCol.row !== row || oldRowCol.col !== col)) {
+              uiGridCtrl.cellNav.broadcastFocus = function (row, col) {
+                if (grid.cellNav.lastRowCol === null || (grid.cellNav.lastRowCol.row !== row || grid.cellNav.lastRowCol.col !== col)) {
                   var newRowCol = new RowCol(row, col);
-                  uiGridCtrl.grid.events.gridCellNav.cellNav(newRowCol, oldRowCol);
-                  oldRowCol = newRowCol;
+                  grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
+                  grid.cellNav.lastRowCol = newRowCol;
                 }
               };
 
@@ -301,7 +376,7 @@
         require: '^uiGrid',
         scope: false,
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
-          if (!$scope.col.allowCellFocus) {
+          if (!$scope.col.colDef.allowCellFocus) {
              return;
           }
 
@@ -315,20 +390,21 @@
 
             var rowCol = uiGridCellNavService.getNextRowCol(direction, $scope.grid, $scope.row, $scope.col);
 
-            $log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
-            uiGridCtrl.broadcastCellNav(rowCol);
+            //$log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
+            uiGridCtrl.cellNav.broadcastCellNav(rowCol);
             setTabEnabled();
 
             return false;
           });
 
           $elm.find('div').on('focus', function (evt) {
-            uiGridCtrl.broadcastFocus($scope.row, $scope.col);
+            uiGridCtrl.cellNav.broadcastFocus($scope.row, $scope.col);
           });
 
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt,rowCol){
-             if (rowCol.row === $scope.row && rowCol.col === $scope.col) {
-                $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
+             if (rowCol.row === $scope.row &&
+               rowCol.col === $scope.col){
+               // $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
                 setFocused();
              }
           });

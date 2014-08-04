@@ -42,8 +42,8 @@ describe('rowSearcher', function() {
     ];
 
     columns = grid.columns = [
-      new GridColumn({ name: 'name' }, 0),
-      new GridColumn({ name: 'company' }, 1)
+      new GridColumn({ name: 'name' }, 0, grid),
+      new GridColumn({ name: 'company' }, 1, grid)
     ];
 
     filter = null;

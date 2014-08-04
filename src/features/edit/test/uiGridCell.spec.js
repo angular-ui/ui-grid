@@ -25,7 +25,7 @@ describe('ui.grid.edit GridCellDirective', function () {
     grid.options.data = [
       {col1: 'val'}
     ];
-    grid.registerColumnBuilder(uiGridEditService.editColumnBuilder);
+    uiGridEditService.initializeGrid(grid);
     grid.buildColumns();
     grid.modifyRows(grid.options.data);
 
@@ -114,6 +114,29 @@ describe('ui.grid.edit GridCellDirective', function () {
       //back to beginning
       expect(element.html()).toBe(displayHtml);
     });
+
+    it('should fire public script', inject(function ($timeout) {
+
+      var edited = false;
+
+      scope.grid.api.edit.on.afterCellEdit(scope,function(rowEntity, colDef, newValue, oldValue){
+        edited = true;
+        scope.$apply();
+      });
+
+      //stop edit
+      $timeout(function(){
+        var event = jQuery.Event("keydown");
+        event.keyCode = uiGridConstants.keymap.ENTER;
+        element.find('input').trigger(event);
+      });
+      $timeout.flush();
+
+      expect(edited).toBe(true);
+
+    }));
+
+
   });
 
 });

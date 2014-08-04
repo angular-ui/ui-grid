@@ -1,42 +1,58 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['$log', '$document', '$timeout', 'uiGridConstants', 'gridUtil',
-    function($log, $document, $timeout, uiGridConstants, GridUtil) {
+  angular.module('ui.grid').directive('uiGridViewport', ['$log',
+    function($log) {
       return {
-        // priority: 1000,
-        require: '^uiGrid',
-        scope: false,
-        link: function($scope, $elm, $attrs, uiGridCtrl) {
-          // if (uiGridCtrl === undefined) {
-          //   throw new Error('[ui-grid-body] uiGridCtrl is undefined!');
-          // }
+        replace: true,
+        scope: {},
+        templateUrl: 'ui-grid/uiGridViewport',
+        require: ['^uiGrid', '^uiGridRenderContainer'],
+        link: function($scope, $elm, $attrs, controllers) {
+          $log.debug('viewport post-link');
+
+          var uiGridCtrl = controllers[0];
+          var containerCtrl = controllers[1];
+
+          $scope.containerCtrl = containerCtrl;
+
+          var rowContainer = containerCtrl.rowContainer;
+          var colContainer = containerCtrl.colContainer;
+
+          var grid = uiGridCtrl.grid;
+
+          // Put the container sin scope so we can get rows and columns from them
+          $scope.rowContainer = containerCtrl.rowContainer;
+          $scope.colContainer = containerCtrl.colContainer;
+
+          // Register this viewport with its container 
+          containerCtrl.viewport = $elm;
 
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = $elm[0].scrollLeft;
 
-            if (newScrollLeft !== uiGridCtrl.prevScrollLeft) {
-              var xDiff = newScrollLeft - uiGridCtrl.prevScrollLeft;
+            if (newScrollLeft !== colContainer.prevScrollLeft) {
+              var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
-              var horizScrollLength = (uiGridCtrl.grid.getCanvasWidth() - uiGridCtrl.grid.getViewportWidth());
+              var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 
-              uiGridCtrl.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
+              colContainer.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
 
-            if (newScrollTop !== uiGridCtrl.prevScrollTop) {
-              var yDiff = newScrollTop - uiGridCtrl.prevScrollTop;
+            if (newScrollTop !== rowContainer.prevScrollTop) {
+              var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
               // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
-              var vertScrollLength = (uiGridCtrl.grid.getCanvasHeight() - uiGridCtrl.grid.getViewportHeight());
+              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
               // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
               var vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
               if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
               
-              uiGridCtrl.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+              rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
           });
         }

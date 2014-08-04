@@ -1,0 +1,49 @@
+@ngdoc overview
+@name Tutorial: Pinning
+@description
+
+
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.pinning']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+      $scope.gridOptions.columnDefs = [
+        { name:'id', width:50 },
+        { name:'name', width:100 },
+        { name:'age', width:100  },
+        { name:'address.street', width:150  },
+        { name:'address.city', width:150 },
+        { name:'address.state', width:50 },
+        { name:'address.zip', width:50 },
+        { name:'company', width:100 },
+        { name:'email', width:100 },
+        { name:'phone', width:200 },
+        { name:'about', width:300 },
+        { name:'friends[0].name', displayName:'1st friend', width:150 },
+        { name:'friends[1].name', displayName:'2nd friend', width:150 },
+        { name:'friends[2].name', displayName:'3rd friend', width:150 },
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid" ui-grid-pinning></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

@@ -1,14 +1,16 @@
 .ui-grid-cell {
   overflow: hidden;
   // position: absolute;
-  position: relative;
+  // position: relative; // NOTE: removing so border is visible
   float: left;
   background-color: inherit;
-}
+  border-right: @gridBorderWidth solid;
+  border-color: @borderColor;
+  box-sizing: border-box;
 
-.ui-grid-inner-cell-contents {
-  height:100%;
-  width:100%;
+  &:last-child {
+    border-right: 0;
+  }
 }
 
 .ui-grid-cell-contents {

@@ -11,12 +11,13 @@
 
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
+      $elm.addClass('grid' + self.grid.id);
 
 
       //add optional reference to externalScopes function to controller
       //so it can be retrieved in lower elements that have isolate scope
       self.getExternalScopes = $scope.getExternalScopes;
-      
+
       // angular.extend(self.grid.options, );
 
       //all properties of grid are available on scope
@@ -27,7 +28,7 @@
         $log.info('pre-compiling cell templates');
         columns.forEach(function (col) {
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-          
+
           var compiledElementFn = $compile(html);
           col.compiledElementFn = compiledElementFn;
         });
@@ -91,7 +92,7 @@
           if (self.grid.columns.length === 0) {
             $log.debug('loading cols in dataWatchFunction');
             if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
-              self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n);
+              self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n, self.grid.options.excludeProperties);
             }
             promises.push(self.grid.buildColumns()
               .then(function() {
@@ -99,21 +100,11 @@
             ));
           }
           $q.all(promises).then(function() {
-            //wrap data in a gridRow
-            // $log.debug('Modifying rows');
             self.grid.modifyRows(n)
               .then(function () {
-                //todo: move this to the ui-body-directive and define how we handle ordered event registration
-                
-                if (self.viewport) {
-                  // Re-draw our rows but stay in the same scrollTop location
-                  // self.redrawRowsByScrolltop();
-
-                  // Adjust the horizontal scroll back to 0 (TODO(c0bra): Do we need this??)
-                  // self.adjustScrollHorizontal(self.prevScollLeft, 0, true);
-
+                // if (self.viewport) {
                   self.redrawInPlace();
-                }
+                // }
 
                 $scope.$evalAsync(function() {
                   self.refreshCanvas(true);
@@ -145,7 +136,15 @@
         if (self.header) {
           // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
           $timeout(function() {
+            var oldHeaderHeight = self.grid.headerHeight;
             self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
+
+            // Rebuild styles if the header height has changed
+            //   The header height is used in body/viewport calculations and those are then used in other styles so we need it to be available
+            if (buildStyles && oldHeaderHeight !== self.grid.headerHeight) {
+              self.grid.buildStyles($scope);
+            }
+
             p.resolve();
           });
         }
@@ -159,11 +158,25 @@
         return p.promise;
       };
 
+      $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
+        if (self.refreshCanceler) {
+          $timeout.cancel(self.refreshCanceler);
+        }
+
+        self.refreshCanceler = $timeout(function () {
+          self.refreshCanvas(true);
+        });
+
+        self.refreshCanceler.then(function () {
+          self.refreshCanceler = null;
+        });
+      };
+
       self.getCellValue = function(row, col) {
         return $scope.grid.getCellValue(row, col);
       };
 
-      $scope.grid.refreshRows = self.refreshRows = function () {
+      $scope.grid.refreshRows = self.refreshRows = function refreshRows() {
         return self.grid.processRowsProcessors(self.grid.rows)
           .then(function (renderableRows) {
             self.grid.setVisibleRows(renderableRows);
@@ -174,8 +187,40 @@
           });
       };
 
+      $scope.grid.refresh = self.refresh = function refresh() {
+        $log.debug('grid refresh');
+
+        var p1 = self.grid.processRowsProcessors(self.grid.rows).then(function (renderableRows) {
+          self.grid.setVisibleRows(renderableRows);
+        });
+
+        var p2 = self.grid.processColumnsProcessors(self.grid.columns).then(function (renderableColumns) {
+          self.grid.setVisibleColumns(renderableColumns);
+        });
+
+        return $q.all([p1, p2]).then(function () {
+          self.redrawInPlace();
+
+          self.refreshCanvas(true);
+        });
+      };
+
+      // Redraw the rows and columns based on our current scroll position
+      self.redrawInPlace = function redrawInPlace() {
+        // $log.debug('redrawInPlace');
+
+        for (var i in self.grid.renderContainers) {
+          var container = self.grid.renderContainers[i];
+
+          // $log.debug('redrawing container', i);
+
+          container.adjustRows(container.prevScrollTop, null);
+          container.adjustColumns(container.prevScrollLeft, null);
+        }
+      };
+
       /* Sorting Methods */
-      
+
 
       /* Event Methods */
 
@@ -189,7 +234,7 @@
         if (typeof(args) === 'undefined' || args === undefined) {
           args = {};
         }
-        
+
         if (typeof(args.grid) === 'undefined' || args.grid === undefined) {
           args.grid = self.grid;
         }
@@ -197,6 +242,9 @@
         $scope.$broadcast(eventName, args);
       };
 
+      self.innerCompile = function (elm) {
+        $compile(elm)($scope);
+      };
     }]);
 
 /**
@@ -207,7 +255,7 @@
  *  @param {Object} uiGrid Options for the grid to use
  *  @param {Object=} external-scopes Add external-scopes='someScopeObjectYouNeed' attribute so you can access
  *            your scopes from within any custom templatedirective.  You access by $scope.getExternalScopes() function
- *  
+ *
  *  @description Create a very basic grid.
  *
  *  @example

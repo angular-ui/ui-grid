@@ -28,8 +28,25 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       {col0: 'row2col0', col1: 'row2col1', col2: 'row2col2'}
     ];
 
+    uiGridCellNavService.initializeGrid(grid);
     grid.modifyRows(grid.options.data);
   }));
+
+
+  describe('public Apis function', function () {
+    beforeEach(function(){
+      grid.buildColumns();
+    });
+
+    it('should have getFocusedCell', function () {
+      expect(grid.api.cellNav.getFocusedCell()).toBeDefined();
+      expect(grid.api.cellNav.getFocusedCell()).toBe(null);
+      grid.cellNav.lastRowCol = 'mockRowCol';
+      expect(grid.api.cellNav.getFocusedCell()).toBe('mockRowCol');
+    });
+
+  });
+
 
   describe('cellNavColumnBuilder function', function () {
     beforeEach(function(){
@@ -40,17 +57,17 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(true);
+      expect(col.colDef.allowCellFocus).toBe(true);
 
       colDef = grid.options.columnDefs[1];
       col = grid.columns[1];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(false);
+      expect(col.colDef.allowCellFocus).toBe(false);
 
       colDef = grid.options.columnDefs[2];
       col = grid.columns[2];
       uiGridCellNavService.cellNavColumnBuilder(colDef, col, grid.options);
-      expect(col.allowCellFocus).toBe(true);
+      expect(col.colDef.allowCellFocus).toBe(true);
     });
   });
 

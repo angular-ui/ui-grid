@@ -18,7 +18,7 @@ The following option is available only if using cellNav feature
 $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
    { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)',
-                cellEditableCondition: function($scope){return $scope.rowIndex%2} }
+                cellEditableCondition: function($scope){return $scope.row.index%2} }
 ]
 </pre>
 
@@ -36,8 +36,21 @@ $scope.gridOptions.columnDefs = [
         { name: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
         { name: 'age' },
         { name: 'address.city',enableCellEdit: true, displayName: 'Address (even rows editable)',
-             cellEditableCondition: function($scope){return $scope.rowIndex%2} }
+             cellEditableCondition: function($scope){return $scope.row.index%2} }
       ];
+
+
+
+     $scope.msg = {};
+
+     $scope.gridOptions.onRegisterApi = function(gridApi){
+              //set gridApi on scope
+              $scope.gridApi = gridApi;
+              gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
+                $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
+                $scope.$apply();
+              });
+            };
 
       $http.get('/data/500_complex.json')
         .success(function(data) {
@@ -49,6 +62,7 @@ $scope.gridOptions.columnDefs = [
     <div ng-controller="MainCtrl">
       <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
       <br>
+      <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
       <br>
       <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
     </div>

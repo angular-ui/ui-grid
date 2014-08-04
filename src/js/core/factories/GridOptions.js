@@ -1,4 +1,4 @@
-(function(){
+  (function(){
 
 angular.module('ui.grid')
 .factory('GridOptions', ['gridUtil', function(gridUtil) {
@@ -8,8 +8,23 @@ angular.module('ui.grid')
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
    * over this object.
+   *
+   * @example To provide default options for all of the grids within your application, use an angular
+   * decorator to modify the GridOptions factory.
+   * <pre>app.config(function($provide){
+   *    $provide.decorator('GridOptions',function($delegate){
+   *      return function(){
+   *        var defaultOptions = new $delegate();
+   *        defaultOptions.excludeProperties = ['id' ,'$$hashKey'];
+   *        return defaultOptions;
+   *      };
+   *    })
+   *  })</pre>
    */
   function GridOptions() {
+
+    this.onRegisterApi = angular.noop();
+
     /**
      * @ngdoc object
      * @name data
@@ -30,6 +45,16 @@ angular.module('ui.grid')
 
      */
     this.columnDefs = [];
+    
+    /**
+     * @ngdoc array
+     * @name excludeProperties
+     * @propertyOf  ui.grid.class:GridOptions
+     * @description (optional) Array of property names in data to ignore when auto-generating column names. defaults to ['$$hashKey']
+     * If columnDefs is defined, this will be ignored.
+     */
+    
+    this.excludeProperties = ['$$hashKey'];
 
     /**
      * @ngdoc boolean

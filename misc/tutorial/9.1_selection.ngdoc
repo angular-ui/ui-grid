@@ -1,0 +1,77 @@
+@ngdoc overview
+@name Tutorial: Selection
+@description
+
+This grid example uses the ui-grid-selection directive to row selection.
+
+Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+      $scope.gridOptions.columnDefs = [
+        { name: 'id' },
+        { name: 'name'},
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
+        { name: 'address.city' }
+      ];
+
+      $scope.gridOptions.multiSelect = true;
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+
+        $scope.info = {};
+
+        $scope.toggleMultiSelect = function() {
+           $scope.gridApi.selection.setMultiSelect(!$scope.gridApi.grid.options.multiSelect);
+        };
+
+        $scope.selectAll = function() {
+                   $scope.gridApi.selection.selectAllRows();
+        };
+
+         $scope.clearAll = function() {
+                         $scope.gridApi.selection.clearSelectedRows();
+              };
+
+        $scope.toggleRow1 = function() {
+                         $scope.gridApi.selection.toggleRowSelection($scope.gridOptions.data[0]);
+        };
+
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+          //set gridApi on scope
+          $scope.gridApi = gridApi;
+          gridApi.selection.on.rowSelectionChanged($scope,function(row){
+            var msg = 'row selected ' + row.isSelected;
+            $log.log(msg);
+          });
+        };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+     <button type="button" class="btn btn-success" ng-click="toggleMultiSelect()">Toggle multiSelect</button>  <strong>MultiSelect:</strong> <span ng-bind="gridApi.grid.options.multiSelect"></span>
+      <button type="button" class="btn btn-success" ng-click="toggleRow1()">Toggle Row 0</button> </span>
+      <br/>
+      <br/>
+      <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button> </span>
+      <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button> </span>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

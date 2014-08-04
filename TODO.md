@@ -2,11 +2,71 @@
 
 # CURRENT
 
-1. [TODO] - header-cell and thus .ui-grid-vertical-bar not filling the full vertical space when a column has filtering disabled but its neighbors DON'T.
+# Pinning
 
-1. [PERF] - Try to improve horizontal scroll performance with cellTemplates
+1. [TODO] - Add tests for new getBorderSize() and closestElm() methods in gridUtil
+1. [BUG] - With multiple columns left-pinned, they are wrapping as it appears the render container is 1px too small
+1. [BUG] - Column menu not in right place when grid is horizontally scrolled
+1. [BUG/MINOR] - If you pin one column and then use the scrollbar to scroll quickly scroll down, the body container will scroll correctly but the pinned container will be missing some rows, visibly.
+   - Also it seems like the scroll amount can get out of sync by a few pixels.
+1. Right-pinned container needs to have a vertical-scrollbar, if visible then the body should hide its own scrollbar, however we determine to handle that.
+
+
+# Render containers
+
+*** [NOTE] *** - I turned off test running (karmangular, etc) for render container development
+
+1. [TODO] - headerHeight when vertical scrollbar renders doesn't include the border width.
+   - Somehow need a way to re-run buildStyles after any header height updates...
+1. [TODO] - Render container header viewport (and maybe main viewport) are too wide. Also the vertical scrollbar is too high. If the header is present the scrollbar needs   
+   to size down...
+
+1. [NOTE] - refreshCanvas() needs to QUEUE a refresh. It cannot directly call one. We need to debounce it somehow. Otherwise every render container refresh call will 
+   make the grid refresh itself WAY too much. Can we just use $timeout() and $timeout.cancel() with no delay?
+   - Maybe make a `queueRefresh` method that GridRenderContainer can call...
+
+1. [NOTE] - On grid init we need to redrawInPlace all containers, or rather update the scrollTop and scrollLeft of all registered container to '0' pixels.
+1. [BUG] - The pinning menu actions ARE putting the columns into the renderContainer caches, but it's not immediately updating (re-rendering) the grid. If I then scroll I
+   see the column is gone, but it's also still accounts for the column's width when setting the canvas width (so two separate bugs).
+   - NOTE - The viewport width adjustment needs to subtract the pinned viewports' dimensions from the main viewport
+   - NOTE - Is the canvasWidth updating running in uiGridHeader BEFORE the visible/renderContainer updates which columns are in the body container?
+   - NOTE - The main viewport and main header will need their left/right dimensions updated as well as their width/height. The header isn't being updated at all!
+   - NOTE - We'd need to subtract the cumulative horizontal-pinned containers width from the top-panel and offset the header's left position based on the left container
+
+1. [TODO] - Horizontal-pinned container will need their OWN header... sigh.
+   - Their repeater will need to be based on their render container
+
+1. [IDEA] - Should grid have an `addRenderContainer` method? Rather than just popping them in to the renderContainers properties with no validation?
+1. [NOTE] - We can add headerHeight back into the left/right-pinned containers if we don't want a scrollbar at the bottom (we probably don't).
+1. [NOTE] - We probably need getAdjustedViewportWidth/Height() methods, the idea being that the normal methods return the full width/height and the others return the adjusted value.
+   The pinned containers will need the FULL value so they can fill out the body's width or height based on which side they're pinned to, and then the viewport will use the adjusted
+   value to render smaller to make room for the other one.
+1. [TODO] - Main viewport will need top/left CSS positioning values to adjust for the left/top-pinned containers (right?)
+1. [TODO] - Make viewports generic, so they can be sized to their contents no matter what they are, so they can listen for scroll events. Also need to give the a
+   viewports controller that child elements (rows, columns) can communicate with to handle column resizing, etc.
+   - Render containers need to have max and min width/height values, and they need to be able to take percentages (i.e. make the left pinned container 30% of the total grid 
+     width).
+   - Need to somehow keep pinned viewports from listening to scroll events that they should ignore, like left/right-pinned containers shouldn't scroll left/right when the
+     body scrolls, but it DOES need to listen to vertical scroll events.
+     - I guess we can just add attributes like `bind-scroll-vertical` + `bind-scroll-horizontal` to make them both fire those events and listen for them... That ought to be
+       the RIGHT thing (yay).
+   - Create a registry of functions that alter the grid viewport's dimensions. For instance, a left-pinned render container will need to substract its own width from the width
+     of the main (body) viewport. Basically the body's viewport has to resize around any other viewport inside the main render area, the scrollbar-box or whatever you want to call it.
+     - Almost done, just need to split the functionality out so there are "normal" methods and "adjusted" methods.
+   - Need to flesh out update() method in ui-grid-render-container to update the renderContainer canvas/viewport styles.
+     - i.e. canvas width = sum of columnCache widths, canvas height = sum of rowCache heights
+
+  ** uiGridRenderContainer **
+  - Needs to register to the specific renderContainer to get its rows and columns
+  - Needs to find its canvas, and its viewport. Or maybe the render container IS a viewport. That's probably easier
+  - Needs to get its canvas height
+
+1. [TODO] - uiGridRow needs to take render container so it knows which column cache to look in
+1. [TODO] - Within column resizer we need to only account for columns within OUR render container, which means we need to be able to access the contain details from its    
+   controller, which will be above us.
+
+
 1. [TODO] - remove gridBorderWidth on column menu top-left, top-right
-1. [TODO] - Try using a $cacheFactory for the cellValueGetterCache.
 1. [TODO] - Move row filtering to feature module.
 
 1. [IDEA] - Look at using Istanbul for code coverage reporting.

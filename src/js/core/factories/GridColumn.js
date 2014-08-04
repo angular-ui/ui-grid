@@ -1,14 +1,16 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridColumn', ['gridUtil', function(gridUtil) {
+.factory('GridColumn', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
 
   /**
    * @ngdoc function
    * @name ui.grid.class:GridColumn
-   * @description Wrapper for the GridOptions.colDefs items.  Allows for needed properties and functions
-   * to be assigned to a grid column
+   * @description Represents the viewModel for each column.  Any state or methods needed for a Grid Column
+   * are defined on this prototype
    * @param {ColDef} colDef Column definition.
+   * @param {number} index the current position of the column in the array
+   * @param {Grid} grid reference to the grid
    <br/>Required properties
    <ul>
    <li>
@@ -29,11 +31,11 @@ angular.module('ui.grid')
    <li>todo: add other optional fields as implementation matures</li>
    </ul>
    *
-   * @param {number} index the current position of the column in the array
    */
-  function GridColumn(colDef, index) {
+  function GridColumn(colDef, index, grid) {
     var self = this;
 
+    self.grid = grid;
     colDef.index = index;
 
     self.updateColumnDef(colDef);
@@ -135,7 +137,8 @@ angular.module('ui.grid')
     // Turn on filtering by default (it's disabled by default at the Grid level)
     self.enableFiltering = typeof(colDef.enableFiltering) !== 'undefined' ? colDef.enableFiltering : true;
 
-    self.menuItems = colDef.menuItems;
+    // self.menuItems = colDef.menuItems;
+    self.setPropertyOrDefault(colDef, 'menuItems', []);
 
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');
@@ -155,7 +158,32 @@ angular.module('ui.grid')
     self.setPropertyOrDefault(colDef, 'filters', []);
   };
 
-  return GridColumn;
+
+    /**
+     * @ngdoc function
+     * @name getColClass
+     * @methodOf ui.grid.class:GridColumn
+     * @description Returns the class name for the column
+     * @param {bool} prefixDot  if true, will return .className instead of className
+     */
+    GridColumn.prototype.getColClass = function (prefixDot) {
+      var cls = uiGridConstants.COL_CLASS_PREFIX + this.index;
+
+      return prefixDot ? '.' + cls : cls;
+    };
+
+    /**
+     * @ngdoc function
+     * @name getColClassDefinition
+     * @methodOf ui.grid.class:GridColumn
+     * @description Returns the class definition for th column
+     */
+    GridColumn.prototype.getColClassDefinition = function () {
+      return ' .grid' + this.grid.id + ' ' + this.getColClass(true) + ' { width: ' + this.drawnWidth + 'px; }';
+    };
+
+
+    return GridColumn;
 }]);
 
 })();

@@ -1,6 +1,3 @@
-<div>
-  <div ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-cell col{{ col.index }}">
-    <div class="ui-grid-vertical-bar">&nbsp;</div>
-    <div class="ui-grid-inner-cell-contents" ui-grid-cell col="col" row="row" row-index="row.index" col-index="col.colDef.index" />
+  <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell>
   </div>
-</div>
+
