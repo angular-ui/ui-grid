@@ -8,7 +8,7 @@ Editing is invoked via double-click, f2, or start typing any non-navigable key. 
 
 ColumnDef Options:
 <br/><code>editableCellTemplate</code> (default: 'ui-grid/cellTextEditor') - Valid html, templateCache Id,  or url that returns html content to be compiled when edit mode is invoked.
-<br/><code>enableCellEdit</code> (default: false) - true to edit a column.
+<br/><code>enableCellEdit</code> (default: true) - false to not allow editing
 <br/><code>cellEditableCondition</code>  (default: true)  Can be set to a boolean or a function that will be called with the cellScope to determine if the cell should be invoked in edit mode.
 <br/>
 The following option is available only if using cellNav feature
@@ -17,8 +17,7 @@ The following option is available only if using cellNav feature
 <pre>
 $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
-   { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)',
-                cellEditableCondition: function($scope){return $scope.row.index%2} }
+   { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)', cellEditableCondition: function($scope){return $scope.row.index%2} }
 ]
 </pre>
 
@@ -32,10 +31,10 @@ $scope.gridOptions.columnDefs = [
       $scope.gridOptions = {  };
 
       $scope.gridOptions.columnDefs = [
-        { name: 'id' },
-        { name: 'name', enableCellEdit: true, displayName: 'Name (editable)' },
-        { name: 'age' },
-        { name: 'address.city',enableCellEdit: true, displayName: 'Address (even rows editable)',
+        { name: 'id', enableCellEdit: false },
+        { name: 'name', displayName: 'Name (editable)' },
+        { name: 'age', enableCellEdit: false},
+        { name: 'address.city', displayName: 'Address (even rows editable)',
              cellEditableCondition: function($scope){return $scope.row.index%2} }
       ];
 
