@@ -528,6 +528,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 // Get the ngColumn that matches the current column from columnDefs
                 var ngColumn = $scope.columns[indexMap[colDef.index]];                
                 ngColumn.width = asteriskVal * colDef.width.length;
+                if (ngColumn.width < ngColumn.minWidth) {
+                    ngColumn.width = ngColumn.minWidth;
+                }
                 if (ngColumn.visible !== false) {
                     totalWidth += ngColumn.width;
                 }
