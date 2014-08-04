@@ -14,6 +14,11 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         var charCode = evt.which || evt.keyCode;
         var isUpDownKeyPress = (charCode === 40 || charCode === 38);
 
+        if (!evt.ctrlKey)
+        {
+            self.toggleSelectAll(false, true);
+        }
+
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;
