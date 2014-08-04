@@ -131,6 +131,12 @@
 		"definition": "Define a header row template for further customization. See github wiki for more details.",
 		"plunker": "Link"
 	},
+	{
+		"id": "init",
+		"defaultValue": "function(grid, $scope) { }",
+		"definition": "Function to be called as soon as the grid is initialized.",
+		"plunker": "Link"
+	},
 	{	
 		"id": "jqueryUIDraggable",
 		"defaultValue": "false",
