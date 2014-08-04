@@ -150,6 +150,16 @@
             }
         },
         ngtemplates: {
+            options: {
+                bootstrap: function(module, script) {
+                    script = script.replace('\n', '\n  var start = $interpolate.startSymbol(), end = $interpolate.endSymbol(); \n');
+                    script = script.replace(/\{\{/gi, '" + start + "');
+                    script = script.replace(/\}\}/gi, '" + end + "');
+                    return "angular.module('" + module + "').run(['$templateCache', '$interpolate', function($templateCache, $interpolate) {\n" +
+                      script + "\n" +
+                      "}]);";
+              }
+            },
             ngGrid: {
                 cwd: 'src/templates',
                 src: '*.html',
