@@ -16,6 +16,9 @@ function ngGridFlexibleHeightPlugin (opts) {
                 if (opts.minHeight != null && (naturalHeight + extraHeight) < opts.minHeight) {
                     naturalHeight = opts.minHeight - extraHeight - 2;
                 }
+                if (opts.maxHeight != null && (naturalHeight + extraHeight) > opts.maxHeight) {
+                    naturalHeight = opts.maxHeight;
+                }
             }
 
             var newViewportHeight = naturalHeight + 3;
