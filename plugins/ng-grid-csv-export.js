@@ -65,7 +65,7 @@ function ngGridCsvExportPlugin (opts) {
             csvData = swapLastCommaForNewline(csvData);
             var gridData = grid.data;
             for (var gridRow in gridData) {
-                for ( k in keys) {
+                for ( var k in keys) {
                     var curCellRaw;
 
                     if (opts != null && opts.columnOverrides != null && opts.columnOverrides[keys[k]] != null) {
