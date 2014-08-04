@@ -20,7 +20,7 @@
           last: 'Última Página'
         },
         menu: {
-          text: 'Elegir columnas:',
+          text: 'Elegir columnas:'
         }
       });
       return $delegate;

@@ -231,7 +231,7 @@
       scope: {
         col: '=',
         position: '@',
-        renderIndex: '=',
+        renderIndex: '='
       },
       require: '?^uiGrid',
       link: function ($scope, $elm, $attrs, uiGridCtrl) {

@@ -3,7 +3,7 @@
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('pt-br', {
         aggregate: {
-          label: 'itens',
+          label: 'itens'
         },
         groupPanel: {
           description: 'Arraste e solte uma coluna aqui para agrupar por essa coluna'
