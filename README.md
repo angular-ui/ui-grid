@@ -12,7 +12,7 @@ Head to http://ui-grid.info for documentation and tutorials. Join https://gitter
 
 We are aggressively trying to move to 3.x, which has been in the works for over a year, and part of that is moving past the 2.x codebase and working to get 3.x update to snuff. The old 2.x versions are still available, which you can currently install as normal with bower/nuget.
 
-To submit fixes to 2.x please point your pull requests at the [2.x](https://github.com/angular-ui/ng-grid/tree/3.0) branch.
+To submit fixes to 2.x please point your pull requests at the [2.x](https://github.com/angular-ui/ng-grid/tree/2.x) branch.
 
 # Building
 
