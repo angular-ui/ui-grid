@@ -1,12 +1,18 @@
 # UI Grid : An Angular data grid
 
-[![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/angular-ui/ng-grid/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
 # Help!
 
-Head to http://ui-grid.info for documentation and tutorials.
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss develpment of the 3.x codebase.
+
+# What Happened to Version 2.x?
+
+We are aggressively trying to move to 3.x, which has been in the works for over a year, and part of that is moving past the 2.x codebase and working to get 3.x update to snuff. The old 2.x versions are still available, which you can currently install as normal with bower/nuget.
+
+To submit fixes to 2.x please point your pull requests at the [2.x](https://github.com/angular-ui/ng-grid/tree/3.0) branch.
 
 # Building
 
@@ -32,9 +38,9 @@ Development "watch" task. This will automatically rebuild from source on changes
 
 By default `grunt dev` will start several karma background watchers that will run the tests against multiple versions of angular. You may specify the version(s) you want to use with the `--angular` flag:
 
-    > grunt dev --angular=1.2.1
+    > grunt dev --angular=1.2.21
 
-    > grunt dev --angular=1.2.3,1.2.4
+    > grunt dev --angular=1.2.20,1.2.21
 
 You can also use the `--browsers` specify what browsers to test with (PhantomJS is the default).
 
@@ -55,14 +61,14 @@ The `karmangular` task runs tests serially against multiple browsers (it is used
     > grunt karmangular --browsers=Chrome
 
     # Run tests with a couple versions of Angular against the default PhantomJS browser
-    > grunt karmangular --angular=1.2.0,1.2.1
+    > grunt karmangular --angular=1.2.20,1.2.21
 
 ## SauceLabs
 
 ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY` environment variable set.
 
     # Execute tests for a couple versions of angular on IE8
-    > grunt karmangular --angular=1.2.3,1.2.4 --browsers=SL_IE_8
+    > grunt karmangular --angular=1.2.20,1.2.21 --browsers=SL_IE_8
 
     # Run the watch tasks against IE10
     > grunt dev --browsers=SL_IE10
