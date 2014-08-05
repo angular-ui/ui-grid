@@ -15,3 +15,7 @@ var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
 var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
 var CELL_EDITABLE_CONDITION = /CELL_EDITABLE_CONDITION/g;
 var TEMPLATE_REGEXP = /<.+>/;
+var FUNC_REGEXP = /(\([^)]*\))?$/;
+var DOT_REGEXP = /\./g;
+var APOS_REGEXP = /'/g;
+var BRACKET_REGEXP = /^(.*)((?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/;
