@@ -14,6 +14,30 @@ We are aggressively trying to move to 3.x, which has been in the works for over 
 
 To submit fixes to 2.x please point your pull requests at the [2.x](https://github.com/angular-ui/ng-grid/tree/2.x) branch.
 
+**Note:** 3.0 is NOT ready for production. It is still in a pre-beta state.
+
+# How Can I Test 3.0?
+
+With 3.0 we are no longer storing release files in the repository; only source files will be here. 3.0 release files are available on http://ui-grid.info, which is built from this repository: ui-grid.info/release/ui-grid-unstable.js
+
+Here is a file list for the 3.0 unstable releases:
+
+File Name            | Url
+---------------------|----------------
+ui-grid-unstable.js  | [http://ui-grid.info/release/ui-grid-unstable.js](http://ui-grid.info/release/ui-grid-unstable.js)
+ui-grid-unstable.css | [http://ui-grid.info/release/ui-grid-unstable.css](http://ui-grid.info/release/ui-grid-unstable.css)
+ui-grid.eot          | [http://ui-grid.info/release/ui-grid.eot](http://ui-grid.info/release/ui-grid.eot)
+ui-grid.svg          | [http://ui-grid.info/release/ui-grid.svg](http://ui-grid.info/release/ui-grid.svg)
+ui-grid.ttf          | [http://ui-grid.info/release/ui-grid.ttf](http://ui-grid.info/release/ui-grid.ttf)
+ui-grid.woff         | [http://ui-grid.info/release/ui-grid.woff](http://ui-grid.info/release/ui-grid.woff)
+
+There are minified files that can be used as well:
+
+File Name                | Url
+-------------------------|----------------
+ui-grid-unstable.js      | [http://ui-grid.info/release/ui-grid-unstable.js](http://ui-grid.info/release/ui-grid-unstable.js)
+ui-grid-unstable.min.css | [http://ui-grid.info/release/ui-grid-unstable.min.css](http://ui-grid.info/release/ui-grid-unstable.min.css)
+
 # Building
 
 Install dependencies
