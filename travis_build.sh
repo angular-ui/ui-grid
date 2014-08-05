@@ -18,3 +18,6 @@ set -e
 grunt
 # grunt test:e2e:ci --verbose
 grunt test:ci
+
+# Send coverage data to coveralls.io
+cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
