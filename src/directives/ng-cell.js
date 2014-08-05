@@ -1,17 +1,17 @@
-﻿ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function ($compile, domUtilityService) {
+﻿ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', '$utilityService', function ($compile, domUtilityService, utilityService) {
     var ngCell = {
         scope: false,
         compile: function() {
             return {
                 pre: function($scope, iElement) {
                     var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field);
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, utilityService.preEval('row.entity.' + $scope.col.field) );
 
                     if ($scope.col.enableCellEdit) {
                         html =  $scope.col.cellEditTemplate;
                         html = html.replace(CELL_EDITABLE_CONDITION, $scope.col.cellEditableCondition);
                         html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, 'row.entity.' + $scope.col.field));
+                        html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, utilityService.preEval('row.entity.' + $scope.col.field)));
                     } else {
                         html = cellTemplate;
                     }
