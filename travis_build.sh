@@ -20,4 +20,5 @@ grunt
 grunt test:ci
 
 # Send coverage data to coveralls.io
+grunt coverage
 cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

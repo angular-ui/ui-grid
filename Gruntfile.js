@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     },
 
     // Clean the temp directory
-    clean: ['.tmp', '<%= dist %>', 'docs'],
+    clean: ['.tmp', '<%= dist %>', 'docs', 'coverage'],
 
     // Templates
     ngtemplates: {
