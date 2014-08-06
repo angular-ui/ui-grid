@@ -5,6 +5,11 @@ angular.module('ui.grid')
   function GridRenderContainer(name, grid, options) {
     var self = this;
 
+    if (gridUtil.type(grid) !== 'Grid') {
+      dump(gridUtil.type(grid));
+      throw new Error('Grid argument is not a Grid object');
+    }
+
     self.name = name;
 
     self.grid = grid;

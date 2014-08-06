@@ -182,6 +182,25 @@ angular.module('ui.grid')
       return ' .grid' + this.grid.id + ' ' + this.getColClass(true) + ' { width: ' + this.drawnWidth + 'px; }';
     };
 
+    /**
+     * @ngdoc function
+     * @name getRenderContainer
+     * @methodOf ui.grid.class:GridColumn
+     * @description Returns the render container object that this column belongs to.
+     *
+     * Columns will be default be in the `body` render container if they aren't allocated to one specifically.
+     */
+    GridColumn.prototype.getRenderContainer = function getRenderContainer() {
+      var self = this;
+
+      var containerId = self.renderContainer;
+
+      if (containerId === null || containerId === '' || containerId === undefined) {
+        containerId = 'body';
+      }
+
+      return self.grid.renderContainers[containerId];
+    };
 
     return GridColumn;
 }]);

@@ -248,7 +248,10 @@
 
         // Resize all the other columns around col
         function resizeAroundColumn(col) {
-          uiGridCtrl.grid.columns.forEach(function (column) {
+          // Get this column's render container
+          var renderContainer = col.getRenderContainer();
+
+          renderContainer.visibleColumnCache.forEach(function (column) {
             // Skip the column we just resized
             if (column.index === col.index) { return; }
             
@@ -448,8 +451,12 @@
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;
           var xDiff = 0;
+
+          // Get the parent render container element
+          var renderContainerElm = gridUtil.closestElm($elm, '.ui-grid-render-container');
+
           // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
-          var cells = uiGridCtrl.grid.element[0].querySelectorAll('.col' + col.index + ' .ui-grid-cell-contents');
+          var cells = renderContainerElm.querySelectorAll('.uiGridCol' + col.index + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
               // $log.debug('width', gridUtil.elementWidth(cell));

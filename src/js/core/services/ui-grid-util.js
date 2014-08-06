@@ -666,6 +666,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     return null;
   };
 
+  s.type = function (obj) {
+    var text = Function.prototype.toString.call(obj.constructor);
+    return text.match(/function (.*?)\(/)[1];
+  };
+
   s.getBorderSize = function getBorderSize(elem, borderType) {
     if (typeof(elem.length) !== 'undefined' && elem.length) {
       elem = elem[0];
