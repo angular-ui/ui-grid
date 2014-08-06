@@ -410,7 +410,7 @@
                   cancelBeginEditEvents();
                   cellElement = $compile(html)($scope.$new());
                   var gridCellContentsEl = angular.element($elm.children()[0]);
-                  isFocusedBeforeEdit = gridCellContentsEl.is(':focus');
+                  isFocusedBeforeEdit = gridCellContentsEl.hasClass(':focus');
                   gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
                   $elm.append(cellElement);
                 }
