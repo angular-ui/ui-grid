@@ -327,8 +327,8 @@ module.exports = function(grunt) {
       rebuild: {
         files: util.testFiles.unit,
         // NOTE(c0bra): turn back on after render containers works
-        tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
-        // tasks: ['jshint:src_test', 'jscs', 'concat', 'uglify', 'ngdocs'],
+        // tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
+        tasks: ['jshint:src_test', 'jscs', 'concat', 'uglify', 'ngdocs'],
       },
       protractor: {
         files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
@@ -563,8 +563,8 @@ module.exports = function(grunt) {
     var tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
     if (e2e === false) {
       // NOTE(c0bra): turn back on after render containers works
-      tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
-      // tasks = ['before-test', 'after-test', 'connect', 'watch'];
+      // tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
+      tasks = ['before-test', 'after-test', 'connect', 'watch'];
     }
 
     grunt.task.run(tasks);
