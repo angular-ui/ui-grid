@@ -64,9 +64,9 @@
           // Sort this column then rebuild the grid's rows
           uiGridCtrl.grid.sortColumn($scope.col, add)
             .then(function () {
-              if (uiGridCtrl.grid.options.enableColumnMenu) {
+              //if (uiGridCtrl.grid.options.enableColumnMenu) {
                 uiGridCtrl.columnMenuCtrl.hideMenu();
-              }
+              //}
               uiGridCtrl.refresh();
             });
         }
