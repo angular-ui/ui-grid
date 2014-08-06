@@ -276,11 +276,11 @@ describe('ui.grid.utilService', function() {
 
   });
 
-  describe('type()', function () {
+  ddescribe('type()', function () {
     it('should return the type of an object as a string', function () {
-      var d = new Date();
+      var g = new Grid({ id: 1 });
 
-      expect(gridUtil.type(Grid)).toEqual('Grid');
+      expect(gridUtil.type(g)).toEqual('Grid');
     });
   });
 });

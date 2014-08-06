@@ -34,11 +34,26 @@ describe('Grid factory', function () {
     $scope.$digest();
   }
 
-  describe('constructor', function() {
+  ddescribe('constructor', function() {
+    it('should throw an exception if no id is provided', function() {
+      expect(function() {
+        var grid = new Grid();
+      }).toThrow(new Error('No ID provided. An ID must be given when creating a grid.'));
+    });
+
     it('should throw an exception if the provided id is invalid', function() {
       expect(function() {
         var grid = new Grid({ id: 'blah blah' });
       }).toThrow();
+    });
+
+    it("should say a grid ID is invalid when it doesn't follow CSS selector rules", function() {
+      try {
+        var grid = new Grid({ id: 'blah blah' });
+      }
+      catch (e) {
+        expect(e).toMatch(/It must follow CSS selector syntax rules/);
+      }
     });
   });
 

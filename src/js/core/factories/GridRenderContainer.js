@@ -6,7 +6,6 @@ angular.module('ui.grid')
     var self = this;
 
     if (gridUtil.type(grid) !== 'Grid') {
-      dump(gridUtil.type(grid));
       throw new Error('Grid argument is not a Grid object');
     }
 

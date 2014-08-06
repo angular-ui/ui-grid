@@ -13,10 +13,13 @@ angular.module('ui.grid')
    */
   var Grid = function Grid(options) {
     // Get the id out of the options, then remove it
-    if (typeof(options.id) !== 'undefined' && options.id) {
+    if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
       if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
         throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
       }
+    }
+    else {
+      throw new Error('No ID provided. An ID must be given when creating a grid.');
     }
 
     this.id = options.id;
