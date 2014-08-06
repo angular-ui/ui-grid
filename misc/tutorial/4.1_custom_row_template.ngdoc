@@ -21,8 +21,8 @@ Create a grid almost the same as the most basic one, but with a custom row templ
           $scope.waiting = 'Done!';
           $interval.cancel(sec);
           $scope.wait = '';
-
-          return '<div><div style="background-color: aquamarine" ng-repeat="col in grid.renderedColumns track by $index" class="ui-grid-cell col{{ col.index }}"><div class="ui-grid-vertical-bar">&nbsp;</div><div ui-grid-cell col="col" row="row" row-index="row.index" col-index="col.colDef.index" /></div></div>';
+          
+          return '<div style="background-color: aquamarine" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
         }, 6000);
       }
 
