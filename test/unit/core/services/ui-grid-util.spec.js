@@ -1,12 +1,14 @@
 describe('ui.grid.utilService', function() {
   var gridUtil,
-      $window;
+      $window,
+      Grid;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function(_gridUtil_, _$window_) {
+  beforeEach(inject(function(_gridUtil_, _$window_, _Grid_) {
     gridUtil = _gridUtil_;
     $window = _$window_;
+    Grid = _Grid_;
   }));
 
   describe('newId()', function() {
@@ -272,5 +274,13 @@ describe('ui.grid.utilService', function() {
 
     });
 
+  });
+
+  describe('type()', function () {
+    it('should return the type of an object as a string', function () {
+      var d = new Date();
+
+      expect(gridUtil.type(Grid)).toEqual('Grid');
+    });
   });
 });
