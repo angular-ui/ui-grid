@@ -48,7 +48,7 @@
           rowContainer.horizontalScrollbarHeight = scrollBarWidth;
 
           // Save the initial scroll position for use in scroll events
-          previousScrollPosition = $elm[0].scrollLeft;
+          previousScrollPosition = gridUtil.normalizeScrollLeft($elm);
         }
 
         // Save the contents elm inside the scrollbar elm so it sizes correctly
@@ -154,14 +154,13 @@
             previousScrollPosition = newScrollTop;
           }
           else if ($scope.type === 'horizontal') {
-            var newScrollLeft = $elm[0].scrollLeft;
+            // var newScrollLeft = $elm[0].scrollLeft;
+            var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
 
             var xDiff = previousScrollPosition - newScrollLeft;
 
             var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
             var horizScrollPercentage = newScrollLeft / horizScrollLength;
-
-            $log.debug('horizScrollPercentage', horizScrollPercentage);
 
             var xArgs = {
               target: $elm,
@@ -213,7 +212,8 @@
 
               var newScrollLeft = Math.max(0, args.x.percentage * horizScrollLength);
               
-              $elm[0].scrollLeft = newScrollLeft;
+              // $elm[0].scrollLeft = newScrollLeft;
+              $elm[0].scrollLeft = gridUtil.denormalizeScrollLeft($elm, newScrollLeft);
             }
           }
         }

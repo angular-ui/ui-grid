@@ -111,7 +111,8 @@
 
                 var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
-                var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
+                // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
+                var oldScrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
 
                 var scrollXPercentage;
                 if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
@@ -128,11 +129,14 @@
                 
                 // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
-                containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+                // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+                containerCtrl.viewport[0].scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
+
                 containerCtrl.prevScrollLeft = newScrollLeft;
 
                 if (containerCtrl.headerViewport) {
-                  containerCtrl.headerViewport.scrollLeft = newScrollLeft;
+                  // containerCtrl.headerViewport.scrollLeft = newScrollLeft;
+                  containerCtrl.headerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
                 }
 
                 // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
@@ -165,7 +169,8 @@
                 var scrollXAmount = newEvent.deltaX * -120;
 
                 // Get the scroll percentage
-                var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
+                var scrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                var scrollXPercentage = (scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollXPercentage < 0) { scrollXPercentage = 0; }
@@ -229,7 +234,12 @@
       }
       
       if (!$scope.disableColumnOffset && $scope.colContainer.currentFirstColumn !== 0) {
-        styles['margin-left'] = $scope.colContainer.columnOffset + 'px';
+        if ($scope.grid.isRTL()) {
+          styles['margin-right'] = $scope.colContainer.columnOffset + 'px';
+        }
+        else {
+          styles['margin-left'] = $scope.colContainer.columnOffset + 'px';
+        }
       }
 
       return styles;
@@ -242,7 +252,12 @@
         if (index === 0 && $scope.colContainer.currentFirstColumn !== 0) {
           var offset = $scope.colContainer.columnOffset;
 
-          return { 'margin-left': offset + 'px' };
+          if ($scope.grid.isRTL()) {
+            return { 'margin-right': offset + 'px' };
+          }
+          else {
+            return { 'margin-left': offset + 'px' }; 
+          }
         }
       }
 

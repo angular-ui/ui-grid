@@ -5,28 +5,6 @@
       /* Styles for the grid */
     }
 
-    /*.grid{{ grid.id }} .ui-grid-header {
-      width: {{ grid.getHeaderViewportWidth() }}px;
-    }*/
-
-    /*.grid{{ grid.id }} .ui-grid-header-canvas {
-      width: {{ grid.getCanvasWidth() }}px;
-    }*/
-
-    /*.grid{{ grid.id }} .ui-grid-body {
-      height: {{ grid.getBodyHeight() }}px;
-    }
-
-    .grid{{ grid.id }} .ui-grid-viewport {
-      height: {{ grid.getViewportHeight() }}px;
-      width: {{ grid.getViewportWidth() }}px;
-    }
-
-    .grid{{ grid.id }} .ui-grid-canvas {
-      height: {{ grid.getCanvasHeight() }}px;
-      width: {{ grid.getCanvasWidth() }}px;
-    }*/
-
     .grid{{ grid.id }} .ui-grid-row, .grid{{ grid.id }} .ui-grid-cell, .grid{{ grid.id }} .ui-grid-cell .ui-grid-vertical-bar {
       height: {{ grid.options.rowHeight }}px;
     }
@@ -34,14 +12,6 @@
     .grid{{ grid.id }} .ui-grid-row:last-child .ui-grid-cell {
       border-bottom-width: {{ ((grid.getTotalRowHeight() < grid.getViewportHeight()) && '1') || '0' }}px;
     }
-
-    /*{{ rowStyles }}
-
-    {{ columnStyles }}*/
-
-    /*.grid{{ grid.id }} .ui-grid-body .ui-grid-cell:first-child, .grid{{ grid.id }} .ui-grid-header .ui-grid-header-cell:first-child {
-      margin-left: {{ grid.columnOffset || 0 }}px;
-    }*/
 
     {{ grid.verticalScrollbarStyles }}
     {{ grid.horizontalScrollbarStyles }}
@@ -59,14 +29,6 @@
 
     {{ grid.customStyles }}
   </style>
-
-  <!-- <div ui-grid-header></div>
-
-  <div ui-grid-body>
-    <div class="ui-grid-no-row-overlay" ng-show="!grid.renderedRows.length">
-      <span>No Rows</span>
-    </div>
-  </div> -->
 
   <div ui-grid-render-container container-id="'body'" col-container-name="'body'" row-container-name="'body'" bind-scroll-horizontal="true" bind-scroll-vertical="true" enable-scrollbars="true"></div>
 

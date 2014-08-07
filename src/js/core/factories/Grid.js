@@ -957,7 +957,7 @@ angular.module('ui.grid')
     return self.cellValueGetterCache[col.colDef.name](row);
   };
 
-  // Reset all sorting on the grid
+  
   Grid.prototype.getNextColumnSortPriority = function getNextColumnSortPriority() {
     var self = this,
         p = 0;

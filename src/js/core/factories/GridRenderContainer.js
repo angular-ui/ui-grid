@@ -395,7 +395,12 @@ angular.module('ui.grid')
     }
 
     if (self.currentFirstColumn !== 0) {
-      styles['margin-left'] = self.columnOffset + 'px';
+      if (self.grid.isRTL()) {
+        styles['margin-right'] = self.columnOffset + 'px';
+      }
+      else {
+        styles['margin-left'] = self.columnOffset + 'px';
+      }
     }
 
     return styles;
@@ -407,7 +412,12 @@ angular.module('ui.grid')
     if (index === 0 && self.currentFirstColumn !== 0) {
       var offset = self.columnOffset;
 
-      return { 'margin-left': offset + 'px' };
+      if (self.grid.isRTL()) {
+        return { 'margin-right': offset + 'px' };
+      }
+      else {
+        return { 'margin-left': offset + 'px' };
+      }
     }
 
     return null;

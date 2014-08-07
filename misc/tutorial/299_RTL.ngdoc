@@ -12,9 +12,21 @@ The grid supports RTL languages
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
         columnDefs: [
-          { field: 'name', width: 200 },
-          { field: 'gender', width: 200 },
-          { field: 'company', width: 200 }
+          { name: 'field1', field: 'name', width: 200 },
+          { name: 'field2', field: 'gender', width: 200 },
+          { name: 'field3', field: 'company', width: 200 },
+          { name: 'field4', field: 'name', width: 200 },
+          { name: 'field5', field: 'gender', width: 200 },
+          { name: 'field6', field: 'company', width: 200 },
+          { name: 'field7', field: 'name', width: 200 },
+          { name: 'field8', field: 'gender', width: 200 },
+          { name: 'field9', field: 'company', width: 200 },
+          { name: 'field10', field: 'name', width: 200 },
+          { name: 'field11', field: 'gender', width: 200 },
+          { name: 'field12', field: 'company', width: 200 },
+          { name: 'field13', field: 'name', width: 200 },
+          { name: 'field14', field: 'gender', width: 200 },
+          { name: 'field15', field: 'company', width: 200 }
         ]
       };
 

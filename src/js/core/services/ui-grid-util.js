@@ -695,6 +695,121 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
   };
 
+  // http://stackoverflow.com/a/22948274/888165
+  // TODO: Opera? Mobile?
+  s.detectBrowser = function detectBrowser() {
+    var userAgent = $window.navigator.userAgent;
+
+    var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer/i};
+
+    for (var key in browsers) {
+      if (browsers[key].test(userAgent)) {
+        return key;
+      }
+    }
+
+    return 'unknown';
+  };
+
+  /**
+    * @ngdoc method
+    * @name normalizeScrollLeft
+    * @methodOf ui.grid.service:GridUtil
+    *
+    * @param {element} element The element to get the `scrollLeft` from.
+    *
+    * @returns {int} A normalized scrollLeft value for the current browser.
+    *
+    * @description
+    * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method normalizes them
+    */
+  s.normalizeScrollLeft = function normalizeScrollLeft(element) {
+    if (typeof(element.length) !== 'undefined' && element.length) {
+      element = element[0];
+    }
+
+    var browser = s.detectBrowser();
+
+    var scrollLeft = element.scrollLeft;
+
+    var dir = angular.element(element).css('direction');
+
+    // IE stays normal in RTL
+    if (browser === 'ie') {
+      return scrollLeft;
+    }
+    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
+    else if (browser === 'chrome') {
+      if (dir === 'rtl') {
+        // Get the max scroll for the element
+        var maxScrollLeft = element.scrollWidth - element.clientWidth;
+
+        // Subtract the current scroll amount from the max scroll
+        return maxScrollLeft - scrollLeft;
+      }
+      else {
+        return scrollLeft;
+      }
+    }
+    // Firefox goes negative!
+    else if (browser === 'firefox') {
+      return Math.abs(scrollLeft);
+    }
+    else {
+      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
+      return scrollLeft;
+    }
+  };
+
+  /**
+  * @ngdoc method
+  * @name normalizeScrollLeft
+  * @methodOf ui.grid.service:GridUtil
+  *
+  * @param {element} element The element to normalize the `scrollLeft` value for
+  * @param {int} scrollLeft The `scrollLeft` value to denormalize.
+  *
+  * @returns {int} A normalized scrollLeft value for the current browser.
+  *
+  * @description
+  * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method denormalizes a value for the current browser.
+  */
+  s.denormalizeScrollLeft = function denormalizeScrollLeft(element, scrollLeft) {
+    if (typeof(element.length) !== 'undefined' && element.length) {
+      element = element[0];
+    }
+
+    var browser = s.detectBrowser();
+
+    var dir = angular.element(element).css('direction');
+
+    // IE stays normal in RTL
+    if (browser === 'ie') {
+      return scrollLeft;
+    }
+    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
+    else if (browser === 'chrome') {
+      if (dir === 'rtl') {
+        // Get the max scroll for the element
+        var maxScrollLeft = element.scrollWidth - element.clientWidth;
+
+        // Subtract the current scroll amount from the max scroll
+        return maxScrollLeft - scrollLeft;
+      }
+      else {
+        return scrollLeft;
+      }
+    }
+    // Firefox goes negative!
+    else if (browser === 'firefox') {
+      return scrollLeft * -1;
+    }
+    else {
+      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
+      return scrollLeft;
+    }
+  };
+
   return s;
 }]);
 

@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['$log',
-    function($log) {
+  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil',
+    function($log, gridUtil) {
       return {
         replace: true,
         scope: {},
@@ -30,7 +30,10 @@
 
           $elm.on('scroll', function (evt) {
             var newScrollTop = $elm[0].scrollTop;
-            var newScrollLeft = $elm[0].scrollLeft;
+            // var newScrollLeft = $elm[0].scrollLeft;
+            var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
+
+            // Handle RTL here
 
             if (newScrollLeft !== colContainer.prevScrollLeft) {
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;

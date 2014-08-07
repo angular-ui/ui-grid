@@ -242,8 +242,12 @@
         $scope.$broadcast(eventName, args);
       };
 
-      self.innerCompile = function (elm) {
+      self.innerCompile = function innerCompile(elm) {
         $compile(elm)($scope);
+      };
+
+      $scope.grid.isRTL = self.isRTL = function isRTL() {
+        return $elm.css('direction') === 'rtl';
       };
     }]);
 
