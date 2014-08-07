@@ -5,14 +5,13 @@
 Ui-Grid allows you to sort rows. The feature is on by default. You can set the `enableSorting` flag in your grid options to enable/disable it.
 
 <span class="span8 alert alert-warning">
-  <strong>Note:</strong> You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.
+  <strong>Note:</strong> You can sort columns by accessing the column menu. You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.
 </span>
 
 Sorting can be disabled at the column level by setting `enableSorting: false` in the column def. See the last column below for an example.
 
 Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it in action, sort Gender then shift-click Name.
 
-@example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
@@ -23,7 +22,7 @@ Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it 
         columnDefs: [
           { field: 'name' },
           { field: 'gender' },
-          { field: 'company',enableSorting: false  }
+          { field: 'company', enableSorting: false }
         ]
       };
 
@@ -44,7 +43,56 @@ Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it 
   <file name="main.css">
     .grid {
       width: 500px;
-      height: 400px;
+      height: 200px;
+    }
+  </file>
+</example>
+
+<h1 id="inital-sort">Initial Sort State</h1>
+
+You can set an initial sort state for the grid by defining the `sort` property on your column definitions. The `direction` sub-property says which way to sort, and the `priority` says what order to sort the columns in (lower priority gets sorted first).
+
+<example module="app2">
+  <file name="app2.js">
+    var app = angular.module('app2', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          {
+            field: 'name',
+            sort: {
+              direction: 'desc',
+              priority: 1
+            }
+          },
+          {
+            field: 'gender',
+            sort: {
+              direction: 'asc',
+              priority: 0
+            }
+          },
+          { field: 'company', enableSorting: false  }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index2.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main2.css">
+    .grid {
+      width: 500px;
+      height: 200px;
     }
   </file>
 </example>
