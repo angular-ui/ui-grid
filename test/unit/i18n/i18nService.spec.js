@@ -25,6 +25,14 @@ describe('i18nService', function () {
       var langs = i18nService.getAllLangs();
       expect(langs.length).toBeGreaterThan(8);
     });
+    it('should get safe text', function () {
+      var text = i18nService.getSafeText('search.placeholder');
+      expect(text).toBe('Search...');
+    });
+    it('should get safe text for missing property', function () {
+      var text = i18nService.getSafeText('search.bad.text');
+      expect(text).toBe('[MISSING]');
+    });
   });
 
 

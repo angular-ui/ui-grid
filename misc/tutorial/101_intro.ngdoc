@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Step 1 Start
+@name Tutorial: 101 Intro to Ui-Grid
 @description
 
 Ui-Grid 3.0 (formerly ng-grid), is a 100% angular grid written with no dependencies other than AngularJS. It is designed around
@@ -13,6 +13,7 @@ In the core module, you get:
  <li>Column sorting with three states: Asc, Desc, None</li>
  <li>Column filtering</li>
  <li>Ability to change header and cell contents with custom templates</li>
+ <li>i18nService allows label translations</li>
 </ul>
 
 

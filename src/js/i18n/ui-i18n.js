@@ -3,14 +3,34 @@
  * https://github.com/timothyswt
  * MIT License
  */
+
+/**
+ * @ngdoc overview
+ * @name ui.grid.i18n
+ * @description
+ *
+ *  # ui.grid.i18n
+ * This module provides i18n functions to ui.grid and any application that wants to use it
+
+ *
+ * <div doc-module-components="ui.grid.i18n"></div>
+ */
+
 (function () {
   var DIRECTIVE_ALIASES = ['uiT', 'uiTranslate'];
   var FILTER_ALIASES = ['t', 'uiTranslate'];
 
   var module = angular.module('ui.grid.i18n');
 
+
+  /**
+   *  @ngdoc object
+   *  @name ui.grid.i18n.constant:i18nConstants
+   *
+   *  @description constants available in i18n module
+   */
   module.constant('i18nConstants', {
-    MISSING: '[MISSING]: ',
+    MISSING: '[MISSING]',
     UPDATE_EVENT: '$uiI18n',
 
     LOCALE_DIRECTIVE_ALIAS: 'uiI18n',
@@ -21,6 +41,12 @@
 //    module.config(['$provide', function($provide) {
 //        $provide.decorator('i18nService', ['$delegate', function($delegate) {}])}]);
 
+  /**
+   *  @ngdoc service
+   *  @name ui.grid.i18n.service:i18nService
+   *
+   *  @description Services for i18n
+   */
   module.service('i18nService', ['$log', 'i18nConstants', '$rootScope',
     function ($log, i18nConstants, $rootScope) {
 
@@ -57,44 +83,114 @@
         }
       };
 
-//      function deepCopy(destination, source) {
-//        'use strict';
-//        // adding deep copy method until angularjs supports deep copy like everyone else.
-//        // https://github.com/angular/angular.js/pull/5059
-//        for (var property in source) {
-//          if (source[property] && source[property].constructor &&
-//            source[property].constructor === Object) {
-//            destination[property] = destination[property] || {};
-//            arguments.callee(destination[property], source[property]);
-//          } else {
-//            destination[property] = source[property];
-//          }
-//        }
-//
-//        return destination;
-//      }
-
       var service = {
-        add: function (langs, strings) {
+
+        /**
+         * @ngdoc service
+         * @name add
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description  Adds the languages and strings to the cache. Decorate this service to
+         * add more translation strings
+         * @param {string} lang language to add
+         * @param {object} stringMaps of strings to add grouped by property names
+         * @example
+         * <pre>
+         *      i18nService.add('en', {
+         *         aggregate: {
+         *                 label1: 'items',
+         *                 label2: 'some more items'
+         *                 }
+         *         },
+         *         groupPanel: {
+         *              description: 'Drag a column header here and drop it to group by that column.'
+         *           }
+         *      }
+         * </pre>
+         */
+        add: function (langs, stringMaps) {
           if (typeof(langs) === 'object') {
             angular.forEach(langs, function (lang) {
               if (lang) {
-                langCache.add(lang, strings);
+                langCache.add(lang, stringMaps);
               }
             });
           } else {
-            langCache.add(langs, strings);
+            langCache.add(langs, stringMaps);
           }
         },
 
+        /**
+         * @ngdoc service
+         * @name getAllLangs
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description  return all currently loaded languages
+         * @returns {array} string
+         */
         getAllLangs: function () {
           return langCache.getAllLangs();
         },
 
+        /**
+         * @ngdoc service
+         * @name get
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description  return all currently loaded languages
+         * @param {string} lang to return.  If not specified, returns current language
+         * @returns {object} the translation string maps for the language
+         */
         get: function (lang) {
           var language = lang ? lang : service.getCurrentLang();
           return langCache.get(language);
         },
+
+        /**
+         * @ngdoc service
+         * @name getSafeText
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description  returns the text specified in the path or a Missing text if text is not found
+         * @param {string} path property path to use for retrieving text from string map
+         * @param {string} lang to return.  If not specified, returns current language
+         * @returns {object} the translation for the path
+         * @example
+         * <pre>
+         * i18nService.getSafeText('sort.ascending')
+         * </pre>
+         */
+        getSafeText: function (path, lang) {
+          var language = lang ? lang : service.getCurrentLang();
+          var trans = langCache.get(language);
+
+          if (!trans) {
+            return i18nConstants.MISSING;
+          }
+
+          var paths = path.split('.');
+          var current = trans;
+
+          for (var i = 0; i < paths.length; ++i) {
+            if (current[paths[i]] === undefined || current[paths[i]] === null) {
+              return i18nConstants.MISSING;
+            } else {
+              current = current[paths[i]];
+            }
+          }
+
+          return current;
+
+        },
+
+        /**
+         * @ngdoc service
+         * @name setCurrentLang
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description sets the current language to use in the application
+         * $broadcasts the Update_Event on the $rootScope
+         * @param {string} lang to set
+         * @example
+         * <pre>
+         * i18nService.setCurrentLang('fr');
+         * </pre>
+         */
 
         setCurrentLang: function (lang) {
           if (lang) {
@@ -103,6 +199,12 @@
           }
         },
 
+        /**
+         * @ngdoc service
+         * @name getCurrentLang
+         * @methodOf ui.grid.i18n.service:i18nService
+         * @description returns the current language used in the application
+         */
         getCurrentLang: function () {
           var lang = langCache.getCurrentLang();
           if (!lang) {

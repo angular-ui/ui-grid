@@ -70,7 +70,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         //   }
         // },
         {
-          title: i18nService.get().sort.ascending,
+          title: i18nService.getSafeText('sort.ascending'),
           icon: 'ui-grid-icon-sort-alt-up',
           action: function($event) {
             $event.stopPropagation();
@@ -84,7 +84,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           }
         },
         {
-          title: i18nService.get().sort.descending,
+          title: i18nService.getSafeText('sort.descending'),
           icon: 'ui-grid-icon-sort-alt-down',
           action: function($event) {
             $event.stopPropagation();
@@ -98,7 +98,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           }
         },
         {
-          title: i18nService.get().sort.remove,
+          title: i18nService.getSafeText('sort.remove'),
           icon: 'ui-grid-icon-cancel',
           action: function ($event) {
             $event.stopPropagation();

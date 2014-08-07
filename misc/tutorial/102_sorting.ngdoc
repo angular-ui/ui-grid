@@ -1,8 +1,8 @@
 @ngdoc overview
-@name Tutorial: Sorting
+@name Tutorial: 102 Sorting
 @description
 
-UI-Grid allows you to sort rows. The feature is on by default. You can set the `enableSorting` flag in your grid options to enable/disable it.
+Ui-Grid allows you to sort rows. The feature is on by default. You can set the `enableSorting` flag in your grid options to enable/disable it.
 
 <span class="span8 alert alert-warning">
   <strong>Note:</strong> You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.

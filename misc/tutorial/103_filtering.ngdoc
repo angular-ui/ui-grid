@@ -1,10 +1,10 @@
 @ngdoc overview
-@name Tutorial: Filtering
+@name Tutorial: 103 Filtering
 @description
 
-UI-Grid allows you to filter rows. Just set the `enableFiltering` flag in your grid options (it is off by default).
+Ui-Grid allows you to filter rows. Just set the `enableFiltering` flag in your grid options (it is off by default).
 
-Sorting can be disabled at the column level by setting `enableFiltering: false` in the column def. See the last column below for an example.
+Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the last column below for an example.
 
 @example
 <example module="app">
