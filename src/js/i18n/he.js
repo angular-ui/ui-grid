@@ -1,3 +1,4 @@
+/* jshint -W100 */
 /**
  * Created by Ran Rosenmann on 07/08/2014.
  */
@@ -6,29 +7,29 @@
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('he', {
         aggregate: {
-          label: 'шщеоеъ'
+          label: 'пїЅпїЅпїЅпїЅпїЅпїЅ'
         },
         groupPanel: {
-          description: 'вшеш тоегд ещзшш аеъд тм оръ мчбх мфй тоегд же'
+          description: 'пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ'
         },
         search: {
-          placeholder: 'зфщ...',
-          showingItems: 'оцйв:',
-          selectedItems: 'сд"л рбзше:',
-          totalItems: 'сд"л ъецаеъ:',
-          size: 'ъецаеъ бгу:',
-          first: 'гу шащеп',
-          next: 'гу дба',
-          previous: 'гу чегн',
-          last: 'гу азшеп'
+          placeholder: 'пїЅпїЅпїЅ...',
+          showingItems: 'пїЅпїЅпїЅпїЅ:',
+          selectedItems: 'пїЅпїЅ"пїЅ пїЅпїЅпїЅпїЅпїЅ:',
+          totalItems: 'пїЅпїЅ"пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:',
+          size: 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ:',
+          first: 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
+          next: 'пїЅпїЅ пїЅпїЅпїЅ',
+          previous: 'пїЅпїЅ пїЅпїЅпїЅпїЅ',
+          last: 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ'
         },
         menu: {
-          text: 'бзш тоегеъ:'
+          text: 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:'
         },
         sort: {
-          ascending: 'сгш темд',
-          descending: 'сгш йешг',
-          remove: 'бим'
+          ascending: 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ',
+          descending: 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ',
+          remove: 'пїЅпїЅпїЅ'
         }
       });
       return $delegate;
