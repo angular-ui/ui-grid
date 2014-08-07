@@ -1,37 +1,37 @@
-/**
+ο»Ώ/**
  * Created by Ran Rosenmann on 07/08/2014.
  */
 (function () {
-  angular.module('ui.grid').config(['$provide', function($provide) {
-    $provide.decorator('i18nService', ['$delegate', function($delegate) {
-      $delegate.add('he', {
-        aggregate: {
-          label: 'ψωεξεϊ'
-        },
-        groupPanel: {
-          description: 'βψεψ ςξεγδ εωηψψ ΰεϊδ ςμ ξπϊ μχαυ μτι ςξεγδ ζε'
-        },
-        search: {
-          placeholder: 'ητω...',
-          showingItems: 'ξφιβ:',
-          selectedItems: 'ρδ"λ παηψε:',
-          totalItems: 'ρδ"λ ϊεφΰεϊ:',
-          size: 'ϊεφΰεϊ αγσ:',
-          first: 'γσ ψΰωεο',
-          next: 'γσ δαΰ',
-          previous: 'γσ χεγν',
-          last: 'γσ ΰηψεο'
-        },
-        menu: {
-          text: 'αηψ ςξεγεϊ:'
-        },
-        sort: {
-          ascending: 'ργψ ςεμδ',
-          descending: 'ργψ ιεψγ',
-          remove: 'αθμ'
-        }
-      });
-      return $delegate;
+    angular.module('ui.grid').config(['$provide', function ($provide) {
+        $provide.decorator('i18nService', ['$delegate', function ($delegate) {
+            $delegate.add('he', {
+                aggregate: {
+                    label: 'items'
+                },
+                groupPanel: {
+                    description: 'Χ’Χ¨Χ•Χ¨ ΧΆΧΧ•Χ“Χ” ΧΧ›ΧΧ Χ•Χ©Χ—Χ¨Χ¨ Χ‘Χ›Χ“Χ™ ΧΧ§Χ‘Χ¥ ΧΆΧΧ•Χ“Χ” Χ–Χ•.'
+                },
+                search: {
+                    placeholder: 'Χ—Χ¤Χ©...',
+                    showingItems: 'ΧΧ¦Χ™Χ’:',
+                    selectedItems: 'Χ΅Χ”"Χ› Χ Χ‘Χ—Χ¨Χ•:',
+                    totalItems: 'Χ΅Χ”"Χ› Χ¨Χ©Χ•ΧΧ•Χª:',
+                    size: 'ΧªΧ•Χ¦ΧΧ•Χª Χ‘Χ“Χ£:',
+                    first: 'Χ“Χ£ Χ¨ΧΧ©Χ•Χ',
+                    next: 'Χ“Χ£ Χ”Χ‘Χ',
+                    previous: 'Χ“Χ£ Χ§Χ•Χ“Χ',
+                    last: 'Χ“Χ£ ΧΧ—Χ¨Χ•Χ'
+                },
+                menu: {
+                    text: 'Χ‘Χ—Χ¨ ΧΆΧΧ•Χ“Χ•Χª:'
+                },
+                sort: {
+                    ascending: 'Χ΅Χ“Χ¨ ΧΆΧ•ΧΧ”',
+                    descending: 'Χ΅Χ“Χ¨ Χ™Χ•Χ¨Χ“',
+                    remove: 'Χ‘ΧΧ'
+                }
+            });
+            return $delegate;
+        }]);
     }]);
-  }]);
 })();
