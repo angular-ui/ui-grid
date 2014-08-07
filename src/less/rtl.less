@@ -1,17 +1,46 @@
 /*
 * RTL Styles
 */
-.grid[dir=rtl] .ui-grid-header-cell,
-.grid[dir=rtl] .ui-grid-cell{
-  float:right !important;
-} 
 
-.grid[dir=rtl] .ui-grid-scrollbar-vertical {
-  right:inherit;
-  left: 4px;
-
+.ui-grid[dir=rtl] .ui-grid-header-cell,
+.ui-grid[dir=rtl] .ui-grid-cell {
+  float: right !important;
 }
-.grid[dir=rtl] .ui-grid-scrollbar-horizontal {
+
+// .ui-grid[dir=rtl] .ui-grid-scrollbar-vertical {
+//   right: inherit;
+//   left: 4px;
+// }
+
+.ui-grid[dir=rtl] .ui-grid-scrollbar-horizontal {
   left: inherit;
-  right:0;
+  right: 0;
+}
+
+.ui-grid[dir=rtl] .ui-grid-native-scrollbar.vertical
+{
+    left: 0px;
+    right: initial;
+}
+
+.grid[dir=rtl] .ui-grid-column-menu-button {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  right: initial;
+}
+
+.ui-grid[dir=rtl] .ui-grid-cell:first-child,
+.ui-grid[dir=rtl] .ui-grid-header-cell:first-child {
+  border-right: 0;
+}
+
+.ui-grid[dir=rtl] .ui-grid-cell:last-child {
+  border-right: @gridBorderWidth solid;
+  border-color: @borderColor;
+}
+
+.ui-grid-header-cell:first-child .ui-grid-vertical-bar,
+.ui-grid-cell:first-child .ui-grid-vertical-bar {
+  width: 0;
 }
