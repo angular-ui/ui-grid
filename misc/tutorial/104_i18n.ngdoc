@@ -2,7 +2,7 @@
 @name Tutorial: 104 i18n
 @description
 
-Ui-Grid provides an i18nService that you can use to change the default language, add translations, or change existing translations.
+UI-Grid provides an i18nService that you can use to change the default language, add translations, or change existing translations.
 
 The easiest way to set language is to use the ui-i18n directive in a div that contains the grid.
 <pre>

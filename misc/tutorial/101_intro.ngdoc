@@ -1,8 +1,8 @@
 @ngdoc overview
-@name Tutorial: 101 Intro to Ui-Grid
+@name Tutorial: 101 Intro to UI-Grid
 @description
 
-Ui-Grid 3.0 (formerly ng-grid), is a 100% angular grid written with no dependencies other than AngularJS. It is designed around
+UI-Grid 3.0 (formerly ng-grid), is a 100% angular grid written with no dependencies other than AngularJS. It is designed around
 a core grid module and features are layered on as angular modules and directives.  This keeps the core small and focused
 while executing very complex features only when you need them.
 

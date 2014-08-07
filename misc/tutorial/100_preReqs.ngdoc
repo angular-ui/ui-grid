@@ -1,0 +1,21 @@
+@ngdoc overview
+@name Tutorial: 100 Prerequisites
+@description
+
+<h1>Browsers</h1>
+Current list of tested browsers: <a href='https://saucelabs.com/u/nggrid' target="_blank">Sauce Labs</a>
+<ul>
+ <li>IE9+</li>
+ <li>Chrome</li>
+ <li>Firefox</li>
+ <li>Safari 5+</li>
+ <li>Opera</li>
+ <li>Android 4+</li>
+</ul>
+
+<h1>AngularJS</h1>
+<ul>
+ <li>1.2.10+</li>
+</ul>
+
+
