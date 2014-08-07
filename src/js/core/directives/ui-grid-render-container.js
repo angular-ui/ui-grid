@@ -173,10 +173,7 @@
 
                 args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
-
-              // $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
-
-              $log.debug(containerCtrl.containerId, 'firing scroll');
+              
               uiGridCtrl.fireScrollingEvent(args);
             });
             
