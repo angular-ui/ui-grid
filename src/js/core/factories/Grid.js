@@ -487,7 +487,7 @@ angular.module('ui.grid')
    * @description
 
      Register a "rows processor" function. When the rows are updated,
-     the grid calls eached registered "rows processor", which has a chance
+     the grid calls each registered "rows processor", which has a chance
      to alter the set of rows (sorting, etc) as long as the count is not
      modified.
    */
@@ -630,6 +630,18 @@ angular.module('ui.grid')
     }
   };
 
+  /**
+   * @ngdoc function
+   * @name registerColumnsProcessor
+   * @methodOf ui.grid.class:Grid
+   * @param {function(renderableColumns)} rows processor function
+   * @returns {Array[GridColumn]} Updated renderable columns
+   * @description
+
+     Register a "columns processor" function. When the columns are updated,
+     the grid calls each registered "columns processor", which has a chance
+     to alter the set of columns, as long as the count is not modified.
+   */
   Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor) {
     if (!angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
