@@ -189,7 +189,12 @@ pip-log.txt
 ## JetBrains
 #################
 .idea
+ng-grid.iml
 
+
+#################
+## other stuff
+#################
 Sauce-Connect.jar
 *.log
 docs
