@@ -34,7 +34,7 @@ describe('Grid factory', function () {
     $scope.$digest();
   }
 
-  ddescribe('constructor', function() {
+  describe('constructor', function() {
     it('should throw an exception if no id is provided', function() {
       expect(function() {
         var grid = new Grid();

@@ -1,5 +1,5 @@
 /* global _ */
-ddescribe('ui.grid.pinning uiGridPinningService', function () {
+describe('ui.grid.pinning uiGridPinningService', function () {
   var uiGridPinningService;
   var gridClassFactory;
   var grid;
