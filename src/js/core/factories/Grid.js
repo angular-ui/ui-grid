@@ -391,7 +391,7 @@ angular.module('ui.grid')
 
     var existingRowCount = self.rows.length;
     for (var i=0; i < newRawData.length; i++) {
-      var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount));
+      var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount, self));
 
       if (self.options.enableRowHashing) {
         var found = self.rowHashMap.get(newRow.entity);

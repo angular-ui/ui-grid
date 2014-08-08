@@ -11,7 +11,15 @@ angular.module('ui.grid')
    * @param {object} entity the array item from GridOptions.data
    * @param {number} index the current position of the row in the array
    */
-  function GridRow(entity, index) {
+  function GridRow(entity, index, grid) {
+
+     /**
+      *  @ngdoc object
+      *  @name grid
+      *  @propertyOf  ui.grid.class:GridRow
+      *  @description A reference back to the grid
+      */
+     this.grid = grid;
 
      /**
       *  @ngdoc object
