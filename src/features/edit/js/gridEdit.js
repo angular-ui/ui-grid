@@ -168,6 +168,8 @@
            */
           colDef.enableCellEdit = colDef.enableCellEdit === undefined ? gridOptions.enableCellEdit : colDef.enableCellEdit;
 
+          col.inputType = colDef.type === 'boolean'?'checkbox':'text';
+
           /**
            *  @ngdoc object
            *  @name cellEditableCondition
