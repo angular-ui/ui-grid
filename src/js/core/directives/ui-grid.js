@@ -92,7 +92,7 @@
           if (self.grid.columns.length === 0) {
             $log.debug('loading cols in dataWatchFunction');
             if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
-              self.grid.options.columnDefs =  gridUtil.getColumnsFromData(n, self.grid.options.excludeProperties);
+              self.grid.buildColumnDefsFromData(n);
             }
             promises.push(self.grid.buildColumns()
               .then(function() {

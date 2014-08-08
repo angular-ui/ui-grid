@@ -169,6 +169,51 @@ describe('Grid factory', function () {
     });
   });
 
+  describe('buildColumns', function() {
+    it('guess correct column types when not specified', function() {
+      var dataRow = {str:'abc', num:123, dat:new Date(), bool:true, obj:{}, nll:null, negNum:-1, posNum:+1 };
+      var rows = [
+        new GridRow(dataRow)
+      ];
+
+      var grid = new Grid({ id: 1 });
+      grid.buildColumnDefsFromData([dataRow]);
+      grid.rows = rows;
+      grid.buildColumns();
+
+
+      expect(grid.getColumn('str').colDef.type).toBe('string');
+      expect(grid.getColumn('num').colDef.type).toBe('number');
+      expect(grid.getColumn('negNum').colDef.type).toBe('number');
+      expect(grid.getColumn('posNum').colDef.type).toBe('number');
+      expect(grid.getColumn('dat').colDef.type).toBe('date');
+      expect(grid.getColumn('bool').colDef.type).toBe('boolean');
+      expect(grid.getColumn('obj').colDef.type).toBe('object');
+      expect(grid.getColumn('nll').colDef.type).toBe('object');
+    });
+
+    it('not overwrite column types specified in options', function() {
+
+      var grid1 = new Grid({ id: 3 });
+
+      grid1.options.columnDefs = [
+        {name:'str',type:'string'},
+        {name:'num', type:'number'},
+        {name:'dat', type:'date'},
+        {name:'bool', type:'boolean'},
+        {name:'obj', type:'object'}
+      ];
+      grid1.buildColumns();
+
+
+      expect(grid1.getColumn('str').colDef.type).toBe('string');
+      expect(grid1.getColumn('num').colDef.type).toBe('number');
+      expect(grid1.getColumn('dat').colDef.type).toBe('date');
+      expect(grid1.getColumn('bool').colDef.type).toBe('boolean');
+      expect(grid1.getColumn('obj').colDef.type).toBe('object');
+    });
+  });
+
   describe('sortColumn', function() {
     it('should throw an exception if no column parameter is provided', function() {
       expect(function () {

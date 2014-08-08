@@ -317,6 +317,38 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     },
 
     /**
+     * @ngdoc method
+     * @name guessType
+     * @methodOf ui.grid.service:GridUtil
+     * @description guesses the type of an argument
+     *
+     * @param {string/number/bool/object} item variable to examine
+     * @returns {string} one of the following
+     * 'string'
+     * 'boolean'
+     * 'number'
+     * 'date'
+     * 'object'
+     */
+    guessType : function (item) {
+      var itemType = typeof(item);
+
+      // Check for numbers and booleans
+      switch (itemType) {
+        case "number":
+        case "boolean":
+        case "string":
+          return itemType;
+        default:
+          if (angular.isDate(item)) {
+            return "date";
+          }
+          return "object";
+      }
+    },
+
+
+  /**
     * @ngdoc method
     * @name elementWidth
     * @methodOf ui.grid.service:GridUtil
