@@ -1,54 +1,17 @@
-language: node_js
+ language: node_js
+ node_js:
+   - "0.10"
 
-node_js:
-  - '0.10'
-
-notifications:
-  irc: "chat.freenode.net#ui-grid"
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/6bdd30ec5170687c7d77
-    on_success: always  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: false     # default: false
-
-env:
-  # matrix:
-  #   - JOB=unit
-  #   - JOB=e2e
-  global:
-  - SAUCE_USERNAME=bgok
-  - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
-  - LOGS_DIR=/tmp/angular-build/logs
-  - secure: PEQFPTi8DRVrj6dEl6tQ+QTI07N8A3XST9eu5uHyW9YuDErDpn6rE8iEI2bd6nU5jldF9cCaGprpEi6aTP71jxFkm2Yjk1PRxtSVo5Cvu7sEwaFOnZi2KBgpKAdv8T3GB4rcjePe3oPwSkw1i/s9THSe18KSzZdgwP2LMctlCyA=
-  - secure: A4ur05WzvEsExKuAR81MmxNldgYbpc8VwI/9hC2v+IWAAaFClWDH6OdlbfO8gNaWJVnLmvMS8emA7zkBuKgQhuMP0u8RoSwn7TOObaCICEM7mbFPRwCX1td0/4FyUdUUAE/jw3Cx4SBdrb0qGkMmdg36W4II1BBzkMnJblUfnNU=
-  - secure: W2QpRQppqS1wMhbiOTOzJmaUXZtjUQdoWj+IKuyX6m7/A2A4YDXfNj+vzXfffbVqnBFDzrYRtcZ6IMmHn9QDs4gJaAaQDc1104UEd/sbVEujDn+9YOE3tTdRLE13FgdwwrLNcpypiPZ+rpWvEizRAlwoMXIiVhL8pUc1hysX9qM=
-  - secure: IaTLpsLUet/9al3Lg9n1k+M+5zIEnCwx7fwOjNoUmHYrYRImDUVmtymb9HSdzozn8cV1z+k6V62wghjK0b8c5tZ0mE9PRtEN8Nv1CjVmrbURpQaypC2A1HT3xg3/MDRwvAoiHILPxTo4k5jw1wgNrYKxCLbb7vmvoPwVv7seTT8=
-
-branches:
+ branch:
   only:
-  - master
-  - /^3\.0$/
-  - /^release-.*$/
+    - master
+    - /^3\.0$/
+    - /^release-.*$/
 
-before_script:
-  - git fetch --tags
-  - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
+ before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - mkdir -p $LOGS_DIR
-  - ./lib/sauce/sauce_connect_setup.sh
-  - npm install --quiet -g grunt-cli karma-cli
+  - npm install --quiet -g grunt-cli karma
   - npm install
-  - bower install
-  - grunt install
-  - ./lib/sauce/sauce_connect_block.sh
 
-script:
-  - ./travis_build.sh
-
-after_success:
-  - grunt release
-
-after_script:
-  - ./travis_print_logs.sh
+ script: grunt test-ci
