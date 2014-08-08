@@ -21,10 +21,19 @@ Create a grid almost the same as the most basic one, but with a custom row templ
           $scope.waiting = 'Done!';
           $interval.cancel(sec);
           $scope.wait = '';
-          
-          return '<div style="background-color: aquamarine" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+          //calling the externalScopes() method will allow you to reach up to the controller scope
+          return '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
         }, 6000);
       }
+
+      $scope.myNewModel = {
+        //access outside scope functions from row template
+        fnOne: function(row)
+        {
+            console.log(row);
+        }
+      };
+      
 
       $scope.waiting = 'Waiting for row template...';
 
@@ -44,7 +53,8 @@ Create a grid almost the same as the most basic one, but with a custom row templ
       <strong ng-bind="waiting"></strong> <strong>{{ wait }}</strong>
       <br>
       <br>
-      <div class="grid" ui-grid="gridOptions"></div>
+      //make sure to set the controller variable in the attribute like so:
+      <div class="grid" ui-grid="gridOptions" external-scopes="myNewModel"></div>
     </div>
   </file>
   <file name="main.css">
