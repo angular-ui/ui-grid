@@ -21,8 +21,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
   };
 
   // Guess which sort function to use on this item
-  rowSorter.guessSortFn = function guessSortFn(item) {
-    var itemType = typeof(item);
+  rowSorter.guessSortFn = function guessSortFn(itemType) {
 
     // Check for numbers and booleans
     switch (itemType) {
@@ -31,17 +30,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       case "boolean":
         return rowSorter.sortBool;
       case "string":
-        // if number string return number string sort fn. else return the str
-        return item.match(numberStrRegex) ? rowSorter.sortNumberStr : rowSorter.sortAlpha;
+        return rowSorter.sortAlpha;
+      case "date":
+        return rowSorter.sortDate;
+      case "object":
+        return rowSorter.basicSort;
       default:
-        // Check if the item is a valid Date TODO(c0bra): Can we use angular.isDate() ?
-        if (Object.prototype.toString.call(item) === '[object Date]') {
-          return rowSorter.sortDate;
-        }
-        else {
-          //finally just sort the basic sort...
-          return rowSorter.basicSort;
-        }
+        throw new Error('No sorting function found for type:' + itemType);
     }
   };
 
@@ -143,20 +138,8 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     }
     // Try and guess what sort function to use
     else {
-      // Get the first row
-      var row = rows[0];
-
-      // No first row, can't guess so return null
-      if (!row) {
-        return null;
-      }
-
-      // TODO(c0bra): need to use that function from the grid class here
-      // Get the value of this column for the row
-      var fieldValue = grid.getCellValue(row, col); // $parse(col.field)(row);
-
       // Guess the sort function
-      sortFn = rowSorter.guessSortFn(fieldValue);
+      sortFn = rowSorter.guessSortFn(col.colDef.type);
 
       // If we found a sort function, cache it
       if (sortFn) {
