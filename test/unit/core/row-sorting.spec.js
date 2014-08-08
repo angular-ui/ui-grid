@@ -81,8 +81,8 @@ describe('rowSorter', function() {
       var e2 = { name: 'Jim' };
 
       rows = [
-        new GridRow(e1, 0),
-        new GridRow(e2, 1)
+        new GridRow(e1, 0, grid),
+        new GridRow(e2, 1, grid)
       ];
 
       cols = [
@@ -177,6 +177,7 @@ describe('rowSorter', function() {
         externalSort: jasmine.createSpy('externalSort')
                         .andCallFake(function (r) {
                           return $timeout(function() {
+                            timeoutRows[0].grid = grid;
                             return timeoutRows;
                           }, 1000);
                         })
@@ -190,8 +191,8 @@ describe('rowSorter', function() {
       var e2 = { name: 'Jim' };
 
       rows = grid.rows = [
-        new GridRow(e1, 0),
-        new GridRow(e2, 1)
+        new GridRow(e1, 0, grid),
+        new GridRow(e2, 1, grid)
       ];
 
       column = new GridColumn({

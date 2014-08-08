@@ -10,12 +10,13 @@ describe('Grid factory', function () {
     GridRow = _GridRow_;
     GridColumn = _GridColumn_;
 
+    grid = new Grid({ id: 1 });
     rows = [
-      new GridRow({ a: 'one' }, 0),
-      new GridRow({ a: 'two' }, 1)
+      new GridRow({ a: 'one' }, 0, grid),
+      new GridRow({ a: 'two' }, 1, grid)
     ];
 
-    grid = new Grid({ id: 1 });
+
     column = new GridColumn({ name: 'a' }, 0, grid);
 
 
@@ -109,6 +110,7 @@ describe('Grid factory', function () {
       runs(runProcs);
 
       runs(function () {
+        expect(rows[0].grid).toEqual(grid);
         expect(rows[0].c).toEqual('foo');
         expect(rows[0].d).toEqual('bar');
         expect(rows[1].c).toEqual('foo');
@@ -172,11 +174,12 @@ describe('Grid factory', function () {
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
       var dataRow = {str:'abc', num:123, dat:new Date(), bool:true, obj:{}, nll:null, negNum:-1, posNum:+1 };
+      var grid = new Grid({ id: 1 });
       var rows = [
-        new GridRow(dataRow)
+        new GridRow(dataRow,1,grid)
       ];
 
-      var grid = new Grid({ id: 1 });
+
       grid.buildColumnDefsFromData([dataRow]);
       grid.rows = rows;
       grid.buildColumns();
