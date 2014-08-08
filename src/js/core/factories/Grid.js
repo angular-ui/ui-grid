@@ -88,6 +88,17 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name buildColumnDefsFromData
+   * @methodOf ui.grid.class:Grid
+   * @description Populates columnDefs from the provided data
+   * @param {function(colDef, col, gridOptions)} rowBuilder function to be called
+   */
+  Grid.prototype.buildColumnDefsFromData = function (dataRows){
+    this.options.columnDefs =  gridUtil.getColumnsFromData(dataRows,  this.options.excludeProperties);
+  };
+
+  /**
+   * @ngdoc function
    * @name registerRowBuilder
    * @methodOf ui.grid.class:Grid
    * @description When the build creates rows from gridOptions.data, the rowBuilders will be called to add
@@ -137,6 +148,14 @@ angular.module('ui.grid')
         col.updateColumnDef(colDef, col.index);
       }
 
+      //Assign colDef type if not specified
+      if (!colDef.type){
+        var firstRow = self.rows.length > 0 ? self.rows[0] : null;
+        if (firstRow) {
+          colDef.type = gridUtil.guessType(self.getCellValue(firstRow, col));
+        }
+      }
+
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
@@ -163,6 +182,7 @@ angular.module('ui.grid')
     if (colDef.name === undefined && colDef.field !== undefined) {
       colDef.name = colDef.field;
     }
+
   };
 
   // Return a list of items that exist in the `n` array but not the `o` array. Uses optional property accessors passed as third & fourth parameters

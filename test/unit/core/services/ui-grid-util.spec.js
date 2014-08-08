@@ -276,7 +276,7 @@ describe('ui.grid.utilService', function() {
 
   });
 
-  ddescribe('type()', function () {
+  describe('type()', function () {
     it('should return the type of an object as a string', function () {
       var g = new Grid({ id: 1 });
 

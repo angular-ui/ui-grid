@@ -43,28 +43,20 @@ describe('rowSorter', function() {
 
   describe('guessSortFn', function () {
     it('should guess a number', function () {
-      var guessFn = rowSorter.guessSortFn(5);
+      var guessFn = rowSorter.guessSortFn('number');
       expect(guessFn).toBe(rowSorter.sortNumber);
     });
 
     it('should guess a date', function () {
-      var guessFn = rowSorter.guessSortFn(new Date());
+      var guessFn = rowSorter.guessSortFn('date');
 
       expect(guessFn).toBe(rowSorter.sortDate);
     });
 
     it('should guess a string', function () {
-      var guessFn = rowSorter.guessSortFn("hi there!");
+      var guessFn = rowSorter.guessSortFn("string");
 
       expect(guessFn).toBe(rowSorter.sortAlpha);
-    });
-
-    it('should guess a number when a number is signed', function () {
-      var guessFn = rowSorter.guessSortFn(-50);
-      expect(guessFn).toBe(rowSorter.sortNumber, 'Negative signed number');
-
-      guessFn = rowSorter.guessSortFn(+50);
-      expect(guessFn).toBe(rowSorter.sortNumber, 'Positive signed number');
     });
 
     it('should guess a number-string when the value is a numeric string', function () {
@@ -102,19 +94,13 @@ describe('rowSorter', function() {
     });
 
     it('should allow booleans', function () {
-      var guessFn = rowSorter.guessSortFn(true);
-      expect(guessFn).toBe(rowSorter.sortBool, true);
-
-      guessFn = rowSorter.guessSortFn(false);
-      expect(guessFn).toBe(rowSorter.sortBool, false);
+      var guessFn = rowSorter.guessSortFn('boolean');
+      expect(guessFn).toBe(rowSorter.sortBool);
     });
 
     it('should use basicSort for objects', function () {
-      function WeirdObject() {}
-      var val = new WeirdObject();
-
-      var guessFn = rowSorter.guessSortFn(val);
-      expect(guessFn).toBe(rowSorter.basicSort, 'WeirdObject');
+      var guessFn = rowSorter.guessSortFn('object');
+      expect(guessFn).toBe(rowSorter.basicSort);
     });
   });
 
@@ -135,6 +121,7 @@ describe('rowSorter', function() {
       cols = [
         new GridColumn({
           name: 'name',
+          type: 'string',
           sort: {
             direction: uiGridConstants.ASC,
             priority: 0
@@ -166,6 +153,7 @@ describe('rowSorter', function() {
       it("should use the column's specified sorting algorithm if it has one", function () {
         cols[0] = new GridColumn({
           name: 'name',
+          type: 'string',
           sortingAlgorithm: jasmine.createSpy('sortingAlgorithm').andReturn(rows),
           sort: {
             direction: uiGridConstants.ASC,
@@ -181,6 +169,7 @@ describe('rowSorter', function() {
       it('should run and use the sorting algorithm output properly', function() {
         cols[0] = new GridColumn({
           name: 'name',
+          type: 'string',
           // Sort words containing the letter 'i' to the top
           sortingAlgorithm: function (a, b) {
             var r = 0;
