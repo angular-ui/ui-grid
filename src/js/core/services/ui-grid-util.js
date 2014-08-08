@@ -322,10 +322,10 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @methodOf ui.grid.service:GridUtil
      * @description guesses the type of an argument
      *
-     * @param {string/number/bool/object} item varible to examine
+     * @param {string/number/bool/object} item variable to examine
      * @returns {string} one of the following
      * 'string'
-     * 'bool'
+     * 'boolean'
      * 'number'
      * 'date'
      * 'object'
