@@ -123,6 +123,15 @@
 
           /**
            *  @ngdoc object
+           *  @name editableCellTemplate
+           *  @propertyOf  ui.grid.edit.api:GridOptions
+           *  @description If specified, cellTemplate to use as the editor for all columns.
+           *  <br/> default to 'ui-grid/cellTextEditor'
+           */
+          gridOptions.editableCellTemplate = gridOptions.editableCellTemplate || '';
+
+          /**
+           *  @ngdoc object
            *  @name enableCellEditOnFocus
            *  @propertyOf  ui.grid.edit.api:GridOptions
            *  @description If true, then editor is invoked as soon as cell receives focus. Default false
@@ -173,15 +182,6 @@
            */
           colDef.cellEditableCondition = colDef.cellEditableCondition === undefined ? gridOptions.cellEditableCondition :  colDef.cellEditableCondition;
 
-          /**
-           *  @ngdoc object
-           *  @name editableCellTemplate
-           *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If specified, cellTemplate to use as the editor for all columns.
-           *  <br/> default to 'ui-grid/cellTextEditor'
-           */
-          gridOptions.editableCellTemplate = gridOptions.editableCellTemplate || '';
-
           colDef.type = colDef.type || 'text';
 
           /**
@@ -205,14 +205,14 @@
             }
 
             promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
-               .then(
-               function (template) {
-                 col.editableCellTemplate = template;
-               },
-               function (res) {
-                 // Todo handle response error here?
-                 throw new Error("Couldn't fetch/use colDef.editableCellTemplate '" + colDef.editableCellTemplate + "'");
-               }));
+              .then(
+              function (template) {
+                col.editableCellTemplate = template;
+              },
+              function (res) {
+                // Todo handle response error here?
+                throw new Error("Couldn't fetch/use colDef.editableCellTemplate '" + colDef.editableCellTemplate + "'");
+              }));
           }
 
           /**
@@ -400,8 +400,8 @@
 
             function shouldEdit(col) {
               return angular.isFunction(col.colDef.cellEditableCondition) ?
-                      col.colDef.cellEditableCondition($scope) :
-                      col.colDef.cellEditableCondition;
+                col.colDef.cellEditableCondition($scope) :
+                col.colDef.cellEditableCondition;
             }
 
             function beginEdit() {
@@ -418,14 +418,14 @@
 
               var cellElement;
               $scope.$apply(function () {
-                        inEdit = true;
-                        cancelBeginEditEvents();
-                        cellElement = $compile(html)($scope.$new());
-                        var gridCellContentsEl = angular.element($elm.children()[0]);
-                        isFocusedBeforeEdit = gridCellContentsEl.hasClass(':focus');
-                        gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
-                        $elm.append(cellElement);
-                      }
+                  inEdit = true;
+                  cancelBeginEditEvents();
+                  cellElement = $compile(html)($scope.$new());
+                  var gridCellContentsEl = angular.element($elm.children()[0]);
+                  isFocusedBeforeEdit = gridCellContentsEl.hasClass(':focus');
+                  gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
+                  $elm.append(cellElement);
+                }
               );
 
               //stop editing when grid is scrolled
