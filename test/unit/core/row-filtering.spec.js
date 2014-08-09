@@ -37,8 +37,8 @@ describe('rowSearcher', function() {
     });
 
     rows = grid.rows = [
-      new GridRow({ name: 'Bill', company: 'Gruber, Inc.' }, 0),
-      new GridRow({ name: 'Frank', company: 'Foo Co' }, 1)
+      new GridRow({ name: 'Bill', company: 'Gruber, Inc.' }, 0, grid),
+      new GridRow({ name: 'Frank', company: 'Foo Co' }, 1, grid)
     ];
 
     columns = grid.columns = [
