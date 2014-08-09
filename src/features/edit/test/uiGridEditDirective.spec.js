@@ -3,6 +3,7 @@ describe('uiGridEditDirective', function () {
   var scope;
   var element;
   var cellTextEditorHtml = '<div><input ng-model="COL_FIELD" ui-grid-text-editor/></div>';
+  var cellBooleanEditorHtml = '<div><input type= "checkbox" ng-model="COL_FIELD" ui-grid-text-editor/></div>';
   var recompile;
 
   beforeEach(module('ui.grid.edit'));
@@ -14,6 +15,7 @@ describe('uiGridEditDirective', function () {
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/uiGridHeaderCell', '<div/>');
     $templateCache.put('ui-grid/cellTextEditor', cellTextEditorHtml);
+    $templateCache.put('ui-grid/cellBooleanEditor', cellBooleanEditorHtml);
 
     scope = $rootScope.$new();
     scope.options = {};
@@ -24,7 +26,8 @@ describe('uiGridEditDirective', function () {
 
     scope.options.columnDefs = [
       {field: 'col1', enableCellEdit: true},
-      {field: 'col2', enableCellEdit: false}
+      {field: 'col2', enableCellEdit: false},
+      {field: 'col3', enableCellEdit: true, type: 'boolean'}
     ];
 
     recompile = function () {
@@ -53,6 +56,10 @@ describe('uiGridEditDirective', function () {
       expect(col.colDef.enableCellEdit).toBe(false);
       expect(col.colDef.editableCellTemplate).not.toBeDefined();
 
+      col = gridScope.grid.getColumn('col3');
+      expect(col).not.toBeNull();
+      expect(col.colDef.enableCellEdit).toBe(true);
+      expect(col.editableCellTemplate).toBe(cellBooleanEditorHtml);
     });
   });
 
