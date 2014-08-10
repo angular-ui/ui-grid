@@ -13,7 +13,7 @@ ColumnDef Options:
 boolean columns) - Valid html, templateCache Id,  or url that returns html content to be compiled when edit mode is invoked.
 <br/><code>enableCellEdit</code> (default: true) - false to not allow editing
 <br/><code>cellEditableCondition</code>  (default: true)  Can be set to a boolean or a function that will be called with the cellScope to determine if the cell should be invoked in edit mode.
-<br/><code>type</code> (default: null) If set to boolean by default a boolean editor will be provided for the column.
+<br/><code>type</code> (default: null) If set to boolean the default editor provided for editing will be boolean editor.
 <br/>
 The following option is available only if using cellNav feature
 <br/><code>enableCellEditOnFocus</code> - true to invoke editor as soon as cell has focus
