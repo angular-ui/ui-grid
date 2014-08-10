@@ -4,6 +4,8 @@ describe('uiGridEditDirective', function () {
   var element;
   var cellTextEditorHtml = '<div><input ng-model="COL_FIELD" ui-grid-text-editor/></div>';
   var cellBooleanEditorHtml = '<div><input type= "checkbox" ng-model="COL_FIELD" ui-grid-text-editor/></div>';
+  var colDefEditableCellTemplate = '<div><input ng-model="COL_FIELD"/></div>';
+  var gridOptionsEditableCellTemplate = '<div><input ng-model="COL_FIELD"/></div>';
   var recompile;
 
   beforeEach(module('ui.grid.edit'));
@@ -60,6 +62,24 @@ describe('uiGridEditDirective', function () {
       expect(col).not.toBeNull();
       expect(col.colDef.enableCellEdit).toBe(true);
       expect(col.editableCellTemplate).toBe(cellBooleanEditorHtml);
+    });
+
+    it('editableCellTemplate value should get priority over default templates', function () {
+
+      element = angular.element('<div ui-grid="options" ui-grid-edit />');
+      scope.options.editableCellTemplate = gridOptionsEditableCellTemplate;
+      recompile();
+
+      //A template specified in Grid Options should get priority over defaults
+      var gridScope = element.scope().$$childTail;
+      var col = gridScope.grid.getColumn('col1');
+      expect(col.editableCellTemplate).toBe(gridOptionsEditableCellTemplate);
+
+      //A template specified in colDef should get priority over defaults
+      //as well as one specified in grid options
+      scope.options.columnDefs[0].editableCellTemplate = colDefEditableCellTemplate;
+      recompile();
+      expect(col.editableCellTemplate).toBe(colDefEditableCellTemplate);
     });
   });
 
