@@ -16,6 +16,7 @@ module.exports = function(config) {
     files: [
       'bower_components/jquery/jquery.min.js',
       'lib/test/jquery.simulate.js',
+      'bower_components/lodash/dist/lodash.min.js',
       
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',
