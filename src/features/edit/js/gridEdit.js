@@ -128,7 +128,6 @@
            *  @description If specified, cellTemplate to use as the editor for all columns.
            *  <br/> default to 'ui-grid/cellTextEditor'
            */
-          gridOptions.editableCellTemplate = gridOptions.editableCellTemplate || 'ui-grid/cellTextEditor';
 
           /**
            *  @ngdoc object
@@ -191,6 +190,15 @@
            */
           if (colDef.enableCellEdit) {
             colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate;
+
+            if (!colDef.editableCellTemplate) {
+              if (colDef.type && colDef.type === 'boolean') {
+                colDef.editableCellTemplate = 'ui-grid/cellBooleanEditor';
+              }
+              else {
+                colDef.editableCellTemplate = 'ui-grid/cellTextEditor';
+              }
+            }
 
             promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
               .then(
