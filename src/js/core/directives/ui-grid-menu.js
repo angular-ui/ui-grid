@@ -161,7 +161,7 @@ angular.module('ui.grid')
             return $scope.shown.call(context);
           };
 
-          $scope.itemAction = function($event) {
+          $scope.itemAction = function($event,title) {
             $log.debug('itemAction');
             $event.stopPropagation();
 
@@ -177,7 +177,7 @@ angular.module('ui.grid')
                 context.grid = uiGridCtrl.grid;
               }
 
-              $scope.action.call(context, $event);
+              $scope.action.call(context, $event, title);
 
               uiGridMenuCtrl.hideMenu();
             }
