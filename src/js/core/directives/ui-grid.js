@@ -43,9 +43,6 @@
           self.grid.options.columnDefs = value;
           self.grid.buildColumns()
             .then(function(){
-              // self.columnSizeCalculated = false;
-              // self.renderedColumns = self.grid.columns;
-
               preCompileCellTemplates($scope.grid.columns);
 
               self.refreshCanvas(true);
@@ -74,8 +71,6 @@
           self.grid.options.columnDefs = n;
           self.grid.buildColumns()
             .then(function(){
-              // self.columnSizeCalculated = false;
-              // self.renderedColumns = self.grid.columns;
 
               preCompileCellTemplates($scope.grid.columns);
 

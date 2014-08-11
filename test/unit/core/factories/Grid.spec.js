@@ -181,8 +181,8 @@ describe('Grid factory', function () {
 
 
       grid.buildColumnDefsFromData([dataRow]);
-      grid.rows = rows;
       grid.buildColumns();
+      grid.modifyRows([dataRow]);
 
 
       expect(grid.getColumn('str').colDef.type).toBe('string');
