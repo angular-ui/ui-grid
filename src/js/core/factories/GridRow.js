@@ -57,7 +57,7 @@ angular.module('ui.grid')
    * @returns {string} resulting name that can be evaluated on scope
    */
   GridRow.prototype.getQualifiedColField = function(col) {
-    return 'row.entity.' + col.field;
+    return 'row.entity["' + col.field + '"]';
   };
 
     /**
@@ -70,7 +70,7 @@ angular.module('ui.grid')
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
-    return 'entity.' + col.field;
+    return 'entity["' + col.field + '"]';
   };
 
   return GridRow;
