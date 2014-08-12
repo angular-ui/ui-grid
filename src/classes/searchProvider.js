@@ -88,7 +88,7 @@
         else {
             var primitiveValues = getAllPrimitiveValues(evalObject(value, col.field));
 			for(var prop in primitiveValues) {
-				result |= condition.regex.test(primValues[prop]);
+				result |= condition.regex.test(primitiveValues[prop]);
 			}
         }
         if (result) {
