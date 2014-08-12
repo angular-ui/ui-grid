@@ -60,6 +60,18 @@
             return columns;
           });
 
+          grid.registerColumnsProcessor(function(renderableColumns) {
+              renderableColumns.forEach(function (column) {
+                  if (column.colDef.visible === false) {
+                      column.visible = false;
+                  }
+              });
+
+              return renderableColumns;
+          });
+
+
+
           if (grid.options.enableFiltering) {
             grid.registerRowsProcessor(grid.searchRows);
           }

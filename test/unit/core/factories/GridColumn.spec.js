@@ -70,4 +70,11 @@ describe('GridColumn factory', function () {
     });
   });
 
+  describe('updateColumnDef', function() {
+      var requiredProps = ['show','hide', 'index',]
+      it('should have all of the required column properties', function(){
+
+      });
+  });
+
 });
