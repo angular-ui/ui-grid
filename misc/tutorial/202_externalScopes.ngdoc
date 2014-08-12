@@ -35,7 +35,7 @@ Then in a template, you access the scope using getExternalScopes() function.
        $scope.gridOptions.columnDefs = [
              { name: 'firstName' },
              { name: 'lastName'},
-             { name: 'Show Scope',
+             { name: 'ShowScope',
                  cellTemplate:'<button class="btn primary" ng-click="getExternalScopes().showMe()">Click Me</button>' }
            ];
 
