@@ -515,9 +515,16 @@
                   });
                 });
 
+                $scope.deepEdit = false;
+
                 $scope.stopEdit = function () {
                   $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                  $scope.deepEdit = false;
                 };
+
+                $elm.on('click', function (evt) {
+                  $scope.deepEdit = true;
+                });
 
                 $elm.on('keydown', function (evt) {
                   switch (evt.keyCode) {
@@ -528,6 +535,23 @@
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
                       $scope.stopEdit();
                       break;
+                  }
+
+                  if ($scope.deepEdit) {
+                    switch (evt.keyCode) {
+                      case uiGridConstants.keymap.LEFT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.RIGHT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.UP:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.DOWN:
+                        evt.stopPropagation();
+                        break;
+                    }
                   }
 
                   return true;
