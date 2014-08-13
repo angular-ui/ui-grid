@@ -204,6 +204,8 @@ angular.module('ui.grid')
 
     /** show column */
     GridColumn.prototype.show = function() {
+      var self = this;
+
       if (typeof self.colDef.visible!== "undefined") {
         self.colDef.visible = true;
       }
@@ -211,11 +213,13 @@ angular.module('ui.grid')
 
     /** hide column */
     GridColumn.prototype.hide = function() {
+      var self = this;
+      
       if (typeof self.colDef.visible!== "undefined") {
         self.colDef.visible = false;
       }
     };
-    
+
     return GridColumn;
 }]);
 
