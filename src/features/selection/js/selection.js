@@ -328,6 +328,12 @@
 
             function registerRowSelectionEvents() {
               $elm.on('click', function () {
+                  // selected row only if clicked on index cell
+                  if ($scope.grid.options.displayIndex == true) {
+                      if ($scope.col.field != "index") {
+                          return;
+                      }
+                  }
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                 $scope.$apply();
               });

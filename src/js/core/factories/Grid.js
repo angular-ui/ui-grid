@@ -161,6 +161,11 @@ angular.module('ui.grid')
     var self = this;
     var builderPromises = [];
 
+      //add index col to columnDefs:
+      if (self.options.displayIndex == true) {
+          self.options.columnDefs.splice(0, 0, { field: 'index', displayName: '', width: 40, cellTemplate: '<div class="indexCell">{{COL_FIELD}}</div>' });
+      }
+
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
@@ -410,16 +415,19 @@ angular.module('ui.grid')
 
     var existingRowCount = self.rows.length;
     for (var i=0; i < newRawData.length; i++) {
-      var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount, self));
+        var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount, self));
 
-      if (self.options.enableRowHashing) {
-        var found = self.rowHashMap.get(newRow.entity);
-        if (found) {
-          found.row = newRow;
+        if (self.options.enableRowHashing) {
+            var found = self.rowHashMap.get(newRow.entity);
+            if (found) {
+                found.row = newRow;
+            }
         }
-      }
-
-      self.rows.push(newRow);
+        //add index col to row data:
+        if (self.options.displayIndex == true) {
+            newRow.entity.index = i + 1;
+        }
+        self.rows.push(newRow);
     }
   };
 
