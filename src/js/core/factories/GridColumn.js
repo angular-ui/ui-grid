@@ -143,18 +143,6 @@ angular.module('ui.grid')
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');
 
-    self.show = function() {
-      if (typeof self.colDef.visible!== "undefined") {
-        self.colDef.visible = true;
-      }
-    };
-
-    self.hide = function() {
-      if (typeof self.colDef.visible!== "undefined") {
-        self.colDef.visible = false;
-      }
-    };
-
     /*
 
       self.filters = [
@@ -214,6 +202,20 @@ angular.module('ui.grid')
       return self.grid.renderContainers[containerId];
     };
 
+    /** show column */
+    GridColumn.prototype.show = function() {
+      if (typeof self.colDef.visible!== "undefined") {
+        self.colDef.visible = true;
+      }
+    };
+
+    /** hide column */
+    GridColumn.prototype.hide = function() {
+      if (typeof self.colDef.visible!== "undefined") {
+        self.colDef.visible = false;
+      }
+    };
+    
     return GridColumn;
 }]);
 
