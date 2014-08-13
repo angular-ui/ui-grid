@@ -517,15 +517,25 @@
                   });
                 });
 
-                $scope.stopEdit = function (evt) {
+               
+               $scope.deepEdit = false;
+               
+               $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
+               
+
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
                   else {
                     $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                   }
+                  $scope.deepEdit = false;
                 };
+
+                $elm.on('click', function (evt) {
+                  $scope.deepEdit = true;
+                });
 
                 $elm.on('keydown', function (evt) {
                   switch (evt.keyCode) {
@@ -536,6 +546,23 @@
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
                       $scope.stopEdit(evt);
                       break;
+                  }
+
+                  if ($scope.deepEdit) {
+                    switch (evt.keyCode) {
+                      case uiGridConstants.keymap.LEFT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.RIGHT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.UP:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.DOWN:
+                        evt.stopPropagation();
+                        break;
+                    }
                   }
 
                   return true;
