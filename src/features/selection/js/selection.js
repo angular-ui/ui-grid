@@ -354,16 +354,16 @@
             }
 
             function registerRowSelectionEvents() {
-              $elm.on('click', function (evt) {
-                      if (evt.shiftKey) {
-                          uiGridSelectionService.shiftSelect($scope.grid,$scope.row,$scope.grid.options.multiSelect);
+                $elm.on('click', function (evt) {
+                    if (evt.shiftKey) {
+                        uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
 
-                      }
-                  else {
-                      uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-                  }
-                $scope.$apply();
-              });
+                    }
+                    else {
+                        uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+                    }
+                    $scope.$apply();
+                });
             }
           }
         };
