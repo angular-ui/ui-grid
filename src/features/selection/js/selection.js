@@ -191,7 +191,34 @@
           row.isSelected = !selected;
           grid.api.selection.raise.rowSelectionChanged(row);
         },
-
+          /**
+           * @ngdoc function
+           * @name shiftSelect
+           * @methodOf  ui.grid.selection.service:uiGridSelectionService
+           * @description selects a group of rows from the last selected row using the shift key
+           * @param {Grid} grid grid object
+           * @param {GridRow} clicked row
+           * @param {bool} multiSelect if false, does nothing this is for multiSelect only
+           */
+          shiftSelect: function(grid,row,multiSelect) {
+              if (!multiSelect) {
+                  return;
+              }
+              var selectedRows = service.getSelectedRows(grid);
+              var fromRow = selectedRows.length > 0 ? selectedRows[selectedRows.length - 1].index : 0;
+              var toRow = grid.renderContainers.body.visibleRowCache.indexOf(row);
+              //reverse select direction
+              if (fromRow > toRow) {
+                  var tmp = fromRow;
+                  fromRow = toRow;
+                  toRow = tmp;
+              }
+              for (var i = fromRow; i <= toRow; i++) {
+                  var rowToSelect = grid.renderContainers.body.visibleRowCache[i];
+                  rowToSelect.isSelected = true;
+                  grid.api.selection.raise.rowSelectionChanged(rowToSelect);
+              }
+          },
         /**
          * @ngdoc function
          * @name getSelectedRows
@@ -327,14 +354,14 @@
             }
 
             function registerRowSelectionEvents() {
-              $elm.on('click', function () {
-                  // selected row only if clicked on index cell
-                  if ($scope.grid.options.displayIndex == true) {
-                      if ($scope.col.field != "index") {
-                          return;
+              $elm.on('click', function (evt) {
+                      if (evt.shiftKey) {
+                          uiGridSelectionService.shiftSelect($scope.grid,$scope.row,$scope.grid.options.multiSelect);
+
                       }
+                  else {
+                      uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                   }
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                 $scope.$apply();
               });
             }
