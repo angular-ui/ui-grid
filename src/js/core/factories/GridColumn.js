@@ -144,16 +144,16 @@ angular.module('ui.grid')
     self.setPropertyOrDefault(colDef, 'sort');
 
     self.show = function() {
-      if(typeof self.colDef.visible!== "undefined") {
+      if (typeof self.colDef.visible!== "undefined") {
         self.colDef.visible = true;
       }
-    }
+    };
 
     self.hide = function() {
-      if(typeof self.colDef.visible!== "undefined") {
+      if (typeof self.colDef.visible!== "undefined") {
         self.colDef.visible = false;
       }
-    }
+    };
 
     /*
 
