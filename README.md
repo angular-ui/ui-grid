@@ -41,7 +41,12 @@ ui-grid-unstable.min.css | [http://ui-grid.info/release/ui-grid-unstable.min.css
 # Building
 
 Install dependencies
-    
+
+    git must be on your path.  If you can't do 'git' from your terminal, then install git first and make sure you have access from the path.
+    Bower installs are dependent on git.
+
+    If you are a git noob, the easiest way to install is by installing the github client.
+
     # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
     
