@@ -219,7 +219,7 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc function
-     * @name showColumn
+     * @name hideColumn
      * @methodOf ui.grid.class:GridColumn
      * @description Hides the column.
      */
