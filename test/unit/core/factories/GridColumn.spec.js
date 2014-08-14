@@ -70,12 +70,14 @@ describe('GridColumn factory', function () {
     });
   });
 
-  // describe('updateColumnDef', function() {
-  //     var requiredProps = ['show','hide', 'index'];
-  //     it('should have all of the required column properties', function(){
-  //         expect(cols);
-  //     });
-
-  // });
+  describe('showColumn', function () {
+    it('should set colDef.visible', function () {
+      var col = grid.columns[0];
+      col.showColumn();
+      expect(col.colDef.visible).toBe(true);
+      col.hideColumn();
+      expect(col.colDef.visible).toBe(false);
+    });
+  });
 
 });
