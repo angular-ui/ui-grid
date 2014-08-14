@@ -115,7 +115,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       expect(element.html()).toBe(displayHtml);
     });
 
-    it('should fire public script', inject(function ($timeout) {
+    it('should fire public event', inject(function ($timeout) {
 
       var edited = false;
 

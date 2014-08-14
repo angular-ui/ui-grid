@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
-    function($log, $q, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer) {
+.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
+    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer) {
 
 /**
    * @ngdoc function
@@ -182,6 +182,22 @@ angular.module('ui.grid')
     });
 
     return $q.all(builderPromises);
+  };
+
+/**
+ * @ngdoc function
+ * @name preCompileCellTemplates
+ * @methodOf ui.grid.class:Grid
+ * @description precompiles all cell templates
+ */
+  Grid.prototype.preCompileCellTemplates = function() {
+        $log.info('pre-compiling cell templates');
+        this.columns.forEach(function (col) {
+          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
+
+          var compiledElementFn = $compile(html);
+          col.compiledElementFn = compiledElementFn;
+        });
   };
 
   /**

@@ -23,16 +23,6 @@
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
-      // Function to pre-compile all the cell templates when the column definitions change
-      function preCompileCellTemplates(columns) {
-        $log.info('pre-compiling cell templates');
-        columns.forEach(function (col) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-
-          var compiledElementFn = $compile(html);
-          col.compiledElementFn = compiledElementFn;
-        });
-      }
 
       //TODO: Move this.
       $scope.groupings = [];
@@ -43,7 +33,7 @@
           self.grid.options.columnDefs = value;
           self.grid.buildColumns()
             .then(function(){
-              preCompileCellTemplates($scope.grid.columns);
+              self.grid.preCompileCellTemplates();
 
               self.refreshCanvas(true);
             });
@@ -72,7 +62,7 @@
           self.grid.buildColumns()
             .then(function(){
 
-              preCompileCellTemplates($scope.grid.columns);
+              self.grid.preCompileCellTemplates();
 
               self.refreshCanvas(true);
             });
@@ -91,7 +81,7 @@
             }
             promises.push(self.grid.buildColumns()
               .then(function() {
-                preCompileCellTemplates($scope.grid.columns);}
+                self.grid.preCompileCellTemplates();}
             ));
           }
           $q.all(promises).then(function() {
