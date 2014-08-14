@@ -215,8 +215,10 @@
               }
               for (var i = fromRow; i <= toRow; i++) {
                   var rowToSelect = grid.renderContainers.body.visibleRowCache[i];
-                  rowToSelect.isSelected = true;
-                  grid.api.selection.raise.rowSelectionChanged(rowToSelect);
+                  if (rowToSelect) {
+                      rowToSelect.isSelected = true;
+                      grid.api.selection.raise.rowSelectionChanged(rowToSelect);
+                  }
               }
           },
         /**
@@ -349,6 +351,9 @@
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
+
+            $elm.addClass('ui-grid-disable-selection');
+
             if ($scope.grid.options.enableRowSelection) {
               registerRowSelectionEvents();
             }

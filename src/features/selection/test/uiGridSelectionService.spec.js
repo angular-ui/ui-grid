@@ -26,6 +26,8 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
 
     grid.buildColumns();
     grid.modifyRows(grid.options.data);
+      grid.setVisibleRows(grid.rows);
+
   }));
 
 
@@ -63,13 +65,27 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
   });
 
   describe('shiftSelect function', function() {
-      it('should select rows in between using shift key', function(){
+      it('should select rows in between using shift key', function () {
           grid.api.selection.toggleRowSelection(grid.rows[2].entity);
-          grid.api.selection.shiftSelect(grid,grid.rows[5], true);
+          uiGridSelectionService.shiftSelect(grid, grid.rows[5], true);
           expect(grid.rows[2].isSelected).toBe(true);
           expect(grid.rows[3].isSelected).toBe(true);
           expect(grid.rows[4].isSelected).toBe(true);
           expect(grid.rows[5].isSelected).toBe(true);
+      });
+
+      it('should reverse selection order if from is bigger then to', function () {
+          grid.api.selection.toggleRowSelection(grid.rows[5].entity);
+          uiGridSelectionService.shiftSelect(grid, grid.rows[2], true);
+          expect(grid.rows[2].isSelected).toBe(true);
+          expect(grid.rows[3].isSelected).toBe(true);
+          expect(grid.rows[4].isSelected).toBe(true);
+          expect(grid.rows[5].isSelected).toBe(true);
+      });
+
+      it('should return if multiSelect is false', function () {
+          uiGridSelectionService.shiftSelect(grid, grid.rows[2], false);
+          expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
       });
   });
 
