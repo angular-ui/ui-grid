@@ -5,7 +5,7 @@
     COL_FIELD: /COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
-    COL_CLASS_PREFIX: 'uiGridCol',
+    COL_CLASS_PREFIX: 'ui-grid-col',
     events: {
       GRID_SCROLL: 'uiGridScroll',
       GRID_SCROLLING: 'uiGridScrolling',
