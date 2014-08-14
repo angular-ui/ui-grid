@@ -18,7 +18,11 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
     ];
 
     _uiGridSelectionService_.initializeGrid(grid);
-    grid.options.data = [{col1:'a'},{col1:'b'}];
+    var data = [];
+      for (var i = 0; i < 10; i++) {
+            data.push({col1:'a'});
+      }
+      grid.options.data = data;
 
     grid.buildColumns();
     grid.modifyRows(grid.options.data);
@@ -57,5 +61,17 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
     });
   });
+
+  describe('shiftSelect function', function() {
+      it('should select rows in between using shift key', function(){
+          grid.api.selection.toggleRowSelection(grid.rows[2].entity);
+          grid.api.selection.shiftSelect(grid,grid.rows[5], true);
+          expect(grid.rows[2].isSelected).toBe(true);
+          expect(grid.rows[3].isSelected).toBe(true);
+          expect(grid.rows[4].isSelected).toBe(true);
+          expect(grid.rows[5].isSelected).toBe(true);
+      });
+  });
+
 
 });
