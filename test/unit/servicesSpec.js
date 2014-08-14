@@ -241,6 +241,35 @@ describe('Utility Service', function () {
             expect($utils.isNullOrUndefined(0)).toEqual(false);
         });
     });
+    // preEval
+    describe('preEval should convert non-bracket portions of expressions to bracket notation', function () {
+
+
+        it('should convert empty string', function() {
+            expect($utils.preEval('')).toEqual('');
+        });
+
+        it('should convert plain single variable reference', function() {
+            expect($utils.preEval('obj')).toEqual('obj');
+        });
+
+        it('should convert object with a property ', function() {
+            expect($utils.preEval('obj.prop')).toEqual('obj[\'prop\']');
+        });
+
+        it('should convert where object\'s property is a function', function() {
+            expect($utils.preEval('obj.f()')).toEqual('obj[\'f\']()');
+        });
+
+        it('should convert deeper complext property requiring bracket notation', function() {
+            expect($utils.preEval('obj.first-name.length')).toEqual('obj[\'first-name\'][\'length\']');
+        });
+
+        it('should convert recursively expression containing bracket notation', function() {
+            expect($utils.preEval('obj.first-name[ "already bracket ... with dots and \' single quote"].charAt(0)'))
+                .toEqual('obj[\'first-name\'][ "already bracket ... with dots and \' single quote"][\'charAt\'](0)');
+        });
+    });
 });
 
 })();
