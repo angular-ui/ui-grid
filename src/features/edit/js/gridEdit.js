@@ -189,16 +189,18 @@
            *  <br/>Defaults to gridOptions.editableCellTemplate
            */
           if (colDef.enableCellEdit) {
-            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate;
-
-            if (!colDef.editableCellTemplate) {
-              if (colDef.type && colDef.type === 'boolean') {
-                colDef.editableCellTemplate = 'ui-grid/cellBooleanEditor';
-              }
-              else {
-                colDef.editableCellTemplate = 'ui-grid/cellTextEditor';
-              }
-            }
+            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate ||
+              (function(){
+                if (colDef.type) {
+                  switch (colDef.type) {
+                    case 'boolean' :
+                      return 'ui-grid/cellBooleanEditor';
+                    case 'number' :
+                      return 'ui-grid/cellNumberEditor';
+                  }
+                }
+              })() ||
+              'ui-grid/cellTextEditor';
 
             promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
               .then(
@@ -511,12 +513,18 @@
                   $elm[0].focus();
                   $elm[0].select();
                   $elm.on('blur', function (evt) {
-                    $scope.stopEdit();
+                    $scope.stopEdit(evt);
                   });
                 });
 
-                $scope.stopEdit = function () {
-                  $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                $scope.stopEdit = function (evt) {
+                  if ($scope.inputForm && !$scope.inputForm.$valid) {
+                    evt.stopPropagation();
+                    $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
+                  }
+                  else {
+                    $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                  }
                 };
 
                 $elm.on('keydown', function (evt) {
@@ -526,7 +534,7 @@
                       $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                       break;
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
-                      $scope.stopEdit();
+                      $scope.stopEdit(evt);
                       break;
                   }
 
