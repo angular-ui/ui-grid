@@ -202,6 +202,35 @@ angular.module('ui.grid')
       return self.grid.renderContainers[containerId];
     };
 
+    /**
+     * @ngdoc function
+     * @name showColumn
+     * @methodOf ui.grid.class:GridColumn
+     * @description Makes the column visible.
+     */
+
+    GridColumn.prototype.showColumn = function() {
+      var self = this;
+
+      if (typeof self.colDef.visible!== "undefined") {
+        self.colDef.visible = true;
+      }
+    };
+
+    /**
+     * @ngdoc function
+     * @name hideColumn
+     * @methodOf ui.grid.class:GridColumn
+     * @description Hides the column.
+     */
+    GridColumn.prototype.hideColumn = function() {
+      var self = this;
+
+      if (typeof self.colDef.visible!== "undefined") {
+        self.colDef.visible = false;
+      }
+    };
+
     return GridColumn;
 }]);
 
