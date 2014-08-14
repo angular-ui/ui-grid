@@ -456,7 +456,7 @@
           var renderContainerElm = gridUtil.closestElm($elm, '.ui-grid-render-container');
 
           // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
-          var cells = renderContainerElm.querySelectorAll('.uiGridCol' + col.index + ' .ui-grid-cell-contents');
+          var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.index + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
               // $log.debug('width', gridUtil.elementWidth(cell));

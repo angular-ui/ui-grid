@@ -49,6 +49,13 @@
           var publicApi = {
             events: {
               selection: {
+                /**
+                 * @ngdoc event
+                 * @name rowSelectionChanged
+                 * @eventOf  ui.grid.selection.api:PublicApi
+                 * @description  is raised after the row.isSelected state is changed
+                 * @param {GridRow} row the row that was selected/deselected
+                 */
                 rowSelectionChanged: function (scope, row) {
                 }
               }
