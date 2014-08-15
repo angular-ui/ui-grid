@@ -42,7 +42,7 @@ Everything else should be added as new angular modules unless the grid team agre
 * One js file per feature
 * no global variables
 * public methods and events are registered in grid.api (more on that later)
-* design and code the angular way. What do we main by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!
+* design and code the angular way. What do we mean by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!
 * feature.js contains an enclosure:
 
 ```javascript
@@ -111,15 +111,38 @@ The main entry point for your feature.
       scope: false,
       compile: function () {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            //register your feature cols and row processors with uiGridCtrl.gri
+          pre: function ($scope, $elm, $attrs, uiGridCtrl, uiGridFeatureService) {
+            //register your feature cols and row processors with uiGridCtrl.grid
             //do anything else you can safely do here
             //!! of course, don't stomp on core grid logic or data
+            //namespace any properties you need on grid
+            //a good pattern is to have a service initializeGrid function
+            uiGridFeatureService.initializeGrid(uiGridCtrl.grid);
           }
         };
       }
     };
   }]);
+```
+
+
+### State
+Any state that your feature needs should be added to the appropriate model and namespaced with your feature name.
+An InitializeGrid function on your feature service makes a nice pattern for to add state to grid
+```
+  //grid level state
+  grid.featureName = {};
+  grid.featureName.someProperty = 'xyz';
+  
+  //column level state
+  grid.columns[0].featureName = {};
+  grid.columns[0].featureName.someProperty = 123;
+  
+  //row level state
+  grid.rows[0].featureName = {};
+  grid.rows[0].featureName.someProperty = 123;
+    
+  
 ```
 
 ### Directives stacked on core directives

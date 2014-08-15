@@ -67,8 +67,6 @@ angular.module('ui.grid')
     //represents the columns on the grid
     this.columns = [];
 
-    this.lastSelectedRow = null;
-
     //current rows that are rendered on the DOM
     this.renderedRows = [];
     this.renderedColumns = [];
