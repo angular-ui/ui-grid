@@ -180,7 +180,7 @@ angular.module('ui.grid')
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
         self.columns.forEach(function (column, index) {
-            if (!self.getColDef(column.field)) {
+            if (!self.getColDef(column.name)) {
                 self.columns.splice(index, 1);
             }
         });
