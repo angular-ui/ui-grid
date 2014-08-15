@@ -8,8 +8,9 @@
       // templateUrl: 'ui-grid/ui-grid-row',
       require: ['^uiGrid', '^uiGridRenderContainer'],
       scope: {
-         row: '=uiGridRow'
-         //rowIndex: '='
+         row: '=uiGridRow',
+         //rowRenderIndex is added to scope to give the true visual index of the row to any directives that need it
+         rowRenderIndex: '='
       },
       compile: function() {
         return {

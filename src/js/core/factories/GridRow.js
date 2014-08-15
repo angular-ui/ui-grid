@@ -10,6 +10,7 @@ angular.module('ui.grid')
    * relation to gridOptions.data.
    * @param {object} entity the array item from GridOptions.data
    * @param {number} index the current position of the row in the array
+   * @param {Grid} reference to the parent grid
    */
   function GridRow(entity, index, grid) {
 
@@ -36,6 +37,15 @@ angular.module('ui.grid')
       *  @description the index of the GridRow. It should always be unique and immutable
       */
     this.index = index;
+
+
+     /**
+      *  @ngdoc object
+      *  @name uid
+      *  @propertyOf  ui.grid.class:GridRow
+      *  @description  UniqueId of row
+      */
+     this.uid = gridUtil.nextUid();
 
      /**
       *  @ngdoc object

@@ -23,7 +23,7 @@ $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
    { name: 'age', enableCellEdit: true, type: 'number'},
    { name: 'isActive', enableCellEdit: true, type: 'boolean'},
-   { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)', cellEditableCondition: function($scope){return $scope.row.index%2} }
+   { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)', cellEditableCondition: function($scope){return $scope.rowRenderIndex%2} }
 ]
 </pre>
 
@@ -41,7 +41,10 @@ $scope.gridOptions.columnDefs = [
         { name: 'name', displayName: 'Name (editable)' },
         { name: 'age', displayName: 'Age' , type: 'number'},
         { name: 'address.city', displayName: 'Address (even rows editable)',
-             cellEditableCondition: function($scope){return $scope.row.index%2} },
+             cellEditableCondition: function($scope){
+             return $scope.rowRenderIndex%2
+             }
+        },
         { name: 'isActive', displayName: 'Active', type: 'boolean'}
       ];
 

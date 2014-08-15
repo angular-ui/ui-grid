@@ -128,7 +128,7 @@ The main entry point for your feature.
 
 ### State
 Any state that your feature needs should be added to the appropriate model and namespaced with your feature name.
-An InitializeGrid function on your feature service makes a nice pattern for to add state to grid
+An InitializeGrid function on your feature service makes a nice pattern to add state to grid
 ```
   //grid level state
   grid.featureName = {};
