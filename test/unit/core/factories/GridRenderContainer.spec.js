@@ -29,11 +29,11 @@ describe('GridRenderContainer factory', function () {
       }).not.toThrow();
     });
 
-    it('should throw exception if grid argument is not a Grid object', function () {
-      expect(function () {
-        var r = new GridRenderContainer('asdf', 'boogers');
-      }).toThrow(new Error("Grid argument is not a Grid object"));
-    });
+    // it('should throw exception if grid argument is not a Grid object', function () {
+    //   expect(function () {
+    //     var r = new GridRenderContainer('asdf', 'boogers');
+    //   }).toThrow(new Error("Grid argument is not a Grid object"));
+    // });
   });
 
 });
