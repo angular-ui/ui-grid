@@ -78,7 +78,7 @@ function ngGridCsvExportPlugin (opts) {
 
                     rowData += '"' + csvStringify(curCellRaw) + '",';
                 }
-                csvData = swapLastCommaForNewline(rowData);
+                csvData += swapLastCommaForNewline(rowData);
             }
             var fp = grid.$root.find(opts.containerPanel);
             var csvDataLinkPrevious = grid.$root.find(opts.containerPanel + ' .' + opts.linkClass);
