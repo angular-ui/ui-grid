@@ -47,7 +47,7 @@
     "karma-script-launcher": "~0.1",
     "grunt-karma": "~0.8",
     "marked": "~0.2",
-    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.1.7-custom10",
+    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.1.7-custom12",
     "grunt-conventional-changelog": "~1.0.0",
     "grunt-gh-pages": "~0.9.0",
     "semver": "~2.2.1",
