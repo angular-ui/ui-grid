@@ -11,9 +11,10 @@ templates should be used for any editor other than the default editors.
 ColumnDef Options:
 <br/><code>editableCellTemplate</code> (default: 'ui-grid/cellNumberEditor' for numeric columns, 'ui-grid/cellBooleanEditor' for boolean columns,
 'ui-grid/cellTextEditor' for others) - Valid html, templateCache Id,  or url that returns html content to be compiled when edit mode is invoked.
-<br/><code>enableCellEdit</code> (default: true) - false to not allow editing
+<br/><code>enableCellEdit</code> (default: false for columns of type 'object', true for all other columns) - true will enable editing and false will disable it.
 <br/><code>cellEditableCondition</code>  (default: true)  Can be set to a boolean or a function that will be called with the cellScope to determine if the cell should be invoked in edit mode.
-<br/><code>type</code> (default: null) If set to number or boolean the default editor provided for editing will be numeric or boolean editor respectively.
+<br/><code>type</code> (default: null) If set to 'number' or 'boolean' the default editor provided for editing will be numeric or boolean editor respectively.
+If set to 'object' the column will not be editable by default.
 <br/>
 The following option is available only if using cellNav feature
 <br/><code>enableCellEditOnFocus</code> - true to invoke editor as soon as cell has focus
@@ -23,6 +24,7 @@ $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
    { name: 'age', enableCellEdit: true, type: 'number'},
    { name: 'isActive', enableCellEdit: true, type: 'boolean'},
+   { name: 'address', displayName: 'Address', type: 'object'},
    { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)', cellEditableCondition: function($scope){return $scope.rowRenderIndex%2} }
 ]
 </pre>
@@ -31,7 +33,13 @@ $scope.gridOptions.columnDefs = [
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.edit', 'addressFormatter']);
+
+    angular.module('addressFormatter', []).filter('address', function () {
+      return function (input) {
+          return input.street + ', ' + input.city + ', ' + input.state + ', ' + input.zip;
+      };
+    });
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {  };
@@ -40,6 +48,7 @@ $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false },
         { name: 'name', displayName: 'Name (editable)' },
         { name: 'age', displayName: 'Age' , type: 'number'},
+        { name: 'address', displayName: 'Address', type: 'object', cellFilter: 'address'},
         { name: 'address.city', displayName: 'Address (even rows editable)',
              cellEditableCondition: function($scope){
              return $scope.rowRenderIndex%2

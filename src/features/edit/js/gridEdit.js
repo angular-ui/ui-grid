@@ -102,10 +102,9 @@
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description Default value that colDefs will take if their enableCellEdit is undefined. Defaults to true.
+           *  @description If defined, it will be the default value that colDefs will take if their enableCellEdit is
+           *  not defined. Defaults to undefined.
            */
-            //default option to true unless it was explicitly set to false
-          gridOptions.enableCellEdit = gridOptions.enableCellEdit !== false;
 
           /**
            *  @ngdoc object
@@ -165,7 +164,8 @@
            *  @propertyOf  ui.grid.edit.api:ColDef
            *  @description enable editing on column
            */
-          colDef.enableCellEdit = colDef.enableCellEdit === undefined ? gridOptions.enableCellEdit : colDef.enableCellEdit;
+          colDef.enableCellEdit = colDef.enableCellEdit === undefined ? (gridOptions.enableCellEdit === undefined ?
+            (colDef.type !== 'object'):gridOptions.enableCellEdit) : colDef.enableCellEdit;
 
           /**
            *  @ngdoc object
