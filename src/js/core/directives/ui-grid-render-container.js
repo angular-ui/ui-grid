@@ -221,9 +221,11 @@
     var self = this;
 
     self.rowStyle = function (index) {
+      var renderContainer = $scope.grid.renderContainers[$scope.containerId];
+
       var styles = {};
       
-      if (!$scope.disableRowOffset) {
+      if (!renderContainer.disableRowOffset) {
         if (index === 0 && self.currentTopRow !== 0) {
           // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
           var hiddenRowWidth = ($scope.rowContainer.currentTopRow) * $scope.grid.options.rowHeight;
@@ -233,7 +235,7 @@
         }
       }
       
-      if (!$scope.disableColumnOffset && $scope.colContainer.currentFirstColumn !== 0) {
+      if (!renderContainer.disableColumnOffset && $scope.colContainer.currentFirstColumn !== 0) {
         if ($scope.grid.isRTL()) {
           styles['margin-right'] = $scope.colContainer.columnOffset + 'px';
         }
@@ -246,9 +248,11 @@
     };
 
     self.columnStyle = function (index) {
+      var renderContainer = $scope.grid.renderContainers[$scope.containerId];
+
       var self = this;
-      
-      if (!$scope.disableColumnOffset) {
+
+      if (!renderContainer.disableColumnOffset) {
         if (index === 0 && $scope.colContainer.currentFirstColumn !== 0) {
           var offset = $scope.colContainer.columnOffset;
 

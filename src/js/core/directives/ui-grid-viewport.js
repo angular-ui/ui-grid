@@ -21,7 +21,7 @@
 
           var grid = uiGridCtrl.grid;
 
-          // Put the container sin scope so we can get rows and columns from them
+          // Put the containers in scope so we can get rows and columns from them
           $scope.rowContainer = containerCtrl.rowContainer;
           $scope.colContainer = containerCtrl.colContainer;
 
