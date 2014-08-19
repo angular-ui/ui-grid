@@ -23,7 +23,7 @@ describe('ui.grid.edit uiGridEditService', function () {
 
       var options = {};
       uiGridEditService.defaultGridOptions(options);
-      expect(options.enableCellEdit).toBe(true);
+      expect(options.enableCellEdit).toBe(undefined);
       expect(options.cellEditableCondition).toBe(true);
       expect(options.enableCellEditOnFocus).toBe(false);
 
@@ -83,7 +83,7 @@ describe('ui.grid.edit uiGridEditService', function () {
       expect(col.editableCellTemplate).not.toBeDefined();
     });
 
-    it('should not create additional edit properties if global enableCellEdit is true', inject(function ($timeout) {
+    it('should create additional edit properties if global enableCellEdit is true', inject(function ($timeout) {
       var  grid = gridClassFactory.createGrid();
       grid.options.enableCellEdit = true;
       grid.options.columnDefs = [
@@ -107,6 +107,20 @@ describe('ui.grid.edit uiGridEditService', function () {
       grid.options.enableCellEdit = false;
       grid.options.columnDefs = [
         {field: 'col1'}
+      ];
+      grid.buildColumns();
+
+      var colDef = grid.options.columnDefs[0];
+      var col = grid.columns[0];
+      uiGridEditService.editColumnBuilder(colDef,col,grid.options);
+      expect(col.colDef.enableCellEdit).toBe(false);
+      expect(col.colDef.editableCellTemplate).not.toBeDefined();
+    });
+
+    it('should not create additional edit properties for column of type object', function () {
+      var  grid = gridClassFactory.createGrid();
+      grid.options.columnDefs = [
+        {field: 'col1', type: 'object'}
       ];
       grid.buildColumns();
 
