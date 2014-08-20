@@ -62,12 +62,12 @@ angular.module('ui.grid')
    * @name getQualifiedColField
    * @methodOf ui.grid.class:GridRow
    * @description returns the qualified field name as it exists on scope
-   * ie: row.entity.fieldA
+   * ie: row.entity['fieldA']
    * @param {GridCol} col column instance
    * @returns {string} resulting name that can be evaluated on scope
    */
   GridRow.prototype.getQualifiedColField = function(col) {
-    return 'row.entity.' + col.field;
+    return "row.entity['" + col.field+"']";
   };
 
     /**
@@ -75,12 +75,12 @@ angular.module('ui.grid')
      * @name getEntityQualifiedColField
      * @methodOf ui.grid.class:GridRow
      * @description returns the qualified field name minus the row path
-     * ie: entity.fieldA
+     * ie: entity['fieldA']
      * @param {GridCol} col column instance
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
-    return 'entity.' + col.field;
+    return "entity['" + col.field+"']";
   };
 
   return GridRow;
