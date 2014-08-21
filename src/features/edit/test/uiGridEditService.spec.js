@@ -11,8 +11,7 @@ describe('ui.grid.edit uiGridEditService', function () {
     gridClassFactory = _gridClassFactory_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
-    $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
-
+    $templateCache.put('ui-grid/cellEditor', '<div ui-grid-editor></div>');
 
 
   }));
