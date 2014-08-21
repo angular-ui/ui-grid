@@ -109,6 +109,41 @@ angular.module('ui.grid')
       this.sort = {};
     };
 
+    GridColumn.prototype.getAggregationValue = function() {
+        var self = this;
+        var result  = 0;
+        var cellValue = null;
+        if (self.aggregationType === 'count') {
+            return 'total rows: ' + self.grid.getVisibleRowCount();
+        }
+        else if (self.aggregationType === 'sum') {
+            angular.forEach(self.grid.getVisibleRows(), function (row) {
+                cellValue = self.grid.getCellValue(row, self);
+                if (angular.isNumber(cellValue)) {
+                    result += self.grid.getCellValue(row, self);
+                }
+            });
+            //TODO: change to i18n
+            return 'total: ' + result;
+        }
+        else if (self.aggregationType === 'avg') {
+            angular.forEach(self.grid.getVisibleRows(), function (row) {
+                var cellValue = self.grid.getCellValue(row, self);
+                if (angular.isNumber(cellValue)) {
+                    result += cellValue;
+                }
+            });
+            result = result / self.grid.getVisibleRowCount();
+            if (angular.isNumber(result)) {
+                //TODO: change to i18n
+                return 'avg: ' + result;
+            }
+        }
+        else {
+            return null;
+        }
+    };
+
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
@@ -117,6 +152,8 @@ angular.module('ui.grid')
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
     self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
+
+    self.aggregationType = angular.isDefined(colDef.aggregationType) ? colDef.aggregationType : null;
 
     //self.originalIndex = index;
 

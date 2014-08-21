@@ -90,7 +90,9 @@
 
           // Scrollbar needs to be negatively positioned beyond the bottom of the relatively-positioned render container
           var bottom = (scrollBarWidth * -1) + gridBottomBorder;
-
+          if(grid.options.showFooter) {
+              bottom -= 1;
+          }
           var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px; }';
           ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
 

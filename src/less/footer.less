@@ -1,0 +1,92 @@
+
+.ui-grid-footer-panel-background {
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+}
+
+@topPanelRadius: @gridBorderRadius - @gridBorderWidth;
+.ui-grid-footer-panel {
+  position: relative;
+  // z-index: 1;
+  // background-color: @darkGray; // #EAEAEA
+  border-bottom: 1px solid @borderColor; // #D4D4D4
+  border-top: 1px solid @borderColor;
+  overflow: hidden;  // Disable so menus show up
+  font-weight: bold;
+
+  // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+  .ui-grid-footer-panel-background;
+
+  .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
+}
+
+.ui-grid-group-panel {
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+  border-bottom: 1px solid @borderColor; // #D4D4D4
+  border-top: 1px solid @borderColor; // #D4D4D4
+  .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
+  min-height: 30px;
+}
+.ui-grid-footer-group-panel .hidden {
+  display: none;
+}
+
+.ui-grid-footer-viewport {
+  overflow: hidden; // Disable so menus show up
+}
+
+.ui-grid-footer-canvas {
+  position: relative;
+
+  // Clearfix for floating header cells
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+
+  &:after {
+    clear:both;
+  }
+
+  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
+}
+
+.ui-grid-footer-cell {
+  position: relative;
+  float: left;
+  top: 0;
+  bottom: 0;
+  background-color: inherit;
+
+  .user-select(none);
+
+  // Default to width 0 so header height can calculate right. Otherwise
+  //  the header cells will flow onto the next line of the header container
+  //  and cause the header height to be calculated as twice the height
+  //  it should be. The column widths are calculated dynamically
+  width: 0;
+
+  &.sortable {
+    cursor: pointer;
+  }
+}
+
+// Make vertical bar in header row fill the height of the cell completely
+.ui-grid-footer .ui-grid-vertical-bar {
+  top: 0;
+  bottom: 0;
+}
+
+input[type="text"].ui-grid-filter-input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+
+  border: @gridBorderWidth solid  @borderColor;
+  .border-radius(@gridBorderRadius);
+
+  &:hover {
+    border: @gridBorderWidth solid  @borderColor;
+  }
+}

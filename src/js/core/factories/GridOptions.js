@@ -23,133 +23,140 @@ angular.module('ui.grid')
    */
   function GridOptions() {
 
-    this.onRegisterApi = angular.noop();
+      this.onRegisterApi = angular.noop();
 
-    /**
-     * @ngdoc object
-     * @name data
-     * @propertyOf  ui.grid.class:GridOptions
-     * @description Array of data to be rendered to grid.  Array can contain complex objects
-     */
-    this.data = [];
+      /**
+       * @ngdoc object
+       * @name data
+       * @propertyOf  ui.grid.class:GridOptions
+       * @description Array of data to be rendered to grid.  Array can contain complex objects
+       */
+      this.data = [];
 
-    /**
-     * @ngdoc object
-     * @name columnDefs
-     * @propertyOf  ui.grid.class:GridOptions
-     * @description (optional) Array of columnDef objects.  Only required property is name.
-     * _field property can be used in place of name for backwards compatibilty with 2.x_
-     *  @example
+      /**
+       * @ngdoc object
+       * @name columnDefs
+       * @propertyOf  ui.grid.class:GridOptions
+       * @description (optional) Array of columnDef objects.  Only required property is name.
+       * _field property can be used in place of name for backwards compatibilty with 2.x_
+       *  @example
 
-     var columnDefs = [{name:'field1'}, {name:'field2'}];
+       var columnDefs = [{name:'field1'}, {name:'field2'}];
 
-     */
-    this.columnDefs = [];
-    
-    /**
-     * @ngdoc array
-     * @name excludeProperties
-     * @propertyOf  ui.grid.class:GridOptions
-     * @description (optional) Array of property names in data to ignore when auto-generating column names. defaults to ['$$hashKey']
-     * If columnDefs is defined, this will be ignored.
-     */
-    
-    this.excludeProperties = ['$$hashKey'];
+       */
+      this.columnDefs = [];
 
-    /**
-     * @ngdoc boolean
-     * @name enableRowHashing
-     * @propertyOf ui.grid.class:GridOptions
-     * @description (optional) True by default. When enabled, this setting allows uiGrid to add
-     * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
-     * the grid to maintain state while vastly speeding up the process of altering `data` by adding/moving/removing rows.
-     * 
-     * Note that this DOES add properties to your data that you may not want, but they are stripped out when using `angular.toJson()`. IF
-     * you do not want this at all you can disable this setting but you will take a performance hit if you are using large numbers of rows
-     * and are altering the data set often.
-     */
-    this.enableRowHashing = true;
+      /**
+       * @ngdoc array
+       * @name excludeProperties
+       * @propertyOf  ui.grid.class:GridOptions
+       * @description (optional) Array of property names in data to ignore when auto-generating column names. defaults to ['$$hashKey']
+       * If columnDefs is defined, this will be ignored.
+       */
 
-    /**
-     * @ngdoc function
-     * @name rowIdentity
-     * @propertyOf ui.grid.class:GridOptions
-     * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
-     * 
-     * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
-     */
-    this.rowIdentity = function rowIdentity(row) {
-        return gridUtil.hashKey(row);
-    };
+      this.excludeProperties = ['$$hashKey'];
 
-    /**
-     * @ngdoc function
-     * @name getRowIdentity
-     * @propertyOf ui.grid.class:GridOptions
-     * @description (optional) This function returns the identity value uniquely identifying this row.
-     * 
-     * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
-     */
-    this.getRowIdentity = function rowIdentity(row) {
-        return row.$$hashKey;
-    };
+      /**
+       * @ngdoc boolean
+       * @name enableRowHashing
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) True by default. When enabled, this setting allows uiGrid to add
+       * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
+       * the grid to maintain state while vastly speeding up the process of altering `data` by adding/moving/removing rows.
+       *
+       * Note that this DOES add properties to your data that you may not want, but they are stripped out when using `angular.toJson()`. IF
+       * you do not want this at all you can disable this setting but you will take a performance hit if you are using large numbers of rows
+       * and are altering the data set often.
+       */
+      this.enableRowHashing = true;
 
-    this.headerRowHeight = 30;
-    this.rowHeight = 30;
-    this.maxVisibleRowCount = 200;
+      /**
+       * @ngdoc function
+       * @name rowIdentity
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
+       *
+       * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
+       */
+      this.rowIdentity = function rowIdentity(row) {
+          return gridUtil.hashKey(row);
+      };
 
-    this.columnWidth = 50;
-    this.maxVisibleColumnCount = 200;
+      /**
+       * @ngdoc function
+       * @name getRowIdentity
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) This function returns the identity value uniquely identifying this row.
+       *
+       * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
+       */
+      this.getRowIdentity = function rowIdentity(row) {
+          return row.$$hashKey;
+      };
 
-    // Turn virtualization on when number of data elements goes over this number
-    this.virtualizationThreshold = 20;
+      this.headerRowHeight = 30;
+      this.showFooter = false;
+      this.footerRowHeight = 30;
+      this.rowHeight = 30;
+      this.maxVisibleRowCount = 200;
 
-    this.columnVirtualizationThreshold = 10;
+      this.columnWidth = 50;
+      this.maxVisibleColumnCount = 200;
 
-    // Extra rows to to render outside of the viewport
-    this.excessRows = 4;
-    this.scrollThreshold = 4;
+      // Turn virtualization on when number of data elements goes over this number
+      this.virtualizationThreshold = 20;
 
-    // Extra columns to to render outside of the viewport
-    this.excessColumns = 4;
-    this.horizontalScrollThreshold = 2;
+      this.columnVirtualizationThreshold = 10;
 
-    // Sorting on by default
-    this.enableSorting = true;
+      // Extra rows to to render outside of the viewport
+      this.excessRows = 4;
+      this.scrollThreshold = 4;
 
-    // Filtering off by default
-    this.enableFiltering = false;
+      // Extra columns to to render outside of the viewport
+      this.excessColumns = 4;
+      this.horizontalScrollThreshold = 2;
 
-    // Column menu can be used by default
-    this.enableColumnMenu = true;
+      // Sorting on by default
+      this.enableSorting = true;
 
-    // Native scrolling on by default
-    this.enableNativeScrolling = true;
+      // Filtering off by default
+      this.enableFiltering = false;
 
-    // Virtual scrolling off by default, overrides enableNativeScrolling if set
-    this.enableVirtualScrolling = false;
+      // Column menu can be used by default
+      this.enableColumnMenu = true;
 
-    // Columns can't be smaller than 10 pixels
-    this.minimumColumnSize = 10;
+      // Native scrolling on by default
+      this.enableNativeScrolling = true;
 
-    /**
-     * @ngdoc function
-     * @name rowEquality
-     * @methodOf ui.grid.class:GridOptions
-     * @description By default, rows are compared using object equality.  This option can be overridden
-     * to compare on any data item property or function
-     * @param {object} entityA First Data Item to compare
-     * @param {object} entityB Second Data Item to compare
-     */
-    this.rowEquality = function(entityA, entityB) {
-      return entityA === entityB;
-    };
+      // Virtual scrolling off by default, overrides enableNativeScrolling if set
+      this.enableVirtualScrolling = false;
 
-    // Custom template for header row
-    this.headerTemplate = null;
+      // Columns can't be smaller than 10 pixels
+      this.minimumColumnSize = 10;
 
-    // Template for rows
-    this.rowTemplate = 'ui-grid/ui-grid-row';
+      /**
+       * @ngdoc function
+       * @name rowEquality
+       * @methodOf ui.grid.class:GridOptions
+       * @description By default, rows are compared using object equality.  This option can be overridden
+       * to compare on any data item property or function
+       * @param {object} entityA First Data Item to compare
+       * @param {object} entityB Second Data Item to compare
+       */
+      this.rowEquality = function (entityA, entityB) {
+          return entityA === entityB;
+      };
+
+      // Custom template for header row
+      this.headerTemplate = null;
+
+      // Custom template for footer row
+      this.footerTemplate = null;
+
+
+
+      // Template for rows
+      this.rowTemplate = 'ui-grid/ui-grid-row';
   }
 
   return GridOptions;

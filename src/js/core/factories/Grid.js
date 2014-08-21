@@ -32,6 +32,7 @@ angular.module('ui.grid')
     angular.extend(this.options, options);
 
     this.headerHeight = this.options.headerRowHeight;
+    this.footerHeight = this.options.showFooter === true ? this.options.footerRowHeight : 0;
     this.gridHeight = 0;
     this.gridWidth = 0;
     this.columnBuilders = [];
@@ -877,7 +878,7 @@ angular.module('ui.grid')
   Grid.prototype.getViewportHeight = function getViewportHeight() {
     var self = this;
 
-    var viewPortHeight = this.gridHeight - this.headerHeight;
+    var viewPortHeight = this.gridHeight - this.headerHeight - this.footerHeight;
 
     // Account for native horizontal scrollbar, if present
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
@@ -956,6 +957,10 @@ angular.module('ui.grid')
 
     // return this.visibleRowCache.length;
     return this.renderContainers.body.visibleRowCache.length;
+  };
+
+  Grid.prototype.getVisibleRows = function getVisibleRows() {
+      return this.renderContainers.body.visibleRowCache;
   };
 
   Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {

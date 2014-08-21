@@ -70,79 +70,83 @@
             }
 
             function scrollHandler (evt, args) {
-              // Vertical scroll
-              if (args.y && $scope.bindScrollVertical) {
-                containerCtrl.prevScrollArgs = args;
+                // Vertical scroll
+                if (args.y && $scope.bindScrollVertical) {
+                    containerCtrl.prevScrollArgs = args;
 
-                var scrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
+                    var scrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
-                // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
-                if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
-                  scrollLength = scrollLength + grid.horizontalScrollbarHeight;
+                    // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
+                    if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
+                        scrollLength = scrollLength + grid.horizontalScrollbarHeight;
+                    }
+
+                    var oldScrollTop = containerCtrl.viewport[0].scrollTop;
+
+                    var scrollYPercentage;
+                    if (typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
+                        scrollYPercentage = args.y.percentage;
+                    }
+                    else if (typeof(args.y.pixels) !== 'undefined' && args.y.pixels !== undefined) {
+                        scrollYPercentage = args.y.percentage = (oldScrollTop + args.y.pixels) / scrollLength;
+                        // $log.debug('y.percentage', args.y.percentage);
+                    }
+                    else {
+                        throw new Error("No percentage or pixel value provided for scroll event Y axis");
+                    }
+
+                    var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
+
+                    containerCtrl.viewport[0].scrollTop = newScrollTop;
+
+                    // TOOD(c0bra): what's this for?
+                    // grid.options.offsetTop = newScrollTop;
+
+                    containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
                 }
 
-                var oldScrollTop = containerCtrl.viewport[0].scrollTop;
-                
-                var scrollYPercentage;
-                if (typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
-                  scrollYPercentage = args.y.percentage;
+                // Horizontal scroll
+                if (args.x && $scope.bindScrollHorizontal) {
+                    containerCtrl.prevScrollArgs = args;
+
+                    var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
+
+                    // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
+                    var oldScrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
+
+                    var scrollXPercentage;
+                    if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
+                        scrollXPercentage = args.x.percentage;
+                    }
+                    else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
+                        scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
+                    }
+                    else {
+                        throw new Error("No percentage or pixel value provided for scroll event X axis");
+                    }
+
+                    var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
+
+                    // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
+
+                    // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+                    containerCtrl.viewport[0].scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
+
+                    containerCtrl.prevScrollLeft = newScrollLeft;
+
+                    if (containerCtrl.headerViewport) {
+                        // containerCtrl.headerViewport.scrollLeft = newScrollLeft;
+                        containerCtrl.headerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
+                    }
+                    if (containerCtrl.footerViewport) {
+                        // containerCtrl.footerViewport.scrollLeft = newScrollLeft;
+                        containerCtrl.footerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, newScrollLeft);
+                    }
+
+                    // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
+
+                    containerCtrl.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
                 }
-                else if (typeof(args.y.pixels) !== 'undefined' && args.y.pixels !== undefined) {
-                  scrollYPercentage = args.y.percentage = (oldScrollTop + args.y.pixels) / scrollLength;
-                  // $log.debug('y.percentage', args.y.percentage);
-                }
-                else {
-                  throw new Error("No percentage or pixel value provided for scroll event Y axis");
-                }
-
-                var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
-
-                containerCtrl.viewport[0].scrollTop = newScrollTop;
-                
-                // TOOD(c0bra): what's this for?
-                // grid.options.offsetTop = newScrollTop;
-
-                containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
-              }
-
-              // Horizontal scroll
-              if (args.x && $scope.bindScrollHorizontal) {
-                containerCtrl.prevScrollArgs = args;
-
-                var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-
-                // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
-                var oldScrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
-
-                var scrollXPercentage;
-                if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
-                  scrollXPercentage = args.x.percentage;
-                }
-                else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
-                  scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
-                }
-                else {
-                  throw new Error("No percentage or pixel value provided for scroll event X axis");
-                }
-
-                var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
-                
-                // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
-
-                // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
-                containerCtrl.viewport[0].scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
-
-                containerCtrl.prevScrollLeft = newScrollLeft;
-
-                if (containerCtrl.headerViewport) {
-                  // containerCtrl.headerViewport.scrollLeft = newScrollLeft;
-                  containerCtrl.headerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
-                }
-
-                // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
-
-                containerCtrl.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
-              }
             }
 
             // Scroll the render container viewport when the mousewheel is used
@@ -193,15 +197,19 @@
               var viewportHeight = rowContainer.getViewportHeight();
 
               var headerViewportWidth = colContainer.getHeaderViewportWidth();
+              var footerViewportWidth = colContainer.getHeaderViewportWidth();
               
               // Set canvas dimensions
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { width: ' + canvasWidth + 'px; }';
-              
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-canvas { width: ' + canvasWidth + 'px; }';
+
+
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-viewport { width: ' + footerViewportWidth + 'px; }';
 
-              // Update 
+                // Update
 
               return ret;
             }
