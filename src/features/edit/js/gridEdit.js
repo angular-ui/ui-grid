@@ -127,9 +127,8 @@
            *  @ngdoc object
            *  @name editableCellTemplate
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
-           *  @description If specified, cellTemplate to use as the editor for all columns.  Requires the edit feature to be enabled
-           *  <br/> default to 'ui-grid/cellTextEditor'
+           *  @description If specified, cellTemplate to use as the editor for all columns.
+           *  <br/> default to 'ui-grid/cellEditor'
            */
 
           /**
@@ -199,18 +198,7 @@
            *  Requires the edit feature to be enabled
            */
           if (colDef.enableCellEdit) {
-            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate ||
-              (function(){
-                if (colDef.type) {
-                  switch (colDef.type) {
-                    case 'boolean' :
-                      return 'ui-grid/cellBooleanEditor';
-                    case 'number' :
-                      return 'ui-grid/cellNumberEditor';
-                  }
-                }
-              })() ||
-              'ui-grid/cellTextEditor';
+            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate || 'ui-grid/cellEditor';
 
             promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
               .then(
@@ -332,7 +320,7 @@
    *  Editing Actions.
    *
    *  Binds edit start events to the uiGridCell element.  When the events fire, the gridCell element is appended
-   *  with the columnDef.editableCellTemplate element ('cellTextEditor.html' by default).
+   *  with the columnDef.editableCellTemplate element ('cellEditor.html' by default).
    *
    *  The editableCellTemplate should respond to uiGridEditConstants.events.BEGIN\_CELL\_EDIT angular event
    *  and do the initial steps needed to edit the cell (setfocus on input element, etc).
@@ -425,6 +413,19 @@
               html = $scope.col.editableCellTemplate;
               html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
+              $scope.inputType = 'text';
+              switch ($scope.col.colDef.type){
+                case 'boolean':
+                  $scope.inputType = 'checkbox';
+                  break;
+                case 'number':
+                  $scope.inputType = 'number';
+                  break;
+                case 'date':
+                  $scope.inputType = 'date';
+                  break;
+              }
+
               var cellElement;
               $scope.$apply(function () {
                   inEdit = true;
@@ -496,9 +497,8 @@
    *  @element div
    *  @restrict A
    *
-   *  @description input editor directive for text fields.
+   *  @description input editor directive for editable fields.
    *  Provides EndEdit and CancelEdit events
-   *  Can be used as a template to develop other editors
    *
    *  Events that end editing:
    *     blur and enter keydown
@@ -507,7 +507,7 @@
    *    - Esc keydown
    *
    */
-  module.directive('uiGridTextEditor',
+  module.directive('uiGridEditor',
     ['uiGridConstants', 'uiGridEditConstants',
       function (uiGridConstants, uiGridEditConstants) {
         return {
@@ -533,8 +533,6 @@
                
                $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
-               
-
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
@@ -583,5 +581,42 @@
           }
         };
       }]);
+
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:input
+   *  @element input
+   *  @restrict E
+   *
+   *  @description directive to provide binding between input[date] value and ng-model for angular 1.2
+   *  It is similar to input[date] directive of angular 1.3
+   *
+   *  Supported date format for input is 'yyyy-MM-dd'
+   *  The directive will set the $valid property of input element and the enclosing form to false if
+   *  model is invalid date or value of input is entered wrong.
+   *
+   */
+    module.directive('input', ['$filter', function ($filter) {
+      return {
+        restrict: 'E',
+        require: '?ngModel',
+        link: function (scope, element, attrs, ngModel) {
+
+          if (angular.version.minor === 2 && attrs.type && 'date' === attrs.type && ngModel) {
+
+            ngModel.$formatters.push(function (modelValue) {
+              ngModel.$setValidity(null, (!modelValue || !isNaN(modelValue.getTime())));
+              return $filter('date')(modelValue, 'yyyy-MM-dd');
+            });
+
+            ngModel.$parsers.push(function (viewValue) {
+              var dateValue = new Date(viewValue);
+              ngModel.$setValidity(null, (!dateValue || !isNaN(dateValue.getTime())));
+              return dateValue;
+            });
+          }
+        }
+      };
+    }]);
 
 })();
