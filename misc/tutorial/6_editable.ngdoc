@@ -4,16 +4,15 @@
 
 You can use the `enableCellEdit` options in your column definitions to allow a column to be editable.
 
-Editing is invoked via double-click, f2, or start typing any non-navigable key. By default numeric editor is provided for numeric fields,
-boolean editor is provided for boolean fields and for all other fields a simple text editor is provided. Custom edit
-templates should be used for any editor other than the default editors.
+Editing is invoked via double-click, f2, or start typing any non-navigable key. By default numeric, date and checkbox editors are
+provided for fields specified as number, date and boolean types, for all other fields a simple text editor is provided.
+Custom edit templates should be used for any editor other than the default editors.
 
 ColumnDef Options:
-<br/><code>editableCellTemplate</code> (default: 'ui-grid/cellNumberEditor' for numeric columns, 'ui-grid/cellBooleanEditor' for boolean columns,
-'ui-grid/cellTextEditor' for others) - Valid html, templateCache Id,  or url that returns html content to be compiled when edit mode is invoked.
+<br/><code>editableCellTemplate</code> (default: 'ui-grid/cellEditor') - Valid html, templateCache Id,  or url that returns html content to be compiled when edit mode is invoked.
 <br/><code>enableCellEdit</code> (default: false for columns of type 'object', true for all other columns) - true will enable editing and false will disable it.
 <br/><code>cellEditableCondition</code>  (default: true)  Can be set to a boolean or a function that will be called with the cellScope to determine if the cell should be invoked in edit mode.
-<br/><code>type</code> (default: null) If set to 'number' or 'boolean' the default editor provided for editing will be numeric or boolean editor respectively.
+<br/><code>type</code> (default: 'string') If set to 'number', 'boolean' or 'date' the default editor provided for editing will be numeric or boolean or date editor respectively.
 If set to 'object' the column will not be editable by default.
 <br/>
 The following option is available only if using cellNav feature
@@ -23,9 +22,10 @@ The following option is available only if using cellNav feature
 $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate },
    { name: 'age', enableCellEdit: true, type: 'number'},
-   { name: 'isActive', enableCellEdit: true, type: 'boolean'},
+   { name: 'registered', displayName: 'Registered' , type: 'date'},
    { name: 'address', displayName: 'Address', type: 'object'},
    { name: 'address.city', enableCellEdit: true, displayName: 'Address (even rows editable)', cellEditableCondition: function($scope){return $scope.rowRenderIndex%2} }
+   { name: 'isActive', enableCellEdit: true, type: 'boolean'},
 ]
 </pre>
 
@@ -48,6 +48,7 @@ $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false },
         { name: 'name', displayName: 'Name (editable)' },
         { name: 'age', displayName: 'Age' , type: 'number'},
+        { name: 'registered', displayName: 'Registered' , type: 'date', cellFilter: 'date:"yyyy-MM-dd"'},
         { name: 'address', displayName: 'Address', type: 'object', cellFilter: 'address'},
         { name: 'address.city', displayName: 'Address (even rows editable)',
              cellEditableCondition: function($scope){
@@ -72,6 +73,9 @@ $scope.gridOptions.columnDefs = [
 
       $http.get('/data/500_complex.json')
         .success(function(data) {
+          for(i = 0; i < data.length; i++){
+            data[i].registered = new Date(data[i].registered);
+          }
           $scope.gridOptions.data = data;
         });
     }]);
