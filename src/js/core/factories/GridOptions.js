@@ -73,7 +73,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name rowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
@@ -85,7 +85,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name getRowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function returns the identity value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
