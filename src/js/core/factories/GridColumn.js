@@ -11,27 +11,62 @@ angular.module('ui.grid')
    * @param {ColDef} colDef Column definition.
    * @param {number} index the current position of the column in the array
    * @param {Grid} grid reference to the grid
-   <br/>Required properties
-   <ul>
-   <li>
-   name - name of field
-   </li>
-   </ul>
-
-   <br/>Optional properties
-   <ul>
-   <li>
-   field - angular expression that evaluates against grid.options.data array element.
-   <br/>can be complex - employee.address.city
-   <br/>Can also be a function - employee.getFullAddress()
-   <br/>see angular docs on binding expressions
-   </li>
-   <li>displayName - column name when displayed on screen.  defaults to name</li>
-   <li>sortingAlgorithm - Algorithm to use for sorting this column. Takes 'a' and 'b' parameters like any normal sorting function.</li>
-   <li>todo: add other optional fields as implementation matures</li>
-   </ul>
-   *
    */
+   
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridColumn.name
+    * @propertyOf ui.grid.class:GridColumn
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (mandatory) each column should have a name, although for backward
+    * compatibility with 2.x name can be omitted if field is present
+    *
+    */
+    
+    /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridColumn.displayName
+    * @propertyOf ui.grid.class:GridColumn
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) name is used if displayName if displayName is not
+    * provided.  If provided then displayName is used in the header.
+    *
+    */
+    
+    /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridColumn.field
+    * @propertyOf ui.grid.class:GridColumn
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) field must be provided if you wish to bind to a 
+    * column in the data source.  Should be an angular expression that evaluates against grid.options.data 
+    * array element.  Can be a complex expression: <code>employee.address.city</code>, or can be a function: <code>employee.getFullAddress()</code>.
+    * See the angular docs on binding expressions.
+    *
+    */
+    
+    /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridColumn.sortingAlgorithm
+    * @propertyOf ui.grid.class:GridColumn
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional)  Algorithm to use for sorting this column. Takes 'a' and 'b' parameters 
+    * like any normal sorting function.
+    *
+    */
+    
+    /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridColumn.filter
+    * @propertyOf ui.grid.class:GridColumn
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional)  Filter to insert against this column.  
+    * @example
+    * <pre>{ term: 'text' }</pre>
+    *
+    */
+    
+   
   function GridColumn(colDef, index, grid) {
     var self = this;
 
