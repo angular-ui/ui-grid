@@ -73,7 +73,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name rowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
@@ -85,7 +85,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name getRowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function returns the identity value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
@@ -114,13 +114,31 @@ angular.module('ui.grid')
     this.excessColumns = 4;
     this.horizontalScrollThreshold = 2;
 
-    // Sorting on by default
+    /**
+     * @ngdoc boolean
+     * @name enableSorting
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) True by default. When enabled, this setting adds sort
+     * widgets to the column headers, allowing sorting of the data.
+     */
     this.enableSorting = true;
 
-    // Filtering off by default
+    /**
+     * @ngdoc boolean
+     * @name enableFiltering
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) False by default. When enabled, this setting adds filter 
+     * boxes to each column header, allowing filtering within the column.
+     */
     this.enableFiltering = false;
 
-    // Column menu can be used by default
+    /**
+     * @ngdoc boolean
+     * @name enableColumnMenu
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) True by default. When enabled, this setting displays a column
+     * menu within each column.
+     */
     this.enableColumnMenu = true;
 
     // Native scrolling on by default
@@ -145,10 +163,26 @@ angular.module('ui.grid')
       return entityA === entityB;
     };
 
-    // Custom template for header row
+    /**
+     * @ngdoc boolean
+     * @name headerTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) Null by default. When provided, this setting uses a custom header
+     * template. Can be set to either the name of a template file 'header_template.html', inline html 
+     * '<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>', or the id
+     * of a precompiled template '??'.  Refer to the custom header tutorial for more information.
+     */
     this.headerTemplate = null;
 
-    // Template for rows
+    /**
+     * @ngdoc boolean
+     * @name rowTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) 'ui-grid/ui-grid-row' by default. When provided, this setting uses a 
+     * custom row template.  Can be set to either the name of a template file 'row_template.html', inline html 
+     * '<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>', or the id
+     * of a precompiled template '??' can be provided.  Refer to the custom row template tutorial for more information.
+     */
     this.rowTemplate = 'ui-grid/ui-grid-row';
   }
 
