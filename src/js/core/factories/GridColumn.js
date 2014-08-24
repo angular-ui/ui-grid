@@ -60,14 +60,6 @@ angular.module('ui.grid')
     *
     */
     
-    /** 
-    * @ngdoc property
-    * @name ui.grid.class:gridColumn.filter
-    * @propertyOf ui.grid.class:gridOptions.columnDefs
-    * @description (optional)  Filter to insert against this column.  In the format:
-    * { term: 'text' }
-    *
-    */
    
   function GridColumn(colDef, index, grid) {
     var self = this;
