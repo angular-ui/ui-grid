@@ -93,6 +93,104 @@ angular.module('ui.grid')
     }
   };
 
+  
+  
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.width
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) sets the column width.  Can be either 
+    * a number or a percentage, or an * for auto.
+    * @example
+    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', width: 100},
+    *                                          { field: 'field2', width: '20%'},
+    *                                          { field: 'field3', width: '*' }]; </pre>
+    *
+    */
+
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.minWidth
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) sets the minimum column width.  Should be a number.
+    * @example
+    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', minWidth: 100}]; </pre>
+    *
+    */
+
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.maxWidth
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) sets the maximum column width.  Should be a number.
+    * @example
+    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', maxWidth: 100}]; </pre>
+    *
+    */
+
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.visible
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) sets whether or not the column is visible
+    * </br>Default is true
+    * @example
+    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', visible: true},
+    *                                          { field: 'field2', visible: false }]; </pre>
+    *
+    */
+   
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.sort
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) not clear what this does, but it can be set
+    *
+    */   
+
+   /** 
+    * @ngdoc property
+    * @name ui.grid.class:GridOptions.columnDef.sortingAlgorithm
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) a function that will be used for sorting the column, in standard
+    * a b format.
+    *
+    */   
+
+   /** 
+    * @ngdoc array
+    * @name ui.grid.class:GridOptions.columnDef.filters
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) unclear what this does or how it's used, but it does something.
+    *
+    */   
+
+   /** 
+    * @ngdoc array
+    * @name ui.grid.class:GridOptions.columnDef.menuItems
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description (optional) used to add menu items to a column.  Refer to the tutorial on this 
+    * functionality.
+    * @example
+    * <pre>  $scope.gridOptions.columnDefs = [ 
+    *   { field: 'field1', menuItems: [
+    *     {
+    *       title: 'Outer Scope Alert',
+    *       icon: 'ui-grid-icon-info-circled',
+    *       action: function($event) {
+    *         this.context.blargh(); // $scope.blargh() would work too, this is just an example
+    *       },
+    *       context: $scope
+    *     },
+    *     {
+    *       title: 'Grid ID',
+    *       action: function() {
+    *         alert('Grid ID: ' + this.grid.id);
+    *       }
+    *     }
+    *   ] }]; </pre>
+    *
+    */   
   GridColumn.prototype.updateColumnDef = function(colDef, index) {
     var self = this;
 
