@@ -58,7 +58,9 @@
          *  @ngdoc object
          *  @name enableRowSelection
          *  @propertyOf  ui.grid.pinning.api:GridOptions
-         *  @description Enable pinning. <br/>Defaults to true
+         *  @propertyOf  ui.grid.class:GridOptions
+         *  @description Enable pinning for the entire grid. Requires the pinning feature to be enabled. 
+         *  <br/>Defaults to true
          */
         gridOptions.enablePinning = gridOptions.enablePinning !== false;
 
@@ -78,7 +80,9 @@
          *  @ngdoc object
          *  @name enablePinning
          *  @propertyOf  ui.grid.pinning.api:ColDef
-         *  @description Enable pinning. <br/>Defaults to true
+         *  @propertyOf  ui.grid.class:GridOptions.columnDef
+         *  @description Enable pinning for the individual column. Requires the pinning feature to be enabled. 
+         *  <br/>Defaults to true
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
 

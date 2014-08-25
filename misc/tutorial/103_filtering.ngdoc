@@ -6,6 +6,8 @@ UI-Grid allows you to filter rows. Just set the `enableFiltering` flag in your g
 
 Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the last column below for an example.
 
+Default filters can be set programmatically by setting `filter: { term: 'xxx' }` in the column def.  See the second column below.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -16,7 +18,7 @@ Filtering can be disabled at the column level by setting `enableFiltering: false
         enableFiltering: true,
         columnDefs: [
           { field: 'name' },
-          { field: 'gender' },
+          { field: 'gender', filter: { term: 'male' } },
           { field: 'company', enableFiltering: false  }
         ]
       };
