@@ -33,6 +33,13 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
       // Get the inner menu part. It's what slides up/down
       var inner = $elm[0].querySelectorAll('.ui-grid-menu-inner');
 
+      /**
+       * @ngdoc boolean
+       * @name ui.grid.class:GridOptions.columnDef.enableSorting
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description (optional) True by default. When enabled, this setting adds sort
+       * widgets to the column header, allowing sorting of the data in the individual column.
+       */
       function sortable() {
         if (uiGridCtrl.grid.options.enableSorting && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting) {
           return true;
@@ -42,6 +49,13 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         }
       }
 
+      /**
+       * @ngdoc boolean
+       * @name ui.grid.class:GridOptions.columnDef.enableFiltering
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description (optional) True by default. When enabled, this setting adds filter
+       * widgets to the column header, allowing filtering of the data in the individual column.
+       */
       function filterable() {
         if (uiGridCtrl.grid.options.enableFiltering && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableFiltering) {
           return true;

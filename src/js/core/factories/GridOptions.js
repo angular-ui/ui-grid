@@ -34,21 +34,33 @@ angular.module('ui.grid')
     this.data = [];
 
     /**
-     * @ngdoc object
-     * @name columnDefs
+     * @ngdoc array
+     * @name ui.grid.class:GridOptions.columnDefs
      * @propertyOf  ui.grid.class:GridOptions
      * @description (optional) Array of columnDef objects.  Only required property is name.
      * _field property can be used in place of name for backwards compatibilty with 2.x_
      *  @example
 
-     var columnDefs = [{name:'field1'}, {name:'field2'}];
+     <pre>var columnDefs = [{name:'field1'}, {name:'field2'}];</pre>
 
      */
     this.columnDefs = [];
-    
+
+    /**
+     * @ngdoc object
+     * @name ui.grid.class:GridOptions.columnDef
+     * @description (optional) Definition of an individual column, which would typically be
+     * one of many column definitions within the gridOptions.columnDefs array
+     *  @example
+
+     <pre>{name:'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
+
+     */
+
+        
     /**
      * @ngdoc array
-     * @name excludeProperties
+     * @name ui.grid.class:GridOptions.excludeProperties
      * @propertyOf  ui.grid.class:GridOptions
      * @description (optional) Array of property names in data to ignore when auto-generating column names. defaults to ['$$hashKey']
      * If columnDefs is defined, this will be ignored.
@@ -58,7 +70,7 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc boolean
-     * @name enableRowHashing
+     * @name ui.grid.class:GridOptions.enableRowHashing
      * @propertyOf ui.grid.class:GridOptions
      * @description (optional) True by default. When enabled, this setting allows uiGrid to add
      * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
@@ -72,8 +84,8 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc function
-     * @name rowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @name ui.grid.class:GridOptions.rowIdentity
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function is used to get and, if necessary, set the value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
@@ -84,8 +96,8 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc function
-     * @name getRowIdentity
-     * @propertyOf ui.grid.class:GridOptions
+     * @name ui.grid.class:GridOptions.getRowIdentity
+     * @methodOf ui.grid.class:GridOptions
      * @description (optional) This function returns the identity value uniquely identifying this row.
      * 
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
@@ -114,13 +126,31 @@ angular.module('ui.grid')
     this.excessColumns = 4;
     this.horizontalScrollThreshold = 2;
 
-    // Sorting on by default
+    /**
+     * @ngdoc boolean
+     * @name ui.grid.class:GridOptions.enableSorting
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) True by default. When enabled, this setting adds sort
+     * widgets to the column headers, allowing sorting of the data.
+     */
     this.enableSorting = true;
 
-    // Filtering off by default
+    /**
+     * @ngdoc boolean
+     * @name ui.grid.class:GridOptions.enableFiltering
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) False by default. When enabled, this setting adds filter 
+     * boxes to each column header, allowing filtering within the column.
+     */
     this.enableFiltering = false;
 
-    // Column menu can be used by default
+    /**
+     * @ngdoc boolean
+     * @name ui.grid.class:GridOptions.enableColumnMenu
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) True by default. When enabled, this setting displays a column
+     * menu within each column.
+     */
     this.enableColumnMenu = true;
 
     // Native scrolling on by default
@@ -134,7 +164,7 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc function
-     * @name rowEquality
+     * @name ui.grid.class:GridOptions.rowEquality
      * @methodOf ui.grid.class:GridOptions
      * @description By default, rows are compared using object equality.  This option can be overridden
      * to compare on any data item property or function
@@ -145,10 +175,26 @@ angular.module('ui.grid')
       return entityA === entityB;
     };
 
-    // Custom template for header row
+    /**
+     * @ngdoc boolean
+     * @name ui.grid.class:GridOptions.headerTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) Null by default. When provided, this setting uses a custom header
+     * template. Can be set to either the name of a template file 'header_template.html', inline html 
+     * <pre>'<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>'</pre>, or the id
+     * of a precompiled template '??'.  Refer to the custom header tutorial for more information.
+     */
     this.headerTemplate = null;
 
-    // Template for rows
+    /**
+     * @ngdoc boolean
+     * @name ui.grid.class:GridOptions.rowTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) 'ui-grid/ui-grid-row' by default. When provided, this setting uses a 
+     * custom row template.  Can be set to either the name of a template file 'row_template.html', inline html 
+     * <pre>'<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'</pre>, or the id
+     * of a precompiled template '??' can be provided.  Refer to the custom row template tutorial for more information.
+     */
     this.rowTemplate = 'ui-grid/ui-grid-row';
   }
 

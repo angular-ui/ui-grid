@@ -174,14 +174,18 @@
            *  @ngdoc object
            *  @name enableRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @description Enable row selection. <br/>Defaults to true
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description Enable row selection for entire grid.  Requires row selection feature to be enabled.
+           *  <br/>Defaults to true
            */
           gridOptions.enableRowSelection = gridOptions.enableRowSelection !== false;
           /**
            *  @ngdoc object
            *  @name multiSelect
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @description Enable multiple row selection. <br/>Defaults to true
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description Enable multiple row selection for entire grid.  Requires row selection feature to be enabled.
+           *  <br/>Defaults to true
            */
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
         },
