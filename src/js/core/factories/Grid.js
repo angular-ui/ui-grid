@@ -125,6 +125,20 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name getColDef
+   * @methodOf ui.grid.class:Grid
+   * @description returns a grid colDef for the column name
+   * @param {string} column.field
+   */
+  Grid.prototype.getColDef = function getColDef(name) {
+    var colDefs = this.options.columnDefs.filter(function (colDef) {
+      return colDef.name === name;
+    });
+    return colDefs.length > 0 ? colDefs[0] : null;
+  };
+
+  /**
+   * @ngdoc function
    * @name assignTypes
    * @methodOf ui.grid.class:Grid
    * @description uses the first row of data to assign colDef.type for any types not defined.
@@ -160,6 +174,15 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
+
+    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
+    if (self.columns.length > self.options.columnDefs.length) {
+        self.columns.forEach(function (column, index) {
+            if (!self.getColDef(column.name)) {
+                self.columns.splice(index, 1);
+            }
+        });
+    }
 
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
