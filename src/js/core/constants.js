@@ -5,6 +5,10 @@
     COL_FIELD: /COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
+    FUNC_REGEXP: /(\([^)]*\))?$/,
+    DOT_REGEXP: /\./g,
+    APOS_REGEXP: /'/g,
+    BRACKET_REGEXP: /^(.*)((?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/,
     COL_CLASS_PREFIX: 'ui-grid-col',
     events: {
       GRID_SCROLL: 'uiGridScroll',

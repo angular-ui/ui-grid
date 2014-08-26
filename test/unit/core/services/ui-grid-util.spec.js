@@ -283,4 +283,31 @@ describe('ui.grid.utilService', function() {
       expect(gridUtil.type(g)).toEqual('Grid');
     });
   });
+
+  describe('preEval should convert non-bracket portions of expressions to bracket notation', function () {
+    it('should convert empty string', function() {
+      expect(gridUtil.preEval('')).toEqual('');
+    });
+
+    it('should convert plain single variable reference', function() {
+      expect(gridUtil.preEval('obj')).toEqual('obj');
+    });
+
+    it('should convert object with a property ', function() {
+      expect(gridUtil.preEval('obj.prop')).toEqual('obj[\'prop\']');
+    });
+
+    it('should convert where object\'s property is a function', function() {
+      expect(gridUtil.preEval('obj.f()')).toEqual('obj[\'f\']()');
+    });
+
+    it('should convert deeper complex property requiring bracket notation', function() {
+      expect(gridUtil.preEval('obj.first-name.length')).toEqual('obj[\'first-name\'][\'length\']');
+    });
+
+    it('should convert recursively expression containing bracket notation', function() {
+      expect(gridUtil.preEval('obj.first-name[ "already bracket ... with dots and \' single quote"].charAt(0)'))
+        .toEqual('obj[\'first-name\'][ "already bracket ... with dots and \' single quote"][\'charAt\'](0)');
+    });
+  });
 });
