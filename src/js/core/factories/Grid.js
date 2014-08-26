@@ -128,7 +128,7 @@ angular.module('ui.grid')
    * @name getColDef
    * @methodOf ui.grid.class:Grid
    * @description returns a grid colDef for the column name
-   * @param {string} column.field
+   * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
     var colDefs = this.options.columnDefs.filter(function (colDef) {
