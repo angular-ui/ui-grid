@@ -8,7 +8,7 @@
     FUNC_REGEXP: /(\([^)]*\))?$/,
     DOT_REGEXP: /\./g,
     APOS_REGEXP: /'/g,
-    BRACKET_REGEXP: /^(.*)((?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/,
+    BRACKET_REGEXP: /^(.*)((?:\s*\[\s*\d+\s*\]\s*)|(?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/,
     COL_CLASS_PREFIX: 'ui-grid-col',
     events: {
       GRID_SCROLL: 'uiGridScroll',
