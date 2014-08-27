@@ -19,7 +19,7 @@ xdescribe('ui.grid.edit GridCellDirective with CellNav feature', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/cellTextEditor', '<div><input ng-model="COL_FIELD" ui-grid-text-editor /></div>');
+    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="COL_FIELD" ui-grid-editor /></div>');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();
