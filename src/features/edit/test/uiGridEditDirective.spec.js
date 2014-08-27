@@ -2,10 +2,7 @@ describe('uiGridEditDirective', function () {
   var gridUtil;
   var scope;
   var element;
-  var cellTextEditorHtml = '<div><input ng-model="COL_FIELD" ui-grid-text-editor/></div>';
-  var cellBooleanEditorHtml = '<div><input type= "checkbox" ng-model="COL_FIELD" ui-grid-text-editor/></div>';
-  var cellNumberEditorHtml = '<div><form name="numberForm"><input type="number" ui-grid-text-editor ' +
-                             'ng-model="COL_FIELD" /></form></div>';
+  var cellEditorHtml = '<div><input ng-model="COL_FIELD" ui-grid-editor/></div>';
   var colDefEditableCellTemplate = '<div><input ng-model="COL_FIELD"/></div>';
   var gridOptionsEditableCellTemplate = '<div><input ng-model="COL_FIELD"/></div>';
   var recompile;
@@ -18,9 +15,7 @@ describe('uiGridEditDirective', function () {
     $templateCache.put('ui-grid/ui-grid', '<div/>');
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/uiGridHeaderCell', '<div/>');
-    $templateCache.put('ui-grid/cellTextEditor', cellTextEditorHtml);
-    $templateCache.put('ui-grid/cellBooleanEditor', cellBooleanEditorHtml);
-    $templateCache.put('ui-grid/cellNumberEditor', cellNumberEditorHtml);
+    $templateCache.put('ui-grid/cellEditor', cellEditorHtml);
 
     scope = $rootScope.$new();
     scope.options = {};
@@ -31,9 +26,7 @@ describe('uiGridEditDirective', function () {
 
     scope.options.columnDefs = [
       {field: 'col1', enableCellEdit: true},
-      {field: 'col2', enableCellEdit: false},
-      {field: 'col3', enableCellEdit: true, type: 'boolean'},
-      {field: 'col4', enableCellEdit: true, type: 'number'}
+      {field: 'col2', enableCellEdit: false}
     ];
 
     recompile = function () {
@@ -55,22 +48,13 @@ describe('uiGridEditDirective', function () {
       var col = gridScope.grid.getColumn('col1');
       expect(col).not.toBeNull();
       expect(col.colDef.enableCellEdit).toBe(true);
-      expect(col.editableCellTemplate).toBe(cellTextEditorHtml);
+      expect(col.editableCellTemplate).toBe(cellEditorHtml);
 
       col = gridScope.grid.getColumn('col2');
       expect(col).not.toBeNull();
       expect(col.colDef.enableCellEdit).toBe(false);
       expect(col.colDef.editableCellTemplate).not.toBeDefined();
 
-      col = gridScope.grid.getColumn('col3');
-      expect(col).not.toBeNull();
-      expect(col.colDef.enableCellEdit).toBe(true);
-      expect(col.editableCellTemplate).toBe(cellBooleanEditorHtml);
-
-      col = gridScope.grid.getColumn('col4');
-      expect(col).not.toBeNull();
-      expect(col.colDef.enableCellEdit).toBe(true);
-      expect(col.editableCellTemplate).toBe(cellNumberEditorHtml);
     });
 
     it('editableCellTemplate value should get priority over default templates', function () {

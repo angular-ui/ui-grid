@@ -594,13 +594,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         digit = uid[index].charCodeAt(0);
         if (digit === 57 /*'9'*/) {
           uid[index] = 'A';
-          return uid.join('');
+          return uidPrefix + uid.join('');
         }
         if (digit === 90  /*'Z'*/) {
           uid[index] = '0';
         } else {
           uid[index] = String.fromCharCode(digit + 1);
-          return uid.join('');
+          return uidPrefix + uid.join('');
         }
       }
       uid.unshift('0');
