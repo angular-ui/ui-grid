@@ -309,5 +309,10 @@ describe('ui.grid.utilService', function() {
       expect(gridUtil.preEval('obj.first-name[ "already bracket ... with dots and \' single quote"].charAt(0)'))
         .toEqual('obj[\'first-name\'][ "already bracket ... with dots and \' single quote"][\'charAt\'](0)');
     });
+
+    it('should convert array property', function() {
+      expect(gridUtil.preEval('obj.first-name[0].charAt(0)'))
+        .toEqual('obj[\'first-name\'][0][\'charAt\'](0)');
+    });
   });
 });

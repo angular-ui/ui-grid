@@ -256,7 +256,6 @@ describe('Grid factory', function () {
       expect(grid.getCellValue(row,grid.getColumn('simpleProp'))).toBe('simplePropValue');
       expect(grid.getCellValue(row,grid.getColumn('complexProp'))).toBe('complexPropValue');
       expect(grid.getCellValue(row,grid.getColumn('functionProp'))).toBe('functionPropValue');
-      //todo:arrayProps not working
       expect(grid.getCellValue(row,grid.getColumn('arrayProp'))).toBe('arrayPropValue');
       expect(grid.getCellValue(row,grid.getColumn('weirdProp'))).toBe('weirdPropValue');
 

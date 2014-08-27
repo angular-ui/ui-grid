@@ -843,6 +843,23 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
   };
 
+    /**
+     * @ngdoc method
+     * @name preEval
+     * @methodOf ui.grid.service:GridUtil
+     *
+     * @param {string} path Path to evaluate
+     *
+     * @returns {string} A path that is normalized.
+     *
+     * @description
+     * Takes a field path and converts it to bracket notation to allow for special characters in path
+     * @example
+     * <pre>
+     * gridUtil.preEval('property') == 'property'
+     * gridUtil.preEval('nested.deep.prop-erty') = "nested['deep']['prop-erty']"
+     * </pre>
+     */
   s.preEval = function (path) {
     var m = uiGridConstants.BRACKET_REGEXP.exec(path);
     if (m) {
