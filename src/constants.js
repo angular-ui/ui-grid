@@ -18,4 +18,4 @@ var TEMPLATE_REGEXP = /<.+>/;
 var FUNC_REGEXP = /(\([^)]*\))?$/;
 var DOT_REGEXP = /\./g;
 var APOS_REGEXP = /'/g;
-var BRACKET_REGEXP = /^(.*)((?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/;
+var BRACKET_REGEXP = /^(.*)((?:\s*\[\s*\d+\s*\]\s*)|(?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/;

@@ -264,6 +264,7 @@ describe('directives', function () {
                                     return (p || '') + '123 Main St';
                                 },
                                 person: {
+                                    arrayProp: ['arrayPropValue'],
                                     'first-name': 'Bob',
                                     'B\'s age': 20,
                                     spouse: {
@@ -286,7 +287,8 @@ describe('directives', function () {
                             { field: 'person.B\'s age' },
                             { field: 'person.spouse.first-name' },
                             { field: 'address()' },
-                            { field: 'address("to").length' }
+                            { field: 'address("to").length' },
+                            { field: 'person.arrayProp[0]' }
                         ];
 
                         // Recompile the grid
@@ -300,6 +302,8 @@ describe('directives', function () {
                         expect(element.find('.ngRow:eq(1) .ngCell.col2').text()).toMatch(/\s*/);
                         // Check cell with function
                         expect(element.find('.ngRow:eq(0) .ngCell.col3').text()).toContain($scope.myData[0].address());
+                        // Check cell with array index
+                        expect(element.find('.ngRow:eq(0) .ngCell.col5').text()).toContain($scope.myData[0].person.arrayProp[0]);
 
                         // Get the first editable cell
                         var cell = element.find('.ngRow:eq(0) .ngCell.col0 [ng-dblclick]');
