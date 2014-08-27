@@ -1,15 +1,15 @@
 @ngdoc overview
-@name Tutorial: Column Resizing
+@name Tutorial: 204 Column Resizing
 @description
 
-You can add column resizing by including the `ui.grid.resizeColumns` feature module in your application's dependencies.
+The Resize Columns feature allows each column to be resized.
+
+To enable, you must include the 'ui.grid.resizeColumns' module and you must include the ui-grid-resize-columns directive on your grid element.
+
 <pre>
 angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
 </pre>
 
-Also, you must add the directive to your grid element.  We do this so that you can have several grids on a
-page and only pay the resizing overhead if the grid is actually using resizing.  Once you use this directive, all
-columns automatically allow resizing
 <pre>
 <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
 </pre>

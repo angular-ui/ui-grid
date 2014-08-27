@@ -1,8 +1,8 @@
 @ngdoc overview
-@name Tutorial: Cell Navigation (WIP)
+@name Tutorial: 202 Cell Navigation
 @description
 
-This grid example uses the ui-grid-cellNav directive to add cell navigation.
+This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav' module and you must include the ui-grid-cellNav directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
 

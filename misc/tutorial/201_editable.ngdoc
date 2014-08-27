@@ -1,6 +1,8 @@
 @ngdoc overview
-@name Tutorial: Editable Grid
+@name Tutorial: 201 Edit Feature
 @description
+
+The ui.grid.edit feature allows inline editing of grid data.  To enable, you must include the 'ui.grid.edit' module and you must include the ui-grid-edit directive on your grid element.
 
 You can use the `enableCellEdit` options in your column definitions to allow a column to be editable.
 

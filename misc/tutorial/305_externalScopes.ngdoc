@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 202 External Scopes
+@name Tutorial: 305 External Scopes
 @description
 
 UI-Grid uses isolate scope, so there is no access to your application scope variables from a row or cell template.
