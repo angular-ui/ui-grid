@@ -59,8 +59,9 @@
          *  @name enableRowSelection
          *  @propertyOf  ui.grid.pinning.api:GridOptions
          *  @propertyOf  ui.grid.class:GridOptions
-         *  @description Enable pinning for the entire grid. Requires the pinning feature to be enabled. 
+         *  @description Enable pinning for the entire grid.  
          *  <br/>Defaults to true
+         *  <br/>_requires the pinning feature to be enabled_
          */
         gridOptions.enablePinning = gridOptions.enablePinning !== false;
 
@@ -81,8 +82,9 @@
          *  @name enablePinning
          *  @propertyOf  ui.grid.pinning.api:ColDef
          *  @propertyOf  ui.grid.class:GridOptions.columnDef
-         *  @description Enable pinning for the individual column. Requires the pinning feature to be enabled. 
+         *  @description Enable pinning for the individual column.  
          *  <br/>Defaults to true
+         *  <br/>_requires the pinning feature to be enabled_
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
 
