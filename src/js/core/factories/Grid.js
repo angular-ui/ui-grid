@@ -1113,16 +1113,6 @@ angular.module('ui.grid')
    * @returns {Promise} A resolved promise that supplies the column.
    */
   
-  /**
-   * @ngdoc constant
-   * @name ui.grid.class:GridOptions.columnDef.sort
-   * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description (optional) Can be used to set the sort direction for the column, values are
-   * uiGridConstants.ASC or uiGridConstants.DESC
-   * @example
-   * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', sort: { direction: uiGridConstants.ASC }}]
-   */
-  
   Grid.prototype.sortColumn = function sortColumn(column, directionOrAdd, add) {
     var self = this,
         direction = null;
