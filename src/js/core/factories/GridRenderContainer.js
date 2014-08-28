@@ -127,7 +127,7 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getViewportHeight = function getViewportHeight() {
     var self = this;
 
-    var viewPortHeight = self.grid.gridHeight - self.grid.headerHeight;
+    var viewPortHeight = self.grid.gridHeight - self.grid.headerHeight - self.grid.footerHeight;
 
     // Account for native horizontal scrollbar, if present
     if (typeof(self.horizontalScrollbarHeight) !== 'undefined' && self.horizontalScrollbarHeight !== undefined && self.horizontalScrollbarHeight > 0) {

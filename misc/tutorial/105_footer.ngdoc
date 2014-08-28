@@ -1,0 +1,51 @@
+@ngdoc overview
+@name Tutorial: 105 Footer
+@description
+
+<p>the grid supports a footer row, which can be displayed if showFooterRow option is set to true</p>
+<p>you can set an aggregation function for each column or use a custom footer template to display what ever you want</p>
+<p>aggregation functions supported are: sum, avg, row count, min, max</p>
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', function ($scope) {
+    var data = [];
+    for(var i=0;i < 100;i++) {
+        data.push({
+        person: 'person ' + i,
+        balance: parseInt(Math.random() * 10000),
+        age: parseInt((Math.random() * 54) + 16),
+        });
+    }
+    $scope.gridOptions = {
+        showFooter: true,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'person', width: 150, aggregationType: 'count' },
+            { field: 'balance',aggregationType: 'sum', width: 150 },
+            { field: 'age', aggregationType: 'avg', width: 80 },
+            { name: 'ageMin', field: 'age', aggregationType: 'min', width: 130, displayName: 'Age for min' },
+            { name: 'ageMax', field: 'age', aggregationType: 'max', width: 130, displayName: 'Age for max' },
+            { name: 'customCellTemplate', field: 'age', width: 150, footerCellTemplate: '<div class="ui-grid-cell-contents" style="background-color: Red;color: White">custom template</div>' }
+        ],
+        data: data
+    }
+
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 100%;
+      height: 250px;
+    }
+  </file>
+</example>
+

@@ -1,0 +1,9 @@
+<div class="ui-grid-footer-panel">
+    <div ui-grid-group-panel ng-show="grid.options.showGroupPanel"></div>
+    <div class="ui-grid-footer ui-grid-footer-viewport">
+        <div class="ui-grid-footer-canvas">
+            <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ui-grid-footer-cell col="col" render-index="$index" class="ui-grid-footer-cell clearfix ui-grid-col{{$index}}">
+            </div>
+        </div>
+    </div>
+</div>
