@@ -131,6 +131,9 @@ angular.module('ui.grid')
     this.rowHeight = 30;
     this.maxVisibleRowCount = 200;
 
+    this.showFooter = false;
+    this.footerRowHeight = 30;
+
     this.columnWidth = 50;
     this.maxVisibleColumnCount = 200;
 
@@ -197,7 +200,7 @@ angular.module('ui.grid')
     };
 
     /**
-     * @ngdoc boolean
+     * @ngdoc string
      * @name headerTemplate
      * @propertyOf ui.grid.class:GridOptions
      * @description Null by default. When provided, this setting uses a custom header
@@ -211,7 +214,18 @@ angular.module('ui.grid')
     this.headerTemplate = null;
 
     /**
-     * @ngdoc boolean
+     * @ngdoc string
+     * @name footerTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) Null by default. When provided, this setting uses a custom footer
+     * template. Can be set to either the name of a template file 'footer_template.html', inline html
+     * <pre>'<div class="ui-grid-bottom-panel" style="text-align: center">I am a Custom Grid Footer</div>'</pre>, or the id
+     * of a precompiled template '??'.  Refer to the custom footer tutorial for more information.
+     */
+    this.footerTemplate = null;
+
+    /**
+     * @ngdoc string
      * @name rowTemplate
      * @propertyOf ui.grid.class:GridOptions
      * @description 'ui-grid/ui-grid-row' by default. When provided, this setting uses a 

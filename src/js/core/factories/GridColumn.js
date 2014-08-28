@@ -249,6 +249,9 @@ angular.module('ui.grid')
 
     //self.originalIndex = index;
 
+    self.aggregationType = angular.isDefined(colDef.aggregationType) ? colDef.aggregationType : null;
+    self.footerCellTemplate = angular.isDefined(colDef.footerCellTemplate) ? colDef.footerCellTemplate : null;
+
     self.cellClass = colDef.cellClass;
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
 
@@ -286,6 +289,8 @@ angular.module('ui.grid')
     self.setPropertyOrDefault(colDef, 'filter');
     self.setPropertyOrDefault(colDef, 'filters', []);
   };
+
+
 
 
     /**
@@ -351,7 +356,57 @@ angular.module('ui.grid')
         this.colDef.visible = false;
     };
 
+    /**
+     * @ngdoc function
+     * @name getAggregationValue
+     * @methodOf ui.grid.class:GridColumn
+     * @description gets the aggregation value based on the aggregation type for this column
+     */
+    GridColumn.prototype.getAggregationValue = function () {
+      var self = this;
+      var result = 0;
+      var visibleRows = self.grid.getVisibleRows();
+      var cellValues = [];
+      angular.forEach(visibleRows, function (row) {
+        var cellValue = self.grid.getCellValue(row, self);
+        if (angular.isNumber(cellValue)) {
+          cellValues.push(cellValue);
+        }
+      });
+      if (angular.isFunction(self.aggregationType)) {
+        return self.aggregationType(visibleRows, self);
+      }
+      else if (self.aggregationType === 'count') {
+        //TODO: change to i18n
+        return 'total rows: ' + self.grid.getVisibleRowCount();
+      }
+      else if (self.aggregationType === 'sum') {
+        angular.forEach(cellValues, function (value) {
+          result += value;
+        });
+        //TODO: change to i18n
+        return 'total: ' + result;
+      }
+      else if (self.aggregationType === 'avg') {
+        angular.forEach(cellValues, function (value) {
+          result += value;
+        });
+        result = result / cellValues.length;
+        //TODO: change to i18n
+        return 'avg: ' + result;
+      }
+      else if (self.aggregationType === 'min') {
+        return 'min: ' + Math.min.apply(null, cellValues);
+      }
+      else if (self.aggregationType === 'max') {
+        return 'max: ' + Math.max.apply(null, cellValues);
+      }
+      else {
+        return null;
+      }
+    };
+
     return GridColumn;
-}]);
+  }]);
 
 })();
