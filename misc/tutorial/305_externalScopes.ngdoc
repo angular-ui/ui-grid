@@ -1,0 +1,75 @@
+@ngdoc overview
+@name Tutorial: 305 External Scopes
+@description
+
+UI-Grid uses isolate scope, so there is no access to your application scope variables from a row or cell template.
+
+To access your application data within UI-Grid, use the external-scopes attribute.  Give the attribute a
+property that exists on your scope.
+<pre>
+ $scope.myViewModel.showMe = function(){...};
+ <div ui-grid="{ data: myData }" external-scopes="myViewModel" class="grid"></div>
+</pre>
+
+Then in a template, you access the scope using getExternalScopes() function.
+<pre>
+    ng-click="getExternalScopes().showMe()"
+</pre>
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$log', function ($scope, $log) {
+
+     $scope.myViewModel = {
+        someProp:'abc',
+        showMe : function(){
+           alert(this.someProp);
+        }
+     };
+
+     $scope.gridOptions = {};
+
+       $scope.gridOptions.columnDefs = [
+             { name: 'firstName' },
+             { name: 'lastName'},
+             { name: 'ShowScope',
+                 cellTemplate:'<button class="btn primary" ng-click="getExternalScopes().showMe()">Click Me</button>' }
+           ];
+
+     $scope.gridOptions.data = [
+        {
+            "firstName": "Cox",
+            "lastName": "Carney",
+            "company": "Enormo",
+            "employed": true
+        },
+        {
+            "firstName": "Lorraine",
+            "lastName": "Wise",
+            "company": "Comveyer",
+            "employed": false
+        },
+        {
+            "firstName": "Nancy",
+            "lastName": "Waters",
+            "company": "Fuelton",
+            "employed": false
+        }
+    ];
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" external-scopes="myViewModel" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+</example>

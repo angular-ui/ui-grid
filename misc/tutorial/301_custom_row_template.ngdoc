@@ -1,0 +1,66 @@
+@ngdoc overview
+@name Tutorial: 301 Custom Row Template
+@description
+
+Create a grid almost the same as the most basic one, but with a custom row template.
+
+You can use [external scopes](/docs/#/tutorial/202_externalScopes) in your row template to access elements in your controller's scope. The `external-scopes` attribute on the grid will expose the property on your `$scope` with that name in the grid's isolate scope. You can then use `getExternalScopes()` in your row template to access that. More details are on the [external scopes](/docs/#/tutorial/202_externalScopes) tutorial.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
+      var start = new Date();
+      var sec = $interval(function () {
+        var wait = parseInt(((new Date()) - start) / 1000, 10);
+        $scope.wait = wait + 's';
+      }, 1000);
+
+      function rowTemplate() {
+        return $timeout(function() {
+          $scope.waiting = 'Done!';
+          $interval.cancel(sec);
+          $scope.wait = '';
+          // Calling the externalScopes() method will allow you to reach up to the controller scope
+          return '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+        }, 6000);
+      }
+
+      // Access outside scope functions from row template
+      $scope.myNewModel = {
+        fnOne: function(row) {
+          console.log(row);
+        }
+      };
+
+      $scope.waiting = 'Waiting for row template...';
+
+      $http.get('/data/100.json')
+        .success(function (data) {
+          $scope.data = data;
+        });
+
+      $scope.gridOptions = {
+        rowTemplate: rowTemplate(),
+        data: 'data'
+      };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong ng-bind="waiting"></strong> <strong>{{ wait }}</strong>
+      <br>
+      <br>
+      //make sure to set the controller variable in the attribute like so:
+      <div class="grid" ui-grid="gridOptions" external-scopes="myNewModel"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 300px;
+    }
+  </file>
+</example>

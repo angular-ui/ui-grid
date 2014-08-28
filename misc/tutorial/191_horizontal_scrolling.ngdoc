@@ -1,0 +1,55 @@
+@ngdoc overview
+@name Tutorial: 191 Horizontal Scrolling
+@description
+
+Demonstrating scrolling with large amount of columns
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true
+      };
+      $scope.gridOptions.columnDefs = [];
+
+      var colCount = 500;
+
+      for (var colIndex = 0; colIndex < colCount; colIndex++) {
+        $scope.gridOptions.columnDefs.push({
+          name: 'col' + colIndex,
+          width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
+        });
+      }
+
+      var data = [];
+      for (var rowIndex = 0; rowIndex < 500; rowIndex++) {
+        var row = {};
+
+        for (var colIndex = 0; colIndex < colCount; colIndex++) {
+          row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+        }
+
+        data.push(row);
+      }
+
+      $scope.gridOptions.data = data;
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>{{ gridOptions.columnDefs.length | number }} Columns with Random Widths</strong>
+      <br>
+      <br>
+      <div ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

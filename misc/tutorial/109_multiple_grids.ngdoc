@@ -1,0 +1,46 @@
+@ngdoc overview
+@name Tutorial: 109 Multiple Grids per Page
+@description
+
+Using multiple grids on a single page
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions1 = {};
+      $scope.gridOptions2 = {};
+
+      $http.get('/data/100.json')
+      .success(function(data) {
+        $scope.gridOptions1.data = data;
+      });
+
+      $http.get('/data/500.json')
+      .success(function(data) {
+        $scope.gridOptions2.data = data;
+      });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div class="row">
+        <div class="span4">
+          <div ui-grid="gridOptions1" class="grid"></div>
+        </div>
+        
+        <div class="span4">
+          <div ui-grid="gridOptions2" class="grid"></div>
+        </div>
+      </div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 250px;
+      height: 150px;
+    }
+  </file>
+</example>

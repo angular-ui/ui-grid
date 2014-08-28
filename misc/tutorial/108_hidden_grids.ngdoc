@@ -1,0 +1,40 @@
+@ngdoc overview
+@name Tutorial: 108 Hidden Grids
+@description
+
+Hiding grids in tabs or modals
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.hideGrid = true;
+
+      $scope.gridOptions = {  };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button type="button" class="btn btn-success" ng-click="hideGrid = !hideGrid">
+        {{ hideGrid && 'Show' || 'Hide' }} Grid
+      </button>
+
+      <div class="well" ng-hide="hideGrid">
+        <div ui-grid="gridOptions" class="grid"></div>
+      </div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 150px;
+    }
+  </file>
+</example>

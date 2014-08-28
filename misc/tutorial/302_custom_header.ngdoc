@@ -1,0 +1,36 @@
+@ngdoc overview
+@name Tutorial: 302 Custom Header
+@description
+
+Create a grid almost the same as the most basic one, but with a custom header
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        headerTemplate: 'header-template.html',
+        data: [
+          { name: 'Bob', title: 'CEO' },
+          { name: 'Frank', title: 'Lowly Developer' }
+        ]
+      };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div class="grid" ui-grid="gridOptions"></div>
+    </div>
+  </file>
+  <file name="header-template.html">
+    <div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 150px;
+    }
+  </file>
+</example>
