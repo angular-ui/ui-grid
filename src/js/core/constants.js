@@ -68,6 +68,14 @@
       NOT_EQUAL: 512
     },
 
+    aggregationTypes: {
+      sum: 2,
+      count: 4,
+      avg: 8,
+      min: 16,
+      max: 32
+    },
+
     // TODO(c0bra): Create full list of these somehow. NOTE: do any allow a space before or after them?
     CURRENCY_SYMBOLS: ['ƒ', '$', '£', '$', '¤', '¥', '៛', '₩', '₱', '฿', '₫']
   });
