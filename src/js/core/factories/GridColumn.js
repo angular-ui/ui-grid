@@ -28,7 +28,7 @@ angular.module('ui.grid')
     * @name ui.grid.class:GridColumn.displayName
     * @propertyOf ui.grid.class:GridColumn
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) name is used if displayName if displayName is not
+    * @description name is used for displayName if displayName is not
     * provided.  If provided then displayName is used in the header.
     *
     */
@@ -38,20 +38,10 @@ angular.module('ui.grid')
     * @name ui.grid.class:GridColumn.field
     * @propertyOf ui.grid.class:GridColumn
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) field must be provided if you wish to bind to a 
-    * column in the data source.  Should be an angular expression that evaluates against grid.options.data 
+    * @description field must be provided if you wish to bind to a 
+    * property in the data source.  Should be an angular expression that evaluates against grid.options.data 
     * array element.  Can be a complex expression: <code>employee.address.city</code>, or can be a function: <code>employee.getFullAddress()</code>.
     * See the angular docs on binding expressions.
-    *
-    */
-    
-    /** 
-    * @ngdoc property
-    * @name ui.grid.class:GridColumn.sortingAlgorithm
-    * @propertyOf ui.grid.class:GridColumn
-    * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional)  Algorithm to use for sorting this column. Takes 'a' and 'b' parameters 
-    * like any normal sorting function.
     *
     */
     
@@ -60,7 +50,7 @@ angular.module('ui.grid')
     * @name ui.grid.class:GridColumn.filter
     * @propertyOf ui.grid.class:GridColumn
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional)  Filter to insert against this column.  
+    * @description Filter to insert against this column.  
     * @example
     * <pre>{ term: 'text' }</pre>
     *
@@ -99,7 +89,7 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name ui.grid.class:GridOptions.columnDef.width
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) sets the column width.  Can be either 
+    * @description sets the column width.  Can be either 
     * a number or a percentage, or an * for auto.
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', width: 100},
@@ -112,7 +102,7 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name ui.grid.class:GridOptions.columnDef.minWidth
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) sets the minimum column width.  Should be a number.
+    * @description sets the minimum column width.  Should be a number.
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', minWidth: 100}]; </pre>
     *
@@ -122,7 +112,7 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name ui.grid.class:GridOptions.columnDef.maxWidth
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) sets the maximum column width.  Should be a number.
+    * @description sets the maximum column width.  Should be a number.
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', maxWidth: 100}]; </pre>
     *
@@ -132,36 +122,42 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name ui.grid.class:GridOptions.columnDef.visible
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) sets whether or not the column is visible
+    * @description sets whether or not the column is visible
     * </br>Default is true
     * @example
-    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', visible: true},
-    *                                          { field: 'field2', visible: false }]; </pre>
+    * <pre>  $scope.gridOptions.columnDefs = [ 
+    *     { field: 'field1', visible: true},
+    *     { field: 'field2', visible: false }
+    *   ]; </pre>
     *
     */
    
-   /** 
-    * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.sort
-    * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) not clear what this does, but it can be set
-    *
-    */   
+  /**
+   * @ngdoc constant
+   * @name ui.grid.class:GridOptions.columnDef.sort
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description Can be used to set the sort direction for the column, values are
+   * uiGridConstants.ASC or uiGridConstants.DESC
+   * @example
+   * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', sort: { direction: uiGridConstants.ASC }}] </pre>
+   */
+  
 
-   /** 
+    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.sortingAlgorithm
+    * @name ui.grid.class:GridColumn.sortingAlgorithm
+    * @propertyOf ui.grid.class:GridColumn
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) a function that will be used for sorting the column, in standard
-    * a b format.
+    * @description Algorithm to use for sorting this column. Takes 'a' and 'b' parameters 
+    * like any normal sorting function.
     *
-    */   
-
+    */
+      
    /** 
     * @ngdoc array
     * @name ui.grid.class:GridOptions.columnDef.filters
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) unclear what this does or how it's used, but it does something.
+    * @description unclear what this does or how it's used, but it does something.
     *
     */   
 
@@ -169,7 +165,7 @@ angular.module('ui.grid')
     * @ngdoc array
     * @name ui.grid.class:GridOptions.columnDef.menuItems
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description (optional) used to add menu items to a column.  Refer to the tutorial on this 
+    * @description used to add menu items to a column.  Refer to the tutorial on this 
     * functionality.
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ 

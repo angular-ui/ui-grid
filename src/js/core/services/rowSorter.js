@@ -128,13 +128,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     var sortFn, item;
 
     // See if we already figured out what to use to sort the column and have it in the cache
-    if (rowSorter.colSortFnCache[col.field]) {
-      sortFn = rowSorter.colSortFnCache[col.field];
+    if (rowSorter.colSortFnCache[col.colDef.name]) {
+      sortFn = rowSorter.colSortFnCache[col.colDef.name];
     }
     // If the column has its OWN sorting algorithm, use that
     else if (col.sortingAlgorithm !== undefined) {
       sortFn = col.sortingAlgorithm;
-      rowSorter.colSortFnCache[col.field] = col.sortingAlgorithm;
+      rowSorter.colSortFnCache[col.colDef.name] = col.sortingAlgorithm;
     }
     // Try and guess what sort function to use
     else {
@@ -143,7 +143,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
       // If we found a sort function, cache it
       if (sortFn) {
-        rowSorter.colSortFnCache[col.field] = sortFn;
+        rowSorter.colSortFnCache[col.colDef.name] = sortFn;
       }
       else {
         // We assign the alpha sort because anything that is null/undefined will never get passed to
@@ -228,8 +228,8 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
         sortFn = rowSorter.getSortFn(grid, col, r);
         
-        var propA = grid.getCellValue(rowA, col); // $parse(col.field)(rowA);
-        var propB = grid.getCellValue(rowB, col); // $parse(col.field)(rowB);
+        var propA = grid.getCellValue(rowA, col);
+        var propB = grid.getCellValue(rowB, col);
 
         // We want to allow zero values to be evaluated in the sort function
         if ((!propA && propA !== 0) || (!propB && propB !== 0)) {
