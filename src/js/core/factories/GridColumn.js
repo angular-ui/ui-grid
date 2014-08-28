@@ -252,7 +252,20 @@ angular.module('ui.grid')
     self.aggregationType = angular.isDefined(colDef.aggregationType) ? colDef.aggregationType : null;
     self.footerCellTemplate = angular.isDefined(colDef.footerCellTemplate) ? colDef.footerCellTemplate : null;
 
+    /**
+     * @ngdoc property
+     * @name cellClass
+     * @propertyOf ui.grid.class:GridColumn
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description cellClass can be a string specifying the class to append to a cell
+     * or it can be a function(row,rowRenderIndex, col, colRenderIndex) that returns a class name
+     *
+     */
     self.cellClass = colDef.cellClass;
+
+
+
+
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
 
     self.visible = gridUtil.isNullOrUndefined(colDef.visible) || colDef.visible;

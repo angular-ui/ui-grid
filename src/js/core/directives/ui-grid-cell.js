@@ -28,8 +28,18 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
             $elm.append(cellElement);
           }
         },
-        post: function($scope, $elm, $attrs) {
+        post: function($scope, $elm, $attrs, uiGridCtrl) {
           $elm.addClass($scope.col.getColClass(false));
+          if ($scope.col.cellClass) {
+            //var contents = angular.element($elm[0].getElementsByClassName('ui-grid-cell-contents'));
+            var contents = $elm;
+            if (angular.isFunction($scope.col.cellClass)) {
+              contents.addClass($scope.col.cellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex));
+            }
+            else {
+              contents.addClass($scope.col.cellClass);
+            }
+          }
         }
       };
     }
