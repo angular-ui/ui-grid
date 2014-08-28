@@ -4,14 +4,16 @@
 
 <p>the grid supports a footer row, which can be displayed if showFooterRow option is set to true</p>
 <p>you can set an aggregation function for each column or use a custom footer template to display what ever you want</p>
-<p>aggregation functions supported are: sum, avg, row count, min, max</p>
+<p>aggregation functions supported are: sum, avg, row count, min, max.
+you need to inject the uiGridConstants in order to use aggregationTypes enum.
+you can also pass in a function in order to create your own aggregation logic</p>
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', function ($scope) {
+    app.controller('MainCtrl', ['$scope','uiGridConstants', function ($scope, uiGridConstants) {
     var data = [];
     for(var i=0;i < 100;i++) {
         data.push({
@@ -24,11 +26,11 @@
         showFooter: true,
         enableFiltering: true,
         columnDefs: [
-            { field: 'person', width: 150, aggregationType: 'count' },
-            { field: 'balance',aggregationType: 'sum', width: 150 },
-            { field: 'age', aggregationType: 'avg', width: 80 },
-            { name: 'ageMin', field: 'age', aggregationType: 'min', width: 130, displayName: 'Age for min' },
-            { name: 'ageMax', field: 'age', aggregationType: 'max', width: 130, displayName: 'Age for max' },
+            { field: 'person', width: 150, aggregationType: uiGridConstants.aggregationTypes.count },
+            { field: 'balance',aggregationType: uiGridConstants.aggregationTypes.sum, width: 150 },
+            { field: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, width: 80 },
+            { name: 'ageMin', field: 'age', aggregationType: uiGridConstants.aggregationTypes.min, width: 130, displayName: 'Age for min' },
+            { name: 'ageMax', field: 'age', aggregationType: uiGridConstants.aggregationTypes.max, width: 130, displayName: 'Age for max' },
             { name: 'customCellTemplate', field: 'age', width: 150, footerCellTemplate: '<div class="ui-grid-cell-contents" style="background-color: Red;color: White">custom template</div>' }
         ],
         data: data
