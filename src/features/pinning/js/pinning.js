@@ -213,7 +213,7 @@
               if ($scope.side === 'left' || $scope.side === 'right') {
                 var cols = grid.renderContainers[$scope.side].visibleColumnCache;
                 var width = 0;
-                for (var i in cols) {
+                for (var i = 0; i < cols.length; i++) {
                   var col = cols[i];
                   width += col.drawnWidth;
                 }
