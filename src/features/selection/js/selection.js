@@ -167,27 +167,24 @@
            *  @ngdoc object
            *  @name ui.grid.selection.api:GridOptions
            *
-           *  @description GridOptions for selection feature
+           *  @description GridOptions for selection feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
           /**
            *  @ngdoc object
            *  @name enableRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable row selection for entire grid.
            *  <br/>Defaults to true
-           *  <br/>_requires row selection feature to be enabled_
            */
           gridOptions.enableRowSelection = gridOptions.enableRowSelection !== false;
           /**
            *  @ngdoc object
            *  @name multiSelect
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable multiple row selection for entire grid
            *  <br/>Defaults to true
-           *  <br/>_requires row selection feature to be enabled_
            */
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
         },

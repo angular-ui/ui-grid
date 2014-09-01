@@ -269,19 +269,18 @@
 
           /**
            *  @ngdoc object
-           *  @name ui.grid.cellNav.api:ColDef
+           *  @name ui.grid.cellNav.api:ColumnDef
            *
-           *  @description Column Definitions for cellNav feature
+           *  @description Column Definitions for cellNav feature, these are available to be 
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
            */
 
           /**
            *  @ngdoc object
            *  @name allowCellFocus
-           *  @propertyOf  ui.grid.cellNav.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.cellNav.api:ColumnDef
            *  @description Enable focus on a cell.  
            *  <br/>Defaults to true
-           *  <br/>_Requires the cell nav feature to be enabled._
            */
           colDef.allowCellFocus = colDef.allowCellFocus === undefined ? true : colDef.allowCellFocus ;
 
