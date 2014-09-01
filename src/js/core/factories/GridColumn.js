@@ -13,10 +13,29 @@ angular.module('ui.grid')
    * @param {Grid} grid reference to the grid
    */
    
+   /**
+    * ******************************************************************************************
+    * PaulL1: Ugly hack here in documentation.  These properties are clearly properties of GridColumn, 
+    * and need to be noted as such for those extending and building ui-grid itself.
+    * However, from an end-developer perspective, they interact with all these through columnDefs,
+    * and they really need to be documented there.  I feel like they're relatively static, and
+    * I can't find an elegant way for ngDoc to reference to both....so I've duplicated each
+    * comment block.  Ugh.
+    * 
+    */
+
    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridColumn.name
+    * @name name
     * @propertyOf ui.grid.class:GridColumn
+    * @description (mandatory) each column should have a name, although for backward
+    * compatibility with 2.x name can be omitted if field is present
+    *
+    */
+
+   /** 
+    * @ngdoc property
+    * @name name
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description (mandatory) each column should have a name, although for backward
     * compatibility with 2.x name can be omitted if field is present
@@ -25,18 +44,36 @@ angular.module('ui.grid')
     
     /** 
     * @ngdoc property
-    * @name ui.grid.class:GridColumn.displayName
+    * @name displayName
     * @propertyOf ui.grid.class:GridColumn
+    * @description Column name that will be shown in the header.  If displayName is not
+    * provided then one is generated using the name.
+    *
+    */
+
+    /** 
+    * @ngdoc property
+    * @name displayName
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description name is used for displayName if displayName is not
-    * provided.  If provided then displayName is used in the header.
+    * @description Column name that will be shown in the header.  If displayName is not
+    * provided then one is generated using the name.
+    *
+    */
+       
+    /** 
+    * @ngdoc property
+    * @name field
+    * @propertyOf ui.grid.class:GridColumn
+    * @description field must be provided if you wish to bind to a 
+    * property in the data source.  Should be an angular expression that evaluates against grid.options.data 
+    * array element.  Can be a complex expression: <code>employee.address.city</code>, or can be a function: <code>employee.getFullAddress()</code>.
+    * See the angular docs on binding expressions.
     *
     */
     
     /** 
     * @ngdoc property
-    * @name ui.grid.class:GridColumn.field
-    * @propertyOf ui.grid.class:GridColumn
+    * @name field
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description field must be provided if you wish to bind to a 
     * property in the data source.  Should be an angular expression that evaluates against grid.options.data 
@@ -47,8 +84,17 @@ angular.module('ui.grid')
     
     /** 
     * @ngdoc property
-    * @name ui.grid.class:GridColumn.filter
+    * @name filter
     * @propertyOf ui.grid.class:GridColumn
+    * @description Filter to insert against this column.  
+    * @example
+    * <pre>{ term: 'text' }</pre>
+    *
+    */
+
+    /** 
+    * @ngdoc property
+    * @name filter
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description Filter to insert against this column.  
     * @example
@@ -87,7 +133,7 @@ angular.module('ui.grid')
   
    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.width
+    * @name width
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description sets the column width.  Can be either 
     * a number or a percentage, or an * for auto.
@@ -100,7 +146,7 @@ angular.module('ui.grid')
 
    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.minWidth
+    * @name minWidth
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description sets the minimum column width.  Should be a number.
     * @example
@@ -110,7 +156,7 @@ angular.module('ui.grid')
 
    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.maxWidth
+    * @name maxWidth
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description sets the maximum column width.  Should be a number.
     * @example
@@ -120,7 +166,7 @@ angular.module('ui.grid')
 
    /** 
     * @ngdoc property
-    * @name ui.grid.class:GridOptions.columnDef.visible
+    * @name visible
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description sets whether or not the column is visible
     * </br>Default is true
@@ -133,8 +179,8 @@ angular.module('ui.grid')
     */
    
   /**
-   * @ngdoc constant
-   * @name ui.grid.class:GridOptions.columnDef.sort
+   * @ngdoc property
+   * @name sort
    * @propertyOf ui.grid.class:GridOptions.columnDef
    * @description Can be used to set the sort direction for the column, values are
    * uiGridConstants.ASC or uiGridConstants.DESC
@@ -145,8 +191,16 @@ angular.module('ui.grid')
 
     /** 
     * @ngdoc property
-    * @name ui.grid.class:GridColumn.sortingAlgorithm
+    * @name sortingAlgorithm
     * @propertyOf ui.grid.class:GridColumn
+    * @description Algorithm to use for sorting this column. Takes 'a' and 'b' parameters 
+    * like any normal sorting function.
+    *
+    */
+
+    /** 
+    * @ngdoc property
+    * @name sortingAlgorithm
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description Algorithm to use for sorting this column. Takes 'a' and 'b' parameters 
     * like any normal sorting function.
@@ -155,7 +209,7 @@ angular.module('ui.grid')
       
    /** 
     * @ngdoc array
-    * @name ui.grid.class:GridOptions.columnDef.filters
+    * @name filters
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description unclear what this does or how it's used, but it does something.
     *
@@ -163,7 +217,7 @@ angular.module('ui.grid')
 
    /** 
     * @ngdoc array
-    * @name ui.grid.class:GridOptions.columnDef.menuItems
+    * @name menuItems
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description used to add menu items to a column.  Refer to the tutorial on this 
     * functionality.

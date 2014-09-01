@@ -350,7 +350,7 @@ module.exports = function(grunt) {
       },
 
       docs: {
-        files: ['misc/tutorial/**/*.ngdoc', 'misc/doc/**'],
+        files: ['misc/tutorial/**/*.ngdoc', 'misc/api/**/*.ngdoc', 'misc/doc/**'],
         tasks: 'ngdocs'
       },
 
@@ -455,7 +455,7 @@ module.exports = function(grunt) {
         navTemplate: 'misc/doc/templates/nav.html'
       },
       api: {
-        src: ['src/**/*.js'],
+        src: ['src/**/*.js', 'misc/api/**/*.ngdoc'],
         title: 'API'
       },
       tutorial: {

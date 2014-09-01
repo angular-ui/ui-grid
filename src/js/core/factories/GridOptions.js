@@ -44,7 +44,8 @@ angular.module('ui.grid')
      * @propertyOf ui.grid.class:GridOptions
      * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for 
      * the grid.  The most common case is an array of objects, where each object has a number of attributes.
-     * Each attribute automatically becomes a column in your grid.  The array can also contain complex objects.
+     * Each attribute automatically becomes a column in your grid.  This array could, for example, be sourced from
+     * an angularJS $resource query request.  The array can also contain complex objects.
      * 
      */
     this.data = [];
@@ -54,8 +55,9 @@ angular.module('ui.grid')
      * @name columnDefs
      * @propertyOf  ui.grid.class:GridOptions
      * @description Array of columnDef objects.  Only required property is name.
+     * The individual options available in columnDefs are documented in the
+     * {@link ui.grid.class:GridOptions.columnDef columnDef} section
      * </br>_field property can be used in place of name for backwards compatibility with 2.x_
-     * </br>The individual options available in columnDefs are documented in the {@link ui.grid.class:GridOptions.columnDef columnDef} section
      *  @example
      *
      * <pre>var columnDefs = [{name:'field1'}, {name:'field2'}];</pre>
@@ -155,7 +157,8 @@ angular.module('ui.grid')
      * @name enableSorting
      * @propertyOf ui.grid.class:GridOptions
      * @description True by default. When enabled, this setting adds sort
-     * widgets to the column headers, allowing sorting of the data.
+     * widgets to the column headers, allowing sorting of the data for the entire grid.
+     * Sorting can then be disabled on individual columns using the columnDefs.
      */
     this.enableSorting = true;
 
@@ -164,7 +167,8 @@ angular.module('ui.grid')
      * @name enableFiltering
      * @propertyOf ui.grid.class:GridOptions
      * @description False by default. When enabled, this setting adds filter 
-     * boxes to each column header, allowing filtering within the column.
+     * boxes to each column header, allowing filtering within the column for the entire grid.
+     * Filtering can then be disabled on individual columns using the columnDefs. 
      */
     this.enableFiltering = false;
 
@@ -220,7 +224,7 @@ angular.module('ui.grid')
      * @description (optional) Null by default. When provided, this setting uses a custom footer
      * template. Can be set to either the name of a template file 'footer_template.html', inline html
      * <pre>'<div class="ui-grid-bottom-panel" style="text-align: center">I am a Custom Grid Footer</div>'</pre>, or the id
-     * of a precompiled template '??'.  Refer to the custom footer tutorial for more information.
+     * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
      */
     this.footerTemplate = null;
 
