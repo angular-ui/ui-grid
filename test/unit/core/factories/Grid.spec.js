@@ -217,6 +217,72 @@ describe('Grid factory', function () {
     });
   });
 
+  describe('binding', function() {
+    var entity;
+
+    beforeEach(function(){
+      entity = {
+        simpleProp: 'simplePropValue',
+        complexProp: { many: { paths: 'complexPropValue'}},
+        functionProp: function () {
+          return 'functionPropValue';
+        },
+        arrayProp: ['arrayPropValue']
+      };
+      entity['\"!weird-pro\'p'] = 'weirdPropValue';
+
+    });
+
+
+    it('should bind correctly to simple prop', function() {
+
+      var colDefs = [
+        {name:'simpleProp'},
+        {name:'complexProp', field:'complexProp.many.paths'},
+        {name:'functionProp', field:'functionProp()'},
+        {name:'arrayProp', field:'arrayProp[0]'},
+        {name:'weirdProp', field:'\"!weird-pro\'p'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+
+
+      grid.buildColumns();
+      grid.modifyRows([entity]);
+
+      var row = grid.rows[0];
+      expect(grid.getCellValue(row,grid.getColumn('simpleProp'))).toBe('simplePropValue');
+      expect(grid.getCellValue(row,grid.getColumn('complexProp'))).toBe('complexPropValue');
+      expect(grid.getCellValue(row,grid.getColumn('functionProp'))).toBe('functionPropValue');
+      expect(grid.getCellValue(row,grid.getColumn('arrayProp'))).toBe('arrayPropValue');
+      expect(grid.getCellValue(row,grid.getColumn('weirdProp'))).toBe('weirdPropValue');
+
+    });
+
+    it('not overwrite column types specified in options', function() {
+
+      var grid1 = new Grid({ id: 3 });
+
+      grid1.options.columnDefs = [
+        {name:'str',type:'string'},
+        {name:'num', type:'number'},
+        {name:'dat', type:'date'},
+        {name:'bool', type:'boolean'},
+        {name:'obj', type:'object'}
+      ];
+      grid1.buildColumns();
+
+
+      expect(grid1.getColumn('str').colDef.type).toBe('string');
+      expect(grid1.getColumn('num').colDef.type).toBe('number');
+      expect(grid1.getColumn('dat').colDef.type).toBe('date');
+      expect(grid1.getColumn('bool').colDef.type).toBe('boolean');
+      expect(grid1.getColumn('obj').colDef.type).toBe('object');
+    });
+  });
+
   describe('sortColumn', function() {
     it('should throw an exception if no column parameter is provided', function() {
       expect(function () {

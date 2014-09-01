@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Custom Row Template
+@name Tutorial: 301 Custom Row Template
 @description
 
 Create a grid almost the same as the most basic one, but with a custom row template.

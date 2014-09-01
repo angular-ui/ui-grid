@@ -1,7 +1,8 @@
 @ngdoc overview
-@name Tutorial: Pinning
+@name Tutorial: 203 Pinning
 @description
 
+The pinning feature allows the user to pin a column to left or right. To enable, you must include the 'ui.grid.pinning' module and you must include the ui-grid-pinning directive on your grid element.
 
 
 @example

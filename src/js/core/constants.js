@@ -5,6 +5,10 @@
     COL_FIELD: /COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
+    FUNC_REGEXP: /(\([^)]*\))?$/,
+    DOT_REGEXP: /\./g,
+    APOS_REGEXP: /'/g,
+    BRACKET_REGEXP: /^(.*)((?:\s*\[\s*\d+\s*\]\s*)|(?:\s*\[\s*"(?:[^"\\]|\\.)*"\s*\]\s*)|(?:\s*\[\s*'(?:[^'\\]|\\.)*'\s*\]\s*))(.*)$/,
     COL_CLASS_PREFIX: 'ui-grid-col',
     events: {
       GRID_SCROLL: 'uiGridScroll',
@@ -62,6 +66,14 @@
       LESS_THAN: 128,
       LESS_THAN_OR_EQUAL: 256,
       NOT_EQUAL: 512
+    },
+
+    aggregationTypes: {
+      sum: 2,
+      count: 4,
+      avg: 8,
+      min: 16,
+      max: 32
     },
 
     // TODO(c0bra): Create full list of these somehow. NOTE: do any allow a space before or after them?

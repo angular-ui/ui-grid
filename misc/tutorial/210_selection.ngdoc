@@ -1,8 +1,8 @@
 @ngdoc overview
-@name Tutorial: Selection
+@name Tutorial: 210 Selection
 @description
 
-This grid example uses the ui-grid-selection directive to row selection.
+This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection' module and you must include the ui-grid-selection directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
 

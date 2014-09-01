@@ -1,9 +1,9 @@
 <div class="ui-grid-render-container">
   <div ui-grid-header></div>
-
   <div ui-grid-viewport></div>
+  <div ui-grid-footer ng-if="grid.options.showFooter"></div>
 
-  <!-- native scrolling -->
+    <!-- native scrolling -->
   <div ui-grid-native-scrollbar ng-if="!grid.options.enableVirtualScrolling && grid.options.enableNativeScrolling && enableScrollbars" type="vertical"></div>
   <div ui-grid-native-scrollbar ng-if="!grid.options.enableVirtualScrolling && grid.options.enableNativeScrolling && enableScrollbars" type="horizontal"></div>
 </div>

@@ -50,5 +50,8 @@ script:
 after_success:
   - grunt release
 
+after_failure:
+  - ./travis_print_logs.sh
+
 after_script:
   - ./travis_print_logs.sh

@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Edit On Focus
+@name Tutorial: 301 Edit On Focus
 @description
 
 Combine ui.grid.edit with ui.grid.cellNav, you can enable editing when the cell gets focus.

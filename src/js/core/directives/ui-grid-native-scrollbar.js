@@ -1,7 +1,7 @@
-(function(){
+(function () {
 // 'use strict';
 
-  angular.module('ui.grid').directive('uiGridNativeScrollbar', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil', function($log, $timeout, $document, uiGridConstants, gridUtil) {
+  angular.module('ui.grid').directive('uiGridNativeScrollbar', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil', function ($log, $timeout, $document, uiGridConstants, gridUtil) {
     var scrollBarWidth = gridUtil.getScrollbarWidth();
     scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
 
@@ -61,7 +61,7 @@
         else if ($scope.type === 'horizontal') {
           elmMaxScroll = gridUtil.elementWidth($elm);
         }
-        
+
         function updateNativeVerticalScrollbar() {
           // Update the vertical scrollbar's content height so it's the same as the canvas
           var h = rowContainer.getCanvasHeight();
@@ -90,7 +90,9 @@
 
           // Scrollbar needs to be negatively positioned beyond the bottom of the relatively-positioned render container
           var bottom = (scrollBarWidth * -1) + gridBottomBorder;
-
+          if (grid.options.showFooter) {
+            bottom -= 1;
+          }
           var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px; }';
           ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
 
@@ -132,8 +134,12 @@
 
             var vertScrollPercentage = newScrollTop / vertScrollLength;
 
-            if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
-            if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
+            if (vertScrollPercentage > 1) {
+              vertScrollPercentage = 1;
+            }
+            if (vertScrollPercentage < 0) {
+              vertScrollPercentage = 0;
+            }
 
             var yArgs = {
               target: $elm,
@@ -141,7 +147,7 @@
                 percentage: vertScrollPercentage
               }
             };
-            
+
             // If the source of this scroll is defined (i.e., not us, then don't fire the scroll event because we'll be re-triggering)
             if (!$scope.scrollSource) {
               uiGridCtrl.fireScrollingEvent(yArgs);
@@ -168,7 +174,7 @@
                 percentage: horizScrollPercentage
               }
             };
-            
+
             // If the source of this scroll is defined (i.e., not us, then don't fire the scroll event because we'll be re-triggering)
             if (!$scope.scrollSource) {
               uiGridCtrl.fireScrollingEvent(xArgs);
@@ -184,7 +190,7 @@
 
         $elm.on('scroll', scrollEvent);
 
-        $elm.on('$destroy', function() {
+        $elm.on('$destroy', function () {
           $elm.off('scroll');
         });
 
@@ -202,7 +208,7 @@
               var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
               var newScrollTop = Math.max(0, args.y.percentage * vertScrollLength);
-              
+
               $elm[0].scrollTop = newScrollTop;
             }
           }
@@ -211,7 +217,7 @@
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
               var newScrollLeft = Math.max(0, args.x.percentage * horizScrollLength);
-              
+
               // $elm[0].scrollLeft = newScrollLeft;
               $elm[0].scrollLeft = gridUtil.denormalizeScrollLeft($elm, newScrollLeft);
             }

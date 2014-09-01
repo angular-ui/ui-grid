@@ -1,0 +1,48 @@
+@ngdoc overview
+@name Tutorial: 106 Binding examples
+@description
+
+UI-Grid supports complex object binding in the colDef.field.
+
+This tutorial shows two-way binding to properties with special characters, array element, nested property, and function.
+
+Note that a function can not be edited.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+
+    app.controller('MainCtrl', ['$scope', function ($scope) {
+
+    $scope.gridOptions = {
+            enableSorting: true,
+            columnDefs: [
+              { name:'fistName', field: 'first-name' },
+              { name:'1stFriend', field: 'friends[0]' },
+              { name:'city', field: 'address.city'},
+              { name:'getZip', field: 'getZip()', enableCellEdit:false}
+            ],
+            data : [      {
+                               "first-name": "Cox",
+                               "friends": ["friend0"],
+                               "address": {street:"301 Dove Ave", city:"Laurel", zip:"39565"},
+                               "getZip" : function() {return this.address.zip;}
+                           }
+                       ]
+          };
+
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+</example>
