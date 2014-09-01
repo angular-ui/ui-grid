@@ -35,7 +35,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
       /**
        * @ngdoc boolean
-       * @name ui.grid.class:GridOptions.columnDef.enableSorting
+       * @name enableSorting
        * @propertyOf ui.grid.class:GridOptions.columnDef
        * @description (optional) True by default. When enabled, this setting adds sort
        * widgets to the column header, allowing sorting of the data in the individual column.
@@ -51,7 +51,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
       /**
        * @ngdoc boolean
-       * @name ui.grid.class:GridOptions.columnDef.enableFiltering
+       * @name enableFiltering
        * @propertyOf ui.grid.class:GridOptions.columnDef
        * @description (optional) True by default. When enabled, this setting adds filter
        * widgets to the column header, allowing filtering of the data in the individual column.

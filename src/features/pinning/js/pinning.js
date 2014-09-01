@@ -51,17 +51,16 @@
          *  @ngdoc object
          *  @name ui.grid.pinning.api:GridOptions
          *
-         *  @description GridOptions for pinning feature
+         *  @description GridOptions for pinning feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
          */
 
         /**
          *  @ngdoc object
          *  @name enableRowSelection
          *  @propertyOf  ui.grid.pinning.api:GridOptions
-         *  @propertyOf  ui.grid.class:GridOptions
          *  @description Enable pinning for the entire grid.  
          *  <br/>Defaults to true
-         *  <br/>_requires the pinning feature to be enabled_
          */
         gridOptions.enablePinning = gridOptions.enablePinning !== false;
 
@@ -72,19 +71,18 @@
 
         /**
          *  @ngdoc object
-         *  @name ui.grid.pinning.api:ColDef
+         *  @name ui.grid.pinning.api:ColumnDef
          *
-         *  @description ColDef for pinning feature
+         *  @description ColumnDef for pinning feature, these are available to be 
+         *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
          */
 
         /**
          *  @ngdoc object
          *  @name enablePinning
-         *  @propertyOf  ui.grid.pinning.api:ColDef
-         *  @propertyOf  ui.grid.class:GridOptions.columnDef
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
          *  @description Enable pinning for the individual column.  
          *  <br/>Defaults to true
-         *  <br/>_requires the pinning feature to be enabled_
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
 
