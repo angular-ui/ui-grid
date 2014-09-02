@@ -16,6 +16,7 @@ function ngGridCsvExportPlugin (opts) {
     opts.linkClass = opts.linkCss || 'csv-data-link-span'; 
     opts.linkLabel = opts.linkLabel || 'CSV Export';
     opts.fileName = opts.fileName || 'Export.csv';
+    self.csvData = null;
 
     self.init = function(scope, grid, services) {
         self.grid = grid;
@@ -23,6 +24,14 @@ function ngGridCsvExportPlugin (opts) {
         self.services = services;
 
         function showDs() {
+            var keys = [];
+            for (var f in grid.config.columnDefs) {
+                if (grid.config.columnDefs.hasOwnProperty(f))
+                {
+                    keys.push(grid.config.columnDefs[f].field);
+                }
+            }
+            var csvData = '';
             function csvStringify(str) {
                 if (str == null) { // we want to catch anything null-ish, hence just == not ===
                     return '';
@@ -80,14 +89,17 @@ function ngGridCsvExportPlugin (opts) {
                 }
                 csvData += swapLastCommaForNewline(rowData);
             }
-            var fp = grid.$root.find(opts.containerPanel);
-            var csvDataLinkPrevious = grid.$root.find(opts.containerPanel + ' .' + opts.linkClass);
-            if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
-            var csvDataLinkHtml = '<span class="' + opts.linkClass + '">';
-            csvDataLinkHtml += '<br><a href="data:text/csv;charset=UTF-8,';
-            csvDataLinkHtml += encodeURIComponent(csvData);
-            csvDataLinkHtml += '" download="' + opts.fileName + '">' + opts.linkLabel + '</a></br></span>' ;
-            fp.append(csvDataLinkHtml);
+            if (!opts.inhibitButton) {
+                var fp = grid.$root.find(".ngFooterPanel");
+                var csvDataLinkPrevious = grid.$root.find('.ngFooterPanel .csv-data-link-span');
+                if (csvDataLinkPrevious != null) {csvDataLinkPrevious.remove() ; }
+                var csvDataLinkHtml = "<span class=\"csv-data-link-span\">";
+                csvDataLinkHtml += "<br><a href=\"data:text/csv;charset=UTF-8,";
+                csvDataLinkHtml += encodeURIComponent(csvData);
+                csvDataLinkHtml += "\" download=\"Export.csv\">CSV Export</a></br></span>" ;
+                fp.append(csvDataLinkHtml);
+            }
+            self.csvData = csvData;
         }
         setTimeout(showDs, 0);
         scope.catHashKeys = function() {
@@ -102,5 +114,14 @@ function ngGridCsvExportPlugin (opts) {
         } else {
             scope.$watch(scope.catHashKeys, showDs);
         }
+    };
+
+    self.downloadCSV = function() {
+        var element = angular.element('<a/>');
+         element.attr({
+             href: 'data:attachment/csv;charset=utf-8,' + encodeURIComponent(self.csvData),
+             target: '_blank',
+             download: opts.downloadFileName ? opts.downloadFileName : 'csvFile.csv'
+         })[0].click();
     };
 }
