@@ -8,9 +8,31 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name ui.grid.class:Grid
    * @description Grid is the main viewModel.  Any properties or methods needed to maintain state are defined in
- * * this prototype.  One instance of Grid is created per Grid directive instance.
+   * this prototype.  One instance of Grid is created per Grid directive instance.
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
+  
+  /**
+   * @ngdoc object
+   * @name ui.grid.api:publicApi
+   * @description The set of grid methods that are expected to be called by
+   * an end user of the grid.
+   * 
+   * @example
+   * In order to call methods on the gridApi, you need to get your instance
+   * of the grid, which is achieved using the onRegisterApi.
+   *   
+   * <pre>
+   *   $scope.gridOptions.onRegisterApi = function(gridApi){
+   *     $scope.gridApi = gridApi;
+   *   };
+   * 
+   *   //...sometime later, after the gridApi has finished registering...
+   *   $scope.gridApi.getVisibleRows()
+   * </pre>
+   * 
+   */
+  
   var Grid = function Grid(options) {
   // Get the id out of the options, then remove it
   if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
@@ -983,19 +1005,35 @@ angular.module('ui.grid')
     return this.renderContainers.body.visibleRowCache.length;
   };
 
-   Grid.prototype.getVisibleRows = function getVisibleRows() {
+  /**
+   * @ngdoc method
+   * @name getVisibleRows
+   * @methodOf ui.grid.api:publicApi
+   * @description Returns all the currently visible rows in the grid
+   * @return {array} visibleRows array of visible rows
+   * 
+   */
+  Grid.prototype.getVisibleRows = function getVisibleRows() {
     return this.renderContainers.body.visibleRowCache;
-   };
+  };
 
+  /**
+   * @ngdoc method
+   * @name getVisibleColumnCount
+   * @methodOf ui.grid.api:publicApi
+   * @description Returns a count of the visible columns
+   * @return {number} visibleColumnCount number of visible columns
+   * 
+   */
   Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {
     // var count = 0;
-
+  
     // this.rows.forEach(function (row) {
     //   if (row.visible) {
     //     count++;
     //   }
     // });
-
+  
     // return this.visibleRowCache.length;
     return this.renderContainers.body.visibleColumnCache.length;
   };
@@ -1043,6 +1081,16 @@ angular.module('ui.grid')
     return rowSorter.sort(this, renderableRows, this.columns);
   };
 
+  /**
+   * @ngdoc method
+   * @name getCellValue
+   * @methodOf ui.grid.api:publicApi
+   * @description Returns a specific cell from the grid
+   * @param {number} row the row number of the cell
+   * @param {number} col the column number of the cell
+   * @return {cell} cell the cell value
+   * 
+   */
   Grid.prototype.getCellValue = function getCellValue(row, col){
     var self = this;
 
