@@ -95,27 +95,24 @@
            *  @ngdoc object
            *  @name ui.grid.edit.api:GridOptions
            *
-           *  @description Options for configuring the edit feature
+           *  @description Options for configuring the edit feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
           /**
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description If defined, sets the default value for the editable flag on each individual colDefs 
            *  if their individual enableCellEdit configuration is not defined. Defaults to undefined.  
-           *  </br>_requires the edit feature to be enabled_
            */
 
           /**
            *  @ngdoc object
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description If specified, either a value or function to be used by all columns before editing.  
            *  If falsy, then editing of cell is not allowed.
-           *  </br>_requires the edit feature to be enabled_
            *  @example
            *  <pre>
            *  function($scope){
@@ -130,17 +127,14 @@
            *  @ngdoc object
            *  @name editableCellTemplate
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If specified, cellTemplate to use as the editor for all columns.
            *  @description If specified, cellTemplate to use as the editor for all columns.  
            *  <br/> defaults to 'ui-grid/cellTextEditor'
-           *  <br/>_requires the edit feature to be enabled_
            */
 
           /**
            *  @ngdoc object
            *  @name enableCellEditOnFocus
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
            *  <br/>_requires cellNav feature and the edit feature to be enabled_
            */
@@ -162,18 +156,17 @@
 
           /**
            *  @ngdoc object
-           *  @name ui.grid.edit.api:ColDef
+           *  @name ui.grid.edit.api:ColumnDef
            *
-           *  @description Column Definitions for edit feature
+           *  @description Column Definition for edit feature, these are available to be 
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
            */
 
           /**
            *  @ngdoc object
            *  @name enableCellEdit
-           *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @description enable editing on column
-           *  <br/>_requires the edit feature to be enabled_
            */
           colDef.enableCellEdit = colDef.enableCellEdit === undefined ? (gridOptions.enableCellEdit === undefined ?
             (colDef.type !== 'object'):gridOptions.enableCellEdit) : colDef.enableCellEdit;
@@ -181,10 +174,8 @@
           /**
            *  @ngdoc object
            *  @name cellEditableCondition
-           *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
-           *  <br/>_requires the edit feature to be enabled_
            *  @example 
            *  <pre>
            *  function($scope){
@@ -198,11 +189,9 @@
           /**
            *  @ngdoc object
            *  @name editableCellTemplate
-           *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @description cell template to be used when editing this column. Can be Url or text template
            *  <br/>Defaults to gridOptions.editableCellTemplate
-           *  <br/>_requires the edit feature to be enabled_
            */
           if (colDef.enableCellEdit) {
             colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate || 'ui-grid/cellEditor';
@@ -221,8 +210,7 @@
           /**
            *  @ngdoc object
            *  @name enableCellEditOnFocus
-           *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @requires ui.grid.cellNav
            *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
            *  <br>_requires both the cellNav feature and the edit feature to be enabled_

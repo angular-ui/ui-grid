@@ -18,17 +18,16 @@
            *  @ngdoc object
            *  @name ui.grid.resizeColumns.api:GridOptions
            *
-           *  @description GridOptions for resizeColumns feature
+           *  @description GridOptions for resizeColumns feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
           /**
            *  @ngdoc object
            *  @name enableColumnResizing
            *  @propertyOf  ui.grid.resizeColumns.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable column resizing on the entire grid 
            *  <br/>Defaults to true
-           *  <br/>_requires the column resizing feature to be enabled_
            */
           gridOptions.enableColumnResizing = gridOptions.enableColumnResizing !== false;
 
@@ -44,19 +43,18 @@
           var promises = [];
           /**
            *  @ngdoc object
-           *  @name ui.grid.resizeColumns.api:ColDef
+           *  @name ui.grid.resizeColumns.api:ColumnDef
            *
-           *  @description ColDef for resizeColumns feature
+           *  @description ColumnDef for resizeColumns feature, these are available to be 
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
            */
 
           /**
            *  @ngdoc object
            *  @name enableColumnResizing
-           *  @propertyOf  ui.grid.resizeColumns.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.resizeColumns.api:ColumnDef
            *  @description Enable column resizing on an individual column
            *  <br/>Defaults to GridOptions.enableColumnResizing
-           *  <br/>_requires column resizing feature to be enabled_
            */
           //default to true unless gridOptions or colDef is explicitly false
           colDef.enableColumnResizing = colDef.enableColumnResizing === undefined ? gridOptions.enableColumnResizing : colDef.enableColumnResizing;
@@ -83,7 +81,7 @@
    * @restrict A
    * @description
    * Enables resizing for all columns on the grid. If, for some reason, you want to use the ui-grid-resize-columns directive, but not allow column resizing, you can explicitly set the
-   * option to false. This prevents resizing for the entire grid, regardless of individual colDef options.
+   * option to false. This prevents resizing for the entire grid, regardless of individual columnDef options.
    *
    * @example
    <doc:example module="app">
