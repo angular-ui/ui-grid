@@ -123,6 +123,25 @@
                 },
                 /**
                  * @ngdoc function
+                 * @name selectAllVisibleRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Selects all visible rows.  Does nothing if multiSelect = false
+                 */
+                selectAllVisibleRows: function () {
+                  if (grid.options.multiSelect === false) {
+                    return;
+                  }
+
+                  grid.rows.forEach(function (row) {
+                    if (row.visible) {
+                      row.isSelected = true;
+                    } else {
+                      row.isSelected = false;
+                    }
+                  });
+                },
+                /**
+                 * @ngdoc function
                  * @name clearSelectedRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Unselects all rows
