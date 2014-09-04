@@ -273,30 +273,7 @@
           uiGridCtrl.grid.buildColumns()
             .then(function() {
               // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
-              uiGridCtrl.refreshCanvas(true)
-                .then(function() {
-                  // If virtual scrolling is turned on we need to update the scrollbar and stuff. The native scrollbars update automatically, of course
-                  if (uiGridCtrl.grid.options.enableVirtualScrolling) {
-                    // Then fire a scroll event to put the scrollbar in the right place, so it doesn't end up too far ahead or behind
-                    var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
-
-                    args.target = $elm;
-                      
-                    // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
-                    if (xDiff && args.x && args.x.pixels) {
-                      var extraPercent = xDiff / uiGridCtrl.grid.getHeaderViewportWidth();
-
-                      args.x.percentage = args.x.percentage - extraPercent;
-
-                      // Can't be less than 0% or more than 100%
-                      if (args.x.percentage > 1) { args.x.percentage = 1; }
-                      else if (args.x.percentage < 0) { args.x.percentage = 0; }
-                    }
-                    
-                    // Fire the scroll event
-                    uiGridCtrl.fireScrollingEvent(args);
-                  }
-                });
+              uiGridCtrl.refreshCanvas(true);
             });
         }
 
@@ -311,14 +288,15 @@
 
           // The other column to resize (the one next to this one)
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
           var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
           }
 
           // Don't resize if it's disabled on this column
@@ -372,14 +350,16 @@
 
           // The other column to resize (the one next to this one)
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
+
           var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
           }
 
           // Don't resize if it's disabled on this column
@@ -439,16 +419,19 @@
           event.stopPropagation();
 
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
+
           var otherCol, multiplier;
 
           // If we're the left-positioned resizer then we need to resize the column to the left of our column, and not our column itself
           if ($scope.position === 'left') {
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
             multiplier = 1;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
             multiplier = -1;
           }
 
