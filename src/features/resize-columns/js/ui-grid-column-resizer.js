@@ -160,9 +160,11 @@
                 resizerRight.attr('position', 'right');
 
                 var col = $scope.col;
-                
+                var renderContainer = col.getRenderContainer();
+
+
                 // Get the column to the left of this one
-                var otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+                var otherCol = renderContainer.renderedColumns[$scope.renderIndex - 1];
 
                 // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
                 if (otherCol && $scope.col.index !== 0 && otherCol.colDef.enableColumnResizing !== false) {
