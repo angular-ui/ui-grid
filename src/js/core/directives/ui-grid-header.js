@@ -21,6 +21,7 @@
             $scope.colContainer = containerCtrl.colContainer;
 
             containerCtrl.header = $elm;
+            containerCtrl.colContainer.header = $elm;
 
             var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
 

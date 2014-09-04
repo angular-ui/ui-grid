@@ -63,20 +63,23 @@
         }
 
         function updateNativeVerticalScrollbar() {
+          // Get the height that the scrollbar should have
+          var height = rowContainer.getViewportHeight();
+
           // Update the vertical scrollbar's content height so it's the same as the canvas
-          var h = rowContainer.getCanvasHeight();
+          var contentHeight = rowContainer.getCanvasHeight();
 
           // TODO(c0bra): set scrollbar `top` by height of header row
           // var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
-          var headerHeight = grid.headerHeight;
+          var headerHeight = colContainer.headerHeight ? colContainer.headerHeight : grid.headerHeight;
 
           // $log.debug('headerHeight in scrollbar', headerHeight);
 
           // var ret = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
-          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
-          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { top: ' + headerHeight + 'px}';
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + contentHeight + 'px; }';
+          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { height: ' + height + 'px; top: ' + headerHeight + 'px}';
 
-          elmMaxScroll = h;
+          elmMaxScroll = contentHeight;
 
           return ret;
         }

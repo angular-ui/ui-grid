@@ -16,13 +16,6 @@
     {{ grid.verticalScrollbarStyles }}
     {{ grid.horizontalScrollbarStyles }}
 
-    /*{{ grid.nativeVerticalScrollbarStyles }}
-    {{ grid.nativeHorizontalScrollbarStyles }}*/
-
-    .grid{{ grid.id }} .ui-grid-native-scrollbar.vertical {
-      height: {{ grid.getViewportHeight() }}px;
-    }
-
     .ui-grid[dir=rtl] .ui-grid-viewport {
       padding-left: {{ grid.verticalScrollbarWidth }}px;
     }

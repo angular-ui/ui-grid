@@ -31,7 +31,10 @@ Default filters can be set programmatically by setting `filter: { term: 'xxx' }`
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      Click on a column header to open the menu and then filter by that column. (The third column has filtering disabled.)
+      You can use asterisks to fuzz-match, i.e. use "*z*" as your filter to show any row where that column contains a "z".
+      <br>
+      <br>
+      <strong>Note:</strong> The third column has filtering disabled.
       <br>
       <br>
       <div ui-grid="gridOptions" class="grid"></div>
