@@ -1,4 +1,4 @@
-describe('ui.grid.selectition uiGridSelectionService', function () {
+describe('ui.grid.selection uiGridSelectionService', function () {
     var uiGridSelectionService;
     var gridClassFactory;
     var grid;
@@ -20,16 +20,14 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
         _uiGridSelectionService_.initializeGrid(grid);
         var data = [];
         for (var i = 0; i < 10; i++) {
-            data.push({col1:'a'});
+            data.push({col1:'a_' + i});
         }
         grid.options.data = data;
 
         grid.buildColumns();
         grid.modifyRows(grid.options.data);
-        grid.setVisibleRows(grid.rows);
-
     }));
-
+    
 
     describe('toggleSelection function', function () {
         it('should toggle selected', function () {
@@ -65,6 +63,10 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
     });
 
     describe('shiftSelect function', function() {
+        beforeEach(function() {
+            grid.setVisibleRows(grid.rows);          
+        });
+        
         it('should select rows in between using shift key', function () {
             grid.api.selection.toggleRowSelection(grid.rows[2].entity);
             uiGridSelectionService.shiftSelect(grid, grid.rows[5], true);
@@ -86,6 +88,83 @@ describe('ui.grid.selectition uiGridSelectionService', function () {
         it('should return if multiSelect is false', function () {
             uiGridSelectionService.shiftSelect(grid, grid.rows[2], false);
             expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
+        });
+    });
+    
+    describe('selectRow and unselectRow functions', function() {
+        it('select then unselect rows, including selecting rows already selected and unselecting rows not selected', function () {
+            grid.api.selection.selectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            
+            grid.api.selection.selectRow(grid.rows[6].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            expect(grid.rows[6].isSelected).toBe(true);
+
+            grid.api.selection.selectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            expect(grid.rows[6].isSelected).toBe(true);
+            
+            grid.api.selection.unSelectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(false);
+            expect(grid.rows[6].isSelected).toBe(true);
+
+            grid.api.selection.unSelectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(false);
+            expect(grid.rows[6].isSelected).toBe(true);
+
+            grid.api.selection.unSelectRow(grid.rows[6].entity);
+            expect(grid.rows[4].isSelected).toBe(false);
+            expect(grid.rows[6].isSelected).toBe(false);
+        });      
+    });
+
+    describe('selectAllRows and clearSelectedRows functions', function() {
+        it('should select all rows, and select all rows when already all selected, then unselect again', function () {
+            grid.api.selection.selectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            
+            grid.api.selection.selectRow(grid.rows[6].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            expect(grid.rows[6].isSelected).toBe(true);
+
+            grid.api.selection.selectAllRows();
+            for (var i = 0; i < 10; i++) {
+                expect(grid.rows[i].isSelected).toBe(true);
+            }
+
+            grid.api.selection.selectAllRows();
+            for (i = 0; i < 10; i++) {
+                expect(grid.rows[i].isSelected).toBe(true);
+            }
+            
+            grid.api.selection.clearSelectedRows();
+            for (i = 0; i < 10; i++) {
+                expect(grid.rows[i].isSelected).toBe(false);
+            }
+        });     
+    });
+
+    describe('selectAllVisibleRows function', function() {
+        it('should select all visible rows', function () {
+            grid.api.selection.selectRow(grid.rows[4].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            
+            grid.api.selection.selectRow(grid.rows[6].entity);
+            expect(grid.rows[4].isSelected).toBe(true);
+            expect(grid.rows[6].isSelected).toBe(true);
+
+            grid.rows[3].visible = true;
+            grid.rows[4].visible = true;
+            grid.rows[6].visible = false;
+            grid.rows[7].visible = true;
+            grid.rows[9].visible = true;
+            
+            grid.api.selection.selectAllVisibleRows();
+            expect(grid.rows[3].isSelected).toBe(true);
+            expect(grid.rows[4].isSelected).toBe(true);
+            expect(grid.rows[6].isSelected).toBe(false);
+            expect(grid.rows[7].isSelected).toBe(true);
+            expect(grid.rows[9].isSelected).toBe(true);
         });
     });
 
