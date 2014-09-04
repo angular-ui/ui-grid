@@ -181,12 +181,6 @@ angular.module('ui.grid')
      */
     this.enableColumnMenu = true;
 
-    // Native scrolling on by default
-    this.enableNativeScrolling = true;
-
-    // Virtual scrolling off by default, overrides enableNativeScrolling if set
-    this.enableVirtualScrolling = false;
-
     // Columns can't be smaller than 10 pixels
     this.minimumColumnSize = 10;
 

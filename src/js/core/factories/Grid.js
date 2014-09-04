@@ -56,11 +56,6 @@ angular.module('ui.grid')
   // Cached function to use with custom row templates
   this.getRowTemplateFn = null;
 
-  // Validate options
-  if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
-    throw "Either native or virtual scrolling must be enabled.";
-  }
-
 
   //representation of the rows on the grid.
   //these are wrapped references to the actual data rows (options.data)

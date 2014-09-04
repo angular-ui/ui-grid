@@ -102,20 +102,19 @@
         }
 
         // NOTE: priority 6 so they run after the column widths update, which in turn update the canvas width
-        if (grid.options.enableNativeScrolling) {
-          if ($scope.type === 'vertical') {
-            grid.registerStyleComputation({
-              priority: 6,
-              func: updateNativeVerticalScrollbar
-            });
-          }
-          else if ($scope.type === 'horizontal') {
-            grid.registerStyleComputation({
-              priority: 6,
-              func: updateNativeHorizontalScrollbar
-            });
-          }
+        if ($scope.type === 'vertical') {
+          grid.registerStyleComputation({
+            priority: 6,
+            func: updateNativeVerticalScrollbar
+          });
         }
+        else if ($scope.type === 'horizontal') {
+          grid.registerStyleComputation({
+            priority: 6,
+            func: updateNativeHorizontalScrollbar
+          });
+        }
+
 
         $scope.scrollSource = null;
 
