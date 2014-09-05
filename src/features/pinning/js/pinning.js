@@ -86,6 +86,29 @@
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
 
+
+        /**
+         *  @ngdoc object
+         *  @name pinnedLeft
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
+         *  @description Column is pinned left when grid is rendered
+         *  <br/>Defaults to false
+         */
+
+        /**
+         *  @ngdoc object
+         *  @name pinnedRight
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
+         *  @description Column is pinned right when grid is rendered
+         *  <br/>Defaults to false
+         */
+        if (colDef.pinnedLeft) {
+          col.renderContainer = 'left';
+        }
+        else if (colDef.pinnedRight) {
+          col.renderContainer = 'right';
+        }
+
         if (!colDef.enablePinning) {
           return;
         }

@@ -15,8 +15,8 @@ The pinning feature allows the user to pin a column to left or right. To enable,
 
       $scope.gridOptions.columnDefs = [
         { name:'id', width:50 },
-        { name:'name', width:100 },
-        { name:'age', width:100  },
+        { name:'name', width:100, pinnedLeft:true },
+        { name:'age', width:100, pinnedRight:true  },
         { name:'address.street', width:150  },
         { name:'address.city', width:150 },
         { name:'address.state', width:50 },

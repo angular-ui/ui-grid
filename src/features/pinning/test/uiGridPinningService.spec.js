@@ -84,6 +84,33 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       expect(colOptions.enablePinning).toBe(true);
     });
 
+    it('should pin left when pinnedLeft=true', function() {
+      colOptions = {pinnedLeft: true};
+      gridOptions = {enablePinning: false};
+
+      uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+
+      expect(mockCol.renderContainer).toBe('left');
+    });
+
+    it('should pin left if both PinnedLeft and PinnedRight', function() {
+      colOptions = {pinnedLeft: true, pinnedRight:true};
+      gridOptions = {enablePinning: false};
+
+      uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+
+      expect(mockCol.renderContainer).toBe('left');
+    });
+
+    it('should pin right when pinnedRight=true', function() {
+      colOptions = {pinnedRight: true};
+      gridOptions = {enablePinning: false};
+
+      uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+
+      expect(mockCol.renderContainer).toBe('right');
+    });
+
     it('should register menu actions for pinnable columns', function () {
       function testMenuItem(obj) {
         expect(obj.title).toEqual(jasmine.any(String));
