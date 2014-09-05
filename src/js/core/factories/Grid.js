@@ -216,6 +216,30 @@ angular.module('ui.grid')
   };
 
   /**
+   * @ngdoc function
+   * @name createLeftContainer
+   * @methodOf ui.grid.class:Grid
+   * @description creates the left render container if it doesn't already exist
+   */
+  Grid.prototype.createLeftContainer = function() {
+    if (!this.renderContainers.left) {
+      this.renderContainers.left = new GridRenderContainer('left', this, { disableColumnOffset: true });
+    }
+  };
+
+  /**
+   * @ngdoc function
+   * @name createRightContainer
+   * @methodOf ui.grid.class:Grid
+   * @description creates the right render container if it doesn't already exist
+   */
+  Grid.prototype.createRightContainer = function() {
+    if (!this.renderContainers.right) {
+      this.renderContainers.right = new GridRenderContainer('right', this, { disableColumnOffset: true });
+    }
+  };
+
+  /**
    * undocumented function
    * @name preprocessColDef
    * @methodOf ui.grid.class:Grid

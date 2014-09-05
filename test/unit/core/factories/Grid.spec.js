@@ -171,6 +171,34 @@ describe('Grid factory', function () {
     });
   });
 
+  ddescribe('renderContainers', function () {
+    it('should have a body render container', function () {
+      expect(grid.renderContainers.body).toBeDefined();
+    });
+
+    it('should create a left render container', function () {
+      expect(grid.renderContainers.left).not.toBeDefined();
+      grid.createLeftContainer();
+      expect(grid.renderContainers.left).toBeDefined();
+      var left = grid.renderContainers.left;
+      //creating twice does nothing
+      grid.createLeftContainer();
+      expect(grid.renderContainers.left).toBe(left);
+    });
+    
+    it('should create a right render container', function () {
+      expect(grid.renderContainers.right).not.toBeDefined();
+      grid.createRightContainer();
+      expect(grid.renderContainers.right).toBeDefined();
+      var right = grid.renderContainers.right;
+      //creating twice does nothing
+      grid.createRightContainer();
+      expect(grid.renderContainers.right).toBe(right);
+    });
+
+
+  });
+
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
       var dataRow = {str:'abc', num:123, dat:new Date(), bool:true, obj:{}, nll:null, negNum:-1, posNum:+1 };

@@ -40,9 +40,8 @@
         // Register a column builder to add new menu items for pinning left and right
         grid.registerColumnBuilder(service.pinningColumnBuilder);
 
-        grid.renderContainers.left = new GridRenderContainer('left', grid, { disableColumnOffset: true });
-        grid.renderContainers.right = new GridRenderContainer('right', grid, { disableColumnOffset: true });
-
+        grid.createLeftContainer();
+        grid.createRightContainer();
       },
 
       defaultGridOptions: function (gridOptions) {
