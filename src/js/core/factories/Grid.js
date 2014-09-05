@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
-    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer) {
+.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', 'debounce',
+    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, debounce) {
 
 /**
    * @ngdoc function
@@ -12,6 +12,7 @@ angular.module('ui.grid')
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
   var Grid = function Grid(options) {
+    var self = this;
   // Get the id out of the options, then remove it
   if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
     if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
@@ -22,50 +23,98 @@ angular.module('ui.grid')
     throw new Error('No ID provided. An ID must be given when creating a grid.');
   }
 
-  this.id = options.id;
+  self.id = options.id;
   delete options.id;
 
   // Get default options
-  this.options = new GridOptions();
+  self.options = new GridOptions();
 
   // Extend the default options with what we were passed in
-  angular.extend(this.options, options);
+  angular.extend(self.options, options);
 
-  this.headerHeight = this.options.headerRowHeight;
-  this.footerHeight = this.options.showFooter === true ? this.options.footerRowHeight : 0;
+  self.headerHeight = self.options.headerRowHeight;
+  self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
 
-  this.gridHeight = 0;
-  this.gridWidth = 0;
-  this.columnBuilders = [];
-  this.rowBuilders = [];
-  this.rowsProcessors = [];
-  this.columnsProcessors = [];
-  this.styleComputations = [];
-  this.viewportAdjusters = [];
+  self.gridHeight = 0;
+  self.gridWidth = 0;
+  self.columnBuilders = [];
+  self.rowBuilders = [];
+  self.rowsProcessors = [];
+  self.columnsProcessors = [];
+  self.styleComputations = [];
+  self.viewportAdjusters = [];
 
-  // this.visibleRowCache = [];
+  // self.visibleRowCache = [];
 
-  // Set of 'render' containers for this grid, which can render sets of rows
-  this.renderContainers = {};
+  // Set of 'render' containers for self grid, which can render sets of rows
+  self.renderContainers = {};
 
   // Create a
-  this.renderContainers.body = new GridRenderContainer('body', this);
+  self.renderContainers.body = new GridRenderContainer('body', self);
 
-  this.cellValueGetterCache = {};
+  self.cellValueGetterCache = {};
 
   // Cached function to use with custom row templates
-  this.getRowTemplateFn = null;
+  self.getRowTemplateFn = null;
 
 
   //representation of the rows on the grid.
   //these are wrapped references to the actual data rows (options.data)
-  this.rows = [];
+  self.rows = [];
 
   //represents the columns on the grid
-  this.columns = [];
+  self.columns = [];
+
+  /**
+   * @ngdoc boolean
+   * @name isScrollingVertically
+   * @propertyOf ui.grid.class:Grid
+   * @description set to true when Grid is scrolling vertically. Set to false via debounced method
+   */
+  self.isScrollingVertically = false;
+
+  /**
+   * @ngdoc boolean
+   * @name isScrollingHorizontally
+   * @propertyOf ui.grid.class:Grid
+   * @description set to true when Grid is scrolling horizontally. Set to false via debounced method
+   */
+  self.isScrollingHorizontally = false;
+
+  var debouncedVertical = debounce(function () {
+    self.isScrollingVertically = false;
+  }, 300);
+
+  var debouncedHorizontal = debounce(function () {
+    self.isScrollingHorizontally = false;
+  }, 300);
 
 
-  this.api = new GridApi(this);
+  /**
+   * @ngdoc function
+   * @name flagScrollingVertically
+   * @methodOf ui.grid.class:Grid
+   * @description sets isScrollingVertically to true and sets it to false in a debounced function
+   */
+  self.flagScrollingVertically = function() {
+    self.isScrollingVertically = true;
+    debouncedVertical();
+  };
+
+  /**
+   * @ngdoc function
+   * @name flagScrollingHorizontally
+   * @methodOf ui.grid.class:Grid
+   * @description sets isScrollingHorizontally to true and sets it to false in a debounced function
+   */
+  self.flagScrollingHorizontally = function() {
+    self.isScrollingHorizontally = true;
+    debouncedHorizontal();
+  };
+
+
+
+  self.api = new GridApi(self);
 };
 
   /**
@@ -1122,6 +1171,7 @@ angular.module('ui.grid')
     self.rowHashMap = hashMap;
   };
 
+
   // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)
   function RowHashMap() {}
 
@@ -1153,6 +1203,8 @@ angular.module('ui.grid')
       return value;
     }
   };
+
+
 
   return Grid;
 
