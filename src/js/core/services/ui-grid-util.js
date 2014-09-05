@@ -875,6 +875,57 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
   };
 
+  /**
+   * @ngdoc method
+   * @name debounce
+   * @methodOf ui.grid.service:GridUtil
+   *
+   * @param {function} func function to debounce
+   * @param {number} wait milliseconds to delay
+   * @param {bool} immediate execute before delay
+   *
+   * @returns {function} A function that can be executed as debounced function
+   *
+   * @description
+   * Copied from https://github.com/shahata/angular-debounce
+   * Takes a function, decorates it to execute only 1 time after multiple calls, and returns the decorated function
+   * @example
+   * <pre>
+   * var debouncedFunc =  gridUtil.debounce(function(){alert('debounced');}, 500);
+   * debouncedFunc();
+   * debouncedFunc();
+   * debouncedFunc();
+   * </pre>
+   */
+  s.debounce =  function (func, wait, immediate) {
+    var timeout, args, context, result;
+    function debounce() {
+      /* jshint validthis:true */
+      context = this;
+      args = arguments;
+      var later = function () {
+        timeout = null;
+        if (!immediate) {
+          result = func.apply(context, args);
+        }
+      };
+      var callNow = immediate && !timeout;
+      if (timeout) {
+        $timeout.cancel(timeout);
+      }
+      timeout = $timeout(later, wait);
+      if (callNow) {
+        result = func.apply(context, args);
+      }
+      return result;
+    }
+    debounce.cancel = function () {
+      $timeout.cancel(timeout);
+      timeout = null;
+    };
+    return debounce;
+  };
+
   return s;
 }]);
 

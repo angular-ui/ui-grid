@@ -20,6 +20,26 @@ describe('ui.grid.utilService', function() {
     });
   });
 
+  describe('debounce()', function() {
+    it('debounces a function', inject(function ($timeout) {
+
+      var x = 0;
+      var func = function () {
+        x++;
+      };
+
+      var debouncedFunc = gridUtil.debounce(func, 10);
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+      $timeout.flush();
+
+      expect(x).toEqual(1);
+    }));
+  });
+
   describe('readableColumnName', function() {
     it('does not throw with null name', function() {
       expect(function() {

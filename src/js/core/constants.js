@@ -12,7 +12,6 @@
     COL_CLASS_PREFIX: 'ui-grid-col',
     events: {
       GRID_SCROLL: 'uiGridScroll',
-      GRID_SCROLLING: 'uiGridScrolling',
       COLUMN_MENU_SHOWN: 'uiGridColMenuShown',
       ITEM_DRAGGING: 'uiGridItemDragStart' // For any item being dragged
     },

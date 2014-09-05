@@ -171,7 +171,7 @@ describe('Grid factory', function () {
     });
   });
 
-  ddescribe('renderContainers', function () {
+  describe('renderContainers', function () {
     it('should have a body render container', function () {
       expect(grid.renderContainers.body).toBeDefined();
     });
