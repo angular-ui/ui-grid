@@ -1,7 +1,8 @@
 (function () {
 // 'use strict';
 
-  angular.module('ui.grid').directive('uiGridNativeScrollbar', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil', function ($log, $timeout, $document, uiGridConstants, gridUtil) {
+  angular.module('ui.grid').directive('uiGridNativeScrollbar', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil',
+    function ($log, $timeout, $document, uiGridConstants, gridUtil) {
     var scrollBarWidth = gridUtil.getScrollbarWidth();
     scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
 
@@ -123,6 +124,7 @@
 
         function scrollEvent(evt) {
           if ($scope.type === 'vertical') {
+            grid.flagScrollingVertically();
             var newScrollTop = $elm[0].scrollTop;
 
             var yDiff = previousScrollPosition - newScrollTop;
@@ -162,6 +164,7 @@
             previousScrollPosition = newScrollTop;
           }
           else if ($scope.type === 'horizontal') {
+            grid.flagScrollingHorizontally();
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
 
@@ -206,15 +209,19 @@
           $scope.scrollSource = args.target;
 
           if ($scope.type === 'vertical') {
+            grid.flagScrollingVertically();
             if (args.y && typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
               var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
 
               var newScrollTop = Math.max(0, args.y.percentage * vertScrollLength);
 
               $elm[0].scrollTop = newScrollTop;
+
+
             }
           }
           else if ($scope.type === 'horizontal') {
+            grid.flagScrollingHorizontally();
             if (args.x && typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
@@ -228,6 +235,9 @@
 
         var gridScrollDereg = $scope.$on(uiGridConstants.events.GRID_SCROLL, gridScroll);
         $scope.$on('$destroy', gridScrollDereg);
+
+
+
       }
     };
   }]);
