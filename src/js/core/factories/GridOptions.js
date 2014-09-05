@@ -133,6 +133,14 @@ angular.module('ui.grid')
     this.rowHeight = 30;
     this.maxVisibleRowCount = 200;
 
+    /**
+     * @ngdoc integer
+     * @name minRowsToShow
+     * @propertyOf ui.grid.class:GridOptions
+     * @description Minimum number of rows to show when the grid doesn't have a defined height. Defaults to "10".
+     */
+    this.minRowsToShow = 10;
+
     this.showFooter = false;
     this.footerRowHeight = 30;
 

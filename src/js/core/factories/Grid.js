@@ -804,6 +804,20 @@ angular.module('ui.grid')
     }
   };
 
+  /**
+   * @ngdoc function
+   * @name handleWindowResize
+   * @methodOf ui.grid.class:Grid
+   * @description Triggered when the browser window resizes; automatically resizes the grid
+   */
+  Grid.prototype.handleWindowResize = function handleWindowResize($event) {
+    var self = this;
+
+    self.gridWidth = gridUtil.elementWidth(self.element);
+    self.gridHeight = gridUtil.elementHeight(self.element);
+
+    self.queueRefresh();
+  };
 
   /**
    * @ngdoc function

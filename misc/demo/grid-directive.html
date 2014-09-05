@@ -9,28 +9,37 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
     <link href="/dist/release/ui-grid.css" rel="stylesheet">
 
-    <script src="/lib/test/angular/1.2.16/angular.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-1.11.1.js"></script>-->
+    <script src="/lib/test/angular/1.2.21/angular.js"></script>
     <script src="/dist/release/ui-grid.js"></script>
 
     <style>
       body {
-        padding: 20px;
+        padding: 60px;
+        min-height: 600px;
       }
 
       .grid {
-        height: 600px;
-        width: 300px;
-        -webkit-transform: translateZ(0);
+        height: 50%;
+        width: auto;
+      }
+
+      .placeholder {
+        height: 50%;
+        width: 50%;
+        border: 3px solid black;
+        background: #ccc;
       }
     </style>
   </head>
   <body ng-controller="Main">
     <!-- <h1>Test</h1> -->
 
-      <div class="row">
+      <!-- <div class="row main"> -->
         <h2>Grid</h2>
         <div ui-grid="gridOptions" class="grid"></div>
-      </div>
+        <!-- <div class="placeholder"> -->
+      <!-- </div> -->
 
       <br>
       <br>
@@ -42,28 +51,12 @@
       app.controller('Main', function($scope, $http) {
           // $scope.gridOptions = { data: 'data' };
           $scope.gridOptions = {};
-          $scope.gridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
+          // $scope.gridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
 
-
-
-          $scope.gridOptions.data = [
-          {
-              "id": 0,
-              "age": 31,
-              "firstName": "Smith",
-              "lastName": "Pena",
-              "company": "Xplor",
-              "employed": false
-          },
-          {
-              "id": 1,
-              "age": 21,
-              "firstName": "Sadie",
-              "lastName": "Lowery",
-              "company": "Quinex",
-              "employed": true
-          }
-        ]
+          $http.get('/misc/site/data/100.json')
+            .success(function (data) {
+              $scope.gridOptions.data = data;
+            });
       });
 
     </script>
