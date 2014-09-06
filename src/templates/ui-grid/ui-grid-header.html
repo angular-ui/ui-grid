@@ -2,7 +2,7 @@
   <div ui-grid-group-panel ng-show="grid.options.showGroupPanel"></div>
   <div class="ui-grid-header ui-grid-header-viewport">
     <div class="ui-grid-header-canvas">
-        <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ui-grid-header-cell col="col" render-index="$index" ng-style="$index === 0 && colContainer.columnStyle($index)">
+        <div class="ui-grid-header-cell clearfix" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ui-grid-header-cell col="col" render-index="$index" ng-style="$index === 0 && colContainer.columnStyle($index)">
         </div>
     </div>
 
