@@ -30,8 +30,15 @@ body {
   color: inherit;
 }
 
-.jumbotron p {
+.lead {
   line-height: 1.4;
+  margin: 0 0 12px;
+}
+
+.description {
+  line-height: 1;
+  font-size: 16px;
+  margin: 0 0 8px;
 }
 
 .container .jumbotron {
@@ -53,10 +60,25 @@ body {
   }
   .jumbotron h1,
   .jumbotron .h1 {
-    font-size: 63px;
+    font-size: 40px;
   }
 }
 
 .nav-ghbtn {
   padding-top: 14px;
+}
+
+.space-before {
+  padding-top: 18px;
+}
+
+
+.grid {
+  height: 250px;
+}
+.pink {
+  color: pink;  
+}
+.blue {
+  color: blue;
 }
