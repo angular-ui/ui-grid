@@ -73,7 +73,7 @@
          *  @name ui.grid.pinning.api:ColumnDef
          *
          *  @description ColumnDef for pinning feature, these are available to be 
-         *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
+         *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
          */
 
         /**
