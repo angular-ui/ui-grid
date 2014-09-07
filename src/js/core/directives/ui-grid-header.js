@@ -3,6 +3,7 @@
 
   angular.module('ui.grid').directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-header';
+    var emptyTemplate = 'ui-grid/ui-grid-no-header';
 
     return {
       restrict: 'EA',
@@ -23,7 +24,20 @@
             containerCtrl.header = $elm;
             containerCtrl.colContainer.header = $elm;
 
-            var headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
+            /**
+             * @ngdoc property
+             * @name hideHeader
+             * @propertyOf ui.grid.class:GridOptions
+             * @description Null by default. When set to true, this setting will replace the
+             * standard header template with '<div></div>', resulting in no header being shown.
+             */
+            
+            var headerTemplate;
+            if ($scope.grid.options.hideHeader){
+              headerTemplate = emptyTemplate;
+            } else {
+              headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;            
+            }
 
              gridUtil.getTemplate(headerTemplate)
               .then(function (contents) {
