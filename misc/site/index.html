@@ -12,11 +12,6 @@
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
   <link rel="stylesheet" href="//ui-grid.info/release/ui-grid-unstable.css" />
-  <style>
-    .grid {
-      height: 250px;
-    }
-  </style>
 </head>
 <body>
   <header class="header">
@@ -52,10 +47,12 @@
   </header>
   <div class="jumbotron">
     <div class="container text-center">
-      <h2>Angular UI Grid</h2>
+      <h1>Angular UI Grid</h1>
 
-      <p>A data grid for <strong><a href="http://angularjs.org">AngularJS</a></strong></p>
-      <p>... more stuff ...</p>
+      <p class="lead">A native data grid for <strong><a href="http://angularjs.org">AngularJS</a></strong>, part of the <strong><a href="http://angular-ui.github.io/">AngularUI</a></strong> suite</p>
+      <p class="description">native angularJS implementation, no jQuery</p>
+      <p class="description">performant with large data sets</p>
+      <p class="description">plugin architecture allows you to use only the features you need</p>
 
       <br>
 
@@ -75,10 +72,9 @@
 
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-        <span>
-        <a class="btn btn-success btn-large" href="http://<%= site %>/docs" title="API Documentation">
+        <a class="btn btn-success btn-large" href="http://<%= site %>/docs/#/tutorial" title="Tutorial">
           <i class="fa fa-gears fa-fw"></i>
-          API Documentation
+          Tutorial
         </a>
       </p>
     </div>
@@ -86,7 +82,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="span4">
+      <div class="span3">
         <div class="text-center">
           <i class="fa fa-4x fa-wrench"></i>
         </div>
@@ -98,7 +94,7 @@
         </ul>
       </div>
 
-      <div class="span4">
+      <div class="span3">
         <div class="text-center">
           <i class="fa fa-4x fa-gear"></i>
         </div>
@@ -114,16 +110,23 @@
           <li>Virtualization</li>
           <li>Column pinning</li>
           <li>Grouping</li>
+          <li>Edit in place</li>
+          <li>Expandable rows</li>
+          <li>Internationalisation</li>
         </ul>
       </div>
 
-      <div class="span4 text-center" ng-app="demo">
+      <div class="span6" ng-app="demo">
         <div class="text-center">
           <i class="fa fa-4x fa-certificate"></i>
         </div>
         <!-- <h4 class="">Cute Kittens</h4> -->
         <!-- <img class="img-circle" src="http://placekitten.com/180/180" /> -->
-        <div class="grid" ui-grid="gridOptions"></div>
+        <h4>Basic Example</h4>
+        <div class="grid" ui-grid="gridOptionsSimple"></div>
+
+        <h4 style="padding:20px 0px 0px 0px">Complex Example</h4>
+        <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
       </div>
     </div>
   </div>
@@ -133,9 +136,9 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
   <script src="//ui-grid.info/release/ui-grid-unstable.js"></script>
   <script>
-    angular.module('demo', ['ui.grid'])
-    .run(function($rootScope) {
-      $rootScope.gridOptions = {
+    angular.module('demo', ['ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns'])
+    .run(function($rootScope, uiGridConstants) {
+      $rootScope.gridOptionsSimple = {
         data: [
           {
               "name": "Ethel Price",
@@ -239,6 +242,171 @@
           }
         ]
       };
+      
+      $rootScope.gridOptionsComplex = {
+        enableFiltering: true,
+        showFooter: true,
+        columnDefs: [
+          { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
+          { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false, 
+            cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+              if (grid.getCellValue(row,col) === 'male') {
+                return 'blue';
+              } else if (grid.getCellValue(row,col) === 'female') {
+                return 'pink';
+              }
+            } 
+          },
+          { name: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, width: 100 },
+          { name: 'company', enableFiltering: false, width: 200 }
+        ],
+        data: [
+          {
+              "name": "Ethel Price",
+              "gender": "female",
+              "company": "Enersol",
+              "age": 25
+          },
+          {
+              "name": "Claudine Neal",
+              "gender": "female",
+              "company": "Sealoud",
+              "age": 19
+          },
+          {
+              "name": "Beryl Rice",
+              "gender": "female",
+              "company": "Velity",
+              "age": 44
+          },
+          {
+              "name": "Wilder Gonzales",
+              "gender": "male",
+              "company": "Geekko",
+              "age": 26
+          },
+          {
+              "name": "Georgina Schultz",
+              "gender": "female",
+              "company": "Suretech",
+              "age": 53
+          },
+          {
+              "name": "Carroll Buchanan",
+              "gender": "male",
+              "company": "Ecosys",
+              "age": 64
+          },
+          {
+              "name": "Valarie Atkinson",
+              "gender": "female",
+              "company": "Hopeli",
+              "age": 35
+          },
+          {
+              "name": "Schroeder Mathews",
+              "gender": "male",
+              "company": "Polarium",
+              "age": 29
+          },
+          {
+              "name": "Lynda Mendoza",
+              "gender": "female",
+              "company": "Dogspa",
+              "age": 49
+          },
+          {
+              "name": "Sarah Massey",
+              "gender": "female",
+              "company": "Bisba",
+              "age": 40
+          },
+          {
+              "name": "Robles Boyle",
+              "gender": "male",
+              "company": "Comtract",
+              "age": 32
+          },
+          {
+              "name": "Evans Hickman",
+              "gender": "male",
+              "company": "Parleynet",
+              "age": 38
+          },
+          {
+              "name": "Dawson Barber",
+              "gender": "male",
+              "company": "Dymi",
+              "age": 21
+          },
+          {
+              "name": "Bruce Strong",
+              "gender": "male",
+              "company": "Xyqag",
+              "age": 61
+          },
+          {
+              "name": "Nellie Whitfield",
+              "gender": "female",
+              "company": "Exospace",
+              "age": 54
+          },
+          {
+              "name": "Jackson Macias",
+              "gender": "male",
+              "company": "Aquamate",
+              "age": 49
+          },
+          {
+              "name": "Pena Pena",
+              "gender": "male",
+              "company": "Quarx",
+              "age": 25
+          },
+          {
+              "name": "Lelia Gates",
+              "gender": "female",
+              "company": "Proxsoft",
+              "age": 54
+          },
+          {
+              "name": "Alfred Oscar",
+              "gender": "male",
+              "company": "Transprop",
+              "age": 34
+          },
+          {
+              "name": "John Alfred",
+              "gender": "male",
+              "company": "Haymans",
+              "age": 70
+          },
+          {
+              "name": "Leonie Warren",
+              "gender": "female",
+              "company": "Hilltop",
+              "age": 25
+          },
+          {
+              "name": "Belinda Gosford",
+              "gender": "female",
+              "company": "Archison",
+              "age": 42
+          },
+          {
+              "name": "Tracey Misoni",
+              "gender": "female",
+              "company": "Verizona",
+              "age": 34
+          },
+          {
+              "name": "Trevino Moreno",
+              "gender": "male",
+              "company": "Conjurica",
+              "age": 31
+          }
+        ]
+      };      
     });
   </script>
 </body>
