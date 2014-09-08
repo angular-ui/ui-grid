@@ -159,7 +159,7 @@
            *  @name ui.grid.edit.api:ColumnDef
            *
            *  @description Column Definition for edit feature, these are available to be 
-           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
            */
 
           /**

@@ -46,7 +46,7 @@
            *  @name ui.grid.resizeColumns.api:ColumnDef
            *
            *  @description ColumnDef for resizeColumns feature, these are available to be 
-           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
            */
 
           /**

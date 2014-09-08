@@ -272,7 +272,7 @@
            *  @name ui.grid.cellNav.api:ColumnDef
            *
            *  @description Column Definitions for cellNav feature, these are available to be 
-           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
            */
 
           /**
