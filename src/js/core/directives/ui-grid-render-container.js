@@ -3,8 +3,8 @@
 
   var module = angular.module('ui.grid');
   
-  module.directive('uiGridRenderContainer', ['$log', '$timeout', 'uiGridConstants', 'gridUtil',
-    function($log, $timeout, uiGridConstants, GridUtil) {
+  module.directive('uiGridRenderContainer', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil',
+    function($log, $timeout, $document, uiGridConstants, GridUtil) {
     return {
       replace: true,
       transclude: true,
@@ -65,8 +65,9 @@
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
 
             // Bind to left/right-scroll events
+            var scrollUnbinder;
             if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
+              scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
             }
 
             function scrollHandler (evt, args) {
@@ -155,6 +156,8 @@
               // use wheelDeltaY
               evt.preventDefault();
 
+              $log.debug('wheel', evt);
+
               var newEvent = GridUtil.normalizeWheelEvent(evt);
 
               var args = { target: $elm };
@@ -185,6 +188,154 @@
               }
               
               uiGridCtrl.fireScrollingEvent(args);
+            });
+            
+
+            var startY = 0,
+            startX = 0,
+            scrollTopStart = 0,
+            scrollLeftStart = 0,
+            directionY = 1,
+            directionX = 1,
+            moveStart;
+
+            function touchmove(event) {
+              if (event.originalEvent) {
+                event = event.originalEvent;
+              }
+
+              event.preventDefault();
+
+              var deltaX, deltaY, newX, newY;
+              newX = event.targetTouches[0].screenX;
+              newY = event.targetTouches[0].screenY;
+              deltaX = -(newX - startX);
+              deltaY = -(newY - startY);
+
+              directionY = (deltaY < 1) ? -1 : 1;
+              directionX = (deltaX < 1) ? -1 : 1;
+
+              deltaY *= 2;
+              deltaX *= 2;
+
+              var args = { target: event.target };
+
+              if (deltaY !== 0) {
+                var scrollYPercentage = (scrollTopStart + deltaY) / (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
+
+                if (scrollYPercentage > 1) { scrollYPercentage = 1; }
+                else if (scrollYPercentage < 0) { scrollYPercentage = 0; }
+
+                args.y = { percentage: scrollYPercentage, pixels: deltaY };
+              }
+              if (deltaX !== 0) {
+                var scrollXPercentage = (scrollLeftStart + deltaX) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
+
+                if (scrollXPercentage > 1) { scrollXPercentage = 1; }
+                else if (scrollXPercentage < 0) { scrollXPercentage = 0; }
+
+                args.x = { percentage: scrollXPercentage, pixels: deltaX };
+              }
+
+              uiGridCtrl.fireScrollingEvent(args);
+            }
+            
+            function touchend(event) {
+              if (event.originalEvent) {
+                event = event.originalEvent;
+              }
+
+              event.preventDefault();
+
+              $document.unbind('touchmove', touchmove);
+              $document.unbind('touchend', touchend);
+              $document.unbind('touchcancel', touchend);
+
+              // Get the distance we moved on the Y axis
+              var scrollTopEnd = containerCtrl.viewport[0].scrollTop;
+              var scrollLeftEnd = containerCtrl.viewport[0].scrollTop;
+              var deltaY = Math.abs(scrollTopEnd - scrollTopStart);
+              var deltaX = Math.abs(scrollLeftEnd - scrollLeftStart);
+
+              // Get the duration it took to move this far
+              var moveDuration = (new Date()) - moveStart;
+
+              // Scale the amount moved by the time it took to move it (i.e. quicker, longer moves == more scrolling after the move is over)
+              var moveYScale = deltaY / moveDuration;
+              var moveXScale = deltaX / moveDuration;
+
+              var decelerateInterval = 63; // 1/16th second
+              var decelerateCount = 8; // == 1/2 second
+              var scrollYLength = 120 * directionY * moveYScale;
+              var scrollXLength = 120 * directionX * moveXScale;
+
+              function decelerate() {
+                $timeout(function() {
+                  var args = { target: event.target };
+
+                  if (scrollYLength !== 0) {
+                    var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYLength) / (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
+
+                    args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
+                  }
+
+                  if (scrollXLength !== 0) {
+                    var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXLength) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
+                    args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
+                  }
+
+                  uiGridCtrl.fireScrollingEvent(args);
+
+                  decelerateCount = decelerateCount -1;
+                  scrollYLength = scrollYLength / 2;
+                  scrollXLength = scrollXLength / 2;
+
+                  if (decelerateCount > 0) {
+                    decelerate();
+                  }
+                  else {
+                    uiGridCtrl.scrollbars.forEach(function (sbar) {
+                      sbar.removeClass('ui-grid-scrollbar-visible');
+                      sbar.removeClass('ui-grid-scrolling');
+                    });
+                  }
+                }, decelerateInterval);
+              }
+
+              // decelerate();
+            }
+
+            if (GridUtil.isTouchEnabled()) {
+              $elm.bind('touchstart', function (event) {
+                if (event.originalEvent) {
+                  event = event.originalEvent;
+                }
+
+                event.preventDefault();
+
+                uiGridCtrl.scrollbars.forEach(function (sbar) {
+                  sbar.addClass('ui-grid-scrollbar-visible');
+                  sbar.addClass('ui-grid-scrolling');
+                });
+
+                moveStart = new Date();
+                startY = event.targetTouches[0].screenY;
+                startX = event.targetTouches[0].screenX;
+                scrollTopStart = containerCtrl.viewport[0].scrollTop;
+                scrollLeftStart = containerCtrl.viewport[0].scrollLeft;
+                
+                $document.on('touchmove', touchmove);
+                $document.on('touchend touchcancel', touchend);
+              });
+            }
+
+            $elm.bind('$destroy', function() {
+              scrollUnbinder();
+              $elm.unbind('keydown');
+
+              ['touchstart', 'touchmove', 'touchend','keydown', 'wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'].forEach(function (eventName) {
+                $elm.unbind(eventName);
+              });
             });
             
             // TODO(c0bra): Handle resizing the inner canvas based on the number of elements

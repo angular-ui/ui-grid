@@ -201,7 +201,7 @@
 
         function gridScroll(evt, args) {
           // Don't listen to our own scroll event!
-          if (args.target && (args.target === $elm || args.target.hasClass('ui-grid-native-scrollbar'))) {
+          if (args.target && (args.target === $elm || angular.element(args.target).hasClass('ui-grid-native-scrollbar'))) {
             return;
           }
 
