@@ -90,13 +90,21 @@ describe('uiGridHeaderCell', function () {
     });
 
     describe('with enableColumnMenu off', function() {
-      it('should not be present', function () {
+      beforeEach(function () {
         $scope.gridOpts.enableColumnMenu = false;
         recompile();
+      });
 
+      it('should not be present', function () {
         menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu-inner');
 
         expect(menu[0]).toBeUndefined('menu is undefined');
+      });
+
+      it('should still allow sorting by clicking a column', function () {
+        expect(function() {
+          $(grid).find('.ui-grid-header-cell .ui-grid-cell-contents').trigger('click');
+        }).not.toThrow();
       });
     });
 

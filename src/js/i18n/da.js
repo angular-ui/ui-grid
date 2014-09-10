@@ -20,7 +20,7 @@
             last: 'Sidste side'
           },
           menu:{
-            text: 'Vælg kolonner:',
+            text: 'Vælg kolonner:'
           }
         });
       return $delegate;
