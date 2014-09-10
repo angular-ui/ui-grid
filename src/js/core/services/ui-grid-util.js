@@ -835,7 +835,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
     // Firefox goes negative!
     else if (browser === 'firefox') {
-      return scrollLeft * -1;
+      if (dir === 'rtl') {
+        return scrollLeft * -1;
+      }
+      else {
+        return scrollLeft;
+      }
     }
     else {
       // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
