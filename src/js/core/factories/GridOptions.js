@@ -210,12 +210,19 @@ angular.module('ui.grid')
      * @name headerTemplate
      * @propertyOf ui.grid.class:GridOptions
      * @description Null by default. When provided, this setting uses a custom header
-     * template. Can be set to either the name of a template file:
+     * template, rather than the default template. Can be set to either the name of a template file:
      * <pre>  $scope.gridOptions.headerTemplate = 'header_template.html';</pre>
      * inline html 
      * <pre>  $scope.gridOptions.headerTemplate = '<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>'</pre>
      * or the id of a precompiled template (TBD how to use this).  
      * </br>Refer to the custom header tutorial for more information.
+     * If you want no header at all, you can set to an empty div:
+     * <pre>  $scope.gridOptions.headerTemplate = '<div></div>';</pre>
+     * 
+     * If you want to only have a static header, then you can set to static content.  If
+     * you want to tailor the existing column headers, then you should look at the
+     * current 'ui-grid-header.html' template in github as your starting point.
+     * 
      */
     this.headerTemplate = null;
 
