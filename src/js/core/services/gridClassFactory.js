@@ -46,7 +46,7 @@
           // Reset all rows to visible initially
           grid.registerRowsProcessor(function allRowsVisible(rows) {
             rows.forEach(function (row) {
-              row.visible = true;
+              row.visible = !row.forceInvisible;
             });
 
             return rows;
