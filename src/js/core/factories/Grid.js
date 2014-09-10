@@ -57,6 +57,7 @@ angular.module('ui.grid')
   self.columnsProcessors = [];
   self.styleComputations = [];
   self.viewportAdjusters = [];
+  self.rowHeaderColumns = [];
 
   // self.visibleRowCache = [];
 
@@ -220,6 +221,30 @@ angular.module('ui.grid')
   };
 
   /**
+  * @ngdoc function
+  * @name addRowHeaderColumn
+  * @methodOf ui.grid.class:Grid
+  * @description adds a row header column to the grid
+  * @param {object} column def
+  */
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
+    var self = this;
+    //self.createLeftContainer();
+    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
+    rowHeaderCol.isRowHeader = true;
+   /* if (self.isRTL()) {
+      rowHeaderCol.renderContainer = 'right';
+    }
+    else {
+      rowHeaderCol.renderContainer = 'left';
+    }*/
+    rowHeaderCol.cellTemplate = cellTemplate;
+    rowHeaderCol.enableFiltering = false;
+    rowHeaderCol.enableSorting = false;
+    self.rowHeaderColumns.push(rowHeaderCol);
+  };
+
+  /**
    * @ngdoc function
    * @name buildColumns
    * @methodOf ui.grid.class:Grid
@@ -231,14 +256,21 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
+    var offset = self.rowHeaderColumns.length;
+
+    //add row header columns to the grid columns array
+    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
+      offset++;
+      self.columns.push(rowHeaderColumn);
+    });
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
-        self.columns.forEach(function (column, index) {
-            if (!self.getColDef(column.name)) {
-                self.columns.splice(index, 1);
-            }
-        });
+      self.columns.forEach(function (column, index) {
+        if (!self.getColDef(column.name)) {
+          self.columns.splice(index, 1);
+        }
+      });
     }
 
     self.options.columnDefs.forEach(function (colDef, index) {
@@ -246,8 +278,8 @@ angular.module('ui.grid')
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index, self);
-        self.columns.splice(index, 0, col);
+        col = new GridColumn(colDef, index + offset, self);
+        self.columns.push(col);
       }
       else {
         col.updateColumnDef(colDef, col.index);
@@ -256,7 +288,6 @@ angular.module('ui.grid')
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
-
     });
 
     return $q.all(builderPromises);
