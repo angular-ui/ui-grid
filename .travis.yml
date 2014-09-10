@@ -48,7 +48,7 @@ script:
   - ./travis_build.sh
 
 after_success:
-  - grunt release
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && grunt release
 
 after_failure:
   - ./travis_print_logs.sh

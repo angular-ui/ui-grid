@@ -17,8 +17,19 @@ set -e
 
 grunt
 # grunt test:e2e:ci --verbose
-grunt test:ci
 
-# Send coverage data to coveralls.io
-grunt coverage
-cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
+# If this is a pull request then we won't have access to secure variables and can't do integration tests with SauceLabs.
+#   In this case just do normal local tests
+if [ $TRAVIS_PULL_REQUEST ]
+then
+  grunt test
+else
+  grunt test:ci
+
+  # Send coverage data to coveralls.io
+  if [ $TRAVIS_BRANCH == "master" ]
+  then
+    grunt coverage
+    cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true\
+  fi
+fi
