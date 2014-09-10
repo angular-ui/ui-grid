@@ -110,66 +110,9 @@
         self.refreshCanvas(true);
       });
 
-      // Refresh the canvas drawable size
-      $scope.grid.refreshCanvas = self.refreshCanvas = function(buildStyles) {
-        if (buildStyles) {
-          self.grid.buildStyles($scope);
-        }
-
-        var p = $q.defer();
-
-        // Get all the header heights
-        var containerHeadersToRecalc = [];
-        for (var containerId in self.grid.renderContainers) {
-          if (self.grid.renderContainers.hasOwnProperty(containerId)) {
-            var container = self.grid.renderContainers[containerId];
-
-            if (container.header) {
-              containerHeadersToRecalc.push(container);
-            }
-          }
-        }
-
-        if (containerHeadersToRecalc.length > 0) {
-          // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
-          $timeout(function() {
-            // var oldHeaderHeight = self.grid.headerHeight;
-            // self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
-
-            var rebuildStyles = false;
-
-            // Get all the header heights
-            for (var i = 0; i < containerHeadersToRecalc.length; i++) {
-              var container = containerHeadersToRecalc[i];
-
-              if (container.header) {
-                var oldHeaderHeight = container.headerHeight;
-                var headerHeight = gridUtil.outerElementHeight(container.header);
-                container.headerHeight = headerHeight;
-
-                if (oldHeaderHeight !== headerHeight) {
-                  rebuildStyles = true;
-                }
-              }
-            }
-
-            // Rebuild styles if the header height has changed
-            //   The header height is used in body/viewport calculations and those are then used in other styles so we need it to be available
-            if (buildStyles && rebuildStyles) {
-              self.grid.buildStyles($scope);
-            }
-
-            p.resolve();
-          });
-        }
-        else {
-          // Timeout still needs to be here to trigger digest after styles have been rebuilt
-          $timeout(function() {
-            p.resolve();
-          });
-        }
-
-        return p.promise;
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
+      self.refreshCanvas = function(buildStyles) {
+        return $scope.grid.refreshCanvas(buildStyles);
       };
 
       $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
@@ -190,47 +133,19 @@
         return $scope.grid.getCellValue(row, col);
       };
 
-      $scope.grid.refreshRows = self.refreshRows = function refreshRows() {
-        return self.grid.processRowsProcessors(self.grid.rows)
-          .then(function (renderableRows) {
-            self.grid.setVisibleRows(renderableRows);
-
-            self.redrawRows();
-
-            self.refreshCanvas();
-          });
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
+      self.refreshRows = function refreshRows() {
+        return $scope.grid.refreshRows();
       };
 
-      $scope.grid.refresh = self.refresh = function refresh() {
-        $log.debug('grid refresh');
-
-        var p1 = self.grid.processRowsProcessors(self.grid.rows).then(function (renderableRows) {
-          self.grid.setVisibleRows(renderableRows);
-        });
-
-        var p2 = self.grid.processColumnsProcessors(self.grid.columns).then(function (renderableColumns) {
-          self.grid.setVisibleColumns(renderableColumns);
-        });
-
-        return $q.all([p1, p2]).then(function () {
-          self.redrawInPlace();
-
-          self.refreshCanvas(true);
-        });
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
+      self.refresh = function refresh() {
+        $scope.grid.refresh();
       };
 
-      // Redraw the rows and columns based on our current scroll position
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
       self.redrawInPlace = function redrawInPlace() {
-        // $log.debug('redrawInPlace');
-
-        for (var i in self.grid.renderContainers) {
-          var container = self.grid.renderContainers[i];
-
-          // $log.debug('redrawing container', i);
-
-          container.adjustRows(container.prevScrollTop, null);
-          container.adjustColumns(container.prevScrollLeft, null);
-        }
+        $scope.grid.redrawInPlace();
       };
 
       /* Sorting Methods */
