@@ -316,7 +316,7 @@ angular.module('ui.grid')
    * @description creates the left render container if it doesn't already exist
    */
   Grid.prototype.createLeftContainer = function() {
-    if (!this.renderContainers.left) {
+    if (!this.hasLeftContainer()) {
       this.renderContainers.left = new GridRenderContainer('left', this, { disableColumnOffset: true });
     }
   };
@@ -328,12 +328,33 @@ angular.module('ui.grid')
    * @description creates the right render container if it doesn't already exist
    */
   Grid.prototype.createRightContainer = function() {
-    if (!this.renderContainers.right) {
+    if (!this.hasRightContainer()) {
       this.renderContainers.right = new GridRenderContainer('right', this, { disableColumnOffset: true });
     }
   };
 
   /**
+   * @ngdoc function
+   * @name hasLeftContainer
+   * @methodOf ui.grid.class:Grid
+   * @description returns true if leftContainer exists
+   */
+  Grid.prototype.hasLeftContainer = function() {
+    return this.renderContainers.left !== undefined;
+  };
+
+  /**
+   * @ngdoc function
+   * @name hasLeftContainer
+   * @methodOf ui.grid.class:Grid
+   * @description returns true if rightContainer exists
+   */
+  Grid.prototype.hasRightContainer = function() {
+    return this.renderContainers.right !== undefined;
+  };
+
+
+      /**
    * undocumented function
    * @name preprocessColDef
    * @methodOf ui.grid.class:Grid

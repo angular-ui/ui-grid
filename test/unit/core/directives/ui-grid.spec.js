@@ -76,4 +76,53 @@ describe('ui-grid', function() {
     });
   });
 
+  describe('watch for new pinned containers', function () {
+    var element, scope;
+
+    beforeEach(inject(function ($compile, $rootScope) {
+      element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
+      scope = $rootScope;
+      scope.gridOptions = {};
+      scope.gridOptions.data = [
+        { col1: 'col1', col2: 'col2' }
+      ];
+
+      scope.gridOptions.onRegisterApi = function(gridApi) {
+        scope.grid = gridApi.grid;
+      };
+
+      $compile(element)(scope);
+      scope.$digest();
+    }));
+
+    it('fires watch for left container', inject(function($timeout) {
+      spyOn(scope.grid, 'refreshCanvas');
+
+      expect(scope.grid.refreshCanvas.callCount).toEqual(0);
+      $timeout(function(){
+        scope.grid.createLeftContainer();
+      });
+      $timeout.flush();
+
+      expect(scope.grid.refreshCanvas).toHaveBeenCalledWith(true);
+      expect(scope.grid.refreshCanvas.callCount).toEqual(1);
+    }));
+
+
+    it('fires watch for right container', inject(function($timeout) {
+      spyOn(scope.grid, 'refreshCanvas');
+
+      expect(scope.grid.refreshCanvas.callCount).toEqual(0);
+      $timeout(function(){
+        scope.grid.createRightContainer();
+      });
+      $timeout.flush();
+
+      expect(scope.grid.refreshCanvas).toHaveBeenCalledWith(true);
+      expect(scope.grid.refreshCanvas.callCount).toEqual(1);
+
+    }));
+
+ });
+
 });

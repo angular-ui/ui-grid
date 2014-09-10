@@ -30,6 +30,6 @@ else
   if [ $TRAVIS_BRANCH == "master" ]
   then
     grunt coverage
-    cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true\
+    cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true
   fi
 fi
