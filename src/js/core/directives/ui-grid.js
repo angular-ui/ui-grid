@@ -268,6 +268,45 @@ angular.module('ui.grid').directive('uiGrid',
               // Run initial canvas refresh
               uiGridCtrl.refreshCanvas();
 
+              //add pinned containers for row headers support
+              //moved from pinning feature
+              var left = angular.element('<div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
+              $elm.prepend(left);
+              uiGridCtrl.innerCompile(left);
+
+              var right = angular.element('<div  ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
+              $elm.append(right);
+              uiGridCtrl.innerCompile(right);
+
+
+              //if we add a left container after render, we need to watch and react
+              $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
+                if (newValue === oldValue) {
+                  return;
+                }
+
+                //todo: remove this code.  it was commented out after moving from pinning because body is already float:left
+//                var bodyContainer = angular.element($elm[0].querySelectorAll('[container-id="body"]'));
+//                if (newValue){
+//                  bodyContainer.attr('style', 'float: left; position: inherit');
+//                }
+//                else {
+//                  bodyContainer.attr('style', 'float: left; position: relative');
+//                }
+
+                grid.refreshCanvas(true);
+              });
+
+              //if we add a right container after render, we need to watch and react
+              $scope.$watch(function () { return grid.hasRightContainer();}, function (newValue, oldValue) {
+                if (newValue === oldValue) {
+                  return;
+                }
+                grid.refreshCanvas(true);
+              });
+
+
+
               // Resize the grid on window resize events
               function gridResize($event) {
                 grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);

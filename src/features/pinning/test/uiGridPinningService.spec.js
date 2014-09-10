@@ -3,12 +3,14 @@ describe('ui.grid.pinning uiGridPinningService', function () {
   var uiGridPinningService;
   var gridClassFactory;
   var grid;
+  var GridRenderContainer;
 
   beforeEach(module('ui.grid.pinning'));
 
-  beforeEach(inject(function (_uiGridPinningService_,_gridClassFactory_, $templateCache) {
+  beforeEach(inject(function (_uiGridPinningService_,_gridClassFactory_, $templateCache, _GridRenderContainer_) {
     uiGridPinningService = _uiGridPinningService_;
     gridClassFactory = _gridClassFactory_;
+    GridRenderContainer = _GridRenderContainer_;
 
     grid = gridClassFactory.createGrid({});
     spyOn(grid, 'registerColumnBuilder');
@@ -32,11 +34,6 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     it('should register a column builder to the grid', function() {
       expect(grid.registerColumnBuilder).toHaveBeenCalledWith(uiGridPinningService.pinningColumnBuilder);
     });
-
-    it('should create left and right render containers on the grid', inject(function (GridRenderContainer) {
-      expect(grid.renderContainers.left).toEqual(jasmine.any(GridRenderContainer));
-      expect(grid.renderContainers.right).toEqual(jasmine.any(GridRenderContainer));
-    }));
   });
 
   describe('defaultGridOptions', function () {
@@ -56,7 +53,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     var mockCol, colOptions, gridOptions;
 
     beforeEach(function() {
-      mockCol = {menuItems: []};
+      mockCol = {menuItems: [], grid: grid};
       colOptions = {};
       gridOptions = {enablePinning:true};
     });
@@ -89,7 +86,8 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       gridOptions = {enablePinning: false};
 
       uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
-
+      expect(grid.renderContainers.left).toEqual(jasmine.any(GridRenderContainer));
+      expect(grid.renderContainers.right).not.toBeDefined();
       expect(mockCol.renderContainer).toBe('left');
     });
 
@@ -107,6 +105,8 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       gridOptions = {enablePinning: false};
 
       uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+      expect(grid.renderContainers.right).toEqual(jasmine.any(GridRenderContainer));
+      expect(grid.renderContainers.left).not.toBeDefined();
 
       expect(mockCol.renderContainer).toBe('right');
     });
