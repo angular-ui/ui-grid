@@ -12,6 +12,7 @@
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
       $elm.addClass('grid' + self.grid.id);
+      self.grid.rtl = $elm.css('direction') === 'rtl';
 
 
       //add optional reference to externalScopes function to controller
@@ -175,9 +176,6 @@
         $compile(elm)($scope);
       };
 
-      $scope.grid.isRTL = self.isRTL = function isRTL() {
-        return $elm.css('direction') === 'rtl';
-      };
     }]);
 
 /**

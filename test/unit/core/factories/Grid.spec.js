@@ -311,6 +311,53 @@ describe('Grid factory', function () {
     });
   });
 
+  describe('row header', function() {
+
+
+    beforeEach(function(){
+
+
+    });
+
+
+    it('should create left container for left row header', function() {
+
+      var colDefs = [
+        {name:'col1'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+
+      grid.addRowHeaderColumn({name:'rowHeader',cellTemplate: "<div/>"});
+      expect(grid.hasLeftContainer()).toBe(true);
+      expect(grid.hasRightContainer()).toBe(false);
+
+
+      grid.buildColumns();
+      expect(grid.columns.length).toBe(2);
+
+    });
+
+
+    it('should create right container when RTL', function() {
+
+      var colDefs = [
+        {name:'col1'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      grid.rtl = true;
+
+      grid.addRowHeaderColumn({name:'rowHeader',cellTemplate: "<div/>"});
+      expect(grid.hasLeftContainer()).toBe(false);
+      expect(grid.hasRightContainer()).toBe(true);
+
+
+      grid.buildColumns();
+      expect(grid.columns.length).toBe(2);
+
+    });
+
+  });
+
   describe('sortColumn', function() {
     it('should throw an exception if no column parameter is provided', function() {
       expect(function () {

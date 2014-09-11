@@ -49,6 +49,7 @@ angular.module('ui.grid')
   self.headerHeight = self.options.headerRowHeight;
   self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
 
+  self.rtl = false;
   self.gridHeight = 0;
   self.gridWidth = 0;
   self.columnBuilders = [];
@@ -132,7 +133,18 @@ angular.module('ui.grid')
   self.api = new GridApi(self);
 };
 
-  /**
+    /**
+     * @ngdoc function
+     * @name isRTL
+     * @methodOf ui.grid.class:Grid
+     * @description Returns true if grid is RightToLeft
+     */
+    Grid.prototype.isRTL = function () {
+      return this.rtl;
+    };
+
+
+      /**
    * @ngdoc function
    * @name registerColumnBuilder
    * @methodOf ui.grid.class:Grid
@@ -227,18 +239,20 @@ angular.module('ui.grid')
   * @description adds a row header column to the grid
   * @param {object} column def
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, index) {
     var self = this;
     //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
     rowHeaderCol.isRowHeader = true;
-   /* if (self.isRTL()) {
+    if (self.isRTL()) {
+      self.createRightContainer();
       rowHeaderCol.renderContainer = 'right';
     }
     else {
+      self.createLeftContainer();
       rowHeaderCol.renderContainer = 'left';
-    }*/
-    rowHeaderCol.cellTemplate = cellTemplate;
+    }
+    rowHeaderCol.cellTemplate = colDef.cellTemplate;
     rowHeaderCol.enableFiltering = false;
     rowHeaderCol.enableSorting = false;
     self.rowHeaderColumns.push(rowHeaderCol);
