@@ -950,6 +950,27 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name queueRefresh
+   * @methodOf ui.grid.class:Grid
+   * @description todo: @c0bra can you document this method?
+   */
+  Grid.prototype.queueRefresh = function queueRefresh() {
+    var self = this;
+    if (self.refreshCanceller) {
+      $timeout.cancel(self.refreshCanceller);
+    }
+
+    self.refreshCanceller = $timeout(function () {
+      self.refreshCanvas(true);
+    });
+
+    self.refreshCanceller.then(function () {
+      self.refreshCanceller = null;
+    });
+  };
+
+  /**
+   * @ngdoc function
    * @name buildStyles
    * @methodOf ui.grid.class:Grid
    * @description calls each styleComputation function

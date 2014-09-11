@@ -101,20 +101,6 @@
       });
 
 
-      $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
-        if (self.refreshCanceler) {
-          $timeout.cancel(self.refreshCanceler);
-        }
-
-        self.refreshCanceler = $timeout(function () {
-          self.grid.refreshCanvas(true);
-        });
-
-        self.refreshCanceler.then(function () {
-          self.refreshCanceler = null;
-        });
-      };
-
       /* Event Methods */
 
       //todo: throttle this event?
@@ -267,13 +253,12 @@ angular.module('ui.grid').directive('uiGrid',
               });
 
 
-
               // Resize the grid on window resize events
               function gridResize($event) {
                 grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
                 grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
-                uiGridCtrl.queueRefresh();
+                grid.queueRefresh();
               }
 
               angular.element($window).on('resize', gridResize);
