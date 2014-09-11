@@ -34,7 +34,6 @@
             }
           };
           this.grid = $scope.grid;
-          this.refreshCanvas = $scope.grid.refreshCanvas;
           this.scope = $scope;
           this.refresh = jasmine.createSpy().andCallFake(function () {
             var deferred = $q.defer();

@@ -65,7 +65,7 @@
           uiGridCtrl.grid.sortColumn($scope.col, add)
             .then(function () {
               uiGridCtrl.columnMenuCtrl.hideMenu();
-              uiGridCtrl.refresh();
+              uiGridCtrl.grid.refresh();
             });
         }
 

@@ -275,7 +275,7 @@
           uiGridCtrl.grid.buildColumns()
             .then(function() {
               // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
-              uiGridCtrl.refreshCanvas(true);
+              uiGridCtrl.grid.refreshCanvas(true);
             });
         }
 

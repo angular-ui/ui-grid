@@ -64,11 +64,6 @@ describe('ui-grid', function() {
 
   });*/
 
-  describe('refreshRows', function() {
-    it('should do something', function () {
-      // TODO(c0bra) ...
-    });
-  });
 
   describe('minColumnsToRender', function() {
     it('calculates the minimum number of columns to render, correctly', function() {
