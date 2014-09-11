@@ -309,7 +309,6 @@ angular.module('ui.grid')
     /**
      * @ngdoc property
      * @name cellClass
-     * @propertyOf ui.grid.class:GridColumn
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description cellClass can be a string specifying the class to append to a cell
      * or it can be a function(row,rowRenderIndex, col, colRenderIndex) that returns a class name
@@ -318,9 +317,29 @@ angular.module('ui.grid')
     self.cellClass = colDef.cellClass;
 
 
-
-
+    /**
+     * @ngdoc property
+     * @name cellFilter
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description cellFilter is a filter to apply to the content of each cell
+     * @example
+     * <pre>
+     *   gridOptions.columnDefs[0].cellFilter = 'date'
+     *
+     */
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
+
+    /**
+     * @ngdoc property
+     * @name headerCellFilter
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description headerCellFilter is a filter to apply to the content of the column header
+     * @example
+     * <pre>
+     *   gridOptions.columnDefs[0].headerCellFilter = 'translate'
+     *
+     */
+    self.headerCellFilter = colDef.headerCellFilter ? colDef.headerCellFilter : "";
 
     self.visible = gridUtil.isNullOrUndefined(colDef.visible) || colDef.visible;
 
