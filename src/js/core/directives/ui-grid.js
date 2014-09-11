@@ -24,11 +24,6 @@
       //all properties of grid are available on scope
       $scope.grid = self.grid;
 
-
-      //TODO: Move this.
-      $scope.groupings = [];
-
-
       if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
           self.grid.options.columnDefs = value;
@@ -36,14 +31,9 @@
             .then(function(){
               self.grid.preCompileCellTemplates();
 
-              self.refreshCanvas(true);
+              self.grid.refreshCanvas(true);
             });
         });
-      }
-      else {
-        if (self.grid.options.columnDefs.length > 0) {
-        //   self.grid.buildColumns();
-        }
       }
 
 
@@ -65,7 +55,7 @@
 
               self.grid.preCompileCellTemplates();
 
-              self.refreshCanvas(true);
+              self.grid.refreshCanvas(true);
             });
         }
       }
@@ -89,11 +79,11 @@
             self.grid.modifyRows(n)
               .then(function () {
                 // if (self.viewport) {
-                  self.redrawInPlace();
+                  self.grid.redrawInPlace();
                 // }
 
                 $scope.$evalAsync(function() {
-                  self.refreshCanvas(true);
+                  self.grid.refreshCanvas(true);
                 });
               });
           });
@@ -106,15 +96,10 @@
         columnDefWatchCollectionDereg();
       });
 
-      // TODO(c0bra): Do we need to destroy this watch on $destroy?
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
-        self.refreshCanvas(true);
+        self.grid.refreshCanvas(true);
       });
 
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.refreshCanvas = function(buildStyles) {
-        return $scope.grid.refreshCanvas(buildStyles);
-      };
 
       $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
         if (self.refreshCanceler) {
@@ -122,7 +107,7 @@
         }
 
         self.refreshCanceler = $timeout(function () {
-          self.refreshCanvas(true);
+          self.grid.refreshCanvas(true);
         });
 
         self.refreshCanceler.then(function () {
@@ -133,25 +118,6 @@
       self.getCellValue = function(row, col) {
         return $scope.grid.getCellValue(row, col);
       };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.refreshRows = function refreshRows() {
-        return $scope.grid.refreshRows();
-      };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.refresh = function refresh() {
-        $scope.grid.refresh();
-      };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.redrawInPlace = function redrawInPlace() {
-        $scope.grid.redrawInPlace();
-      };
-
-      /* Sorting Methods */
-
-
       /* Event Methods */
 
       //todo: throttle this event?
@@ -264,7 +230,7 @@ angular.module('ui.grid').directive('uiGrid',
               }
 
               // Run initial canvas refresh
-              uiGridCtrl.refreshCanvas();
+              grid.refreshCanvas();
 
               //add pinned containers for row headers support
               //moved from pinning feature
