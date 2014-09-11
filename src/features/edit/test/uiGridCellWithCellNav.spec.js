@@ -1,3 +1,4 @@
+//tests not working. need to refactor either tests or cellNav because the controller isn't wired properly
 xdescribe('ui.grid.edit GridCellDirective with CellNav feature', function () {
   beforeEach(module('ui.grid.cellNav'));
   beforeEach(module('ui.grid.edit'));
@@ -39,10 +40,6 @@ xdescribe('ui.grid.edit GridCellDirective with CellNav feature', function () {
     scope.col.cellTemplate = '<div class="ui-grid-cell-contents">{{COL_FIELD}}</div>';
     scope.row = grid.rows[0];
 
-
-
-    scope.getCellValue = function(row,col){return 'val';};
-
     var gridController = {
       add: function() { return 123; }
     };
@@ -73,16 +70,25 @@ xdescribe('ui.grid.edit GridCellDirective with CellNav feature', function () {
 
   it('should stop editing on arrow', function () {
     //stop edit
-    var event = jQuery.Event("keydown");
-    event.keyCode = uiGridConstants.keymap.ARROW_RIGHT;
-    element.find('input').trigger(event);
+
+    $timeout(function () {
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.RIGHT;
+      element.find('input').trigger(event);
+      scope.$digest();
+    });
+    $timeout.flush();
+
 
     //back to beginning
     expect(element.html()).toBe(displayHtml);
   });
 
-  it('should not stop editing on arrow after click', function () {
+  it('should not stop editing on arrow after click', inject(function ($timeout) {
     //click to deep edit (user can use arrows to navigate around editable text)
+
+
+
     var event = jQuery.Event("click");
     element.find('input').trigger(event);
 
@@ -92,6 +98,6 @@ xdescribe('ui.grid.edit GridCellDirective with CellNav feature', function () {
 
     //back to beginning
     expect(element.html()).toBe(displayHtml);
-  });
+  }));
 
 });

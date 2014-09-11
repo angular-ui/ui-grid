@@ -115,9 +115,6 @@
         });
       };
 
-      self.getCellValue = function(row, col) {
-        return $scope.grid.getCellValue(row, col);
-      };
       /* Event Methods */
 
       //todo: throttle this event?
