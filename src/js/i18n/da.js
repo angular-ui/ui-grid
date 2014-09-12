@@ -21,6 +21,9 @@
           },
           menu:{
             text: 'Vælg kolonner:',
+          },
+          column: {
+            hide: 'Skjul kolonne'
           }
         });
       return $delegate;
