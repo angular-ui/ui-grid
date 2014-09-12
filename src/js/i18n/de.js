@@ -24,6 +24,9 @@
         },
         menu: {
           text: 'Spalten auswählen:'
+        },
+        column: {
+          hide: 'Spalte ausblenden'
         }
       });
       return $delegate;

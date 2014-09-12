@@ -26,6 +26,9 @@
           ascending: 'Sorteer oplopend',
           descending: 'Sorteer aflopend',
           remove: 'Verwijder sortering'
+        },
+        column: {
+          hide: 'Kolom te verbergen'
         }
       });
       return $delegate;
