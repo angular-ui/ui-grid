@@ -121,6 +121,14 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           shown: function() {
             return (sortable() && typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null);
           }
+        },
+        {
+          title: i18nService.getSafeText('column.hide'),
+          icon: 'ui-grid-icon-cancel',
+          action: function ($event) {
+            $event.stopPropagation();
+            $scope.hideColumn();
+          }
         }
       ];
 
@@ -272,6 +280,13 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
       $scope.unsortColumn = function () {
         $scope.col.unsort();
+
+        uiGridCtrl.grid.refresh();
+        self.hideMenu();
+      };
+
+      $scope.hideColumn = function () {
+        $scope.col.colDef.visible = false;
 
         uiGridCtrl.grid.refresh();
         self.hideMenu();
