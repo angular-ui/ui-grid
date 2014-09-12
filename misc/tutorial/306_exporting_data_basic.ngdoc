@@ -1,0 +1,55 @@
+@ngdoc overview
+@name Tutorial: 306 Exporting Data
+@description The exporter feature allows data to be exported from the grid in 
+csv or pdf format.  A basic UI is provided, but in most circumstances you would
+create your own UI.
+
+The exporter can export all data, visible data or selected data.
+
+To use the exporter you need to include the ui-grid-exporter directive on
+your grid.  If you want to export selected rows you must include the ui-grid-selection
+directive on your grid.  If you want to export as PDF you need to have installed pdfMake, 
+available through:
+<pre>  bower install pdfmake  </pre>
+
+The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}.
+
+
+@example
+In this first example there are three columns, only two of which are visible.  Using the vanilla
+exporter configuration you get an export button, and when you elect to export as CSV you receive
+a download link.
+
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.selection', 'ui.grid.exporter']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        columnDefs: [
+          { field: 'name' },
+          { field: 'gender', visible: false},
+          { field: 'company' }
+        ]
+      };
+      
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" ui-grid-selection ui-grid-exporter class="grid"></div>
+    </div>
+  </file>
+  
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

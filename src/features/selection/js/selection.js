@@ -162,6 +162,15 @@
                 },
                 /**
                  * @ngdoc function
+                 * @name getSelectedGridRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description returns all selectedRow's as gridRows
+                 */
+                getSelectedGridRows: function () {
+                  return service.getSelectedRows(grid);
+                },
+                /**
+                 * @ngdoc function
                  * @name setMultiSelect
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Sets the current gridOption.multiSelect to true or false

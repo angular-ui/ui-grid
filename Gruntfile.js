@@ -429,6 +429,8 @@ module.exports = function(grunt) {
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
+          'bower_components/pdfmake/build/pdfmake.js',
+          'bower_components/pdfmake/build/vfs_fonts.js'
         ],
         hiddenScripts: [
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
