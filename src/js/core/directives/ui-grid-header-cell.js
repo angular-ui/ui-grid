@@ -64,7 +64,7 @@
           // Sort this column then rebuild the grid's rows
           uiGridCtrl.grid.sortColumn($scope.col, add)
             .then(function () {
-              uiGridCtrl.columnMenuCtrl.hideMenu();
+              uiGridCtrl.columnMenuScope.hideMenu();
               uiGridCtrl.grid.refresh();
             });
         }
@@ -87,7 +87,7 @@
           cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
 
           cancelMousedownTimeout.then(function () {
-            uiGridCtrl.columnMenuCtrl.showMenu($scope.col, $elm);
+            uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
           });
         });
 
@@ -99,22 +99,22 @@
           $event.stopPropagation();
 
           // If the menu is already showing...
-          if (uiGridCtrl.columnMenuCtrl.shown) {
+          if (uiGridCtrl.columnMenuScope.menuShown) {
             // ... and we're the column the menu is on...
-            if (uiGridCtrl.columnMenuCtrl.col === $scope.col) {
+            if (uiGridCtrl.columnMenuScope.col === $scope.col) {
               // ... hide it
-              uiGridCtrl.columnMenuCtrl.hideMenu();
+              uiGridCtrl.columnMenuScope.hideMenu();
             }
             // ... and we're NOT the column the menu is on
             else {
               // ... move the menu to our column
-              uiGridCtrl.columnMenuCtrl.showMenu($scope.col, $elm);
+              uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
             }
           }
           // If the menu is NOT showing
           else {
             // ... show it on our column
-            uiGridCtrl.columnMenuCtrl.showMenu($scope.col, $elm);
+            uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
           }
         };
 

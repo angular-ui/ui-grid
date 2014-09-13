@@ -29,6 +29,9 @@
                     ascending: 'סדר עולה',
                     descending: 'סדר יורד',
                     remove: 'בטל'
+                },
+                column: {
+                  hide: 'טור הסתר'
                 }
             });
             return $delegate;
