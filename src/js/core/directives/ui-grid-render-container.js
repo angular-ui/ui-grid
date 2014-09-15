@@ -50,7 +50,37 @@
             containerCtrl.containerId = $scope.containerId;
             containerCtrl.rowContainer = rowContainer;
             containerCtrl.colContainer = colContainer;
+
+            /**
+             * @ngdoc event
+             * @name scrollReachedTop
+             * @eventOf ui.grid.core.api:PublicApi
+             * @description raised when the vertical scroll reaches the top of 
+             * the grid.  Can be used for infinite scroll
+             * <pre>
+             *      gridApi.cellNav.on.scrollReachedTop(scope,function( grid ){})
+             * </pre>
+             * @param {object} grid the grid itself, allowing you to easily call
+             * grid.refresh()
+             */
+            grid.api.registerEvent( 'core', 'scrollReachedTop' );
+
+            /**
+             * @ngdoc event
+             * @name scrollReachedTop
+             * @eventOf ui.grid.core.api:PublicApi
+             * @description raised when the vertical scroll reaches the bottom of 
+             * the grid.  Can be used for infinite scroll
+             * <pre>
+             *      gridApi.cellNav.on.scrollReachedBottom(scope,function( grid ){})
+             * </pre>
+             * @param {object} grid the grid itself, allowing you to easily call
+             * grid.refresh()
+             */
+            grid.api.registerEvent( 'core', 'scrollReachedBottom' );
           },
+          
+          
           post: function postlink($scope, $elm, $attrs, controllers) {
             $log.debug('render container ' + $scope.containerId + ' post-link');
 
@@ -63,7 +93,7 @@
 
             // Put the container name on this element as a class
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
-
+            
             // Bind to left/right-scroll events
             var scrollUnbinder;
             if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
@@ -104,6 +134,14 @@
                 // grid.options.offsetTop = newScrollTop;
 
                 containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
+                
+                if ( newScrollTop <= 0 ){
+                  grid.api.core.raise.scrollReachedTop( grid );
+                }
+                
+                if ( newScrollTop >= scrollLength ){
+                  grid.api.core.raise.scrollReachedBottom( grid );
+                }
               }
 
               // Horizontal scroll

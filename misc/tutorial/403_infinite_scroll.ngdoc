@@ -1,0 +1,128 @@
+@ngdoc overview
+@name Tutorial: 403 Infinite Scrolling
+@description
+
+Events within the cellNav service to permit infinite scrolling to be added to the grid.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+      // never hold more than this number of rows in the grid
+      $scope.MAX_DATA = 399;
+      
+      $scope.gridOptions = {  };
+
+      $scope.gridOptions.columnDefs = [
+      ];
+
+      $scope.getEarlierPages = function( grid ) {
+        // Emulate getting a page slowly, and only get new pages if one
+        // isn't already being got (i.e. a debounce)
+        if( !$scope.gettingEarlier ) {
+          $scope.gettingEarlier = true;
+   
+          $interval(function(){
+            $http.get('/data/100.json')
+            .success(function(page) {
+              $scope.addRowNums(page, $scope.firstRow - 100 );
+
+              // add the 100 rows into the front of our data.
+              angular.forEach(page, function( row, index ) {
+                $scope.gridOptions.data.unshift(row);
+              });
+              $scope.firstRow -= 100;
+              
+              // If more than MAX_DATA, get rid of rows from the end
+              if( $scope.lastRow - $scope.firstRow > $scope.MAX_DATA ){
+                for(var i=0;i<100;i++){
+                  $scope.gridOptions.data.pop();
+                }
+                $scope.lastRow -= 100;
+              }
+              
+              $scope.gettingEarlier = false;
+              grid.refresh();
+            });          
+          }, 1000, 1);
+        } 
+      };
+
+      $scope.getLaterPages = function( grid ) {
+        // Emulate getting a page slowly, and only get new pages if one
+        // isn't already being got (i.e. a debounce)
+        
+        if( !$scope.gettingLater ) {
+          $scope.gettingLater = true;
+  
+          $interval(function(){
+            $http.get('/data/100.json')
+            .success(function(page) {
+              $scope.addRowNums(page, $scope.lastRow + 1 );
+
+              // add the 100 rows into our data.
+              angular.forEach( page, function( row, index ){
+                $scope.gridOptions.data.push(row);
+              });  
+              $scope.lastRow += 100;
+              
+              // If more than MAX_DATA, get rid of rows from the start
+              if( $scope.lastRow - $scope.firstRow > $scope.MAX_DATA ){
+                for(var i=0;i<100;i++){
+                  $scope.gridOptions.data.shift();
+                }
+                $scope.firstRow += 100;
+              }
+              $scope.gettingLater = false;
+              grid.refresh();
+            });          
+          }, 1000, 1); 
+        }
+      };
+      
+      $scope.addRowNums = function( page, offset ) {
+        angular.forEach(page, function( row, index ){
+          row.row = index + offset;
+        });
+      };
+
+      $scope.gridOptions.onRegisterApi = function(gridApi){
+        $scope.gridApi = gridApi;
+        $interval( function() {
+          $scope.gridApi.core.on.scrollReachedTop( $scope, $scope.getEarlierPages );
+          $scope.gridApi.core.on.scrollReachedBottom( $scope, $scope.getLaterPages );
+        }, 50, 1);
+      };
+
+      $http.get('/data/100.json')
+      .success(function(page) {
+        $scope.addRowNums(page, 1000);
+        $scope.gridOptions.data = page;
+        
+        // emulate a paging architecture where we've got rows 1000 through 1099
+        $scope.firstRow = 1000;
+        $scope.lastRow = 1099;
+      });
+      
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>Currently showing from row: {{firstRow}} to row: {{lastRow}}</strong>
+      <br>
+      <strong ng-if="gettingEarlier">Getting earlier pages!!</strong>
+      <br>
+      <strong ng-if="gettingLater">Getting later pages!!</strong>
+      <br>
+      <div ui-grid="gridOptions" class="grid" ui-grid-cellNav></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 450px;
+    }
+  </file>
+</example>
