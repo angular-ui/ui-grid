@@ -206,6 +206,14 @@
            *  <br/>Defaults to true
            */
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
+          /**
+           *  @ngdoc object
+           *  @name enableRowHeaderSelection
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable a row header to be used for selection
+           *  <br/>Defaults to true
+           */
+          gridOptions.enableRowHeaderSelection = gridOptions.enableRowHeaderSelection !== false;
         },
 
         /**
@@ -325,8 +333,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridSelection', ['$log', 'uiGridSelectionConstants', 'uiGridSelectionService',
-    function ($log, uiGridSelectionConstants, uiGridSelectionService) {
+  module.directive('uiGridSelection', ['$log', 'uiGridSelectionConstants', 'uiGridSelectionService', '$templateCache',
+    function ($log, uiGridSelectionConstants, uiGridSelectionService, $templateCache) {
       return {
         replace: true,
         priority: 0,
@@ -338,6 +346,34 @@
               uiGridSelectionService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
+              if (uiGridCtrl.grid.options.enableRowHeaderSelection) {
+                var cellTemplate = $templateCache.get('ui-grid/selectionRowHeader');
+                var selectionRowHeaderDef = { name: 'selectionRowHeaderCol', displayName: '', width: 30, cellTemplate: cellTemplate};
+                uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
+              }
+            }
+          };
+        }
+      };
+    }]);
+
+  module.directive('uiGridSelectionRowHeaderButtons', ['$log', '$templateCache', 'uiGridSelectionService',
+    function ($log, $templateCache, uiGridSelectionService) {
+      return {
+        replace: true,
+        restrict: 'E',
+        template: $templateCache.get('ui-grid/selectionRowHeaderButtons'),
+        scope: true,
+        require: '^uiGrid',
+        link: function($scope, $elm, $attrs, uiGridCtrl) {
+          var self = uiGridCtrl.grid;
+          $scope.selectButtonClick = function(row, evt) {
+            if (evt.shiftKey) {
+              uiGridSelectionService.shiftSelect(self, row, self.options.multiSelect);
+
+            }
+            else {
+              uiGridSelectionService.toggleRowSelection(self, row, self.options.multiSelect);
             }
           };
         }
@@ -390,9 +426,8 @@
           scope: false,
           link: function ($scope, $elm, $attrs) {
 
-            $elm.addClass('ui-grid-disable-selection');
-
-            if ($scope.grid.options.enableRowSelection) {
+            if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection) {
+              $elm.addClass('ui-grid-disable-selection');
               registerRowSelectionEvents();
             }
 

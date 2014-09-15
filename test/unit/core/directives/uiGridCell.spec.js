@@ -1,18 +1,24 @@
 describe('uiGridCell', function () {
-  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, $log;
+  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, $log, grid;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, _$log_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, _$log_, gridClassFactory) {
     $scope = $rootScope;
     $compile = _$compile_;
     $timeout = _$timeout_;
     GridColumn = _GridColumn_;
     $log = _$log_;
 
-    $scope.col = new GridColumn({name: 'col1', cellClass: 'testClass'}, 0, {});
+
+    $scope.grid = gridClassFactory.createGrid();
+
+
+    $scope.col = new GridColumn({name: 'col1', cellClass: 'testClass'}, 0, $scope.grid);
     $scope.col.cellTemplate = '<div class="ui-grid-cell-contents">{{COL_FIELD}}</div>';
-    $scope.getCellValue = function (row, col) {
+
+    //override getCellValue
+    $scope.grid.getCellValue = function (row, col) {
       return 'val';
     };
     $scope.rowRenderIndex = 2;

@@ -145,7 +145,7 @@
 
         if ($scope.filterable) {
           $scope.$on('$destroy', $scope.$watch('col.filter.term', function(n, o) {
-            uiGridCtrl.refresh()
+            uiGridCtrl.grid.refresh()
               .then(function () {
                 if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
                    uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });

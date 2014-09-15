@@ -74,7 +74,7 @@ describe('ui-grid', function() {
   describe('watch for new pinned containers', function () {
     var element, scope;
 
-    beforeEach(inject(function ($compile, $rootScope) {
+    beforeEach(inject(function ($compile, $rootScope, $timeout) {
       element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
       scope = $rootScope;
       scope.gridOptions = {};
@@ -86,8 +86,10 @@ describe('ui-grid', function() {
         scope.grid = gridApi.grid;
       };
 
-      $compile(element)(scope);
-      scope.$digest();
+      $timeout(function () {
+        $compile(element)(scope);
+      });
+      $timeout.flush();
     }));
 
     it('fires watch for left container', inject(function($timeout) {

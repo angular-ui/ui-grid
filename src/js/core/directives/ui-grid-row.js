@@ -36,7 +36,6 @@
             //add optional reference to externalScopes function to scope
             //so it can be retrieved in lower elements
             $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
-            $scope.getCellValue = uiGridCtrl.getCellValue;
           }
         };
       }

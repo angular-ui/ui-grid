@@ -316,7 +316,7 @@ angular.module('ui.grid')
   Grid.prototype.preCompileCellTemplates = function() {
         $log.info('pre-compiling cell templates');
         this.columns.forEach(function (col) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
+          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
           var compiledElementFn = $compile(html);
           col.compiledElementFn = compiledElementFn;
@@ -946,6 +946,27 @@ angular.module('ui.grid')
     self.gridHeight = gridUtil.elementHeight(self.element);
 
     self.queueRefresh();
+  };
+
+  /**
+   * @ngdoc function
+   * @name queueRefresh
+   * @methodOf ui.grid.class:Grid
+   * @description todo: @c0bra can you document this method?
+   */
+  Grid.prototype.queueRefresh = function queueRefresh() {
+    var self = this;
+    if (self.refreshCanceller) {
+      $timeout.cancel(self.refreshCanceller);
+    }
+
+    self.refreshCanceller = $timeout(function () {
+      self.refreshCanvas(true);
+    });
+
+    self.refreshCanceller.then(function () {
+      self.refreshCanceller = null;
+    });
   };
 
   /**
