@@ -37,13 +37,14 @@ describe('rowSearcher', function() {
     });
 
     rows = grid.rows = [
-      new GridRow({ name: 'Bill', company: 'Gruber, Inc.' }, 0, grid),
-      new GridRow({ name: 'Frank', company: 'Foo Co' }, 1, grid)
+      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25 }, 0, grid),
+      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45 }, 1, grid)
     ];
 
     columns = grid.columns = [
       new GridColumn({ name: 'name' }, 0, grid),
-      new GridColumn({ name: 'company' }, 1, grid)
+      new GridColumn({ name: 'company' }, 1, grid),
+      new GridColumn({ name: 'age' }, 2, grid)
     ];
 
     filter = null;
@@ -228,6 +229,48 @@ describe('rowSearcher', function() {
 
       expect(ret[0].visible).toBe(true);
       expect(ret[1].visible).toBe(false);
+    });
+  });
+
+  describe('with a custom filter function', function() {
+    var custom, ret;
+    beforeEach(function() {
+      // A custom filtering function (condition), eg:
+      //   ">20"  : returns rows where column val is >20
+      //   "<=10" : returns rows where column val is <=10
+      custom = {};
+      custom.filterFn = function(searchTerm, rowValue, row, column) {
+        var firstChar = searchTerm.charAt(0);
+        var secondChar = searchTerm.charAt(1);
+        var orEqualTo = secondChar === '=';
+        var trimBy = orEqualTo ? 2 : 1 ;
+        var compareTo;
+        
+        if (firstChar === '>') {
+          compareTo = searchTerm.substr(trimBy) * 1;
+          return orEqualTo ? rowValue >= compareTo : rowValue > compareTo;
+        }
+        else if (firstChar === '<') {
+          compareTo = searchTerm.substr(trimBy) * 1;
+          return orEqualTo ? rowValue <= compareTo : rowValue < compareTo;
+        }
+        else {
+          return true;
+        }
+      };
+
+      spyOn(custom, 'filterFn').andCallThrough();
+      setFilter(columns[2], '>27', custom.filterFn);
+      ret = rowSearcher.search(grid, rows, columns);
+    });
+    it('should run the function for each row', function() {
+      expect(custom.filterFn.calls.length).toEqual(2);
+      expect(custom.filterFn.calls[0].args).toEqual(['>27', 25, rows[0], columns[2]]);
+      expect(custom.filterFn.calls[1].args).toEqual(['>27', 45, rows[1], columns[2]]);
+    });
+    it('should honor the result of the function call when filtering', function() {
+      expect(ret[0].visible).toBe(false);
+      expect(ret[1].visible).toBe(true);
     });
   });
 

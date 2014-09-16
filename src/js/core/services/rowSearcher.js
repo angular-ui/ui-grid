@@ -162,8 +162,11 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
   };
 
   rowSearcher.runColumnFilter = function runColumnFilter(grid, row, column, termCache, i, filter) {
+    // Cache typeof condition
+    var conditionType = typeof(filter.condition);
+
     // Default to CONTAINS condition
-    if (typeof(filter.condition) === 'undefined' || !filter.condition) {
+    if (conditionType === 'undefined' || !filter.condition) {
       filter.condition = uiGridConstants.filter.CONTAINS;
     }
 
@@ -189,6 +192,10 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
       if (!filter.condition.test(value)) {
         return false;
       }
+    }
+    // If the filter's condition is a function, run it
+    else if (conditionType === 'function') {
+      return filter.condition(term, value, row, column);
     }
     else if (filter.condition === uiGridConstants.filter.STARTS_WITH) {
       var startswithRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId, new RegExp('^' + term, regexpFlags));
