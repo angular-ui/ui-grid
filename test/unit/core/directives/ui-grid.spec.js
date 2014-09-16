@@ -102,7 +102,6 @@ describe('ui-grid', function() {
       $timeout.flush();
 
       expect(scope.grid.refreshCanvas).toHaveBeenCalledWith(true);
-      expect(scope.grid.refreshCanvas.callCount).toEqual(1);
     }));
 
 
@@ -116,8 +115,6 @@ describe('ui-grid', function() {
       $timeout.flush();
 
       expect(scope.grid.refreshCanvas).toHaveBeenCalledWith(true);
-      expect(scope.grid.refreshCanvas.callCount).toEqual(1);
-
     }));
 
  });
