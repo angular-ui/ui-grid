@@ -336,11 +336,13 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     if (filterCols.length > 0) {
       filterCols.forEach(function foreachFilterCol(col) {
         rows.forEach(function foreachRow(row) {
-          if (!rowSearcher.searchColumn(grid, row, col, termCache)) {
+          if (row.forceInvisible || !rowSearcher.searchColumn(grid, row, col, termCache)) {
             row.visible = false;
           }
         });
       });
+      
+      grid.api.core.raise.rowsVisibleChanged();
 
       // rows.forEach(function (row) {
       //   var matchesAllColumns = true;

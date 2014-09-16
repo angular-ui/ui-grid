@@ -6,12 +6,6 @@ angular.module('ui.grid')
 
 /**
  * @ngdoc object
- * @name ui.grid.core
- * @description Not sure this needs to be defined, I'll see
- *
- */
-/**
- * @ngdoc object
  * @name ui.grid.core.api:PublicApi
  * @description Public Api for the core grid features
  *
@@ -131,6 +125,25 @@ angular.module('ui.grid')
 
 
   self.api = new GridApi(self);
+
+  /**
+   * @ngdoc function
+   * @name refresh
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Refresh the rendered grid on screen.
+   * 
+   */
+  this.api.registerMethod( 'core', 'refresh', this.refresh );
+
+  /**
+   * @ngdoc function
+   * @name refreshRows
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Refresh the rendered grid on screen?  Note: not functional at present
+   * @returns {promise} promise that is resolved when render completes?
+   * 
+   */
+  this.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
 };
 
     /**
@@ -1329,16 +1342,6 @@ angular.module('ui.grid')
   
   /**
    * @ngdoc function
-   * @name refresh
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen.
-   * 
-   */
-  // this.api.registerMethod( 'core', 'refresh', this.refresh );
-
-
-  /**
-   * @ngdoc function
    * @name refreshRows
    * @methodOf ui.grid.class:Grid
    * @description Refresh the rendered rows on screen?  Note: not functional at present 
@@ -1358,17 +1361,6 @@ angular.module('ui.grid')
         self.refreshCanvas();
       });
   };
-
-  /**
-   * @ngdoc function
-   * @name refreshRows
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen?  Note: not functional at present
-   * @returns {promise} promise that is resolved when render completes?
-   * 
-   */
-  // this.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
-
 
   /**
    * @ngdoc function
