@@ -171,7 +171,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     }
 
     // Term to search for.
-    var term = rowSearcher.stripTerm(filter);
+    var term = rowSearcher.stripTerm(column.filter);
 
     if (term === null || term === undefined || term === '') {
       return true;
