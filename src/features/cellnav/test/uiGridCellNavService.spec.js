@@ -4,14 +4,16 @@ describe('ui.grid.edit uiGridCellNavService', function () {
   var grid;
   var uiGridConstants;
   var uiGridCellNavConstants;
+  var $rootScope;
 
   beforeEach(module('ui.grid.cellNav'));
 
-  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_) {
+  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_, _$rootScope_) {
     uiGridCellNavService = _uiGridCellNavService_;
     gridClassFactory = _gridClassFactory_;
     uiGridConstants = _uiGridConstants_;
     uiGridCellNavConstants = _uiGridCellNavConstants_;
+    $rootScope = _$rootScope_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
 
@@ -291,4 +293,51 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
   });
 
+  describe('scrollTo', function () {
+    var evt;
+    var args;
+    var $scope;
+    
+    beforeEach(function(){
+      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
+      grid.buildColumns();
+      grid.setVisibleColumns(grid.columns);
+      grid.setVisibleRows(grid.rows);
+      $scope = $rootScope.$new();
+      
+      evt = null;
+      args = null;
+      $scope.$on(uiGridConstants.events.GRID_SCROLL, function( receivedEvt, receivedArgs ){
+        evt = receivedEvt;
+        args = receivedArgs;
+      });
+      grid.columns[0].drawnWidth = 100;
+      grid.columns[1].drawnWidth = 200;
+      grid.columns[2].drawnWidth = 300;
+    });
+
+    it('should request scroll to row and column', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, grid.options.data[2], grid.columns[1].colDef);
+      
+      expect(args).toEqual( { y : { percentage : 2/3 }, x : { percentage :  300/600 } });
+    });
+
+    it('should request scroll to row only', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, grid.options.data[2], null);
+      
+      expect(args).toEqual( { y : { percentage : 2/3 } });
+    });
+
+    it('should request scroll to column only', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, null, grid.columns[1].colDef);
+      
+      expect(args).toEqual( { x : { percentage :  300/600 } });
+    });
+
+    it('should request no scroll as no row or column', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, null, null );
+      
+      expect(args).toEqual(null);
+    });
+  });
 });
