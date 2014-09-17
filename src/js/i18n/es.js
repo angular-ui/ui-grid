@@ -21,9 +21,6 @@
         },
         menu: {
           text: 'Elegir columnas:'
-        },
-        column: {
-          hide: 'Ocultar la columna'
         }
       });
       return $delegate;

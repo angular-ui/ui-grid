@@ -21,9 +21,6 @@
         },
         menu: {
           text: 'انتخاب ستون\u200cها:'
-        },
-        column: {
-          hide: 'ستون پنهان کن'
         }
       });
       return $delegate;

@@ -247,16 +247,6 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description uses the first row of data to assign colDef.type for any types not defined.
    */
-  /**
-   * @ngdoc property
-   * @name type
-   * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description the type of the column, used in sorting.  If not provided then the 
-   * grid will guess the type.  Add this only if the grid guessing is not to your
-   * satisfaction.  Refer to {@link ui.grid.service:GridUtil.guessType gridUtil.guessType} for
-   * a list of values the grid knows about.
-   *
-   */
   Grid.prototype.assignTypes = function(){
     var self = this;
     self.options.columnDefs.forEach(function (colDef, index) {

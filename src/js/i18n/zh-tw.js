@@ -21,9 +21,6 @@
         },
         menu: {
           text: '選擇欄位：'
-        },
-        column: {
-          hide: '隐藏列'
         }
       });
       return $delegate;

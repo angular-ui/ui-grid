@@ -21,9 +21,6 @@
         },
         menu: {
           text: '数据分组与选择列：'
-        },
-        column: {
-          hide: '隐藏列'
         }
       });
       return $delegate;

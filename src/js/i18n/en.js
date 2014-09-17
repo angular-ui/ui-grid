@@ -29,9 +29,6 @@
           ascending: 'Sort Ascending',
           descending: 'Sort Descending',
           remove: 'Remove Sort'
-        },
-        column: {
-          hide: 'Hide Column'
         }
       });
       return $delegate;

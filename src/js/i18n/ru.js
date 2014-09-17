@@ -29,9 +29,6 @@
           ascending: 'По возрастанию',
           descending: 'По убыванию',
           remove: 'Убрать сортировку'
-        },
-        column: {
-          hide: 'спрятать столбец'
         }
       });
       return $delegate;
