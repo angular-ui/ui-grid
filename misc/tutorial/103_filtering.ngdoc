@@ -32,6 +32,9 @@ function myCustomSorter(searchTerm, cellValue, row, column) {
 For an example of this, see the "phone" column below for an example of this; the custom filter condition makes sure to strip the phone number of everything
 except digits to compare to the search term.
 
+### Placeholder
+
+Set the `placeholder` property on the `filter` object to add a `placeholder=""` attribute to the input element. This is set for the "email" and "age" columns below.
 
 ### Multiple filter fields
 
@@ -57,7 +60,14 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
           // no filter input
           { field: 'company', enableFiltering: false  },
           // specifies one of the built-in conditions
-          { field: 'email', filter: { condition: uiGridConstants.filter.ENDS_WITH }},
+          // and a placeholder for the input
+          {
+            field: 'email',
+            filter: {
+              condition: uiGridConstants.filter.ENDS_WITH,
+              placeholder: 'ends with'
+            }
+          },
           // custom condition function
           {
             field: 'phone',
@@ -71,10 +81,12 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
           // multiple filters
           { field: 'age', filters: [
             {
-              condition: uiGridConstants.filter.GREATER_THAN
+              condition: uiGridConstants.filter.GREATER_THAN,
+              placeholder: 'greater than'
             },
             {
-              condition: uiGridConstants.filter.LESS_THAN
+              condition: uiGridConstants.filter.LESS_THAN,
+              placeholder: 'less than'
             }
           ]}
         ]
