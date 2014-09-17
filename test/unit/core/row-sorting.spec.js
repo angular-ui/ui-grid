@@ -111,6 +111,15 @@ describe('rowSorter', function() {
       expect(ret[0].entity.name).toEqual('Jim');
     });
 
+    it('should not sort if useExternalSorting is set', function() {
+      cols[0].sort.direction = uiGridConstants.DESC;
+      grid.options.useExternalSorting = true;
+
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.name).toEqual('Bob');
+    });
+
     // TODO(c0bra) ...
     describe('with a custom sorting algorithm', function () {
       beforeEach(function() {
