@@ -171,8 +171,6 @@ describe('rowSorter', function() {
     beforeEach(inject(function(_$timeout_) {
       $timeout = _$timeout_;
 
-      timeoutRows = [new GridRow({ name: 'Frank' }, 0)];
-
       grid = gridClassFactory.createGrid({
         externalSort: jasmine.createSpy('externalSort')
                         .andCallFake(function (r) {
@@ -182,6 +180,8 @@ describe('rowSorter', function() {
                           }, 1000);
                         })
       });
+
+      timeoutRows = [new GridRow({ name: 'Frank' }, 0, grid)];
 
       // grid.options.externalSort = function (grid, column, rows) {
       //   // sort stuff here
