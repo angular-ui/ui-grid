@@ -2,6 +2,15 @@
 
 var module = angular.module('ui.grid');
 
+/**
+ * @ngdoc object
+ * @name ui.grid.class:RowSorter
+ * @description RowSorter provides the default sorting mechanisms, 
+ * including guessing column types and applying appropriate sort 
+ * algorithms
+ * 
+ */ 
+
 module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGridConstants) {
   var currencyRegexStr = 
     '(' +
@@ -186,10 +195,34 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     }
   };
 
+  /**
+   * @ngdoc object
+   * @name useExternalSorting
+   * @propertyOf ui.grid.class:GridOptions
+   * @description Prevents the internal sorting from executing.  Events will
+   * still be fired when the sort changes, and the sort information on
+   * the columns will be updated, allowing an external sorter (for example,
+   * server sorting) to be implemented.  Defaults to false. 
+   * 
+   */
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:RowSorter
+   * @name sort
+   * @description sorts the grid 
+   * @param {Object} grid the grid itself
+   * @param {Object} rows the rows to be sorted
+   * @param {Object} columns the columns in which to look
+   * for sort criteria
+   */
   rowSorter.sort = function rowSorterSort(grid, rows, columns) {
     // first make sure we are even supposed to do work
     if (!rows) {
       return;
+    }
+    
+    if (grid.options.useExternalSorting){
+      return rows;
     }
 
     // Build the list of columns to sort by

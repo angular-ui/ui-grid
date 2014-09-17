@@ -6,12 +6,6 @@ angular.module('ui.grid')
 
 /**
  * @ngdoc object
- * @name ui.grid.core
- * @description Not sure this needs to be defined, I'll see
- *
- */
-/**
- * @ngdoc object
  * @name ui.grid.core.api:PublicApi
  * @description Public Api for the core grid features
  *
@@ -131,6 +125,46 @@ angular.module('ui.grid')
 
 
   self.api = new GridApi(self);
+
+  /**
+   * @ngdoc function
+   * @name refresh
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Refresh the rendered grid on screen.
+   * 
+   */
+  self.api.registerMethod( 'core', 'refresh', this.refresh );
+
+  /**
+   * @ngdoc function
+   * @name refreshRows
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Refresh the rendered grid on screen?  Note: not functional at present
+   * @returns {promise} promise that is resolved when render completes?
+   * 
+   */
+  self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
+
+
+  /**
+   * @ngdoc function
+   * @name sortChanged
+   * @methodOf  ui.grid.core.api:PublicApi
+   * @description The sort criteria on one or more columns has
+   * changed.  Provides as parameters the grid and the output of
+   * getColumnSorting, which is an array of gridColumns
+   * that have sorting on them, sorted in priority order. 
+   * 
+   * @param {Grid} grid the grid
+   * @param {array} sortColumns an array of columns with 
+   * sorts on them, in priority order
+   * 
+   * @example
+   * <pre>
+   *      gridApi.core.on.sortChanged( grid, sortColumns );
+   * </pre>
+   */
+  self.api.registerEvent( 'core', 'sortChanged' );
 };
 
     /**
@@ -212,16 +246,6 @@ angular.module('ui.grid')
    * @name assignTypes
    * @methodOf ui.grid.class:Grid
    * @description uses the first row of data to assign colDef.type for any types not defined.
-   */
-  /**
-   * @ngdoc property
-   * @name type
-   * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description the type of the column, used in sorting.  If not provided then the 
-   * grid will guess the type.  Add this only if the grid guessing is not to your
-   * satisfaction.  Refer to {@link ui.grid.service:GridUtil.guessType gridUtil.guessType} for
-   * a list of values the grid knows about.
-   *
    */
   Grid.prototype.assignTypes = function(){
     var self = this;
@@ -1229,6 +1253,7 @@ angular.module('ui.grid')
    * @name sortColumn
    * @methodOf ui.grid.class:Grid
    * @description Set the sorting on a given column, optionally resetting any existing sorting on the Grid.
+   * Emits the sortChanged event whenever the sort criteria are changed.
    * @param {GridColumn} column Column to set the sorting on
    * @param {uiGridConstants.ASC|uiGridConstants.DESC} [direction] Direction to sort by, either descending or ascending.
    *   If not provided, the column will iterate through the sort directions: ascending, descending, unsorted.
@@ -1277,6 +1302,8 @@ angular.module('ui.grid')
     else {
       column.sort.direction = direction;
     }
+    
+    self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
   };
@@ -1329,16 +1356,6 @@ angular.module('ui.grid')
   
   /**
    * @ngdoc function
-   * @name refresh
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen.
-   * 
-   */
-  // this.api.registerMethod( 'core', 'refresh', this.refresh );
-
-
-  /**
-   * @ngdoc function
    * @name refreshRows
    * @methodOf ui.grid.class:Grid
    * @description Refresh the rendered rows on screen?  Note: not functional at present 
@@ -1358,17 +1375,6 @@ angular.module('ui.grid')
         self.refreshCanvas();
       });
   };
-
-  /**
-   * @ngdoc function
-   * @name refreshRows
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen?  Note: not functional at present
-   * @returns {promise} promise that is resolved when render completes?
-   * 
-   */
-  // this.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
-
 
   /**
    * @ngdoc function

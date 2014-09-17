@@ -21,9 +21,6 @@
         },
         menu: {
           text: 'Choisir des colonnes:'
-        },
-        column: {
-          hide: 'Colonne de peau'
         }
       });
       return $delegate;

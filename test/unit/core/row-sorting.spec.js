@@ -111,6 +111,15 @@ describe('rowSorter', function() {
       expect(ret[0].entity.name).toEqual('Jim');
     });
 
+    it('should not sort if useExternalSorting is set', function() {
+      cols[0].sort.direction = uiGridConstants.DESC;
+      grid.options.useExternalSorting = true;
+
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.name).toEqual('Bob');
+    });
+
     // TODO(c0bra) ...
     describe('with a custom sorting algorithm', function () {
       beforeEach(function() {
@@ -171,8 +180,6 @@ describe('rowSorter', function() {
     beforeEach(inject(function(_$timeout_) {
       $timeout = _$timeout_;
 
-      timeoutRows = [new GridRow({ name: 'Frank' }, 0)];
-
       grid = gridClassFactory.createGrid({
         externalSort: jasmine.createSpy('externalSort')
                         .andCallFake(function (r) {
@@ -182,6 +189,8 @@ describe('rowSorter', function() {
                           }, 1000);
                         })
       });
+
+      timeoutRows = [new GridRow({ name: 'Frank' }, 0, grid)];
 
       // grid.options.externalSort = function (grid, column, rows) {
       //   // sort stuff here

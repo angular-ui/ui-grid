@@ -46,7 +46,7 @@
           // Reset all rows to visible initially
           grid.registerRowsProcessor(function allRowsVisible(rows) {
             rows.forEach(function (row) {
-              row.visible = true;
+              row.visible = !row.forceInvisible;
             });
 
             return rows;
@@ -101,26 +101,10 @@
 
           var templateGetPromises = [];
 
-          /**
-           * @ngdoc property
-           * @name headerCellTemplate
-           * @propertyOf ui.grid.class:GridOptions.columnDef
-           * @description a custom template for the header for this column.  The default
-           * is ui-grid/uiGridHeaderCell
-           *
-           */
           if (!colDef.headerCellTemplate) {
             colDef.headerCellTemplate = 'ui-grid/uiGridHeaderCell';
           }
 
-          /**
-           * @ngdoc property
-           * @name cellTemplate
-           * @propertyOf ui.grid.class:GridOptions.columnDef
-           * @description a custom template for each cell in this column.  The default
-           * is ui-grid/uiGridCell
-           *
-           */
           if (!colDef.cellTemplate) {
             colDef.cellTemplate = 'ui-grid/uiGridCell';
           }
@@ -135,11 +119,10 @@
               })
           );
 
-
           templateGetPromises.push(gridUtil.getTemplate(colDef.headerCellTemplate)
               .then(
               function (template) {
-                col.headerCellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.headerCellFilter ? "|" + col.headerCellFilter : "");
+                col.headerCellTemplate = template;
               },
               function (res) {
                 throw new Error("Couldn't fetch/use colDef.headerCellTemplate '" + colDef.headerCellTemplate + "'");
