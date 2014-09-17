@@ -171,7 +171,7 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     }
 
     // Term to search for.
-    var term = rowSearcher.stripTerm(column.filter);
+    var term = rowSearcher.stripTerm(filter);
 
     if (term === null || term === undefined || term === '') {
       return true;
@@ -270,18 +270,10 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     if (typeof(column.filters) !== 'undefined' && column.filters && column.filters.length > 0) {
       filters = column.filters;
     }
-    else if (typeof(column.filter) !== 'undefined' && column.filter) {
-      // Cache custom conditions, building the RegExp takes time
-      var conditionCacheId = 'cond-' + column.field + '-' + column.filter.term;
-      var condition = termCache(conditionCacheId) ? termCache(conditionCacheId) : termCache(conditionCacheId, rowSearcher.guessCondition(column.filter));
-
-      filters[0] = {
-        term: column.filter.term,
-        condition: condition,
-        flags: {
-          caseSensitive: false
-        }
-      };
+    else {
+      // If filters array is not there, assume no filters for this column. 
+      // This array should have been built in GridColumn::updateColumnDef.
+      return true;
     }
     
     for (var i in filters) {
@@ -296,6 +288,27 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
           }
         }
       */
+     
+      // Check for when no condition is supplied. In this case, guess the condition
+      // to use based on the filter's term. Cache this result.
+      if (!filter.condition) {
+        // Cache custom conditions, building the RegExp takes time
+        var conditionCacheId = 'cond-' + column.field + '-' + filter.term;
+        var condition = termCache(conditionCacheId) ? termCache(conditionCacheId) : termCache(conditionCacheId, rowSearcher.guessCondition(filter));
+
+        // Create a surrogate filter so as not to change
+        // the actual columnDef.filters.
+        filter = {
+          // Copy over the search term
+          term: filter.term,
+          // Use the guessed condition
+          condition: condition,
+          // Set flags, using passed flags if present
+          flags: angular.extend({
+            caseSensitive: false
+          }, filter.flags)
+        };
+      }
 
       var ret = rowSearcher.runColumnFilter(grid, row, column, termCache, i, filter);
       if (!ret) {

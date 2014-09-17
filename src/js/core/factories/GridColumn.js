@@ -361,6 +361,25 @@ angular.module('ui.grid')
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');
 
+    // Set up default filters array for when one is not provided.
+    //   In other words, this (in column def):
+    //   
+    //       filter: { term: 'something', flags: {}, condition: [CONDITION] }
+    //       
+    //   is just shorthand for this:
+    //   
+    //       filters: [{ term: 'something', flags: {}, condition: [CONDITION] }]
+    //       
+    var defaultFilters = [];
+    if (colDef.filter) {
+      defaultFilters.push(colDef.filter);
+    }
+    else if (self.enableFiltering && self.grid.options.enableFiltering) {
+      defaultFilters.push({
+        term: ''
+      });
+    }
+
     /*
 
       self.filters = [
@@ -373,7 +392,7 @@ angular.module('ui.grid')
     */
 
     self.setPropertyOrDefault(colDef, 'filter');
-    self.setPropertyOrDefault(colDef, 'filters', []);
+    self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
   };
 
 

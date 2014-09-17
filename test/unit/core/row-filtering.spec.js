@@ -58,11 +58,6 @@ describe('rowSearcher', function() {
     });
   }
 
-  function setTermFilter(column, term) {
-    column.filter = {};
-    column.filter.term = term;
-  }
-
   afterEach(function () {
     // angular.element(grid).remove();
     grid = null;
@@ -177,8 +172,8 @@ describe('rowSearcher', function() {
 
   describe('with one matching term and one failing term set on both columns', function() {
     it('should not show the row', function () {
-      setTermFilter(columns[0], 'Bil');
-      setTermFilter(columns[1], 'blargle');
+      setFilter(columns[0], 'Bil');
+      setFilter(columns[1], 'blargle');
 
       rows.splice(1);
 
@@ -190,7 +185,7 @@ describe('rowSearcher', function() {
 
   describe('with a trailing *', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], 'Bil*');
+      setFilter(columns[0], 'Bil*');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -201,7 +196,7 @@ describe('rowSearcher', function() {
 
   describe('with a preceding *', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], '*ll');
+      setFilter(columns[0], '*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -212,7 +207,7 @@ describe('rowSearcher', function() {
 
   describe('with a * inside the term', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], 'B*ll');
+      setFilter(columns[0], 'B*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -223,7 +218,7 @@ describe('rowSearcher', function() {
 
   describe('a *', function () {
     it('should match zero characters too', function () {
-      setTermFilter(columns[0], 'Bi*ll');
+      setFilter(columns[0], 'Bi*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 

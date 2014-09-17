@@ -151,15 +151,19 @@
             }
     
             if ($scope.filterable) {
-              $scope.$on('$destroy', $scope.$watch('col.filter.term', function(n, o) {
-                uiGridCtrl.grid.refresh()
-                  .then(function () {
-                    if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
-                       uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
-                    }
-                    // uiGridCtrl.fireEvent('force-vertical-scroll');
-                  });
-              }));
+              // Set up watch/deregister-on-destroy for every
+              // filter in this column (usually just one).
+              angular.forEach($scope.col.filters, function(filter, i) {
+                $scope.$on('$destroy', $scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                  uiGridCtrl.grid.refresh()
+                    .then(function () {
+                      if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
+                         uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
+                      }
+                      // uiGridCtrl.fireEvent('force-vertical-scroll');
+                    });
+                }));  
+              });
             }
           }
         };
