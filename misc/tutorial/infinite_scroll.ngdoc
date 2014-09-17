@@ -1,0 +1,76 @@
+@ngdoc overview
+@name Tutorial: Infinite scroll
+@description
+
+The infinite scroll feature allows the user to lazy load their data to gridOptions.data
+
+Specify percentage when lazy load should trigger:
+<pre>
+  $scope.gridOptions.infiniteScroll = 20;
+</pre>
+
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.infiniteScroll']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+    /**
+      * @ngdoc property
+      * @name infiniteScrollPercentage
+      * @propertyOf ui.grid.class:GridOptions
+      * @description This setting controls at what percentage of the scroll more data
+      * is requested by the infinite scroll
+      */
+      $scope.gridOptions.infiniteScrollPercentage = 15;
+      
+      $scope.gridOptions.columnDefs = [
+        { name:'id'},
+        { name:'name' },
+        { name:'age' }
+      ];
+      var page = 1;
+      var getData = function(data, page) {
+        var res = [];
+        for (var i = 0; i < page * 100 && i < data.length; ++i) {
+          res.push(data[i]);
+        }
+        return res;
+      };
+
+      $http.get('/data/10000_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = getData(data, page);
+          ++page;
+        });
+
+      $scope.gridOptions.onRegisterApi = function(gridApi){
+        gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
+          $http.get('/data/10000_complex.json')
+            .success(function(data) {
+              $scope.gridOptions.data = getData(data, page);
+              ++page;
+              gridApi.infiniteScroll.dataLoaded();
+            })
+            .error(function() {
+              gridApi.infiniteScroll.dataLoaded();
+            });
+        });
+      };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid" ui-grid-infinite-scroll></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>
