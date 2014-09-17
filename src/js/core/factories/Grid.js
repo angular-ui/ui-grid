@@ -133,7 +133,7 @@ angular.module('ui.grid')
    * @description Refresh the rendered grid on screen.
    * 
    */
-  this.api.registerMethod( 'core', 'refresh', this.refresh );
+  self.api.registerMethod( 'core', 'refresh', this.refresh );
 
   /**
    * @ngdoc function
@@ -143,7 +143,28 @@ angular.module('ui.grid')
    * @returns {promise} promise that is resolved when render completes?
    * 
    */
-  this.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
+  self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
+
+
+  /**
+   * @ngdoc function
+   * @name sortChanged
+   * @methodOf  ui.grid.core.api:PublicApi
+   * @description The sort criteria on one or more columns has
+   * changed.  Provides as parameters the grid and the output of
+   * getColumnSorting, which is an array of gridColumns
+   * that have sorting on them, sorted in priority order. 
+   * 
+   * @param {Grid} grid the grid
+   * @param {array} sortColumns an array of columns with 
+   * sorts on them, in priority order
+   * 
+   * @example
+   * <pre>
+   *      gridApi.core.on.sortChanged( grid, sortColumns );
+   * </pre>
+   */
+  self.api.registerEvent( 'core', 'sortChanged' );
 };
 
     /**
@@ -1242,6 +1263,7 @@ angular.module('ui.grid')
    * @name sortColumn
    * @methodOf ui.grid.class:Grid
    * @description Set the sorting on a given column, optionally resetting any existing sorting on the Grid.
+   * Emits the sortChanged event whenever the sort criteria are changed.
    * @param {GridColumn} column Column to set the sorting on
    * @param {uiGridConstants.ASC|uiGridConstants.DESC} [direction] Direction to sort by, either descending or ascending.
    *   If not provided, the column will iterate through the sort directions: ascending, descending, unsorted.
@@ -1290,6 +1312,8 @@ angular.module('ui.grid')
     else {
       column.sort.direction = direction;
     }
+    
+    self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
   };

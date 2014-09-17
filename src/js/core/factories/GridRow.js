@@ -66,7 +66,9 @@ angular.module('ui.grid')
      * both grid refresh and emits the rowsVisibleChanged event
      * @param {object} rowEntity gridOptions.data[] array instance
      */
-    this.grid.api.registerMethod( 'core', 'setRowInvisible', this.setRowInvisible );
+    if (!this.grid.api.core.setRowInvisible){
+      this.grid.api.registerMethod( 'core', 'setRowInvisible', this.setRowInvisible );
+    }
 
     /**
      * @ngdoc function
@@ -79,7 +81,9 @@ angular.module('ui.grid')
      * TODO: if a filter is active then we can't just set it to visible?
      * @param {object} rowEntity gridOptions.data[] array instance
      */
-    this.grid.api.registerMethod( 'core', 'clearRowInvisible', this.clearRowInvisible );
+    if (!this.grid.api.core.clearRowInvisible){
+      this.grid.api.registerMethod( 'core', 'clearRowInvisible', this.clearRowInvisible );
+    }
 
     /**
      * @ngdoc function
@@ -89,7 +93,9 @@ angular.module('ui.grid')
      * @param {Grid} grid the grid you want to get visible rows from
      * @returns {array} an array of gridRow 
      */
-    this.grid.api.registerMethod( 'core', 'getVisibleRows', this.getVisibleRows );
+    if (!this.grid.api.core.getVisibleRows){
+      this.grid.api.registerMethod( 'core', 'getVisibleRows', this.getVisibleRows );
+    }
     
     /**
      * @ngdoc event
@@ -104,7 +110,9 @@ angular.module('ui.grid')
      * and that is the one that would have been useful.
      * 
      */
-    this.grid.api.registerEvent( 'core', 'rowsVisibleChanged' );
+    if (!this.grid.api.core.raise.rowsVisibleChanged){
+      this.grid.api.registerEvent( 'core', 'rowsVisibleChanged' );
+    }
     
   }
 
