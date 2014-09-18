@@ -320,33 +320,38 @@ describe('Grid factory', function () {
     });
 
 
-    it('should create left container for left row header', function() {
+    it('should create left container for left row header', inject(function(gridClassFactory, $timeout) {
 
       var colDefs = [
         {name:'col1'}
       ];
-      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var grid = new gridClassFactory.createGrid({ columnDefs:colDefs });
 
-      grid.addRowHeaderColumn({name:'rowHeader',cellTemplate: "<div/>"});
+      $timeout(function () {
+        grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
+      });
+      $timeout.flush();
       expect(grid.hasLeftContainer()).toBe(true);
       expect(grid.hasRightContainer()).toBe(false);
-
 
       grid.buildColumns();
       expect(grid.columns.length).toBe(2);
 
-    });
+    }));
 
 
-    it('should create right container when RTL', function() {
+    it('should create right container when RTL', inject(function(gridClassFactory, $timeout) {
 
       var colDefs = [
         {name:'col1'}
       ];
-      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var grid = new gridClassFactory.createGrid({columnDefs:colDefs });
       grid.rtl = true;
 
-      grid.addRowHeaderColumn({name:'rowHeader',cellTemplate: "<div/>"});
+      $timeout(function () {
+        grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
+      });
+      $timeout.flush();
       expect(grid.hasLeftContainer()).toBe(false);
       expect(grid.hasRightContainer()).toBe(true);
 
@@ -354,7 +359,7 @@ describe('Grid factory', function () {
       grid.buildColumns();
       expect(grid.columns.length).toBe(2);
 
-    });
+    }));
 
   });
 
