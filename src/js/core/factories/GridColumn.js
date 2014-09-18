@@ -402,9 +402,10 @@ angular.module('ui.grid')
       defaultFilters.push(colDef.filter);
     }
     else if (self.enableFiltering && self.grid.options.enableFiltering) {
-      defaultFilters.push({
-        term: ''
-      });
+      // Add an empty filter definition object, which will
+      // translate to a guessed condition and no pre-populated
+      // value for the filter <input>.
+      defaultFilters.push({});
     }
 
     /**
