@@ -344,13 +344,14 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               uiGridSelectionService.initializeGrid(uiGridCtrl.grid);
-            },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
               if (uiGridCtrl.grid.options.enableRowHeaderSelection) {
-                var cellTemplate = $templateCache.get('ui-grid/selectionRowHeader');
+                var cellTemplate = 'ui-grid/selectionRowHeader';
                 var selectionRowHeaderDef = { name: 'selectionRowHeaderCol', displayName: '', width: 30, cellTemplate: cellTemplate};
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
               }
+            },
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {
+
             }
           };
         }

@@ -286,10 +286,13 @@ angular.module('ui.grid')
       self.createLeftContainer();
       rowHeaderCol.renderContainer = 'left';
     }
-    rowHeaderCol.cellTemplate = colDef.cellTemplate;
-    rowHeaderCol.enableFiltering = false;
-    rowHeaderCol.enableSorting = false;
-    self.rowHeaderColumns.push(rowHeaderCol);
+
+    self.columnBuilders[0](colDef,rowHeaderCol,self.gridOptions)
+      .then(function(){
+        rowHeaderCol.enableFiltering = false;
+        rowHeaderCol.enableSorting = false;
+        self.rowHeaderColumns.push(rowHeaderCol);
+      });
   };
 
   /**
