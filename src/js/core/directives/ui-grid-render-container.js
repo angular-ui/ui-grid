@@ -376,7 +376,7 @@
 
   }]);
 
-  module.controller('uiGridRenderContainer', ['$scope', function ($scope) {
+  module.controller('uiGridRenderContainer', ['$scope', '$log', function ($scope, $log) {
     var self = this;
 
     self.rowStyle = function (index) {
@@ -387,7 +387,8 @@
       if (!renderContainer.disableRowOffset) {
         if (index === 0 && self.currentTopRow !== 0) {
           // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-          var hiddenRowWidth = ($scope.rowContainer.currentTopRow) * $scope.grid.options.rowHeight;
+          var hiddenRowWidth = ($scope.rowContainer.currentTopRow) *
+            $scope.rowContainer.visibleRowCache[$scope.rowContainer.currentTopRow].height;
 
           // return { 'margin-top': hiddenRowWidth + 'px' };
           styles['margin-top'] = hiddenRowWidth + 'px';

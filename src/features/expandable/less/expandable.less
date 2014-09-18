@@ -1,0 +1,20 @@
+@import '../../../less/variables';
+
+.expandableRow {
+  .ui-grid-row {
+
+    &:nth-child(odd) .ui-grid-cell {
+      background-color: @rowColorOdd;
+    }
+
+    &:nth-child(even) .ui-grid-cell {
+      background-color: @rowColorEven;
+    }
+
+  }
+
+
+}
+
+.uiGridExpandableButtonsCell {
+}

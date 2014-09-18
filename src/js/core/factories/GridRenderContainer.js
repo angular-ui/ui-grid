@@ -65,7 +65,14 @@ angular.module('ui.grid')
 
   GridRenderContainer.prototype.minRowsToRender = function minRowsToRender() {
     var self = this;
-    return Math.ceil(self.getViewportHeight() / self.grid.options.rowHeight);
+    var minRows = 0;
+    var rowAddedHeight = 0;
+    var viewPortHeight = self.getViewportHeight();
+    for (var i = self.visibleRowCache.length - 1; rowAddedHeight < viewPortHeight && i >= 0; i--) {
+      rowAddedHeight += self.visibleRowCache[i].height;
+      minRows++;
+    }
+    return minRows;
   };
 
   GridRenderContainer.prototype.minColumnsToRender = function minColumnsToRender() {
@@ -177,7 +184,11 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret =  self.grid.options.rowHeight * self.getVisibleRowCount();
+    var ret =  0;
+
+    self.visibleRowCache.forEach(function(row){
+      ret += row.height;
+    });
 
     if (typeof(self.grid.horizontalScrollbarHeight) !== 'undefined' && self.grid.horizontalScrollbarHeight !== undefined && self.grid.horizontalScrollbarHeight > 0) {
       ret = ret - self.grid.horizontalScrollbarHeight;
