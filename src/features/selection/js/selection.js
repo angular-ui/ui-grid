@@ -397,8 +397,7 @@
           scope: false,
           compile: function ($elm, $attrs) {
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
-            rowRepeatDiv.removeClass('ui-grid-row');
-            rowRepeatDiv.attr("ng-class", "{'ui-grid-row-selected': row.isSelected, 'ui-grid-row' : !row.isSelected }");
+            rowRepeatDiv.attr("ng-class", "{'ui-grid-row-selected': row.isSelected}");
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
 
