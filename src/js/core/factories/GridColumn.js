@@ -86,9 +86,9 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name filter
     * @propertyOf ui.grid.class:GridColumn
-    * @description Filter to insert against this column.  
+    * @description Filter on this column.  
     * @example
-    * <pre>{ term: 'text' }</pre>
+    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...' }</pre>
     *
     */
 
@@ -96,9 +96,17 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name filter
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description Filter to insert against this column.  
+    * @description Specify a single filter field on this column.
     * @example
-    * <pre>{ term: 'text' }</pre>
+    * <pre>$scope.gridOptions.columnDefs = [ 
+    *   {
+    *     field: 'field1',
+    *     filter: {
+    *       condition: uiGridConstants.filter.STARTS_WITH,
+    *       placeholder: 'starts with...'
+    *     }
+    *   }
+    * ]; </pre>
     *
     */
     
@@ -211,8 +219,46 @@ angular.module('ui.grid')
     * @ngdoc array
     * @name filters
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description unclear what this does or how it's used, but it does something.
+    * @description Specify multiple filter fields.
+    * @example
+    * <pre>$scope.gridOptions.columnDefs = [ 
+    *   {
+    *     field: 'field1', filters: [
+    *       {
+    *         condition: uiGridConstants.filter.STARTS_WITH,
+    *         placeholder: 'starts with...'
+    *       },
+    *       {
+    *         condition: uiGridConstants.filter.ENDS_WITH,
+    *         placeholder: 'ends with...'
+    *       }
+    *     ]
+    *   }
+    * ]; </pre>
     *
+    * 
+    */ 
+   
+   /** 
+    * @ngdoc array
+    * @name filters
+    * @propertyOf ui.grid.class:GridColumn
+    * @description Filters for this column. Includes 'term' property bound to filter input elements.
+    * @example
+    * <pre>[
+    *   {
+    *     term: 'foo', // ngModel for <input>
+    *     condition: uiGridConstants.filter.STARTS_WITH,
+    *     placeholder: 'starts with...'
+    *   },
+    *   {
+    *     term: 'baz',
+    *     condition: uiGridConstants.filter.ENDS_WITH,
+    *     placeholder: 'ends with...'
+    *   }
+    * ] </pre>
+    *
+    * 
     */   
 
    /** 
@@ -361,19 +407,74 @@ angular.module('ui.grid')
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');
 
+    // Set up default filters array for when one is not provided.
+    //   In other words, this (in column def):
+    //   
+    //       filter: { term: 'something', flags: {}, condition: [CONDITION] }
+    //       
+    //   is just shorthand for this:
+    //   
+    //       filters: [{ term: 'something', flags: {}, condition: [CONDITION] }]
+    //       
+    var defaultFilters = [];
+    if (colDef.filter) {
+      defaultFilters.push(colDef.filter);
+    }
+    else if (self.enableFiltering && self.grid.options.enableFiltering) {
+      // Add an empty filter definition object, which will
+      // translate to a guessed condition and no pre-populated
+      // value for the filter <input>.
+      defaultFilters.push({});
+    }
+
+    /**
+     * @ngdoc object
+     * @name ui.grid.class:GridOptions.columnDef.filter
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description An object defining filtering for a column.
+     */    
+
+    /**
+     * @ngdoc property
+     * @name condition
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description Defines how rows are chosen as matching the filter term. This can be set to
+     * one of the constants in uiGridConstants.filter, or you can supply a custom filter function
+     * that gets passed the following arguments: [searchTerm, cellValue, row, column].
+     */
+    
+    /**
+     * @ngdoc property
+     * @name term
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description If set, the filter field will be pre-populated
+     * with this value.
+     */
+
+    /**
+     * @ngdoc property
+     * @name placeholder
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description String that will be set to the <input>.placeholder attribute.
+     */
+
     /*
 
       self.filters = [
         {
           term: 'search term'
-          condition: uiGridContants.filter.CONTAINS
+          condition: uiGridConstants.filter.CONTAINS,
+          placeholder: 'my placeholder',
+          flags: {
+            caseSensitive: true
+          }
         }
       ]
 
     */
 
     self.setPropertyOrDefault(colDef, 'filter');
-    self.setPropertyOrDefault(colDef, 'filters', []);
+    self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
   };
 
 
