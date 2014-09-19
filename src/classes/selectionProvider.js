@@ -159,7 +159,7 @@ var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
                 if (!wasSelected && checkAll) {
                     self.selectedItems.push(rows[i].entity);
                 } else if (wasSelected && !checkAll) {
-                    index = self.selectedItems.indexOf(rows[i].entity);
+                    index = self.getSelectionIndex(rows[i].entity);
                     if (index > -1) {
                         self.selectedItems.splice(index, 1);
                     }
