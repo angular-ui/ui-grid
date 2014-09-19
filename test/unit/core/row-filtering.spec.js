@@ -37,13 +37,14 @@ describe('rowSearcher', function() {
     });
 
     rows = grid.rows = [
-      new GridRow({ name: 'Bill', company: 'Gruber, Inc.' }, 0, grid),
-      new GridRow({ name: 'Frank', company: 'Foo Co' }, 1, grid)
+      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25 }, 0, grid),
+      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45 }, 1, grid)
     ];
 
     columns = grid.columns = [
       new GridColumn({ name: 'name' }, 0, grid),
-      new GridColumn({ name: 'company' }, 1, grid)
+      new GridColumn({ name: 'company' }, 1, grid),
+      new GridColumn({ name: 'age' }, 2, grid)
     ];
 
     filter = null;
@@ -55,11 +56,6 @@ describe('rowSearcher', function() {
       term: term,
       condition: condition
     });
-  }
-
-  function setTermFilter(column, term) {
-    column.filter = {};
-    column.filter.term = term;
   }
 
   afterEach(function () {
@@ -176,8 +172,8 @@ describe('rowSearcher', function() {
 
   describe('with one matching term and one failing term set on both columns', function() {
     it('should not show the row', function () {
-      setTermFilter(columns[0], 'Bil');
-      setTermFilter(columns[1], 'blargle');
+      setFilter(columns[0], 'Bil');
+      setFilter(columns[1], 'blargle');
 
       rows.splice(1);
 
@@ -189,7 +185,7 @@ describe('rowSearcher', function() {
 
   describe('with a trailing *', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], 'Bil*');
+      setFilter(columns[0], 'Bil*');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -200,7 +196,7 @@ describe('rowSearcher', function() {
 
   describe('with a preceding *', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], '*ll');
+      setFilter(columns[0], '*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -211,7 +207,7 @@ describe('rowSearcher', function() {
 
   describe('with a * inside the term', function () {
     it('needs to match', function () {
-      setTermFilter(columns[0], 'B*ll');
+      setFilter(columns[0], 'B*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
@@ -222,12 +218,54 @@ describe('rowSearcher', function() {
 
   describe('a *', function () {
     it('should match zero characters too', function () {
-      setTermFilter(columns[0], 'Bi*ll');
+      setFilter(columns[0], 'Bi*ll');
 
       var ret = rowSearcher.search(grid, rows, columns);
 
       expect(ret[0].visible).toBe(true);
       expect(ret[1].visible).toBe(false);
+    });
+  });
+
+  describe('with a custom filter function', function() {
+    var custom, ret;
+    beforeEach(function() {
+      // A custom filtering function (condition), eg:
+      //   ">20"  : returns rows where column val is >20
+      //   "<=10" : returns rows where column val is <=10
+      custom = {};
+      custom.filterFn = function(searchTerm, rowValue, row, column) {
+        var firstChar = searchTerm.charAt(0);
+        var secondChar = searchTerm.charAt(1);
+        var orEqualTo = secondChar === '=';
+        var trimBy = orEqualTo ? 2 : 1 ;
+        var compareTo;
+        
+        if (firstChar === '>') {
+          compareTo = searchTerm.substr(trimBy) * 1;
+          return orEqualTo ? rowValue >= compareTo : rowValue > compareTo;
+        }
+        else if (firstChar === '<') {
+          compareTo = searchTerm.substr(trimBy) * 1;
+          return orEqualTo ? rowValue <= compareTo : rowValue < compareTo;
+        }
+        else {
+          return true;
+        }
+      };
+
+      spyOn(custom, 'filterFn').andCallThrough();
+      setFilter(columns[2], '>27', custom.filterFn);
+      ret = rowSearcher.search(grid, rows, columns);
+    });
+    it('should run the function for each row', function() {
+      expect(custom.filterFn.calls.length).toEqual(2);
+      expect(custom.filterFn.calls[0].args).toEqual(['>27', 25, rows[0], columns[2]]);
+      expect(custom.filterFn.calls[1].args).toEqual(['>27', 45, rows[1], columns[2]]);
+    });
+    it('should honor the result of the function call when filtering', function() {
+      expect(ret[0].visible).toBe(false);
+      expect(ret[1].visible).toBe(true);
     });
   });
 
