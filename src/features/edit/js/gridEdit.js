@@ -396,6 +396,61 @@
                 col.colDef.cellEditableCondition;
             }
 
+
+            /**
+             *  @ngdoc property
+             *  @name editType
+             *  @propertyOf ui.grid.edit.api:ColumnDef
+             *  @description specify the editType that you'd like
+             *  to use.  Defaults to 'input', other valid values are
+             *  'dropdown'
+             * 
+             */
+            /**
+             *  @ngdoc property
+             *  @name editDropdownOptionsArray
+             *  @propertyOf ui.grid.edit.api:ColumnDef
+             *  @description an array of values in the format
+             *  [ {id: xxx, value: xxx} ], which is populated
+             *  into the edit dropdown
+             * 
+             */
+            /**
+             *  @ngdoc property
+             *  @name editDropdownIdLabel
+             *  @propertyOf ui.grid.edit.api:ColumnDef
+             *  @description the label for the "id" field
+             *  in the editDropdownOptionsArray.  Defaults
+             *  to 'id'
+             *  @example
+             *  <pre>
+             *    $scope.gridOptions = { 
+             *      columnDefs: [
+             *        {name: 'status', editType: 'dropdown', 
+             *          editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
+             *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+             *      ],
+             *  </pre>
+             * 
+             */
+            /**
+             *  @ngdoc property
+             *  @name editDropdownValueLabel
+             *  @propertyOf ui.grid.edit.api:ColumnDef
+             *  @description the label for the "value" field
+             *  in the editDropdownOptionsArray.  Defaults
+             *  to 'value'
+             *  @example
+             *  <pre>
+             *    $scope.gridOptions = { 
+             *      columnDefs: [
+             *        {name: 'status', editType: 'dropdown', 
+             *          editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
+             *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+             *      ],
+             *  </pre>
+             * 
+             */
             function beginEdit() {
               if (!shouldEdit($scope.col)) {
                 return;
@@ -408,17 +463,25 @@
               html = $scope.col.editableCellTemplate;
               html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
-              $scope.inputType = 'text';
-              switch ($scope.col.colDef.type){
-                case 'boolean':
-                  $scope.inputType = 'checkbox';
-                  break;
-                case 'number':
-                  $scope.inputType = 'number';
-                  break;
-                case 'date':
-                  $scope.inputType = 'date';
-                  break;
+              $scope.editType = $scope.col.colDef.editType ? $scope.col.colDef.editType : 'input';
+               
+              if ( $scope.editType === 'input' ){
+                $scope.inputType = 'text';
+                switch ($scope.col.colDef.type){
+                  case 'boolean':
+                    $scope.inputType = 'checkbox';
+                    break;
+                  case 'number':
+                    $scope.inputType = 'number';
+                    break;
+                  case 'date':
+                    $scope.inputType = 'date';
+                    break;
+                }
+              } else if ( $scope.editType === 'dropdown' ){
+                $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+                $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';  
+                $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';  
               }
 
               var cellElement;
@@ -488,7 +551,7 @@
 
   /**
    *  @ngdoc directive
-   *  @name ui.grid.edit.directive:uiGridTextEditor
+   *  @name ui.grid.edit.directive:uiGridEditor
    *  @element div
    *  @restrict A
    *
@@ -548,6 +611,9 @@
                       $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                       break;
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
+                      $scope.stopEdit(evt);
+                      break;
+                    case uiGridConstants.keymap.TAB:
                       $scope.stopEdit(evt);
                       break;
                   }
@@ -636,5 +702,83 @@
         }
       };
     }]);
+    
+    
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:uiGridEditDropdown
+   *  @element div
+   *  @restrict A
+   *
+   *  @description dropdown editor for editable fields.
+   *  Provides EndEdit and CancelEdit events
+   *
+   *  Events that end editing:
+   *     blur and enter keydown, and any left/right nav
+   *
+   *  Events that cancel editing:
+   *    - Esc keydown
+   *
+   */
+  module.directive('uiGridEditDropdown',
+    ['uiGridConstants', 'uiGridEditConstants',
+      function (uiGridConstants, uiGridEditConstants) {
+        return {
+          scope: true,
+          compile: function () {
+            return {
+              pre: function ($scope, $elm, $attrs) {
+
+              },
+              post: function ($scope, $elm, $attrs) {
+
+                //set focus at start of edit
+                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
+                  $elm[0].focus();
+                  $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
+                  $elm.on('blur', function (evt) {
+                    $scope.stopEdit(evt);
+                  });
+                });
+
+               
+                $scope.stopEdit = function (evt) {
+                  // no need to validate a dropdown - invalid values shouldn't be
+                  // available in the list
+                  $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                };
+
+                $elm.on('keydown', function (evt) {
+                  switch (evt.keyCode) {
+                    case uiGridConstants.keymap.ESC:
+                      evt.stopPropagation();
+                      $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
+                      break;
+                    case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
+                      $scope.stopEdit(evt);
+                      break;
+                    case uiGridConstants.keymap.LEFT:
+                      $scope.stopEdit(evt);
+                      break;
+                    case uiGridConstants.keymap.RIGHT:
+                      $scope.stopEdit(evt);
+                      break;
+                    case uiGridConstants.keymap.UP:
+                      evt.stopPropagation();
+                      break;
+                    case uiGridConstants.keymap.DOWN:
+                      evt.stopPropagation();
+                      break;
+                    case uiGridConstants.keymap.TAB:
+                      $scope.stopEdit(evt);
+                      break;
+                  }
+                  return true;
+                });
+              }
+            };
+          }
+        };
+      }]);    
 
 })();
