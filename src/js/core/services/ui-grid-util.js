@@ -504,7 +504,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
       // Webkit
       if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY; }
-      if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = orgEvent.wheelDeltaX * -1; }
+      if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = orgEvent.wheelDeltaX; }
 
       // Look for lowest delta to normalize the delta values
       absDelta = Math.abs(delta);
