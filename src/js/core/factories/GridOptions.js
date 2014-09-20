@@ -189,6 +189,15 @@ angular.module('ui.grid')
      */
     this.enableColumnMenu = true;
 
+    /**
+     * @ngdoc boolean
+     * @name enableScrollbars
+     * @propertyOf ui.grid.class:GridOptions
+     * @description True by default. When enabled, this settings enable vertical
+     * and horizontal scrollbar for grid.
+     */
+    this.enableScrollbars = true;
+
     // Columns can't be smaller than 10 pixels
     this.minimumColumnSize = 10;
 
