@@ -1,3 +1,5 @@
+/* global pdfMake */
+
 (function () {
   'use strict';
 
