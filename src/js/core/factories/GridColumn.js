@@ -291,7 +291,7 @@ angular.module('ui.grid')
     * - icon: the icon shown alongside that title
     * - action: the method to call when the menu is clicked
     * - shown: a function to evaluate to determine whether or not to show the item
-    * - active: a function to evaluate to determine whether or not to enable the item
+    * - active: a function to evaluate to determine whether or not the item is currently selected
     * - context: context to pass to the action function??
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ 

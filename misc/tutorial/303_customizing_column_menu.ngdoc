@@ -106,8 +106,8 @@ See the example below for usage.
           .perform();
         browser.sleep(550);  // 500ms for long press
         
-        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
-        expect(columnMenu.isDisplayed()).toEqual(false);
+        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).all( by.css( '.ui-grid-menu-inner' ));
+        expect(columnMenu.count()).toEqual(0);
       });
   
       it('2 menu items in second column, implying no hide option and no remove sort option', function () {

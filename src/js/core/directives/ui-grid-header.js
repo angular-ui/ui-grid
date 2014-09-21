@@ -271,6 +271,12 @@
               }
               // canvasWidth = canvasWidth + 1;
 
+              // if we have a grid menu, then we prune the width of the last column header
+              // to allow room for the button whilst still getting to the column menu
+              if (columnCache.length > 0) { // && grid.options.enableGridMenu) {
+                columnCache[columnCache.length - 1].headerWidth = columnCache[columnCache.length - 1].drawnWidth - 30;
+              }
+
               containerCtrl.colContainer.canvasWidth = parseInt(canvasWidth, 10);
 
               // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
