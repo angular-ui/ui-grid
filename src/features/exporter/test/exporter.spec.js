@@ -73,7 +73,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
         exporterPdfOrientation : 'landscape',
         exporterPdfPageSize : 'A4',
-        exporterPdfMaxGridWidth : 720
+        exporterPdfMaxGridWidth : 720,
+        exporterMenuCsv: true,
+        exporterMenuPdf: true
       });
     });
 
@@ -89,7 +91,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
-        exporterPdfMaxGridWidth : 670
+        exporterPdfMaxGridWidth : 670,
+        exporterMenuCsv: false,
+        exporterMenuPdf: false
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -103,7 +107,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
-        exporterPdfMaxGridWidth : 670
+        exporterPdfMaxGridWidth : 670,
+        exporterMenuCsv: false,
+        exporterMenuPdf: false
       });
     });    
   });
