@@ -1,9 +1,28 @@
+.ui-grid-menu-button {
+  z-index: 2;
+  position: fixed;
+  right: 0;  
+  background: @headerBackgroundColor;
+  border: @gridBorderWidth solid @borderColor;
+  cursor: pointer;
+  min-height: 27px;
+  font-weight: normal;
+}
+
+.ui-grid-menu-button .ui-grid-icon-container {
+  margin-top: 3px;
+}
+
+.ui-grid-menu-button .ui-grid-menu {
+  right: 0;
+}
+
 .ui-grid-menu {
   z-index: 2; // So it shows up over grid canvas
   position: absolute;
   overflow: hidden;
   padding: 0 10px 20px 10px;
-  cursor: default; // Parent element can have pointer cursor
+  cursor: pointer;
 }
 
 .ui-grid-menu .ui-grid-menu-inner {
