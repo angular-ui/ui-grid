@@ -149,11 +149,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * See http://alistapart.com/article/getoutbindingsituations
      *
      * @ngdoc method
-     * @name readableColumnName
+     * @name createBoundedWrapper
      * @methodOf ui.grid.service:GridUtil
      *
-     * @param object Object to bind 'this' to
-     * @param method Method to bind
+     * @param {object} Object to bind 'this' to
+     * @param {method} Method to bind
      * @returns {Function} The wrapper that performs the binding
      */
     createBoundedWrapper: function(object, method) {
