@@ -1013,6 +1013,8 @@ angular.module('ui.grid')
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
     });
+
+    return self.refreshCanceller;
   };
 
   /**
