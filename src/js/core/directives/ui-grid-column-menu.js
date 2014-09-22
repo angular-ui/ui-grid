@@ -199,7 +199,14 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             // var containerScrollLeft = $columnelement
             var containerId = column.renderContainer ? column.renderContainer : 'body';
             var renderContainer = column.grid.renderContainers[containerId];
-            var containerScrolLeft = renderContainer.prevScrollLeft;
+            // var containerScrolLeft = renderContainer.prevScrollLeft;
+
+            // It's possible that the render container of the column we're attaching to is offset from the grid (i.e. pinned containers), we
+            //   need to get the different in the offsetLeft between the render container and the grid
+            var renderContainerElm = gridUtil.closestElm($columnElement, '.ui-grid-render-container');
+            var renderContainerOffset = renderContainerElm.offsetLeft - $scope.grid.element[0].offsetLeft;
+
+            var containerScrolLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
             var myWidth = gridUtil.elementWidth($scope.menu, true);
 
@@ -207,11 +214,9 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             // Get the column menu right padding
             var paddingRight = parseInt(angular.element($scope.menu).css('padding-right'), 10);
 
-            $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
+            // $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
 
-            // $elm.css('left', (left - offset + width - myWidth + paddingRight) + 'px');
-            // $elm.css('left', (left + width - myWidth + paddingRight) + 'px');
-            $elm.css('left', (left - containerScrolLeft + width - myWidth + paddingRight) + 'px');
+            $elm.css('left', (left + renderContainerOffset - containerScrolLeft + width - myWidth + paddingRight) + 'px');
             $elm.css('top', (top + height) + 'px');
 
             // Hide the menu on a click on the document
