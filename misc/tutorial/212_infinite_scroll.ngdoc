@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Infinite scroll
+@name Tutorial: 212 Infinite scroll
 @description
 
 The infinite scroll feature allows the user to lazy load their data to gridOptions.data
