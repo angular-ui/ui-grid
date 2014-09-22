@@ -90,3 +90,83 @@ body {
 .btn-group2 {
   margin-top: 30px;
 }
+
+
+.benefits {
+  font-size: 18px;
+}
+
+.benefits li:before {
+  content: '✓';
+  margin-left: -1em;
+  margin-right: .300em;
+  color: green;
+}
+
+.benefits li {
+  list-style: none;
+  line-height: 30px;
+}
+
+@media (max-width: 480px) {
+  .row-fluid .description.offset4 {
+    margin-left: 10px;
+  }
+
+  .features .first-block.offset3 {
+    margin-left: 20px;
+  }
+}
+
+.intro.container-fluid .row {
+  margin-right: -20px;
+}
+
+
+/* From Bootstrap Responsive */
+
+.visible-phone {
+  display: none !important;
+}
+
+.visible-tablet {
+  display: none !important;
+}
+
+.hidden-desktop {
+  display: none !important;
+}
+
+.visible-desktop {
+  display: inherit !important;
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+  .visible-desktop {
+    display: none !important ;
+  }
+  .visible-tablet {
+    display: inherit !important;
+  }
+  .hidden-tablet {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+  .visible-desktop {
+    display: none !important;
+  }
+  .visible-phone {
+    display: inherit !important;
+  }
+  .hidden-phone {
+    display: none !important;
+  }
+}
