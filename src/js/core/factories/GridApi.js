@@ -172,8 +172,18 @@
             this[featureName] = {};
           }
 
-          var feature = this[featureName];
-          feature[methodName] = callBackFn;
+          var feature = this[featureName],
+              fn;
+          // Make sure that 'this' inside methods of at least feature 'core'
+          // points to the grid.
+          if (featureName === 'core') {
+              fn = gridUtil.createBoundedWrapper(this.grid, callBackFn);
+          }
+          // Not sure where other features need their 'this' to point to.
+          else {
+              fn = callBackFn;
+          }
+          feature[methodName] = fn;
 
         };
 
