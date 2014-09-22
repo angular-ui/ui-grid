@@ -3,7 +3,7 @@ body {
 }
 
 .jumbotron {
-  padding: 30px;
+  padding: 30px 0;
   margin-bottom: 30px;
   font-size: 21px;
   font-weight: 200;
@@ -46,7 +46,7 @@ body {
 }
 
 .jumbotron .container {
-  max-width: 100%;
+  max-width: 110%;
 }
 
 @media screen and (min-width: 768px) {
@@ -81,4 +81,12 @@ body {
 }
 .blue {
   color: blue;
+}
+
+.btn-large {
+  margin: 5px 10px;
+}
+
+.btn-group2 {
+  margin-top: 30px;
 }
