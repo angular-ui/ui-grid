@@ -156,8 +156,6 @@
               // use wheelDeltaY
               evt.preventDefault();
 
-              $log.debug('wheel', evt);
-
               var newEvent = GridUtil.normalizeWheelEvent(evt);
 
               var args = { target: $elm };

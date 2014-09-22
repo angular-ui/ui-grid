@@ -5,7 +5,7 @@
     return {
       restrict: 'EA',
       replace: true,
-      template: '<div><div ui-grid-render-container container-id="side" row-container-name="\'body\'" col-container-name="side" bind-scroll-vertical="true" class="ui-grid-pinned-container {{ side }}"></div></div>',
+      template: '<div class="ui-grid-pinned-container"><div ui-grid-render-container container-id="side" row-container-name="\'body\'" col-container-name="side" bind-scroll-vertical="true" class="{{ side }} ui-grid-render-container-{{ side }}"></div></div>',
       scope: {
         side: '=uiGridPinnedContainer'
       },
@@ -19,7 +19,7 @@
 
             var myWidth = 0;
 
-            // $elm.addClass($scope.side);
+            $elm.addClass('ui-grid-pinned-container-' + $scope.side);
 
             function updateContainerDimensions() {
               // $log.debug('update ' + $scope.side + ' dimensions');
@@ -44,7 +44,7 @@
 
                 var myHeight = grid.renderContainers.body.getViewportHeight(); // + grid.horizontalScrollbarHeight;
 
-                ret += '.grid' + grid.id + ' .ui-grid-pinned-container.' + $scope.side + ', .ui-grid-pinned-container.' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + myHeight + 'px; } ';
+                ret += '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.side + ', .grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.side + ' .ui-grid-render-container-' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + myHeight + 'px; } ';
               }
 
               return ret;
