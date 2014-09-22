@@ -1327,6 +1327,7 @@ angular.module('ui.grid')
     if (angular.isFunction(this.options.onRegisterApi)) {
       this.options.onRegisterApi(this.api);
     }
+    this.api.core.raise.renderingComplete( this.api );
   };
 
   Grid.prototype.createRowHashMap = function createRowHashMap() {

@@ -76,7 +76,33 @@
                  * @param {object} oldValue old value
                  */
                 afterCellEdit: function (rowEntity, colDef, newValue, oldValue) {
-                }
+                },
+                /**
+                 * @ngdoc event
+                 * @name beginCellEdit
+                 * @eventOf  ui.grid.edit.api:PublicApi
+                 * @description raised when cell editing starts on a cell
+                 * <pre>
+                 *      gridApi.edit.on.beginCellEdit(scope,function(rowEntity, colDef){})
+                 * </pre>
+                 * @param {object} rowEntity the options.data element that was edited
+                 * @param {object} colDef the column that was edited
+                 */
+                beginCellEdit: function (rowEntity, colDef) {
+                },
+                /**
+                 * @ngdoc event
+                 * @name cancelCellEdit
+                 * @eventOf  ui.grid.edit.api:PublicApi
+                 * @description raised when cell editing is cancelled on a cell
+                 * <pre>
+                 *      gridApi.edit.on.cancelCellEdit(scope,function(rowEntity, colDef){})
+                 * </pre>
+                 * @param {object} rowEntity the options.data element that was edited
+                 * @param {object} colDef the column that was edited
+                 */
+                cancelCellEdit: function (rowEntity, colDef) {
+                }                
               }
             },
             methods: {
@@ -390,14 +416,15 @@
               }
             }
 
-            function shouldEdit(col) {
-              return angular.isFunction(col.colDef.cellEditableCondition) ?
-                col.colDef.cellEditableCondition($scope) :
-                col.colDef.cellEditableCondition;
+            function shouldEdit(col, row) {
+              return !row.isSaving && 
+                ( angular.isFunction(col.colDef.cellEditableCondition) ?
+                    col.colDef.cellEditableCondition($scope) :
+                    col.colDef.cellEditableCondition );
             }
 
             function beginEdit() {
-              if (!shouldEdit($scope.col)) {
+              if (!shouldEdit($scope.col, $scope.row)) {
                 return;
               }
 
@@ -454,6 +481,7 @@
               });
 
               $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT);
+              $scope.grid.api.edit.raise.beginCellEdit($scope.row.entity, $scope.col.colDef);
             }
 
             function endEdit(retainFocus) {
@@ -479,6 +507,7 @@
               cellModel.assign($scope, origCellValue);
               $scope.$apply();
 
+              $scope.grid.api.edit.raise.cancelCellEdit($scope.row.entity, $scope.col.colDef);
               endEdit(true);
             }
 
