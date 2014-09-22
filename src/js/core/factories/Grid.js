@@ -1248,10 +1248,13 @@ angular.module('ui.grid')
   Grid.prototype.getColumnSorting = function getColumnSorting() {
     var self = this;
 
-    var sortedCols = [];
+    var sortedCols = [], myCols;
 
     // Iterate through all the columns, sorted by priority
-    self.columns.sort(rowSorter.prioritySort).forEach(function (col) {
+    // Make local copy of column list, because sorting is in-place and we do not want to
+    // change the original sequence of columns
+    myCols = self.columns.slice(0);
+    myCols.sort(rowSorter.prioritySort).forEach(function (col) {
       if (col.sort && typeof(col.sort.direction) !== 'undefined' && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
         sortedCols.push(col);
       }
