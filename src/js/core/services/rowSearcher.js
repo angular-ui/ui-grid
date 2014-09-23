@@ -162,8 +162,11 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
   };
 
   rowSearcher.runColumnFilter = function runColumnFilter(grid, row, column, termCache, i, filter) {
+    // Cache typeof condition
+    var conditionType = typeof(filter.condition);
+
     // Default to CONTAINS condition
-    if (typeof(filter.condition) === 'undefined' || !filter.condition) {
+    if (conditionType === 'undefined' || !filter.condition) {
       filter.condition = uiGridConstants.filter.CONTAINS;
     }
 
@@ -189,6 +192,10 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
       if (!filter.condition.test(value)) {
         return false;
       }
+    }
+    // If the filter's condition is a function, run it
+    else if (conditionType === 'function') {
+      return filter.condition(term, value, row, column);
     }
     else if (filter.condition === uiGridConstants.filter.STARTS_WITH) {
       var startswithRE = termCache(cacheId) ? termCache(cacheId) : termCache(cacheId, new RegExp('^' + term, regexpFlags));
@@ -263,18 +270,10 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
     if (typeof(column.filters) !== 'undefined' && column.filters && column.filters.length > 0) {
       filters = column.filters;
     }
-    else if (typeof(column.filter) !== 'undefined' && column.filter) {
-      // Cache custom conditions, building the RegExp takes time
-      var conditionCacheId = 'cond-' + column.field + '-' + column.filter.term;
-      var condition = termCache(conditionCacheId) ? termCache(conditionCacheId) : termCache(conditionCacheId, rowSearcher.guessCondition(column.filter));
-
-      filters[0] = {
-        term: column.filter.term,
-        condition: condition,
-        flags: {
-          caseSensitive: false
-        }
-      };
+    else {
+      // If filters array is not there, assume no filters for this column. 
+      // This array should have been built in GridColumn::updateColumnDef.
+      return true;
     }
     
     for (var i in filters) {
@@ -289,6 +288,27 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
           }
         }
       */
+     
+      // Check for when no condition is supplied. In this case, guess the condition
+      // to use based on the filter's term. Cache this result.
+      if (!filter.condition) {
+        // Cache custom conditions, building the RegExp takes time
+        var conditionCacheId = 'cond-' + column.field + '-' + filter.term;
+        var condition = termCache(conditionCacheId) ? termCache(conditionCacheId) : termCache(conditionCacheId, rowSearcher.guessCondition(filter));
+
+        // Create a surrogate filter so as not to change
+        // the actual columnDef.filters.
+        filter = {
+          // Copy over the search term
+          term: filter.term,
+          // Use the guessed condition
+          condition: condition,
+          // Set flags, using passed flags if present
+          flags: angular.extend({
+            caseSensitive: false
+          }, filter.flags)
+        };
+      }
 
       var ret = rowSearcher.runColumnFilter(grid, row, column, termCache, i, filter);
       if (!ret) {
