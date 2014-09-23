@@ -1,4 +1,4 @@
-describe('ui.grid.edit GridCellDirective', function () {
+describe('ui.grid.edit GridCellDirective - with dropdown', function () {
   var gridUtil;
   var scope;
   var element;
@@ -15,15 +15,15 @@ describe('ui.grid.edit GridCellDirective', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="COL_FIELD" ui-grid-editor /></div>');
+    $templateCache.put('ui-grid/cellEditor', '<div><select ng-model="COL_FIELD" ui-grid-edit-dropdown ng-model="COL_FIELD" ng-options="field[editDropdownIdLabel] as field[editDropdownValueLabel] for field in editDropdownOptionsArray"></select></div>');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();
     grid.options.columnDefs = [
-      {name: 'col1', enableCellEdit: true}
+      {name: 'col1', enableCellEdit: true, editType: 'dropdown', editDropdownOptionsArray: [{id: 1, value: 'fred'}, {id:2, value: 'john'}]}
     ];
     grid.options.data = [
-      {col1: 'val'}
+      {col1: 1}
     ];
     uiGridEditService.initializeGrid(grid);
     grid.buildColumns();
@@ -52,7 +52,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       recompile();
 
       displayHtml = element.html();
-      expect(element.text()).toBe('val');
+      expect(element.text()).toBe('1');
     });
 
     it('startEdit on "a"', function () {
@@ -80,18 +80,20 @@ describe('ui.grid.edit GridCellDirective', function () {
       recompile();
 
       displayHtml = element.html();
-      expect(element.text()).toBe('val');
+      expect(element.text()).toBe('1');
       //invoke edit
       element.dblclick();
-      expect(element.find('input')).toBeDefined();
-      expect(element.find('input').val()).toBe('val');
+      expect(element.find('select')).toBeDefined();
+      
+      // val is the selected option, which is option 0
+      expect(element.find('select').val()).toBe('0');
     });
 
     it('should stop editing on enter', function () {
       //stop edit
       var event = jQuery.Event("keydown");
       event.keyCode = uiGridConstants.keymap.ENTER;
-      element.find('input').trigger(event);
+      element.find('select').trigger(event);
 
       //back to beginning
       expect(element.html()).toBe(displayHtml);
@@ -101,7 +103,27 @@ describe('ui.grid.edit GridCellDirective', function () {
       //stop edit
       var event = jQuery.Event("keydown");
       event.keyCode = uiGridConstants.keymap.ESC;
-      element.find('input').trigger(event);
+      element.find('select').trigger(event);
+
+      //back to beginning
+      expect(element.html()).toBe(displayHtml);
+    });
+
+    it('should stop editing on arrow left', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.LEFT;
+      element.find('select').trigger(event);
+
+      //back to beginning
+      expect(element.html()).toBe(displayHtml);
+    });
+
+    it('should stop editing on arrow right', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.RIGHT;
+      element.find('select').trigger(event);
 
       //back to beginning
       expect(element.html()).toBe(displayHtml);
@@ -111,7 +133,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       //stop edit
       var event = jQuery.Event("keydown");
       event.keyCode = uiGridConstants.keymap.TAB;
-      element.find('input').trigger(event);
+      element.find('select').trigger(event);
 
       //back to beginning
       expect(element.html()).toBe(displayHtml);
@@ -138,7 +160,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       $timeout(function(){
         var event = jQuery.Event("keydown");
         event.keyCode = uiGridConstants.keymap.ENTER;
-        element.find('input').trigger(event);
+        element.find('select').trigger(event);
       });
       $timeout.flush();
 
