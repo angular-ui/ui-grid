@@ -6,6 +6,15 @@
     var scrollBarWidth = gridUtil.getScrollbarWidth();
     scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
 
+
+    var browser = gridUtil.detectBrowser();
+    $log.debug('browser', browser);
+    if (browser === 'ie') {
+      scrollBarWidth = scrollBarWidth + 1;
+    }
+
+    $log.debug('scrollBarWidth', scrollBarWidth);
+
     return {
       scope: {
         type: '@'

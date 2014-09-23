@@ -760,7 +760,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
   s.detectBrowser = function detectBrowser() {
     var userAgent = $window.navigator.userAgent;
 
-    var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer/i};
+    var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer|trident\//i};
 
     for (var key in browsers) {
       if (browsers[key].test(userAgent)) {
