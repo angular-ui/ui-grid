@@ -400,7 +400,8 @@
           event.stopPropagation();
 
           // Get the left offset of the grid
-          gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
+          // gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
+          gridLeft = uiGridCtrl.grid.element[0].getBoundingClientRect().left;
 
           // Get the starting X position, which is the X coordinate of the click minus the grid's offset
           startX = event.clientX - gridLeft;
