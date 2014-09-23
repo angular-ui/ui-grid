@@ -67,15 +67,15 @@
                  * @ngdoc function
                  * @name scrollTo
                  * @methodOf  ui.grid.cellNav.api:PublicApi
-                 * @description (TODO) brings the row and column into view
+                 * @description brings the specified row and column into view
+                 * @param {Grid} grid the grid you'd like to act upon, usually available
+                 * from gridApi.grid
+                 * @param {object} $scope a scope we can broadcast events from
                  * @param {object} rowEntity gridOptions.data[] array instance to make visible
                  * @param {object} colDef to make visible
                  */
-                scrollTo: function (rowEntity, colDef) {
-                  var row = grid.getRow(rowEntity);
-                  if (row !== null) {
-                    //todo: scroll into view
-                  }
+                scrollTo: function (grid, $scope, rowEntity, colDef) {
+                  service.scrollTo(grid, $scope, rowEntity, colDef);
                 },
                 /**
                  * @ngdoc function
@@ -285,6 +285,64 @@
           colDef.allowCellFocus = colDef.allowCellFocus === undefined ? true : colDef.allowCellFocus ;
 
           return $q.all(promises);
+        },
+        
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name scrollVerticallyTo
+         * @description Scroll the grid vertically such that the specified
+         * row is in view
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} $scope a scope we can broadcast events from
+         * @param {object} rowEntity gridOptions.data[] array instance to make visible
+         * @param {object} colDef to make visible
+         */
+        scrollTo: function (grid, $scope, rowEntity, colDef) {
+          var args = {};
+          
+          if ( rowEntity !== null ){
+            var row = grid.getRow(rowEntity);
+            if ( row ) { 
+              args.y = { percentage: row.index / grid.renderContainers.body.visibleRowCache.length }; 
+            }
+          }
+          
+          if ( colDef !== null ){
+            var col = grid.getColumn(colDef.name ? colDef.name : colDef.field);
+            if ( col ) {
+              args.x = { percentage: this.getLeftWidth(grid, col.index) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache.length - 1) };              
+            }
+          }
+          
+          if ( args.y || args.x ){
+            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+          }
+        },
+        
+
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name getLeftWidth
+         * @description Get the current drawn width of the columns in the 
+         * grid up to and including the numbered column
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} colIndex the column to total up to and including
+         */
+        getLeftWidth: function( grid, colIndex ){
+          var width = 0;
+          
+          if ( !colIndex ){ return; }
+          
+          for ( var i=0; i <= colIndex; i++ ){
+            if ( grid.renderContainers.body.visibleColumnCache[i].drawnWidth ){
+              width += grid.renderContainers.body.visibleColumnCache[i].drawnWidth;
+            } 
+          }
+          return width;
         }
 
       };
