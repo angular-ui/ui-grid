@@ -13,6 +13,29 @@
         var GridApi = function GridApi(grid) {
           this.grid = grid;
           this.listeners = [];
+          
+          /**
+           * @ngdoc function
+           * @name renderingComplete
+           * @methodOf  ui.grid.core.api:PublicApi
+           * @description Rendering is complete, called at the same
+           * time as `onRegisterApi`, but provides a way to obtain
+           * that same event within features without stopping end
+           * users from getting at the onRegisterApi method.
+           * 
+           * Included in gridApi so that it's always there - otherwise
+           * there is still a timing problem with when a feature can
+           * call this. 
+           * 
+           * @param {GridApi} gridApi the grid api, as normally 
+           * returned in the onRegisterApi method
+           * 
+           * @example
+           * <pre>
+           *      gridApi.core.on.renderingComplete( grid );
+           * </pre>
+           */
+          this.registerEvent( 'core', 'renderingComplete' );
         };
 
         /**
@@ -211,7 +234,7 @@
           });
 
         };
-
+        
         return GridApi;
 
       }]);
