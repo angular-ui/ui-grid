@@ -2,6 +2,7 @@
 
 var module = angular.module('ui.grid');
 
+
 function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
 }
@@ -137,6 +138,32 @@ var uidPrefix = 'uiGrid-';
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', 'uiGridConstants',
   function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, uiGridConstants) {
   var s = {
+
+    /**
+     * @ngdoc method
+     * @name createBoundedWrapper
+     * @methodOf ui.grid.service:GridUtil
+     *
+     * @param {object} Object to bind 'this' to
+     * @param {method} Method to bind
+     * @returns {Function} The wrapper that performs the binding
+     *
+     * @description
+     * Binds given method to given object.
+     *
+     * By means of a wrapper, ensures that ``method`` is always bound to
+     * ``object`` regardless of its calling environment.
+     * Iow, inside ``method``, ``this`` always points to ``object``.
+     *
+     * See http://alistapart.com/article/getoutbindingsituations
+     *
+     */
+    createBoundedWrapper: function(object, method) {
+        return function() {
+            return method.apply(object, arguments);
+        };
+    },
+
 
     /**
      * @ngdoc method
