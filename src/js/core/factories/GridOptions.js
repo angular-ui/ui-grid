@@ -125,7 +125,7 @@ angular.module('ui.grid')
      * 
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
      */
-    this.getRowIdentity = function rowIdentity(row) {
+    this.getRowIdentity = function getRowIdentity(row) {
         return row.$$hashKey;
     };
 

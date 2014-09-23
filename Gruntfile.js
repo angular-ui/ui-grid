@@ -320,16 +320,12 @@ module.exports = function(grunt) {
         tasks: ['ngtemplates']
       },
 
-      // src_test: {
-      //   files: '<%= jshint.src_test.src %>',
-      //   tasks: ['jshint:src_test', 'jasmine']
-      // },
+      
       rebuild: {
         files: util.testFiles.unit,
-        // NOTE(c0bra): turn back on after render containers works
-        // tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
-        tasks: ['jshint:src_test', 'jscs', 'concat', 'uglify', 'ngdocs'],
+        tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
       },
+
       protractor: {
         files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
         tasks: ['protractor-watch:auto']
@@ -546,7 +542,6 @@ module.exports = function(grunt) {
   grunt.registerTask('after-test', ['build']);
 
   // Default task.
-  // grunt.registerTask('default', ['clean', 'jshint', 'ngtemplates', 'karma:single', 'concat', 'uglify', 'less', 'ngdocs']);
   grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
@@ -562,16 +557,13 @@ module.exports = function(grunt) {
 
     var tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
     if (e2e === false) {
-      // NOTE(c0bra): turn back on after render containers works
-      // tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
-      tasks = ['before-test', 'after-test', 'connect', 'watch'];
+      tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
     }
 
     grunt.task.run(tasks);
   });
 
   // Testing tasks
-  // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
@@ -584,7 +576,6 @@ module.exports = function(grunt) {
       grunt.task.run('karma:travis');
     }
     else {
-      // grunt.task.run(this.args.length ? 'karma:single' : 'karma:continuous');
       grunt.task.run('karmangular');
     }
   });
