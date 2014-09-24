@@ -13,6 +13,7 @@ module.exports = function(grunt) {
     changelog: 'grunt-conventional-changelog',
     shell: 'grunt-shell-spawn',
     jscs: 'grunt-jscs-checker',
+    protractor: 'grunt-protractor-runner',
     'stable-version': './lib/grunt/plugins.js',
     'current-version': './lib/grunt/plugins.js'
   });
@@ -48,7 +49,7 @@ module.exports = function(grunt) {
       'protractor-start': {
         command: 'node ./node_modules/protractor/bin/webdriver-manager start',
         options: {
-          stdout: true,
+          stdout: false,
           async: true
         }
       },
