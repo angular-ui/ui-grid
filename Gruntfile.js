@@ -7,11 +7,13 @@ module.exports = function(grunt) {
   require('jit-grunt')(grunt, {
     'bump-only': 'grunt-bump',
     'bump-commit': 'grunt-bump',
-    'nugetpack': 'grunt-nuget',
-    'nugetpush': 'grunt-nuget',
-    'ngtemplates': 'grunt-angular-templates',
-    'changelog': 'grunt-conventional-changelog',
-    'shell': 'grunt-shell-spawn'
+    nugetpack: 'grunt-nuget',
+    nugetpush: 'grunt-nuget',
+    ngtemplates: 'grunt-angular-templates',
+    changelog: 'grunt-conventional-changelog',
+    shell: 'grunt-shell-spawn',
+    'stable-version': './lib/grunt/plugins.js',
+    'current-version': './lib/grunt/plugins.js'
   });
 
   // Project configuration.
