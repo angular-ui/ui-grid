@@ -20,9 +20,11 @@
     "angularjs",
     "slickgrid",
     "kogrid",
-    "ui-grid"
+    "ui-grid",
+    "ui grid",
+    "data grid"
   ],
-  "author": "ui-grid Team",
+  "author": "UI Grid Team",
   "license": "MIT",
   "devDependencies": {
     "grunt": "~0.4",
@@ -60,6 +62,8 @@
     "grunt-jscs-checker": "^0.4.1",
     "jshint-stylish": "^0.2.0",
     "karma-coverage": "^0.2.5",
-    "coveralls": "^2.11.1"
+    "coveralls": "^2.11.1",
+    "jit-grunt": "^0.8.0",
+    "grunt-bump": "0.0.15"
   }
 }

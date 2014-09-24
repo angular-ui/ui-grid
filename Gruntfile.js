@@ -4,6 +4,14 @@ var util = require('./lib/grunt/utils.js');
 
 /*global module:false*/
 module.exports = function(grunt) {
+  require('jit-grunt')(grunt, {
+    'bump-only': 'grunt-bump',
+    'bump-commit': 'grunt-bump',
+    'nugetpack': 'grunt-nuget',
+    'nugetpush': 'grunt-nuget',
+    'ngtemplates': 'grunt-angular-templates'
+  });
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -370,6 +378,7 @@ module.exports = function(grunt) {
       'gh-pages': {
         options: {
           base: '<%= dist %>',
+          tag: '<%= version %>',
           repo: 'https://github.com/angular-ui/ui-grid.info.git',
           message: 'gh-pages v<%= version %>',
           add: true
@@ -485,6 +494,36 @@ module.exports = function(grunt) {
       }
     },
 
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        push: false
+      }
+    },
+
+    nugetpack: {
+      dist: {
+        // src: 'lib/nuget/ui-grid.nuspec',
+        src: 'ui-grid.nuspec',
+        // dest: '.tmp/',
+        dest: '.',
+        options: {
+          // basePath: '.',
+          version: '<%= version %>',
+          verbose: true
+        }
+      }
+    },
+
+    nugetpush: {
+      dist: {
+        src: '.tmp/nuget/*.nupkg',
+        options: {
+            apiKey: process.env.NUGET_API_KEY
+        }
+      }
+    },
+
     'cut-release': {
       options: {
         cleanup: true,
@@ -499,25 +538,25 @@ module.exports = function(grunt) {
   util.updateConfig();
 
   grunt.loadTasks('lib/grunt');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-angular-templates');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-protractor-runner');
-  grunt.loadNpmTasks('grunt-ngdocs');
-  grunt.loadNpmTasks('grunt-conventional-changelog');
-  grunt.loadNpmTasks('grunt-gh-pages');
-  grunt.loadNpmTasks('grunt-shell-spawn');
-  // grunt.loadNpmTasks('grunt-grunticon');
-  grunt.loadNpmTasks('grunt-fontello');
-  grunt.loadNpmTasks('grunt-jscs-checker');
+  // grunt.loadNpmTasks('grunt-contrib-concat');
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
+  // grunt.loadNpmTasks('grunt-contrib-watch');
+  // grunt.loadNpmTasks('grunt-contrib-jasmine');
+  // grunt.loadNpmTasks('grunt-contrib-clean');
+  // grunt.loadNpmTasks('grunt-contrib-jshint');
+  // grunt.loadNpmTasks('grunt-contrib-less');
+  // grunt.loadNpmTasks('grunt-contrib-copy');
+  // grunt.loadNpmTasks('grunt-angular-templates');
+  // grunt.loadNpmTasks('grunt-contrib-connect');
+  // grunt.loadNpmTasks('grunt-karma');
+  // grunt.loadNpmTasks('grunt-protractor-runner');
+  // grunt.loadNpmTasks('grunt-ngdocs');
+  // grunt.loadNpmTasks('grunt-conventional-changelog');
+  // grunt.loadNpmTasks('grunt-gh-pages');
+  // grunt.loadNpmTasks('grunt-shell-spawn');
+  // // grunt.loadNpmTasks('grunt-grunticon');
+  // grunt.loadNpmTasks('grunt-fontello');
+  // grunt.loadNpmTasks('grunt-jscs-checker');
 
   // grunt.renameTask('protractor', 'protractor-old');
   grunt.registerTask('protractor-watch', function () {

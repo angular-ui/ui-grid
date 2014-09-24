@@ -378,3 +378,15 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
 # CSS
 
 1. Use snake-case for class names, not camelCase.
+
+# Performing a release
+
+Run these grunt tasks. Look at the grunt-bump module for how to specify a major/minor/patch/pre-release version. This series will bump the version in package.json, update the changelog for that version, then commit the changes and add a new git tag for the version.
+
+    grunt bump-only
+    grunt changelog
+    grunt commit-only
+
+Then push the changes to origin/master and Travis will take care of the rest!
+
+**NOTE:** Nuget must be pushed to manually

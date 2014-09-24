@@ -1,11 +1,15 @@
 {
-  "name": "ui-grid",
+  "name": "angular-ui-grid",
   "version": "3.0.0",
-  "homepage": "https://github.com/angular-ui/ng-grid",
+  "homepage": "http://ui-grid.info",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui/ui-grid.info.git"
+  },
   "authors": [
     "__Contributors__"
   ],
-  "description": "Angular data grid",
+  "description": "AngularJS data grid",
   "keywords": [
     "angular",
     "grid"
