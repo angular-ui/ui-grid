@@ -227,6 +227,18 @@ describe('rowSearcher', function() {
     });
   });
 
+  describe('with external filtering', function () {
+    it('should not filter at all', function () {
+      grid.options.useExternalFiltering = true;
+      setFilter(columns[0], 'Bi*ll');
+
+      var ret = rowSearcher.search(grid, rows, columns);
+
+      expect(ret[0].visible).toBe(true);
+      expect(ret[1].visible).toBe(true);
+    });
+  });
+  
   describe('with a custom filter function', function() {
     var custom, ret;
     beforeEach(function() {
