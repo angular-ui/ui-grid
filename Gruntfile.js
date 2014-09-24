@@ -10,7 +10,8 @@ module.exports = function(grunt) {
     'nugetpack': 'grunt-nuget',
     'nugetpush': 'grunt-nuget',
     'ngtemplates': 'grunt-angular-templates',
-    'changelog': 'grunt-conventional-changelog'
+    'changelog': 'grunt-conventional-changelog',
+    'shell': 'grunt-shell-spawn'
   });
 
   // Project configuration.
@@ -379,7 +380,7 @@ module.exports = function(grunt) {
       'gh-pages': {
         options: {
           base: '<%= dist %>',
-          tag: '<%= version %>',
+          tag: 'v<%= version %>',
           repo: 'https://github.com/angular-ui/ui-grid.info.git',
           message: 'gh-pages v<%= version %>',
           add: true
