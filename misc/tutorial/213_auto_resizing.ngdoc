@@ -4,6 +4,9 @@
 
 The auto-resize feature will enable the grid to resize itself when its container changes size.
 
+To use, include the `'ui.grid.autoResize'` module in your angular app's dependencies, and add the `ui-grid-auto-resize` directive to your grid element.
+
+<strong>Note:</strong> This works by adding a checker on 250ms interval that sees if the grid element has changed in size. It could potentially affect the performance of your site or application negatively.
 
 @example
 <example module="app">
