@@ -94,7 +94,7 @@ Steps:
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="{ data: myData }" class="grid"></div>
+      <div id="grid1" ui-grid="{ data: myData }" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -102,5 +102,37 @@ Steps:
       width: 500px;
       height: 250px;
     }
+  </file>
+
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    it('grid should have three visible rows', function () {
+      gridTestUtils.expectRowCount( 'grid1', 3 );
+    });
+
+    it('grid should have four visible columns', function () {
+      gridTestUtils.expectHeaderColumnCount( 'grid1', 4 );
+    });
+
+    it('header values should be as expected', function () {
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'First Name' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Last Name' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 3, 'Employed' );
+    });
+
+    it('first row cell values should be as expected', function () {
+      // checking individual cells usually gives a better stack trace when there are errors
+      gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Cox' );
+      gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'Carney' );
+      gridTestUtils.expectCellValueMatch( 'grid1', 0, 2, 'Enormo' );
+      gridTestUtils.expectCellValueMatch( 'grid1', 0, 3, 'true' );
+    });
+
+    it('next two row cell values should be as expected', function () {
+      // checking in bulk is convenient to write, but can be less informative with errors
+      gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Lorraine', 'Wise', 'Comveyer', 'false' ] );
+      gridTestUtils.expectRowValuesMatch( 'grid1', 2, [ 'Nancy', 'Waters', 'Fuelton', 'false' ] );
+    });
   </file>
 </example>

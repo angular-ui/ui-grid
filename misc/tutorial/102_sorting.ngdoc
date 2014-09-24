@@ -37,7 +37,7 @@ Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it 
       Click on a column header to sort by that column. (The third column has sorting disabled.)
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -86,7 +86,7 @@ You can set an initial sort state for the grid by defining the `sort` property o
   </file>
   <file name="index2.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div id="grid2" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main2.css">
@@ -95,4 +95,94 @@ You can set an initial sort state for the grid by defining the `sort` property o
       height: 200px;
     }
   </file>
+  
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    
+    describe('first grid on the page, no default sort', function() {
+      it('grid should have three visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+      });
+  
+      it('header values should be as expected', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+      });
+  
+      it('grid should be unsorted by default', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+
+      it('sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+      });
+
+      it('reverse sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+      });
+      
+      it('return to original sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+      
+      it('sort asc by clicking menu', function() {
+        gridTestUtils.clickColumnMenuSortAsc( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );        
+      });
+
+      it('sort desc by clicking menu, then remove sort', function() {
+        gridTestUtils.clickColumnMenuSortDesc( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+
+        gridTestUtils.clickColumnMenuRemoveSort( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+      
+      it('sort two columns, gender then name, by shift clicking', function() {
+        gridTestUtils.clickHeaderCell( 'grid1', 1 );
+        gridTestUtils.shiftClickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alisha Myers' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Beryl Rice' );
+      });
+
+      it('sort disabled on last column', function() {
+        gridTestUtils.clickHeaderCell( 'grid1', 2 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+    });
+
+
+    describe('second grid on the page, has default sort', function() {
+      it('grid should have three visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid2', 3 );
+      });
+  
+      it('header values should be as expected', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 0, 'Name' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 1, 'Gender' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 2, 'Company' );
+      });
+  
+      it('grid should be sorted by default', function () {
+        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid2', 1, 0, 'Velma Fry' );
+      });
+    });
+
+  </file>  
 </example>

@@ -328,7 +328,7 @@ module.exports = function(grunt) {
 
       protractor: {
         files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
-        tasks: ['protractor-watch:auto']
+        tasks: ['ngdocs', 'protractor-watch:auto']
       },
 
       less: {
@@ -453,7 +453,7 @@ module.exports = function(grunt) {
         navTemplate: 'misc/doc/templates/nav.html'
       },
       api: {
-        src: ['src/**/*.js', 'misc/api/**/*.ngdoc'],
+        src: ['src/**/*.js', 'misc/api/**/*.ngdoc', 'test/e2e/**/*.js'],
         title: 'API'
       },
       tutorial: {
