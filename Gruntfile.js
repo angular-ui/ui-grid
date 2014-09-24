@@ -9,7 +9,8 @@ module.exports = function(grunt) {
     'bump-commit': 'grunt-bump',
     'nugetpack': 'grunt-nuget',
     'nugetpush': 'grunt-nuget',
-    'ngtemplates': 'grunt-angular-templates'
+    'ngtemplates': 'grunt-angular-templates',
+    'changelog': 'grunt-conventional-changelog'
   });
 
   // Project configuration.
@@ -497,6 +498,7 @@ module.exports = function(grunt) {
     bump: {
       options: {
         files: ['package.json', 'bower.json'],
+        commitFiles: ['package.json', 'bower.json', 'CHANGELOG.md'],
         push: false
       }
     },
