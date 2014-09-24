@@ -255,6 +255,16 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
   };
 
   /**
+   * @ngdoc boolean
+   * @name useExternalFiltering
+   * @propertyOf ui.grid.class:GridOptions
+   * @description False by default. When enabled, this setting suppresses the internal filtering.
+   * All UI logic will still operate, allowing filter conditions to be set and modified.
+   * 
+   * The external filter logic can listen for the `filterChange` event, which fires whenever
+   * a filter has been adjusted.
+   */
+  /**
    * @ngdoc function
    * @name searchColumn
    * @methodOf ui.grid.service:rowSearcher
@@ -267,10 +277,13 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
   rowSearcher.searchColumn = function searchColumn(grid, row, column, termCache) {
     var filters = [];
 
+    if (grid.options.useExternalFiltering) {
+      return true;
+    }
+    
     if (typeof(column.filters) !== 'undefined' && column.filters && column.filters.length > 0) {
       filters = column.filters;
-    }
-    else {
+    } else {
       // If filters array is not there, assume no filters for this column. 
       // This array should have been built in GridColumn::updateColumnDef.
       return true;
