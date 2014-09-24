@@ -39,8 +39,8 @@ The auto-resize feature will enable the grid to resize itself when its container
         var newHeight = Math.floor(Math.random() * (300 - 100 + 1) + 300);
         var newWidth = Math.floor(Math.random() * (600 - 200 + 1) + 200);
 
-        angular.element('.grid').css('height', newHeight + 'px');
-        angular.element('.grid').css('width', newWidth + 'px');
+        angular.element(document.getElementsByClassName('grid')[0]).css('height', newHeight + 'px');
+        angular.element(document.getElementsByClassName('grid')[0]).css('width', newWidth + 'px');
       };
     }]);
   </file>

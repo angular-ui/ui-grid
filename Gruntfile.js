@@ -421,7 +421,7 @@ module.exports = function(grunt) {
           }
         },
         scripts: [
-          '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js', // TODO(c0bra): REMOVE!
+           // no jquery automatically loaded for tutorial!!!
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',

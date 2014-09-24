@@ -475,7 +475,7 @@
 
           function setFocused(){
             var div = $elm.find('div');
-            div.focus();
+            div[0].focus();
             div.attr("tabindex", 0);
           }
 
