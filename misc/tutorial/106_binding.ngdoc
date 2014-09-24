@@ -18,7 +18,7 @@ Note that a function can not be edited.
     $scope.gridOptions = {
             enableSorting: true,
             columnDefs: [
-              { name:'fistName', field: 'first-name' },
+              { name:'firstName', field: 'first-name' },
               { name:'1stFriend', field: 'friends[0]' },
               { name:'city', field: 'address.city'},
               { name:'getZip', field: 'getZip()', enableCellEdit:false}
@@ -36,7 +36,7 @@ Note that a function can not be edited.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-edit class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -45,4 +45,22 @@ Note that a function can not be edited.
       height: 250px;
     }
   </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    it('grid should have one visible row and four columns', function () {
+      gridTestUtils.expectRowCount( 'grid1', 1 );
+      gridTestUtils.expectHeaderColumnCount( 'grid1', 4 );
+    });
+
+    it('headers as specified', function () {
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'First Name' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, '1st Friend' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'City' );
+      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 3, 'Get Zip' );
+    });
+
+    it('row values should be as expected', function () {
+      gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Cox', 'friend0', 'Laurel', '39565' ]);
+    });
+  </file>  
 </example>

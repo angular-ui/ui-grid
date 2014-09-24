@@ -25,12 +25,6 @@
  </div>
  </doc:source>
  <doc:scenario>
- it('should apply the right class to the element', function () {
-      element(by.css('.blah')).getCssValue('border')
-        .then(function(c) {
-          expect(c).toContain('1px solid');
-        });
-    });
  </doc:scenario>
  </doc:example>
  */

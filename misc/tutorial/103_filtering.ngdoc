@@ -106,7 +106,7 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
       <strong>Note:</strong> The third column has filtering disabled.
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -115,4 +115,37 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
       height: 400px;
     }
   </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    
+    describe('first grid on the page, filtered by male by default', function() {
+      it('grid should have six visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 6 );
+      });
+
+      it('filter on 4 columns, filter with greater than/less than on one, one with no filter', function () {
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 0, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 1, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 2, 0 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 3, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 4, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 5, 2 );
+      });
+
+      it('third row should be Bishop Carr - will be Terry Clay if filtering broken', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
+      });
+      
+      it('cancel filter on gender column, should now see Terry Clay in third row', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Terry Clay' );
+      });
+
+      it('filter on email column, should automatically do "ends with"', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
+        gridTestUtils.enterFilterInColumn( 'grid1', 3, 'mixers.com' );        
+        gridTestUtils.expectRowCount( 'grid1', 2 );
+      });
+    });
+  </file>  
 </example>

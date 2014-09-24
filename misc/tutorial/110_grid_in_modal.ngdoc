@@ -31,7 +31,7 @@ Using a grid in a modal popup
         var elm;
         var modal = {
           open: function() {
-            var html = '<div class="modal"><a class="modal-close" href ng-click="close()">X</a><div ui-grid="gridOptions" class="grid"></div></div>';
+            var html = '<div class="modal"><a class="modal-close" href ng-click="close()">X</a><div id="grid1" ui-grid="gridOptions" class="grid"></div></div>';
 
             elm = angular.element(html);
             angular.element(document.body).prepend(elm);
@@ -55,7 +55,7 @@ Using a grid in a modal popup
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <button class="btn btn-success" ng-click="showModal()">Show Modal</button>
+      <button id="showButton" class="btn btn-success" ng-click="showModal()">Show Modal</button>
     </div>
   </file>
   <file name="main.css">
@@ -91,5 +91,14 @@ Using a grid in a modal popup
       width: 300px;
       height: 250px;
     }
+  </file>
+    <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    it('click modal button, grid should show with three columns and some data', function () {
+      element( by.id ( 'showButton' ) ).click();
+      gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+      gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Ethel Price', 'female', 'Enersol' ]);
+      element( by.css ( '.modal-close' ) ).click();
+    });
   </file>
 </example>
