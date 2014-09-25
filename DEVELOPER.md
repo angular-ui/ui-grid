@@ -390,4 +390,6 @@ Run these grunt tasks. Look at the grunt-bump module for how to specify a major/
 
 Then push the changes to origin/master and Travis will take care of the rest!
 
+    git push origin master --tags
+
 **NOTE:** Nuget must be pushed to manually
