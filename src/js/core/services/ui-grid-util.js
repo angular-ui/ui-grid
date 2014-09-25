@@ -2,7 +2,6 @@
 
 var module = angular.module('ui.grid');
 
-
 function getStyles (elem) {
   return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
 }
@@ -138,6 +137,8 @@ var uidPrefix = 'uiGrid-';
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', 'uiGridConstants',
   function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, uiGridConstants) {
   var s = {
+
+    getStyles: getStyles,
 
     /**
      * @ngdoc method
