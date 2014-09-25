@@ -6,8 +6,6 @@ var semver = require('semver');
 // Get the tag on this commit, if there is one. We'll use it in the gh-pages task
 var currentTag = semver.clean( util.getCurrentTag() );
 
-console.log("CURRENT TAG", currentTag);
-
 /*global module:false*/
 module.exports = function(grunt) {
   require('jit-grunt')(grunt, {
