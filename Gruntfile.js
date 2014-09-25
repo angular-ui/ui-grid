@@ -643,7 +643,7 @@ module.exports = function(grunt) {
   });
   
   grunt.registerTask('release', 'Release a new version out info the world', function () {
-    grunt.task.run(['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid.info']);
+    grunt.task.run(['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid-site']);
 
     // If there's a tag on this commit, release a new version to bower
     if (currentTag) {
