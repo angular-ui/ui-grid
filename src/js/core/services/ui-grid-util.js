@@ -82,7 +82,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 function getWidthOrHeight( elem, name, extra ) {
   // Start with offset property, which is equivalent to the border-box value
   var valueIsBorderBox = true,
-          val = name === 'width' ? elem.offsetWidth : elem.offsetHeight,
+          val,
           styles = getStyles(elem),
           isBorderBox = styles['boxSizing'] === 'border-box';
 
