@@ -321,11 +321,13 @@ describe('Grid factory', function () {
 
 
     it('should create left container for left row header', inject(function(gridClassFactory, $timeout) {
-
       var colDefs = [
         {name:'col1'}
       ];
       var grid = new gridClassFactory.createGrid({ columnDefs:colDefs });
+
+      spyOn( grid, "preCompileCellTemplates").andCallFake(function() {});
+      spyOn( grid, "handleWindowResize").andCallFake(function() {});
 
       $timeout(function () {
         grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
@@ -347,6 +349,9 @@ describe('Grid factory', function () {
       ];
       var grid = new gridClassFactory.createGrid({columnDefs:colDefs });
       grid.rtl = true;
+
+      spyOn( grid, "preCompileCellTemplates").andCallFake(function() {});
+      spyOn( grid, "handleWindowResize").andCallFake(function() {});
 
       $timeout(function () {
         grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
