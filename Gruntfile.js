@@ -2,6 +2,9 @@
 var path = require('path');
 var util = require('./lib/grunt/utils.js');
 
+// Get the tag on this commit, if there is one. We'll use it in the gh-pages task
+var currentTag = util.getCurrentTag();
+
 /*global module:false*/
 module.exports = function(grunt) {
   require('jit-grunt')(grunt, {
@@ -384,7 +387,7 @@ module.exports = function(grunt) {
       'gh-pages': {
         options: {
           base: '<%= dist %>',
-          tag: 'v<%= version %>',
+          tag: (currentTag) ? 'v' + currentTag : null,
           repo: 'https://github.com/angular-ui/ui-grid.info.git',
           message: 'gh-pages v<%= version %>',
           add: true
