@@ -28,7 +28,7 @@
           remove: 'Verwijder sortering'
         },
         column: {
-          hide: 'Kolom te verbergen'
+          hide: 'Verberg kolom'
         }
       });
       return $delegate;
