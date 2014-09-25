@@ -1,9 +1,12 @@
 // var eyes = require('eyes');
 var path = require('path');
 var util = require('./lib/grunt/utils.js');
+var semver = require('semver');
 
 // Get the tag on this commit, if there is one. We'll use it in the gh-pages task
-var currentTag = util.getCurrentTag();
+var currentTag = semver.clean( util.getCurrentTag() );
+
+console.log("CURRENT TAG", currentTag);
 
 /*global module:false*/
 module.exports = function(grunt) {
@@ -18,7 +21,8 @@ module.exports = function(grunt) {
     jscs: 'grunt-jscs-checker',
     protractor: 'grunt-protractor-runner',
     'stable-version': './lib/grunt/plugins.js',
-    'current-version': './lib/grunt/plugins.js'
+    'current-version': './lib/grunt/plugins.js',
+    'update-bower-json': './lib/grunt/plugins.js'
   });
 
   // Project configuration.
@@ -647,7 +651,7 @@ module.exports = function(grunt) {
 
     // If there's a tag on this commit, release a new version to bower
     if (currentTag) {
-      grunt.task.run('gh-pages:bower');
+      grunt.task.run('update-bower-json', 'gh-pages:bower');
     }
   });
 };
