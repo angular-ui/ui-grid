@@ -384,7 +384,7 @@ module.exports = function(grunt) {
     },
 
     'gh-pages': {
-      'ui-grid.info': {
+      'ui-grid-site': {
         options: {
           base: '<%= dist %>',
           tag: (currentTag) ? 'v' + currentTag : null,
