@@ -145,6 +145,18 @@ angular.module('ui.grid')
    */
   self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
 
+  /**
+   * @ngdoc function
+   * @name handleWindowResize
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Trigger a grid resize, normally this would be picked
+   * up by a watch on window size, but in some circumstances it is necessary
+   * to call this manually
+   * @returns {promise} promise that is resolved when render completes?
+   * 
+   */
+  self.api.registerMethod( 'core', 'handleWindowResize', this.handleWindowResize );
+
 
   /**
    * @ngdoc function
@@ -297,11 +309,18 @@ angular.module('ui.grid')
       rowHeaderCol.renderContainer = 'left';
     }
 
-    self.columnBuilders[0](colDef,rowHeaderCol,self.gridOptions)
+    // relies on the default column builder being first in array, as it is instantiated
+    // as part of grid creation
+    self.columnBuilders[0](colDef,rowHeaderCol,self.options)
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
         self.rowHeaderColumns.push(rowHeaderCol);
+        self.buildColumns()
+          .then( function() {
+            self.preCompileCellTemplates();
+            self.handleWindowResize();
+          });
       });
   };
 
@@ -319,12 +338,6 @@ angular.module('ui.grid')
     var builderPromises = [];
     var offset = self.rowHeaderColumns.length;
 
-    //add row header columns to the grid columns array
-    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
-      offset++;
-      self.columns.push(rowHeaderColumn);
-    });
-
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
       self.columns.forEach(function (column, index) {
@@ -333,6 +346,13 @@ angular.module('ui.grid')
         }
       });
     }
+
+    //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
+    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
+      offset++;
+      self.columns.unshift(rowHeaderColumn);
+    });
+
 
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
