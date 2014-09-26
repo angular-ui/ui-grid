@@ -47,6 +47,9 @@ Methods and properties are provided to operate with this regime:
 
 
 @example
+In this example rows are saved 2 seconds after moving off, and the save is faked using a timeout of 3 seconds, so 
+each save will take 3 seconds to complete.  Any row saved with a gender of "male" will error.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'addressFormatter']);

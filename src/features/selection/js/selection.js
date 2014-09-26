@@ -406,7 +406,16 @@
           scope: false,
           compile: function ($elm, $attrs) {
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
-            rowRepeatDiv.attr("ng-class", "{'ui-grid-row-selected': row.isSelected}");
+
+            var existingNgClass = rowRepeatDiv.attr("ng-class");
+            var newNgClass = '';
+            if ( existingNgClass ) {
+              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-selected': row.isSelected}";
+            } else {
+              newNgClass = "{'ui-grid-row-selected': row.isSelected}";
+            }
+            rowRepeatDiv.attr("ng-class", newNgClass);
+
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
 
