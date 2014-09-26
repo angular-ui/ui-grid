@@ -178,17 +178,6 @@ describe('ui.grid.utilService', function() {
       });
     });
 
-    describe('elementWidth()', function () {
-      it('should calculate element width', function() {
-        //var elm = angular.element('<div style="width: 200px">asdf</div>');
-        // dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
-
-        var w = gridUtil.elementWidth(elm);
-
-        expect(w).toEqual(200);
-      });
-    });
-
     describe('outerElementHeight()', function () {
       it('should calculate element height, including border', function() {
         elm.style.border = "1px solid black";
