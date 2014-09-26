@@ -298,7 +298,7 @@ angular.module('ui.grid')
   Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
     var self = this;
     //self.createLeftContainer();
-    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
+    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length, self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
       self.createRightContainer();
@@ -351,6 +351,11 @@ angular.module('ui.grid')
     angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
       offset++;
       self.columns.unshift(rowHeaderColumn);
+      
+      // renumber any columns already there, as cellNav relies on cols[index] === col.index
+      self.columns.forEach(function(column, index){
+        column.index = index;
+      });
     });
 
 
