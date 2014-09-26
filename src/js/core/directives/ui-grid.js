@@ -12,7 +12,7 @@
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
       $elm.addClass('grid' + self.grid.id);
-      self.grid.rtl = $elm.css('direction') === 'rtl';
+      self.grid.rtl = gridUtil.getStyles($elm[0])['direction'] === 'rtl';
 
 
       //add optional reference to externalScopes function to controller
