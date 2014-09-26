@@ -94,7 +94,7 @@
             // Long-click (for mobile)
             var cancelMousedownTimeout;
             var mousedownStartTime = 0;
-            $contentsElm.on('mousedown', function(event) {
+            $contentsElm.on('mousedown touchstart', function(event) {
               if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
                 event = event.originalEvent;
               }
@@ -113,8 +113,12 @@
               });
             });
     
-            $contentsElm.on('mouseup', function () {
+            $contentsElm.on('mouseup touchend', function () {
               $timeout.cancel(cancelMousedownTimeout);
+            });
+
+            $scope.$on('$destroy', function () {
+              $contentsElm.off('mousedown touchstart');
             });
     
             $scope.toggleMenu = function($event) {
