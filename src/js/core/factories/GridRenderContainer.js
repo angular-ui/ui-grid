@@ -86,13 +86,13 @@ angular.module('ui.grid')
       var col = self.visibleColumnCache[i];
 
       if (totalWidth < viewportWidth) {
-        totalWidth += col.drawnWidth;
+        totalWidth += col.drawnWidth ? col.drawnWidth : 0;
         min++;
       }
       else {
         var currWidth = 0;
         for (var j = i; j >= i - min; j--) {
-          currWidth += self.visibleColumnCache[j].drawnWidth;
+          currWidth += self.visibleColumnCache[j].drawnWidth ? self.visibleColumnCache[j].drawnWidth : 0;
         }
         if (currWidth < viewportWidth) {
           min++;
