@@ -370,7 +370,7 @@
           }
 
           // Get the new width
-          var newWidth = col.drawnWidth + xDiff;
+          var newWidth = parseInt(col.drawnWidth + xDiff, 10);
 
           // If the new width is less than the minimum width, make it the minimum width
           if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
@@ -488,7 +488,7 @@
             maxWidth = col.colDef.maxWidth;
           }
 
-          col.colDef.width = maxWidth;
+          col.colDef.width = parseInt(maxWidth, 10);
           
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
