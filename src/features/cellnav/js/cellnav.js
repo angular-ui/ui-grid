@@ -290,9 +290,9 @@
         /**
          * @ngdoc method
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
-         * @name scrollVerticallyTo
-         * @description Scroll the grid vertically such that the specified
-         * row is in view
+         * @name scrollTo
+         * @description Scroll the grid such that the specified
+         * row and column is in view
          * @param {Grid} grid the grid you'd like to act upon, usually available
          * from gridApi.grid
          * @param {object} $scope a scope we can broadcast events from
@@ -300,20 +300,39 @@
          * @param {object} colDef to make visible
          */
         scrollTo: function (grid, $scope, rowEntity, colDef) {
-          var args = {};
+          var gridRow = null, gridCol = null;
           
           if ( rowEntity !== null ){
-            var row = grid.getRow(rowEntity);
-            if ( row ) { 
-              args.y = { percentage: row.index / grid.renderContainers.body.visibleRowCache.length }; 
-            }
+            gridRow = grid.getRow(rowEntity);
           }
           
           if ( colDef !== null ){
-            var col = grid.getColumn(colDef.name ? colDef.name : colDef.field);
-            if ( col ) {
-              args.x = { percentage: this.getLeftWidth(grid, col.index) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache.length - 1) };              
-            }
+            gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
+          }
+          this.scrollToInternal(grid, $scope, gridRow, gridCol);
+        },
+        
+
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name scrollToInternal
+         * @description Like scrollTo, but takes gridRow and gridCol
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} $scope a scope we can broadcast events from
+         * @param {GridRow} gridRow row to make visible
+         * @param {GridCol} gridCol column to make visible
+         */
+        scrollToInternal: function( grid, $scope, gridRow, gridCol ){
+          var args = {};
+          
+          if ( gridRow !== null ){
+            args.y = { percentage: gridRow.index / grid.renderContainers.body.visibleRowCache.length }; 
+          }
+          
+          if ( gridCol !== null ){
+            args.x = { percentage: this.getLeftWidth(grid, gridCol.index) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache.length - 1) };              
           }
           
           if ( args.y || args.x ){
@@ -477,6 +496,7 @@
             var div = $elm.find('div');
             div[0].focus();
             div.attr("tabindex", 0);
+            $scope.grid.queueRefresh();
           }
 
         }
