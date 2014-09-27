@@ -88,7 +88,7 @@ See the example below for usage.
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    ddescribe('column menus', function() {
+    describe('column menus', function() {
       it('grid1 should have three visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });

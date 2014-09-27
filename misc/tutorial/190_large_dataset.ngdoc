@@ -38,7 +38,7 @@ Demonstrates the following:
       <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -46,5 +46,26 @@ Demonstrates the following:
       width: 500px;
       height: 450px;
     }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '190 large dataset', function() {
+      it('grid should have five visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 5 );
+      });
+  
+      it('column headers as expected', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Id' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Name' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Age' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 3, 'Address.City' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 4, 'Age Again' );
+      });
+
+      it('first couple of rows as expected', function () {
+        gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ '0', 'Ramsey Cummings', '52', 'Glendale', '52' ] );
+        gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ '1', 'Stefanie Huff', '70', 'Beaverdale', '70' ] );
+      });
+    });    
   </file>
 </example>
