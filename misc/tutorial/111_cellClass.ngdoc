@@ -49,19 +49,21 @@ In this example, we will override the color and background for the first column 
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    it('grid should have two visible columns', function () {
-      gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
-    });
-
-    it('column one formatted color red, background yellow', function () {
-      // red on yellow background for 0,0
-      expect( gridTestUtils.dataCell( 'grid1', 0, 0 ).getCssValue('background-color')).toEqual('rgba(255, 255, 0, 1)');
-      expect( gridTestUtils.dataCell( 'grid1', 0, 0 ).getCssValue('color')).toEqual('rgba(255, 0, 0, 1)');
-      
-      // color blue for 2,1, which has company name 'Velity'
-      gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Velity' );
-      expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(0, 0, 255, 1)');
-    });
+    describe( '111 cell class', function() {
+      it('grid should have two visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+      });
+  
+      it('column one formatted color red, background yellow', function () {
+        // red on yellow background for 0,0
+        expect( gridTestUtils.dataCell( 'grid1', 0, 0 ).getCssValue('background-color')).toEqual('rgba(255, 255, 0, 1)');
+        expect( gridTestUtils.dataCell( 'grid1', 0, 0 ).getCssValue('color')).toEqual('rgba(255, 0, 0, 1)');
+        
+        // color blue for 2,1, which has company name 'Velity'
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Velity' );
+        expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(0, 0, 255, 1)');
+      });
+    });    
   </file>
 </example>
 
