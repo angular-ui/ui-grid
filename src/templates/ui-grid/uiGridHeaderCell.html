@@ -8,7 +8,7 @@
     </span>
   </div>
 
-  <div ng-if="grid.options.enableColumnMenu && !col.isRowHeader" class="ui-grid-column-menu-button" ng-click="toggleMenu($event)">
+  <div class="ui-grid-column-menu-button" ng-if="grid.options.enableColumnMenu && !col.isRowHeader  && !col.colDef.disableColumnMenu" class="ui-grid-column-menu-button" ng-click="toggleMenu($event)">
     <i class="ui-grid-icon-angle-down">&nbsp;<i>
   </div>
 

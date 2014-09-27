@@ -466,6 +466,44 @@ module.exports = {
       var headerCell = this.headerCell( gridId, colNumber);
       
       headerCell.element( by.css( '.ui-grid-filter-input' ) ).sendKeys(filterValue);
+    },
+    
+
+     /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name expectVisibleColumnMenuItems
+     * @description Checks how many visible menu items there are in the column menu   
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} colNumber the number of the column (within the visible columns)
+     * that you want to check the count for
+     * @param {integer} expectItems the number of visible items you expect
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.visibleColumnMenuItems('myGrid', 0, 3);
+     * </pre>
+     * 
+     */
+    expectVisibleColumnMenuItems: function( gridId, colNumber, expectItems ) {
+      var headerCell = this.headerCell( gridId, colNumber );
+      headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
+      
+      var columnMenu = element( by.id( gridId ) ).element( by.css( '.ui-grid-column-menu' ));
+ 
+      var menuItems = columnMenu.all( by.css( '.ui-grid-menu-item' ) );
+      
+      menuItems.map(function(elm) {
+        return elm.isDisplayed();
+      }).then( function( displayedArray ){
+        displayedCount = 0;
+        for( var i=0; i<displayedArray.length; i++ ){
+          if( displayedArray[i] ){
+            displayedCount++;
+          }
+        }
+        expect(displayedCount).toEqual( expectItems );
+      }); 
     }
 };
 
