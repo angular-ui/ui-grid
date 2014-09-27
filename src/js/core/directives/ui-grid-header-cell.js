@@ -121,6 +121,14 @@
               $contentsElm.off('mousedown touchstart');
             });
     
+            /** 
+            * @ngdoc property
+            * @name disableColumnMenu
+            * @propertyOf ui.grid.class:GridOptions.columnDef
+            * @description if column menus are enabled, disables column menus for this specific
+            * column
+            *
+            */
             $scope.toggleMenu = function($event) {
               $event.stopPropagation();
     
