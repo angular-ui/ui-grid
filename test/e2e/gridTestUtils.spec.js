@@ -486,24 +486,24 @@ module.exports = {
      * 
      */
     expectVisibleColumnMenuItems: function( gridId, colNumber, expectItems ) {
-      var headerCell = this.headerCell( gridId, colNumber );
-      headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
-      
-      var displayedCount = 0;
-      var columnMenu = element( by.id( gridId ) ).element( by.css( '.ui-grid-column-menu' ));
- 
-      var menuItems = columnMenu.all( by.css( '.ui-grid-menu-item' ) );
-      
-      menuItems.map(function(elm) {
-        return elm.isDisplayed();
-      }).then( function( displayedArray ){
-        for( var i=0; i<displayedArray.length; i++ ){
-          if( displayedArray[i] ){
-            displayedCount++;
-          }
-        }
-        expect(displayedCount).toEqual( expectItems );
-      }); 
-    }
+       var headerCell = this.headerCell(gridId, colNumber);
+       headerCell.element(by.css('.ui-grid-column-menu-button')).click();
+
+       var displayedCount = 0;
+       var columnMenu = element(by.id(gridId)).element(by.css('.ui-grid-column-menu'));
+
+       var menuItems = columnMenu.all(by.css('.ui-grid-menu-item'));
+
+       menuItems.map(function (elm) {
+         return elm.isDisplayed();
+       }).then(function (displayedArray) {
+         for (var i = 0; i < displayedArray.length; i++) {
+           if (displayedArray[i]) {
+             displayedCount++;
+           }
+         }
+         expect(displayedCount).toEqual(expectItems);
+       });
+     }
 };
 

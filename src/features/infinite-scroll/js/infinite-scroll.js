@@ -173,9 +173,10 @@
           scope: false,
           link: function ($scope, $elm, $attr){
             $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
-
-              var percentage = 100 - (args.y.percentage * 100);
-              uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
+              if (args.y) {
+                var percentage = 100 - (args.y.percentage * 100);
+                uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
+              }
             });
           }
         };
