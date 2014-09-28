@@ -1,5 +1,4 @@
 <div ui-grid-expandable-row ng-if="expandableRow.shouldRenderExpand()" class="expandableRow"
-     style="float:left;margin-top: 1px;margin-bottom: 1px;float:left;margin-top: 1px;margin-bottom: 1px;"
-     ng-style="{width: (grid.renderContainers.body.getCanvasWidth() - grid.verticalScrollbarWidth),
-     'margin-left': grid.isRTL() ? grid.verticalScrollbarWidth : 0
-     ,height: grid.options.expandable.expandableRowHeight}"></div>
+     style="float:left; margin-top: 1px; margin-bottom: 1px"
+     ng-style="{width: (grid.renderContainers.body.getCanvasWidth() - grid.verticalScrollbarWidth) + 'px'
+     , height: grid.options.expandable.expandableRowHeight + 'px'}"></div>

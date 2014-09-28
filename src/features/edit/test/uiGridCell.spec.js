@@ -107,6 +107,16 @@ describe('ui.grid.edit GridCellDirective', function () {
       expect(element.html()).toBe(displayHtml);
     });
 
+    it('should stop editing on tab', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.TAB;
+      element.find('input').trigger(event);
+
+      //back to beginning
+      expect(element.html()).toBe(displayHtml);
+    });
+
     it('should stop when grid scrolls', function () {
       //stop edit
       scope.$broadcast(uiGridConstants.events.GRID_SCROLL);

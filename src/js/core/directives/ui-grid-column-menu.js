@@ -65,7 +65,23 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
           return false;
         }
       };
-      
+
+
+      /**
+       * @ngdoc boolean
+       * @name disableHiding
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description (optional) True by default. When enabled, this setting allows a user to hide the column
+       * using the column menu.
+       */
+      $scope.hideable = function() {
+        if (typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.disableHiding) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      };      
       var defaultMenuItems = [
         // NOTE: disabling this in favor of a little filter text box
         // Column filter input
@@ -126,6 +142,9 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         {
           title: i18nService.getSafeText('column.hide'),
           icon: 'ui-grid-icon-cancel',
+          shown: function() {
+            return $scope.hideable();
+          },
           action: function ($event) {
             $event.stopPropagation();
             $scope.hideColumn();
@@ -199,19 +218,24 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             // var containerScrollLeft = $columnelement
             var containerId = column.renderContainer ? column.renderContainer : 'body';
             var renderContainer = column.grid.renderContainers[containerId];
-            var containerScrolLeft = renderContainer.prevScrollLeft;
+            // var containerScrolLeft = renderContainer.prevScrollLeft;
+
+            // It's possible that the render container of the column we're attaching to is offset from the grid (i.e. pinned containers), we
+            //   need to get the different in the offsetLeft between the render container and the grid
+            var renderContainerElm = gridUtil.closestElm($columnElement, '.ui-grid-render-container');
+            var renderContainerOffset = renderContainerElm.offsetLeft - $scope.grid.element[0].offsetLeft;
+
+            var containerScrolLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
             var myWidth = gridUtil.elementWidth($scope.menu, true);
 
             // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
             // Get the column menu right padding
-            var paddingRight = parseInt(angular.element($scope.menu).css('padding-right'), 10);
+            var paddingRight = parseInt(gridUtil.getStyles(angular.element($scope.menu)[0])['padding-right'], 10);
 
-            $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
+            // $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
 
-            // $elm.css('left', (left - offset + width - myWidth + paddingRight) + 'px');
-            // $elm.css('left', (left + width - myWidth + paddingRight) + 'px');
-            $elm.css('left', (left - containerScrolLeft + width - myWidth + paddingRight) + 'px');
+            $elm.css('left', (left + renderContainerOffset - containerScrolLeft + width - myWidth + paddingRight) + 'px');
             $elm.css('top', (top + height) + 'px');
 
             // Hide the menu on a click on the document

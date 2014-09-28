@@ -7,6 +7,12 @@ describe('uiGridHeaderCell', function () {
     { "name": "Beryl Rice", "gender": "female", "company": "Velity" },
     { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
   ];
+  
+  var columnDefs = [
+    { name: 'name'},
+    { name: 'gender' },
+    { name: 'company' }
+  ];
 
   beforeEach(module('ui.grid'));
 
@@ -19,6 +25,7 @@ describe('uiGridHeaderCell', function () {
 
     $scope.gridOpts = {
       enableSorting: true,
+      columnDefs: columnDefs,
       data: data
     };
 
@@ -97,6 +104,19 @@ describe('uiGridHeaderCell', function () {
         menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu-inner');
 
         expect(menu[0]).toBeUndefined('menu is undefined');
+        
+        var headers = $(grid).find('.ui-grid-column-menu-button');
+        expect(headers.length).toEqual(0);
+      });
+    });
+
+    describe('with colDef.disableColumnMenu on', function() {
+      it('should not be present', function () {
+        $scope.gridOpts.columnDefs[0].disableColumnMenu = true;
+        recompile();
+
+        var headers = $(grid).find('.ui-grid-column-menu-button');
+        expect(headers.length).toEqual(2);
       });
     });
 

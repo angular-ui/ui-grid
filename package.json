@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "3.0.0",
+  "version": "3.0.0-rc.11",
   "description": "__Contributors:__",
   "directories": {
     "test": "test"
@@ -20,9 +20,11 @@
     "angularjs",
     "slickgrid",
     "kogrid",
-    "ui-grid"
+    "ui-grid",
+    "ui grid",
+    "data grid"
   ],
-  "author": "ui-grid Team",
+  "author": "UI Grid Team",
   "license": "MIT",
   "devDependencies": {
     "grunt": "~0.4",
@@ -53,13 +55,15 @@
     "semver": "~2.2.1",
     "shelljs": "~0.2.6",
     "grunt-contrib-copy": "~0.4.1",
-    "protractor": "~0.14.0",
+    "protractor": "~1.0.0",
     "grunt-protractor-runner": "0.2.0",
     "grunt-shell-spawn": "~0.3.0",
     "selenium-webdriver": "~2.39.0",
     "grunt-jscs-checker": "^0.4.1",
     "jshint-stylish": "^0.2.0",
     "karma-coverage": "^0.2.5",
-    "coveralls": "^2.11.1"
+    "coveralls": "^2.11.1",
+    "jit-grunt": "^0.8.0",
+    "grunt-bump": "0.0.15"
   }
 }

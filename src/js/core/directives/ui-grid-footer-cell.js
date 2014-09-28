@@ -35,6 +35,8 @@
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             //$elm.addClass($scope.col.getColClass(false));
             $scope.grid = uiGridCtrl.grid;
+
+            $elm.addClass($scope.col.getColClass(false));
           }
         };
       }

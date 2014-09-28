@@ -105,7 +105,7 @@ ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY`
     # Run the watch tasks against IE10
     > grunt dev --browsers=SL_IE10
 
-The full list of SauceLabs browsers is in `lib/grunt/util.js` in the `customLaunchers` method. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
+The full list of SauceLabs browsers can be seen by running `grunt saucebrowsers`. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
 
 # Thanks
 

@@ -118,7 +118,8 @@
            * @name cellTemplate
            * @propertyOf ui.grid.class:GridOptions.columnDef
            * @description a custom template for each cell in this column.  The default
-           * is ui-grid/uiGridCell
+           * is ui-grid/uiGridCell.  If you are using the cellNav feature, this template
+           * must contain a div that can receive focus.
            *
            */
           if (!colDef.cellTemplate) {

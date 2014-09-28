@@ -34,6 +34,8 @@
             var newScrollTop = $elm[0].scrollTop;
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
+            var horizScrollPercentage = -1;
+            var vertScrollPercentage = -1;
 
             // Handle RTL here
 
@@ -41,7 +43,7 @@
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-              var horizScrollPercentage = newScrollLeft / horizScrollLength;
+              horizScrollPercentage = newScrollLeft / horizScrollLength;
 
               colContainer.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
@@ -52,12 +54,26 @@
               // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
               var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
               // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
-              var vertScrollPercentage = newScrollTop / vertScrollLength;
+              vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
               if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
               
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+            }
+            
+            if ( !$scope.grid.isScrollingVertically && !$scope.grid.isScrollingHorizontally ){
+              // viewport scroll that didn't come from fireScrollEvent, so fire a scroll to keep 
+              // the header in sync
+              var args = {};
+              if ( horizScrollPercentage > -1 ){
+                args.x = { percentage: horizScrollPercentage };
+              }
+
+              if ( vertScrollPercentage > -1 ){
+                args.y = { percentage: vertScrollPercentage };
+              }
+              uiGridCtrl.fireScrollingEvent(args); 
             }
           });
         }

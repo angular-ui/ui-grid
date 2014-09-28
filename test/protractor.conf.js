@@ -2,8 +2,8 @@
 exports.config = {
   // The address of a running selenium server.
 
-  // seleniumAddress: 'http://localhost:4444/wd/hub',
-  seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.37.0.jar',
+  //seleniumAddress: 'http://localhost:4444/wd/hub',
+  seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.42.2.jar',
   seleniumPort: 4444,
 
   // Capabilities to be passed to the webdriver instance.

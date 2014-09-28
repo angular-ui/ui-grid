@@ -370,7 +370,7 @@
           }
 
           // Get the new width
-          var newWidth = col.drawnWidth + xDiff;
+          var newWidth = parseInt(col.drawnWidth + xDiff, 10);
 
           // If the new width is less than the minimum width, make it the minimum width
           if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
@@ -400,7 +400,8 @@
           event.stopPropagation();
 
           // Get the left offset of the grid
-          gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
+          // gridLeft = uiGridCtrl.grid.element[0].offsetLeft;
+          gridLeft = uiGridCtrl.grid.element[0].getBoundingClientRect().left;
 
           // Get the starting X position, which is the X coordinate of the click minus the grid's offset
           startX = event.clientX - gridLeft;
@@ -487,7 +488,7 @@
             maxWidth = col.colDef.maxWidth;
           }
 
-          col.colDef.width = maxWidth;
+          col.colDef.width = parseInt(maxWidth, 10);
           
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);

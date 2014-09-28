@@ -2,28 +2,97 @@
 @name Tutorial: 103 Filtering
 @description
 
+### Simple setup
+
 UI-Grid allows you to filter rows. Just set the `enableFiltering` flag in your grid options (it is off by default).
 
-Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the last column below for an example.
+Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the "company" column below for an example.
 
-Default filters can be set programmatically by setting `filter: { term: 'xxx' }` in the column def.  See the second column below.
+The filter field can be pre-populated by setting `filter: { term: 'xxx' }` in the column def.  See the "gender" column below.
+
+### Conditon
+
+The `filter` object introduced above may also specify a `condition`, which defines how rows are chosen as matching the filter term. UI-Grid comes with several conditions
+out-of-the-box, which are defined by `uiGridConstants.filter.*`. See the "email" column below. 
+
+If no condition is set, UI-Grid will take a best guess based on the contents of the filter field. Even basic wildcard (*) use is supported!
+
+If you want to create your own filtering logic, the `condition` field of the `filter` object can also be a function that gets run for each 
+row. Such a function has the following signature:
+
+```Javascript
+function myCustomSorter(searchTerm, cellValue, row, column) {
+  // Custom logic that returns true if `row`
+  // passes the filter and false if it should
+  // be filtered out
+  return booleanResult;
+}
+```
+
+For an example of this, see the "phone" column below for an example of this; the custom filter condition makes sure to strip the phone number of everything
+except digits to compare to the search term.
+
+### Placeholder
+
+Set the `placeholder` property on the `filter` object to add a `placeholder=""` attribute to the input element. This is set for the "email" and "age" columns below.
+
+### Multiple filter fields
+
+Occasionally, you may want to provide two or more filters for a single column. This can be accomplished by setting a `filters` array instead of a `filter` object.
+The elements of this array are the same as the contents of the `filter` object in all the previous examples. In fact, `filter: { term: 'xxx' }` is just an alias 
+for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
+
+
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.gridOptions = {
         enableFiltering: true,
         columnDefs: [
+          // default
           { field: 'name' },
+          // pre-populated search field
           { field: 'gender', filter: { term: 'male' } },
-          { field: 'company', enableFiltering: false  }
+          // no filter input
+          { field: 'company', enableFiltering: false  },
+          // specifies one of the built-in conditions
+          // and a placeholder for the input
+          {
+            field: 'email',
+            filter: {
+              condition: uiGridConstants.filter.ENDS_WITH,
+              placeholder: 'ends with'
+            }
+          },
+          // custom condition function
+          {
+            field: 'phone',
+            filter: {
+              condition: function(searchTerm, cellValue) {
+                var strippedValue = (cellValue + '').replace(/[^\d]/g, '');
+                return strippedValue.indexOf(searchTerm) >= 0;
+              }
+            }
+          },
+          // multiple filters
+          { field: 'age', filters: [
+            {
+              condition: uiGridConstants.filter.GREATER_THAN,
+              placeholder: 'greater than'
+            },
+            {
+              condition: uiGridConstants.filter.LESS_THAN,
+              placeholder: 'less than'
+            }
+          ]}
         ]
       };
 
-      $http.get('/data/100.json')
+      $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
@@ -37,13 +106,46 @@ Default filters can be set programmatically by setting `filter: { term: 'xxx' }`
       <strong>Note:</strong> The third column has filtering disabled.
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 650px;
       height: 400px;
     }
   </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    
+    describe('first grid on the page, filtered by male by default', function() {
+      it('grid should have six visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 6 );
+      });
+
+      it('filter on 4 columns, filter with greater than/less than on one, one with no filter', function () {
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 0, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 1, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 2, 0 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 3, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 4, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 5, 2 );
+      });
+
+      it('third row should be Bishop Carr - will be Terry Clay if filtering broken', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
+      });
+      
+      it('cancel filter on gender column, should now see Terry Clay in third row', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Terry Clay' );
+      });
+
+      it('filter on email column, should automatically do "ends with"', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
+        gridTestUtils.enterFilterInColumn( 'grid1', 3, 'mixers.com' );        
+        gridTestUtils.expectRowCount( 'grid1', 2 );
+      });
+    });
+  </file>  
 </example>

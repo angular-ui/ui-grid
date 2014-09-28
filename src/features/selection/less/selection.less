@@ -16,10 +16,16 @@
   cursor: default;
 }
 
-.uiGridSelectionRowHeaderButtons {
+.ui-grid-selection-row-header-buttons {
   cursor: pointer;
+  opacity: 0.1;
+
+  &.ui-grid-row-selected {
+    opacity: 1;
+  }
 }
 
-.uiGridSelectionRowHeaderCell {
+// TODO: remove? I can't find this class used anywhere, even with the camelCase name
+.ui-grid-selection-row-header-cell {
   border-bottom: solid @gridBorderWidth @borderColor;
 }

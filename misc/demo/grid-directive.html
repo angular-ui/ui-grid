@@ -37,7 +37,7 @@
 
       <!-- <div class="row main"> -->
         <h2>Grid</h2>
-        <div ui-grid="gridOptions" class="grid"></div>
+        <div ui-grid="gridOptions" class="grid" ui-grid-selection></div>
         <!-- <div class="placeholder"> -->
       <!-- </div> -->
 
@@ -46,7 +46,7 @@
 
       <script>
 
-      var app = angular.module('test', ['ui.grid']);
+      var app = angular.module('test', ['ui.grid', 'ui.grid.selection']);
 
       app.controller('Main', function($scope, $http) {
           // $scope.gridOptions = { data: 'data' };

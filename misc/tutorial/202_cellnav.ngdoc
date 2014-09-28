@@ -2,9 +2,13 @@
 @name Tutorial: 202 Cell Navigation
 @description
 
-This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav' module and you must include the ui-grid-cellNav directive on your grid element.
+This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav' 
+module and you must include the ui-grid-cellNav directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
+
+Also provides an example of requesting a scroll to a specific row or column programatically - useful for
+remembering the state of a page and scrolling back to that position when a user returns.
 
 @example
 <example module="app">
@@ -15,10 +19,15 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
       $scope.gridOptions = {};
 
       $scope.gridOptions.columnDefs = [
-        { name: 'id' },
-        { name: 'name'},
-        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
-        { name: 'address.city' }
+        { name: 'id', width:'10%' },
+        { name: 'name', width:'30%' },
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false, width:'15%' },
+        { name: 'address.city', width:'25%' },
+        { name: 'phone', width:'30%' },
+        { name: 'company', width:'25%' },
+        { name: 'email', width:'30%' },
+        { name: 'balance', width:'20%' },
+        { name: 'guid', width:'40%' }
       ];
 
       $http.get('/data/500_complex.json')
@@ -35,7 +44,11 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
           if(rowCol !== null) {
               $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
           }
-        }
+        };
+        
+        $scope.scrollTo = function( rowIndex, colIndex ) {
+          $scope.gridApi.cellNav.scrollTo( $scope.gridApi.grid, $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+        };
 
         $scope.gridOptions.onRegisterApi = function(gridApi){
            $scope.gridApi = gridApi;
@@ -53,6 +66,9 @@ Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <button type="button" class="btn btn-success" ng-click="scrollTo(20,0)">Scroll To Row 20</button>
+      <button type="button" class="btn btn-success" ng-click="scrollTo(0,7)">Scroll To Balance</button>
+      <button type="button" class="btn btn-success" ng-click="scrollTo(50,7)">Scroll To Row 50, Balance</button>
       <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
