@@ -386,12 +386,26 @@ angular.module('ui.grid')
  * @description precompiles all cell templates
  */
   Grid.prototype.preCompileCellTemplates = function() {
-        this.columns.forEach(function (col) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+    var self = this;
+    this.columns.forEach(function (col) {
+      var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
+      html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
-          var compiledElementFn = $compile(html);
-          col.compiledElementFn = compiledElementFn;
-        });
+
+      var compiledElementFn = $compile(html);
+      col.compiledElementFn = compiledElementFn;
+    });
+  };
+
+  /**
+   * @ngdoc function
+   * @name getGridQualifiedColField
+   * @methodOf ui.grid.class:Grid
+   * @description precompiles all cell templates
+   * @param {GridColumn} col col object
+   */
+  Grid.prototype.getQualifiedColField = function (col) {
+    return 'row.entity.' + gridUtil.preEval(col.field);
   };
 
   /**

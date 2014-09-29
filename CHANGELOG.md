@@ -1,3 +1,12 @@
+<a name="v3.0.0-rc.NEXT"></a>
+### v3.0.0-rc.NEXT Current Master
+
+#### Breaking Changes
+* editableCellTemplates should use MODEL_COL_FIELD instead of COL_FIELD.
+https://github.com/angular-ui/ng-grid/issues/1633 MODEL_COL_FIELD variable was added to the cellTemplate and editCellTemplate for utilizing the bound field in ng-model.  Edit feature
+was changed to use MODEL_COL_FIELD instead of COL_FIELD for consistency.
+
+
 <a name="v3.0.0-rc.11"></a>
 ### v3.0.0-rc.11 (2014-09-26)
 

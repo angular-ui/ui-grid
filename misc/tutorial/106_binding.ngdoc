@@ -8,6 +8,14 @@ This tutorial shows two-way binding to properties with special characters, array
 
 Note that a function can not be edited.
 
+In your custom cellTemplates, you can use:
+<br/>
+COL\_FIELD which will be replaced with grid.getCellValue(row). This should be used for any cellTemplates that need readonly access to the field value
+<br/>
+MODEL\_COL\_FIELD which will be replaced with row.entity.field.  Use MODEL\_COL\_FIELD anytime you need ng-model='field'
+
+
+
 @example
 <example module="app">
   <file name="app.js">
