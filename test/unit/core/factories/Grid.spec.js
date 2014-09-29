@@ -1,15 +1,17 @@
 describe('Grid factory', function () {
   var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
+  var gridClassFactory;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_) {
+  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
     GridRow = _GridRow_;
     GridColumn = _GridColumn_;
     uiGridConstants = _uiGridConstants_;
+    gridClassFactory = _gridClassFactory_;
 
     grid = new Grid({ id: 1 });
     rows = [
@@ -262,6 +264,27 @@ describe('Grid factory', function () {
 
     });
 
+    it('should replace constants in template', inject(function ($timeout) {
+
+      var colDefs = [
+        {name:'simpleProp', cellTemplate:'<div ng-model="MODEL_COL_FIELD"/>'}
+      ];
+      var grid =  gridClassFactory.createGrid({columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
+      grid.modifyRows([entity]);
+      grid.preCompileCellTemplates();
+
+      var row = grid.rows[0];
+      expect(grid.getColumn('simpleProp').compiledElementFn).toBeDefined();
+
+    }));
 
     it('should bind correctly to simple prop', function() {
 

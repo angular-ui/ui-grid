@@ -3,6 +3,7 @@
   angular.module('ui.grid').constant('uiGridConstants', {
     CUSTOM_FILTERS: /CUSTOM_FILTERS/g,
     COL_FIELD: /COL_FIELD/g,
+    MODEL_COL_FIELD: /MODEL_COL_FIELD/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
     FUNC_REGEXP: /(\([^)]*\))?$/,
