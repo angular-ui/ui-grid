@@ -497,8 +497,8 @@ module.exports = {
       menuItems.map(function(elm) {
         return elm.isDisplayed();
       }).then( function( displayedArray ){
-        for( var i=0; i<displayedArray.length; i++ ){
-          if( displayedArray[i] ){
+        for ( var i=0; i<displayedArray.length; i++ ){
+          if ( displayedArray[i] ){
             displayedCount++;
           }
         }

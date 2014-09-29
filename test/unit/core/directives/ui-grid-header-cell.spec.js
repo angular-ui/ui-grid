@@ -122,6 +122,7 @@ describe('uiGridHeaderCell', function () {
 
     describe('when window is resized', function () {
       it('should hide an open menu', function () {
+        delete $scope.gridOpts.columnDefs[0].disableColumnMenu;
         openMenu();
         expect(menu.hasClass('ng-hide')).toBe(false, 'column menu is visible');
         
