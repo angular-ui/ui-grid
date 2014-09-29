@@ -362,7 +362,18 @@ describe('Grid factory', function () {
       expect(grid.hasRightContainer()).toBe(true);
 
 
-      grid.buildColumns();
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
+
+      expect(grid.columns.length).toBe(2);
+
+      //test calling build columns twice to assure we don't get duplicate headers
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
       expect(grid.columns.length).toBe(2);
 
     }));
