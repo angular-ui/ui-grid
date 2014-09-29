@@ -75,9 +75,11 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              var expandableRowHeaderColDef = {name: 'expandableButtons', width: 40};
-              expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
-              uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
+              if (uiGridCtrl.grid.options.expandable.enableExpandableRowHeader ) {
+                var expandableRowHeaderColDef = {name: 'expandableButtons', width: 40};
+                expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
+                uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
+              }
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
