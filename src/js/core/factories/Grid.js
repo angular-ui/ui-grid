@@ -1335,7 +1335,11 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        column.sort.direction = null;
+        if ( column.colDef && column.colDef.suppressRemoveSort ){
+          column.sort.direction = uiGridConstants.ASC;
+        } else {
+          column.sort.direction = null;
+        }
       }
       else {
         column.sort.direction = uiGridConstants.ASC;

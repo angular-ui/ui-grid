@@ -50,6 +50,24 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         }
       };
 
+
+      /**
+       * @ngdoc boolean
+       * @name suppressRemoveSort
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description (optional) False by default. When enabled, this setting hides the removeSort option
+       * in the menu.
+       */
+      $scope.suppressRemoveSort = function() {
+        if ($scope.col && $scope.col.colDef && $scope.col.colDef.suppressRemoveSort) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      };
+
+
       /**
        * @ngdoc boolean
        * @name enableFiltering
@@ -111,7 +129,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             return $scope.sortable();
           },
           active: function() {
-            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.ASC);
+            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.ASC);
           }
         },
         {
@@ -125,7 +144,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             return $scope.sortable();
           },
           active: function() {
-            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.DESC);
+            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.DESC);
           }
         },
         {
@@ -136,7 +156,9 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             $scope.unsortColumn();
           },
           shown: function() {
-            return ($scope.sortable() && typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null);
+            return ($scope.sortable() && typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null && 
+                    !$scope.suppressRemoveSort());
           }
         },
         {

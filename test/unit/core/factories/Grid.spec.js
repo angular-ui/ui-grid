@@ -1,14 +1,15 @@
 describe('Grid factory', function () {
-  var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column;
+  var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_) {
+  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_) {
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
     GridRow = _GridRow_;
     GridColumn = _GridColumn_;
+    uiGridConstants = _uiGridConstants_;
 
     grid = new Grid({ id: 1 });
     rows = [
@@ -380,6 +381,50 @@ describe('Grid factory', function () {
       catch (e) {
         expect(e.message).toContain('No column parameter provided', 'exception contains column name');
       }
+    });
+    
+    it( 'if sort is currently null, then should toggle to ASC', function() {
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+    });
+
+    it( 'if sort is currently ASC, then should toggle to DESC', function() {
+      column.sort = {direction: uiGridConstants.ASC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: null };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: false };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: true };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
     });
   });
 });

@@ -25,7 +25,7 @@ See the example below for usage.
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.blargh = function() {
         alert("I'm in the outer scope!");
       };
@@ -34,7 +34,7 @@ See the example below for usage.
         enableSorting: true,
         columnDefs: [
           { field: 'name', disableColumnMenu: true },
-          { field: 'gender', disableHiding: true },
+          { field: 'gender', disableHiding: true, suppressRemoveSort: true, sort: { direction: uiGridConstants.ASC } },
           {
             field: 'company',
             menuItems: [
@@ -74,7 +74,10 @@ See the example below for usage.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      Click on the third column header to test custom menu items.
+      Click on the third column header to test custom menu items.  The first column should have no
+      column menu available, including via a long-press.  The second column should have a menu, but the
+      ability to remove the sort is suppressed - the user can toggle between ASC and DESC but not remove
+      the sort.
       <br>
       <br>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
@@ -93,17 +96,61 @@ See the example below for usage.
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });
   
-      it('no column menu on first column', function () {
+      it('no column menu on first column, including from long press', function () {
         var headerCell = gridTestUtils.headerCell( 'grid1', 0 );
         expect( headerCell.all( by.css( '.ui-grid-column-menu-button' ) ).count()).toEqual(0);
+        
+        browser.actions()
+          .mouseDown(headerCell, protractor.Button.LEFT)
+          .perform();
+        browser.sleep(550);  // 500ms for long press
+        
+        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
+        expect(columnMenu.isDisplayed()).toEqual(false);
       });
   
-      it('2 menu items in second column, implying no hide option', function () {
+      it('2 menu items in second column, implying no hide option and no remove sort option', function () {
         gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 2 );        
+      });      
+
+      it('Long press opens menu in second column', function () {
+        var headerCell = gridTestUtils.headerCell( 'grid1', 1 );
+
+        browser.actions()
+          .mouseDown(headerCell, protractor.Button.LEFT)
+          .perform();
+        browser.sleep(550);  // 500ms for long press
+        
+        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
+        expect(columnMenu.isDisplayed()).toEqual(true, 'column menu should be displayed');
+      });      
+
+      it('Column 2 rotates through sort ASC and sort DESC, but no sort null', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'female' );
+
+        gridTestUtils.clickHeaderCell( 'grid1', 1 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'male' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'male' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'male' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'male' );
+
+        gridTestUtils.clickHeaderCell( 'grid1', 1 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'female' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'female' );
       });      
 
       it('6 visible items in the third column, implying hide option', function () {
         gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 6 );        
+      });
+
+      it('click header to sort third column, 7 visible items in the third column, implying remove sort option', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 2 );
+        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 7 );        
       });
     });
 

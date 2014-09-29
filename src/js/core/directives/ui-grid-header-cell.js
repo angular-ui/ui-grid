@@ -109,7 +109,9 @@
               cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
     
               cancelMousedownTimeout.then(function () {
-                uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
+                if ( $scope.col.colDef && !$scope.col.colDef.disableColumnMenu ){
+                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
+                }
               });
             });
     
