@@ -6,7 +6,7 @@
 
 # Help!
 
-Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss develpment of the 3.x codebase.
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.
 
 # What Happened to Version 2.x?
 
