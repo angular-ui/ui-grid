@@ -374,8 +374,10 @@ module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGrid
           }
         });
       });
-      
-      grid.api.core.raise.rowsVisibleChanged();
+
+      if (grid.api.core.raise.rowsVisibleChanged) {
+        grid.api.core.raise.rowsVisibleChanged();
+      }
 
       // rows.forEach(function (row) {
       //   var matchesAllColumns = true;
