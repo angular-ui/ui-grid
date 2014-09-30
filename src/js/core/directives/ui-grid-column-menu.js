@@ -245,7 +245,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             // It's possible that the render container of the column we're attaching to is offset from the grid (i.e. pinned containers), we
             //   need to get the different in the offsetLeft between the render container and the grid
             var renderContainerElm = gridUtil.closestElm($columnElement, '.ui-grid-render-container');
-            var renderContainerOffset = renderContainerElm.offsetLeft - $scope.grid.element[0].offsetLeft;
+            var renderContainerOffset = renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left;
 
             var containerScrolLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
@@ -253,7 +253,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
             // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
             // Get the column menu right padding
-            var paddingRight = parseInt(gridUtil.getStyles(angular.element($scope.menu)[0])['padding-right'], 10);
+            var paddingRight = parseInt(gridUtil.getStyles(angular.element($scope.menu)[0])['paddingRight'], 10);
 
             // $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
 
