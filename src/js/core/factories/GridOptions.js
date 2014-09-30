@@ -160,6 +160,9 @@ angular.module('ui.grid')
     this.excessColumns = 4;
     this.horizontalScrollThreshold = 2;
 
+    // Default time to throttle scroll events to.
+    this.scrollThrottle = 70;
+
     /**
      * @ngdoc boolean
      * @name enableSorting
