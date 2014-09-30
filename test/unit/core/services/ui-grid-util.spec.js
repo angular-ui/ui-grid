@@ -40,6 +40,38 @@ describe('ui.grid.utilService', function() {
     }));
   });
 
+  describe('throttle()', function() {
+    var x;
+    var func = function () {
+      x++;
+    };
+
+    it('prevents multiple function calls', inject(function ($timeout) {
+      x = 0;
+
+      var throttledFunc = gridUtil.throttle(func, 10);
+      throttledFunc();
+      throttledFunc();
+      throttledFunc();
+      expect(x).toEqual(1);
+      $timeout.flush();
+      expect(x).toEqual(1);
+    }));
+
+    it('queues a final event if trailing param is truthy', inject(function ($timeout) {
+      x = 0;
+
+      var throttledFunc = gridUtil.throttle(func, 10, {trailing: true});
+      throttledFunc();
+      throttledFunc();
+      throttledFunc();
+      expect(x).toEqual(1);
+      $timeout.flush();
+      expect(x).toEqual(2);
+    }));
+
+  });
+
   describe('readableColumnName', function() {
     it('does not throw with null name', function() {
       expect(function() {
