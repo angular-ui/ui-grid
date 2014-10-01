@@ -537,9 +537,9 @@
             var existingNgClass = rowRepeatDiv.attr("ng-class");
             var newNgClass = '';
             if ( existingNgClass ) {
-              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError}";
+              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError, 'ui-grid-row-dirty': row.isDirty}";
             } else {
-              newNgClass = "{'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError}";
+              newNgClass = "{'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError, 'ui-grid-row-dirty': row.isDirty}";
             }
             rowRepeatDiv.attr("ng-class", newNgClass);
 
