@@ -13,21 +13,21 @@ remembering the state of a page and scrolling back to that position when a user 
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {};
 
       $scope.gridOptions.columnDefs = [
-        { name: 'id', width:'10%' },
-        { name: 'name', width:'30%' },
-        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false, width:'15%' },
-        { name: 'address.city', width:'25%' },
-        { name: 'phone', width:'30%' },
-        { name: 'company', width:'25%' },
-        { name: 'email', width:'30%' },
-        { name: 'balance', width:'20%' },
-        { name: 'guid', width:'40%' }
+        { name: 'id', width:'150' },
+        { name: 'name', width:'200' },
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false, width:'100' },
+        { name: 'address.city', width:'200' },
+        { name: 'phone', width:'150' },
+        { name: 'company', width:'150' },
+        { name: 'email', width:'150' },
+        { name: 'balance', width:'100' },
+        { name: 'guid', width:'100' }
       ];
 
       $http.get('/data/500_complex.json')
@@ -72,7 +72,7 @@ remembering the state of a page and scrolling back to that position when a user 
       <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
-      <div ui-grid="gridOptions" ui-grid-cellNav class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-pinning class="grid"></div>
     </div>
   </file>
   <file name="main.css">
