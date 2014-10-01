@@ -35,7 +35,8 @@ If the promise is successfully resolved then the row is set back to clean.  If t
 row is set to a status of `isError`.
 
 Optionally, the calling application can request `flushDirtyRows`, which will trigger the save event for all
-currently dirty rows.
+currently dirty rows.  If the `rowEditWaitInterval` grid option is set to -1, then saves will never be triggered
+by timer, and only be triggered when manually called.
 
 Methods and properties are provided to operate with this regime:
 
@@ -44,6 +45,7 @@ Methods and properties are provided to operate with this regime:
 - `flushDirtyRows()`: flushes all currently dirty rows to the server, might be used 
   on a page navigation request or pressing of a save button
 - `saveRow( rowEntity )`: event called when a row is ready for saving
+- `rowEditWaitInterval`: grid option that controls how long a wait will be before a save is triggered (in ms)
 
 
 @example
