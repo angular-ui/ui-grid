@@ -1,14 +1,17 @@
 describe('Grid factory', function () {
-  var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column;
+  var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
+  var gridClassFactory;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_) {
+  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
     GridRow = _GridRow_;
     GridColumn = _GridColumn_;
+    uiGridConstants = _uiGridConstants_;
+    gridClassFactory = _gridClassFactory_;
 
     grid = new Grid({ id: 1 });
     rows = [
@@ -261,6 +264,27 @@ describe('Grid factory', function () {
 
     });
 
+    it('should replace constants in template', inject(function ($timeout) {
+
+      var colDefs = [
+        {name:'simpleProp', cellTemplate:'<div ng-model="MODEL_COL_FIELD"/>'}
+      ];
+      var grid =  gridClassFactory.createGrid({columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
+      grid.modifyRows([entity]);
+      grid.preCompileCellTemplates();
+
+      var row = grid.rows[0];
+      expect(grid.getColumn('simpleProp').compiledElementFn).toBeDefined();
+
+    }));
 
     it('should bind correctly to simple prop', function() {
 
@@ -361,7 +385,18 @@ describe('Grid factory', function () {
       expect(grid.hasRightContainer()).toBe(true);
 
 
-      grid.buildColumns();
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
+
+      expect(grid.columns.length).toBe(2);
+
+      //test calling build columns twice to assure we don't get duplicate headers
+      $timeout(function () {
+        grid.buildColumns();
+      });
+      $timeout.flush();
       expect(grid.columns.length).toBe(2);
 
     }));
@@ -380,6 +415,50 @@ describe('Grid factory', function () {
       catch (e) {
         expect(e.message).toContain('No column parameter provided', 'exception contains column name');
       }
+    });
+    
+    it( 'if sort is currently null, then should toggle to ASC', function() {
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+    });
+
+    it( 'if sort is currently ASC, then should toggle to DESC', function() {
+      column.sort = {direction: uiGridConstants.ASC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: null };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: false };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC', function() {
+      column.sort = {direction: uiGridConstants.DESC};
+      column.colDef = { suppressRemoveSort: true };
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
     });
   });
 });

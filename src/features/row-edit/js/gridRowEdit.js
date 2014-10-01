@@ -113,7 +113,7 @@
                  * 
                  */
                 getDirtyRows: function (grid) {
-                  return grid.rowEditDirtyRows;
+                  return grid.rowEditDirtyRows ? grid.rowEditDirtyRows : [];
                 },
                 /**
                  * @ngdoc method
@@ -128,7 +128,7 @@
                  * 
                  */
                 getErrorRows: function (grid) {
-                  return grid.rowEditErrorRows;
+                  return grid.rowEditErrorRows ? grid.rowEditErrorRows : [];
                 },
                 /**
                  * @ngdoc method
@@ -326,20 +326,6 @@
         
         
         /**
-         * @ngdoc property
-         * @propertyOf ui.grid.rowEdit.api:GridOptions
-         * @name rowEditWaitInterval
-         * @description How long the grid should wait for another change on this row
-         * before triggering a save (in milliseconds)
-         * 
-         * @example
-         * Setting the wait interval to 4 seconds
-         * <pre>
-         *   $scope.gridOptions = { rowEditWaitInterval: 4000 }
-         * </pre>
-         * 
-         */
-        /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
          * @name endEditCell
@@ -442,6 +428,22 @@
         
         
         /**
+         * @ngdoc property
+         * @propertyOf ui.grid.rowEdit.api:GridOptions
+         * @name rowEditWaitInterval
+         * @description How long the grid should wait for another change on this row
+         * before triggering a save (in milliseconds).  If set to -1, then saves are 
+         * never triggered by timer (implying that the user will call flushDirtyRows() 
+         * manually)
+         * 
+         * @example
+         * Setting the wait interval to 4 seconds
+         * <pre>
+         *   $scope.gridOptions = { rowEditWaitInterval: 4000 }
+         * </pre>
+         * 
+         */
+        /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
          * @name considerSetTimer
@@ -456,8 +458,10 @@
           service.cancelTimer( grid, gridRow );
           
           if ( gridRow.isDirty && !gridRow.isSaving ){
-            var waitTime = grid.options.rowEditWaitInterval ? grid.options.rowEditWaitInterval : 2000;
-            gridRow.rowEditSaveTimer = $interval( service.saveRow( grid, gridRow ), waitTime, 1);
+            if ( grid.options.rowEditWaitInterval !== -1 ){
+              var waitTime = grid.options.rowEditWaitInterval ? grid.options.rowEditWaitInterval : 2000;
+              gridRow.rowEditSaveTimer = $interval( service.saveRow( grid, gridRow ), waitTime, 1);
+            }
           }
         },
         
@@ -533,9 +537,9 @@
             var existingNgClass = rowRepeatDiv.attr("ng-class");
             var newNgClass = '';
             if ( existingNgClass ) {
-              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError}";
+              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError, 'ui-grid-row-dirty': row.isDirty}";
             } else {
-              newNgClass = "{'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError}";
+              newNgClass = "{'ui-grid-row-saving': row.isSaving, 'ui-grid-row-error': row.isError, 'ui-grid-row-dirty': row.isDirty}";
             }
             rowRepeatDiv.attr("ng-class", newNgClass);
 

@@ -2,11 +2,21 @@
 @name Tutorial: 210 Selection
 @description
 
-This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection' module and you must include the ui-grid-selection directive on your grid element.
+This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection' 
+module and you must include the ui-grid-selection directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
 
+By default the module will provide a row header with checkboxes that allow selection of individual rows.  If you set
+the `enableRowHeaderSelection` gridOption to false, then the row header is hidden and a click on the row will
+result in selection of that row.
+
+Setting the `multiSelect` gridOption to true will allow selecting multiple rows, setting to false will allow selection
+of only one row at a time.
+
 @example
+Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
@@ -55,6 +65,24 @@ Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged 
           });
         };
     }]);
+    
+    app.controller('SecondCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = { enableRowSelection: true, enableRowHeaderSelection: false };
+
+      $scope.gridOptions.columnDefs = [
+        { name: 'id' },
+        { name: 'name'},
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
+        { name: 'address.city' }
+      ];
+
+      $scope.gridOptions.multiSelect = false;
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
@@ -65,6 +93,11 @@ Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged 
       <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button> </span>
       <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button> </span>
       <br>
+      <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+      
+    </div>
+    <div ng-controller="SecondCtrl">
+      Single selection grid without rowHeader:
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
     </div>
   </file>

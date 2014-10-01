@@ -15,7 +15,7 @@ describe('ui.grid.edit GridCellDirective', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="COL_FIELD" ui-grid-editor /></div>');
+    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="MODEL_COL_FIELD" ui-grid-editor /></div>');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();

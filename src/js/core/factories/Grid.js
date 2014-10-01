@@ -160,6 +160,31 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name sortHandleNulls
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description A null handling method that can be used when building custom sort
+   * functions
+   * @example
+   * <pre>
+   *   mySortFn = function(a, b) {
+   *   var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+   *   if ( nulls !== null ){
+   *     return nulls;
+   *   } else {
+   *     // your code for sorting here
+   *   };
+   * </pre>
+   * @param {object} a sort value a
+   * @param {object} b sort value b
+   * @returns {number} null if there were no nulls/undefineds, otherwise returns
+   * a sort value that should be passed back from the sort function
+   * 
+   */
+  self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
+
+
+  /**
+   * @ngdoc function
    * @name sortChanged
    * @methodOf  ui.grid.core.api:PublicApi
    * @description The sort criteria on one or more columns has
@@ -339,16 +364,15 @@ angular.module('ui.grid')
     var offset = self.rowHeaderColumns.length;
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
-    if (self.columns.length > self.options.columnDefs.length) {
-      self.columns.forEach(function (column, index) {
-        if (!self.getColDef(column.name)) {
-          self.columns.splice(index, 1);
-        }
-      });
-    }
+    self.columns.forEach(function (column, index) {
+      if (!self.getColDef(column.name)) {
+        self.columns.splice(index, 1);
+      }
+    });
+
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
-    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
+    self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
       offset++;
       self.columns.unshift(rowHeaderColumn);
       
@@ -386,12 +410,26 @@ angular.module('ui.grid')
  * @description precompiles all cell templates
  */
   Grid.prototype.preCompileCellTemplates = function() {
-        this.columns.forEach(function (col) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+    var self = this;
+    this.columns.forEach(function (col) {
+      var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
+      html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
-          var compiledElementFn = $compile(html);
-          col.compiledElementFn = compiledElementFn;
-        });
+
+      var compiledElementFn = $compile(html);
+      col.compiledElementFn = compiledElementFn;
+    });
+  };
+
+  /**
+   * @ngdoc function
+   * @name getGridQualifiedColField
+   * @methodOf ui.grid.class:Grid
+   * @description precompiles all cell templates
+   * @param {GridColumn} col col object
+   */
+  Grid.prototype.getQualifiedColField = function (col) {
+    return 'row.entity.' + gridUtil.preEval(col.field);
   };
 
   /**
@@ -1335,7 +1373,11 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        column.sort.direction = null;
+        if ( column.colDef && column.colDef.suppressRemoveSort ){
+          column.sort.direction = uiGridConstants.ASC;
+        } else {
+          column.sort.direction = null;
+        }
       }
       else {
         column.sort.direction = uiGridConstants.ASC;

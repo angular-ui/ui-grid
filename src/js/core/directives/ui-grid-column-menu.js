@@ -50,6 +50,24 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         }
       };
 
+
+      /**
+       * @ngdoc boolean
+       * @name suppressRemoveSort
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description (optional) False by default. When enabled, this setting hides the removeSort option
+       * in the menu.
+       */
+      $scope.suppressRemoveSort = function() {
+        if ($scope.col && $scope.col.colDef && $scope.col.colDef.suppressRemoveSort) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      };
+
+
       /**
        * @ngdoc boolean
        * @name enableFiltering
@@ -111,7 +129,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             return $scope.sortable();
           },
           active: function() {
-            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.ASC);
+            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.ASC);
           }
         },
         {
@@ -125,7 +144,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             return $scope.sortable();
           },
           active: function() {
-            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.DESC);
+            return (typeof($scope.col) !== 'undefined' && typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined' && $scope.col.sort.direction === uiGridConstants.DESC);
           }
         },
         {
@@ -136,7 +156,9 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             $scope.unsortColumn();
           },
           shown: function() {
-            return ($scope.sortable() && typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null);
+            return ($scope.sortable() && typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && 
+                    typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null && 
+                    !$scope.suppressRemoveSort());
           }
         },
         {
@@ -223,7 +245,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             // It's possible that the render container of the column we're attaching to is offset from the grid (i.e. pinned containers), we
             //   need to get the different in the offsetLeft between the render container and the grid
             var renderContainerElm = gridUtil.closestElm($columnElement, '.ui-grid-render-container');
-            var renderContainerOffset = renderContainerElm.offsetLeft - $scope.grid.element[0].offsetLeft;
+            var renderContainerOffset = renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left;
 
             var containerScrolLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
@@ -231,7 +253,7 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
 
             // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
             // Get the column menu right padding
-            var paddingRight = parseInt(gridUtil.getStyles(angular.element($scope.menu)[0])['padding-right'], 10);
+            var paddingRight = parseInt(gridUtil.getStyles(angular.element($scope.menu)[0])['paddingRight'], 10);
 
             // $log.debug('position', left + ' + ' + width + ' - ' + myWidth + ' + ' + paddingRight);
 

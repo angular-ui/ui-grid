@@ -481,7 +481,7 @@ angular.module('ui.grid')
           isPercent = false;
 
       if (!angular.isNumber(column.width)) {
-        isPercent = isNaN(column.width) ? gridUtil.endsWith(column.width, "%") : false;
+        isPercent = isNaN(column.width) && gridUtil.endsWith(column.width, "%");
       }
 
       if (angular.isString(column.width) && column.width.indexOf('*') !== -1) { //  we need to save it until the end to do the calulations on the remaining width.

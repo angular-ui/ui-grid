@@ -235,5 +235,27 @@ describe('rowSorter', function() {
       });
     });
   });
+  
+  describe( 'test each sort routine and null/undefined handling', function () {
+    it( 'each function sorts as expected', function() {
+      var sortValues = {
+        basicSort: [ undefined, null, 'a', 'b' ],
+        sortNumber: [ undefined, null, 1, 2 ],
+        sortNumberStr: [ undefined, null, '3.a5', '5.b7' ],
+        sortAlpha: [ undefined, null, 'a', 'b' ],
+        sortDate: [ undefined, null, new Date('2009-12-12'), new Date('2010-11-11') ],
+        sortBool: [ undefined, null, false, true ]
+      };
+      
+      angular.forEach( sortValues, function( values, sortFnName ) {
+        expect( rowSorter[sortFnName] (values[0], values[1])).toEqual(0, sortFnName + ': expected undefined to equal null');
+        expect( rowSorter[sortFnName] (values[0], values[2])).toBeGreaterThan(0, sortFnName + ': expected undefined to be greater than value');
+        expect( rowSorter[sortFnName] (values[3], values[1])).toBeLessThan(0, sortFnName + ': expected value to be less than null');
+        expect( rowSorter[sortFnName] (values[2], values[2])).toEqual(0, sortFnName + ': expected value to equal value');
+        expect( rowSorter[sortFnName] (values[2], values[3])).toBeLessThan(0, sortFnName + ': expected value to be less than value');
+        expect( rowSorter[sortFnName] (values[3], values[2])).toBeGreaterThan(0, sortFnName + ': expected value to be greater than value');
+      });
+    });
+  });
 
 });
