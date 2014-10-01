@@ -160,6 +160,31 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name sortHandleNulls
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description A null handling method that can be used when building custom sort
+   * functions
+   * @example
+   * <pre>
+   *   mySortFn = function(a, b) {
+   *   var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+   *   if ( nulls !== null ){
+   *     return nulls;
+   *   } else {
+   *     // your code for sorting here
+   *   };
+   * </pre>
+   * @param {object} a sort value a
+   * @param {object} b sort value b
+   * @returns {number} null if there were no nulls/undefineds, otherwise returns
+   * a sort value that should be passed back from the sort function
+   * 
+   */
+  self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
+
+
+  /**
+   * @ngdoc function
    * @name sortChanged
    * @methodOf  ui.grid.core.api:PublicApi
    * @description The sort criteria on one or more columns has
