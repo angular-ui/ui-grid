@@ -236,7 +236,7 @@ describe('rowSorter', function() {
     });
   });
   
-  ddescribe( 'test each sort routine and null/undefined handling', function () {
+  describe( 'test each sort routine and null/undefined handling', function () {
     it( 'each function sorts as expected', function() {
       var sortValues = {
         basicSort: [ undefined, null, 'a', 'b' ],
