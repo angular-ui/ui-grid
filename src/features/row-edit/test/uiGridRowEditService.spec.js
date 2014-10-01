@@ -158,7 +158,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       $interval.flush(200);
       expect( called ).toEqual(true);
     });
-    
+
     it( 'row already dirty so even though value not changed, interval triggered at 2000ms', function() {
       var called = false;
       spyOn( uiGridRowEditService, 'saveRow' ).andCallFake( function() {
@@ -183,6 +183,29 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( called ).toEqual(true);
     });    
 
+    it( 'timer is not present beforehand, timer interval set to -1 so not created', function() {
+      var called = false;
+      grid.options.rowEditWaitInterval = -1;
+      spyOn( uiGridRowEditService, 'saveRow' ).andCallFake( function() {
+        return function() { called = true;};
+      });
+      
+      expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
+      
+      grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '2' );
+      expect( uiGridRowEditService.saveRow ).not.toHaveBeenCalled();
+      expect( grid.rows[0].isDirty ).toEqual( true );
+      expect( grid.rowEditDirtyRows.length ).toEqual( 1 );
+      
+      expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
+      
+      $interval.flush(1900);
+      expect( called ).toEqual(false);
+
+      $interval.flush(200);
+      expect( called ).toEqual(false);
+    });
+    
     it( 'edit timer is in place beforehand and is cancelled, a new one is created and triggered at non-standard 4000ms', function() {
       var called = false;
       spyOn( uiGridRowEditService, 'saveRow' ).andCallFake( function() {
