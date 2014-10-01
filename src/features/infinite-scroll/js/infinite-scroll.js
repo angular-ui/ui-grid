@@ -4,7 +4,7 @@
    *  @ngdoc overview
    *  @name ui.grid.infiniteScroll
    *
-   *  @description 
+   *  @description
    *
    *   #ui.grid.infiniteScroll
    * This module provides infinite scroll functionality to ui-grid
@@ -18,7 +18,7 @@
    *  @description Service for infinite scroll features
    */
   module.service('uiGridInfiniteScrollService', ['gridUtil', '$log', '$compile', '$timeout', function (gridUtil, $log, $compile, $timeout) {
-    
+
     var service = {
 
       /**
@@ -29,6 +29,8 @@
        */
 
       initializeGrid: function(grid) {
+        service.defaultGridOptions(grid.options);
+
         /**
          *  @ngdoc object
          *  @name ui.grid.infiniteScroll.api:PublicAPI
@@ -72,6 +74,26 @@
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
+      defaultGridOptions: function (gridOptions) {
+        //default option to true unless it was explicitly set to false
+        /**
+         *  @ngdoc object
+         *  @name ui.grid.infiniteScroll.api:GridOptions
+         *
+         *  @description GridOptions for infinite scroll feature, these are available to be
+         *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
+         */
+
+        /**
+         *  @ngdoc object
+         *  @name enableInfiniteScroll
+         *  @propertyOf  ui.grid.infiniteScroll.api:GridOptions
+         *  @description Enable infinite scrolling for this grid
+         *  <br/>Defaults to true
+         */
+        gridOptions.enableInfiniteScroll = gridOptions.enableInfiniteScroll !== false;
+      },
+
 
       /**
        * @ngdoc function
@@ -81,22 +103,22 @@
        */
 
       loadData: function (grid) {
-          grid.api.infiniteScroll.raise.needLoadMoreData();
-          grid.options.loadTimout = true;
+        grid.api.infiniteScroll.raise.needLoadMoreData();
+        grid.options.loadTimout = true;
       },
 
       /**
        * @ngdoc function
        * @name checkScroll
        * @methodOf ui.grid.infiniteScroll.service:uiGridInfiniteScrollService
-       * @description This function checks scroll position inside grid and 
+       * @description This function checks scroll position inside grid and
        * calls 'loadData' function when scroll reaches 'infiniteScrollPercentage'
        */
 
       checkScroll: function(grid, scrollTop) {
 
         /* Take infiniteScrollPercentage value or use 20% as default */
-        var infiniteScrollPercentage = grid.options.infiniteScrollPercentage ? grid.options.infiniteScrollPercentage : 20; 
+        var infiniteScrollPercentage = grid.options.infiniteScrollPercentage ? grid.options.infiniteScrollPercentage : 20;
 
         if (!grid.options.loadTimout && scrollTop <= infiniteScrollPercentage) {
           this.loadData(grid);
@@ -105,12 +127,12 @@
         return false;
       }
       /**
-      * @ngdoc property
-      * @name infiniteScrollPercentage
-      * @propertyOf ui.grid.class:GridOptions
-      * @description This setting controls at what percentage of the scroll more data
-      * is requested by the infinite scroll
-      */
+       * @ngdoc property
+       * @name infiniteScrollPercentage
+       * @propertyOf ui.grid.class:GridOptions
+       * @description This setting controls at what percentage of the scroll more data
+       * is requested by the infinite scroll
+       */
     };
     return service;
   }]);
@@ -146,7 +168,7 @@
    </file>
    </example>
    */
-  
+
   module.directive('uiGridInfiniteScroll', ['$log', 'uiGridInfiniteScrollService',
     function ($log, uiGridInfiniteScrollService) {
       return {
@@ -154,7 +176,7 @@
         scope: false,
         require: '^uiGrid',
         compile: function($scope, $elm, $attr){
-          return { 
+          return {
             pre: function($scope, $elm, $attr, uiGridCtrl) {
               uiGridInfiniteScrollService.initializeGrid(uiGridCtrl.grid);
             },
@@ -166,17 +188,20 @@
     }]);
 
   module.directive('uiGridViewport',
-    ['$compile', '$log', 'uiGridInfiniteScrollService', 'uiGridConstants', 
+    ['$compile', '$log', 'uiGridInfiniteScrollService', 'uiGridConstants',
       function ($compile, $log, uiGridInfiniteScrollService, uiGridConstants) {
         return {
           priority: -200,
           scope: false,
           link: function ($scope, $elm, $attr){
-            $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
-
-              var percentage = 100 - (args.y.percentage * 100);
-              uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
-            });
+            if ($scope.grid.options.enableInfiniteScroll) {
+              $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+                if (args.y) {
+                  var percentage = 100 - (args.y.percentage * 100);
+                  uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
+                }
+              });
+            }
           }
         };
       }]);
