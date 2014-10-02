@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridColumn', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
+.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', function(gridUtil, uiGridConstants, i18nService) {
 
   /**
    * @ngdoc function
@@ -574,32 +574,57 @@ angular.module('ui.grid')
         return self.aggregationType(visibleRows, self);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.count) {
-        //TODO: change to i18n
-        return 'total rows: ' + self.grid.getVisibleRowCount();
+        return self.getAggregationText('aggregation.count', self.grid.getVisibleRowCount());
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.sum) {
         angular.forEach(cellValues, function (value) {
           result += value;
         });
-        //TODO: change to i18n
-        return 'total: ' + result;
+        return self.getAggregationText('aggregation.sum', result);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.avg) {
         angular.forEach(cellValues, function (value) {
           result += value;
         });
         result = result / cellValues.length;
-        //TODO: change to i18n
-        return 'avg: ' + result;
+        return self.getAggregationText('aggregation.avg', result);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.min) {
-        return 'min: ' + Math.min.apply(null, cellValues);
+        return self.getAggregationText('aggregation.min', Math.min.apply(null, cellValues));
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.max) {
-        return 'max: ' + Math.max.apply(null, cellValues);
+        return self.getAggregationText('aggregation.max', Math.max.apply(null, cellValues));
       }
       else {
         return null;
+      }
+    };
+    
+   /** 
+    * @ngdoc property
+    * @name aggregationHideLabel
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description defaults to false, if set to true hides the label text
+    * in the aggregation footer, so only the value is displayed.
+    *
+    */
+    /**
+     * @ngdoc function
+     * @name getAggregationText
+     * @methodOf ui.grid.class:GridColumn
+     * @description converts the aggregation value into a text string, including 
+     * i18n and deciding whether or not to display based on colDef.aggregationHideLabel
+     * 
+     * @param {string} label the i18n lookup value to use for the column label
+     * @param {number} value the calculated aggregate value for this column
+     * 
+     */
+    GridColumn.prototype.getAggregationText = function ( label, value ) {
+      var self = this;
+      if ( self.colDef.aggregationHideLabel ){
+        return value;
+      } else {
+        return i18nService.getSafeText(label) + value;
       }
     };
 
