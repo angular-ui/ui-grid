@@ -11,13 +11,14 @@ All features are enabled to get an idea of performance
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection']);
 
     app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
 
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
       $scope.gridOptions.enableColumnResizing = true;
+      $scope.gridOptions.enableFiltering = true;
       
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;
@@ -87,7 +88,7 @@ All features are enabled to get an idea of performance
       <br>
       <strong>{{ myData.length }} rows</strong>
       <br>
-      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection class="grid"></div>
     </div>
   </file>
   <file name="main.css">
