@@ -24,6 +24,13 @@
           },
           column: {
             hide: 'Skjul kolonne'
+          },
+          aggregation: {
+            count: 'samlede rækker: ',
+            sum: 'smalede: ',
+            avg: 'gns: ',
+            min: 'min: ',
+            max: 'max: '
           }
         });
       return $delegate;

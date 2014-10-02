@@ -27,6 +27,13 @@
         },
         column: {
           hide: 'Spalte ausblenden'
+        },
+        aggregation: {
+          count: 'gesamt reihen: ',
+          sum: 'gesamt: ',
+          avg: 'durchschnitt: ',
+          min: 'min: ',
+          max: 'max: '
         }
       });
       return $delegate;
