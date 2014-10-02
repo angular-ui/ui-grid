@@ -39,6 +39,11 @@
           avg: 'avg: ',
           min: 'min: ',
           max: 'max: '
+        },
+        pinning: {
+         pinLeft: 'Pin Left',
+          pinRight: 'Pin Right',
+          unpin: 'Unpin'
         }
       });
       return $delegate;
