@@ -32,6 +32,13 @@
         },
         column: {
           hide: 'Göm kolumn'
+        },
+        aggregation: {
+          count: 'total rows: ',
+          sum: 'total: ',
+          avg: 'avg: ',
+          min: 'min: ',
+          max: 'max: '
         }
       });
       return $delegate;
