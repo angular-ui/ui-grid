@@ -39,7 +39,12 @@
           avg: 'avg: ',
           min: 'min: ',
           max: 'max: '
-        }
+        },
+        pinning: {
+          pinLeft: 'Fäst vänster',
+          pinRight: 'Fäst höger',
+          unpin: 'Lösgör'
+          }
       });
       return $delegate;
     }]);
