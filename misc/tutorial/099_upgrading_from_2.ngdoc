@@ -119,7 +119,7 @@ You also need to declare the external scope within your controller:
 
 And on the grid directive:
 <pre>
-  <div class="gridStyle" ui-grid="gridOptions" external-scopes="$myScope" ></div>
+  <div class="gridStyle" ui-grid="gridOptions" external-scopes="myScope" ></div>
 </pre>
 
 
