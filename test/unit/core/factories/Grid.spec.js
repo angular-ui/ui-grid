@@ -1,10 +1,11 @@
 describe('Grid factory', function () {
-  var $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
+  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
   var gridClassFactory;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
+  beforeEach(inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
+    $timeout = _$timeout_;
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
@@ -274,6 +275,51 @@ describe('Grid factory', function () {
       expect(grid1.columns[3].name).toEqual('3.5');
       expect(grid1.columns[4].name).toEqual('4');
       expect(grid1.columns[5].name).toEqual('5');      
+    });
+
+    it('should respect the row header', function() {
+      var columnDefs =  [
+        {name:'1'},
+        {name:'2'},
+        {name:'3'},
+        {name:'4'},
+        {name:'5'}
+      ];
+
+      var grid1 =  gridClassFactory.createGrid({columnDefs:columnDefs});
+
+
+      $timeout(function(){
+        grid1.addRowHeaderColumn({name:'rowHeader'});
+      });
+      $timeout.flush();
+
+      $timeout(function(){
+        grid1.buildColumns();
+      });
+      $timeout.flush();
+
+
+      expect(grid1.columns[0].name).toEqual('rowHeader');
+      expect(grid1.columns[1].name).toEqual('1');
+      expect(grid1.columns[2].name).toEqual('2');
+      expect(grid1.columns[3].name).toEqual('3');
+      expect(grid1.columns[4].name).toEqual('4');
+      expect(grid1.columns[5].name).toEqual('5');
+
+      grid1.options.columnDefs.splice(3, 0, {name: '3.5'});
+
+      $timeout(function(){
+        grid1.buildColumns();
+      });
+      $timeout.flush();
+
+      expect(grid1.columns[1].name).toEqual('1');
+      expect(grid1.columns[2].name).toEqual('2');
+      expect(grid1.columns[3].name).toEqual('3');
+      expect(grid1.columns[4].name).toEqual('3.5');
+      expect(grid1.columns[5].name).toEqual('4');
+      expect(grid1.columns[6].name).toEqual('5');
     });
 
     it('add columns at the correct position - start', function() {

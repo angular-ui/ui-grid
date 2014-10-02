@@ -680,7 +680,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
     s['element' + capsName] = function (elem, extra) {
       var e = elem;
-      if (typeof(e.length) !== 'undefined' && e.length) {
+      if (e && typeof(e.length) !== 'undefined' && e.length) {
         e = elem[0];
       }
 
