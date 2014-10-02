@@ -24,6 +24,21 @@
           
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             $scope.grid = uiGridCtrl.grid;
+            
+            /**
+             * @ngdoc event
+             * @name filterChanged
+             * @eventOf  ui.grid.core.api:PublicApi
+             * @description  is raised after the filter is changed.  The nature
+             * of the watch expression doesn't allow notification of what changed,
+             * so the receiver of this event will need to re-extract the filter 
+             * conditions from the columns.
+             * 
+             */
+            if (!$scope.grid.api.core.raise.filterChanged){
+              $scope.grid.api.registerEvent( 'core', 'filterChanged' );
+            }
+                        
     
             $elm.addClass($scope.col.getColClass(false));
     // shane - No need for watch now that we trackby col name
@@ -71,7 +86,7 @@
               // Sort this column then rebuild the grid's rows
               uiGridCtrl.grid.sortColumn($scope.col, add)
                 .then(function () {
-                  uiGridCtrl.columnMenuScope.hideMenu();
+                  if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
                 });
             }
@@ -79,7 +94,7 @@
             // Long-click (for mobile)
             var cancelMousedownTimeout;
             var mousedownStartTime = 0;
-            $contentsElm.on('mousedown', function(event) {
+            $contentsElm.on('mousedown touchstart', function(event) {
               if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
                 event = event.originalEvent;
               }
@@ -94,14 +109,28 @@
               cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
     
               cancelMousedownTimeout.then(function () {
-                uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
+                if ( $scope.col.colDef && !$scope.col.colDef.disableColumnMenu ){
+                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
+                }
               });
             });
     
-            $contentsElm.on('mouseup', function () {
+            $contentsElm.on('mouseup touchend', function () {
               $timeout.cancel(cancelMousedownTimeout);
             });
+
+            $scope.$on('$destroy', function () {
+              $contentsElm.off('mousedown touchstart');
+            });
     
+            /** 
+            * @ngdoc property
+            * @name disableColumnMenu
+            * @propertyOf ui.grid.class:GridOptions.columnDef
+            * @description if column menus are enabled, disables column menus for this specific
+            * column
+            *
+            */
             $scope.toggleMenu = function($event) {
               $event.stopPropagation();
     
@@ -151,15 +180,24 @@
             }
     
             if ($scope.filterable) {
-              $scope.$on('$destroy', $scope.$watch('col.filter.term', function(n, o) {
-                uiGridCtrl.grid.refresh()
-                  .then(function () {
-                    if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
-                       uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
-                    }
-                    // uiGridCtrl.fireEvent('force-vertical-scroll');
-                  });
-              }));
+              var filterDeregisters = [];
+              angular.forEach($scope.col.filters, function(filter, i) {
+                filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                  uiGridCtrl.grid.api.core.raise.filterChanged();
+                  uiGridCtrl.grid.refresh()
+                    .then(function () {
+                      if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
+                         uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
+                      }
+                      // uiGridCtrl.fireEvent('force-vertical-scroll');
+                    });
+                }));  
+              });
+              $scope.$on('$destroy', function() {
+                angular.forEach(filterDeregisters, function(filterDeregister) {
+                  filterDeregister();
+                });
+              });
             }
           }
         };

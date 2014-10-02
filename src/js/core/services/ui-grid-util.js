@@ -3,7 +3,12 @@
 var module = angular.module('ui.grid');
 
 function getStyles (elem) {
-  return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
+  var e = elem;
+  if (typeof(e.length) !== 'undefined' && e.length) {
+    e = elem[0];
+  }
+
+  return e.ownerDocument.defaultView.getComputedStyle(e, null);
 }
 
 var rnumnonpx = new RegExp( "^(" + (/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/).source + ")(?!px)[a-z%]+$", "i" ),
@@ -82,7 +87,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 function getWidthOrHeight( elem, name, extra ) {
   // Start with offset property, which is equivalent to the border-box value
   var valueIsBorderBox = true,
-          val = name === 'width' ? elem.offsetWidth : elem.offsetHeight,
+          val,
           styles = getStyles(elem),
           isBorderBox = styles['boxSizing'] === 'border-box';
 
@@ -137,6 +142,34 @@ var uidPrefix = 'uiGrid-';
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', 'uiGridConstants',
   function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, uiGridConstants) {
   var s = {
+
+    getStyles: getStyles,
+
+    /**
+     * @ngdoc method
+     * @name createBoundedWrapper
+     * @methodOf ui.grid.service:GridUtil
+     *
+     * @param {object} Object to bind 'this' to
+     * @param {method} Method to bind
+     * @returns {Function} The wrapper that performs the binding
+     *
+     * @description
+     * Binds given method to given object.
+     *
+     * By means of a wrapper, ensures that ``method`` is always bound to
+     * ``object`` regardless of its calling environment.
+     * Iow, inside ``method``, ``this`` always points to ``object``.
+     *
+     * See http://alistapart.com/article/getoutbindingsituations
+     *
+     */
+    createBoundedWrapper: function(object, method) {
+        return function() {
+            return method.apply(object, arguments);
+        };
+    },
+
 
     /**
      * @ngdoc method
@@ -733,7 +766,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
   s.detectBrowser = function detectBrowser() {
     var userAgent = $window.navigator.userAgent;
 
-    var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer/i};
+    var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer|trident\//i};
 
     for (var key in browsers) {
       if (browsers[key].test(userAgent)) {
@@ -764,8 +797,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     var browser = s.detectBrowser();
 
     var scrollLeft = element.scrollLeft;
-
-    var dir = angular.element(element).css('direction');
+    
+    var dir = s.getStyles(element)['direction'];
 
     // IE stays normal in RTL
     if (browser === 'ie') {
@@ -814,7 +847,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     var browser = s.detectBrowser();
 
-    var dir = angular.element(element).css('direction');
+    var dir = s.getStyles(element)['direction'];
 
     // IE stays normal in RTL
     if (browser === 'ie') {

@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridColumn', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
+.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', function(gridUtil, uiGridConstants, i18nService) {
 
   /**
    * @ngdoc function
@@ -86,9 +86,9 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name filter
     * @propertyOf ui.grid.class:GridColumn
-    * @description Filter to insert against this column.  
+    * @description Filter on this column.  
     * @example
-    * <pre>{ term: 'text' }</pre>
+    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...' }</pre>
     *
     */
 
@@ -96,9 +96,17 @@ angular.module('ui.grid')
     * @ngdoc property
     * @name filter
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description Filter to insert against this column.  
+    * @description Specify a single filter field on this column.
     * @example
-    * <pre>{ term: 'text' }</pre>
+    * <pre>$scope.gridOptions.columnDefs = [ 
+    *   {
+    *     field: 'field1',
+    *     filter: {
+    *       condition: uiGridConstants.filter.STARTS_WITH,
+    *       placeholder: 'starts with...'
+    *     }
+    *   }
+    * ]; </pre>
     *
     */
     
@@ -211,8 +219,46 @@ angular.module('ui.grid')
     * @ngdoc array
     * @name filters
     * @propertyOf ui.grid.class:GridOptions.columnDef
-    * @description unclear what this does or how it's used, but it does something.
+    * @description Specify multiple filter fields.
+    * @example
+    * <pre>$scope.gridOptions.columnDefs = [ 
+    *   {
+    *     field: 'field1', filters: [
+    *       {
+    *         condition: uiGridConstants.filter.STARTS_WITH,
+    *         placeholder: 'starts with...'
+    *       },
+    *       {
+    *         condition: uiGridConstants.filter.ENDS_WITH,
+    *         placeholder: 'ends with...'
+    *       }
+    *     ]
+    *   }
+    * ]; </pre>
     *
+    * 
+    */ 
+   
+   /** 
+    * @ngdoc array
+    * @name filters
+    * @propertyOf ui.grid.class:GridColumn
+    * @description Filters for this column. Includes 'term' property bound to filter input elements.
+    * @example
+    * <pre>[
+    *   {
+    *     term: 'foo', // ngModel for <input>
+    *     condition: uiGridConstants.filter.STARTS_WITH,
+    *     placeholder: 'starts with...'
+    *   },
+    *   {
+    *     term: 'baz',
+    *     condition: uiGridConstants.filter.ENDS_WITH,
+    *     placeholder: 'ends with...'
+    *   }
+    * ] </pre>
+    *
+    * 
     */   
 
    /** 
@@ -220,7 +266,14 @@ angular.module('ui.grid')
     * @name menuItems
     * @propertyOf ui.grid.class:GridOptions.columnDef
     * @description used to add menu items to a column.  Refer to the tutorial on this 
-    * functionality.
+    * functionality.  A number of settings are supported:
+    * 
+    * - title: controls the title that is displayed in the menu
+    * - icon: the icon shown alongside that title
+    * - action: the method to call when the menu is clicked
+    * - shown: a function to evaluate to determine whether or not to show the item
+    * - active: a function to evaluate to determine whether or not to enable the item
+    * - context: context to pass to the action function??
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ 
     *   { field: 'field1', menuItems: [
@@ -230,6 +283,8 @@ angular.module('ui.grid')
     *       action: function($event) {
     *         this.context.blargh(); // $scope.blargh() would work too, this is just an example
     *       },
+    *       shown: function() { return true; },
+    *       active: function() { return true; },
     *       context: $scope
     *     },
     *     {
@@ -297,6 +352,7 @@ angular.module('ui.grid')
 
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
+    self.name = colDef.name;
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
     self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
@@ -361,19 +417,74 @@ angular.module('ui.grid')
     // Use the column definition sort if we were passed it
     self.setPropertyOrDefault(colDef, 'sort');
 
+    // Set up default filters array for when one is not provided.
+    //   In other words, this (in column def):
+    //   
+    //       filter: { term: 'something', flags: {}, condition: [CONDITION] }
+    //       
+    //   is just shorthand for this:
+    //   
+    //       filters: [{ term: 'something', flags: {}, condition: [CONDITION] }]
+    //       
+    var defaultFilters = [];
+    if (colDef.filter) {
+      defaultFilters.push(colDef.filter);
+    }
+    else if (self.enableFiltering && self.grid.options.enableFiltering) {
+      // Add an empty filter definition object, which will
+      // translate to a guessed condition and no pre-populated
+      // value for the filter <input>.
+      defaultFilters.push({});
+    }
+
+    /**
+     * @ngdoc object
+     * @name ui.grid.class:GridOptions.columnDef.filter
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description An object defining filtering for a column.
+     */    
+
+    /**
+     * @ngdoc property
+     * @name condition
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description Defines how rows are chosen as matching the filter term. This can be set to
+     * one of the constants in uiGridConstants.filter, or you can supply a custom filter function
+     * that gets passed the following arguments: [searchTerm, cellValue, row, column].
+     */
+    
+    /**
+     * @ngdoc property
+     * @name term
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description If set, the filter field will be pre-populated
+     * with this value.
+     */
+
+    /**
+     * @ngdoc property
+     * @name placeholder
+     * @propertyOf ui.grid.class:GridOptions.columnDef.filter
+     * @description String that will be set to the <input>.placeholder attribute.
+     */
+
     /*
 
       self.filters = [
         {
           term: 'search term'
-          condition: uiGridContants.filter.CONTAINS
+          condition: uiGridConstants.filter.CONTAINS,
+          placeholder: 'my placeholder',
+          flags: {
+            caseSensitive: true
+          }
         }
       ]
 
     */
 
     self.setPropertyOrDefault(colDef, 'filter');
-    self.setPropertyOrDefault(colDef, 'filters', []);
+    self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
   };
 
 
@@ -463,32 +574,57 @@ angular.module('ui.grid')
         return self.aggregationType(visibleRows, self);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.count) {
-        //TODO: change to i18n
-        return 'total rows: ' + self.grid.getVisibleRowCount();
+        return self.getAggregationText('aggregation.count', self.grid.getVisibleRowCount());
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.sum) {
         angular.forEach(cellValues, function (value) {
           result += value;
         });
-        //TODO: change to i18n
-        return 'total: ' + result;
+        return self.getAggregationText('aggregation.sum', result);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.avg) {
         angular.forEach(cellValues, function (value) {
           result += value;
         });
         result = result / cellValues.length;
-        //TODO: change to i18n
-        return 'avg: ' + result;
+        return self.getAggregationText('aggregation.avg', result);
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.min) {
-        return 'min: ' + Math.min.apply(null, cellValues);
+        return self.getAggregationText('aggregation.min', Math.min.apply(null, cellValues));
       }
       else if (self.aggregationType === uiGridConstants.aggregationTypes.max) {
-        return 'max: ' + Math.max.apply(null, cellValues);
+        return self.getAggregationText('aggregation.max', Math.max.apply(null, cellValues));
       }
       else {
         return null;
+      }
+    };
+    
+   /** 
+    * @ngdoc property
+    * @name aggregationHideLabel
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description defaults to false, if set to true hides the label text
+    * in the aggregation footer, so only the value is displayed.
+    *
+    */
+    /**
+     * @ngdoc function
+     * @name getAggregationText
+     * @methodOf ui.grid.class:GridColumn
+     * @description converts the aggregation value into a text string, including 
+     * i18n and deciding whether or not to display based on colDef.aggregationHideLabel
+     * 
+     * @param {string} label the i18n lookup value to use for the column label
+     * @param {number} value the calculated aggregate value for this column
+     * 
+     */
+    GridColumn.prototype.getAggregationText = function ( label, value ) {
+      var self = this;
+      if ( self.colDef.aggregationHideLabel ){
+        return value;
+      } else {
+        return i18nService.getSafeText(label) + value;
       }
     };
 

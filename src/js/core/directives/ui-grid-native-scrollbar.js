@@ -6,6 +6,12 @@
     var scrollBarWidth = gridUtil.getScrollbarWidth();
     scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
 
+    // If the browser is IE, add 1px to the scrollbar container, otherwise scroll events won't work right (in IE11 at least)
+    var browser = gridUtil.detectBrowser();
+    if (browser === 'ie') {
+      scrollBarWidth = scrollBarWidth + 1;
+    }
+
     return {
       scope: {
         type: '@'

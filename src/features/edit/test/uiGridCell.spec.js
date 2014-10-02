@@ -15,7 +15,7 @@ describe('ui.grid.edit GridCellDirective', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="COL_FIELD" ui-grid-editor /></div>');
+    $templateCache.put('ui-grid/cellEditor', '<div><input ng-model="MODEL_COL_FIELD" ui-grid-editor /></div>');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();
@@ -101,6 +101,16 @@ describe('ui.grid.edit GridCellDirective', function () {
       //stop edit
       var event = jQuery.Event("keydown");
       event.keyCode = uiGridConstants.keymap.ESC;
+      element.find('input').trigger(event);
+
+      //back to beginning
+      expect(element.html()).toBe(displayHtml);
+    });
+
+    it('should stop editing on tab', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.TAB;
       element.find('input').trigger(event);
 
       //back to beginning

@@ -4,14 +4,16 @@ describe('ui.grid.edit uiGridCellNavService', function () {
   var grid;
   var uiGridConstants;
   var uiGridCellNavConstants;
+  var $rootScope;
 
   beforeEach(module('ui.grid.cellNav'));
 
-  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_) {
+  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_, _$rootScope_) {
     uiGridCellNavService = _uiGridCellNavService_;
     gridClassFactory = _gridClassFactory_;
     uiGridConstants = _uiGridConstants_;
     uiGridCellNavConstants = _uiGridCellNavConstants_;
+    $rootScope = _$rootScope_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
 
@@ -153,142 +155,52 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
   });
 
-  describe('navigate left', function () {
+
+  describe('scrollTo', function () {
+    var evt;
+    var args;
+    var $scope;
+    
     beforeEach(function(){
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
-    });
-    it('should navigate to col left from unfocusable column', function () {
-      var col = grid.columns[1];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
-    });
-
-    it('should navigate up one row and far right column', function () {
-      var col = grid.columns[0];
-      var row = grid.rows[1];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+      grid.setVisibleColumns(grid.columns);
+      grid.setVisibleRows(grid.rows);
+      $scope = $rootScope.$new();
+      
+      evt = null;
+      args = null;
+      $scope.$on(uiGridConstants.events.GRID_SCROLL, function( receivedEvt, receivedArgs ){
+        evt = receivedEvt;
+        args = receivedArgs;
+      });
+      grid.columns[0].drawnWidth = 100;
+      grid.columns[1].drawnWidth = 200;
+      grid.columns[2].drawnWidth = 300;
     });
 
-    it('should stay on same row and go to far right', function () {
-      var col = grid.columns[0];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    it('should request scroll to row and column', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, grid.options.data[2], grid.columns[1].colDef);
+      
+      expect(args).toEqual( { y : { percentage : 2/3 }, x : { percentage :  300/600 } });
     });
 
-    it('should skip col that is not focusable', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.LEFT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+    it('should request scroll to row only', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, grid.options.data[2], null);
+      
+      expect(args).toEqual( { y : { percentage : 2/3 } });
+    });
+
+    it('should request scroll to column only', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, null, grid.columns[1].colDef);
+      
+      expect(args).toEqual( { x : { percentage :  300/600 } });
+    });
+
+    it('should request no scroll as no row or column', function () {
+      uiGridCellNavService.scrollTo( grid, $scope, null, null );
+      
+      expect(args).toEqual(null);
     });
   });
-
-  describe('navigate right', function () {
-    beforeEach(function(){
-      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
-      grid.buildColumns();
-    });
-    it('should navigate to col right from unfocusable column', function () {
-      var col = grid.columns[1];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-    it('should navigate down one row and far left column', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
-    });
-
-    it('should stay on same row and go to far left', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[2];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[2]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
-    });
-
-    it('should skip col that is not focusable', function () {
-      var col = grid.columns[0];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.RIGHT, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-  });
-
-  describe('navigate down', function () {
-    beforeEach(function(){
-      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
-      grid.buildColumns();
-    });
-    it('should navigate to col right from unfocusable column', function () {
-      var col = grid.columns[1];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-    it('should navigate down one row and same column', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-    it('should stay on same row and same column', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[2];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.DOWN, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[2]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-  });
-
-  describe('navigate up', function () {
-    beforeEach(function(){
-      grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
-      grid.buildColumns();
-    });
-    it('should navigate to col right from unfocusable column', function () {
-      var col = grid.columns[1];
-      var row = grid.rows[2];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-    it('should navigate up one row and same column', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[2];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-    it('should stay on same row and same column', function () {
-      var col = grid.columns[2];
-      var row = grid.rows[0];
-      var rowCol = uiGridCellNavService.getNextRowCol(uiGridCellNavConstants.direction.UP, grid, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
-    });
-
-  });
-
 });

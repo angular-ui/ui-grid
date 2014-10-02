@@ -1,9 +1,28 @@
 // var eyes = require('eyes');
 var path = require('path');
 var util = require('./lib/grunt/utils.js');
+var semver = require('semver');
+
+// Get the tag on this commit, if there is one. We'll use it in the gh-pages task
+var currentTag = semver.clean( util.getCurrentTag() );
 
 /*global module:false*/
 module.exports = function(grunt) {
+  require('jit-grunt')(grunt, {
+    'bump-only': 'grunt-bump',
+    'bump-commit': 'grunt-bump',
+    nugetpack: 'grunt-nuget',
+    nugetpush: 'grunt-nuget',
+    ngtemplates: 'grunt-angular-templates',
+    changelog: 'grunt-conventional-changelog',
+    shell: 'grunt-shell-spawn',
+    jscs: 'grunt-jscs-checker',
+    protractor: 'grunt-protractor-runner',
+    'stable-version': './lib/grunt/plugins.js',
+    'current-version': './lib/grunt/plugins.js',
+    'update-bower-json': './lib/grunt/plugins.js'
+  });
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -35,7 +54,7 @@ module.exports = function(grunt) {
       'protractor-start': {
         command: 'node ./node_modules/protractor/bin/webdriver-manager start',
         options: {
-          stdout: true,
+          stdout: false,
           async: true
         }
       },
@@ -320,19 +339,15 @@ module.exports = function(grunt) {
         tasks: ['ngtemplates']
       },
 
-      // src_test: {
-      //   files: '<%= jshint.src_test.src %>',
-      //   tasks: ['jshint:src_test', 'jasmine']
-      // },
+      
       rebuild: {
         files: util.testFiles.unit,
-        // NOTE(c0bra): turn back on after render containers works
-        // tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
-        tasks: ['jshint:src_test', 'jscs', 'concat', 'uglify', 'ngdocs'],
+        tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
       },
+
       protractor: {
         files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
-        tasks: ['protractor-watch:auto']
+        tasks: ['ngdocs', 'protractor-watch:auto']
       },
 
       less: {
@@ -371,11 +386,23 @@ module.exports = function(grunt) {
     },
 
     'gh-pages': {
-      'gh-pages': {
+      'ui-grid-site': {
         options: {
           base: '<%= dist %>',
+          tag: (currentTag) ? 'v' + currentTag : null,
           repo: 'https://github.com/angular-ui/ui-grid.info.git',
           message: 'gh-pages v<%= version %>',
+          add: true
+        },
+        src: ['**/*']
+      },
+      'bower': {
+        options: {
+          base: '<%= dist %>/release/' + currentTag,
+          tag: (currentTag) ? 'v' + currentTag : null,
+          repo: 'https://github.com/angular-ui/bower-ui-grid.git',
+          message: 'v' + currentTag,
+          branch: 'master',
           add: true
         },
         src: ['**/*']
@@ -425,10 +452,12 @@ module.exports = function(grunt) {
           }
         },
         scripts: [
-          '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js', // TODO(c0bra): REMOVE!
+           // no jquery automatically loaded for tutorial!!!
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.js',
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
+          'bower_components/pdfmake/build/pdfmake.js',
+          'bower_components/pdfmake/build/vfs_fonts.js'
         ],
         hiddenScripts: [
           '//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js',
@@ -455,7 +484,7 @@ module.exports = function(grunt) {
         navTemplate: 'misc/doc/templates/nav.html'
       },
       api: {
-        src: ['src/**/*.js', 'misc/api/**/*.ngdoc'],
+        src: ['src/**/*.js', 'misc/api/**/*.ngdoc', 'test/e2e/**/*.js'],
         title: 'API'
       },
       tutorial: {
@@ -487,13 +516,44 @@ module.exports = function(grunt) {
       }
     },
 
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        commitFiles: ['package.json', 'bower.json', 'CHANGELOG.md'],
+        push: false
+      }
+    },
+
+    nugetpack: {
+      dist: {
+        // src: 'lib/nuget/ui-grid.nuspec',
+        src: 'ui-grid.nuspec',
+        // dest: '.tmp/',
+        dest: '.',
+        options: {
+          // basePath: '.',
+          version: '<%= version %>',
+          verbose: true
+        }
+      }
+    },
+
+    nugetpush: {
+      dist: {
+        src: '.tmp/nuget/*.nupkg',
+        options: {
+            apiKey: process.env.NUGET_API_KEY
+        }
+      }
+    },
+
     'cut-release': {
       options: {
         cleanup: true,
         keepUnstable: false
       },
       dist: {
-        src: '<%= dist %>/release/*.{js,css}',
+        src: '<%= dist %>/release/*.{js,css,svg,woff,ttf,eot}',
         dest: '<%= dist %>/release/'
       }
     }
@@ -501,25 +561,25 @@ module.exports = function(grunt) {
   util.updateConfig();
 
   grunt.loadTasks('lib/grunt');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-angular-templates');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-protractor-runner');
-  grunt.loadNpmTasks('grunt-ngdocs');
-  grunt.loadNpmTasks('grunt-conventional-changelog');
-  grunt.loadNpmTasks('grunt-gh-pages');
-  grunt.loadNpmTasks('grunt-shell-spawn');
-  // grunt.loadNpmTasks('grunt-grunticon');
-  grunt.loadNpmTasks('grunt-fontello');
-  grunt.loadNpmTasks('grunt-jscs-checker');
+  // grunt.loadNpmTasks('grunt-contrib-concat');
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
+  // grunt.loadNpmTasks('grunt-contrib-watch');
+  // grunt.loadNpmTasks('grunt-contrib-jasmine');
+  // grunt.loadNpmTasks('grunt-contrib-clean');
+  // grunt.loadNpmTasks('grunt-contrib-jshint');
+  // grunt.loadNpmTasks('grunt-contrib-less');
+  // grunt.loadNpmTasks('grunt-contrib-copy');
+  // grunt.loadNpmTasks('grunt-angular-templates');
+  // grunt.loadNpmTasks('grunt-contrib-connect');
+  // grunt.loadNpmTasks('grunt-karma');
+  // grunt.loadNpmTasks('grunt-protractor-runner');
+  // grunt.loadNpmTasks('grunt-ngdocs');
+  // grunt.loadNpmTasks('grunt-conventional-changelog');
+  // grunt.loadNpmTasks('grunt-gh-pages');
+  // grunt.loadNpmTasks('grunt-shell-spawn');
+  // // grunt.loadNpmTasks('grunt-grunticon');
+  // grunt.loadNpmTasks('grunt-fontello');
+  // grunt.loadNpmTasks('grunt-jscs-checker');
 
   // grunt.renameTask('protractor', 'protractor-old');
   grunt.registerTask('protractor-watch', function () {
@@ -546,7 +606,6 @@ module.exports = function(grunt) {
   grunt.registerTask('after-test', ['build']);
 
   // Default task.
-  // grunt.registerTask('default', ['clean', 'jshint', 'ngtemplates', 'karma:single', 'concat', 'uglify', 'less', 'ngdocs']);
   grunt.registerTask('default', ['before-test', 'test', 'after-test']);
 
   // Build with no testing
@@ -562,16 +621,13 @@ module.exports = function(grunt) {
 
     var tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
     if (e2e === false) {
-      // NOTE(c0bra): turn back on after render containers works
-      // tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
-      tasks = ['before-test', 'after-test', 'connect', 'watch'];
+      tasks = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
     }
 
     grunt.task.run(tasks);
   });
 
   // Testing tasks
-  // grunt.registerTask('test:ci', ['clean', 'jshint', 'ngtemplates', 'karma:sauce']);
   grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
@@ -584,10 +640,16 @@ module.exports = function(grunt) {
       grunt.task.run('karma:travis');
     }
     else {
-      // grunt.task.run(this.args.length ? 'karma:single' : 'karma:continuous');
       grunt.task.run('karmangular');
     }
   });
   
-  grunt.registerTask('release', ['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages']);
+  grunt.registerTask('release', 'Release a new version out info the world', function () {
+    grunt.task.run(['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid-site']);
+
+    // If there's a tag on this commit, release a new version to bower
+    if (currentTag) {
+      grunt.task.run('update-bower-json', 'gh-pages:bower');
+    }
+  });
 };

@@ -214,6 +214,53 @@ describe('GridEvent factory', function () {
     expect(gridApi.someOtherFeature.someOtherEvent).toBeDefined();
   }));
 
+  it('should default callbacks this to grid', inject(function($timeout, $rootScope) {
+    var grid = new Grid({ id: 1 });
+    var gridApi = new GridApi(grid);
+
+    function callBackFn(scope, newRowCol, oldRowCol){
+      expect(this).toBeDefined(grid);
+    }
+
+    var publicMethods = {
+      gridCellNav : {
+        cellNav : function(scope, newRowCol, oldRowCol){
+          expect(this).toBeDefined(grid);
+        }
+      }
+    };
+
+    gridApi.registerMethodsFromObject(publicMethods);
+    gridApi.registerMethod('f','m',callBackFn);
+
+    expect(gridApi.gridCellNav.cellNav).toBeDefined();
+    gridApi.gridCellNav.cellNav();
+  }));
+
+  it('should use thisArg in callback', inject(function($timeout, $rootScope) {
+    var grid = new Grid({ id: 1 });
+    var gridApi = new GridApi(grid);
+    var someThisArg = {};
+
+    function callBackFn(scope, newRowCol, oldRowCol){
+      expect(this).toBeDefined(someThisArg);
+    }
+
+    var publicMethods = {
+      gridCellNav : {
+        cellNav : function(scope, newRowCol, oldRowCol){
+          expect(this).toBeDefined(someThisArg);
+        }
+      }
+    };
+
+    gridApi.registerMethodsFromObject(publicMethods, someThisArg);
+    gridApi.registerMethod('f','m',callBackFn, someThisArg);
+
+    expect(gridApi.gridCellNav.cellNav).toBeDefined();
+    gridApi.gridCellNav.cellNav();
+  }));
+
 
 
 

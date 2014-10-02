@@ -125,7 +125,7 @@ angular.module('ui.grid')
      * 
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
      */
-    this.getRowIdentity = function rowIdentity(row) {
+    this.getRowIdentity = function getRowIdentity(row) {
         return row.$$hashKey;
     };
 
@@ -188,6 +188,15 @@ angular.module('ui.grid')
      * menu within each column.
      */
     this.enableColumnMenu = true;
+
+    /**
+     * @ngdoc boolean
+     * @name enableScrollbars
+     * @propertyOf ui.grid.class:GridOptions
+     * @description True by default. When enabled, this settings enable vertical
+     * and horizontal scrollbar for grid.
+     */
+    this.enableScrollbars = true;
 
     // Columns can't be smaller than 10 pixels
     this.minimumColumnSize = 10;

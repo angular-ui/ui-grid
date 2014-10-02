@@ -28,7 +28,14 @@
           remove: 'Verwijder sortering'
         },
         column: {
-          hide: 'Kolom te verbergen'
+          hide: 'Verberg kolom'
+        },
+        aggregation: {
+          count: 'total rows: ',
+          sum: 'total: ',
+          avg: 'avg: ',
+          min: 'min: ',
+          max: 'max: '
         }
       });
       return $delegate;

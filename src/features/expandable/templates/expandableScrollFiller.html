@@ -1,9 +1,9 @@
 <div ng-if="expandableRow.shouldRenderFiller()"
-     style="float:left;margin-top: 2px;margin-bottom: 2px"
-     ng-style="{width: (grid.getViewportWidth())
-     ,height: grid.options.expandable.expandableRowHeight, 'margin-left': grid.options.rowHeader.rowHeaderWidth}"
+     style="float:left; margin-top: 2px; margin-bottom: 2px"
+     ng-style="{ width: (grid.getViewportWidth()) + 'px',
+              height: grid.options.expandable.expandableRowHeight + 'px', 'margin-left': grid.options.rowHeader.rowHeaderWidth + 'px' }"
      >
     <i class="ui-grid-icon-spin5 ui-grid-animate-spin" ng-style=
-            "{'margin-top': ( grid.options.expandable.expandableRowHeight/2 - 5),
-            'margin-left':((grid.getViewportWidth() - grid.options.rowHeader.rowHeaderWidth)/2 - 5)}">
+            "{ 'margin-top': ( grid.options.expandable.expandableRowHeight/2 - 5) + 'px',
+            'margin-left' : ((grid.getViewportWidth() - grid.options.rowHeader.rowHeaderWidth)/2 - 5) + 'px' }">
      </i></div>

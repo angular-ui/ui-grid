@@ -6,7 +6,7 @@
 
 # Help!
 
-Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss develpment of the 3.x codebase.
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.
 
 # What Happened to Version 2.x?
 
@@ -105,7 +105,7 @@ ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY`
     # Run the watch tasks against IE10
     > grunt dev --browsers=SL_IE10
 
-The full list of SauceLabs browsers is in `lib/grunt/util.js` in the `customLaunchers` method. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
+The full list of SauceLabs browsers can be seen by running `grunt saucebrowsers`. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
 
 # Thanks
 

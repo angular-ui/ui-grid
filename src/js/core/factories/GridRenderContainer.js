@@ -86,13 +86,13 @@ angular.module('ui.grid')
       var col = self.visibleColumnCache[i];
 
       if (totalWidth < viewportWidth) {
-        totalWidth += col.drawnWidth;
+        totalWidth += col.drawnWidth ? col.drawnWidth : 0;
         min++;
       }
       else {
         var currWidth = 0;
         for (var j = i; j >= i - min; j--) {
-          currWidth += self.visibleColumnCache[j].drawnWidth;
+          currWidth += self.visibleColumnCache[j].drawnWidth ? self.visibleColumnCache[j].drawnWidth : 0;
         }
         if (currWidth < viewportWidth) {
           min++;
@@ -481,7 +481,7 @@ angular.module('ui.grid')
           isPercent = false;
 
       if (!angular.isNumber(column.width)) {
-        isPercent = isNaN(column.width) ? gridUtil.endsWith(column.width, "%") : false;
+        isPercent = isNaN(column.width) && gridUtil.endsWith(column.width, "%");
       }
 
       if (angular.isString(column.width) && column.width.indexOf('*') !== -1) { //  we need to save it until the end to do the calulations on the remaining width.

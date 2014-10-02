@@ -20,10 +20,17 @@
             last: 'Sidste side'
           },
           menu:{
-            text: 'Vælg kolonner:',
+            text: 'Vælg kolonner:'
           },
           column: {
             hide: 'Skjul kolonne'
+          },
+          aggregation: {
+            count: 'samlede rækker: ',
+            sum: 'smalede: ',
+            avg: 'gns: ',
+            min: 'min: ',
+            max: 'max: '
           }
         });
       return $delegate;

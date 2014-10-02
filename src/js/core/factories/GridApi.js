@@ -13,6 +13,29 @@
         var GridApi = function GridApi(grid) {
           this.grid = grid;
           this.listeners = [];
+          
+          /**
+           * @ngdoc function
+           * @name renderingComplete
+           * @methodOf  ui.grid.core.api:PublicApi
+           * @description Rendering is complete, called at the same
+           * time as `onRegisterApi`, but provides a way to obtain
+           * that same event within features without stopping end
+           * users from getting at the onRegisterApi method.
+           * 
+           * Included in gridApi so that it's always there - otherwise
+           * there is still a timing problem with when a feature can
+           * call this. 
+           * 
+           * @param {GridApi} gridApi the grid api, as normally 
+           * returned in the onRegisterApi method
+           * 
+           * @example
+           * <pre>
+           *      gridApi.core.on.renderingComplete( grid );
+           * </pre>
+           */
+          this.registerEvent( 'core', 'renderingComplete' );
         };
 
         /**
@@ -166,15 +189,16 @@
          * @param {string} featureName name of the feature
          * @param {string} methodName  name of the method
          * @param {object} callBackFn function to execute
+         * @param {object} thisArg binds callBackFn 'this' to thisArg.  Defaults to gridApi.grid
          */
-        GridApi.prototype.registerMethod = function (featureName, methodName, callBackFn) {
+        GridApi.prototype.registerMethod = function (featureName, methodName, callBackFn, thisArg) {
           if (!this[featureName]) {
             this[featureName] = {};
           }
 
           var feature = this[featureName];
-          feature[methodName] = callBackFn;
 
+          feature[methodName] = gridUtil.createBoundedWrapper(thisArg || this.grid, callBackFn);
         };
 
         /**
@@ -190,8 +214,9 @@
          *          methodNameTwo:function(args){}
          *        }
          * @param {object} eventObjectMap map of feature/event names
+         * @param {object} thisArg binds this to thisArg for all functions.  Defaults to gridApi.grid
          */
-        GridApi.prototype.registerMethodsFromObject = function (methodMap) {
+        GridApi.prototype.registerMethodsFromObject = function (methodMap, thisArg) {
           var self = this;
           var features = [];
           angular.forEach(methodMap, function (featProp, featPropName) {
@@ -204,12 +229,12 @@
 
           features.forEach(function (feature) {
             feature.methods.forEach(function (method) {
-              self.registerMethod(feature.name, method.name, method.fn);
+              self.registerMethod(feature.name, method.name, method.fn, thisArg);
             });
           });
 
         };
-
+        
         return GridApi;
 
       }]);

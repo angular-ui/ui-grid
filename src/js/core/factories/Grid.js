@@ -145,6 +145,43 @@ angular.module('ui.grid')
    */
   self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
 
+  /**
+   * @ngdoc function
+   * @name handleWindowResize
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Trigger a grid resize, normally this would be picked
+   * up by a watch on window size, but in some circumstances it is necessary
+   * to call this manually
+   * @returns {promise} promise that is resolved when render completes?
+   * 
+   */
+  self.api.registerMethod( 'core', 'handleWindowResize', this.handleWindowResize );
+
+
+  /**
+   * @ngdoc function
+   * @name sortHandleNulls
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description A null handling method that can be used when building custom sort
+   * functions
+   * @example
+   * <pre>
+   *   mySortFn = function(a, b) {
+   *   var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+   *   if ( nulls !== null ){
+   *     return nulls;
+   *   } else {
+   *     // your code for sorting here
+   *   };
+   * </pre>
+   * @param {object} a sort value a
+   * @param {object} b sort value b
+   * @returns {number} null if there were no nulls/undefineds, otherwise returns
+   * a sort value that should be passed back from the sort function
+   * 
+   */
+  self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
+
 
   /**
    * @ngdoc function
@@ -286,7 +323,7 @@ angular.module('ui.grid')
   Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
     var self = this;
     //self.createLeftContainer();
-    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
+    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length, self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
       self.createRightContainer();
@@ -297,11 +334,18 @@ angular.module('ui.grid')
       rowHeaderCol.renderContainer = 'left';
     }
 
-    self.columnBuilders[0](colDef,rowHeaderCol,self.gridOptions)
+    // relies on the default column builder being first in array, as it is instantiated
+    // as part of grid creation
+    self.columnBuilders[0](colDef,rowHeaderCol,self.options)
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
         self.rowHeaderColumns.push(rowHeaderCol);
+        self.buildColumns()
+          .then( function() {
+            self.preCompileCellTemplates();
+            self.handleWindowResize();
+          });
       });
   };
 
@@ -319,28 +363,33 @@ angular.module('ui.grid')
     var builderPromises = [];
     var offset = self.rowHeaderColumns.length;
 
-    //add row header columns to the grid columns array
-    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
-      offset++;
-      self.columns.push(rowHeaderColumn);
+    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
+    self.columns.forEach(function (column, index) {
+      if (!self.getColDef(column.name)) {
+        self.columns.splice(index, 1);
+      }
     });
 
-    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
-    if (self.columns.length > self.options.columnDefs.length) {
-      self.columns.forEach(function (column, index) {
-        if (!self.getColDef(column.name)) {
-          self.columns.splice(index, 1);
-        }
+
+    //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
+    self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
+      offset++;
+      self.columns.unshift(rowHeaderColumn);
+      
+      // renumber any columns already there, as cellNav relies on cols[index] === col.index
+      self.columns.forEach(function(column, index){
+        column.index = index;
       });
-    }
+    });
+
 
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index + offset, self);
-        self.columns.push(col);
+        col = new GridColumn(colDef, index, self);
+        self.columns.splice(index, 0, col);
       }
       else {
         col.updateColumnDef(colDef, col.index);
@@ -361,12 +410,26 @@ angular.module('ui.grid')
  * @description precompiles all cell templates
  */
   Grid.prototype.preCompileCellTemplates = function() {
-        this.columns.forEach(function (col) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+    var self = this;
+    this.columns.forEach(function (col) {
+      var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
+      html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
-          var compiledElementFn = $compile(html);
-          col.compiledElementFn = compiledElementFn;
-        });
+
+      var compiledElementFn = $compile(html);
+      col.compiledElementFn = compiledElementFn;
+    });
+  };
+
+  /**
+   * @ngdoc function
+   * @name getGridQualifiedColField
+   * @methodOf ui.grid.class:Grid
+   * @description precompiles all cell templates
+   * @param {GridColumn} col col object
+   */
+  Grid.prototype.getQualifiedColField = function (col) {
+    return 'row.entity.' + gridUtil.preEval(col.field);
   };
 
   /**
@@ -1013,6 +1076,8 @@ angular.module('ui.grid')
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
     });
+
+    return self.refreshCanceller;
   };
 
   /**
@@ -1248,10 +1313,13 @@ angular.module('ui.grid')
   Grid.prototype.getColumnSorting = function getColumnSorting() {
     var self = this;
 
-    var sortedCols = [];
+    var sortedCols = [], myCols;
 
     // Iterate through all the columns, sorted by priority
-    self.columns.sort(rowSorter.prioritySort).forEach(function (col) {
+    // Make local copy of column list, because sorting is in-place and we do not want to
+    // change the original sequence of columns
+    myCols = self.columns.slice(0);
+    myCols.sort(rowSorter.prioritySort).forEach(function (col) {
       if (col.sort && typeof(col.sort.direction) !== 'undefined' && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
         sortedCols.push(col);
       }
@@ -1305,7 +1373,11 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        column.sort.direction = null;
+        if ( column.colDef && column.colDef.suppressRemoveSort ){
+          column.sort.direction = uiGridConstants.ASC;
+        } else {
+          column.sort.direction = null;
+        }
       }
       else {
         column.sort.direction = uiGridConstants.ASC;
@@ -1327,6 +1399,7 @@ angular.module('ui.grid')
     if (angular.isFunction(this.options.onRegisterApi)) {
       this.options.onRegisterApi(this.api);
     }
+    this.api.core.raise.renderingComplete( this.api );
   };
 
   Grid.prototype.createRowHashMap = function createRowHashMap() {
