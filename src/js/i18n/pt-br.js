@@ -24,6 +24,13 @@
         },
         column: {
           hide: 'Esconder coluna'
+        },
+        aggregation: {
+          count: 'total rows: ',
+          sum: 'total: ',
+          avg: 'avg: ',
+          min: 'min: ',
+          max: 'max: '
         }
       });
       return $delegate;

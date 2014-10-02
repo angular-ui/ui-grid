@@ -29,6 +29,13 @@
         },
         column: {
           hide: 'Verberg kolom'
+        },
+        aggregation: {
+          count: 'total rows: ',
+          sum: 'total: ',
+          avg: 'avg: ',
+          min: 'min: ',
+          max: 'max: '
         }
       });
       return $delegate;
