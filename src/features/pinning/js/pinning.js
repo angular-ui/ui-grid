@@ -16,21 +16,6 @@
 
   var module = angular.module('ui.grid.pinning', ['ui.grid']);
 
-  module.config(['$provide', function ($provide) {
-    $provide.decorator('i18nService', ['$delegate', function ($delegate) {
-      $delegate.add('en',
-        { pinning: {
-            pinLeft: 'Pin Left',
-            pinRight: 'Pin Right',
-            unpin: 'Unpin'
-          }
-        }
-      );
-
-      return $delegate;
-    }]);
-  }]);
-
   module.service('uiGridPinningService', ['$log', 'GridRenderContainer', 'i18nService', function ($log, GridRenderContainer, i18nService) {
     var service = {
 
