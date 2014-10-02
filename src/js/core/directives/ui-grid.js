@@ -55,7 +55,7 @@
 
               self.grid.preCompileCellTemplates();
 
-              self.grid.refreshCanvas(true);
+              self.grid.refresh();
             });
         }
       }
