@@ -211,7 +211,25 @@ column and row builders (see below).  See ui.grid.edit unit tests on how to easi
 ```
 
 
-The grid provides calls different processors for rows and cols that you can implement for your feature.
+## i18n
+Any translated strings for you feature should be populated in the language files in src/js/i18n.  Namespace the strings
+by your feature name. en.js should always be populated.
+```
+     ...
+     avg: 'avg: ',
+          min: 'min: ',
+          max: 'max: '
+        },
+      //pinning feature translations
+      pinning: {
+         pinLeft: 'Pin Left',
+          pinRight: 'Pin Right',
+          unpin: 'Unpin'
+        }
+      ...
+```
+
+The grid calls different processors for rows and cols that you can implement for your feature.
 ## ColumnBuilder
 ColumnBuilder functions allow you to add your own properties / functions to each GridCol object. for
 testing ease, it's best to create a service that returns the function.  See ui.grid.edit unit tests on how to easily test your function
