@@ -361,7 +361,7 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
-    var offset = self.rowHeaderColumns.length;
+    var headerOffset = self.rowHeaderColumns.length;
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     self.columns.forEach(function (column, index) {
@@ -373,13 +373,7 @@ angular.module('ui.grid')
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
     self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
-      offset++;
       self.columns.unshift(rowHeaderColumn);
-      
-      // renumber any columns already there, as cellNav relies on cols[index] === col.index
-      self.columns.forEach(function(column, index){
-        column.index = index;
-      });
     });
 
 
@@ -389,7 +383,7 @@ angular.module('ui.grid')
 
       if (!col) {
         col = new GridColumn(colDef, index, self);
-        self.columns.splice(index, 0, col);
+        self.columns.splice(index + headerOffset, 0, col);
       }
       else {
         col.updateColumnDef(colDef, col.index);
