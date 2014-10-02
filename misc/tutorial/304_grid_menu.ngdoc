@@ -10,20 +10,22 @@ actions.  The exporter feature also adds menu items to this menu.
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {};
-
-      $scope.menuItems = [
-        {
-          title: 'Rotate Grid',
-          action: function ($event) {
-            this.grid.element.toggleClass('rotated');
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+      $scope.gridOptions = {
+        gridMenuCustomItems: [
+          {
+            title: 'Rotate Grid',
+            action: function ($event) {
+              this.grid.element.toggleClass('rotated');
+            }
           }
+        ],
+        onRegisterApi: function( gridApi ){
+          $scope.gridApi = gridApi;
+          $interval( function() {
+            gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'dummy item'}]);
+          }, 0, 1);
         }
-      ];
-
-      $scope.openMyMenu = function () {
-        $scope.$broadcast('openMyMenu');
       };
 
       $http.get('/data/100.json')
@@ -31,40 +33,10 @@ actions.  The exporter feature also adds menu items to this menu.
           $scope.gridOptions.data = data;
         });
     }]);
-
-    app.directive('myCustomMenu', function ($timeout, gridUtil) {
-      return {
-        restrict: 'A',
-        scope: true,
-        require: ['^uiGrid', 'uiGridMenu'],
-        link: function ($scope, $elm, $attr, controllers) {
-          var uiGridCtrl = controllers[0];
-          var uiGridMenuCtrl = controllers[1];
-
-          $scope.$on('openMyMenu', function () {
-            uiGridMenuCtrl.showMenu();
-
-            $timeout(function () {
-              var grid = uiGridCtrl.grid.element;
-              var width = gridUtil.elementWidth(grid, true);
-
-              // Put the menu just to the right of the grid
-              $elm.css('left', width + 'px');
-
-              // Put the menu at the top of the grid but adjust for the border
-              $elm.css('top', '-1px');
-            });
-          });
-        }
-      };
-    });
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <button type="button" class="btn btn-info" ng-click="openMyMenu()">Open Menu</button>
-      <br>
-      <br>
-      <div ui-grid="gridOptions" class="grid">
+      <div id="grid1" ui-grid="gridOptions" class="grid">
         <div class="my-custom-menu" my-custom-menu ui-grid-menu menu-items="menuItems"></div>
       </div>
     </div>
