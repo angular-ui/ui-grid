@@ -1,0 +1,93 @@
+@ngdoc overview
+@name Tutorial: 113 Adding and removing columns
+@description 
+
+You can dynamically add and remove columns, the grid watches the column defs and
+updates appropriately.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+    
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.columns = [{ field: 'name' }, { field: 'gender' }];
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: $scope.columns
+      };
+      
+      $scope.remove = function() {
+          $scope.columns.splice($scope.columns.length-1, 1);
+      }
+      
+      $scope.add = function() {
+          $scope.columns.push({ field: 'company', enableSorting: false });
+      }
+
+      $scope.splice = function() {
+          $scope.columns.splice(1, 0, { field: 'company', enableSorting: false });
+      }
+    
+      $scope.unsplice = function() {
+          $scope.columns.splice(1, 1);
+      }
+    
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+          console.log(data)
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      Try clicking the Add button to add the company column.
+      Try clicking the Remove button to remove the last column.
+      Try clicking the Splice button to insert a column in the middle.
+      <br>
+      <br>
+      <button id="button_add" class="btn" ng-click="add()">Add</button>
+      <button id="button_remove" class="btn" ng-click="remove()">Remove Last</button>
+      <button id="button_splice" class="btn" ng-click="splice()">Splice</button>
+      <button id="button_unsplice" class="btn" ng-click="unsplice()">Remove Middle</button>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '113 dynamically changing columns', function() {
+      it('grid should have two visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+      });
+  
+      it('add and remove columns from end, grid updates accordingly', function () {
+        element(by.id('button_add')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+
+        element(by.id('button_remove')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+      });      
+
+      it('add and remove columns in middle, grid updates accordingly', function () {
+        element(by.id('button_splice')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Company' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Gender' );
+
+        element(by.id('button_unsplice')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+      });      
+    });    
+  </file>
+</example>

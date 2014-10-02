@@ -246,6 +246,93 @@ describe('Grid factory', function () {
       expect(grid1.getColumn('bool').colDef.type).toBe('boolean');
       expect(grid1.getColumn('obj').colDef.type).toBe('object');
     });
+    
+    it('add columns at the correct position - middle', function() {
+      var grid1 = new Grid({ id: 3 });
+
+      grid1.options.columnDefs = [
+        {name:'1'},
+        {name:'2'},
+        {name:'3'},
+        {name:'4'},
+        {name:'5'}
+      ];
+      grid1.buildColumns();
+      
+      expect(grid1.columns[0].name).toEqual('1');
+      expect(grid1.columns[1].name).toEqual('2');
+      expect(grid1.columns[2].name).toEqual('3');
+      expect(grid1.columns[3].name).toEqual('4');
+      expect(grid1.columns[4].name).toEqual('5');
+      
+      grid1.options.columnDefs.splice(3, 0, {name: '3.5'});
+      grid1.buildColumns();
+
+      expect(grid1.columns[0].name).toEqual('1');
+      expect(grid1.columns[1].name).toEqual('2');
+      expect(grid1.columns[2].name).toEqual('3');
+      expect(grid1.columns[3].name).toEqual('3.5');
+      expect(grid1.columns[4].name).toEqual('4');
+      expect(grid1.columns[5].name).toEqual('5');      
+    });
+
+    it('add columns at the correct position - start', function() {
+      var grid1 = new Grid({ id: 3 });
+
+      grid1.options.columnDefs = [
+        {name:'1'},
+        {name:'2'},
+        {name:'3'},
+        {name:'4'},
+        {name:'5'}
+      ];
+      grid1.buildColumns();
+      
+      expect(grid1.columns[0].name).toEqual('1');
+      expect(grid1.columns[1].name).toEqual('2');
+      expect(grid1.columns[2].name).toEqual('3');
+      expect(grid1.columns[3].name).toEqual('4');
+      expect(grid1.columns[4].name).toEqual('5');
+      
+      grid1.options.columnDefs.unshift({name: '0.5'});
+      grid1.buildColumns();
+
+      expect(grid1.columns[0].name).toEqual('0.5');
+      expect(grid1.columns[1].name).toEqual('1');
+      expect(grid1.columns[2].name).toEqual('2');
+      expect(grid1.columns[3].name).toEqual('3');
+      expect(grid1.columns[4].name).toEqual('4');
+      expect(grid1.columns[5].name).toEqual('5');      
+    });
+
+    it('add columns at the correct position - end', function() {
+      var grid1 = new Grid({ id: 3 });
+
+      grid1.options.columnDefs = [
+        {name:'1'},
+        {name:'2'},
+        {name:'3'},
+        {name:'4'},
+        {name:'5'}
+      ];
+      grid1.buildColumns();
+      
+      expect(grid1.columns[0].name).toEqual('1');
+      expect(grid1.columns[1].name).toEqual('2');
+      expect(grid1.columns[2].name).toEqual('3');
+      expect(grid1.columns[3].name).toEqual('4');
+      expect(grid1.columns[4].name).toEqual('5');
+      
+      grid1.options.columnDefs.push({name: '5.5'});
+      grid1.buildColumns();
+
+      expect(grid1.columns[0].name).toEqual('1');
+      expect(grid1.columns[1].name).toEqual('2');
+      expect(grid1.columns[2].name).toEqual('3');
+      expect(grid1.columns[3].name).toEqual('4');
+      expect(grid1.columns[4].name).toEqual('5');
+      expect(grid1.columns[5].name).toEqual('5.5');      
+    });
   });
 
   describe('binding', function() {
