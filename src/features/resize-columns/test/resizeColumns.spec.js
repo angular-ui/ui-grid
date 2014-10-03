@@ -18,7 +18,8 @@ describe('ui.grid.resizeColumns', function () {
 
     $scope.gridOpts = {
       enableColumnResizing: true,
-      data: data
+      data: data,
+      onRegisterApi: function(gridApi){ $scope.gridApi = gridApi; }
     };
 
     recompile = function () {
@@ -100,7 +101,7 @@ describe('ui.grid.resizeColumns', function () {
     xit('should resize the column to the maximum width of the rendered columns', function (done) {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
-      var colWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+      var colWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
       expect(colWidth === 166 || colWidth === 167).toBe(true); // allow for column widths that don't equally divide 
 
@@ -108,7 +109,7 @@ describe('ui.grid.resizeColumns', function () {
 
       $scope.$digest();
 
-      var newColWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+      var newColWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
       // Can't really tell how big the columns SHOULD be, we'll just expect them to be different in width now
       expect(newColWidth).not.toEqual(colWidth);
@@ -137,7 +138,7 @@ describe('ui.grid.resizeColumns', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         // Get the initial width of the column
-        initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
         initialX = firstResizer.position().left;
 
@@ -176,7 +177,7 @@ describe('ui.grid.resizeColumns', function () {
         });
 
         it('should cause the column to resize by the amount change in the X axis', function () {
-          var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+          var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid ).first().width();
 
           expect(newWidth - initialWidth).toEqual(xDiff);
         });
@@ -212,7 +213,7 @@ describe('ui.grid.resizeColumns', function () {
         $(firstResizer).simulate('dblclick');
         $scope.$digest();
 
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
         expect(newWidth >= minWidth).toEqual(true);
       });
@@ -233,7 +234,7 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       it('should not go below the minWidth', function () {
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
         expect(newWidth >= minWidth).toEqual(true);
       });
@@ -262,7 +263,7 @@ describe('ui.grid.resizeColumns', function () {
         $(firstResizer).simulate('dblclick');
         $scope.$digest();
 
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
         expect(newWidth <= maxWidth).toEqual(true);
       });
@@ -283,7 +284,7 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       it('should not go above the maxWidth', function () {
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + $scope.gridApi.grid.columns[0].uid).first().width();
 
         expect(newWidth <= maxWidth).toEqual(true);
       });

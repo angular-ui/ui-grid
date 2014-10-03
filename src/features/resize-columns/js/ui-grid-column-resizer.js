@@ -167,12 +167,11 @@
                 var otherCol = renderContainer.renderedColumns[$scope.renderIndex - 1];
 
                 // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
-                if (otherCol && $scope.col.index !== 0 && otherCol.colDef.enableColumnResizing !== false) {
+                if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
                   $elm.prepend(resizerLeft);
                 }
                 
                 // Don't append the right resizer if this column has resizing disabled
-                //if ($scope.col.index !== $scope.grid.renderedColumns.length - 1 && $scope.col.colDef.enableColumnResizing !== false) {
                 if ($scope.col.colDef.enableColumnResizing !== false) {
                   $elm.append(resizerRight);
                 }
@@ -259,7 +258,7 @@
 
           renderContainer.visibleColumnCache.forEach(function (column) {
             // Skip the column we just resized
-            if (column.index === col.index) { return; }
+            if (column === col) { return; }
             
             var colDef = column.colDef;
             if (!colDef.width || (angular.isString(colDef.width) && (colDef.width.indexOf('*') !== -1 || colDef.width.indexOf('%') !== -1))) {
@@ -446,7 +445,7 @@
           var renderContainerElm = gridUtil.closestElm($elm, '.ui-grid-render-container');
 
           // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
-          var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.index + ' .ui-grid-cell-contents');
+          var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.uid + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
               // $log.debug('width', gridUtil.elementWidth(cell));

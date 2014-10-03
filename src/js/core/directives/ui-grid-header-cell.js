@@ -41,13 +41,6 @@
                         
     
             $elm.addClass($scope.col.getColClass(false));
-    // shane - No need for watch now that we trackby col name
-    //        $scope.$watch('col.index', function (newValue, oldValue) {
-    //          if (newValue === oldValue) { return; }
-    //          var className = $elm.attr('class');
-    //          className = className.replace(uiGridConstants.COL_CLASS_PREFIX + oldValue, uiGridConstants.COL_CLASS_PREFIX + newValue);
-    //          $elm.attr('class', className);
-    //        });
     
             // Hide the menu by default
             $scope.menuShown = false;
