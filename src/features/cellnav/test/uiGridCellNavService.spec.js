@@ -182,7 +182,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     it('should request scroll to row and column', function () {
       uiGridCellNavService.scrollTo( grid, $scope, grid.options.data[2], grid.columns[1].colDef);
       
-      expect(args).toEqual( { y : { percentage : 2/3 }, x : { percentage :  300/600 } });
+      expect(args).toEqual( { y : { percentage : 2/3 }, x : { percentage :  (100 + 2/3 * 200)/600 } });
     });
 
     it('should request scroll to row only', function () {
@@ -192,9 +192,9 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     });
 
     it('should request scroll to column only', function () {
-      uiGridCellNavService.scrollTo( grid, $scope, null, grid.columns[1].colDef);
+      uiGridCellNavService.scrollTo( grid, $scope, null, grid.columns[0].colDef);
       
-      expect(args).toEqual( { x : { percentage :  300/600 } });
+      expect(args).toEqual( { x : { percentage :  0 } });
     });
 
     it('should request no scroll as no row or column', function () {
