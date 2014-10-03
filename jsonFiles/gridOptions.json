@@ -1,4 +1,10 @@
 ﻿[
+﻿	{
+﻿		"id": "primaryKey"
+﻿		"defaultValue": "undefined",
+﻿		"definition": "Field of user's data that should be unique. Allows you automatically update selections state for previously loaded data.",
+﻿		"plunker": "Link"
+﻿	},
 	{	
 		"id": "aggregateTemplate",
 		"defaultValue": "<div ng-click=\"row.toggleExpand()\" ng-style=\"{'left': row.offsetleft}\" class=\"ngAggregate\"><span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span><div class=\"{{row.aggClass()}}\"></div></div>",
