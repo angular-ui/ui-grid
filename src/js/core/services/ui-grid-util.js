@@ -964,6 +964,55 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     return debounce;
   };
 
+  /**
+   * @ngdoc method
+   * @name throttle
+   * @methodOf ui.grid.service:GridUtil
+   *
+   * @param {function} func function to throttle
+   * @param {number} wait milliseconds to delay after first trigger
+   * @param {Object} params to use in throttle.
+   *
+   * @returns {function} A function that can be executed as throttled function
+   *
+   * @description
+   * Adapted from debounce function (above)
+   * Potential keys for Params Object are:
+   *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
+   * @example
+   * <pre>
+   * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
+   * throttledFunc(); //=> logs throttled
+   * throttledFunc(); //=> queues attempt to log throttled for ~500ms (since trailing param is truthy)
+   * throttledFunc(); //=> updates arguments to keep most-recent request, but does not do anything else.
+   * </pre>
+   */
+  s.throttle = function(func, wait, options){
+    options = options || {};
+    var lastCall = 0, queued = null, context, args;
+
+    function runFunc(endDate){
+      lastCall = +new Date();
+      func.apply(context, args);
+      $timeout(function(){ queued = null; }, 0);
+    }
+
+    return function(){
+      /* jshint validthis:true */
+      context = this;
+      args = arguments;
+      if (queued === null){
+        var sinceLast = +new Date() - lastCall;
+        if (sinceLast > wait){
+          runFunc();
+        }
+        else if (options.trailing){
+          queued = $timeout(runFunc, wait - sinceLast);
+        }
+      }
+    };
+  };
+
   return s;
 }]);
 

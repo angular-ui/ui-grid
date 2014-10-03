@@ -103,10 +103,9 @@
 
       /* Event Methods */
 
-      //todo: throttle this event?
-      self.fireScrollingEvent = function(args) {
+      self.fireScrollingEvent = gridUtil.throttle(function(args) {
         $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
-      };
+      }, self.grid.options.scrollThrottle, {trailing: true});
 
       self.fireEvent = function(eventName, args) {
         // Add the grid to the event arguments if it's not there
