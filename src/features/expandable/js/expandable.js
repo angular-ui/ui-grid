@@ -139,6 +139,10 @@
                   return ret;
                 };
 
+                if ($scope.colContainer.name === 'left') {
+                    angular.element($elm.parent()).css('width', '40px');
+                }
+
               },
               post: function ($scope, $elm, $attrs, controllers) {
               }
