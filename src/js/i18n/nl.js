@@ -31,9 +31,9 @@
           hide: 'Verberg kolom'
         },
         aggregation: {
-          count: 'total rows: ',
-          sum: 'total: ',
-          avg: 'avg: ',
+          count: 'aantal rijen: ',
+          sum: 'som: ',
+          avg: 'gemiddelde: ',
           min: 'min: ',
           max: 'max: '
         }
