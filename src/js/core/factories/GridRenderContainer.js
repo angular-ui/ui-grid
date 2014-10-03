@@ -498,8 +498,6 @@ angular.module('ui.grid')
         canvasWidth = parseInt(canvasWidth, 10) + parseInt(column.width, 10);
 
         column.drawnWidth = column.width;
-
-        // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
       }
     });
 
@@ -525,8 +523,6 @@ angular.module('ui.grid')
           canvasWidth += colWidth;
           column.drawnWidth = colWidth;
 
-          // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
           // Remove this element from the percent array so it's not processed below
           percentArray.splice(i, 1);
         }
@@ -537,8 +533,6 @@ angular.module('ui.grid')
 
           canvasWidth += colWidth;
           column.drawnWidth = colWidth;
-
-          // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
           // Remove this element from the percent array so it's not processed below
           percentArray.splice(i, 1);
@@ -552,8 +546,6 @@ angular.module('ui.grid')
         canvasWidth += colWidth;
 
         column.drawnWidth = colWidth;
-
-        // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
       });
     }
 
@@ -575,8 +567,6 @@ angular.module('ui.grid')
           canvasWidth += colWidth;
           column.drawnWidth = colWidth;
 
-          // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
           lastColumn = column;
 
           // Remove this element from the percent array so it's not processed below
@@ -590,8 +580,6 @@ angular.module('ui.grid')
 
           canvasWidth += colWidth;
           column.drawnWidth = colWidth;
-
-          // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
           // Remove this element from the percent array so it's not processed below
           asterisksArray.splice(i, 1);
@@ -607,8 +595,6 @@ angular.module('ui.grid')
         canvasWidth += colWidth;
 
         column.drawnWidth = colWidth;
-
-        // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
       });
     }
 

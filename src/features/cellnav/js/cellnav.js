@@ -354,11 +354,11 @@
           var args = {};
 
           if (gridRow !== null) {
-            args.y = { percentage: gridRow.index / grid.renderContainers.body.visibleRowCache.length };
+            args.y = { percentage: grid.renderContainers.body.visibleRowCache.indexOf(gridRow) / grid.renderContainers.body.visibleRowCache.length };
           }
 
           if (gridCol !== null) {
-            args.x = { percentage: this.getLeftWidth(grid, gridCol.index) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache.length - 1) };
+            args.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
           }
 
           if (args.y || args.x) {
@@ -371,26 +371,37 @@
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
          * @name getLeftWidth
          * @description Get the current drawn width of the columns in the
-         * grid up to and including the numbered column
+         * grid up to the numbered column, and add an apportionment for the
+         * column that we're on.  So if we are on column 0, we want to scroll
+         * 0% (i.e. exclude this column from calc).  If we're on the last column
+         * we want to scroll to 100% (i.e. include this column in the calc). So
+         * we include (thisColIndex / totalNumberCols) % of this column width
          * @param {Grid} grid the grid you'd like to act upon, usually available
          * from gridApi.grid
-         * @param {object} colIndex the column to total up to and including
+         * @param {gridCol} upToCol the column to total up to and including
          */
-        getLeftWidth: function (grid, colIndex) {
+        getLeftWidth: function (grid, upToCol) {
           var width = 0;
 
-          if (!colIndex) {
-            return;
+          if (!upToCol) {
+            return width;
           }
-
-          for (var i = 0; i <= colIndex; i++) {
-            if (grid.renderContainers.body.visibleColumnCache[i].drawnWidth) {
-              width += grid.renderContainers.body.visibleColumnCache[i].drawnWidth;
+          
+          var lastIndex = grid.renderContainers.body.visibleColumnCache.indexOf( upToCol );
+          
+          // total column widths up-to but not including the passed in column
+          grid.renderContainers.body.visibleColumnCache.forEach( function( col, index ) {
+            if ( index < lastIndex ){
+              width += col.drawnWidth;  
             }
-          }
+          });
+          
+          // pro-rata the final column based on % of total columns.
+          var percentage = lastIndex === 0 ? 0 : (lastIndex + 1) / grid.renderContainers.body.visibleColumnCache.length;
+          width += upToCol.drawnWidth * percentage;
+           
           return width;
         }
-
       };
 
       return service;
@@ -516,7 +527,6 @@
 
             var rowCol = $scope.colContainer.cellNav.getNextRowCol(direction, $scope.row, $scope.col);
 
-            //$log.debug('next row ' + rowCol.row.index + ' next Col ' + rowCol.col.colDef.name);
             uiGridCtrl.cellNav.broadcastCellNav(rowCol);
             setTabEnabled();
 
@@ -534,7 +544,6 @@
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol) {
             if (rowCol.row === $scope.row &&
               rowCol.col === $scope.col) {
-              // $log.debug('Setting focus on Row ' + rowCol.row.index + ' Col ' + rowCol.col.colDef.name);
               setFocused();
             }
           });

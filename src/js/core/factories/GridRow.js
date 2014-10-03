@@ -32,15 +32,6 @@ angular.module('ui.grid')
 
      /**
       *  @ngdoc object
-      *  @name index
-      *  @propertyOf  ui.grid.class:GridRow
-      *  @description the index of the GridRow. It should always be unique and immutable
-      */
-    this.index = index;
-
-
-     /**
-      *  @ngdoc object
       *  @name uid
       *  @propertyOf  ui.grid.class:GridRow
       *  @description  UniqueId of row
