@@ -61,7 +61,7 @@ module.exports = {
      * 
      */
     expectHeaderColumnCount: function( gridId, expectedNumCols ) {
-      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
       expect(headerCols.count()).toEqual(expectedNumCols);
     },
 
@@ -104,7 +104,7 @@ module.exports = {
      * 
      */
     headerCell: function( gridId, expectedCol, expectedValue ) {
-      return element( by.id( gridId ) ).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+      return element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
     },
 
 
