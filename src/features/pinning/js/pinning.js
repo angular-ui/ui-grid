@@ -104,6 +104,7 @@
           },
           action: function () {
             this.context.col.renderContainer = 'left';
+            this.context.col.width = this.context.col.drawnWidth;
             this.context.col.grid.createLeftContainer();
 
             // Need to call refresh twice; once to move our column over to the new render container and then
@@ -123,6 +124,7 @@
           },
           action: function () {
             this.context.col.renderContainer = 'right';
+            this.context.col.width = this.context.col.drawnWidth;
             this.context.col.grid.createRightContainer();
 
 
