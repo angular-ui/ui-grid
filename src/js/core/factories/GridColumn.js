@@ -110,16 +110,34 @@ angular.module('ui.grid')
     *
     */
     
-   
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name GridColumn
+   * @description Initializes a gridColumn
+   * @param {ColumnDef} colDef the column def to associate with this column
+   * @param {number} index deprecated, but not yet removed from signature - null can be passed
+   * @param {Grid} grid the grid we'd like to create this column in
+   */ 
   function GridColumn(colDef, index, grid) {
     var self = this;
 
     self.grid = grid;
-    colDef.index = index;
 
     self.updateColumnDef(colDef);
   }
 
+
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name setPropertyOrDefault
+   * @description Sets a property on the column using the passed in columnDef, and
+   * setting the defaultValue if the value cannot be found on the colDef
+   * @param {ColumnDef} colDef the column def to look in for the property value
+   * @param {string} propName the property name we'd like to set
+   * @param {object} defaultValue the value to use if the colDef doesn't provide the setting
+   */ 
   GridColumn.prototype.setPropertyOrDefault = function (colDef, propName, defaultValue) {
     var self = this;
 
@@ -296,16 +314,23 @@ angular.module('ui.grid')
     *   ] }]; </pre>
     *
     */   
+
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name updateColumnDef
+   * @description Moves settings from the columnDef down onto the column,
+   * and sets properties as appropriate
+   * @param {ColumnDef} colDef the column def to look in for the property value
+   * @param {number} index deprecated but not yet removed from method signature.  Null is valid.
+   */ 
   GridColumn.prototype.updateColumnDef = function(colDef, index) {
     var self = this;
 
     self.colDef = colDef;
 
-    //position of column
-    self.index = (typeof(index) === 'undefined') ? colDef.index : index;
-
     if (colDef.name === undefined) {
-      throw new Error('colDef.name is required for column at index ' + self.index);
+      throw new Error('colDef.name is required for column at index ' + self.grid.options.columnDefs.indexOf(colDef));
     }
 
     var parseErrorMsg = "Cannot parse column width '" + colDef.width + "' for column named '" + colDef.name + "'";

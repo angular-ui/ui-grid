@@ -340,6 +340,7 @@ angular.module('ui.grid')
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
+        rowHeaderCol.disableHiding = true;
         self.rowHeaderColumns.push(rowHeaderCol);
         self.buildColumns()
           .then( function() {
@@ -363,13 +364,12 @@ angular.module('ui.grid')
     var builderPromises = [];
     var headerOffset = self.rowHeaderColumns.length;
 
-    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
+    // Remove any columns for which a columnDef cannot be found
     self.columns.forEach(function (column, index) {
       if (!self.getColDef(column.name)) {
         self.columns.splice(index, 1);
       }
     });
-
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
     self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
@@ -377,6 +377,8 @@ angular.module('ui.grid')
     });
 
 
+    // look at each column def, and update column properties to match.  If the column def
+    // new, then splice in a new gridCol
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
@@ -386,12 +388,17 @@ angular.module('ui.grid')
         self.columns.splice(index + headerOffset, 0, col);
       }
       else {
-        col.updateColumnDef(colDef, col.index);
+        col.updateColumnDef(colDef);
       }
 
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
+    });
+    
+    // col.index is still used in the cell templates, so just renumber it every time
+    self.columns.forEach( function( col, index ){
+      col.index = index;
     });
 
     return $q.all(builderPromises);
