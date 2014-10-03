@@ -4,6 +4,10 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         return true;
     }
 
+    if (document.activeElement.tagName === "INPUT") {
+        return true;
+    }
+
     var charCode = evt.which || evt.keyCode,
         newColumnIndex,
         lastInRow = false,
