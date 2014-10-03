@@ -291,15 +291,15 @@
           // The other column to resize (the one next to this one)
           var col = $scope.col;
           var renderContainer = col.getRenderContainer();
-          var otherCol;
+          // var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
             col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
+            // otherCol = $scope.col;
           }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-          }
+          // else if ($scope.position === 'right') {
+          //   otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+          // }
 
           // Don't resize if it's disabled on this column
           if (col.colDef.enableColumnResizing === false) {
@@ -354,15 +354,15 @@
           var col = $scope.col;
           var renderContainer = col.getRenderContainer();
 
-          var otherCol;
+          // var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
             col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
+            // otherCol = $scope.col;
           }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-          }
+          // else if ($scope.position === 'right') {
+          //   otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+          // }
 
           // Don't resize if it's disabled on this column
           if (col.colDef.enableColumnResizing === false) {
@@ -424,19 +424,19 @@
           var col = $scope.col;
           var renderContainer = col.getRenderContainer();
 
-          var otherCol, multiplier;
+          // var otherCol, multiplier;
 
           // If we're the left-positioned resizer then we need to resize the column to the left of our column, and not our column itself
           if ($scope.position === 'left') {
             col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
-            multiplier = 1;
+            // otherCol = $scope.col;
+            // multiplier = 1;
           }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-            multiplier = -1;
-          }
+          // else if ($scope.position === 'right') {
+          //   otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+          //   otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+          //   multiplier = -1;
+          // }
 
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;

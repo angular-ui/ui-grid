@@ -214,10 +214,10 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
         var top = $columnElement[0].offsetTop;
 
         // Get the grid scrollLeft
-        var offset = 0;
-        if (column.grid.options.offsetLeft) {
-          offset = column.grid.options.offsetLeft;
-        }
+        // var offset = 0;
+        // if (column.grid.options.offsetLeft) {
+        //   offset = column.grid.options.offsetLeft;
+        // }
 
         var height = gridUtil.elementHeight($columnElement, true);
         var width = gridUtil.elementWidth($columnElement, true);
@@ -238,8 +238,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
             }
 
             // var containerScrollLeft = $columnelement
-            var containerId = column.renderContainer ? column.renderContainer : 'body';
-            var renderContainer = column.grid.renderContainers[containerId];
+            // var containerId = column.renderContainer ? column.renderContainer : 'body';
+            // var renderContainer = column.grid.renderContainers[containerId];
             // var containerScrolLeft = renderContainer.prevScrollLeft;
 
             // It's possible that the render container of the column we're attaching to is offset from the grid (i.e. pinned containers), we
