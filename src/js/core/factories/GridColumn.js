@@ -311,34 +311,36 @@ angular.module('ui.grid')
     var parseErrorMsg = "Cannot parse column width '" + colDef.width + "' for column named '" + colDef.name + "'";
 
     // If width is not defined, set it to a single star
-    if (gridUtil.isNullOrUndefined(colDef.width)) {
-      self.width = '*';
-    }
-    else {
-      // If the width is not a number
-      if (!angular.isNumber(colDef.width)) {
-        // See if it ends with a percent
-        if (gridUtil.endsWith(colDef.width, '%')) {
-          // If so we should be able to parse the non-percent-sign part to a number
-          var percentStr = colDef.width.replace(/%/g, '');
-          var percent = parseInt(percentStr, 10);
-          if (isNaN(percent)) {
+    if (gridUtil.isNullOrUndefined(self.width) || !angular.isNumber(self.width)) {
+      if (gridUtil.isNullOrUndefined(colDef.width)) {
+        self.width = '*';
+      }
+      else {
+        // If the width is not a number
+        if (!angular.isNumber(colDef.width)) {
+          // See if it ends with a percent
+          if (gridUtil.endsWith(colDef.width, '%')) {
+            // If so we should be able to parse the non-percent-sign part to a number
+            var percentStr = colDef.width.replace(/%/g, '');
+            var percent = parseInt(percentStr, 10);
+            if (isNaN(percent)) {
+              throw new Error(parseErrorMsg);
+            }
+            self.width = colDef.width;
+          }
+          // And see if it's a number string
+          else if (colDef.width.match(/^(\d+)$/)) {
+            self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
+          }
+          // Otherwise it should be a string of asterisks
+          else if (!colDef.width.match(/^\*+$/)) {
             throw new Error(parseErrorMsg);
           }
+        }
+        // Is a number, use it as the width
+        else {
           self.width = colDef.width;
         }
-        // And see if it's a number string
-        else if (colDef.width.match(/^(\d+)$/)) {
-          self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
-        }
-        // Otherwise it should be a string of asterisks
-        else if (!colDef.width.match(/^\*+$/)) {
-          throw new Error(parseErrorMsg);
-        }
-      }
-      // Is a number, use it as the width
-      else {
-        self.width = colDef.width;
       }
     }
 
