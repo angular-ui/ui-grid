@@ -15,12 +15,17 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
           }
 
           // If the grid controller is present, use it to get the compiled cell template function
-          if (uiGridCtrl) {
+          if (uiGridCtrl && $scope.col.compiledElementFn) {
              compileTemplate();
           }
           // No controller, compile the element manually (for unit tests)
           else {
+            if( uiGridCtrl && !$scope.col.compiledElementFn ){
+              $log.error('Manually compiling cell template as render has been called before precompile.  Please log a ui-grid issue');  
+            }
+            
             var html = $scope.col.cellTemplate
+              .replace(uiGridConstants.MODEL_COL_FIELD, 'row.entity.' + gridUtil.preEval(col.field))
               .replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
             var cellElement = $compile(html)($scope);
             $elm.append(cellElement);
