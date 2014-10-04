@@ -1,5 +1,5 @@
 describe('ui-grid-menu', function() {
-  var $scope, $compile, menu, inner, recompile;
+  var $scope, $compile, menu, recompile;
 
   beforeEach(module('ui.grid'));
 
@@ -34,17 +34,16 @@ describe('ui-grid-menu', function() {
     // $scope.isShown = true;
 
     recompile = function () {
-      menu = angular.element('<div ui-grid-menu menu-items="items"></div>');
+      menu = angular.element('<div ui-grid-menu menu-items="items" ng-show="shown"></div>');
       $compile(menu)($scope);
       $scope.$digest();
-      inner = $(menu).find('.ui-grid-menu-inner').first();
     };
 
     recompile();
   }));
 
   it('should hide the menu by default', function () {
-    expect(inner.hasClass('ng-hide')).toBe(true);
+    expect(menu.hasClass('ng-hide')).toBe(true);
   });
 
   // TODO(c0bra): Change to test hide-menu & show-menu events
@@ -52,26 +51,26 @@ describe('ui-grid-menu', function() {
   //   $scope.isShown = true;
   //   $scope.$digest();
 
-  //   expect(inner.hasClass('ng-hide')).toBe(false);
+  //   expect(menu.hasClass('ng-hide')).toBe(false);
   // });
 
   // it('should be shown when the shown property is a function that returns true', function () {
   //   $scope.isShown = function() { return true; };
   //   $scope.$digest();
 
-  //   expect(inner.hasClass('ng-hide')).toBe(false);
+  //   expect(menu.hasClass('ng-hide')).toBe(false);
   // });
 
   it('should hide when hideMenu() is called', function() {
     $scope.$broadcast('show-menu');
     $scope.$digest();
 
-    expect(inner.hasClass('ng-hide')).toBe(false);
+    expect(menu.hasClass('ng-hide')).toBe(false);
 
     menu.isolateScope().hideMenu();
     $scope.$digest();
 
-    expect(inner.hasClass('ng-hide')).toBe(true);
+    expect(menu.hasClass('ng-hide')).toBe(true);
   });
 
   it('should create a list of menu items from the menuItems attribute', function() {
@@ -170,7 +169,6 @@ describe('ui-grid-menu', function() {
       menu = angular.element('<div ui-grid-menu menu-items="items"></div>');
       $compile(menu)($scope);
       $scope.$digest();
-      inner = $(menu).find('.ui-grid-menu-inner').first();
     }));
 
     it("should display a menu item by default if no 'shown' property is passed", function() {

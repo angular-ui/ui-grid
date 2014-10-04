@@ -54,7 +54,7 @@ describe('uiGridHeaderCell', function () {
       headerCell1 = $(grid).find('.ui-grid-header-cell:nth(0) .ui-grid-cell-contents');
       headerCell2 = $(grid).find('.ui-grid-header-cell:nth(1) .ui-grid-cell-contents');
       
-      menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu-inner');
+      menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu');
     });
 
     function openMenu() {
