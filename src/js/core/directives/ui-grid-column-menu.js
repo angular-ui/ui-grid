@@ -89,8 +89,8 @@ angular.module('ui.grid').directive('uiGridColumnMenu', ['$log', '$timeout', '$w
        * @ngdoc boolean
        * @name disableHiding
        * @propertyOf ui.grid.class:GridOptions.columnDef
-       * @description (optional) True by default. When enabled, this setting allows a user to hide the column
-       * using the column menu.
+       * @description (optional) False by default. When enabled, this setting prevents a user from hiding the column
+       * using the column menu or the grid menu.
        */
       $scope.hideable = function() {
         if (typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.disableHiding) {

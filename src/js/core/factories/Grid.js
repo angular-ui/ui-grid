@@ -340,6 +340,7 @@ angular.module('ui.grid')
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
+        rowHeaderCol.disableHiding = true;
         self.rowHeaderColumns.push(rowHeaderCol);
         self.buildColumns()
           .then( function() {
@@ -362,14 +363,17 @@ angular.module('ui.grid')
     var self = this;
     var builderPromises = [];
     var headerOffset = self.rowHeaderColumns.length;
+    var i;
 
-    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
-    self.columns.forEach(function (column, index) {
-      if (!self.getColDef(column.name)) {
-        self.columns.splice(index, 1);
+    // Remove any columns for which a columnDef cannot be found
+    // Deliberately don't use forEach, as it doesn't like splice being called in the middle
+    // Also don't cache columns.length, as it will change during this operation
+    for ( i=0; i<self.columns.length; i++ ){
+      if (!self.getColDef(self.columns[i].name)) {
+        self.columns.splice(i, 1);
+        i--;
       }
-    });
-
+    }
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
     self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
@@ -377,23 +381,25 @@ angular.module('ui.grid')
     });
 
 
+    // look at each column def, and update column properties to match.  If the column def
+    // doesn't have a column, then splice in a new gridCol
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index, self);
+        col = new GridColumn(colDef, gridUtil.nextUid(), self);
         self.columns.splice(index + headerOffset, 0, col);
       }
       else {
-        col.updateColumnDef(colDef, col.index);
+        col.updateColumnDef(colDef);
       }
 
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
     });
-
+    
     return $q.all(builderPromises);
   };
 
