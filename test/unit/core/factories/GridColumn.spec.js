@@ -199,4 +199,25 @@ describe('GridColumn factory', function () {
     });
   });
 
+  describe('unsort', function() {
+    beforeEach( function() {
+      grid.options.data = [
+        { name: 'fred', value: 1 },
+        { name: 'john', value: 2 },
+        { name: 'james', value: 3 },
+        { name: 'matthew', value: 4 },
+        { name: 'murray', value: 5 },
+      ];
+      grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];  
+    });
+    
+    it('raise event', function() {
+      var sortChanged = false;
+      grid.api.core.on.sortChanged( $scope, function(){ sortChanged = true; });
+      
+      grid.columns[0].unsort();
+      expect( sortChanged ).toEqual(true);
+    });
+  });
+
 });

@@ -372,6 +372,7 @@ angular.module('ui.grid')
     // Remove this column from the grid sorting
     GridColumn.prototype.unsort = function () {
       this.sort = {};
+      self.grid.api.core.raise.sortChanged( self, self.grid.getColumnSorting() );
     };
 
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
