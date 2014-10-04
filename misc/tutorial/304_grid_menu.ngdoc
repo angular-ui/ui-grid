@@ -1,0 +1,71 @@
+@ngdoc overview
+@name Tutorial: 304 Grid Menu
+@description The grid menu can be enabled through setting the gridOption `enableGridMenu`.  This 
+adds a settings icon in the top right of the grid, which floats above the column header.  The
+menu by default gives access to show/hide columns, but can be customised to show additional
+actions.  The exporter feature also adds menu items to this menu.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+      $scope.gridOptions = {
+        gridMenuCustomItems: [
+          {
+            title: 'Rotate Grid',
+            action: function ($event) {
+              this.grid.element.toggleClass('rotated');
+            }
+          }
+        ],
+        onRegisterApi: function( gridApi ){
+          $scope.gridApi = gridApi;
+          $interval( function() {
+            gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'dummy item'}]);
+          }, 0, 1);
+        }
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div id="grid1" ui-grid="gridOptions" class="grid">
+        <div class="my-custom-menu" my-custom-menu ui-grid-menu menu-items="menuItems"></div>
+      </div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+
+    .my-custom-menu {
+      position: absolute;
+    }
+
+    .my-custom-menu .ui-grid-menu {
+      padding: 0px;
+    }
+
+    .my-custom-menu .ui-grid-menu-inner {
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .rotated {
+      transform: rotate(180deg);
+      -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+      -moz-transform: rotate(180deg);
+      -o-transform: rotate(180deg);
+    }
+  </file>
+</example>
