@@ -160,6 +160,17 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name addRowHeaderColumn
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description adds a row header column to the grid
+   * @param {object} column def
+   * 
+   */
+  self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
+
+
+  /**
+   * @ngdoc function
    * @name sortHandleNulls
    * @methodOf ui.grid.core.api:PublicApi
    * @description A null handling method that can be used when building custom sort
