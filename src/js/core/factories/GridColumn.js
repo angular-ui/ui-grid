@@ -332,7 +332,7 @@ angular.module('ui.grid')
     if (colDef.name === undefined) {
       throw new Error('colDef.name is required for column at index ' + self.grid.options.columnDefs.indexOf(colDef));
     }
-
+    
     var parseErrorMsg = "Cannot parse column width '" + colDef.width + "' for column named '" + colDef.name + "'";
 
     // If width is not defined, set it to a single star
@@ -380,6 +380,11 @@ angular.module('ui.grid')
 
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
+    
+    if ( typeOf( self.field ) !== 'string' ){
+      $log.error( 'Field is not a string, this is likely to break the code, Field is: ' + self.field );
+    }
+    
     self.name = colDef.name;
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
