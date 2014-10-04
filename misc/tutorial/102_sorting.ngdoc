@@ -12,6 +12,12 @@ Sorting can be disabled at the column level by setting `enableSorting: false` in
 
 Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it in action, sort Gender then shift-click Name.
 
+When sorting using the menus, the sorts are additive.  So if you have one column sorted and you pick another sort
+from a column menu, it will add on to the existing sort rather than replacing it.  You need to use the 'remove sort' option
+on the existing column if you don't want to sort by it any more.  
+
+When sorting using the headers, clicking on a header removes all other sorts unless you shift-click.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
