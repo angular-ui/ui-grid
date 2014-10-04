@@ -3,7 +3,9 @@
 @description 
 
 You can dynamically add and remove columns, the grid watches the column defs and
-updates appropriately.
+updates appropriately.  The columns are by default shown in the order of the columnDefs,
+although if/when the column move feature arrives the end user will be able to alter 
+that default.
 
 @example
 <example module="app">

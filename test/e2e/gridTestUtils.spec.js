@@ -49,10 +49,12 @@ module.exports = {
      * @ngdoc method
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest
      * @name expectHeaderColumnCount
-     * @description Checks that a grid header has the specified number of columns.
+     * @description Checks that a grid header body render container (the default render container)
+     * has the specified number of columns.  If you are using pinned columns then you may also want
+     * to check expectHeaderLeftColumnCount
      * @param {string} gridId the id of the grid that you want to inspect
      * @param {integer} expectedNumCols the number of visible columns you expect the
-     * grid to have
+     * body to have
      * 
      * @example 
      * <pre>
@@ -66,6 +68,25 @@ module.exports = {
     },
 
 
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name expectHeaderLeftColumnCount
+     * @description Checks that a grid header left render container has the specified number of columns.
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} expectedNumCols the number of visible columns you expect the
+     * left render container to have
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.expectHeaderLeftColumnCount('myGrid', 2);
+     * </pre>
+     * 
+     */
+    expectHeaderLeftColumnCount: function( gridId, expectedNumCols ) {
+      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+      expect(headerCols.count()).toEqual(expectedNumCols);
+    },
     /**
      * @ngdoc method
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest
