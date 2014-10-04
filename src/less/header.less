@@ -94,58 +94,22 @@
 
 /* Slide up/down animations */
 .ui-grid-column-menu .ui-grid-menu .ui-grid-menu-inner {
-  &.ng-hide-add, &.ng-hide-remove {
+  &.ng-enter, &.ng-leave {
     .transition(all, 0.05s, linear);
     display: block !important;
   }
   
-  &.ng-hide-add.ng-hide-add-active,
-  &.ng-hide-remove {
+  &.ng-leave.ng-leave-active,
+  &.ng-enter {
     .transform(translateY(-100%));
   }
    
-  &.ng-hide-add,
-  &.ng-hide-remove.ng-hide-remove-active {
+  &.ng-leave,
+  &.ng-enter.ng-enter-active {
     .transform(translateY(0));
   }
 }
 
-// NOTE: not used currently (TODO(c0bra): Remove or use down the road?)
-// .ui-grid-column-filter {
-//   display: table;
-
-//   .input-container {
-//     position: relative;
-//     display: table-cell;
-
-//     .column-filter-input {
-//       margin: 0;
-//     }
-
-//     .column-filter-cancel-icon-container {
-//       position: absolute;
-//       top: 0;
-//       bottom: 0;
-//       right: 0;
-
-//       .column-filter-cancel-icon {
-//         position: absolute;
-//         top: 50%;
-//         line-height: 32px;
-//         margin-top: -16px;
-//         right: 2px;
-//       }
-//     }
-//   }
-
-//   .button-container {
-//     display: table-cell;
-
-//     .ui-grid-button {
-//       margin-left: 4px;
-//     }
-//   }
-// }
 
 .ui-grid-filter-container {
   padding: 4px 10px;

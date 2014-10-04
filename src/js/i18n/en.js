@@ -44,6 +44,15 @@
          pinLeft: 'Pin Left',
           pinRight: 'Pin Right',
           unpin: 'Unpin'
+        },
+        gridMenu: {
+          columns: 'Columns:',
+          exporterAllAsCsv: 'Export all data as csv',
+          exporterVisibleAsCsv: 'Export visible data as csv',
+          exporterSelectedAsCsv: 'Export selected data as csv',
+          exporterAllAsPdf: 'Export all data as pdf',
+          exporterVisibleAsPdf: 'Export visible data as pdf',
+          exporterSelectedAsPdf: 'Export selected data as pdf',
         }
       });
       return $delegate;

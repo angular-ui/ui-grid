@@ -16,7 +16,7 @@
    * columns.
    * 
    * No UI is provided, the caller should provide their own UI/buttons 
-   * as appropriate.
+   * as appropriate, or enable the gridMenu
    * 
    * <br/>
    * <br/>
@@ -70,8 +70,8 @@
    *
    *  @description Services for exporter feature
    */
-  module.service('uiGridExporterService', ['$log', '$q', 'uiGridExporterConstants', 'gridUtil', '$compile',
-    function ($log, $q, uiGridExporterConstants, gridUtil, $compile) {
+  module.service('uiGridExporterService', ['$log', '$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
+    function ($log, $q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
 
       var service = {
 
@@ -136,6 +136,17 @@
           grid.api.registerEventsFromObject(publicApi.events);
 
           grid.api.registerMethodsFromObject(publicApi.methods);
+          
+          if (grid.api.core.addToGridMenu){
+            service.addToMenu( grid );
+          } else {
+            // order of registration is not guaranteed, register in a little while
+            $interval( function() {
+              if (grid.api.core.addToGridMenu){
+                service.addToMenu( grid );
+              }              
+            }, 100, 1);
+          }
 
         },
 
@@ -276,58 +287,93 @@
            * <br/>Defaults to null, which means no layout 
            */
 
+          /**
+           * @ngdoc object
+           * @name exporterMenuCsv
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Add csv export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
+           */
+          gridOptions.exporterMenuCsv = gridOptions.exporterMenuCsv !== undefined ? gridOptions.exporterMenuCsv : true;
+
+          /**
+           * @ngdoc object
+           * @name exporterMenuPdf
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Add pdf export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
+           */
+          gridOptions.exporterMenuPdf = gridOptions.exporterMenuPdf !== undefined ? gridOptions.exporterMenuPdf : true;
+
+
         },
 
 
         /**
          * @ngdoc function
-         * @name showMenu
+         * @name addToMenu
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
-         * @description Shows the grid menu with exporter content,
+         * @description Adds export items to the grid menu,
          * allowing the user to select export options 
          * @param {Grid} grid the grid from which data should be exported
          */
-        showMenu: function ( grid ) {
-          grid.exporter.$scope.menuItems = [
+        addToMenu: function ( grid ) {
+          grid.api.core.addToGridMenu( grid, [
             {
-              title: 'Export all data as csv',
+              title: i18nService.getSafeText('gridMenu.exporterAllAsCsv'),
               action: function ($event) {
                 this.grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuCsv; 
               }
             },
             {
-              title: 'Export visible data as csv',
+              title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
               action: function ($event) {
                 this.grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuCsv; 
               }
             },
             {
-              title: 'Export selected data as csv',
+              title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
               action: function ($event) {
                 this.grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuCsv &&
+                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
               }
             },
             {
-              title: 'Export all data as pdf',
+              title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
               action: function ($event) {
                 this.grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuPdf; 
               }
             },
             {
-              title: 'Export visible data as pdf',
+              title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
               action: function ($event) {
                 this.grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuPdf; 
               }
             },
             {
-              title: 'Export selected data as pdf',
+              title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
               action: function ($event) {
                 this.grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuPdf &&
+                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
               }
             }
-          ];
-          
-          grid.exporter.$scope.$broadcast('toggleExporterMenu');          
+          ]);
         },
         
 
@@ -769,15 +815,9 @@
         priority: 0,
         require: '^uiGrid',
         scope: false,
-        compile: function () {
-          return {
-            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              uiGridExporterService.initializeGrid(uiGridCtrl.grid);
-              uiGridCtrl.grid.exporter.$scope = $scope;
-            },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            }
-          };
+        link: function ($scope, $elm, $attrs, uiGridCtrl) {
+          uiGridExporterService.initializeGrid(uiGridCtrl.grid);
+          uiGridCtrl.grid.exporter.$scope = $scope;
         }
       };
     }

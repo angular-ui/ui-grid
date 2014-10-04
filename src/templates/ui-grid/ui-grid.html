@@ -23,8 +23,9 @@
     {{ grid.customStyles }}
   </style>
 
-  <div ui-grid-render-container container-id="'body'" col-container-name="'body'" row-container-name="'body'" bind-scroll-horizontal="true" bind-scroll-vertical="true" enable-scrollbars="grid.options.enableScrollbars"></div>
+  <div ui-grid-menu-button ng-if="grid.options.enableGridMenu"></div>
 
+  <div ui-grid-render-container container-id="'body'" col-container-name="'body'" row-container-name="'body'" bind-scroll-horizontal="true" bind-scroll-vertical="true" enable-scrollbars="grid.options.enableScrollbars"></div>
 
   <div ui-grid-column-menu ng-if="grid.options.enableColumnMenu"></div>
 

@@ -54,7 +54,7 @@ describe('uiGridHeaderCell', function () {
       headerCell1 = $(grid).find('.ui-grid-header-cell:nth(0) .ui-grid-cell-contents');
       headerCell2 = $(grid).find('.ui-grid-header-cell:nth(1) .ui-grid-cell-contents');
       
-      menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu-inner');
+      menu = $(grid).find('.ui-grid-column-menu');
     });
 
     function openMenu() {
@@ -67,32 +67,32 @@ describe('uiGridHeaderCell', function () {
     describe('showing a menu with long-click', function () {
       it('should open the menu', inject(function () {
         openMenu();
-        expect(menu.hasClass('ng-hide')).toBe(false, 'column menu is visible (does not have ng-hide class)');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible (the inner is present)');
       }));
     });
 
     describe('right click', function () {
       it('should do nothing', inject(function() {
-        expect(menu.hasClass('ng-hide')).toBe(true, 'column menu is not initially visible');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not initially visible');
 
         headerCell1.trigger({ type: 'mousedown', button: 3 });
         $scope.$digest();
         $timeout.flush();
         $scope.$digest();
 
-        expect(menu.hasClass('ng-hide')).toBe(true, 'column menu is not visible');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       }));
     });
 
     describe('clicking outside visible menu', function () {
       it('should close the menu', inject(function() {
         openMenu();
-        expect(menu.hasClass('ng-hide')).toBe(false, 'column menu is visible');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
 
         $document.trigger('click');
         $scope.$digest();
         
-        expect(menu.hasClass('ng-hide')).toBe(true, 'column menu is hidden');        
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       }));
     });
 
@@ -124,12 +124,12 @@ describe('uiGridHeaderCell', function () {
       it('should hide an open menu', function () {
         delete $scope.gridOpts.columnDefs[0].disableColumnMenu;
         openMenu();
-        expect(menu.hasClass('ng-hide')).toBe(false, 'column menu is visible');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
         
         $(window).trigger('resize');
         // NOTE: don't have to $digest() here, the menu needs to handle running it on its own in the resize handler
 
-        expect(menu.hasClass('ng-hide')).toBe(true, 'column menu is hidden');
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       });
     });
 
