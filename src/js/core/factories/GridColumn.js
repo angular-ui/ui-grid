@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', function(gridUtil, uiGridConstants, i18nService) {
+.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', '$log', function(gridUtil, uiGridConstants, i18nService, $log) {
 
   /**
    * @ngdoc function
@@ -381,7 +381,7 @@ angular.module('ui.grid')
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
     
-    if ( typeOf( self.field ) !== 'string' ){
+    if ( typeof( self.field ) !== 'string' ){
       $log.error( 'Field is not a string, this is likely to break the code, Field is: ' + self.field );
     }
     
