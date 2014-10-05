@@ -185,6 +185,24 @@ angular.module('ui.grid')
     
     
     /**
+     * @ngdoc array
+     * @name gridMenuTitleFilter
+     * @propertyOf ui.grid.class:GridOptions
+     * @description (optional) A function that takes a title string 
+     * (usually the col.displayName), and converts it into a display value.  The function
+     * must return either a string or a promise.
+     * 
+     * Used for internationalization of the grid menu column names - for angular-translate
+     * you can pass $translate as the function, for i18nService you can pass getSafeText as the 
+     * function
+     * @example
+     * <pre>
+     *   gridOptions = {
+     *     gridMenuTitleFilter: $translate
+     *   }
+     * </pre>
+     */
+    /**
      * @ngdoc method
      * @methodOf ui.grid.gridMenuService
      * @name showHideColumns
@@ -206,11 +224,12 @@ angular.module('ui.grid')
         title: i18nService.getSafeText('gridMenu.columns')
       });
       
-      $scope.grid.options.columnDefs.forEach( function( value, index ){
-        if ( !value.disableHiding ){
+      $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
+      
+      $scope.grid.options.columnDefs.forEach( function( colDef, index ){
+        if ( !colDef.disableHiding ){
           // add hide menu item - shows an OK icon as we only show when column is already visible
-          showHideColumns.push({
-            title: value.displayName || value.name || value.field,
+          var menuItem = {
             icon: 'ui-grid-icon-ok',
             action: function($event) {
               $event.stopPropagation();
@@ -219,12 +238,13 @@ angular.module('ui.grid')
             shown: function() {
               return this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined;
             },
-            context: { gridCol: $scope.grid.getColumn(value.name || value.field) }
-          });
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+          };
+          service.setMenuItemTitle( menuItem, colDef, $scope.grid );
+          showHideColumns.push( menuItem );
 
           // add show menu item - shows no icon as we only show when column is invisible
-          showHideColumns.push({
-            title: value.displayName || value.name || value.field,
+          menuItem = {
             icon: 'ui-grid-icon-cancel',
             action: function($event) {
               $event.stopPropagation();
@@ -233,14 +253,47 @@ angular.module('ui.grid')
             shown: function() {
               return !(this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined);
             },
-            context: { gridCol: $scope.grid.getColumn(value.name || value.field) }
-          });
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+          };
+          service.setMenuItemTitle( menuItem, colDef, $scope.grid );
+          showHideColumns.push( menuItem );
         }
       });
       return showHideColumns;
     },
     
     
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.gridMenuService
+     * @name setMenuItemTitle
+     * @description Handles the response from gridMenuTitleFilter, adding it directly to the menu
+     * item if it returns a string, otherwise waiting for the promise to resolve or reject then
+     * putting the result into the title 
+     * @param {object} menuItem the menuItem we want to put the title on
+     * @param {object} colDef the colDef from which we can get displayName, name or field
+     * @param {Grid} grid the grid, from which we can get the options.gridMenuTitleFilter
+     * 
+     */
+    setMenuItemTitle: function( menuItem, colDef, grid ){
+      var title = grid.options.gridMenuTitleFilter( colDef.displayName || colDef.name || colDef.field );
+      
+      if ( typeof(title) === 'string' ){
+        menuItem.title = title;
+      } else if ( title.then ){
+        // must be a promise
+        menuItem.title = "";
+        title.then( function( successValue ) {
+          menuItem.title = successValue;
+        }, function( errorValue ) {
+          menuItem.title = errorValue;
+        });
+      } else {
+        $log.error('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
+        menuItem.title = 'badconfig';
+      }
+    },
+
     /**
      * @ngdoc method
      * @methodOf ui.grid.gridMenuService
