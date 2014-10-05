@@ -5,15 +5,17 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
   var $rootScope;
   var $scope;
   var $log;
+  var $q;
   
   beforeEach(module('ui.grid'));
 
-  beforeEach( inject(function (_uiGridGridMenuService_, _gridClassFactory_, _$rootScope_, _$log_) {
+  beforeEach( inject(function (_uiGridGridMenuService_, _gridClassFactory_, _$rootScope_, _$log_, _$q_) {
     uiGridGridMenuService = _uiGridGridMenuService_;
     gridClassFactory = _gridClassFactory_;
     $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
     $log = _$log_;
+    $q = _$q_;
 
     grid = gridClassFactory.createGrid( { id: 1234 });
     grid.options.columnDefs = [
@@ -107,6 +109,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
 
     it('grab bag of stuff', function () {
       grid.options.gridMenuCustomItems = [ { title: 'z' }, { title: 'a' }];
+      grid.options.gridMenuTitleFilter = function( title ) {return 'fn_' + title;};
       var registeredMenuItems = [ { id: 'customItem1', title: 'x' }, { id: 'customItem2', title: 'y' } ];
       grid.options.columnDefs[1].disableHiding = true;
 
@@ -121,12 +124,12 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       expect( menuItems[3].title ).toEqual('y', 'Menu item 3 should be from register');
 
       expect( menuItems[4].title ).toEqual('Columns:', 'Menu item 4 should be header');
-      expect( menuItems[5].title ).toEqual('col1', 'Menu item 5 should be col1');
-      expect( menuItems[6].title ).toEqual('col1', 'Menu item 6 should be col1');
-      expect( menuItems[7].title ).toEqual('col3', 'Menu item 7 should be col3');
-      expect( menuItems[8].title ).toEqual('col3', 'Menu item 8 should be col3');
-      expect( menuItems[9].title ).toEqual('col4', 'Menu item 9 should be col4');
-      expect( menuItems[10].title ).toEqual('col4', 'Menu item 10 should be col4');
+      expect( menuItems[5].title ).toEqual('fn_col1', 'Menu item 5 should be col1');
+      expect( menuItems[6].title ).toEqual('fn_col1', 'Menu item 6 should be col1');
+      expect( menuItems[7].title ).toEqual('fn_col3', 'Menu item 7 should be col3');
+      expect( menuItems[8].title ).toEqual('fn_col3', 'Menu item 8 should be col3');
+      expect( menuItems[9].title ).toEqual('fn_col4', 'Menu item 9 should be col4');
+      expect( menuItems[10].title ).toEqual('fn_col4', 'Menu item 10 should be col4');
       
       expect( menuItems[5].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
       expect( menuItems[6].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
@@ -135,6 +138,45 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       expect( menuItems[9].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
       expect( menuItems[10].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
       
+    });
+
+    it('gridMenuTitleFilter returns a promise', function () {
+      var promises = [];
+      grid.options.gridMenuTitleFilter = function( title ) {
+        var deferred = $q.defer();
+        promises.push(deferred);
+        return deferred.promise;
+      };
+
+      var menuItems = uiGridGridMenuService.getMenuItems( $scope );
+      
+      expect( menuItems.length ).toEqual(9, 'Should be 9 items, 1 columns header, and 2x4 columns that allow hiding');
+      expect( menuItems[0].title ).toEqual('Columns:', 'Menu item 0 should be header');
+      expect( menuItems[1].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[2].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[3].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[4].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[5].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[6].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[7].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[8].title ).toEqual('', 'Promise not resolved');
+      
+      console.log(promises.length);
+      promises.forEach( function( promise, index ) {
+        promise.resolve('resolve_' + index);
+      });
+      $scope.$digest();
+
+      expect( menuItems.length ).toEqual(9, 'Should be 9 items, 1 columns header, and 2x4 columns that allow hiding');
+      expect( menuItems[0].title ).toEqual('Columns:', 'Menu item 0 should be header');
+      expect( menuItems[1].title ).toEqual('resolve_0', 'Promise now resolved');
+      expect( menuItems[2].title ).toEqual('resolve_1', 'Promise now resolved');
+      expect( menuItems[3].title ).toEqual('resolve_2', 'Promise now resolved');
+      expect( menuItems[4].title ).toEqual('resolve_3', 'Promise now resolved');
+      expect( menuItems[5].title ).toEqual('resolve_4', 'Promise now resolved');
+      expect( menuItems[6].title ).toEqual('resolve_5', 'Promise now resolved');
+      expect( menuItems[7].title ).toEqual('resolve_6', 'Promise now resolved');
+      expect( menuItems[8].title ).toEqual('resolve_7', 'Promise now resolved');      
     });
   }); 
 

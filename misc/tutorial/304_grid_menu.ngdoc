@@ -9,15 +9,30 @@ The exporter feature also adds menu items to this menu.  The `exporterMenuCsv` o
 to false, which suppresses csv export.  The 'export selected rows' option is only available
 if at least one row is selected.
 
+The column titles can have a custom filter defined using `gridMenuTitleFilter`, used when your
+column headers have an internationalization filter (angular translate or i18nService), and you
+want them also internationalized in the grid menu.  The translate needs to return either a string,
+or a promise that will resolve to a string.  In the example below we create a fake 
+internationalization function that waits 1 second then prefixes each column with "col: ".
+
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.exporter', 'ui.grid.selection']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', '$q', function ($scope, $http, $interval, $q) {
+      var fakeI18n = function( title ){
+        var deferred = $q.defer();
+        $interval( function() {
+          deferred.resolve( 'col: ' + title );
+        }, 1000, 1);
+        return deferred.promise;
+      };
+    
       $scope.gridOptions = {
         exporterMenuCsv: false,
         enableGridMenu: true,
+        gridMenuTitleFilter: fakeI18n,
         gridMenuCustomItems: [
           {
             title: 'Rotate Grid',
