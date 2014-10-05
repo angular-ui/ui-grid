@@ -279,44 +279,22 @@ function ($log, gridUtil, uiGridConstants, uiGridGridMenuService) {
 
       uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
       
+      $scope.shown = false;
 
-      $scope.openMenu = function () {
-        $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
-        $scope.$broadcast('openGridMenu');
+      $scope.toggleMenu = function () {
+        if ( $scope.shown ){
+          $scope.$broadcast('hide-menu');
+          $scope.shown = false;
+        } else {
+          $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
+          $scope.$broadcast('show-menu');
+          $scope.shown = true;
+        }
       };
-    }
-  };
-
-}])
-.directive('uiGridMenuHandler', ['$log', 'gridUtil', 'uiGridConstants', '$timeout', 
-function ($log, gridUtil, uiGridConstants, $timeout) {
-
-  return {
-    priority: 0,
-    require: ['?^uiGrid', 'uiGridMenu'],
-    link: function ($scope, $elm, $attrs, controllers) {
-      var uiGridCtrl = controllers[0];
-      var uiGridMenuCtrl = controllers[1];
-
-      $scope.$on('openGridMenu', function () {
-        uiGridMenuCtrl.showMenu();
-        
-        $timeout(function () {
-          var gridElm = uiGridCtrl.grid.element;
-          var gridWidth = gridUtil.elementWidth(gridElm, true);
-          var menuWidth = 200;  // calculate this later
-
-          // Put the menu inside the right of the grid
-          $elm.css('left', gridWidth - menuWidth + 'px');
-
-          // Put the menu at the top of the grid but adjust for the border
-          $elm.css('top', '-1px');
-        });
-      });
       
-      $scope.$on('hideGridMenu', function () {
-        uiGridMenuCtrl.hideMenu();
-      });      
+      $scope.$on('menu-hidden', function() {
+        $scope.shown = false;
+      });
     }
   };
 

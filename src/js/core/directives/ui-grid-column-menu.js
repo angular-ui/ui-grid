@@ -282,16 +282,19 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 
       var containerScrolLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
-      var myWidth = $scope.lastWidth ? $scope.lastWidth : 170;
-      var paddingRight = $scope.lastPaddingRight ? $scope.lastPaddingRight : 10;
+      // default value the last width for _this_ column, otherwise last width for _any_ column, otherwise default to 170
+      var myWidth = $scope.col.lastMenuWidth ? $scope.col.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
+      var paddingRight = $scope.col.lastMenuPaddingRight ? $scope.col.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
       if (menu.length !== 0){
         myWidth = gridUtil.elementWidth(menu, true);
-        $scope.lastWidth = myWidth;
+        $scope.lastMenuWidth = myWidth;
+        $scope.col.lastMenuWidth = myWidth;
 
         // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
         // Get the column menu right padding
         paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
-        $scope.lastPaddingRight = paddingRight;
+        $scope.lastMenuPaddingRight = paddingRight;
+        $scope.col.lastMenuPaddingRight = paddingRight;
       }
 
       $elm.css('left', (positionData.left + renderContainerOffset - containerScrolLeft + positionData.width - myWidth + paddingRight) + 'px');
@@ -304,8 +307,8 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 }])
 
 
-.directive('uiGridColumnMenu', ['$log', '$timeout', '$window', '$document', '$injector', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', 
-function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstants, uiGridColumnMenuService) {
+.directive('uiGridColumnMenu', ['$log', '$timeout', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', 
+function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
 /**
  * @ngdoc directive
  * @name ui.grid.directive:uiGridColumnMenu
@@ -348,7 +351,7 @@ function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstan
         $scope.col = column;
 
         // Remove an existing document click handler
-        $document.off('click', documentClick);
+//        $document.off('click', documentClick);
 
         // Get the position information for the column element
         var colElementPosition = uiGridColumnMenuService.getColumnElementPosition( $scope, column, $columnElement );
@@ -373,7 +376,7 @@ function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstan
         }
 
         // Hide the menu on a click on the document
-        $document.on('click', documentClick);
+//        $document.on('click', documentClick);
       };
 
 
@@ -382,14 +385,20 @@ function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstan
        * @methodOf ui.grid.directive:uiGridColumnMenu
        * @name hideMenu
        * @description Hides the column menu.
+       * @param {boolean} broadcastTrigger true if we were triggered by a broadcast
+       * from the menu itself - in which case don't broadcast again as we'll get
+       * an infinite loop
        */
-      $scope.hideMenu = function() {
+      $scope.hideMenu = function( broadcastTrigger ) {
         delete $scope.col;
         $scope.menuShown = false;
-        $scope.$broadcast('hide-menu');
+        
+        if ( !broadcastTrigger ){
+          $scope.$broadcast('hide-menu');
+        }
       };
 
-
+/*
       function documentClick() {
         $scope.$apply($scope.hideMenu);
         $document.off('click', documentClick);
@@ -411,6 +420,10 @@ function ($log, $timeout, $window, $document, $injector, gridUtil, uiGridConstan
       $scope.$on('$destroy', function() {
         angular.element($window).off('resize', resizeHandler);
         $document.off('click', documentClick);
+      });
+*/      
+      $scope.$on('menu-hidden', function() {
+        $scope.hideMenu( true );
       });
 
  
