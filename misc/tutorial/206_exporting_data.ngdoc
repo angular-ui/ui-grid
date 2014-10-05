@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 306 Exporting Data With Custom UI
+@name Tutorial: 206 Exporting Data With Native UI
 @description The exporter feature allows data to be exported from the grid in 
 csv or pdf format.  The exporter can export all data, visible data or selected data.
 
@@ -11,6 +11,8 @@ available through:
 
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}.
 
+The exporter adds menu items to the grid menu, to use the native UI you need to enable
+the grid menu using the gridOption `enableGridMenu`
 
 @example
 In this example we provide a custom UI for calling the exporter, and we tailor
@@ -27,6 +29,7 @@ the way the returned data behaves.
           { field: 'gender', visible: false},
           { field: 'company' }
         ],
+        enableGridMenu: true,
         exporterLinkLabel: 'get your csv here',
         exporterPdfDefaultStyle: {fontSize: 9},
         exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
@@ -34,48 +37,22 @@ the way the returned data behaves.
         exporterPdfOrientation: 'portrait',
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
         }
       };
       
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-        });
+      .success(function(data) {
+        $scope.gridOptions.data = data;
+      });
         
-      
-        
-      $scope.export = function(){
-        if ($scope.export_format == 'csv') {
-          var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
-          $scope.gridApi.exporter.csvExport( $scope.export_row_type, $scope.export_column_type, myElement );
-        } else if ($scope.export_format == 'pdf') {
-          $scope.gridApi.exporter.pdfExport( $scope.export_row_type, $scope.export_column_type );
-        };
-      };
     }]);
   </file>
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <label>Which columns should we export?</label>
-      <select ng-model="export_column_type"</select>
-        <option value='all'>All</option>
-        <option value='visible'>Visible</option>
-      </select>
-      <label>Which rows should we export?</label>
-      <select ng-model="export_row_type"</select>
-        <option value='all'>All</option>
-        <option value='visible'>Visible</option>
-        <option value='selected'>Selected</option>
-      </select>
-      <label>What format would you like?</label>
-      <select ng-model="export_format"</select>
-        <option value='csv'>CSV</option>
-        <option value='pdf'>PDF</option>
-      </select>
-      <button ng-click="export()">Export</button>
       <div class="custom-csv-link-location">
         <label>Your CSV will show below:</label>
         <span class="ui-grid-exporter-csv-link">&nbsp</span>

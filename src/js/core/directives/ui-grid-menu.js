@@ -42,57 +42,66 @@ angular.module('ui.grid')
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
+      var self = this;
       gridUtil.enableAnimations($elm);
 
+      
+    // *** Show/Hide functions ******
+      self.showMenu = $scope.showMenu = function() {
+        $scope.shown = true;
+
+        // Turn off an existing dpcument click handler
+        angular.element(document).off('click', applyHideMenu);
+
+        // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
+        $timeout(function() {
+          angular.element(document).on('click', applyHideMenu);
+        });
+      };
+
+      self.hideMenu = $scope.hideMenu = function() {
+        $scope.shown = false;
+        $scope.$emit('menu-hidden');
+        angular.element(document).off('click', applyHideMenu);
+      };
+
+      $scope.$on('hide-menu', function () {
+        $scope.hideMenu();
+      });
+
+      $scope.$on('show-menu', function () {
+        $scope.showMenu();
+      });
+
+      
+    // *** Auto hide when click elsewhere ******
+      var applyHideMenu = function(){
+        $scope.$apply(function () {
+          $scope.hideMenu();
+        });
+      };
+    
       if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
         $scope.autoHide = true;
       }
 
       if ($scope.autoHide) {
-        angular.element($window).on('resize', $scope.hideMenu);
+        angular.element($window).on('resize', applyHideMenu);
       }
-
-      $scope.$on('hide-menu', function () {
-        $scope.shown = false;
-      });
-
-      $scope.$on('show-menu', function () {
-        $scope.shown = true;
-      });
-
-      $scope.$on('$destroy', function() {
-        angular.element($window).off('resize', $scope.hideMenu);
-      });
-    },
-    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-      var self = this;
-
-      self.hideMenu = $scope.hideMenu = function() {
-        $scope.shown = false;
-      };
-
-      function documentClick() {
-        $scope.$apply(function () {
-          self.hideMenu();
-          angular.element(document).off('click', documentClick);
-        });
-      }
-
-      self.showMenu = $scope.showMenu = function() {
-        $scope.shown = true;
-
-        // Turn off an existing dpcument click handler
-        angular.element(document).off('click', documentClick);
-
-        // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
-        $timeout(function() {
-          angular.element(document).on('click', documentClick);
-        });
-      };
 
       $scope.$on('$destroy', function () {
-        angular.element(document).off('click', documentClick);
+        angular.element(document).off('click', applyHideMenu);
       });
+      
+
+      $scope.$on('$destroy', function() {
+        angular.element($window).off('resize', applyHideMenu);
+      });
+    },
+    
+    
+    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+      var self = this;
     }]
   };
 
@@ -173,7 +182,7 @@ angular.module('ui.grid')
 
               $scope.action.call(context, $event, title);
 
-              uiGridMenuCtrl.hideMenu();
+              $scope.$emit('hide-menu');
             }
           };
 
