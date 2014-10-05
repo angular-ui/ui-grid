@@ -63,6 +63,7 @@ describe('ui-grid-menu', function() {
     //   expect(inner.hasClass('ng-hide')).toBe(false);
     // });
   
+/* Now only responds to broadcast events
     it('should hide when hideMenu() is called', function() {
       $scope.$broadcast('show-menu');
       $scope.$digest();
@@ -74,7 +75,7 @@ describe('ui-grid-menu', function() {
   
       expect(menu.find('.ui-grid-menu-inner').length).toEqual(0);
     });
-    
+*/    
   });
 
   describe( 'actions with menu displayed', function() {

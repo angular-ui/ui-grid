@@ -127,7 +127,7 @@ describe('uiGridHeaderCell', function () {
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
         
         $(window).trigger('resize');
-        // NOTE: don't have to $digest() here, the menu needs to handle running it on its own in the resize handler
+        $scope.$digest();
 
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       });

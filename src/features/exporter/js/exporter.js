@@ -378,6 +378,13 @@
         
 
         /**
+         * @ngdoc object
+         * @name exporterCsvLinkElement
+         * @propertyOf  ui.grid.exporter.api:GridOptions
+         * @description The element that the csv link should be placed into.
+         * Mandatory if using the native UI.
+         */
+        /**
          * @ngdoc function
          * @name csvExport
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
@@ -397,9 +404,16 @@
           var exportColumnHeaders = this.getColumnHeaders(grid, colTypes);
           var exportData = this.getData(grid, rowTypes, colTypes);
           var csvContent = this.formatAsCsv(exportColumnHeaders, exportData);
-          this.renderCsvLink(grid, csvContent, $elm);
           
-          // this.grid.exporter.$scope.$broadcast('clearExporterMenu');
+          if ( !$elm && grid.options.exporterCsvLinkElement ){
+            $elm = grid.options.exporterCsvLinkElement;
+          }
+          
+          if ( $elm ){
+            this.renderCsvLink(grid, csvContent, $elm);
+          } else {
+            $log.error( 'Exporter asked to export as csv, but no element provided.  Perhaps you should set gridOptions.exporterCsvLinkElement?')
+;          }
         },
         
         
