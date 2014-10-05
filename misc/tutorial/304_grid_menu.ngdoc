@@ -16,7 +16,7 @@ if at least one row is selected.
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
       $scope.gridOptions = {
-        exporterMenuCsvExport: false,
+        exporterMenuCsv: false,
         enableGridMenu: true,
         gridMenuCustomItems: [
           {
@@ -79,8 +79,8 @@ if at least one row is selected.
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });
 
-      it('grid1 grid menu should have 10 items', function () {
-        gridTestUtils.expectVisibleGridMenuItems( 'grid1', 10 );
+      it('grid1 grid menu should have 8 items', function () {
+        gridTestUtils.expectVisibleGridMenuItems( 'grid1', 8 );
       });
       
       it('grid1 hide then show gender column', function () {
