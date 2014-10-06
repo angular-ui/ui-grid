@@ -748,8 +748,9 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     var styles = getStyles(elem);
 
+    // If a specific border is supplied, like 'top', read the 'borderTop' style property
     if (borderType) {
-      borderType = 'border-' + borderType;
+      borderType = 'border' + borderType.charAt(0).toUpperCase() + borderType.slice(1);
     }
     else {
       borderType = 'border';

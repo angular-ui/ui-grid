@@ -13,17 +13,24 @@
         row: '=',
         renderIndex: '='
       },
-      require: '?^uiGrid',
+      require: ['?^uiGrid', '^uiGridRenderContainer'],
       replace: true,
       compile: function() {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+          pre: function ($scope, $elm, $attrs) {
             var cellHeader = $compile($scope.col.headerCellTemplate)($scope);
             $elm.append(cellHeader);
           },
           
-          post: function ($scope, $elm, $attrs, uiGridCtrl) {
+          post: function ($scope, $elm, $attrs, controllers) {
+            var uiGridCtrl = controllers[0];
+            var renderContainerCtrl = controllers[1];
+
             $scope.grid = uiGridCtrl.grid;
+
+            $log.debug('id', renderContainerCtrl.containerId);
+
+            $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
             $elm.addClass($scope.col.getColClass(false));
     

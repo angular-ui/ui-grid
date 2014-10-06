@@ -1512,17 +1512,42 @@ angular.module('ui.grid')
         var rebuildStyles = false;
 
         // Get all the header heights
-        for (var i = 0; i < containerHeadersToRecalc.length; i++) {
-          var container = containerHeadersToRecalc[i];
+        var maxHeight = 0;
+        var i, container;
+        for (i = 0; i < containerHeadersToRecalc.length; i++) {
+          container = containerHeadersToRecalc[i];
 
           if (container.header) {
             var oldHeaderHeight = container.headerHeight;
             var headerHeight = gridUtil.outerElementHeight(container.header);
+
             container.headerHeight = headerHeight;
 
             if (oldHeaderHeight !== headerHeight) {
               rebuildStyles = true;
             }
+
+            // Get the "inner" header height, that is the height minus the top and bottom borders, if present. We'll use it to make sure all the headers have a consistent height
+            var topBorder = gridUtil.getBorderSize(container.header, 'top');
+            var bottomBorder = gridUtil.getBorderSize(container.header, 'bottom');
+            var innerHeaderHeight = headerHeight - topBorder - bottomBorder;
+
+            container.innerHeaderHeight = innerHeaderHeight;
+
+            // Save the largest header height for use later
+            if (innerHeaderHeight > maxHeight) {
+              maxHeight = innerHeaderHeight;
+            }
+          }
+        }
+
+        // Go through all the headers
+        for (i = 0; i < containerHeadersToRecalc.length; i++) {
+          container = containerHeadersToRecalc[i];
+
+          // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
+          if (container.headerHeight < maxHeight) {
+            container.explicitHeaderHeight = maxHeight;
           }
         }
 
