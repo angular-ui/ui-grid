@@ -169,15 +169,14 @@
                 // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
                 if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
                   $elm.prepend(resizerLeft);
+                  $compile(resizerLeft)($scope);
                 }
                 
                 // Don't append the right resizer if this column has resizing disabled
                 if ($scope.col.colDef.enableColumnResizing !== false) {
                   $elm.append(resizerRight);
+                  $compile(resizerRight)($scope);
                 }
-
-                $compile(resizerLeft)($scope);
-                $compile(resizerRight)($scope);
               });
             }
           }
