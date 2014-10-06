@@ -44,7 +44,14 @@
                 var template = angular.element(contents);
                 
                 var newElm = $compile(template)($scope);
-                $elm.append(newElm);
+                $elm.replaceWith(newElm);
+
+                // Replace the reference to the container's header element with this new element
+                containerCtrl.header = newElm;
+                containerCtrl.colContainer.header = newElm;
+
+                // And update $elm to be the new element
+                $elm = newElm;
 
                 if (containerCtrl) {
                   // Inject a reference to the header viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
