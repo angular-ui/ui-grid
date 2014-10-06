@@ -1,4 +1,4 @@
-<div ng-class="{ 'sortable': sortable }">
+<div ng-class="{ 'sortable': sortable }" ng-style="{ 'height': renderContainer.explicitHeaderHeight + 'px' }">
   <div class="ui-grid-vertical-bar">&nbsp;</div>
   <div class="ui-grid-cell-contents" col-index="renderIndex">
     {{ col.displayName CUSTOM_FILTERS }}
@@ -9,7 +9,7 @@
   </div>
 
   <div class="ui-grid-column-menu-button" ng-if="grid.options.enableColumnMenu && !col.isRowHeader  && !col.colDef.disableColumnMenu" class="ui-grid-column-menu-button" ng-click="toggleMenu($event)">
-    <i class="ui-grid-icon-angle-down">&nbsp;<i>
+    <i class="ui-grid-icon-angle-down">&nbsp;</i>
   </div>
 
   <div ng-if="filterable" class="ui-grid-filter-container" ng-repeat="colFilter in col.filters">

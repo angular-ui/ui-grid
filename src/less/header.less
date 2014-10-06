@@ -4,11 +4,14 @@
 }
 
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
+
+.ui-grid-header {
+  border-bottom: 1px solid @borderColor;
+}
+
 .ui-grid-top-panel {
     position: relative;
-    // z-index: 1;
-    // background-color: @darkGray; // #EAEAEA
-    border-bottom: 1px solid @borderColor; // #D4D4D4
+    // border-bottom: 1px solid @borderColor; // #D4D4D4
 
     overflow: hidden;  // Disable so menus show up
     font-weight: bold;
