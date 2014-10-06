@@ -4,7 +4,7 @@
 
 UI-Grid allows you to sort rows. The feature is on by default. You can set the `enableSorting` flag in your grid options to enable/disable it.
 
-<span class="span8 alert alert-warning">
+<span class="col-xs-12 alert alert-warning">
   <strong>Note:</strong> You can sort columns by accessing the column menu. You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.
 </span>
 
