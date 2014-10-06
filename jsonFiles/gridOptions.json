@@ -174,6 +174,12 @@
 		"plunker": "Link"
 	},
 	{
+		"id": "noKeyboardNavigation",
+		"defaultValue": "false",
+		"definition": "Disables keyboard navigation",
+		"plunker": "Link"
+	},
+	{
 		"id": "pagingOptions",
 		"defaultValue": "{ pageSizes: [250, 500, 1000], pageSize: 250, totalServerItems: 0, currentPage: 1 }",
 		"definition": " pageSizes: list of available page sizes. \n pageSize: currently selected page size. \n totalServerItems: Total items are on the server. \n currentPage: the uhm... current page.",
