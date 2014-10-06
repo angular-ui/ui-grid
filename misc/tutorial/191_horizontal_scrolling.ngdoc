@@ -9,31 +9,37 @@ Demonstrating scrolling with large amount of columns
   <file name="app.js">
     var app = angular.module('app', ['ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
       $scope.gridOptions = {
         enableSorting: true
       };
-      $scope.gridOptions.columnDefs = [];
 
       var colCount = 500;
+      var rowCount = 500;
 
-      for (var colIndex = 0; colIndex < colCount; colIndex++) {
-        $scope.gridOptions.columnDefs.push({
-          name: 'col' + colIndex,
-          width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
-        });
-      }
-
-      var data = [];
-      for (var rowIndex = 0; rowIndex < 500; rowIndex++) {
-        var row = {};
-
+      $scope.gridOptions.columnDefs = [];
+      $timeout( function() {
         for (var colIndex = 0; colIndex < colCount; colIndex++) {
-          row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+          $scope.gridOptions.columnDefs.push({
+            name: 'col' + colIndex,
+            width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
+          });
         }
+      });
+      
+      var data = [];
 
-        data.push(row);
-      }
+      $timeout( function() {
+        for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+          var row = {};
+  
+          for (var colIndex = 0; colIndex < colCount; colIndex++) {
+            row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+          }
+  
+          data.push(row);
+        }
+      });
 
       $scope.gridOptions.data = data;
     }]);
