@@ -161,7 +161,6 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       expect( menuItems[7].title ).toEqual('', 'Promise not resolved');
       expect( menuItems[8].title ).toEqual('', 'Promise not resolved');
       
-      console.log(promises.length);
       promises.forEach( function( promise, index ) {
         promise.resolve('resolve_' + index);
       });
