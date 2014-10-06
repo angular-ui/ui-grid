@@ -470,7 +470,8 @@ module.exports = function(grunt) {
         ],
         styles: [
           'misc/doc/css/prettify.css',
-          'misc/doc/css/bootstrap-flatly.css',
+          //'misc/doc/css/bootstrap-flatly.min.css',
+          //'misc/doc/css/docs.css',
           // process.env.TRAVIS ? '<%= dist %>/release/<%= pkg.name %>.unstable.css' : '<%= dist %>/release/<%= pkg.name %>.css'
           // '<%= dist %>/release/<%= pkg.name %>.css'
         ],

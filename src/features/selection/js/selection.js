@@ -338,7 +338,7 @@
    *  @example
    <example module="app">
    <file name="app.js">
-   var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+   var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
 
    app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.data = [

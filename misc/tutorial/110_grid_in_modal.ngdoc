@@ -31,14 +31,16 @@ Using a grid in a modal popup
         var elm;
         var modal = {
           open: function() {
-            var html = '<div class="modal"><a class="modal-close" href ng-click="close()">X</a><div id="grid1" ui-grid="gridOptions" class="grid"></div></div>';
 
+            var html = '<div class="modal" ng-style="modalStyle">{{modalStyle}}<div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body"><div id="grid1" ui-grid="gridOptions" class="grid"></div></div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
             elm = angular.element(html);
             angular.element(document.body).prepend(elm);
 
             $rootScope.close = function() {
               modal.close();
             };
+            
+            $rootScope.modalStyle = {"display": "block"};
 
             $compile(elm)($rootScope);
           },
@@ -59,34 +61,6 @@ Using a grid in a modal popup
     </div>
   </file>
   <file name="main.css">
-    .modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 50%;
-      max-width: 550px;
-      min-width: 330px;
-      height: auto;
-      z-index: 2000;
-      -webkit-transform: translateX(-50%) translateY(-50%);
-      -moz-transform: translateX(-50%) translateY(-50%);
-      -ms-transform: translateX(-50%) translateY(-50%);
-      transform: translateX(-50%) translateY(-50%);
-
-      border: 1px solid #333;
-      background-color: #fafafa;
-
-      padding: 15px;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: #000;
-      font-weight: bold;
-    }
-
     .grid {
       width: 300px;
       height: 250px;
@@ -98,7 +72,7 @@ Using a grid in a modal popup
       element( by.id ( 'showButton' ) ).click();
       gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Ethel Price', 'female', 'Enersol' ]);
-      element( by.css ( '.modal-close' ) ).click();
+      element( by.id ( 'buttonClose' ) ).click();
     });
   </file>
 </example>
