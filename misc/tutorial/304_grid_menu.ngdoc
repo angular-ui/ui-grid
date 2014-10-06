@@ -43,6 +43,8 @@ internationalization function that waits 1 second then prefixes each column with
         ],
         onRegisterApi: function( gridApi ){
           $scope.gridApi = gridApi;
+          
+          // interval of zero just to allow the directive to have initialized
           $interval( function() {
             gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'Dynamic item'}]);
           }, 0, 1);

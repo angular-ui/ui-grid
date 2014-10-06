@@ -34,7 +34,7 @@ angular.module('ui.grid')
       });
       
       $scope.registeredMenuItems = [];
-      
+
       /**
        * @ngdoc function
        * @name addToGridMenu

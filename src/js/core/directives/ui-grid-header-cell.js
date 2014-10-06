@@ -25,21 +25,6 @@
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             $scope.grid = uiGridCtrl.grid;
             
-            /**
-             * @ngdoc event
-             * @name filterChanged
-             * @eventOf  ui.grid.core.api:PublicApi
-             * @description  is raised after the filter is changed.  The nature
-             * of the watch expression doesn't allow notification of what changed,
-             * so the receiver of this event will need to re-extract the filter 
-             * conditions from the columns.
-             * 
-             */
-            if (!$scope.grid.api.core.raise.filterChanged){
-              $scope.grid.api.registerEvent( 'core', 'filterChanged' );
-            }
-                        
-    
             $elm.addClass($scope.col.getColClass(false));
     
             // Hide the menu by default
