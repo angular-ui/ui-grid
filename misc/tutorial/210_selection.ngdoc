@@ -90,6 +90,8 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
+          
+          // $interval whilst we wait for the grid to digest the data we just gave it
           $interval( function() {$scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);}, 0, 1);
         });
     }]);
