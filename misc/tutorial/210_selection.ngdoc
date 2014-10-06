@@ -14,6 +14,11 @@ result in selection of that row.
 Setting the `multiSelect` gridOption to true will allow selecting multiple rows, setting to false will allow selection
 of only one row at a time.
 
+If you have `multiSelect: false`, then an additional option `noUnselect` will mean that a row is always selected.  You
+can select a different row (which will unselect the current row), but you cannot manually unselect the current row
+by clicking on it.  This means that at least one row is always selected, other than when you first open the grid.  If 
+necessary you could programatically select the first row upon page open.  The second grid demonstrates this.
+
 @example
 Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
 
@@ -66,7 +71,7 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
         };
     }]);
     
-    app.controller('SecondCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('SecondCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
       $scope.gridOptions = { enableRowSelection: true, enableRowHeaderSelection: false };
 
       $scope.gridOptions.columnDefs = [
@@ -77,10 +82,15 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       ];
 
       $scope.gridOptions.multiSelect = false;
+      $scope.gridOptions.noUnselect = true;
+      $scope.gridOptions.onRegisterApi = function( gridApi ) {
+        $scope.gridApi = gridApi;
+      };
 
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
+          $interval( function() {$scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);}, 0, 1);
         });
     }]);
   </file>
