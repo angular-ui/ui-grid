@@ -1,6 +1,6 @@
 ﻿[
 ﻿	{
-﻿		"id": "primaryKey"
+﻿		"id": "primaryKey",
 ﻿		"defaultValue": "undefined",
 ﻿		"definition": "Field of user's data that should be unique. Allows you automatically update selections state for previously loaded data.",
 ﻿		"plunker": "Link"
