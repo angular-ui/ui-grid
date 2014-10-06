@@ -406,6 +406,7 @@
             }
 
             function beginEditFocus(evt) {
+              console.log('begin edit');
               evt.stopPropagation();
               beginEdit();
             }
