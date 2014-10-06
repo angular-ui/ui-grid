@@ -283,18 +283,18 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       var containerScrollLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
       // default value the last width for _this_ column, otherwise last width for _any_ column, otherwise default to 170
-      var myWidth = $scope.col.lastMenuWidth ? $scope.col.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
-      var paddingRight = $scope.col.lastMenuPaddingRight ? $scope.col.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
+      var myWidth = column.lastMenuWidth ? column.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
+      var paddingRight = column.lastMenuPaddingRight ? column.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
       if (menu.length !== 0){
         myWidth = gridUtil.elementWidth(menu, true);
         $scope.lastMenuWidth = myWidth;
-        $scope.col.lastMenuWidth = myWidth;
+        column.lastMenuWidth = myWidth;
 
         // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
         // Get the column menu right padding
         paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
         $scope.lastMenuPaddingRight = paddingRight;
-        $scope.col.lastMenuPaddingRight = paddingRight;
+        column.lastMenuPaddingRight = paddingRight;
       }
       
       var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.width - myWidth + paddingRight;
@@ -369,6 +369,7 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
         
         if ($scope.menuShown) {
           $scope.$broadcast('hide-menu');
+          $scope.col = column;
           
           uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
           $scope.$broadcast('show-menu');

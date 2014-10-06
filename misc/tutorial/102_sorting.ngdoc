@@ -198,6 +198,11 @@ in (lower priority gets sorted first).
         gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
         gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
       });
+
+      it('click one menu, then click another menu, expect undisplay and redisplay on second click', function() {
+        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 0, 3 );
+        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 3 );
+      });
     });
 
 
