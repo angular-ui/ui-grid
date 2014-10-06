@@ -664,6 +664,10 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       return objType + ':' + key;
+    },
+
+    resetUids: function () {
+      uid = ['0', '0', '0'];
     }
 
     // setHashKey: function setHashKey(obj, h) {

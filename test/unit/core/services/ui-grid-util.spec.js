@@ -356,4 +356,44 @@ describe('ui.grid.utilService', function() {
         .toEqual('obj[\'first-name\'][0][\'charAt\'](0)');
     });
   });
+
+  describe('resetUids()', function () {
+    it('should reset the UID index back to 000', function () {
+      gridUtil.resetUids();
+      
+      for (var i = 0; i < 50; i++) {
+        gridUtil.nextUid();
+      }
+
+      var uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-01F');
+
+      gridUtil.resetUids();
+
+      uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-001');
+    });
+  });
+
+  describe('nextUid', function () {
+    it('should generate an initial unique id', function () {
+      gridUtil.resetUids();
+      var uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-001');
+    });
+
+    it('should generate unique ids for each call', function () {
+      gridUtil.resetUids();
+
+      var uid1 = gridUtil.nextUid();
+      var uid2 = gridUtil.nextUid();
+      var uid3 = gridUtil.nextUid();
+
+      expect(uid2).toEqual('uiGrid-002');
+      expect(uid3).toEqual('uiGrid-003');
+    });
+  });
 });
