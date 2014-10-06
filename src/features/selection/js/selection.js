@@ -77,7 +77,7 @@
                 toggleRowSelection: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -90,7 +90,7 @@
                 selectRow: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && !row.isSelected) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -103,7 +103,7 @@
                 unSelectRow: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && row.isSelected) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -217,6 +217,17 @@
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
           /**
            *  @ngdoc object
+           *  @name noUnselect
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Prevent a row from being unselected.  Works in conjunction
+           *  with `multiselect = false` and `gridApi.selection.selectRow()` to allow
+           *  you to create a single selection only grid - a row is always selected, you
+           *  can only select different rows, you can't unselect the row.
+           *  <br/>Defaults to false
+           */
+          gridOptions.noUnselect = gridOptions.noUnselect === true;
+          /**
+           *  @ngdoc object
            *  @name enableRowHeaderSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable a row header to be used for selection
@@ -233,17 +244,23 @@
          * @param {Grid} grid grid object
          * @param {GridRow} row row to select or deselect
          * @param {bool} multiSelect if false, only one row at time can be selected
+         * @param {bool} noUnselect if true then rows cannot be unselected
          */
-        toggleRowSelection: function (grid, row, multiSelect) {
+        toggleRowSelection: function (grid, row, multiSelect, noUnselect) {
           var selected = row.isSelected;
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid);
           }
-          row.isSelected = !selected;
-          if (row.isSelected === true) {
-            grid.selection.lastSelectedRow = row;
+          
+          if (row.isSelected && noUnselect){
+            // don't deselect the row 
+          } else {
+            row.isSelected = !selected;
+            if (row.isSelected === true) {
+              grid.selection.lastSelectedRow = row;
+            }
+            grid.api.selection.raise.rowSelectionChanged(row);
           }
-          grid.api.selection.raise.rowSelectionChanged(row);
         },
         /**
          * @ngdoc function
@@ -383,7 +400,7 @@
 
             }
             else {
-              uiGridSelectionService.toggleRowSelection(self, row, self.options.multiSelect);
+              uiGridSelectionService.toggleRowSelection(self, row, self.options.multiSelect, self.options.noUnselect );
             }
           };
         }
@@ -456,7 +473,7 @@
 
                 }
                 else {
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
                 }
                 $scope.$apply();
               });
