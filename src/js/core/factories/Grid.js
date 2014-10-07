@@ -160,6 +160,17 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name addRowHeaderColumn
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description adds a row header column to the grid
+   * @param {object} column def
+   * 
+   */
+  self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
+
+
+  /**
+   * @ngdoc function
    * @name sortHandleNulls
    * @methodOf ui.grid.core.api:PublicApi
    * @description A null handling method that can be used when building custom sort
@@ -340,6 +351,7 @@ angular.module('ui.grid')
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
+        rowHeaderCol.disableHiding = true;
         self.rowHeaderColumns.push(rowHeaderCol);
         self.buildColumns()
           .then( function() {
@@ -361,45 +373,44 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
-    var offset = self.rowHeaderColumns.length;
+    var headerOffset = self.rowHeaderColumns.length;
+    var i;
 
-    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
-    self.columns.forEach(function (column, index) {
-      if (!self.getColDef(column.name)) {
-        self.columns.splice(index, 1);
+    // Remove any columns for which a columnDef cannot be found
+    // Deliberately don't use forEach, as it doesn't like splice being called in the middle
+    // Also don't cache columns.length, as it will change during this operation
+    for ( i=0; i<self.columns.length; i++ ){
+      if (!self.getColDef(self.columns[i].name)) {
+        self.columns.splice(i, 1);
+        i--;
       }
-    });
-
+    }
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
     self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
-      offset++;
       self.columns.unshift(rowHeaderColumn);
-      
-      // renumber any columns already there, as cellNav relies on cols[index] === col.index
-      self.columns.forEach(function(column, index){
-        column.index = index;
-      });
     });
 
 
+    // look at each column def, and update column properties to match.  If the column def
+    // doesn't have a column, then splice in a new gridCol
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index, self);
-        self.columns.splice(index, 0, col);
+        col = new GridColumn(colDef, gridUtil.nextUid(), self);
+        self.columns.splice(index + headerOffset, 0, col);
       }
       else {
-        col.updateColumnDef(colDef, col.index);
+        col.updateColumnDef(colDef);
       }
 
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
     });
-
+    
     return $q.all(builderPromises);
   };
 
@@ -1501,17 +1512,42 @@ angular.module('ui.grid')
         var rebuildStyles = false;
 
         // Get all the header heights
-        for (var i = 0; i < containerHeadersToRecalc.length; i++) {
-          var container = containerHeadersToRecalc[i];
+        var maxHeight = 0;
+        var i, container;
+        for (i = 0; i < containerHeadersToRecalc.length; i++) {
+          container = containerHeadersToRecalc[i];
 
           if (container.header) {
             var oldHeaderHeight = container.headerHeight;
             var headerHeight = gridUtil.outerElementHeight(container.header);
+
             container.headerHeight = headerHeight;
 
             if (oldHeaderHeight !== headerHeight) {
               rebuildStyles = true;
             }
+
+            // Get the "inner" header height, that is the height minus the top and bottom borders, if present. We'll use it to make sure all the headers have a consistent height
+            var topBorder = gridUtil.getBorderSize(container.header, 'top');
+            var bottomBorder = gridUtil.getBorderSize(container.header, 'bottom');
+            var innerHeaderHeight = headerHeight - topBorder - bottomBorder;
+
+            container.innerHeaderHeight = innerHeaderHeight;
+
+            // Save the largest header height for use later
+            if (innerHeaderHeight > maxHeight) {
+              maxHeight = innerHeaderHeight;
+            }
+          }
+        }
+
+        // Go through all the headers
+        for (i = 0; i < containerHeadersToRecalc.length; i++) {
+          container = containerHeadersToRecalc[i];
+
+          // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
+          if (container.headerHeight < maxHeight) {
+            container.explicitHeaderHeight = maxHeight;
           }
         }
 

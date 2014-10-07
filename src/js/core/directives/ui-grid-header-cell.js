@@ -13,41 +13,26 @@
         row: '=',
         renderIndex: '='
       },
-      require: '?^uiGrid',
+      require: ['?^uiGrid', '^uiGridRenderContainer'],
       replace: true,
       compile: function() {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+          pre: function ($scope, $elm, $attrs) {
             var cellHeader = $compile($scope.col.headerCellTemplate)($scope);
             $elm.append(cellHeader);
           },
           
-          post: function ($scope, $elm, $attrs, uiGridCtrl) {
+          post: function ($scope, $elm, $attrs, controllers) {
+            var uiGridCtrl = controllers[0];
+            var renderContainerCtrl = controllers[1];
+
             $scope.grid = uiGridCtrl.grid;
+
+            $log.debug('id', renderContainerCtrl.containerId);
+
+            $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
-            /**
-             * @ngdoc event
-             * @name filterChanged
-             * @eventOf  ui.grid.core.api:PublicApi
-             * @description  is raised after the filter is changed.  The nature
-             * of the watch expression doesn't allow notification of what changed,
-             * so the receiver of this event will need to re-extract the filter 
-             * conditions from the columns.
-             * 
-             */
-            if (!$scope.grid.api.core.raise.filterChanged){
-              $scope.grid.api.registerEvent( 'core', 'filterChanged' );
-            }
-                        
-    
             $elm.addClass($scope.col.getColClass(false));
-    // shane - No need for watch now that we trackby col name
-    //        $scope.$watch('col.index', function (newValue, oldValue) {
-    //          if (newValue === oldValue) { return; }
-    //          var className = $elm.attr('class');
-    //          className = className.replace(uiGridConstants.COL_CLASS_PREFIX + oldValue, uiGridConstants.COL_CLASS_PREFIX + newValue);
-    //          $elm.attr('class', className);
-    //        });
     
             // Hide the menu by default
             $scope.menuShown = false;

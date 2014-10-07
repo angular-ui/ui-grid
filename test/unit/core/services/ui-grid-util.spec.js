@@ -40,6 +40,38 @@ describe('ui.grid.utilService', function() {
     }));
   });
 
+  describe('throttle()', function() {
+    var x;
+    var func = function () {
+      x++;
+    };
+
+    it('prevents multiple function calls', inject(function ($timeout) {
+      x = 0;
+
+      var throttledFunc = gridUtil.throttle(func, 10);
+      throttledFunc();
+      throttledFunc();
+      throttledFunc();
+      expect(x).toEqual(1);
+      $timeout.flush();
+      expect(x).toEqual(1);
+    }));
+
+    it('queues a final event if trailing param is truthy', inject(function ($timeout) {
+      x = 0;
+
+      var throttledFunc = gridUtil.throttle(func, 10, {trailing: true});
+      throttledFunc();
+      throttledFunc();
+      throttledFunc();
+      expect(x).toEqual(1);
+      $timeout.flush();
+      expect(x).toEqual(2);
+    }));
+
+  });
+
   describe('readableColumnName', function() {
     it('does not throw with null name', function() {
       expect(function() {
@@ -322,6 +354,46 @@ describe('ui.grid.utilService', function() {
     it('should convert array property', function() {
       expect(gridUtil.preEval('obj.first-name[0].charAt(0)'))
         .toEqual('obj[\'first-name\'][0][\'charAt\'](0)');
+    });
+  });
+
+  describe('resetUids()', function () {
+    it('should reset the UID index back to 000', function () {
+      gridUtil.resetUids();
+      
+      for (var i = 0; i < 50; i++) {
+        gridUtil.nextUid();
+      }
+
+      var uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-01F');
+
+      gridUtil.resetUids();
+
+      uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-001');
+    });
+  });
+
+  describe('nextUid', function () {
+    it('should generate an initial unique id', function () {
+      gridUtil.resetUids();
+      var uid = gridUtil.nextUid();
+
+      expect(uid).toEqual('uiGrid-001');
+    });
+
+    it('should generate unique ids for each call', function () {
+      gridUtil.resetUids();
+
+      var uid1 = gridUtil.nextUid();
+      var uid2 = gridUtil.nextUid();
+      var uid3 = gridUtil.nextUid();
+
+      expect(uid2).toEqual('uiGrid-002');
+      expect(uid3).toEqual('uiGrid-003');
     });
   });
 });

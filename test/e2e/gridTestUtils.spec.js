@@ -49,10 +49,12 @@ module.exports = {
      * @ngdoc method
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest
      * @name expectHeaderColumnCount
-     * @description Checks that a grid header has the specified number of columns.
+     * @description Checks that a grid header body render container (the default render container)
+     * has the specified number of columns.  If you are using pinned columns then you may also want
+     * to check expectHeaderLeftColumnCount
      * @param {string} gridId the id of the grid that you want to inspect
      * @param {integer} expectedNumCols the number of visible columns you expect the
-     * grid to have
+     * body to have
      * 
      * @example 
      * <pre>
@@ -61,11 +63,30 @@ module.exports = {
      * 
      */
     expectHeaderColumnCount: function( gridId, expectedNumCols ) {
-      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
       expect(headerCols.count()).toEqual(expectedNumCols);
     },
 
 
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name expectHeaderLeftColumnCount
+     * @description Checks that a grid header left render container has the specified number of columns.
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} expectedNumCols the number of visible columns you expect the
+     * left render container to have
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.expectHeaderLeftColumnCount('myGrid', 2);
+     * </pre>
+     * 
+     */
+    expectHeaderLeftColumnCount: function( gridId, expectedNumCols ) {
+      var headerCols = element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+      expect(headerCols.count()).toEqual(expectedNumCols);
+    },
     /**
      * @ngdoc method
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest
@@ -104,7 +125,7 @@ module.exports = {
      * 
      */
     headerCell: function( gridId, expectedCol, expectedValue ) {
-      return element( by.id( gridId ) ).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+      return element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
     },
 
 
@@ -504,6 +525,65 @@ module.exports = {
         }
         expect(displayedCount).toEqual( expectItems );
       }); 
-    }
+    },
+    
+
+     /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name expectVisibleGridMenuItems
+     * @description Checks how many visible menu items there are in the grid menu   
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} expectItems the number of visible items you expect
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.expectVisibleGridMenuItems('myGrid', 3);
+     * </pre>
+     * 
+     */
+    expectVisibleGridMenuItems: function( gridId, expectItems ) {
+      var gridMenuButton = element( by.id( gridId ) ).element( by.css ( '.ui-grid-menu-button' ) );
+      gridMenuButton.click();
+      
+      var displayedCount = 0;
+ 
+      var menuItems = gridMenuButton.all( by.css( '.ui-grid-menu-item' ) );
+      
+      menuItems.map(function(elm) {
+        return elm.isDisplayed();
+      }).then( function( displayedArray ){
+        for ( var i=0; i<displayedArray.length; i++ ){
+          if ( displayedArray[i] ){
+            displayedCount++;
+          }
+        }
+        expect(displayedCount).toEqual( expectItems );
+      }); 
+    },
+
+     /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name clickGridMenuItem
+     * @description Clicks on a numbered grid menu item.  Note that it's clicking
+     * the item based on the underlying repeater - and that some of the items will
+     * not be visible.  So the item you want to click on may not be the same
+     * as the item number when you look at the ui   
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} itemNumber the number of visible items you expect
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.clickVisibleGridMenuItem('myGrid', 9);
+     * </pre>
+     * 
+     */
+    clickGridMenuItem: function( gridId, itemNumber ) {
+      var gridMenuButton = element( by.id( gridId ) ).element( by.css ( '.ui-grid-menu-button' ) );
+      gridMenuButton.click();
+      
+      gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
+    }        
 };
 

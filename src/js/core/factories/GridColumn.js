@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', function(gridUtil, uiGridConstants, i18nService) {
+.factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', '$log', function(gridUtil, uiGridConstants, i18nService, $log) {
 
   /**
    * @ngdoc function
@@ -110,16 +110,35 @@ angular.module('ui.grid')
     *
     */
     
-   
-  function GridColumn(colDef, index, grid) {
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name GridColumn
+   * @description Initializes a gridColumn
+   * @param {ColumnDef} colDef the column def to associate with this column
+   * @param {number} uid the unique and immutable uid we'd like to allocate to this column
+   * @param {Grid} grid the grid we'd like to create this column in
+   */ 
+  function GridColumn(colDef, uid, grid) {
     var self = this;
 
     self.grid = grid;
-    colDef.index = index;
+    self.uid = uid;
 
     self.updateColumnDef(colDef);
   }
 
+
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name setPropertyOrDefault
+   * @description Sets a property on the column using the passed in columnDef, and
+   * setting the defaultValue if the value cannot be found on the colDef
+   * @param {ColumnDef} colDef the column def to look in for the property value
+   * @param {string} propName the property name we'd like to set
+   * @param {object} defaultValue the value to use if the colDef doesn't provide the setting
+   */ 
   GridColumn.prototype.setPropertyOrDefault = function (colDef, propName, defaultValue) {
     var self = this;
 
@@ -272,7 +291,7 @@ angular.module('ui.grid')
     * - icon: the icon shown alongside that title
     * - action: the method to call when the menu is clicked
     * - shown: a function to evaluate to determine whether or not to show the item
-    * - active: a function to evaluate to determine whether or not to enable the item
+    * - active: a function to evaluate to determine whether or not the item is currently selected
     * - context: context to pass to the action function??
     * @example
     * <pre>  $scope.gridOptions.columnDefs = [ 
@@ -296,55 +315,64 @@ angular.module('ui.grid')
     *   ] }]; </pre>
     *
     */   
-  GridColumn.prototype.updateColumnDef = function(colDef, index) {
+
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.class:GridColumn
+   * @name updateColumnDef
+   * @description Moves settings from the columnDef down onto the column,
+   * and sets properties as appropriate
+   * @param {ColumnDef} colDef the column def to look in for the property value
+   */ 
+  GridColumn.prototype.updateColumnDef = function(colDef) {
     var self = this;
 
     self.colDef = colDef;
 
-    //position of column
-    self.index = (typeof(index) === 'undefined') ? colDef.index : index;
-
     if (colDef.name === undefined) {
-      throw new Error('colDef.name is required for column at index ' + self.index);
+      throw new Error('colDef.name is required for column at index ' + self.grid.options.columnDefs.indexOf(colDef));
     }
-
+    
     var parseErrorMsg = "Cannot parse column width '" + colDef.width + "' for column named '" + colDef.name + "'";
 
     // If width is not defined, set it to a single star
-    if (gridUtil.isNullOrUndefined(colDef.width)) {
-      self.width = '*';
-    }
-    else {
-      // If the width is not a number
-      if (!angular.isNumber(colDef.width)) {
-        // See if it ends with a percent
-        if (gridUtil.endsWith(colDef.width, '%')) {
-          // If so we should be able to parse the non-percent-sign part to a number
-          var percentStr = colDef.width.replace(/%/g, '');
-          var percent = parseInt(percentStr, 10);
-          if (isNaN(percent)) {
+    if (gridUtil.isNullOrUndefined(self.width) || !angular.isNumber(self.width)) {
+      if (gridUtil.isNullOrUndefined(colDef.width)) {
+        self.width = '*';
+      }
+      else {
+        // If the width is not a number
+        if (!angular.isNumber(colDef.width)) {
+          // See if it ends with a percent
+          if (gridUtil.endsWith(colDef.width, '%')) {
+            // If so we should be able to parse the non-percent-sign part to a number
+            var percentStr = colDef.width.replace(/%/g, '');
+            var percent = parseInt(percentStr, 10);
+            if (isNaN(percent)) {
+              throw new Error(parseErrorMsg);
+            }
+            self.width = colDef.width;
+          }
+          // And see if it's a number string
+          else if (colDef.width.match(/^(\d+)$/)) {
+            self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
+          }
+          // Otherwise it should be a string of asterisks
+          else if (!colDef.width.match(/^\*+$/)) {
             throw new Error(parseErrorMsg);
           }
+        }
+        // Is a number, use it as the width
+        else {
           self.width = colDef.width;
         }
-        // And see if it's a number string
-        else if (colDef.width.match(/^(\d+)$/)) {
-          self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
-        }
-        // Otherwise it should be a string of asterisks
-        else if (!colDef.width.match(/^\*+$/)) {
-          throw new Error(parseErrorMsg);
-        }
-      }
-      // Is a number, use it as the width
-      else {
-        self.width = colDef.width;
       }
     }
 
     // Remove this column from the grid sorting
     GridColumn.prototype.unsort = function () {
       this.sort = {};
+      self.grid.api.core.raise.sortChanged( self, self.grid.getColumnSorting() );
     };
 
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
@@ -352,6 +380,11 @@ angular.module('ui.grid')
 
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
+    
+    if ( typeof( self.field ) !== 'string' ){
+      $log.error( 'Field is not a string, this is likely to break the code, Field is: ' + self.field );
+    }
+    
     self.name = colDef.name;
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
@@ -498,7 +531,7 @@ angular.module('ui.grid')
      * @param {bool} prefixDot  if true, will return .className instead of className
      */
     GridColumn.prototype.getColClass = function (prefixDot) {
-      var cls = uiGridConstants.COL_CLASS_PREFIX + this.index;
+      var cls = uiGridConstants.COL_CLASS_PREFIX + this.uid;
 
       return prefixDot ? '.' + cls : cls;
     };

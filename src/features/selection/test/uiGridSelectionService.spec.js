@@ -30,7 +30,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     
 
     describe('toggleSelection function', function () {
-        it('should toggle selected', function () {
+        it('should toggle selected with multiselect', function () {
             uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true);
             expect(grid.rows[0].isSelected).toBe(true);
 
@@ -38,13 +38,25 @@ describe('ui.grid.selection uiGridSelectionService', function () {
             expect(grid.rows[0].isSelected).toBe(false);
         });
 
-        it('should toggle selected', function () {
+        it('should toggle selected without multiselect', function () {
             uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], false);
             expect(grid.rows[0].isSelected).toBe(true);
 
             uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], false);
             expect(grid.rows[0].isSelected).toBe(false);
             expect(grid.rows[1].isSelected).toBe(true);
+        });
+
+        it('should toggle selected with noUnselect', function () {
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], false, true);
+            expect(grid.rows[0].isSelected).toBe(true, 'row should be selected, noUnselect doesn\'t stop rows being selected');
+
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], false, true);
+            expect(grid.rows[0].isSelected).toBe(true, 'row should still be selected, noUnselect prevents unselect');
+            
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], false, true);
+            expect(grid.rows[0].isSelected).toBe(false, 'row should not be selected, noUnselect doesn\'t stop other rows being selected');
+            expect(grid.rows[1].isSelected).toBe(true, 'new row should be selected');
         });
 
         it('should clear selected', function () {

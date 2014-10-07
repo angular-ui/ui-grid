@@ -44,4 +44,20 @@ each other.
       height: 300px;
     }
   </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '211 two grids', function() {
+      it('check first grid has rendered', function () {
+        gridTestUtils.expectHeaderColumnCount( 'firstGrid', 3 );
+      });
+
+      it('check second grid has rendered', function () {
+        gridTestUtils.expectHeaderColumnCount( 'secondGrid', 3 );
+      });
+  
+//      it('check that menus display over the correct grid', function () {
+        // still working out how to get protractor to scroll an element
+//      });
+    });    
+  </file>  
 </example>

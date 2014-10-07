@@ -14,6 +14,15 @@ result in selection of that row.
 Setting the `multiSelect` gridOption to true will allow selecting multiple rows, setting to false will allow selection
 of only one row at a time.
 
+If you have `multiSelect: false`, then an additional option `noUnselect` will mean that a row is always selected.  You
+can select a different row (which will unselect the current row), but you cannot manually unselect the current row
+by clicking on it.  This means that at least one row is always selected, other than when you first open the grid.  If 
+necessary you could programatically select the first row upon page open.  The second grid demonstrates this.
+
+If `multiSelect: true`, another option `modifierKeysToMultiSelect` may be used. If set to true will allow selecting multiple 
+row only if the Ctrl-Key, Cmd-Key (Mac) or the Shift-Key is used when selecting, set to false will allow selecting multiple 
+rows always. 
+
 @example
 Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
 
@@ -41,19 +50,23 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
         $scope.info = {};
 
         $scope.toggleMultiSelect = function() {
-           $scope.gridApi.selection.setMultiSelect(!$scope.gridApi.grid.options.multiSelect);
+          $scope.gridApi.selection.setMultiSelect(!$scope.gridApi.grid.options.multiSelect);
+        };
+
+        $scope.toggleModifierKeysToMultiSelect = function() {
+          $scope.gridApi.selection.setModifierKeysToMultiSelect(!$scope.gridApi.grid.options.modifierKeysToMultiSelect);
         };
 
         $scope.selectAll = function() {
-                   $scope.gridApi.selection.selectAllRows();
+          $scope.gridApi.selection.selectAllRows();
         };
 
-         $scope.clearAll = function() {
-                         $scope.gridApi.selection.clearSelectedRows();
-              };
+        $scope.clearAll = function() {
+          $scope.gridApi.selection.clearSelectedRows();
+        };
 
         $scope.toggleRow1 = function() {
-                         $scope.gridApi.selection.toggleRowSelection($scope.gridOptions.data[0]);
+          $scope.gridApi.selection.toggleRowSelection($scope.gridOptions.data[0]);
         };
 
         $scope.gridOptions.onRegisterApi = function(gridApi){
@@ -66,7 +79,7 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
         };
     }]);
     
-    app.controller('SecondCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('SecondCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
       $scope.gridOptions = { enableRowSelection: true, enableRowHeaderSelection: false };
 
       $scope.gridOptions.columnDefs = [
@@ -77,24 +90,35 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       ];
 
       $scope.gridOptions.multiSelect = false;
+      $scope.gridOptions.modifierKeysToMultiSelect = false;
+      $scope.gridOptions.noUnselect = true;
+      $scope.gridOptions.onRegisterApi = function( gridApi ) {
+        $scope.gridApi = gridApi;
+      };
 
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
+          
+          // $interval whilst we wait for the grid to digest the data we just gave it
+          $interval( function() {$scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);}, 0, 1);
         });
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-     <button type="button" class="btn btn-success" ng-click="toggleMultiSelect()">Toggle multiSelect</button>  <strong>MultiSelect:</strong> <span ng-bind="gridApi.grid.options.multiSelect"></span>
-      <button type="button" class="btn btn-success" ng-click="toggleRow1()">Toggle Row 0</button> </span>
+      <button type="button" class="btn btn-success" ng-click="toggleMultiSelect()">Toggle multiSelect</button>  <strong>MultiSelect:</strong> <span ng-bind="gridApi.grid.options.multiSelect"></span>
+      <button type="button" class="btn btn-success" ng-click="toggleRow1()">Toggle Row 0</button>
       <br/>
       <br/>
-      <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button> </span>
-      <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button> </span>
-      <br>
+      <button type="button" class="btn btn-success" ng-click="toggleModifierKeysToMultiSelect()">Toggle modifierKeysToMultiSelect</button>  <strong>ModifierKeysToMultiSelect:</strong> <span ng-bind="gridApi.grid.options.modifierKeysToMultiSelect"> </span>     
+      <br/>
+      <br/>
+      <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button>
+      <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
+      <br/>
+
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
-      
     </div>
     <div ng-controller="SecondCtrl">
       Single selection grid without rowHeader:

@@ -1,5 +1,5 @@
 describe('ui.grid.resizeColumns', function () {
-  var grid, $scope, $compile, recompile, uiGridConstants;
+  var grid, gridUtil, gridScope, $scope, $compile, recompile, uiGridConstants;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -11,10 +11,11 @@ describe('ui.grid.resizeColumns', function () {
   beforeEach(module('ui.grid'));
   beforeEach(module('ui.grid.resizeColumns'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _uiGridConstants_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _uiGridConstants_, _gridUtil_) {
     $scope = $rootScope;
     $compile = _$compile_;
     uiGridConstants = _uiGridConstants_;
+    gridUtil = _gridUtil_;
 
     $scope.gridOpts = {
       enableColumnResizing: true,
@@ -22,10 +23,13 @@ describe('ui.grid.resizeColumns', function () {
     };
 
     recompile = function () {
+      gridUtil.resetUids();
+
       grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
       document.body.appendChild(grid[0]);
       $compile(grid)($scope);
       $scope.$digest();
+      gridScope = $(grid).isolateScope();
     };
 
     recompile();
@@ -137,7 +141,8 @@ describe('ui.grid.resizeColumns', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         // Get the initial width of the column
-        initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var firstColumnUid = gridScope.grid.columns[0].uid;
+        initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         initialX = firstResizer.position().left;
 
@@ -176,7 +181,8 @@ describe('ui.grid.resizeColumns', function () {
         });
 
         it('should cause the column to resize by the amount change in the X axis', function () {
-          var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+          var firstColumnUid = gridScope.grid.columns[0].uid;
+          var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
           expect(newWidth - initialWidth).toEqual(xDiff);
         });
@@ -201,7 +207,7 @@ describe('ui.grid.resizeColumns', function () {
         { field: 'gender' },
         { field: 'company' }
       ];
-
+      
       recompile();
     });
 
@@ -212,7 +218,9 @@ describe('ui.grid.resizeColumns', function () {
         $(firstResizer).simulate('dblclick');
         $scope.$digest();
 
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var firstColumnUid = gridScope.grid.columns[0].uid;
+
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         expect(newWidth >= minWidth).toEqual(true);
       });
@@ -233,7 +241,9 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       it('should not go below the minWidth', function () {
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var firstColumnUid = gridScope.grid.columns[0].uid;
+
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         expect(newWidth >= minWidth).toEqual(true);
       });
@@ -262,7 +272,9 @@ describe('ui.grid.resizeColumns', function () {
         $(firstResizer).simulate('dblclick');
         $scope.$digest();
 
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var firstColumnUid = gridScope.grid.columns[0].uid;
+
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         expect(newWidth <= maxWidth).toEqual(true);
       });
@@ -283,7 +295,9 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       it('should not go above the maxWidth', function () {
-        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
+        var firstColumnUid = gridScope.grid.columns[0].uid;
+
+        var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         expect(newWidth <= maxWidth).toEqual(true);
       });

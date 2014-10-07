@@ -6,7 +6,7 @@
 
 # Help!
 
-Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.  We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor](FIRST_TIMER.md), also look at [Developer](DEVELOPER.md) 
 
 # What Happened to Version 2.x?
 
@@ -18,7 +18,7 @@ To submit fixes to 2.x please point your pull requests at the [2.x](https://gith
 
 # How Can I Test 3.0?
 
-With 3.0 we are no longer storing release files in the repository; only source files will be here. 3.0 release files are available on http://ui-grid.info, which is built from this repository: ui-grid.info/release/ui-grid-unstable.js
+With 3.0 we are no longer storing release files in the repository; only source files will be here. 3.0 release files are available on http://ui-grid.info, which is built from this repository: ui-grid.info/release/ui-grid-unstable.js, and the beta is available from bower as `bower install angular-ui-grid --save-dev`
 
 Here is a file list for the 3.0 unstable releases:
 

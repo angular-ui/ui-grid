@@ -77,7 +77,7 @@
                 toggleRowSelection: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -90,7 +90,7 @@
                 selectRow: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && !row.isSelected) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -103,7 +103,7 @@
                 unSelectRow: function (rowEntity) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && row.isSelected) {
-                    service.toggleRowSelection(grid, row, grid.options.multiSelect);
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
                 /**
@@ -178,6 +178,16 @@
                  */
                 setMultiSelect: function (multiSelect) {
                   grid.options.multiSelect = multiSelect;
+                },
+                /**
+                 * @ngdoc function
+                 * @name setModifierKeysToMultiSelect
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Sets the current gridOption.modifierKeysToMultiSelect to true or false
+                 * @param {bool} modifierKeysToMultiSelect true to only allow multiple rows when using ctrlKey or shiftKey is used
+                 */
+                setModifierKeysToMultiSelect: function (modifierKeysToMultiSelect) {
+                  grid.options.modifierKeysToMultiSelect = modifierKeysToMultiSelect;
                 }
               }
             }
@@ -217,6 +227,25 @@
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
           /**
            *  @ngdoc object
+           *  @name noUnselect
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Prevent a row from being unselected.  Works in conjunction
+           *  with `multiselect = false` and `gridApi.selection.selectRow()` to allow
+           *  you to create a single selection only grid - a row is always selected, you
+           *  can only select different rows, you can't unselect the row.
+           *  <br/>Defaults to false
+           */
+          gridOptions.noUnselect = gridOptions.noUnselect === true;
+          /**
+           *  @ngdoc object
+           *  @name modifierKeysToMultiSelect
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable multiple row selection only when using the ctrlKey or shiftKey. Requires multiSelect to be true.
+           *  <br/>Defaults to false
+           */
+          gridOptions.modifierKeysToMultiSelect = gridOptions.modifierKeysToMultiSelect === true;
+          /**
+           *  @ngdoc object
            *  @name enableRowHeaderSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable a row header to be used for selection
@@ -233,17 +262,23 @@
          * @param {Grid} grid grid object
          * @param {GridRow} row row to select or deselect
          * @param {bool} multiSelect if false, only one row at time can be selected
+         * @param {bool} noUnselect if true then rows cannot be unselected
          */
-        toggleRowSelection: function (grid, row, multiSelect) {
+        toggleRowSelection: function (grid, row, multiSelect, noUnselect) {
           var selected = row.isSelected;
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid);
           }
-          row.isSelected = !selected;
-          if (row.isSelected === true) {
-            grid.selection.lastSelectedRow = row;
+          
+          if (row.isSelected && noUnselect){
+            // don't deselect the row 
+          } else {
+            row.isSelected = !selected;
+            if (row.isSelected === true) {
+              grid.selection.lastSelectedRow = row;
+            }
+            grid.api.selection.raise.rowSelectionChanged(row);
           }
-          grid.api.selection.raise.rowSelectionChanged(row);
         },
         /**
          * @ngdoc function
@@ -380,10 +415,12 @@
           $scope.selectButtonClick = function(row, evt) {
             if (evt.shiftKey) {
               uiGridSelectionService.shiftSelect(self, row, self.options.multiSelect);
-
+            }
+            else if (evt.ctrlKey || evt.metaKey) {
+              uiGridSelectionService.toggleRowSelection(self, row, self.options.multiSelect, self.options.noUnselect); 
             }
             else {
-              uiGridSelectionService.toggleRowSelection(self, row, self.options.multiSelect);
+              uiGridSelectionService.toggleRowSelection(self, row, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
           };
         }
@@ -453,10 +490,12 @@
               $elm.on('click', function (evt) {
                 if (evt.shiftKey) {
                   uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-
+                }
+                else if (evt.ctrlKey || evt.metaKey) {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
                 }
                 else {
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
                 }
                 $scope.$apply();
               });

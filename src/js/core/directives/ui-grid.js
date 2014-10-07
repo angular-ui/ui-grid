@@ -65,7 +65,7 @@
         var promises = [];
 
         if (n) {
-          if (self.grid.columns.length === 0) {
+          if (self.grid.columns.length === ( self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0 ) ) {
             $log.debug('loading cols in dataWatchFunction');
             if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
               self.grid.buildColumnDefsFromData(n);
@@ -103,10 +103,9 @@
 
       /* Event Methods */
 
-      //todo: throttle this event?
-      self.fireScrollingEvent = function(args) {
+      self.fireScrollingEvent = gridUtil.throttle(function(args) {
         $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
-      };
+      }, self.grid.options.scrollThrottle, {trailing: true});
 
       self.fireEvent = function(eventName, args) {
         // Add the grid to the event arguments if it's not there

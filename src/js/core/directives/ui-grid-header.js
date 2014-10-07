@@ -44,7 +44,14 @@
                 var template = angular.element(contents);
                 
                 var newElm = $compile(template)($scope);
-                $elm.append(newElm);
+                $elm.replaceWith(newElm);
+
+                // Replace the reference to the container's header element with this new element
+                containerCtrl.header = newElm;
+                containerCtrl.colContainer.header = newElm;
+
+                // And update $elm to be the new element
+                $elm = newElm;
 
                 if (containerCtrl) {
                   // Inject a reference to the header viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
@@ -129,7 +136,6 @@
 
                   column.drawnWidth = column.width;
 
-                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + column.width + 'px; }';
                 }
               });
 
@@ -155,8 +161,6 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
                   }
@@ -167,8 +171,6 @@
 
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
-
-                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     // Remove this element from the percent array so it's not processed below
                     percentArray.splice(i, 1);
@@ -182,8 +184,6 @@
                   canvasWidth += colWidth;
 
                   column.drawnWidth = colWidth;
-
-                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                 });
               }
 
@@ -205,8 +205,6 @@
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
 
-                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
-
                     lastColumn = column;
 
                     // Remove this element from the percent array so it's not processed below
@@ -220,8 +218,6 @@
 
                     canvasWidth += colWidth;
                     column.drawnWidth = colWidth;
-
-                    // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
 
                     // Remove this element from the percent array so it's not processed below
                     asterisksArray.splice(i, 1);
@@ -237,8 +233,6 @@
                   canvasWidth += colWidth;
 
                   column.drawnWidth = colWidth;
-
-                  // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + column.index + ' { width: ' + colWidth + 'px; }';
                 });
               }
 
@@ -283,6 +277,12 @@
                 canvasWidth = canvasWidth + grid.verticalScrollbarWidth;
               }
               // canvasWidth = canvasWidth + 1;
+
+              // if we have a grid menu, then we prune the width of the last column header
+              // to allow room for the button whilst still getting to the column menu
+              if (columnCache.length > 0) { // && grid.options.enableGridMenu) {
+                columnCache[columnCache.length - 1].headerWidth = columnCache[columnCache.length - 1].drawnWidth - 30;
+              }
 
               containerCtrl.colContainer.canvasWidth = parseInt(canvasWidth, 10);
 

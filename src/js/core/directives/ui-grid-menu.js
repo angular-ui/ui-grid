@@ -42,57 +42,126 @@ angular.module('ui.grid')
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      gridUtil.enableAnimations($elm);
+      var self = this;
+      var menuMid;
+      var $animate;
+     
+    // *** Show/Hide functions ******
+      self.showMenu = $scope.showMenu = function() {
+        if ( !$scope.shown ){
 
+          /*
+           * In order to animate cleanly we remove the ng-if, wait a digest cycle, then
+           * animate the removal of the ng-hide.  We can't successfully (so far as I can tell)
+           * animate removal of the ng-if, as the menu items aren't there yet.  And we don't want
+           * to rely on ng-show only, as that leaves elements in the DOM that are needlessly evaluated
+           * on scroll events.
+           * 
+           * Note when testing animation that animations don't run on the tutorials.  When debugging it looks
+           * like they do, but angular has a default $animate provider that is just a stub, and that's what's
+           * being called.  ALso don't be fooled by the fact that your browser has actually loaded the 
+           * angular-translate.js, it's not using it.  You need to test animations in an external application. 
+           */
+          $scope.shown = true;
+
+          $timeout( function() {
+            menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+            $animate = gridUtil.enableAnimations(menuMid);
+            if ( $animate ){
+              $scope.shownMid = true;
+              $animate.removeClass(menuMid, 'ng-hide');
+            } else {
+              $scope.shownMid = true;
+            }
+          });
+        } else if ( !$scope.shownMid ){
+          // we're probably doing a hide then show, so we don't need to wait for ng-if
+          menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+          $animate = gridUtil.enableAnimations(menuMid);
+          if ( $animate ){
+            $scope.shownMid = true;
+            $animate.removeClass(menuMid, 'ng-hide');
+          } else {
+            $scope.shownMid = true;
+          }
+        }
+
+        // Turn off an existing document click handler
+        angular.element(document).off('click', applyHideMenu);
+
+        // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
+        $timeout(function() {
+          angular.element(document).on('click', applyHideMenu);
+        });
+      };
+
+
+      self.hideMenu = $scope.hideMenu = function() {
+        if ( $scope.shown ){
+          /*
+           * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
+           * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
+           * callback on the addClass method, but it is very unreliable with unit tests for no discernable reason.
+           *   
+           * The user may have clicked on the menu again whilst
+           * we're waiting, so we check that the mid isn't shown before applying the ng-if.
+           */
+          menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+          $animate = gridUtil.enableAnimations(menuMid);
+
+          if ( $animate ){
+            $scope.shownMid = false;
+            $animate.addClass(menuMid, 'ng-hide', function() {
+              if ( !$scope.shownMid ){
+                $scope.shown = false;
+                $scope.$emit('menu-hidden');
+              }
+            });
+          } else {
+            $scope.shownMid = false;
+            $scope.shown = false;
+          }
+        }
+        angular.element(document).off('click', applyHideMenu);
+      };
+
+      $scope.$on('hide-menu', function () {
+        $scope.hideMenu();
+      });
+
+      $scope.$on('show-menu', function () {
+        $scope.showMenu();
+      });
+
+      
+    // *** Auto hide when click elsewhere ******
+      var applyHideMenu = function(){
+        $scope.$apply(function () {
+          $scope.hideMenu();
+        });
+      };
+    
       if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
         $scope.autoHide = true;
       }
 
       if ($scope.autoHide) {
-        angular.element($window).on('resize', $scope.hideMenu);
+        angular.element($window).on('resize', applyHideMenu);
       }
-
-      $scope.$on('hide-menu', function () {
-        $scope.shown = false;
-      });
-
-      $scope.$on('show-menu', function () {
-        $scope.shown = true;
-      });
-
-      $scope.$on('$destroy', function() {
-        angular.element($window).off('resize', $scope.hideMenu);
-      });
-    },
-    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-      var self = this;
-
-      self.hideMenu = $scope.hideMenu = function() {
-        $scope.shown = false;
-      };
-
-      function documentClick() {
-        $scope.$apply(function () {
-          self.hideMenu();
-          angular.element(document).off('click', documentClick);
-        });
-      }
-
-      self.showMenu = $scope.showMenu = function() {
-        $scope.shown = true;
-
-        // Turn off an existing dpcument click handler
-        angular.element(document).off('click', documentClick);
-
-        // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
-        $timeout(function() {
-          angular.element(document).on('click', documentClick);
-        });
-      };
 
       $scope.$on('$destroy', function () {
-        angular.element(document).off('click', documentClick);
+        angular.element(document).off('click', applyHideMenu);
       });
+      
+
+      $scope.$on('$destroy', function() {
+        angular.element($window).off('resize', applyHideMenu);
+      });
+    },
+    
+    
+    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+      var self = this;
     }]
   };
 
@@ -173,7 +242,7 @@ angular.module('ui.grid')
 
               $scope.action.call(context, $event, title);
 
-              uiGridMenuCtrl.hideMenu();
+              $scope.$emit('hide-menu');
             }
           };
 

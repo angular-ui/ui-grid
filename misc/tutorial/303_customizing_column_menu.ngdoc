@@ -12,7 +12,8 @@ The column menu will add the column's `GridColumn` object to the context as `thi
 You can then show/hide the the menu item based on conditions that use the grid and column.  You could 
 also use a custom column builder to add some item to the every column definition.
 
-You can remove the column hide option using the `disableHiding` columnDef option.  You can disable
+You can remove the column hide option using the `disableHiding` columnDef option, which will also prevent
+this column being hidden in the gridMenu (once it is finished and merged).  You can disable
 the column menu entirely using the `disableColumnMenu` columnDef option.
 
 You can supply an icon class with the `icon` property.
@@ -105,8 +106,8 @@ See the example below for usage.
           .perform();
         browser.sleep(550);  // 500ms for long press
         
-        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
-        expect(columnMenu.isDisplayed()).toEqual(false);
+        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).all( by.css( '.ui-grid-menu-inner' ));
+        expect(columnMenu.count()).toEqual(0);
       });
   
       it('2 menu items in second column, implying no hide option and no remove sort option', function () {
