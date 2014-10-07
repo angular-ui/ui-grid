@@ -139,8 +139,23 @@
                   return ret;
                 };
 
+                function updateContainerDimensions() {
+                    var grid = $scope.grid;
+                    var ret = '';
+                    var myWidth = 40;
+                    var myHeight = 30;
+                    ret += '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name + ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + myWidth + 'px; }';
+
+
+                    return ret;
+                }
+
                 if ($scope.colContainer.name === 'left') {
-                    angular.element($elm.parent()).css('width', '40px');
+                    //angular.element($elm.parent()).css('width', '40px');
+                    $scope.grid.registerStyleComputation({
+                        priority: 15,
+                        func: updateContainerDimensions
+                    });
                 }
 
               },
