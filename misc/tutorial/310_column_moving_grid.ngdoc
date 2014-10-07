@@ -1,0 +1,48 @@
+@ngdoc overview
+@name Tutorial: 310 Column Moving grid
+@description
+
+Feature ui.grid.moveColumns allows moving column to a different position. To enable, you must include the `ui.grid.moveColumns` module
+and you must include the `ui-grid-move-columns` directive on your grid element.
+
+By default column moving will be enabled for all the columns of the grid. To disable it for all columns of grid property `enableColumnMoving`
+of grid options can be used. To specifically enable or disable column moving for a specific column property `enableColumnMoving`
+of column definitions can be used.
+
+Columns can be repositioned by either dragging and dropping them to specific position or by using this gridApi method
+`gridApi.colMovable.moveColumn(oldPosition, newPosition)`.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.moveColumns']);
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+      };
+
+      $scope.gridOptions.columnDefs = [
+        { name: 'id'},
+        { name: 'name'},
+        { name: 'age'},
+        { name: 'gender'},
+        { name: 'email'},
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 100%;
+      height: 400;
+    }
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+    <div class="grid" ui-grid="gridOptions" ui-grid-move-columns></div>
+    </div>
+  </file>
+</example>

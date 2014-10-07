@@ -105,8 +105,8 @@
             $scope.$on('$destroy', function () {
               $contentsElm.off('mousedown touchstart');
             });
-    
-            /** 
+
+            /**
             * @ngdoc property
             * @name disableColumnMenu
             * @propertyOf ui.grid.class:GridOptions.columnDef
