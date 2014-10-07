@@ -96,19 +96,37 @@
 }
 
 /* Slide up/down animations */
-.ui-grid-column-menu .ui-grid-menu .ui-grid-menu-inner {
-  &.ng-enter, &.ng-leave {
+.ui-grid-column-menu .ui-grid-menu .ui-grid-menu-mid {
+  &.ng-hide-add, &.ng-hide-remove {
     .transition(all, 0.05s, linear);
     display: block !important;
   }
   
-  &.ng-leave.ng-leave-active,
-  &.ng-enter {
+  &.ng-hide-add.ng-hide-add-active,
+  &.ng-hide-remove {
     .transform(translateY(-100%));
   }
    
-  &.ng-leave,
-  &.ng-enter.ng-enter-active {
+  &.ng-hide-add,
+  &.ng-hide-remove.ng-hide-remove-active {
+    .transform(translateY(0));
+  }
+}
+
+/* Slide up/down animations */
+.ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+  &.ng-hide-add, &.ng-hide-remove {
+    .transition(all, 0.05s, linear);
+    display: block !important;
+  }
+  
+  &.ng-hide-add.ng-hide-add-active,
+  &.ng-hide-remove {
+    .transform(translateY(-100%));
+  }
+   
+  &.ng-hide-add,
+  &.ng-hide-remove.ng-hide-remove-active {
     .transform(translateY(0));
   }
 }
