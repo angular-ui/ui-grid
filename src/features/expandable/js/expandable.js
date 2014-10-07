@@ -139,6 +139,21 @@
                   return ret;
                 };
 
+                  function updateRowContainerWidth() {
+                      var grid = $scope.grid;
+                      var colWidth = grid.getColumn('expandableButtons').width;
+                      return '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id +
+                          ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name +
+                          ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + colWidth + 'px; }';
+                  }
+
+                  if ($scope.colContainer.name === 'left') {
+                      $scope.grid.registerStyleComputation({
+                          priority: 15,
+                          func: updateRowContainerWidth
+                      });
+                  }
+
               },
               post: function ($scope, $elm, $attrs, controllers) {
               }
