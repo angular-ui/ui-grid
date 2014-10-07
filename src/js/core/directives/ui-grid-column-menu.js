@@ -365,7 +365,6 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
         if ($scope.menuShown) {
           // we want to hide, then reposition, then show, but we want to wait for animations
           // we set a variable, and then rely on the menu-hidden event to call the reposition and show
-          $scope.col = column;
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
           $scope.hideThenShow = true;
@@ -374,21 +373,14 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
         } else {
           self.shown = $scope.menuShown = true;
           uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
+
+          $scope.colElement = $columnElement;
+          $scope.colElementPosition = colElementPosition;
           $scope.$broadcast('show-menu');
-          $timeout( $scope.repositionMenuClosure( $scope, column, colElementPosition, $elm, $columnElement ));
         } 
 
       };
 
-
-      $scope.repositionMenuClosure = function( $scope, column, colElementPosition, $elm, $columnElement ) {
-        return function() {
-          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
-          delete $scope.colElementPosition;
-          delete $scope.columnElement;
-        };
-      };
-      
 
       /**
        * @ngdoc method
@@ -415,12 +407,17 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
 
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
           $scope.$broadcast('show-menu');
-          $timeout( $scope.repositionMenuClosure( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement ));
 
           $scope.menuShown = true;
         } else {
           $scope.hideMenu( true );
         }
+      });
+      
+      $scope.$on('menu-shown', function() {
+        uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+        delete $scope.colElementPosition;
+        delete $scope.columnElement;
       });
 
  
