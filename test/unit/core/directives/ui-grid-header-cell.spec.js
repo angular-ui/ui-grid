@@ -1,5 +1,5 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile;
+  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -15,13 +15,15 @@ describe('uiGridHeaderCell', function () {
   ];
 
   beforeEach(module('ui.grid'));
+  beforeEach(module('ngAnimateMock'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
     $timeout = _$timeout_;
     $window = _$window_;
+    $animate = _$animate_;
 
     $scope.gridOpts = {
       enableSorting: true,
@@ -76,8 +78,9 @@ describe('uiGridHeaderCell', function () {
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not initially visible');
 
         headerCell1.trigger({ type: 'mousedown', button: 3 });
-        $scope.$digest();
-        $timeout.flush();
+
+        // the final ng-if call is buried inside a $animate callback, flush it
+        $animate.triggerCallbacks();
         $scope.$digest();
 
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
@@ -90,6 +93,9 @@ describe('uiGridHeaderCell', function () {
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
 
         $document.trigger('click');
+
+        // the final ng-if call is buried inside a $animate callback, flush it
+        $animate.triggerCallbacks();
         $scope.$digest();
         
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
@@ -127,6 +133,10 @@ describe('uiGridHeaderCell', function () {
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
         
         $(window).trigger('resize');
+        $scope.$digest();
+
+        // the final ng-if call is buried inside a $animate callback, flush it
+        $animate.triggerCallbacks();
         $scope.$digest();
 
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');

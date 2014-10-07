@@ -1,15 +1,17 @@
 <div class="ui-grid-menu" ng-if="shown">
-  <div class="ui-grid-menu-inner">
-    <ul class="ui-grid-menu-items">
-      <li
-        ng-repeat="item in menuItems"
-        ui-grid-menu-item action="item.action"
-        title="item.title"
-        active="item.active"
-        icon="item.icon"
-        shown="item.shown"
-        context="item.context"
-        template-url="item.templateUrl"></li>
-    </ul>
+  <div class="ui-grid-menu-mid" ng-show="shownMid">
+    <div class="ui-grid-menu-inner">
+      <ul class="ui-grid-menu-items">
+        <li
+          ng-repeat="item in menuItems"
+          ui-grid-menu-item action="item.action"
+          title="item.title"
+          active="item.active"
+          icon="item.icon"
+          shown="item.shown"
+          context="item.context"
+          template-url="item.templateUrl"></li>
+      </ul>
+    </div>
   </div>
 </div>

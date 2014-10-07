@@ -285,16 +285,20 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       // default value the last width for _this_ column, otherwise last width for _any_ column, otherwise default to 170
       var myWidth = column.lastMenuWidth ? column.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
       var paddingRight = column.lastMenuPaddingRight ? column.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
-      if (menu.length !== 0){
-        myWidth = gridUtil.elementWidth(menu, true);
-        $scope.lastMenuWidth = myWidth;
-        column.lastMenuWidth = myWidth;
-
-        // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
-        // Get the column menu right padding
-        paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
-        $scope.lastMenuPaddingRight = paddingRight;
-        column.lastMenuPaddingRight = paddingRight;
+      
+      if ( menu.length !== 0 ){
+        var mid = menu[0].querySelectorAll('.ui-grid-menu-mid'); 
+        if ( mid.length !== 0 && !mid[0].classList.contains('ng-hide') ){
+          myWidth = gridUtil.elementWidth(menu, true);
+          $scope.lastMenuWidth = myWidth;
+          column.lastMenuWidth = myWidth;
+  
+          // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
+          // Get the column menu right padding
+          paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
+          $scope.lastMenuPaddingRight = paddingRight;
+          column.lastMenuPaddingRight = paddingRight;
+        }
       }
       
       var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.width - myWidth + paddingRight;
@@ -355,36 +359,36 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
         // Swap to this column
         $scope.col = column;
 
-        // Remove an existing document click handler
-//        $document.off('click', documentClick);
-
         // Get the position information for the column element
         var colElementPosition = uiGridColumnMenuService.getColumnElementPosition( $scope, column, $columnElement );
 
-        var repositionMenuClosure = function( $scope, column, colElementPosition, $elm, $columnElement ) {
-          return function() {
-            uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
-          };
-        };
-        
         if ($scope.menuShown) {
-          $scope.$broadcast('hide-menu');
+          // we want to hide, then reposition, then show, but we want to wait for animations
+          // we set a variable, and then rely on the menu-hidden event to call the reposition and show
           $scope.col = column;
-          
-          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
-          $scope.$broadcast('show-menu');
-          $timeout( repositionMenuClosure( $scope, column, colElementPosition, $elm, $columnElement ));
+          $scope.colElement = $columnElement;
+          $scope.colElementPosition = colElementPosition;
+          $scope.hideThenShow = true;
+
+          $scope.$broadcast('hide-menu');
         } else {
           self.shown = $scope.menuShown = true;
           uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
           $scope.$broadcast('show-menu');
-          $timeout( repositionMenuClosure( $scope, column, colElementPosition, $elm, $columnElement ));
-        }
+          $timeout( $scope.repositionMenuClosure( $scope, column, colElementPosition, $elm, $columnElement ));
+        } 
 
-        // Hide the menu on a click on the document
-//        $document.on('click', documentClick);
       };
 
+
+      $scope.repositionMenuClosure = function( $scope, column, colElementPosition, $elm, $columnElement ) {
+        return function() {
+          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
+          delete $scope.colElementPosition;
+          delete $scope.columnElement;
+        };
+      };
+      
 
       /**
        * @ngdoc method
@@ -404,32 +408,19 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
         }
       };
 
-/*
-      function documentClick() {
-        $scope.$apply($scope.hideMenu);
-        $document.off('click', documentClick);
-      }
       
-      function resizeHandler() {
-        $scope.$apply($scope.hideMenu);
-      }
-      angular.element($window).bind('resize', resizeHandler);
-
-      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.GRID_SCROLL, function(evt, args) {
-        $scope.hideMenu();
-      }));
-
-      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, function(evt, args) {
-        $scope.hideMenu();
-      }));
-
-      $scope.$on('$destroy', function() {
-        angular.element($window).off('resize', resizeHandler);
-        $document.off('click', documentClick);
-      });
-*/      
       $scope.$on('menu-hidden', function() {
-        $scope.hideMenu( true );
+        if ( $scope.hideThenShow ){
+          delete $scope.hideThenShow;
+
+          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+          $scope.$broadcast('show-menu');
+          $timeout( $scope.repositionMenuClosure( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement ));
+
+          $scope.menuShown = true;
+        } else {
+          $scope.hideMenu( true );
+        }
       });
 
  
