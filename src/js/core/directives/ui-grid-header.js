@@ -146,7 +146,7 @@
 
               if (percentArray.length > 0) {
                 // Pre-process to make sure they're all within any min/max values
-                for (i = 0; i < percentArray.length; i++) {
+                for (i = percentArray.length - 1; i >= 0; i--) {
                   column = percentArray[i];
 
                   var percent = parseInt(column.width.replace(/%/g, ''), 10) / 100;
@@ -191,7 +191,7 @@
                 var asteriskVal = parseInt(remainingWidth / asteriskNum, 10);
 
                  // Pre-process to make sure they're all within any min/max values
-                for (i = 0; i < asterisksArray.length; i++) {
+                for (i = asterisksArray.length - 1; i >= 0; i--) {
                   column = asterisksArray[i];
 
                   colWidth = parseInt(asteriskVal * column.width.length, 10);
