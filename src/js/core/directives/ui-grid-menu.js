@@ -43,14 +43,50 @@ angular.module('ui.grid')
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
       var self = this;
-      gridUtil.enableAnimations($elm);
-
-      
+      var menuMid;
+      var $animate;
+     
     // *** Show/Hide functions ******
       self.showMenu = $scope.showMenu = function() {
-        $scope.shown = true;
+        if ( !$scope.shown ){
 
-        // Turn off an existing dpcument click handler
+          /*
+           * In order to animate cleanly we remove the ng-if, wait a digest cycle, then
+           * animate the removal of the ng-hide.  We can't successfully (so far as I can tell)
+           * animate removal of the ng-if, as the menu items aren't there yet.  And we don't want
+           * to rely on ng-show only, as that leaves elements in the DOM that are needlessly evaluated
+           * on scroll events.
+           * 
+           * Note when testing animation that animations don't run on the tutorials.  When debugging it looks
+           * like they do, but angular has a default $animate provider that is just a stub, and that's what's
+           * being called.  ALso don't be fooled by the fact that your browser has actually loaded the 
+           * angular-translate.js, it's not using it.  You need to test animations in an external application. 
+           */
+          $scope.shown = true;
+
+          $timeout( function() {
+            menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+            $animate = gridUtil.enableAnimations(menuMid);
+            if ( $animate ){
+              $scope.shownMid = true;
+              $animate.removeClass(menuMid, 'ng-hide');
+            } else {
+              $scope.shownMid = true;
+            }
+          });
+        } else if ( !$scope.shownMid ){
+          // we're probably doing a hide then show, so we don't need to wait for ng-if
+          menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+          $animate = gridUtil.enableAnimations(menuMid);
+          if ( $animate ){
+            $scope.shownMid = true;
+            $animate.removeClass(menuMid, 'ng-hide');
+          } else {
+            $scope.shownMid = true;
+          }
+        }
+
+        // Turn off an existing document click handler
         angular.element(document).off('click', applyHideMenu);
 
         // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
@@ -59,9 +95,33 @@ angular.module('ui.grid')
         });
       };
 
+
       self.hideMenu = $scope.hideMenu = function() {
-        $scope.shown = false;
-        $scope.$emit('menu-hidden');
+        if ( $scope.shown ){
+          /*
+           * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
+           * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
+           * callback on the addClass method, but it is very unreliable with unit tests for no discernable reason.
+           *   
+           * The user may have clicked on the menu again whilst
+           * we're waiting, so we check that the mid isn't shown before applying the ng-if.
+           */
+          menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
+          $animate = gridUtil.enableAnimations(menuMid);
+
+          if ( $animate ){
+            $scope.shownMid = false;
+            $animate.addClass(menuMid, 'ng-hide', function() {
+              if ( !$scope.shownMid ){
+                $scope.shown = false;
+                $scope.$emit('menu-hidden');
+              }
+            });
+          } else {
+            $scope.shownMid = false;
+            $scope.shown = false;
+          }
+        }
         angular.element(document).off('click', applyHideMenu);
       };
 

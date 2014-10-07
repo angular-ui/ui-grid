@@ -614,6 +614,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       try {
         $animate = $injector.get('$animate');
         $animate.enabled(true, element);
+        return $animate;
       }
       catch (e) {}
     },
