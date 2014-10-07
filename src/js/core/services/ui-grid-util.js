@@ -757,6 +757,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       borderType = 'border';
     }
 
+    borderType += 'Width';
+
     var val = parseInt(styles[borderType], 10);
 
     if (isNaN(val)) {
