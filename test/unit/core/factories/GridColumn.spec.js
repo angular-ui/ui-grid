@@ -1,14 +1,14 @@
 describe('GridColumn factory', function () {
-  var $q, $scope, cols, grid, gridCol, Grid, GridColumn, gridClassFactory, GridRenderContainer, uiGridConstants;
+  var $q, $scope, cols, grid, gridCol, Grid, GridColumn, gridClassFactory, GridRenderContainer, uiGridConstants, $httpBackend;
 
   beforeEach(module('ui.grid'));
 
   function buildCols() {
-    grid.buildColumns();
+    return grid.buildColumns();
   }
 
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridColumn_, _gridClassFactory_, _GridRenderContainer_, _uiGridConstants_) {
+  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridColumn_, _gridClassFactory_, _GridRenderContainer_, _uiGridConstants_, _$httpBackend_) {
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
@@ -16,6 +16,7 @@ describe('GridColumn factory', function () {
     gridClassFactory = _gridClassFactory_;
     GridRenderContainer = _GridRenderContainer_;
     uiGridConstants = _uiGridConstants_;
+    $httpBackend = _$httpBackend_;
 
     cols = [
       { field: 'firstName' }
@@ -220,4 +221,113 @@ describe('GridColumn factory', function () {
     });
   });
 
+  describe('getCompiledElementFn()', function () {
+    var col;
+
+    beforeEach(function () {
+      col = grid.columns[0];
+    });
+
+    it('should return a promise', function () {
+      expect(col.getCompiledElementFn().hasOwnProperty('then')).toBe(true);
+    });
+
+    it('should return a promise that is resolved when the cellTemplate is compiled', function () {
+      var resolved = false;
+
+      runs(function () {
+        buildCols().then(function () {
+          grid.preCompileCellTemplates();
+        });
+      });
+
+      runs(function () {
+        col.getCompiledElementFn().then(function () {
+          resolved = true;
+        });
+
+        $scope.$digest();
+      });
+
+      // $scope.$digest();
+
+      runs(function () {
+        expect(resolved).toBe(true);
+      });
+    });
+
+    it('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
+      var resolved = false;
+
+      var url = 'http://www.a-really-fake-url.com/template.html';
+      cols[0].cellTemplate = url;
+
+      $httpBackend.when('GET', url).respond('<div>foo</div>');
+
+      runs(function () {
+        buildCols().then(function () {
+          grid.preCompileCellTemplates();
+        });
+
+        col.getCompiledElementFn().then(function () {
+          resolved = true;
+        });
+
+        expect(resolved).toBe(false);
+
+        $httpBackend.flush();
+      });
+
+      runs(function () {
+        $scope.$digest();
+      });
+
+      runs(function () {
+        expect(resolved).toBe(true);
+      });
+    });
+  });
+
+  describe('getCellTemplate()', function () {
+    var col;
+
+    beforeEach(function () {
+      col = grid.columns[0];
+    });
+
+    it('should return a promise', function () {
+      expect(col.getCellTemplate().hasOwnProperty('then')).toBe(true);
+    });
+
+    it('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
+      var resolved = false;
+
+      var url = 'http://www.a-really-fake-url.com/template.html';
+      cols[0].cellTemplate = url;
+
+      $httpBackend.when('GET', url).respond('<div>foo</div>');
+
+      runs(function () {
+        buildCols().then(function () {
+          grid.preCompileCellTemplates();
+        });
+
+        col.getCellTemplate().then(function () {
+          resolved = true;
+        });
+
+        expect(resolved).toBe(false);
+
+        $httpBackend.flush();
+      });
+
+      runs(function () {
+        $scope.$digest();
+      });
+
+      runs(function () {
+        expect(resolved).toBe(true);
+      });
+    });
+  });
 });

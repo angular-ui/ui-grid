@@ -46,12 +46,20 @@
 
       <script>
 
-      var app = angular.module('test', ['ui.grid', 'ui.grid.selection']);
+      var app = angular.module('test', ['ui.grid', 'ui.grid.selection', 'ui.grid.expandable']);
 
       app.controller('Main', function($scope, $http) {
           // $scope.gridOptions = { data: 'data' };
-          $scope.gridOptions = {};
-          // $scope.gridOptions.columnDefs = [ {name:"First Name", field:"firstName"} ];
+          $scope.gridOptions = {
+            enableFiltering: true
+          };
+          $scope.gridOptions.columnDefs = [
+            {
+              name : "Name",
+              field: "name",
+              cellTemplate: '/misc/demo/cellTemplate.html'
+            }
+          ];
 
           $http.get('/misc/site/data/100.json')
             .success(function (data) {
