@@ -30,7 +30,8 @@
  */
 angular.module('ui.grid')
 
-.directive('uiGridMenu', ['$log', '$compile', '$timeout', '$window', '$document', 'gridUtil', function ($log, $compile, $timeout, $window, $document, gridUtil) {
+.directive('uiGridMenu', ['$log', '$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
+function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
   var uiGridMenu = {
     priority: 0,
     scope: {
@@ -69,9 +70,12 @@ angular.module('ui.grid')
             $animate = gridUtil.enableAnimations(menuMid);
             if ( $animate ){
               $scope.shownMid = true;
-              $animate.removeClass(menuMid, 'ng-hide');
+              $animate.removeClass(menuMid, 'ng-hide', function() {
+                $scope.$emit('menu-shown');
+              });
             } else {
               $scope.shownMid = true;
+              $scope.$emit('menu-shown');
             }
           });
         } else if ( !$scope.shownMid ){
@@ -80,9 +84,12 @@ angular.module('ui.grid')
           $animate = gridUtil.enableAnimations(menuMid);
           if ( $animate ){
             $scope.shownMid = true;
-            $animate.removeClass(menuMid, 'ng-hide');
+            $animate.removeClass(menuMid, 'ng-hide', function() {
+              $scope.$emit('menu-shown');
+            });
           } else {
             $scope.shownMid = true;
+            $scope.$emit('menu-shown');
           }
         }
 
@@ -157,6 +164,10 @@ angular.module('ui.grid')
       $scope.$on('$destroy', function() {
         angular.element($window).off('resize', applyHideMenu);
       });
+
+      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.GRID_SCROLL, applyHideMenu ));
+
+      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
     },
     
     
