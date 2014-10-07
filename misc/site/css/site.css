@@ -3,7 +3,7 @@ body {
 }
 
 .jumbotron {
-  padding: 30px 0;
+  padding: 30px 20px;
   margin-bottom: 30px;
   font-size: 21px;
   font-weight: 200;
@@ -38,23 +38,17 @@ body {
 .description {
   line-height: 1;
   font-size: 16px;
-  margin: 0 0 8px;
+  margin: 0 8px;
 }
 
 .container .jumbotron {
   border-radius: 6px;
 }
 
-.jumbotron .container {
-  max-width: 110%;
-}
-
 @media screen and (min-width: 768px) {
   .jumbotron {
     padding-top: 48px;
     padding-bottom: 48px;
-  }
-  .container .jumbotron {
     padding-right: 60px;
     padding-left: 60px;
   }
@@ -64,14 +58,59 @@ body {
   }
 }
 
-.nav-ghbtn {
-  padding-top: 14px;
+.intro {
+  display: table;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.jumbotron {
+  width: 100%;
+  display: table-cell;
+  text-align: center;  
+}
+
+.description {
+  display: inline-block;
+  text-align: left;
+}
+.benefits li:before {
+  content: '✓';
+  margin-left: -1em;
+  margin-right: .300em;
+  color: green;
+}
+
+.benefits li {
+  list-style: none;
+  line-height: 30px;
+}
+
+
+@media (min-width: 768px) {
+  .navbar-brand {
+    padding: 15px 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+   
+@media (min-width: 768px) {
+  .navbar-text {
+    float: left;
+    margin: 15px;
+  }
 }
 
 .space-before {
-  padding-top: 18px;
+  padding-top: 8px;
 }
-
 
 .grid {
   height: 250px;
@@ -96,33 +135,22 @@ body {
   font-size: 18px;
 }
 
-.benefits li:before {
-  content: '✓';
-  margin-left: -1em;
-  margin-right: .300em;
-  color: green;
+.intro-body {
+  display: table;
+  width: 100%;
 }
 
-.benefits li {
-  list-style: none;
-  line-height: 30px;
+.feature {
+  display: block;
+  text-align: left;
+  padding-top: 10px;
 }
 
-@media (max-width: 480px) {
-  .row-fluid .description.offset4 {
-    margin-left: 10px;
-  }
-
-  .features .first-block.offset3 {
-    margin-left: 20px;
-  }
+.feature-heading {
+  padding-top 30px;
+  text-align: center;
+  min-width: 100%;
 }
-
-.intro.container-fluid .row {
-  margin-right: -20px;
-}
-
-
 /* From Bootstrap Responsive */
 
 .visible-phone {

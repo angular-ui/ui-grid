@@ -798,7 +798,7 @@
    *  @example
    <example module="app">
    <file name="app.js">
-   var app = angular.module('app', ['ui.grid', 'ui.grid.edit']);
+   var app = angular.module('app', ['ui.grid', 'ui.grid.exporter']);
 
    app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.data = [
@@ -807,6 +807,8 @@
       ];
 
       $scope.gridOptions = {
+        enableGridMenu: true,
+        exporterMenuCsv: false,
         columnDefs: [
           {name: 'name', enableCellEdit: true},
           {name: 'title', enableCellEdit: true}
