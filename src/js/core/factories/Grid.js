@@ -429,6 +429,10 @@ angular.module('ui.grid')
 
       var compiledElementFn = $compile(html);
       col.compiledElementFn = compiledElementFn;
+
+      if (col.compiledElementFnDefer) {
+        col.compiledElementFnDefer.resolve(col.compiledElementFn);
+      }
     });
   };
 
