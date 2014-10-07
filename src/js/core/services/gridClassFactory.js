@@ -124,9 +124,11 @@
            */
           if (!colDef.cellTemplate) {
             colDef.cellTemplate = 'ui-grid/uiGridCell';
+            col.cellTemplatePromise = gridUtil.getTemplate(colDef.cellTemplate);
           }
 
-          templateGetPromises.push(gridUtil.getTemplate(colDef.cellTemplate)
+          col.cellTemplatePromise = gridUtil.getTemplate(colDef.cellTemplate);
+          templateGetPromises.push(col.cellTemplatePromise
             .then(
               function (template) {
                 col.cellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
@@ -135,7 +137,6 @@
                 throw new Error("Couldn't fetch/use colDef.cellTemplate '" + colDef.cellTemplate + "'");
               })
           );
-
 
           templateGetPromises.push(gridUtil.getTemplate(colDef.headerCellTemplate)
               .then(
@@ -146,6 +147,9 @@
                 throw new Error("Couldn't fetch/use colDef.headerCellTemplate '" + colDef.headerCellTemplate + "'");
               })
           );
+
+          // Create a promise for the compiled element function
+          col.compiledElementFnDefer = $q.defer();
 
           return $q.all(templateGetPromises);
         }
