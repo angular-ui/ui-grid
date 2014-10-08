@@ -4,6 +4,7 @@
     "@rowColorOdd": "#FDFFE3",
     "@rowColorEven": "#E6E3BB",
     "@verticalBarColor": "@borderColor",
+    "@selectedColor": "darken(#D3741C, 8%)",
 
     "@headerBackgroundColor": "#D3741C",
     "@headerGradientStart": "@headerBackgroundColor",
@@ -19,5 +20,5 @@
     "@scrollbarBorder": "1px solid darken(@scrollbarBackground, 15%)",
     "@scrollbarBorderScrolling": "1px solid darken(@scrollbarBackground, 15%)"
   },
-  "customLess": ".ui-grid { color: #242729; }\n\n.ui-grid-header { color: lighten(@headerBackgroundColor, 45%); }"
+  "customLess": ".ui-grid { color: #242729; }\n\n.ui-grid-header, .ui-grid-column-menu { color: lighten(@headerBackgroundColor, 45%); }"
 }
