@@ -165,8 +165,7 @@
            *  <br/>_requires cellNav feature and the edit feature to be enabled_
            */
             //enableCellEditOnFocus can only be used if cellnav module is used
-          gridOptions.enableCellEditOnFocus = gridOptions.enableCellEditOnFocus === undefined ?
-            false: gridOptions.enableCellEditOnFocus;
+          gridOptions.enableCellEditOnFocus = gridOptions.enableCellEditOnFocus === undefined ? false : gridOptions.enableCellEditOnFocus;
         },
 
         /**
@@ -195,7 +194,7 @@
            *  @description enable editing on column
            */
           colDef.enableCellEdit = colDef.enableCellEdit === undefined ? (gridOptions.enableCellEdit === undefined ?
-            (colDef.type !== 'object'):gridOptions.enableCellEdit) : colDef.enableCellEdit;
+            (colDef.type !== 'object') : gridOptions.enableCellEdit) : colDef.enableCellEdit;
 
           /**
            *  @ngdoc object

@@ -379,7 +379,7 @@ angular.module('ui.grid')
     // Remove any columns for which a columnDef cannot be found
     // Deliberately don't use forEach, as it doesn't like splice being called in the middle
     // Also don't cache columns.length, as it will change during this operation
-    for ( i=0; i<self.columns.length; i++ ){
+    for (i = 0; i < self.columns.length; i++){
       if (!self.getColDef(self.columns[i].name)) {
         self.columns.splice(i, 1);
         i--;
@@ -517,11 +517,11 @@ angular.module('ui.grid')
     var self = this;
 
     var t = [];
-    for (var i=0; i<n.length; i++) {
+    for (var i = 0; i < n.length; i++) {
       var nV = nAccessor ? n[i][nAccessor] : n[i];
       
       var found = false;
-      for (var j=0; j<o.length; j++) {
+      for (var j = 0; j < o.length; j++) {
         var oV = oAccessor ? o[j][oAccessor] : o[j];
         if (self.options.rowEquality(nV, oV)) {
           found = true;
@@ -571,7 +571,7 @@ angular.module('ui.grid')
           self.createRowHashMap();
         }
 
-        for (i=0; i<newRawData.length; i++) {
+        for (i = 0; i < newRawData.length; i++) {
           newRow = newRawData[i];
 
           self.rowHashMap.put(newRow, {
@@ -719,7 +719,7 @@ angular.module('ui.grid')
     var self = this;
 
     var existingRowCount = self.rows.length;
-    for (var i=0; i < newRawData.length; i++) {
+    for (var i = 0; i < newRawData.length; i++) {
       var newRow = self.processRowBuilders(new GridRow(newRawData[i], i + existingRowCount, self));
 
       if (self.options.enableRowHashing) {
