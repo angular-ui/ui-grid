@@ -20,7 +20,7 @@ grunt
 
 # If this is a pull request then we won't have access to secure variables and can't do integration tests with SauceLabs.
 #   In this case just do normal local tests
-if [ $TRAVIS_PULL_REQUEST ]
+if [ $TRAVIS_PULL_REQUEST == "true" ]
 then
   grunt test
 else
