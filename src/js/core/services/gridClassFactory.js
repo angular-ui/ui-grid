@@ -20,7 +20,7 @@
          * @returns {Grid} grid
          */
         createGrid : function(options) {
-          options = (typeof(options) !== 'undefined') ? options: {};
+          options = (typeof(options) !== 'undefined') ? options : {};
           options.id = gridUtil.newId();
           var grid = new Grid(options);
 
