@@ -40,7 +40,7 @@
               uiGridCtrl.grid.gridHeight = newGridHeight;
               uiGridCtrl.grid.gridWidth = newGridWidth;
 
-              uiGridCtrl.grid.queueRefresh()
+              uiGridCtrl.grid.refresh()
                 .then(function () {
                   getDimensions();
 
