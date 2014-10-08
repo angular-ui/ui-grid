@@ -355,7 +355,7 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
        * @param {GridCol} column the column we want to position below
        * @param {element} $columnElement the column element we want to position below
        */
-      $scope.showMenu = function(column, $columnElement) {
+      $scope.showMenu = function(column, $columnElement, event) {
         // Swap to this column
         $scope.col = column;
 
@@ -369,14 +369,14 @@ function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
           $scope.colElementPosition = colElementPosition;
           $scope.hideThenShow = true;
 
-          $scope.$broadcast('hide-menu');
+          $scope.$broadcast('hide-menu', { originalEvent: event });
         } else {
           self.shown = $scope.menuShown = true;
           uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
 
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
-          $scope.$broadcast('show-menu');
+          $scope.$broadcast('show-menu', { originalEvent: event });
         } 
 
       };

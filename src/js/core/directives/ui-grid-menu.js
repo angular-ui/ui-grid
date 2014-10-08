@@ -48,7 +48,7 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
       var $animate;
      
     // *** Show/Hide functions ******
-      self.showMenu = $scope.showMenu = function() {
+      self.showMenu = $scope.showMenu = function(event, args) {
         if ( !$scope.shown ){
 
           /*
@@ -78,7 +78,7 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
               $scope.$emit('menu-shown');
             }
           });
-        } else if ( !$scope.shownMid ){
+        } else if ( !$scope.shownMid ) {
           // we're probably doing a hide then show, so we don't need to wait for ng-if
           menuMid = $elm[0].querySelectorAll( '.ui-grid-menu-mid' );
           $animate = gridUtil.enableAnimations(menuMid);
@@ -93,17 +93,22 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
           }
         }
 
+        var docEventType = 'click';
+        if (args && args.originalEvent && args.originalEvent.type && args.originalEvent.type === 'touchstart') {
+          docEventType = args.originalEvent.type;
+        }
+
         // Turn off an existing document click handler
-        angular.element(document).off('click', applyHideMenu);
+        angular.element(document).off('click touchstart', applyHideMenu);
 
         // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
         $timeout(function() {
-          angular.element(document).on('click', applyHideMenu);
+          angular.element(document).on(docEventType, applyHideMenu);
         });
       };
 
 
-      self.hideMenu = $scope.hideMenu = function() {
+      self.hideMenu = $scope.hideMenu = function(event, args) {
         if ( $scope.shown ){
           /*
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
@@ -129,15 +134,16 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
             $scope.shown = false;
           }
         }
-        angular.element(document).off('click', applyHideMenu);
+
+        angular.element(document).off('click touchstart', applyHideMenu);
       };
 
-      $scope.$on('hide-menu', function () {
-        $scope.hideMenu();
+      $scope.$on('hide-menu', function (event, args) {
+        $scope.hideMenu(event, args);
       });
 
-      $scope.$on('show-menu', function () {
-        $scope.showMenu();
+      $scope.$on('show-menu', function (event, args) {
+        $scope.showMenu(event, args);
       });
 
       
@@ -157,7 +163,7 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
       }
 
       $scope.$on('$destroy', function () {
-        angular.element(document).off('click', applyHideMenu);
+        angular.element(document).off('click touchstart', applyHideMenu);
       });
       
 
