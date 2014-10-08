@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! $TRAVIS_PULL_REQUEST ]
+if [ ! $TRAVIS_PULL_REQUEST == "true" ]
 then
   # Wait for Connect to be ready before exiting
   while [ ! -f $SAUCE_CONNECT_READY_FILE ]; do
