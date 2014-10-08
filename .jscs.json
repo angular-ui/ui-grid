@@ -25,5 +25,6 @@
   "disallowImplicitTypeConversion": ["string"],
   "disallowMixedSpacesAndTabs": true,
   "disallowTrailingComma": true,
-  "disallowYodaConditions": true
+  "disallowYodaConditions": true,
+  "disallowNewlineBeforeBlockStatements": true
 }
