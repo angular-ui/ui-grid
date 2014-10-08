@@ -176,14 +176,17 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
         {name: 'x', displayName: '12345234', width: 200, align: 'left'}
       ];
+
+      var date = new Date(2014, 11, 12, 0, 0, 0, 0);
+
       var data = [
         [ 'a string', 'a string', 'A string', 'a string' ],
         [ '', '45', 'A string', false ],
-        [ new Date('2014-12-12'), 45, 'A string', true ]
+        [ date, 45, 'A string', true ]
       ];
 
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data)).toEqual(
-        '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"2014-12-12T00:00:00.000Z",45,"A string",TRUE'
+        '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"' + date.toISOString() + '",45,"A string",TRUE'
       );
     });
   });
@@ -233,10 +236,13 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
         {name: 'x', displayName: '12345234', width: 200, align: 'left'}
       ];
+
+      var date = new Date(2014, 11, 12, 0, 0, 0, 0);
+
       var data = [
         [ 'a string', 'a string', 'A string', 'a string' ],
         [ '', '45', 'A string', false ],
-        [ new Date('2014-12-12'), 45, 'A string', true ]
+        [ date, 45, 'A string', true ]
       ];
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
@@ -256,7 +262,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
               ], 
               [ 'a string', 'a string', 'A string', 'a string' ], 
               [ '', '45', 'A string', 'FALSE' ], 
-              [ "2014-12-12T00:00:00.000Z", '45', 'A string', 'TRUE' ] 
+              [ date.toISOString(), '45', 'A string', 'TRUE' ] 
             ] 
           } 
         }], 
@@ -295,10 +301,13 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
         {name: 'x', displayName: '12345234', width: 200, align: 'left'}
       ];
+
+      var date = new Date(2014, 12, 12, 0, 0, 0, 0);
+
       var data = [
         [ 'a string', 'a string', 'A string', 'a string' ],
         [ '', '45', 'A string', false ],
-        [ new Date('2014-12-12'), 45, 'A string', true ]
+        [ date, 45, 'A string', true ]
       ];
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
@@ -318,7 +327,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
               ], 
               [ 'a string', 'a string', 'A string', 'a string' ], 
               [ '', '45', 'A string', 'FALSE' ], 
-              [ '2014-12-12T00:00:00.000Z', '45', 'A string', 'TRUE' ] 
+              [ date.toISOString(), '45', 'A string', 'TRUE' ] 
             ] 
           } 
         } ], 
