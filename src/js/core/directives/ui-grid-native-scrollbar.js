@@ -4,7 +4,11 @@
   angular.module('ui.grid').directive('uiGridNativeScrollbar', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil',
     function ($log, $timeout, $document, uiGridConstants, gridUtil) {
     var scrollBarWidth = gridUtil.getScrollbarWidth();
-    scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
+
+    // scrollBarWidth = scrollBarWidth > 0 ? scrollBarWidth : 17;
+    if (!angular.isNumber(scrollBarWidth)) {
+      scrollBarWidth = 0;
+    }
 
     // If the browser is IE, add 1px to the scrollbar container, otherwise scroll events won't work right (in IE11 at least)
     var browser = gridUtil.detectBrowser();

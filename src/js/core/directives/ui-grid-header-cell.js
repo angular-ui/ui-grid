@@ -28,8 +28,6 @@
 
             $scope.grid = uiGridCtrl.grid;
 
-            $log.debug('id', renderContainerCtrl.containerId);
-
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
             $elm.addClass($scope.col.getColClass(false));
@@ -94,8 +92,8 @@
               cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
     
               cancelMousedownTimeout.then(function () {
-                if ( $scope.col.colDef && !$scope.col.colDef.disableColumnMenu ){
-                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
+                if ($scope.col.colDef && !$scope.col.colDef.disableColumnMenu) {
+                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
               });
             });
@@ -141,7 +139,7 @@
     
             // If this column is sortable, add a click event handler
             if ($scope.sortable) {
-              $contentsElm.on('click', function(evt) {
+              $contentsElm.on('click touchend', function(evt) {
                 evt.stopPropagation();
     
                 $timeout.cancel(cancelMousedownTimeout);

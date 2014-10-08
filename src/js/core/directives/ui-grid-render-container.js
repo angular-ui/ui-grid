@@ -302,7 +302,7 @@
                 }, decelerateInterval);
               }
 
-              // decelerate();
+              decelerate();
             }
 
             if (GridUtil.isTouchEnabled()) {
