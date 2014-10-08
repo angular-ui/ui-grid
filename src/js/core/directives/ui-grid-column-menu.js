@@ -288,7 +288,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       
       if ( menu.length !== 0 ){
         var mid = menu[0].querySelectorAll('.ui-grid-menu-mid'); 
-        if ( mid.length !== 0 && !mid[0].classList.contains('ng-hide') ){
+        if ( mid.length !== 0 && !angular.element(mid).hasClass('ng-hide') ) {
           myWidth = gridUtil.elementWidth(menu, true);
           $scope.lastMenuWidth = myWidth;
           column.lastMenuWidth = myWidth;
