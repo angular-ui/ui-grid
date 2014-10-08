@@ -389,8 +389,14 @@
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               uiGridSelectionService.initializeGrid(uiGridCtrl.grid);
               if (uiGridCtrl.grid.options.enableRowHeaderSelection) {
-                var cellTemplate = 'ui-grid/selectionRowHeader';
-                var selectionRowHeaderDef = { name: 'selectionRowHeaderCol', displayName: '', width: 30, cellTemplate: cellTemplate};
+                var selectionRowHeaderDef = {
+                  name: 'selectionRowHeaderCol',
+                  displayName: '',
+                  width: 30,
+                  cellTemplate: 'ui-grid/selectionRowHeader',
+                  headerCellTemplate: 'ui-grid/selectionHeaderCell'
+                };
+
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
               }
             },
