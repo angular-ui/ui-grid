@@ -243,7 +243,7 @@ describe('rowSorter', function() {
         sortNumber: [ undefined, null, 1, 2 ],
         sortNumberStr: [ undefined, null, '3.a5', '5.b7' ],
         sortAlpha: [ undefined, null, 'a', 'b' ],
-        sortDate: [ undefined, null, new Date('2009-12-12'), new Date('2010-11-11') ],
+        sortDate: [ undefined, null, new Date(2009, 12, 12), new Date(2010, 11, 11) ],
         sortBool: [ undefined, null, false, true ]
       };
       
