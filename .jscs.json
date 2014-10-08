@@ -22,5 +22,7 @@
   "disallowSpacesInNamedFunctionExpression": {
     "beforeOpeningRoundBrace": true
   },
-  "disallowImplicitTypeConversion": ["string"]
+  "disallowImplicitTypeConversion": ["string"],
+  "disallowMixedSpacesAndTabs": true,
+  "disallowTrailingComma": true
 }

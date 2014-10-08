@@ -26,7 +26,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {field: 'col1', name: 'col1', displayName: 'Col1', width: 50},
         {field: 'col2', name: 'col2', displayName: 'Col2', width: '*', type: 'number'},
         {field: 'col3', name: 'col3', displayName: 'Col3', width: 100},
-        {field: 'col4', name: 'col4', displayName: 'Col4', width: 200},
+        {field: 'col4', name: 'col4', displayName: 'Col4', width: 200}
     ];
 
     _uiGridExporterService_.initializeGrid(grid);
