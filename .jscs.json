@@ -24,5 +24,6 @@
   },
   "disallowImplicitTypeConversion": ["string"],
   "disallowMixedSpacesAndTabs": true,
-  "disallowTrailingComma": true
+  "disallowTrailingComma": true,
+  "disallowYodaConditions": true
 }

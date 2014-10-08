@@ -696,11 +696,11 @@
    */
     module.directive('input', ['$filter', function ($filter) {
       function parseDateString(dateString) {
-        if ('undefined' === typeof dateString || '' === dateString) {
+        if (typeof(dateString) === 'undefined' || dateString === '') {
           return null;
         }
         var parts = dateString.split('-');
-        if (3 !== parts.length) {
+        if (parts.length !== 3) {
           return null;
         }
         var year = parseInt(parts[0], 10);
@@ -717,7 +717,7 @@
         require: '?ngModel',
         link: function (scope, element, attrs, ngModel) {
 
-          if (angular.version.minor === 2 && attrs.type && 'date' === attrs.type && ngModel) {
+          if (angular.version.minor === 2 && attrs.type && attrs.type === 'date' && ngModel) {
 
             ngModel.$formatters.push(function (modelValue) {
               ngModel.$setValidity(null,(!modelValue || !isNaN(modelValue.getTime())));
