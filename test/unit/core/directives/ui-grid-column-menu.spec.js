@@ -20,13 +20,13 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
       {name: 'col1'},
       {name: 'col2'},
       {name: 'col3'},
-      {name: 'col4'},
+      {name: 'col4'}
     ];
     grid.options.data = [
       {col1: '1_1', col2: '1_2', col3: '1_3', col4: '1_4'},
       {col1: '2_1', col2: '2_2', col3: '2_3', col4: '2_4'},
       {col1: '3_1', col2: '3_2', col3: '3_3', col4: '3_4'},
-      {col1: '4_1', col2: '4_2', col3: '4_3', col4: '4_4'},
+      {col1: '4_1', col2: '4_2', col3: '4_3', col4: '4_4'}
     ];
     
     grid.buildColumns();

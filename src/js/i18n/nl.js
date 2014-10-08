@@ -44,7 +44,7 @@
           exporterSelectedAsCsv: 'Export selected data as csv',
           exporterAllAsPdf: 'Export all data as pdf',
           exporterVisibleAsPdf: 'Export visible data as pdf',
-          exporterSelectedAsPdf: 'Export selected data as pdf',
+          exporterSelectedAsPdf: 'Export selected data as pdf'
         }
       });
       return $delegate;

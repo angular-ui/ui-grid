@@ -22,4 +22,6 @@
 
   // (c0bra): Not supported in jscs yet (currently 1.3.0)
   // "requireSpaceBeforeBlockStatements": true
+
+  "requireSpaceBeforeObjectValues": true
 }

@@ -672,7 +672,7 @@
             }],
             styles: {
               tableStyle: grid.options.exporterPdfTableStyle,
-              tableHeader: grid.options.exporterPdfTableHeaderStyle,
+              tableHeader: grid.options.exporterPdfTableHeaderStyle
             },
             defaultStyle: grid.options.exporterPdfDefaultStyle
           };

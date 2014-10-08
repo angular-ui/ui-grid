@@ -89,7 +89,7 @@ describe('GridColumn factory', function () {
         { name: 'john', value: 2 },
         { name: 'james', value: 3 },
         { name: 'matthew', value: 4 },
-        { name: 'murray', value: 5 },
+        { name: 'murray', value: 5 }
       ];
       grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];  
     });
@@ -207,7 +207,7 @@ describe('GridColumn factory', function () {
         { name: 'john', value: 2 },
         { name: 'james', value: 3 },
         { name: 'matthew', value: 4 },
-        { name: 'murray', value: 5 },
+        { name: 'murray', value: 5 }
       ];
       grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];  
     });
