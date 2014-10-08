@@ -198,3 +198,23 @@ body {
     display: none !important;
   }
 }
+
+.modal {
+    display: block;
+}
+.modal-body:before,
+.modal-body:after {
+    display: table;
+    content: " ";
+}
+.modal-header:before,
+.modal-header:after {
+    display: table;
+    content: " ";
+}
+p.modal-message {
+  margin: 10px 0;
+}
+.compiled-css {
+  margin-bottom: 10px;
+}

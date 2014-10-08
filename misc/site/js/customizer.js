@@ -44,11 +44,10 @@ app.controller('Main', function($log, $http, $scope, less, Theme) {
 
     $scope.variables = angular.copy($scope.defaultVariables);
     $scope.updateCSS();
-  }
+  };
 
   $scope.updateCSS = function(compress) {
     $scope.compress = compress;
-
     var fullSrc = $scope.source + ' ' + $scope.customLess;
     var src = less.replaceVariables(fullSrc, $scope.variables);
     less.process(src, $scope.compress)
