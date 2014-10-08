@@ -400,11 +400,13 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
 # Performing a release
 
 Run these grunt tasks. Look at the grunt-bump module for how to specify a major/minor/patch/pre-release version. This series will bump the version in package.json, update the changelog for that version, then commit the changes and add a new git tag for the version.
+
+Make sure not to include a preceding 'v' in the version name. It will be done automatically by the `bump` task.
     
     # Optionally set the version manually: grunt bump-only --setversion=3.0.1-rc.1
     grunt bump-only
     grunt changelog
-    grunt commit-only
+    grunt bump-commit
 
 Then push the changes to origin/master and Travis will take care of the rest!
 
