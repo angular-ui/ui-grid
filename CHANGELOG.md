@@ -1,5 +1,5 @@
-<a name="vv3.0.0-rc.12"></a>
-### vv3.0.0-rc.12 (2014-10-08)
+<a name="v3.0.0-rc.12"></a>
+### v3.0.0-rc.12 (2014-10-08)
 
 
 #### Bug Fixes
@@ -23,6 +23,7 @@
 #### Features
 
 * **cellTemplates:** add MODEL_COL_FIELD to cellTemplate parsing so it can be used in ng-model #1633  ([66f3404a](http://github.com/angular-ui/ng-grid/commit/66f3404ade7ead010142ecf047e863f526d960a3))
+
 
 <a name="v3.0.0-rc.NEXT"></a>
 ### v3.0.0-rc.NEXT Current Master
