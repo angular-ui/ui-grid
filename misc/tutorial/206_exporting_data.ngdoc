@@ -15,8 +15,7 @@ The exporter adds menu items to the grid menu, to use the native UI you need to 
 the grid menu using the gridOption `enableGridMenu`
 
 @example
-In this example we provide a custom UI for calling the exporter, and we tailor
-the way the returned data behaves.
+In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 
 <example module="app">
   <file name="app.js">
