@@ -1,0 +1,73 @@
+@ngdoc overview
+@name Tutorial: 207 Importing Data With Native UI
+@description The importer feature allows data to be imported into the grid in 
+csv or json format.  The importer can use the native grid menu, or can accept a 
+file from a custom file picker implemented by the user.
+
+The importer imports files in json or csv format, with the ability to be extended
+to other file formats if demand exists.
+
+For json format files the received elements are assumed to match the column.field 
+attributes in your columnDefs, and are loaded into the provided entity.  Optionally
+you can provide a custom function that maps each entity as it is imported.
+
+For csv files the data is mapped to the columnDefs, with columns in the heading row in the 
+csv needing to match either the column.name or column.displayName.  Optionally you can
+provide a custom function that maps headings to column.name, and this will be used instead.
+
+To use the importer you need to include the ui-grid-importer directive on
+your grid.  
+
+The options and API for importer can be found at {@link api/ui.grid.importer ui.grid.importer}.
+
+The importer adds menu items to the grid menu, to use the native UI you need to enable
+the grid menu using the gridOption `enableGridMenu`
+
+@example
+In this example we use the native grid menu to import a file.  You need to provide a file
+from your file system to use the tutorial, you can copy either import.json or import.csv
+as a test file.
+
+The grid will start empty, and will auto-populate the column defs and data once the file 
+has been imported (in many uses you would define the column defs up front, this example
+illustrates that doing so is not mandatory).
+
+
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.importer']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+      $scope.gridOptions = {
+        enableGridMenu: true,
+        onRegisterApi: function(gridApi){ 
+          $scope.gridApi = gridApi;
+        }
+      };
+    }]);
+  </file>
+  
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" ui-grid-importer class="grid"></div>
+    </div>
+  </file>
+  
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>
+import.json:
+<pre>
+[{"Name":"John Smith","Gender":"male","Company":"TestIcon"},{"Name":"Jane Doe","Gender":"female","Company":"FastTruck"}]
+</pre>
+
+import.csv
+<pre>
+"Name","Gender","Company"
+"John Smith","male","TestIcon"
+"Jane Doe","female","FastTrucks"
+</pre>

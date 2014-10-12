@@ -147,6 +147,29 @@
                  */
                 flushDirtyRows: function (grid) {
                   return service.flushDirtyRows(grid);
+                },
+                
+                /**
+                 * @ngdoc method
+                 * @methodOf ui.grid.rowEdit.api:PublicApi
+                 * @name setRowsDirty
+                 * @description Sets each of the rows passed in dataRows
+                 * to be dirty.  note that if you have only just inserted the
+                 * rows into your data you will need to wait for a $digest cycle
+                 * before the gridRows are present - so often you would wrap this
+                 * call in a $interval or $timeout
+                 * <pre>
+                 *      $interval( function() {
+                 *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
+                 *      }, 0, 1);
+                 * </pre>
+                 * @param {object} grid the grid for which rows should be set dirty
+                 * @param {array} dataRows the data entities for which the gridRows
+                 * should be set dirty.  
+                 * 
+                 */
+                setRowsDirty: function (grid, dataRows) {
+                  service.setRowsDirty(grid, dataRows);
                 }
               }
             }
@@ -481,7 +504,52 @@
             $interval.cancel(gridRow.rowEditSaveTimer);
             delete gridRow.rowEditSaveTimer;
           }
+        },
+
+
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.rowEdit.api:PublicApi
+         * @name setRowsDirty
+         * @description Sets each of the rows passed in dataRows
+         * to be dirty.  note that if you have only just inserted the
+         * rows into your data you will need to wait for a $digest cycle
+         * before the gridRows are present - so often you would wrap this
+         * call in a $interval or $timeout
+         * <pre>
+         *      $interval( function() {
+         *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
+         *      }, 0, 1);
+         * </pre>
+         * @param {object} grid the grid for which rows should be set dirty
+         * @param {array} dataRows the data entities for which the gridRows
+         * should be set dirty.  
+         * 
+         */
+        setRowsDirty: function( grid, myDataRows ) {
+          var gridRow;
+          myDataRows.forEach( function( value, index ){
+            gridRow = grid.getRow( value );
+            if ( gridRow ){
+              if ( !grid.rowEditDirtyRows ){
+                grid.rowEditDirtyRows = [];
+              }
+              
+              if ( !gridRow.isDirty ){
+                gridRow.isDirty = true;
+                grid.rowEditDirtyRows.push( gridRow );
+              }
+              
+              delete gridRow.isError;
+              
+              service.considerSetTimer( grid, gridRow );
+            } else {
+              $log.error( "requested row not found in rowEdit.setRowsDirty, row was: " + value );
+            }
+          });
         }
+        
+        
       };
 
       return service;
