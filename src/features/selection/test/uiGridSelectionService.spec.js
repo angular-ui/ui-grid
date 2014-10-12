@@ -59,6 +59,17 @@ describe('ui.grid.selection uiGridSelectionService', function () {
             expect(grid.rows[1].isSelected).toBe(true, 'new row should be selected');
         });
 
+        it('should remain selected', function () {
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true);
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true);
+            expect(grid.rows[0].isSelected).toBe(true);
+            expect(grid.rows[1].isSelected).toBe(true);
+
+            uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], false);
+            expect(grid.rows[0].isSelected).toBe(false, 'row should not be selected, last row selection was not a multiselect selection');
+            expect(grid.rows[1].isSelected).toBe(true, 'row should be selected, multiple rows was selected before the selection');
+        });
+
         it('should clear selected', function () {
             uiGridSelectionService.toggleRowSelection(grid, grid.rows[0]);
             expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);

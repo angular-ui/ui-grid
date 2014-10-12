@@ -266,11 +266,18 @@
          */
         toggleRowSelection: function (grid, row, multiSelect, noUnselect) {
           var selected = row.isSelected;
+
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid);
+          } else if (!multiSelect && selected) {
+            var selectedRows = service.getSelectedRows(grid);
+            if (selectedRows.length > 1) {
+              selected = false; // Enable reselect of the row
+              service.clearSelectedRows(grid);
+            }
           }
           
-          if (row.isSelected && noUnselect){
+          if (selected && noUnselect){
             // don't deselect the row 
           } else {
             row.isSelected = !selected;
