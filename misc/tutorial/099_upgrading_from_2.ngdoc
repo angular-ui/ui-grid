@@ -83,6 +83,11 @@ $scope.gridOptions.columnDefs = [...];
 </pre>
 
 
+### Accessing cell values ###
+
+In 2.x you would use `row.getProperty(col.field)` within a cellTemplate to get the value of a cell. In 3.0 this has changed to `grid.getCellValue(row, col)`.
+
+
 ### External scopes must be declared ###
 The grid now uses an isolate scope, meaning that the scope on your controller is not directly accessible
 to widgets that you include in the grid.  You now need to declare an external scope (refer associated tutorial).
