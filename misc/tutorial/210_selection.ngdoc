@@ -19,9 +19,16 @@ can select a different row (which will unselect the current row), but you cannot
 by clicking on it.  This means that at least one row is always selected, other than when you first open the grid.  If 
 necessary you could programatically select the first row upon page open.  The second grid demonstrates this.
 
-If `multiSelect: true`, another option `modifierKeysToMultiSelect` may be used. If set to true will allow selecting multiple 
-row only if the Ctrl-Key, Cmd-Key (Mac) or the Shift-Key is used when selecting, set to false will allow selecting multiple 
-rows always. 
+If `multiSelect: true`, another option `modifierKeysToMultiSelect` may be used. If set to true this will allow selecting 
+multiple rows only if the Ctrl-Key, Cmd-Key (Mac) or the Shift-Key is used when selecting, if set to false then it allows
+selecting multiple rows by individually clicking them.
+
+By default a selectAll box is shown at the top of the rowHeader.  If `multiSelect: true` is set then this will allow
+you to select all visible rows.  Note that the selectAll does not watch for new data, so if you are using the selectAll
+function and you add data to the grid, you need to check `grid.api.selection.getSelectAllState`, and if it is currently
+ticked, then manually call `grid.api.selection.selectAllVisibleRows` after your data has been added.
+
+The selectAll box can be disabled by setting `enableSelectAll` to false. 
 
 @example
 Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
@@ -31,7 +38,10 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
     var app = angular.module('app', ['ui.grid', 'ui.grid.selection']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = { enableRowSelection: true };
+      $scope.gridOptions = { 
+        enableRowSelection: true,
+        enableSelectAll: true
+      };
 
       $scope.gridOptions.columnDefs = [
         { name: 'id' },
