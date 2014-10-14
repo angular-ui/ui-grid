@@ -191,5 +191,17 @@ describe('ui.grid.selection uiGridSelectionService', function () {
         });
     });
 
+    describe('selectRowByVisibleIndex function', function() {
+        it('should select specified row', function () {
+            grid.rows[1].visible = false;
+            grid.setVisibleRows(grid.rows);
+            
+            grid.api.selection.selectRowByVisibleIndex(0);
+            expect(grid.rows[0].isSelected).toBe(true);
+            
+            grid.api.selection.selectRowByVisibleIndex(1);
+            expect(grid.rows[2].isSelected).toBe(true);
+        });
+    });
 
 });
