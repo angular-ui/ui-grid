@@ -34,11 +34,11 @@
           hide: 'Göm kolumn'
         },
         aggregation: {
-          count: 'total rows: ',
-          sum: 'total: ',
-          avg: 'avg: ',
-          min: 'min: ',
-          max: 'max: '
+          count: 'Antal rader: ',
+          sum: 'Summa: ',
+          avg: 'Genomsnitt: ',
+          min: 'Min: ',
+          max: 'Max: '
         },
         pinning: {
           pinLeft: 'Fäst vänster',
@@ -46,21 +46,21 @@
           unpin: 'Lösgör'
         },
         gridMenu: {
-          columns: 'Columns:',
-          importerTitle: 'Import file',
-          exporterAllAsCsv: 'Export all data as csv',
-          exporterVisibleAsCsv: 'Export visible data as csv',
-          exporterSelectedAsCsv: 'Export selected data as csv',
-          exporterAllAsPdf: 'Export all data as pdf',
-          exporterVisibleAsPdf: 'Export visible data as pdf',
-          exporterSelectedAsPdf: 'Export selected data as pdf'
+          columns: 'Kolumner:',
+          importerTitle: 'Importera fil',
+          exporterAllAsCsv: 'Exportera all data som CSV',
+          exporterVisibleAsCsv: 'Exportera synlig data som CSV',
+          exporterSelectedAsCsv: 'Exportera markerad data som CSV',
+          exporterAllAsPdf: 'Exportera all data som PDF',
+          exporterVisibleAsPdf: 'Exportera synlig data som PDF',
+          exporterSelectedAsPdf: 'Exportera markerad data som PDF'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Kolumnnamn kunde inte härledas. Har filen ett sidhuvud?',
+          noObjects: 'Objekt kunde inte härledas. Har filen data undantaget sidhuvud?',
+          invalidCsv: 'Filen kunde inte behandlas, är den en giltig CSV?',
+          invalidJson: 'Filen kunde inte behandlas, är den en giltig JSON?',
+          jsonNotArray: 'Importerad JSON-fil måste innehålla ett fält. Import avbruten.'
         }
       });
       return $delegate;
