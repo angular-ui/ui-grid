@@ -119,6 +119,7 @@
 
                   grid.rows.forEach(function (row) {
                     row.isSelected = true;
+                    grid.api.selection.raise.rowSelectionChanged(row);
                   });
                 },
                 /**
@@ -135,8 +136,10 @@
                   grid.rows.forEach(function (row) {
                     if (row.visible) {
                       row.isSelected = true;
+                      grid.api.selection.raise.rowSelectionChanged(row);
                     } else {
                       row.isSelected = false;
+                      grid.api.selection.raise.rowSelectionChanged(row);
                     }
                   });
                 },
