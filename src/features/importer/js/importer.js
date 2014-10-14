@@ -130,10 +130,10 @@
            * Otherwise defaults to true.
            * 
            */
-          if (gridOptions.enableImporter  || gridOptions.enableImporter === undefined){
-            if ( !(window.File && window.FileReader && window.FileList && window.Blob)) {
+          if (gridOptions.enableImporter  || gridOptions.enableImporter === undefined) {
+            if ( !($window.hasOwnProperty('File') && $window.hasOwnProperty('FileReader') && $window.hasOwnProperty('FileList') && $window.hasOwnProperty('Blob')) ) {
               $log.error('The File APIs are not fully supported in this browser, grid importer cannot be used.');
-              this.grid.options.enableImporter = false;
+              gridOptions.enableImporter = false;
             } else {
               gridOptions.enableImporter = true;
             }
@@ -236,7 +236,7 @@
           if ( gridOptions.enableImporter && ( !gridOptions.importerInputElement || !gridOptions.importerInputElement.append ) ) {
             gridOptions.importerShowMenu = false;
           } else {
-            gridOptions.importerShowMenu = gridOptions.importerShowMenu !== false;
+            gridOptions.importerShowMenu = !!gridOptions.importerShowMenu;
           }
         },
 
