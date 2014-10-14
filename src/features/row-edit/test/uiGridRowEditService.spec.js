@@ -59,6 +59,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.api.rowEdit.getDirtyRows ).toEqual( jasmine.any(Function) );
       expect( grid.api.rowEdit.getErrorRows ).toEqual( jasmine.any(Function) );
       expect( grid.api.rowEdit.flushDirtyRows ).toEqual( jasmine.any(Function) );
+      expect( grid.api.rowEdit.setRowsDirty ).toEqual( jasmine.any(Function) );
 
     });
 
@@ -481,5 +482,20 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( success ).toEqual(false);
       expect( failure ).toEqual(true);
     });  
+  });
+  
+  
+  describe( 'setRowsDirty', function() {
+    it( 'rows are set dirty', function() {
+      uiGridRowEditService.initializeGrid( $scope, grid );
+      uiGridEditService.initializeGrid( grid );
+      grid.renderingComplete();
+
+      grid.api.rowEdit.setRowsDirty( grid, [ grid.options.data[0], grid.options.data[1] ]);
+      expect( grid.rows[0].isDirty ).toEqual( true );
+      expect( grid.rows[0].rowEditSaveTimer ).not.toEqual( undefined );
+      expect( grid.rows[1].isDirty ).toEqual( true );
+      expect( grid.rows[1].rowEditSaveTimer ).not.toEqual( undefined );
+    });
   });    
 });

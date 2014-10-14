@@ -25,12 +25,19 @@ angular.module('ui.grid')
     initialize: function( $scope, grid ){
       grid.gridMenuScope = $scope;
       $scope.grid = grid;
+      $scope.registeredMenuItems = [];
       
       // not certain this is needed, but would be bad to create a memory leak
       $scope.$on('$destroy', function() {
-        $scope.grid.gridMenuScope = null;
-        $scope.grid = null;
-        $scope.registeredMenuItems = null;
+        if ( $scope.grid && $scope.grid.gridMenuScope ){
+          $scope.grid.gridMenuScope = null;
+        }
+        if ( $scope.grid ){
+          $scope.grid = null;
+        }
+        if ( $scope.registeredMenuItems ){
+          $scope.registeredMenuItems = null;
+        }
       });
       
       $scope.registeredMenuItems = [];
@@ -88,7 +95,12 @@ angular.module('ui.grid')
       if ( !angular.isArray( menuItems ) ) {
         $log.error( 'addToGridMenu: menuItems must be an array, and is not, not adding any items');
       } else {
-        grid.gridMenuScope.registeredMenuItems = grid.gridMenuScope.registeredMenuItems.concat( menuItems );
+        if ( grid.gridMenuScope ){
+          grid.gridMenuScope.registeredMenuItems = grid.gridMenuScope.registeredMenuItems ? grid.gridMenuScope.registeredMenuItems : [];
+          grid.gridMenuScope.registeredMenuItems = grid.gridMenuScope.registeredMenuItems.concat( menuItems );
+        } else {
+          $log.error( 'Asked to addToGridMenu, but gridMenuScope not present.  Timing issue?  Please log issue with ui-grid');
+        }
       }  
     },
     
@@ -99,7 +111,9 @@ angular.module('ui.grid')
      * @methodOf ui.grid.core.api:PublicApi
      * @description Remove an item from the grid menu based on a provided id.  Assumes
      * that the id is unique, removes only the last instance of that id.  Does nothing if
-     * the specified id is not found
+     * the specified id is not found.  If there is no gridMenuScope or registeredMenuItems
+     * then do nothing silently - the desired result is those menu items not be present and they
+     * aren't.
      * @param {Grid} grid the grid on which we are acting
      * @param {string} id the id we'd like to remove from the menu
      * 
@@ -107,16 +121,18 @@ angular.module('ui.grid')
     removeFromGridMenu: function( grid, id ){
       var foundIndex = -1;
       
-      grid.gridMenuScope.registeredMenuItems.forEach( function( value, index ) {
-        if ( value.id === id ){
-          if (foundIndex > -1) {
-            $log.error( 'removeFromGridMenu: found multiple items with the same id, removing only the last' );
-          } else {
-            
-            foundIndex = index;
+      if ( grid && grid.gridMenuScope ){
+        grid.gridMenuScope.registeredMenuItems.forEach( function( value, index ) {
+          if ( value.id === id ){
+            if (foundIndex > -1) {
+              $log.error( 'removeFromGridMenu: found multiple items with the same id, removing only the last' );
+            } else {
+              
+              foundIndex = index;
+            }
           }
-        }
-      });
+        });
+      }
 
       if ( foundIndex > -1 ){
         grid.gridMenuScope.registeredMenuItems.splice( foundIndex, 1 );
@@ -214,8 +230,7 @@ angular.module('ui.grid')
      */
     showHideColumns: function( $scope ){
       var showHideColumns = [];
-      if ( !$scope.grid.options.columnDefs ) {
-        $log.error( 'Something is wrong in showHideColumns, there are no columnDefs' );
+      if ( !$scope.grid.options.columnDefs || $scope.grid.options.columnDefs.length === 0 || $scope.grid.columns.length === 0 ) {
         return showHideColumns;
       }
       
