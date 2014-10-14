@@ -95,6 +95,22 @@
                 },
                 /**
                  * @ngdoc function
+                 * @name selectRowByVisibleIndex
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Select the specified row by visible index (i.e. if you
+                 * specify row 0 you'll get the first visible row selected).  In this context
+                 * visible means of those rows that are theoretically visible (i.e. not filtered),
+                 * rather than rows currently rendered on the screen.
+                 * @param {number} index index within the rowsVisible array
+                 */
+                selectRowByVisibleIndex: function ( rowNum ) {
+                  var row = grid.renderContainers.body.visibleRowCache[rowNum];
+                  if (row !== null && !row.isSelected) {
+                    service.toggleRowSelection(grid, row, grid.options.multiSelect, grid.options.noUnselect);
+                  }
+                },
+                /**
+                 * @ngdoc function
                  * @name unSelectRow
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description UnSelect the data row
