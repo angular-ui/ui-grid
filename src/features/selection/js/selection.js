@@ -42,6 +42,7 @@
           //add feature namespace and any properties to grid for needed state
           grid.selection = {};
           grid.selection.lastSelectedRow = null;
+          grid.selection.selectAll = false;
 
           service.defaultGridOptions(grid.options);
 
@@ -207,7 +208,21 @@
                  */
                 setModifierKeysToMultiSelect: function (modifierKeysToMultiSelect) {
                   grid.options.modifierKeysToMultiSelect = modifierKeysToMultiSelect;
+                },
+                /**
+                 * @ngdoc function
+                 * @name getSelectAllState
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Returns whether or not the selectAll checkbox is currently ticked.  The
+                 * grid doesn't automatically select rows when you add extra data - so when you add data
+                 * you need to explicitly check whether the selectAll is set, and then call setVisible rows
+                 * if it is
+                 * @param {bool} modifierKeysToMultiSelect true to only allow multiple rows when using ctrlKey or shiftKey is used
+                 */
+                getSelectAllState: function (grid) {
+                  return grid.selection.selectAll;
                 }
+                
               }
             }
           };
@@ -271,6 +286,14 @@
            *  <br/>Defaults to true
            */
           gridOptions.enableRowHeaderSelection = gridOptions.enableRowHeaderSelection !== false;
+          /**
+           *  @ngdoc object
+           *  @name enableSelectAll
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable the select all checkbox at the top of the selectionRowHeader
+           *  <br/>Defaults to true
+           */
+          gridOptions.enableSelectAll = gridOptions.enableSelectAll !== false;
         },
 
         /**
@@ -454,6 +477,34 @@
             }
             else {
               uiGridSelectionService.toggleRowSelection(self, row, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
+            }
+          };
+        }
+      };
+    }]);
+
+  module.directive('uiGridSelectionSelectAllButtons', ['$log', '$templateCache', 'uiGridSelectionService',
+    function ($log, $templateCache, uiGridSelectionService) {
+      return {
+        replace: true,
+        restrict: 'E',
+        template: $templateCache.get('ui-grid/selectionSelectAllButtons'),
+        scope: false,
+        link: function($scope, $elm, $attrs, uiGridCtrl) {
+          var self = $scope.col.grid;
+          
+          $scope.headerButtonClick = function(row, evt) {
+            if ( self.selection.selectAll ){
+              uiGridSelectionService.clearSelectedRows(self);
+              if ( self.options.noUnselect ){
+                self.api.selection.selectRowByVisibleIndex(0);
+              }
+              self.selection.selectAll = false;
+            } else {
+              if ( self.options.multiSelect ){
+                self.api.selection.selectAllVisibleRows();
+                self.selection.selectAll = true;
+              }
             }
           };
         }
