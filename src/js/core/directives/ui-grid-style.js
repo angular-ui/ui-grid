@@ -38,15 +38,15 @@
    */
 
 
-  angular.module('ui.grid').directive('uiGridStyle', ['$log', '$interpolate', function($log, $interpolate) {
+  angular.module('ui.grid').directive('uiGridStyle', ['gridUtil', '$interpolate', function(gridUtil, $interpolate) {
     return {
       // restrict: 'A',
       // priority: 1000,
       // require: '?^uiGrid',
       link: function($scope, $elm, $attrs, uiGridCtrl) {
-        $log.debug('ui-grid-style link');
+        // gridUtil.logDebug('ui-grid-style link');
         // if (uiGridCtrl === undefined) {
-        //    $log.warn('[ui-grid-style link] uiGridCtrl is undefined!');
+        //    gridUtil.logWarn('[ui-grid-style link] uiGridCtrl is undefined!');
         // }
 
         var interpolateFn = $interpolate($elm.text(), true);

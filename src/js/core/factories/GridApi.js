@@ -1,8 +1,8 @@
 (function () {
 
   angular.module('ui.grid')
-    .factory('GridApi', ['$log', '$q', '$rootScope', 'gridUtil', 'uiGridConstants', 'GridRow', 'uiGridGridMenuService',
-      function ($log, $q, $rootScope, gridUtil, uiGridConstants, GridRow, uiGridGridMenuService) {
+    .factory('GridApi', ['$q', '$rootScope', 'gridUtil', 'uiGridConstants', 'GridRow', 'uiGridGridMenuService',
+      function ($q, $rootScope, gridUtil, uiGridConstants, GridRow, uiGridGridMenuService) {
         /**
          * @ngdoc function
          * @name ui.grid.class:GridApi
@@ -175,12 +175,12 @@
 
           var eventId = self.grid.id + featureName + eventName;
 
-          $log.log('Creating raise event method ' + featureName + '.raise.' + eventName);
+          // gridUtil.logDebug('Creating raise event method ' + featureName + '.raise.' + eventName);
           feature.raise[eventName] = function () {
             $rootScope.$broadcast.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
           };
 
-          $log.log('Creating on event method ' + featureName + '.on.' + eventName);
+          // gridUtil.logDebug('Creating on event method ' + featureName + '.on.' + eventName);
           feature.on[eventName] = function (scope, handler) {
             var dereg = registerEventWithAngular(scope, eventId, handler, self.grid);
 

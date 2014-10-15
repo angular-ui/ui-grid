@@ -1,4 +1,4 @@
-angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $log, $parse, gridUtil, uiGridConstants) {
+angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $parse, gridUtil, uiGridConstants) {
   var uiGridCell = {
     priority: 0,
     scope: false,
@@ -21,7 +21,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
           // No controller, compile the element manually (for unit tests)
           else {
             if ( uiGridCtrl && !$scope.col.compiledElementFn ){
-              // $log.error('Render has been called before precompile.  Please log a ui-grid issue');  
+              // gridUtil.logError('Render has been called before precompile.  Please log a ui-grid issue');  
 
               $scope.col.getCompiledElementFn()
                 .then(function (compiledElementFn) {

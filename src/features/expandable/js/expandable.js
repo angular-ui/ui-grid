@@ -20,7 +20,7 @@
    *
    *  @description Services for the expandable grid
    */
-  module.service('uiGridExpandableService', ['gridUtil', '$log', '$compile', function (gridUtil, $log, $compile) {
+  module.service('uiGridExpandableService', ['gridUtil', '$compile', function (gridUtil, $compile) {
     var service = {
       initializeGrid: function (grid) {
         
@@ -201,8 +201,8 @@
    *    }
    *  </pre>  
    */
-  module.directive('uiGridExpandable', ['$log', 'uiGridExpandableService', '$templateCache',
-    function ($log, uiGridExpandableService, $templateCache) {
+  module.directive('uiGridExpandable', ['uiGridExpandableService', '$templateCache',
+    function (uiGridExpandableService, $templateCache) {
       return {
         replace: true,
         priority: 0,
@@ -226,8 +226,8 @@
     }]);
 
   module.directive('uiGridExpandableRow',
-  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval',
-    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval) {
+  ['uiGridExpandableService', '$timeout', '$compile', 'uiGridConstants','gridUtil','$interval',
+    function (uiGridExpandableService, $timeout, $compile, uiGridConstants, gridUtil, $interval) {
 
       return {
         replace: false,
@@ -256,8 +256,8 @@
     }]);
 
   module.directive('uiGridRow',
-    ['$compile', '$log', '$templateCache',
-      function ($compile, $log, $templateCache) {
+    ['$compile', 'gridUtil', '$templateCache',
+      function ($compile, gridUtil, $templateCache) {
         return {
           priority: -200,
           scope: false,
@@ -301,8 +301,8 @@
       }]);
 
   module.directive('uiGridViewport',
-    ['$compile', '$log', '$templateCache',
-      function ($compile, $log, $templateCache) {
+    ['$compile', 'gridUtil', '$templateCache',
+      function ($compile, gridUtil, $templateCache) {
         return {
           priority: -200,
           scope: false,
