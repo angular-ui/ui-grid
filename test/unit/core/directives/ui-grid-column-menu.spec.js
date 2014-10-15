@@ -4,16 +4,14 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
   var grid; 
   var $rootScope;
   var $scope;
-  var $log;
   
   beforeEach(module('ui.grid'));
 
-  beforeEach( inject(function (_uiGridColumnMenuService_, _gridClassFactory_, _$rootScope_, _$log_) {
+  beforeEach( inject(function (_uiGridColumnMenuService_, _gridClassFactory_, _$rootScope_) {
     uiGridColumnMenuService = _uiGridColumnMenuService_;
     gridClassFactory = _gridClassFactory_;
     $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
-    $log = _$log_;
 
     grid = gridClassFactory.createGrid( { id: 1234 });
     grid.options.columnDefs = [

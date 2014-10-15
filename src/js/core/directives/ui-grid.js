@@ -1,11 +1,11 @@
 (function () {
   'use strict';
 
-  angular.module('ui.grid').controller('uiGridController', ['$scope', '$element', '$attrs', '$log', 'gridUtil', '$q', 'uiGridConstants',
+  angular.module('ui.grid').controller('uiGridController', ['$scope', '$element', '$attrs', 'gridUtil', '$q', 'uiGridConstants',
                     '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile',
-    function ($scope, $elm, $attrs, $log, gridUtil, $q, uiGridConstants,
+    function ($scope, $elm, $attrs, gridUtil, $q, uiGridConstants,
               $templateCache, gridClassFactory, $timeout, $parse, $compile) {
-      $log.debug('ui-grid controller');
+      // gridUtil.logDebug('ui-grid controller');
 
       var self = this;
 
@@ -61,12 +61,12 @@
       }
 
       function dataWatchFunction(n) {
-        // $log.debug('dataWatch fired');
+        // gridUtil.logDebug('dataWatch fired');
         var promises = [];
 
         if (n) {
           if (self.grid.columns.length === ( self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0 ) ) {
-            $log.debug('loading cols in dataWatchFunction');
+            // gridUil.logDebug('loading cols in dataWatchFunction');
             if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
               self.grid.buildColumnDefsFromData(n);
             }
@@ -158,13 +158,11 @@
  */
 angular.module('ui.grid').directive('uiGrid',
   [
-    '$log',
     '$compile',
     '$templateCache',
     'gridUtil',
     '$window',
     function(
-      $log,
       $compile,
       $templateCache,
       gridUtil,
@@ -182,7 +180,7 @@ angular.module('ui.grid').directive('uiGrid',
         compile: function () {
           return {
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              $log.debug('ui-grid postlink');
+              // gridUtil.logDebug('ui-grid postlink');
 
               var grid = uiGridCtrl.grid;
 

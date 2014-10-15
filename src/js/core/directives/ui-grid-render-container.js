@@ -3,8 +3,8 @@
 
   var module = angular.module('ui.grid');
   
-  module.directive('uiGridRenderContainer', ['$log', '$timeout', '$document', 'uiGridConstants', 'gridUtil',
-    function($log, $timeout, $document, uiGridConstants, GridUtil) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'uiGridConstants', 'gridUtil',
+    function($timeout, $document, uiGridConstants, GridUtil) {
     return {
       replace: true,
       transclude: true,
@@ -22,7 +22,7 @@
       compile: function () {
         return {
           pre: function prelink($scope, $elm, $attrs, controllers) {
-            $log.debug('render container ' + $scope.containerId + ' pre-link');
+            // gridUtil.logDebug('render container ' + $scope.containerId + ' pre-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -52,7 +52,7 @@
             containerCtrl.colContainer = colContainer;
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
-            $log.debug('render container ' + $scope.containerId + ' post-link');
+            // gridUtil.logDebug('render container ' + $scope.containerId + ' post-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -92,7 +92,7 @@
                 }
                 else if (typeof(args.y.pixels) !== 'undefined' && args.y.pixels !== undefined) {
                   scrollYPercentage = args.y.percentage = (oldScrollTop + args.y.pixels) / scrollLength;
-                  // $log.debug('y.percentage', args.y.percentage);
+                  // gridUtil.logDebug('y.percentage', args.y.percentage);
                 }
                 else {
                   throw new Error("No percentage or pixel value provided for scroll event Y axis");
@@ -384,7 +384,7 @@
 
   }]);
 
-  module.controller('uiGridRenderContainer', ['$scope', '$log', function ($scope, $log) {
+  module.controller('uiGridRenderContainer', ['$scope', 'gridUtil', function ($scope, gridUtil) {
     var self = this;
 
     self.rowStyle = function (index) {

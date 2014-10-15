@@ -13,7 +13,7 @@
   var module = angular.module('ui.grid.autoResize', ['ui.grid']);
   
 
-  module.directive('uiGridAutoResize', ['$log', '$timeout', 'gridUtil', function ($log, $timeout, gridUtil) {
+  module.directive('uiGridAutoResize', ['$timeout', 'gridUtil', function ($timeout, gridUtil) {
     return {
       require: 'uiGrid',
       scope: false,

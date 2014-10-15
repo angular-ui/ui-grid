@@ -1,14 +1,13 @@
 describe('uiGridCell', function () {
-  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, $log, grid;
+  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, grid;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, _$log_, gridClassFactory) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, gridClassFactory) {
     $scope = $rootScope;
     $compile = _$compile_;
     $timeout = _$timeout_;
     GridColumn = _GridColumn_;
-    $log = _$log_;
 
 
     $scope.grid = gridClassFactory.createGrid();

@@ -1,15 +1,15 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil',
-    function($log, gridUtil) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil',
+    function(gridUtil) {
       return {
         replace: true,
         scope: {},
         templateUrl: 'ui-grid/uiGridViewport',
         require: ['^uiGrid', '^uiGridRenderContainer'],
         link: function($scope, $elm, $attrs, controllers) {
-          $log.debug('viewport post-link');
+          // gridUtil.logDebug('viewport post-link');
 
           var uiGridCtrl = controllers[0];
           var containerCtrl = controllers[1];
