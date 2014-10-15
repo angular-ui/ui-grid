@@ -10,20 +10,19 @@ describe('ui.grid.expandable', function () {
     scope = $rootScope;
     timeout = $timeout;
 
-    scope.gridOptions = {};
+    scope.gridOptions = {
+      expandableRowTemplate: 'expandableRowTemplate.html',
+      expandableRowHeight: 150
+    };
     scope.gridOptions.data = [
       { col1: 'col1', col2: 'col2' }
     ];
-    scope.gridOptions.expandable = {
-      rowExpandableTemplate: 'rowExpandableTemplate.html',
-      expandableRowHeight: 150
-    };
     scope.gridOptions.onRegisterApi = function (gridApi) {
       scope.gridApi = gridApi;
       scope.grid = gridApi.grid;
     };
 
-    $httpBackend.when('GET', 'rowExpandableTemplate.html').respond("<div class='test'></div>");
+    $httpBackend.when('GET', 'expandableRowTemplate.html').respond("<div class='test'></div>");
     element = angular.element('<div class="col-md-5" ui-grid="gridOptions" ui-grid-expandable></div>');
 
     $timeout(function () {
