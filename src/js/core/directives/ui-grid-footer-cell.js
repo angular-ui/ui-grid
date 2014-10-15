@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridFooterCell', ['$log', '$timeout', 'gridUtil', '$compile', function ($log, $timeout, gridUtil, $compile) {
+  angular.module('ui.grid').directive('uiGridFooterCell', ['$timeout', 'gridUtil', '$compile', function ($timeout, gridUtil, $compile) {
     var uiGridFooterCell = {
       priority: 0,
       scope: {

@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout',
-    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout) {
+.factory('Grid', ['$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout',
+    function($q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout) {
 
 /**
  * @ngdoc object
@@ -344,7 +344,7 @@ angular.module('ui.grid')
           colDef.type = gridUtil.guessType(self.getCellValue(firstRow, col));
         }
         else {
-          $log.log('Unable to assign type from data, so defaulting to string');
+          gridUtil.logWarn('Unable to assign type from data, so defaulting to string');
           colDef.type = 'string';
         }
       }
@@ -397,7 +397,7 @@ angular.module('ui.grid')
    * @returns {Promise} a promise to load any needed column resources
    */
   Grid.prototype.buildColumns = function buildColumns() {
-    $log.debug('buildColumns');
+    // gridUtil.logDebug('buildColumns');
     var self = this;
     var builderPromises = [];
     var headerOffset = self.rowHeaderColumns.length;
@@ -934,7 +934,7 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    // $log.debug('setVisibleRows');
+    // gridUtil.logDebug('setVisibleRows');
 
     var self = this;
 
@@ -1056,7 +1056,7 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleColumns = function setVisibleColumns(columns) {
-    // $log.debug('setVisibleColumns');
+    // gridUtil.logDebug('setVisibleColumns');
 
     var self = this;
 
@@ -1130,7 +1130,7 @@ angular.module('ui.grid')
    */
   // TODO: this used to take $scope, but couldn't see that it was used
   Grid.prototype.buildStyles = function buildStyles() {
-    // $log.debug('buildStyles');
+    // gridUtil.logDebug('buildStyles');
 
     var self = this;
     
@@ -1208,7 +1208,7 @@ angular.module('ui.grid')
     
     viewPortHeight = viewPortHeight + adjustment.height;
 
-    // $log.debug('viewPortHeight', viewPortHeight);
+    // gridUtil.logDebug('viewPortHeight', viewPortHeight);
 
     return viewPortHeight;
   };
@@ -1226,7 +1226,7 @@ angular.module('ui.grid')
     
     viewPortWidth = viewPortWidth + adjustment.width;
 
-    // $log.debug('getviewPortWidth', viewPortWidth);
+    // gridUtil.logDebug('getviewPortWidth', viewPortWidth);
 
     return viewPortWidth;
   };
@@ -1470,7 +1470,7 @@ angular.module('ui.grid')
    * 
    */
   Grid.prototype.refresh = function refresh() {
-    $log.debug('grid refresh');
+    // gridUtil.logDebug('grid refresh');
     
     var self = this;
     
@@ -1620,14 +1620,14 @@ angular.module('ui.grid')
    * 
    */
   Grid.prototype.redrawInPlace = function redrawInPlace() {
-    // $log.debug('redrawInPlace');
+    // gridUtil.logDebug('redrawInPlace');
     
     var self = this;
 
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
-      // $log.debug('redrawing container', i);
+      // gridUtil.logDebug('redrawing container', i);
 
       container.adjustRows(container.prevScrollTop, null);
       container.adjustColumns(container.prevScrollLeft, null);

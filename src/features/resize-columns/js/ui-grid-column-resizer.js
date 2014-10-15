@@ -8,8 +8,8 @@
   });
 
 
-  module.service('uiGridResizeColumnsService', ['$log','$q',
-    function ($log,$q) {
+  module.service('uiGridResizeColumnsService', ['gridUtil','$q',
+    function (gridUtil,$q) {
 
       var service = {
         defaultGridOptions: function(gridOptions){
@@ -110,7 +110,7 @@
    </doc:scenario>
    </doc:example>
    */
-  module.directive('uiGridResizeColumns', ['$log', 'uiGridResizeColumnsService', function ($log, uiGridResizeColumnsService) {
+  module.directive('uiGridResizeColumns', ['gridUtil', 'uiGridResizeColumnsService', function (gridUtil, uiGridResizeColumnsService) {
     return {
       replace: true,
       priority: 0,
@@ -132,7 +132,7 @@
   }]);
 
   // Extend the uiGridHeaderCell directive
-  module.directive('uiGridHeaderCell', ['$log', '$templateCache', '$compile', '$q', function ($log, $templateCache, $compile, $q) {
+  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', function (gridUtil, $templateCache, $compile, $q) {
     return {
       // Run after the original uiGridHeaderCell
       priority: -10,
@@ -227,7 +227,7 @@
      </doc:scenario>
    </doc:example>
    */  
-  module.directive('uiGridColumnResizer', ['$log', '$document', 'gridUtil', 'uiGridConstants', 'columnBounds', function ($log, $document, gridUtil, uiGridConstants, columnBounds) {
+  module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'columnBounds', function ($document, gridUtil, uiGridConstants, columnBounds) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
@@ -447,7 +447,7 @@
           var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.uid + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
               // Get the cell width
-              // $log.debug('width', gridUtil.elementWidth(cell));
+              // gridUtil.logDebug('width', gridUtil.elementWidth(cell));
 
               // Account for the menu button if it exists
               var menuButton;

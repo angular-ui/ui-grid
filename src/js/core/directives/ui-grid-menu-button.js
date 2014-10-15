@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.service('uiGridGridMenuService', [ '$log', 'i18nService', function( $log, i18nService ) {
+.service('uiGridGridMenuService', [ 'gridUtil', 'i18nService', function( gridUtil, i18nService ) {
   /**
    *  @ngdoc service
    *  @name ui.grid.gridMenuService
@@ -93,13 +93,13 @@ angular.module('ui.grid')
      */
     addToGridMenu: function( grid, menuItems ) {
       if ( !angular.isArray( menuItems ) ) {
-        $log.error( 'addToGridMenu: menuItems must be an array, and is not, not adding any items');
+        gridUtil.logError( 'addToGridMenu: menuItems must be an array, and is not, not adding any items');
       } else {
         if ( grid.gridMenuScope ){
           grid.gridMenuScope.registeredMenuItems = grid.gridMenuScope.registeredMenuItems ? grid.gridMenuScope.registeredMenuItems : [];
           grid.gridMenuScope.registeredMenuItems = grid.gridMenuScope.registeredMenuItems.concat( menuItems );
         } else {
-          $log.error( 'Asked to addToGridMenu, but gridMenuScope not present.  Timing issue?  Please log issue with ui-grid');
+          gridUtil.logError( 'Asked to addToGridMenu, but gridMenuScope not present.  Timing issue?  Please log issue with ui-grid');
         }
       }  
     },
@@ -125,7 +125,7 @@ angular.module('ui.grid')
         grid.gridMenuScope.registeredMenuItems.forEach( function( value, index ) {
           if ( value.id === id ){
             if (foundIndex > -1) {
-              $log.error( 'removeFromGridMenu: found multiple items with the same id, removing only the last' );
+              gridUtil.logError( 'removeFromGridMenu: found multiple items with the same id, removing only the last' );
             } else {
               
               foundIndex = index;
@@ -184,7 +184,7 @@ angular.module('ui.grid')
       
       if ( $scope.grid.options.gridMenuCustomItems ){
         if ( !angular.isArray( $scope.grid.options.gridMenuCustomItems ) ){ 
-          $log.error( 'gridOptions.gridMenuCustomItems must be an array, and is not'); 
+          gridUtil.logError( 'gridOptions.gridMenuCustomItems must be an array, and is not'); 
         } else {
           menuItems = menuItems.concat( $scope.grid.options.gridMenuCustomItems );
         }
@@ -304,7 +304,7 @@ angular.module('ui.grid')
           menuItem.title = errorValue;
         });
       } else {
-        $log.error('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
+        gridUtil.logError('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
         menuItem.title = 'badconfig';
       }
     },
@@ -331,8 +331,8 @@ angular.module('ui.grid')
 
 
 
-.directive('uiGridMenuButton', ['$log', 'gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 
-function ($log, gridUtil, uiGridConstants, uiGridGridMenuService) {
+.directive('uiGridMenuButton', ['gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 
+function (gridUtil, uiGridConstants, uiGridGridMenuService) {
 
   return {
     priority: 0,

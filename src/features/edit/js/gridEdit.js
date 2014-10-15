@@ -42,8 +42,8 @@
    *
    *  @description Services for editing features
    */
-  module.service('uiGridEditService', ['$log', '$q', '$templateCache', 'uiGridConstants', 'gridUtil',
-    function ($log, $q, $templateCache, uiGridConstants, gridUtil) {
+  module.service('uiGridEditService', ['$q', '$templateCache', 'uiGridConstants', 'gridUtil',
+    function ($q, $templateCache, uiGridConstants, gridUtil) {
 
       var service = {
 
@@ -312,7 +312,7 @@
    </file>
    </example>
    */
-  module.directive('uiGridEdit', ['$log', 'uiGridEditService', function ($log, uiGridEditService) {
+  module.directive('uiGridEdit', ['gridUtil', 'uiGridEditService', function (gridUtil, uiGridEditService) {
     return {
       replace: true,
       priority: 0,
@@ -369,8 +369,8 @@
    *
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridEditConstants', '$log', '$parse', 'uiGridEditService',
-      function ($compile, uiGridConstants, uiGridEditConstants, $log, $parse, uiGridEditService) {
+    ['$compile', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
+      function ($compile, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
         return {
           priority: -100, // run after default uiGridCell directive
           restrict: 'A',

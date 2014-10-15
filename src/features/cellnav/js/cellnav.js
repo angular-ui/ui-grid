@@ -20,8 +20,8 @@
   });
 
 
-  module.factory('uiGridCellNavFactory', ['$log', 'uiGridConstants', 'uiGridCellNavConstants', '$q',
-    function ($log, uiGridConstants, uiGridCellNavConstants, $q) {
+  module.factory('uiGridCellNavFactory', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q) {
       /**
        *  @ngdoc object
        *  @name ui.grid.cellNav.object:CellNav
@@ -161,8 +161,8 @@
    *  @description Services for cell navigation features. If you don't like the key maps we use,
    *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
-  module.service('uiGridCellNavService', ['$log', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory',
-    function ($log, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav) {
+  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav) {
 
       var service = {
 
@@ -439,8 +439,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['$log', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function ($log, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -150,
@@ -455,7 +455,7 @@
 
               uiGridCtrl.cellNav = {};
 
-              //  $log.debug('uiGridEdit preLink');
+              //  gridUtil.logDebug('uiGridEdit preLink');
               uiGridCtrl.cellNav.broadcastCellNav = function (newRowCol) {
                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
                 uiGridCtrl.cellNav.broadcastFocus(newRowCol.row, newRowCol.col);
@@ -477,8 +477,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$log', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function ($log, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridRenderContainer', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -505,8 +505,8 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['uiGridCellNavService', '$log', 'uiGridCellNavConstants',
-    function (uiGridCellNavService, $log, uiGridCellNavConstants) {
+  module.directive('uiGridCell', ['uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants',
+    function (uiGridCellNavService, gridUtil, uiGridCellNavConstants) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',

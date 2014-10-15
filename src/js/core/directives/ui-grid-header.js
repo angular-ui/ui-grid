@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridHeader', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
+  angular.module('ui.grid').directive('uiGridHeader', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-header';
     var emptyTemplate = 'ui-grid/ui-grid-no-header';
 
@@ -68,7 +68,7 @@
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
 
-            $log.debug('ui-grid-header link');
+            // gridUtil.logDebug('ui-grid-header link');
 
             var grid = uiGridCtrl.grid;
 

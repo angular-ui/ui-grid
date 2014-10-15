@@ -1,6 +1,9 @@
 (function () {
   'use strict';
   angular.module('ui.grid').constant('uiGridConstants', {
+    LOG_DEBUG_MESSAGES: true,
+    LOG_WARN_MESSAGES: true,
+    LOG_ERROR_MESSAGES: true,
     CUSTOM_FILTERS: /CUSTOM_FILTERS/g,
     COL_FIELD: /COL_FIELD/g,
     MODEL_COL_FIELD: /MODEL_COL_FIELD/g,
