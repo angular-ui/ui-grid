@@ -135,21 +135,21 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 
     /**
      * @ngdoc boolean
-     * @name disableHiding
+     * @name enableHiding
      * @propertyOf ui.grid.class:GridOptions.columnDef
-     * @description (optional) False by default. When enabled, this setting prevents a user from hiding the column
+     * @description (optional) True by default. When set to false, this setting prevents a user from hiding the column
      * using the column menu or the grid menu.
      */
     /**
      * @ngdoc method
      * @methodOf ui.grid.service:uiGridColumnMenuService
      * @name hideable
-     * @description  determines whether a column can be hidden, but checking the disableHiding columnDef option
+     * @description  determines whether a column can be hidden, by checking the enableHiding columnDef option
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
      * 
      */  
     hideable: function( $scope ) {
-      if (typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.disableHiding) {
+      if (typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.enableHiding === false ) {
         return false;
       }
       else {

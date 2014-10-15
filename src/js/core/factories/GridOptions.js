@@ -185,12 +185,12 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc boolean
-     * @name enableColumnMenu
+     * @name enableColumnMenus
      * @propertyOf ui.grid.class:GridOptions
      * @description True by default. When enabled, this setting displays a column
      * menu within each column.
      */
-    this.enableColumnMenu = true;
+    this.enableColumnMenus = true;
 
     /**
      * @ngdoc boolean

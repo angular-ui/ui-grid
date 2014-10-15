@@ -111,7 +111,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       grid.options.gridMenuCustomItems = [ { title: 'z' }, { title: 'a' }];
       grid.options.gridMenuTitleFilter = function( title ) {return 'fn_' + title;};
       var registeredMenuItems = [ { id: 'customItem1', title: 'x' }, { id: 'customItem2', title: 'y' } ];
-      grid.options.columnDefs[1].disableHiding = true;
+      grid.options.columnDefs[1].enableHiding = false;
 
       uiGridGridMenuService.addToGridMenu( grid, registeredMenuItems );
       

@@ -74,6 +74,25 @@
                 });
             }
     
+            /**
+            * @ngdoc property
+            * @name enableColumnMenu
+            * @propertyOf ui.grid.class:GridOptions.columnDef
+            * @description if column menus are enabled, controls the column menus for this specific
+            * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
+            * using this option. If gridOptions.enableColumnMenus === false then you get no column
+            * menus irrespective of the value of this option ).  Defaults to true.
+            *
+            */
+            /**
+            * @ngdoc property
+            * @name enableColumnMenus
+            * @propertyOf ui.grid.class:GridOptions.columnDef
+            * @description Override for column menus everywhere - if set to false then you get no
+            * column menus.  Defaults to true.
+            *
+            */
+
             // Long-click (for mobile)
             var cancelMousedownTimeout;
             var mousedownStartTime = 0;
@@ -92,7 +111,8 @@
               cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
     
               cancelMousedownTimeout.then(function () {
-                if ($scope.col.colDef && !$scope.col.colDef.disableColumnMenu) {
+                if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false && 
+                    $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false) {
                   uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
               });
@@ -106,14 +126,7 @@
               $contentsElm.off('mousedown touchstart');
             });
 
-            /**
-            * @ngdoc property
-            * @name disableColumnMenu
-            * @propertyOf ui.grid.class:GridOptions.columnDef
-            * @description if column menus are enabled, disables column menus for this specific
-            * column
-            *
-            */
+
             $scope.toggleMenu = function($event) {
               $event.stopPropagation();
     
