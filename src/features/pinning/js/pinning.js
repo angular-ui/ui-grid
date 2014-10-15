@@ -16,7 +16,7 @@
 
   var module = angular.module('ui.grid.pinning', ['ui.grid']);
 
-  module.service('uiGridPinningService', ['$log', 'GridRenderContainer', 'i18nService', function ($log, GridRenderContainer, i18nService) {
+  module.service('uiGridPinningService', ['gridUtil', 'GridRenderContainer', 'i18nService', function (gridUtil, GridRenderContainer, i18nService) {
     var service = {
 
       initializeGrid: function (grid) {
@@ -164,8 +164,8 @@
     return service;
   }]);
 
-  module.directive('uiGridPinning', ['$log', 'uiGridPinningService',
-    function ($log, uiGridPinningService) {
+  module.directive('uiGridPinning', ['gridUtil', 'uiGridPinningService',
+    function (gridUtil, uiGridPinningService) {
       return {
         require: 'uiGrid',
         scope: false,

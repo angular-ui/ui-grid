@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridHeaderCell', ['$log', '$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
-  function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
+  angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
+  function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
     // Do stuff after mouse has been down this many ms on the header cell
     var mousedownTimeout = 500;
 

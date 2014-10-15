@@ -316,8 +316,8 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 }])
 
 
-.directive('uiGridColumnMenu', ['$log', '$timeout', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', 
-function ($log, $timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
+.directive('uiGridColumnMenu', ['$timeout', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', 
+function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
 /**
  * @ngdoc directive
  * @name ui.grid.directive:uiGridColumnMenu

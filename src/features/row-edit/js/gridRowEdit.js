@@ -34,8 +34,8 @@
    *
    *  @description Services for row editing features
    */
-  module.service('uiGridRowEditService', ['$interval', '$log', '$q', 'uiGridConstants', 'uiGridRowEditConstants', 'gridUtil', 
-    function ($interval, $log, $q, uiGridConstants, uiGridRowEditConstants, gridUtil) {
+  module.service('uiGridRowEditService', ['$interval', '$q', 'uiGridConstants', 'uiGridRowEditConstants', 'gridUtil', 
+    function ($interval, $q, uiGridConstants, uiGridRowEditConstants, gridUtil) {
 
       var service = {
 
@@ -225,7 +225,7 @@
             if ( gridRow.rowEditSavePromise ){
               gridRow.rowEditSavePromise.then( self.processSuccessPromise( grid, gridRow ), self.processErrorPromise( grid, gridRow ));
             } else {
-              $log.log( 'A promise was not returned when saveRow event was raised, either nobody is listening to event, or event handler did not return a promise' );
+              gridUtil.logError( 'A promise was not returned when saveRow event was raised, either nobody is listening to event, or event handler did not return a promise' );
             }
             return promise;
           };
@@ -384,7 +384,7 @@
         endEditCell: function( rowEntity, colDef, newValue, previousValue ){
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ $log.log( 'Unable to find rowEntity in grid data, dirty flag cannot be set' ); return; }
+          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, dirty flag cannot be set' ); return; }
 
           if ( newValue !== previousValue || gridRow.isDirty ){
             if ( !grid.rowEditDirtyRows ){
@@ -418,7 +418,7 @@
         beginEditCell: function( rowEntity, colDef ){
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ $log.log( 'Unable to find rowEntity in grid data, timer cannot be cancelled' ); return; }
+          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be cancelled' ); return; }
           
           service.cancelTimer( grid, gridRow );
         },
@@ -442,7 +442,7 @@
         cancelEditCell: function( rowEntity, colDef ){
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ $log.log( 'Unable to find rowEntity in grid data, timer cannot be set' ); return; }
+          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be set' ); return; }
           
           service.considerSetTimer( grid, gridRow );
         },
@@ -566,7 +566,7 @@
               
               service.considerSetTimer( grid, gridRow );
             } else {
-              $log.error( "requested row not found in rowEdit.setRowsDirty, row was: " + value );
+              gridUtil.logError( "requested row not found in rowEdit.setRowsDirty, row was: " + value );
             }
           });
         }
@@ -587,8 +587,8 @@
    *  @description Adds row editing features to the ui-grid-edit directive.
    *
    */
-  module.directive('uiGridRowEdit', ['$log', 'uiGridRowEditService', 'uiGridEditConstants', 
-  function ($log, uiGridRowEditService, uiGridEditConstants) {
+  module.directive('uiGridRowEdit', ['gridUtil', 'uiGridRowEditService', 'uiGridEditConstants', 
+  function (gridUtil, uiGridRowEditService, uiGridEditConstants) {
     return {
       replace: true,
       priority: 0,
@@ -616,8 +616,8 @@
    *  for the grid row to allow coloring of saving and error rows
    */
   module.directive('uiGridViewport',
-    ['$compile', 'uiGridConstants', '$log', '$parse',
-      function ($compile, uiGridConstants, $log, $parse) {
+    ['$compile', 'uiGridConstants', 'gridUtil', '$parse',
+      function ($compile, uiGridConstants, gridUtil, $parse) {
         return {
           priority: -200, // run after default  directive
           scope: false,

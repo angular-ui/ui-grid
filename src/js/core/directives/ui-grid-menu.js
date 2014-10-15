@@ -30,8 +30,8 @@
  */
 angular.module('ui.grid')
 
-.directive('uiGridMenu', ['$log', '$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
-function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
+.directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
+function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
   var uiGridMenu = {
     priority: 0,
     scope: {
@@ -185,7 +185,7 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
   return uiGridMenu;
 }])
 
-.directive('uiGridMenuItem', ['$log', 'gridUtil', '$compile', 'i18nService', function ($log, gridUtil, $compile, i18nService) {
+.directive('uiGridMenuItem', ['gridUtil', '$compile', 'i18nService', function (gridUtil, $compile, i18nService) {
   var uiGridMenuItem = {
     priority: 0,
     scope: {
@@ -242,7 +242,7 @@ function ($log, $compile, $timeout, $window, $document, gridUtil, uiGridConstant
           };
 
           $scope.itemAction = function($event,title) {
-            $log.debug('itemAction');
+            // gridUtil.logDebug('itemAction');
             $event.stopPropagation();
 
             if (typeof($scope.action) === 'function') {

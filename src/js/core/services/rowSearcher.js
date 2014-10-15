@@ -37,7 +37,7 @@ function QuickCache() {
  *
  *  @description Service for searching/filtering rows based on column value conditions.
  */
-module.service('rowSearcher', ['$log', 'uiGridConstants', function ($log, uiGridConstants) {
+module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil, uiGridConstants) {
   var defaultCondition = uiGridConstants.filter.STARTS_WITH;
 
   var rowSearcher = {};
