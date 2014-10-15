@@ -7,18 +7,18 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
-   * over this object.  Setting gridOptions within your controller is the most common method for an application 
+   * over this object.  Setting gridOptions within your controller is the most common method for an application
    * developer to configure the behaviour of their ui-grid
-   * 
+   *
    * @example To define your gridOptions within your controller:
    * <pre>$scope.gridOptions = {
    *   data: $scope.myData,
-   *   columnDefs: [ 
+   *   columnDefs: [
    *     { name: 'field1', displayName: 'pretty display name' },
    *     { name: 'field2', visible: false }
    *  ]
    * };</pre>
-   * 
+   *
    * You can then use this within your html template, when you define your grid:
    * <pre>&lt;div ui-grid="gridOptions"&gt;&lt;/div&gt;</pre>
    *
@@ -42,11 +42,11 @@ angular.module('ui.grid')
      * @ngdoc object
      * @name data
      * @propertyOf ui.grid.class:GridOptions
-     * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for 
+     * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for
      * the grid.  The most common case is an array of objects, where each object has a number of attributes.
      * Each attribute automatically becomes a column in your grid.  This array could, for example, be sourced from
      * an angularJS $resource query request.  The array can also contain complex objects.
-     * 
+     *
      */
     this.data = [];
 
@@ -75,20 +75,20 @@ angular.module('ui.grid')
      *
      */
 
-        
+
     /**
      * @ngdoc array
      * @name excludeProperties
      * @propertyOf  ui.grid.class:GridOptions
      * @description Array of property names in data to ignore when auto-generating column names.  Provides the
      * inverse of columnDefs - columnDefs is a list of columns to include, excludeProperties is a list of columns
-     * to exclude. 
-     * 
+     * to exclude.
+     *
      * If columnDefs is defined, this will be ignored.
-     * 
+     *
      * Defaults to ['$$hashKey']
      */
-    
+
     this.excludeProperties = ['$$hashKey'];
 
     /**
@@ -98,7 +98,7 @@ angular.module('ui.grid')
      * @description True by default. When enabled, this setting allows uiGrid to add
      * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
      * the grid to maintain state while vastly speeding up the process of altering `data` by adding/moving/removing rows.
-     * 
+     *
      * Note that this DOES add properties to your data that you may not want, but they are stripped out when using `angular.toJson()`. IF
      * you do not want this at all you can disable this setting but you will take a performance hit if you are using large numbers of rows
      * and are altering the data set often.
@@ -110,7 +110,7 @@ angular.module('ui.grid')
      * @name rowIdentity
      * @methodOf ui.grid.class:GridOptions
      * @description This function is used to get and, if necessary, set the value uniquely identifying this row.
-     * 
+     *
      * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
      */
     this.rowIdentity = function rowIdentity(row) {
@@ -122,7 +122,7 @@ angular.module('ui.grid')
      * @name getRowIdentity
      * @methodOf ui.grid.class:GridOptions
      * @description This function returns the identity value uniquely identifying this row.
-     * 
+     *
      * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
      */
     this.getRowIdentity = function getRowIdentity(row) {
@@ -140,6 +140,14 @@ angular.module('ui.grid')
      * @description Minimum number of rows to show when the grid doesn't have a defined height. Defaults to "10".
      */
     this.minRowsToShow = 10;
+
+    /**
+     * @ngdoc integer
+     * @name maxRowsToShow
+     * @propertyOf ui.grid.class:GridOptions
+     * @description Maximum number of rows to show when the grid doesn't have a defined height. Defaults to "10".
+     */
+    this.maxRowsToShow = 10;
 
     this.showFooter = false;
     this.footerRowHeight = 30;
@@ -177,9 +185,9 @@ angular.module('ui.grid')
      * @ngdoc boolean
      * @name enableFiltering
      * @propertyOf ui.grid.class:GridOptions
-     * @description False by default. When enabled, this setting adds filter 
+     * @description False by default. When enabled, this setting adds filter
      * boxes to each column header, allowing filtering within the column for the entire grid.
-     * Filtering can then be disabled on individual columns using the columnDefs. 
+     * Filtering can then be disabled on individual columns using the columnDefs.
      */
     this.enableFiltering = false;
 
@@ -224,17 +232,17 @@ angular.module('ui.grid')
      * @description Null by default. When provided, this setting uses a custom header
      * template, rather than the default template. Can be set to either the name of a template file:
      * <pre>  $scope.gridOptions.headerTemplate = 'header_template.html';</pre>
-     * inline html 
+     * inline html
      * <pre>  $scope.gridOptions.headerTemplate = '<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>'</pre>
-     * or the id of a precompiled template (TBD how to use this).  
+     * or the id of a precompiled template (TBD how to use this).
      * </br>Refer to the custom header tutorial for more information.
      * If you want no header at all, you can set to an empty div:
      * <pre>  $scope.gridOptions.headerTemplate = '<div></div>';</pre>
-     * 
+     *
      * If you want to only have a static header, then you can set to static content.  If
      * you want to tailor the existing column headers, then you should look at the
      * current 'ui-grid-header.html' template in github as your starting point.
-     * 
+     *
      */
     this.headerTemplate = null;
 
@@ -253,12 +261,12 @@ angular.module('ui.grid')
      * @ngdoc string
      * @name rowTemplate
      * @propertyOf ui.grid.class:GridOptions
-     * @description 'ui-grid/ui-grid-row' by default. When provided, this setting uses a 
+     * @description 'ui-grid/ui-grid-row' by default. When provided, this setting uses a
      * custom row template.  Can be set to either the name of a template file:
      * <pre> $scope.gridOptions.rowTemplate = 'row_template.html';</pre>
-     * inline html 
+     * inline html
      * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
-     * or the id of a precompiled template (TBD how to use this) can be provided.  
+     * or the id of a precompiled template (TBD how to use this) can be provided.
      * </br>Refer to the custom row template tutorial for more information.
      */
     this.rowTemplate = 'ui-grid/ui-grid-row';
