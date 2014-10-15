@@ -298,7 +298,9 @@
             if (!grid.rowEditErrorRows){
               grid.rowEditErrorRows = [];
             }
-            grid.rowEditErrorRows.push( gridRow );
+            if (!service.isRowPresent( grid.rowEditErrorRows, gridRow ) ){
+              grid.rowEditErrorRows.push( gridRow );
+            }
           };
         },
         
@@ -321,6 +323,26 @@
           });
         },
         
+        
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
+         * @name isRowPresent
+         * @description  Checks whether a row is already present
+         * in the given array 
+         * @param {array} rowArray the array in which to look for the row
+         * @param {GridRow} gridRow the row that should be looked for
+         */
+        isRowPresent: function( rowArray, removeGridRow ){
+          var present = false;
+          angular.forEach( rowArray, function( gridRow, index ){
+            if ( gridRow.uid === removeGridRow.uid ){
+              present = true;
+            }
+          });
+          return present;
+        },
+
         
         /**
          * @ngdoc method

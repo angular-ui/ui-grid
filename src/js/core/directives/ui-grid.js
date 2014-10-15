@@ -63,7 +63,7 @@
       function dataWatchFunction(n) {
         // $log.debug('dataWatch fired');
         var promises = [];
-
+        
         if (n) {
           if (self.grid.columns.length === ( self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0 ) ) {
             $log.debug('loading cols in dataWatchFunction');
@@ -84,6 +84,9 @@
 
                 $scope.$evalAsync(function() {
                   self.grid.refreshCanvas(true);
+                  angular.forEach( self.grid.dataChangeCallbacks, function( callback, uid ){
+                    callback( self.grid );
+                  });
                 });
               });
           });

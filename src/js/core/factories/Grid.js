@@ -53,6 +53,7 @@ angular.module('ui.grid')
   self.styleComputations = [];
   self.viewportAdjusters = [];
   self.rowHeaderColumns = [];
+  self.dataChangeCallbacks = {};
 
   // self.visibleRowCache = [];
 
@@ -259,6 +260,32 @@ angular.module('ui.grid')
    */
   Grid.prototype.registerRowBuilder = function registerRowBuilder(rowBuilder) {
     this.rowBuilders.push(rowBuilder);
+  };
+
+  /**
+   * @ngdoc function
+   * @name registerDataChangeCallback
+   * @methodOf ui.grid.class:Grid
+   * @description When the data watch notices a change in the data, all the callbacks
+   * in the dataWatchCallback array will be called.
+   * @param {function(grid)} callback function to be called
+   * @returns {string} uid of the callback, can be used to deregister it again
+   */
+  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback) {
+    var uid = gridUtil.nextUid();
+    this.dataChangeCallbacks[uid] = callback;
+    return uid;
+  };
+
+  /**
+   * @ngdoc function
+   * @name deregisterDataChangeCallback
+   * @methodOf ui.grid.class:Grid
+   * @description Delete the callback identified by the id.
+   * @param {string} uid uid of the callback to be deregistered
+   */
+  Grid.prototype.deregisterDataChangeCallback = function deregisterDataChangeCallback(uid) {
+    delete this.dataChangeCallbacks[uid];
   };
 
   /**

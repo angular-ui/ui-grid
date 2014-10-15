@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 310 Importing Data With Row Edit
+@name Tutorial: 311 Importing Data With Row Edit
 @description The importer feature allows data to be imported into the grid in 
 csv or json format.  The importer can use the native grid menu, or can accept a 
 file from a custom file picker implemented by the user.
@@ -23,12 +23,17 @@ and can be edited to save without error.
     var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.importer', 'ui.grid.rowEdit', 'ui.grid.edit']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', '$q', function ($scope, $http, $interval, $q) {
+      $scope.data = [];
       $scope.gridOptions = {
         enableGridMenu: true,
+        importerDataAddCallback: function( grid, newObjects ) {
+          $scope.data = $scope.data.concat( newObjects );
+        },
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
           gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-        }
+        },
+        data: 'data'
       };
 
       $scope.saveRow = function( rowEntity ) {

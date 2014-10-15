@@ -98,15 +98,17 @@
 
           grid.api.registerMethodsFromObject(publicApi.methods);
 
-          if (grid.api.core.addToGridMenu){
-            service.addToMenu( grid );
-          } else {
-            // order of registration is not guaranteed, register in a little while
-            $interval( function() {
-              if (grid.api.core.addToGridMenu){
-                service.addToMenu( grid );
-              }             
-            }, 100, 1);
+          if ( grid.options.enableImporter && grid.options.importerShowMenu ){
+            if ( grid.api.core.addToGridMenu ){
+              service.addToMenu( grid );
+            } else {
+              // order of registration is not guaranteed, register in a little while
+              $interval( function() {
+                if (grid.api.core.addToGridMenu){
+                  service.addToMenu( grid );
+                }             
+              }, 100, 1);
+            }
           }
         },
         
@@ -205,7 +207,29 @@
           if ( !gridOptions.importerErrorCallback ||  typeof(gridOptions.importerErrorCallback) !== 'function' ){
             delete gridOptions.importerErrorCallback;  
           }
-          
+
+          /**
+           * @ngdoc method
+           * @name importerDataAddCallback
+           * @methodOf ui.grid.importer.api:GridOptions
+           * @description A mandatory callback function that adds data to the source data array.  The grid
+           * generally doesn't add rows to the source data array, it is tidier to handle this through a user
+           * callback.
+           * 
+           * <pre>
+           *      gridOptions.importerDataAddCallback: function( grid, newObjects ) {
+           *        $scope.myData = $scope.myData.concat( newObjects );
+           *      })
+           * </pre>
+           * @param {Grid} grid the grid we're importing into, may be useful in some way
+           * @param {array} newObjects an array of new objects that you should add to your data
+           * 
+           */
+          if ( gridOptions.enableImporter === true && !gridOptions.importerDataAddCallback ) {
+            $log.error("You have not set an importerDataAddCallback, importer is disabled");
+            gridOptions.enableImporter = false;
+          }
+                    
           /**
            * @ngdoc object
            * @name importerNewObject
@@ -227,17 +251,10 @@
            * @ngdoc property
            * @propertyOf ui.grid.importer.api:GridOptions
            * @name importerShowMenu
-           * @description Whether or not to show an item in the grid menu.  If an item
-           * is to be shown in the grid menu then an `importerInputElement` must be 
-           * provided as well.  If there is no `importerInputElement` then the menu
-           * will be automatically suppressed, otherwise defaults to true.
+           * @description Whether or not to show an item in the grid menu.  Defaults to true.
            * 
            */
-          if ( gridOptions.enableImporter && ( !gridOptions.importerInputElement || !gridOptions.importerInputElement.append ) ) {
-            gridOptions.importerShowMenu = false;
-          } else {
-            gridOptions.importerShowMenu = !!gridOptions.importerShowMenu;
-          }
+          gridOptions.importerShowMenu = gridOptions.importerShowMenu !== false;
         },
 
 
@@ -545,30 +562,14 @@
          * @returns {object} the new object
          */
         addObjects: function( grid, newObjects ){
-          grid.options.data = grid.options.data.concat( newObjects );
-          
-          // This block replicates the data watch, but shouldn't be necessary in an ideal world
-          var promises = [];
-          if (grid.columns.length === ( grid.rowHeaderColumns ? grid.rowHeaderColumns.length : 0 ) ) {
-            if (grid.options.columnDefs.length === 0) {
-              grid.buildColumnDefsFromData(grid.options.data);
-            }
-            promises.push(grid.buildColumns()
-              .then(function() {
-                grid.preCompileCellTemplates();}
-            ));
+          if ( grid.api.rowEdit ){
+            var callbackId = grid.registerDataChangeCallback( function() {
+              grid.api.rowEdit.setRowsDirty( grid, newObjects );
+              grid.deregisterDataChangeCallback( callbackId );
+            });
           }
 
-          $q.all(promises).then(function() {
-            grid.modifyRows(grid.options.data)
-              .then(function () {
-                  grid.redrawInPlace();
-                  grid.refreshCanvas(true);
-                  if ( grid.api.rowEdit ){
-                    grid.api.rowEdit.setRowsDirty( grid, newObjects );
-                  }
-              });
-          });
+          grid.options.importerDataAddCallback( grid, newObjects );
         },
         
         
