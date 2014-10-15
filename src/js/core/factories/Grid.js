@@ -351,7 +351,7 @@ angular.module('ui.grid')
       .then(function(){
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
-        rowHeaderCol.disableHiding = true;
+        rowHeaderCol.enableHiding = false;
         self.rowHeaderColumns.push(rowHeaderCol);
         self.buildColumns()
           .then( function() {
