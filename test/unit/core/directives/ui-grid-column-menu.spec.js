@@ -150,7 +150,7 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
 
   describe('hideable: ', function () {
     it('everything present: is not hideable', function () {
-      $scope.col = { uid: 'ui-grid-01x', colDef: { disableHiding: true } };
+      $scope.col = { uid: 'ui-grid-01x', colDef: { enableHiding: false } };
       
       expect( uiGridColumnMenuService.hideable( $scope ) ).toEqual( false );
     });  

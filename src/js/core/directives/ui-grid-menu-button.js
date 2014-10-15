@@ -242,7 +242,7 @@ angular.module('ui.grid')
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
       
       $scope.grid.options.columnDefs.forEach( function( colDef, index ){
-        if ( !colDef.disableHiding ){
+        if ( colDef.enableHiding !== false ){
           // add hide menu item - shows an OK icon as we only show when column is already visible
           var menuItem = {
             icon: 'ui-grid-icon-ok',

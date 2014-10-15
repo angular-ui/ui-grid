@@ -104,7 +104,7 @@ describe('uiGridHeaderCell', function () {
 
     describe('with enableColumnMenu off', function() {
       it('should not be present', function () {
-        $scope.gridOpts.enableColumnMenu = false;
+        $scope.gridOpts.enableColumnMenus = false;
         recompile();
 
         menu = $(grid).find('.ui-grid-column-menu .ui-grid-menu-inner');
@@ -116,9 +116,9 @@ describe('uiGridHeaderCell', function () {
       });
     });
 
-    describe('with colDef.disableColumnMenu on', function() {
+    describe('with colDef.enableColumnMenu false', function() {
       it('should not be present', function () {
-        $scope.gridOpts.columnDefs[0].disableColumnMenu = true;
+        $scope.gridOpts.columnDefs[0].enableColumnMenu = false;
         recompile();
 
         var headers = $(grid).find('.ui-grid-column-menu-button');
@@ -128,7 +128,7 @@ describe('uiGridHeaderCell', function () {
 
     describe('when window is resized', function () {
       it('should hide an open menu', function () {
-        delete $scope.gridOpts.columnDefs[0].disableColumnMenu;
+        delete $scope.gridOpts.columnDefs[0].enableColumnMenu;
         openMenu();
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
         
