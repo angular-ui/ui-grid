@@ -1,0 +1,49 @@
+@ngdoc overview
+@name Tutorial: 214 Pagination
+@description
+
+When pagination is enabled, the data is displayed in pages that can be browsed using a page selector.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.pagination']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {};
+
+      $scope.gridOptions.columnDefs = [
+        { name:'name'},
+        { name:'gender' },
+        { name:'company' }
+      ];
+
+      $scope.gridOptions.onRegisterApi = function (gridApi) {
+        $scope.gridApi = gridApi;
+      }
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <p>Page: {{ gridApi.pagination.getPage() }}</p>
+      <p>Total pages: {{ gridApi.pagination.getTotalPages() }}</p>
+      <button type="button" class="btn btn-success" ng-click="gridApi.pagination.previousPage()">
+        previous page
+      </button>
+      <button type="button" class="btn btn-success" ng-click="gridApi.pagination.nextPage()">
+        next page
+      </button>
+      <div ui-grid="gridOptions" ui-grid-pagination class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+    }
+  </file>
+</example>
