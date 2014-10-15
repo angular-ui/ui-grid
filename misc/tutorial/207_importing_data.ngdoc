@@ -16,7 +16,8 @@ csv needing to match either the column.name or column.displayName.  Optionally y
 provide a custom function that maps headings to column.name, and this will be used instead.
 
 To use the importer you need to include the ui-grid-importer directive on
-your grid.  
+your grid, and you must provide a `gridOptions.importerDataAddCallback` function that adds
+the created objects into your data array. 
 
 The options and API for importer can be found at {@link api/ui.grid.importer ui.grid.importer}.
 
@@ -38,8 +39,13 @@ illustrates that doing so is not mandatory).
     var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.importer']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+      $scope.data = [];
       $scope.gridOptions = {
         enableGridMenu: true,
+        data: 'data',
+        importerDataAddCallback: function ( grid, newObjects ) {
+          $scope.data = $scope.data.concat( newObjects );
+        },
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
         }

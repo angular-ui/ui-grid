@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 306 Exporting Data With Custom UI
+@name Tutorial: 312 Exporting Data With Custom UI
 @description The exporter feature allows data to be exported from the grid in 
 csv or pdf format.  The exporter can export all data, visible data or selected data.
 
