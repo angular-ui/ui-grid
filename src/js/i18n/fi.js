@@ -56,11 +56,11 @@
           exporterSelectedAsPdf: 'Vie valittu tieto pdf-muodossa'
         },
         importer: {
-          noHeaders: 'Sarakkeen nimiä ei voitu päätellä, onko tiedostossa otsikkoa?',
-          noObjects: 'Tietoja ei voitu lukea, onko tiedostossa muuta kuin otsikko?',
+          noHeaders: 'Sarakkeen nimiä ei voitu päätellä, onko tiedostossa otsikkoriviä?',
+          noObjects: 'Tietoja ei voitu lukea, onko tiedostossa muuta kuin otsikkot?',
           invalidCsv: 'Tiedostoa ei voitu käsitellä, oliko se CSV-muodossa?',
-          invalidJson: 'Tiedostoa ei voitu käsitellä, oliko se JSON-muodossa',
-          jsonNotArray: 'Tuotu tiedosto ei sisältänyt taulukkoa, lopetetaan.'
+          invalidJson: 'Tiedostoa ei voitu käsitellä, oliko se JSON-muodossa?',
+          jsonNotArray: 'Tiedosto ei sisältänyt taulukkoa, lopetetaan.'
         }
       });
       return $delegate;
