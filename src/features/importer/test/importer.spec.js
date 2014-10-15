@@ -11,6 +11,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
   var $interval;
   var $compile;
   var $log;
+  var gridOptions;
 
   beforeEach(module('ui.grid.importer', 'ui.grid.rowEdit'));
 
@@ -29,20 +30,26 @@ describe('ui.grid.importer uiGridImporterService', function () {
     $compile = _$compile_;
     $log = _$log_;
 
-    grid = gridClassFactory.createGrid({});
-    grid.ptions = {};
-    grid.options.columnDefs = [
+    $scope.data = [];
+    for (var i = 0; i < 3; i++) {
+        $scope.data.push({col1:'a_'+i, col2:'b_'+i, col3:'c_'+i, col4:'d_'+i});
+    }
+
+    gridOptions = {
+      columnDefs: [
         {field: 'col1', name: 'col1', displayName: 'Col1', width: 50},
         {field: 'col2', name: 'col2', displayName: 'Col2', width: '*', type: 'number'},
         {field: 'col3', name: 'col3', displayName: 'Col3', width: 100},
         {field: 'col4', name: 'col4', displayName: 'Col4', width: 200}
-    ];
+      ],
+      data: $scope.data,
+      importerDataAddCallback: function( grid, newObjects ){
+        $scope.data = $scope.data.concat( newObjects );
+        gridOptions.data = $scope.data;
+      }
+    };
 
-    var data = [];
-    for (var i = 0; i < 3; i++) {
-        data.push({col1:'a_'+i, col2:'b_'+i, col3:'c_'+i, col4:'d_'+i});
-    }
-    grid.options.data = data;
+    grid = gridClassFactory.createGrid(gridOptions);
     
     _uiGridImporterService_.initializeGrid(grid);
     grid.buildColumns();
@@ -50,12 +57,6 @@ describe('ui.grid.importer uiGridImporterService', function () {
     grid.rows[1].visible = false;
     grid.columns[2].visible = false;
     grid.setVisibleRows(grid.rows);
-
-    grid.gridWidth = 500;
-    grid.columns[0].drawnWidth = 50; 
-    grid.columns[1].drawnWidth = '*'; 
-    grid.columns[2].drawnWidth = 100; 
-    grid.columns[3].drawnWidth = 200; 
   }));
   
 
@@ -72,10 +73,10 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
       if ($window.hasOwnProperty('File') && $window.hasOwnProperty('FileReader') && $window.hasOwnProperty('FileList') && $window.hasOwnProperty('Blob')) {
         expect( options ).toEqual({
-          enableImporter: true,
+          enableImporter: false,
           importerProcessHeaders: uiGridImporterService.processHeaders,
           importerNewObject: undefined,
-          importerShowMenu: false
+          importerShowMenu: true
         });
       }
       else {
@@ -83,12 +84,12 @@ describe('ui.grid.importer uiGridImporterService', function () {
           enableImporter: false,
           importerProcessHeaders: uiGridImporterService.processHeaders,
           importerNewObject: undefined,
-          importerShowMenu: false
+          importerShowMenu: true
         });
       }
     });
 
-    // Only run the rest of the tests in the browser supports the File API
+    // Only run the rest of the tests if the browser supports the File API
     if (window.hasOwnProperty('File') && window.hasOwnProperty('FileReader') && window.hasOwnProperty('FileList') && window.hasOwnProperty('Blob')) {
       it('disable importer', function() {
         var testFunction = function() {};
@@ -123,7 +124,8 @@ describe('ui.grid.importer uiGridImporterService', function () {
           importerProcessHeaders: testFunction,
           importerNewObject: testObject,
           importerShowMenu: true,
-          importerErrorCallback: function () {}   
+          importerErrorCallback: function () {},
+          importerDataAddCallback: function () {}   
         };
         
         uiGridImporterService.defaultGridOptions(options);
@@ -132,14 +134,15 @@ describe('ui.grid.importer uiGridImporterService', function () {
           enableImporter: true,
           importerProcessHeaders: testFunction,
           importerNewObject: testObject,
-          importerShowMenu: false,
-          importerErrorCallback: jasmine.any(Function)
+          importerShowMenu: true,
+          importerErrorCallback: jasmine.any(Function),
+          importerDataAddCallback: jasmine.any(Function)
         });
       });
     }
   });
   
-  // Only run the rest of the tests in the browser supports the File API
+  // Only run the rest of the tests if the browser supports the File API
   if (window.hasOwnProperty('File') && window.hasOwnProperty('FileReader') && window.hasOwnProperty('FileList') && window.hasOwnProperty('Blob')) {
     describe( 'importThisFile', function() {
       // not tested as yet, mocking files is annoying
@@ -149,25 +152,43 @@ describe('ui.grid.importer uiGridImporterService', function () {
     describe( 'importJsonClosure', function() {
       it( 'imports a valid file', function() {
         var testFile = {target: {result: '[{"field":"some data","field2":"some more data"}]'}};
+
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
         uiGridImporterService.importJsonClosure( grid )( testFile );
-        expect( grid.options.data.length ).toEqual(4);
-        expect( grid.options.data[3].field ).toEqual( 'some data' );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(4, 'data should now have 4 rows');
+        expect( $scope.data[3].field ).toEqual( 'some data' );
+
+        expect( grid.rows.length ).toEqual(4, 'grid should now have 4 rows');
       });
      
       it( 'with rowEdit, sets rows dirty', function() {
         uiGridRowEditService.initializeGrid( $scope, grid );
         uiGridEditService.initializeGrid( grid );
-
-        grid.renderingComplete();    
-
-        var testFile = {target: {result: '[{"field":"some data","field2":"some more data"},{"field":"2some data","field2":"2some more data"}]'}};
-        uiGridImporterService.importJsonClosure( grid )( testFile );
-        expect( grid.options.data.length ).toEqual(5);
-        expect( grid.options.data[3].field ).toEqual( 'some data' );
         
-        $scope.$digest();
-        $interval.flush();
-        expect( grid.rows.length ).toEqual(5);
+        var testFile = {target: {result: '[{"field":"some data","field2":"some more data"},{"field":"2some data","field2":"2some more data"}]'}};
+
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
+        uiGridImporterService.importJsonClosure( grid )( testFile );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
+        expect( $scope.data[3].field ).toEqual( 'some data' );
+
+        expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
         expect( grid.rowEditDirtyRows.length).toEqual(2);
@@ -200,25 +221,41 @@ describe('ui.grid.importer uiGridImporterService', function () {
     describe( 'importCsvClosure', function() {
       it( 'imports a valid file', function() {
         var testFile = {target: {result: '"col1", "col2"\n"some data","some more data"\n"2some data", "2some more data"'}};
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
         uiGridImporterService.importCsvClosure( grid )( testFile );
-        expect( grid.options.data.length ).toEqual(5);
-        expect( grid.options.data[3].col1 ).toEqual( 'some data' );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
+        expect( $scope.data[3].col1 ).toEqual( 'some data' );
+
+        expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
       });
      
       it( 'with rowEdit, sets rows dirty', function() {
         uiGridRowEditService.initializeGrid( $scope, grid );
         uiGridEditService.initializeGrid( grid );
-
-        grid.renderingComplete();    
-
-        var testFile = {target: {result: '"col1", "col2"\n"some data","some more data"\n"2some data", "2some more data"'}};
-        uiGridImporterService.importCsvClosure( grid )( testFile );
-        expect( grid.options.data.length ).toEqual(5);
-        expect( grid.options.data[3].col1 ).toEqual( 'some data' );
         
-        $scope.$digest();
-        $interval.flush();
-        expect( grid.rows.length ).toEqual(5);
+        var testFile = {target: {result: '"col1", "col2"\n"some data","some more data"\n"2some data", "2some more data"'}};
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
+        uiGridImporterService.importCsvClosure( grid )( testFile );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
+        expect( $scope.data[3].col1 ).toEqual( 'some data' );
+
+        expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
         expect( grid.rowEditDirtyRows.length).toEqual(2);
@@ -360,24 +397,31 @@ describe('ui.grid.importer uiGridImporterService', function () {
       it( 'adds objects without rowEdit', function() {
         var objects = [ { name: 'Fred', gender: 'male'}, { name: 'Jane', gender: 'female' } ];
         uiGridImporterService.addObjects( grid, objects );
-        expect( grid.options.data.length ).toEqual(5);
-        expect( grid.options.data[3].name ).toEqual( 'Fred' );
+        
+        expect( $scope.data.length ).toEqual(5);
+        expect( $scope.data[3].name ).toEqual( 'Fred' );
       });
      
       it( 'with rowEdit, sets rows dirty', function() {
         uiGridRowEditService.initializeGrid( $scope, grid );
         uiGridEditService.initializeGrid( grid );
 
-        grid.renderingComplete();    
-
         var objects = [ { name: 'Fred', gender: 'male'}, { name: 'Jane', gender: 'female' } ];
+
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
         uiGridImporterService.addObjects( grid, objects );
-        expect( grid.options.data.length ).toEqual(5);
-        expect( grid.options.data[3].name ).toEqual( 'Fred' );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
+        expect( $scope.data[3].name ).toEqual( 'Fred' );
         
-        $scope.$digest();
-        $interval.flush();
-        expect( grid.rows.length ).toEqual(5);
+        expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
         expect( grid.rowEditDirtyRows.length).toEqual(2);

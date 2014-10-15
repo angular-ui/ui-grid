@@ -594,4 +594,15 @@ describe('Grid factory', function () {
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
     });
   });
+  
+  
+  describe( 'register and deregister data change callbacks', function() {
+    it( 'register then deregister data change callback', function() {
+      var uid = grid.registerDataChangeCallback( function() {});
+      expect( grid.dataChangeCallbacks[uid]).toEqual( jasmine.any(Function));
+      
+      grid.deregisterDataChangeCallback( uid );
+      expect( grid.dataChangeCallbacks ).toEqual( {} );
+    });
+  });
 });
