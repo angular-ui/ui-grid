@@ -33,9 +33,8 @@ SubGrid nesting can be done upto multiple levels.
     var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
-      $scope.gridOptions.expandable = {
-        rowExpandableTemplate: 'rowExpandableTemplate.html',
+      $scope.gridOptions = {
+        expandableRowTemplate: 'expandableRowTemplate.html',
         expandableRowHeight: 150
       }
 
@@ -85,7 +84,7 @@ SubGrid nesting can be done upto multiple levels.
       height: 400px;
     }
   </file>
-  <file name="rowExpandableTemplate.html">
+  <file name="expandableRowTemplate.html">
     <div ui-grid="row.entity.subGridOptions" style="height:140px;"></div>
   </file>
 </example>
