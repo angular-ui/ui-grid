@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridPinnedContainer', ['$log', function ($log) {
+  angular.module('ui.grid').directive('uiGridPinnedContainer', ['gridUtil', function (gridUtil) {
     return {
       restrict: 'EA',
       replace: true,
@@ -13,7 +13,7 @@
       compile: function compile() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            $log.debug('ui-grid-pinned-container ' + $scope.side + ' link');
+            // gridUtil.logDebug('ui-grid-pinned-container ' + $scope.side + ' link');
 
             var grid = uiGridCtrl.grid;
 
@@ -22,7 +22,7 @@
             $elm.addClass('ui-grid-pinned-container-' + $scope.side);
 
             function updateContainerDimensions() {
-              // $log.debug('update ' + $scope.side + ' dimensions');
+              // gridUtil.logDebug('update ' + $scope.side + ' dimensions');
 
               var ret = '';
 
@@ -37,7 +37,7 @@
 
                 myWidth = width;
 
-                // $log.debug('myWidth', myWidth);
+                // gridUtil.logDebug('myWidth', myWidth);
 
                 // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
                 $elm.attr('style', null);

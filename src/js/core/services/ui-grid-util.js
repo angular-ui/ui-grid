@@ -669,16 +669,56 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     resetUids: function () {
       uid = ['0', '0', '0'];
+    },
+    
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil
+     * @name logError
+     * @description wraps the $log method, allowing us to choose different
+     * treatment within ui-grid if we so desired.  At present we only log
+     * error messages if uiGridConstants.LOG_ERROR_MESSAGES is set to true
+     * @param {string} logMessage message to be logged to the console
+     * 
+     */
+    logError: function( logMessage ){
+      if ( uiGridConstants.LOG_ERROR_MESSAGES ){
+        $log.$error( logMessage );
+      }
+    },
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil
+     * @name logWarn
+     * @description wraps the $log method, allowing us to choose different
+     * treatment within ui-grid if we so desired.  At present we only log
+     * warning messages if uiGridConstants.LOG_WARN_MESSAGES is set to true
+     * @param {string} logMessage message to be logged to the console
+     * 
+     */
+    logWarn: function( logMessage ){
+      if ( uiGridConstants.LOG_WARN_MESSAGES ){
+        $log.$warn( logMessage );
+      }
+    },
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil
+     * @name logDebug
+     * @description wraps the $log method, allowing us to choose different
+     * treatment within ui-grid if we so desired.  At present we only log
+     * debug messages if uiGridConstants.LOG_DEBUG_MESSAGES is set to true
+     * @param {string} logMessage message to be logged to the console
+     * 
+     */
+    logDebug: function( logMessage ){
+      if ( uiGridConstants.LOG_DEBUG_MESSAGES ){
+        $log.$debug( logMessage );
+      }
     }
 
-    // setHashKey: function setHashKey(obj, h) {
-    //   if (h) {
-    //     obj.$$hashKey = h;
-    //   }
-    //   else {
-    //     delete obj.$$hashKey;
-    //   }
-    // }
   };
 
   ['width', 'height'].forEach(function (name) {

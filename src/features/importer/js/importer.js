@@ -52,8 +52,8 @@
    *
    *  @description Services for importer feature
    */
-  module.service('uiGridImporterService', ['$log', '$q', 'uiGridImporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService', '$window',
-    function ($log, $q, uiGridImporterConstants, gridUtil, $compile, $interval, i18nService, $window) {
+  module.service('uiGridImporterService', ['$q', 'uiGridImporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService', '$window',
+    function ($q, uiGridImporterConstants, gridUtil, $compile, $interval, i18nService, $window) {
 
       var service = {
 
@@ -132,7 +132,7 @@
            */
           if (gridOptions.enableImporter  || gridOptions.enableImporter === undefined) {
             if ( !($window.hasOwnProperty('File') && $window.hasOwnProperty('FileReader') && $window.hasOwnProperty('FileList') && $window.hasOwnProperty('Blob')) ) {
-              $log.error('The File APIs are not fully supported in this browser, grid importer cannot be used.');
+              gridUtil.logError('The File APIs are not fully supported in this browser, grid importer cannot be used.');
               gridOptions.enableImporter = false;
             } else {
               gridOptions.enableImporter = true;
@@ -276,7 +276,7 @@
          */
         importThisFile: function ( grid, fileObject ) {
           if (!fileObject){
-            $log.error( 'No file object provided to importThisFile, should be impossible, aborting');
+            gridUtil.logError( 'No file object provided to importThisFile, should be impossible, aborting');
             return;
           }
           
@@ -607,7 +607,7 @@
             grid.options.importerErrorCallback( grid, alertI18nToken, consoleMessage, context );
           } else {
             $window.alert(i18nService.getSafeText( alertI18nToken )); 
-            $log.error(consoleMessage + context ); 
+            gridUtil.logError(consoleMessage + context ); 
           }
         }
       };
@@ -626,8 +626,8 @@
    *  @description Adds importer features to grid
    *
    */
-  module.directive('uiGridImporter', ['$log', 'uiGridImporterConstants', 'uiGridImporterService', 'gridUtil', '$compile',
-    function ($log, uiGridImporterConstants, uiGridImporterService, gridUtil, $compile) {
+  module.directive('uiGridImporter', ['uiGridImporterConstants', 'uiGridImporterService', 'gridUtil', '$compile',
+    function (uiGridImporterConstants, uiGridImporterService, gridUtil, $compile) {
       return {
         replace: true,
         priority: 0,
@@ -650,8 +650,8 @@
    *  selected
    *
    */
-  module.directive('uiGridImporterMenuItem', ['$log', 'uiGridImporterConstants', 'uiGridImporterService', 'gridUtil', '$compile',
-    function ($log, uiGridImporterConstants, uiGridImporterService, gridUtil, $compile) {
+  module.directive('uiGridImporterMenuItem', ['uiGridImporterConstants', 'uiGridImporterService', 'gridUtil', '$compile',
+    function (uiGridImporterConstants, uiGridImporterService, gridUtil, $compile) {
       return {
         replace: true,
         priority: 0,
@@ -671,7 +671,7 @@
           var grid = uiGridCtrl.grid;
           
           if ( fileChooser.length !== 1 ){
-            $log.error('Found > 1 or < 1 file choosers within the menu item, error, cannot continue');
+            gridUtil.logError('Found > 1 or < 1 file choosers within the menu item, error, cannot continue');
           } else {
             fileChooser[0].addEventListener('change', handleFileSelect, false);  // TODO: why the false on the end?  Google  
           }

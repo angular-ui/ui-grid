@@ -70,8 +70,8 @@
    *
    *  @description Services for exporter feature
    */
-  module.service('uiGridExporterService', ['$log', '$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
-    function ($log, $q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
+  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
+    function ($q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
 
       var service = {
 
@@ -412,7 +412,7 @@
           if ( $elm ){
             this.renderCsvLink(grid, csvContent, $elm);
           } else {
-            $log.error( 'Exporter asked to export as csv, but no element provided.  Perhaps you should set gridOptions.exporterCsvLinkElement?')
+            gridUtil.logError( 'Exporter asked to export as csv, but no element provided.  Perhaps you should set gridOptions.exporterCsvLinkElement?')
 ;          }
         },
         
@@ -485,7 +485,7 @@
               if ( grid.api.selection ){
                 rows = grid.api.selection.getSelectedGridRows();
               } else {
-                $log.error('selection feature must be enabled to allow selected rows to be exported');
+                gridUtil.logError('selection feature must be enabled to allow selected rows to be exported');
               }
               break;
           }
@@ -824,8 +824,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridExporter', ['$log', 'uiGridExporterConstants', 'uiGridExporterService', 'gridUtil', '$compile',
-    function ($log, uiGridExporterConstants, uiGridExporterService, gridUtil, $compile) {
+  module.directive('uiGridExporter', ['uiGridExporterConstants', 'uiGridExporterService', 'gridUtil', '$compile',
+    function (uiGridExporterConstants, uiGridExporterService, gridUtil, $compile) {
       return {
         replace: true,
         priority: 0,
