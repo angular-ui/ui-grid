@@ -82,7 +82,6 @@
 
     describe('enables pinning when gridOptions.enablePinning is true', function () {
       it('should add pinned containers to the DOM', function () {
-        console.log(grid);
         var leftContainer = $(grid).find('[ui-grid-pinned-container*=left]');
         expect(leftContainer.size()).toEqual(1);
 
@@ -199,7 +198,6 @@
           })
           .first();
 
-        console.log(updateContainerDimensionsFunction());
       });
     });
   });

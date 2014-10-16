@@ -596,13 +596,61 @@ describe('Grid factory', function () {
   });
   
   
-  describe( 'register and deregister data change callbacks', function() {
+  describe( 'data change callbacks', function() {
     it( 'register then deregister data change callback', function() {
       var uid = grid.registerDataChangeCallback( function() {});
-      expect( grid.dataChangeCallbacks[uid]).toEqual( jasmine.any(Function));
+      expect( grid.dataChangeCallbacks[uid]).toEqual( { callback: jasmine.any(Function), types: [ uiGridConstants.dataChange.ALL ] } );
       
       grid.deregisterDataChangeCallback( uid );
       expect( grid.dataChangeCallbacks ).toEqual( {} );
+    });
+
+    describe( 'mix of callbacks being called', function() {
+      var called;
+      var constants;
+      
+      beforeEach( function() {
+        called = [];
+        constants = uiGridConstants.dataChange;
+        
+        // this function will push it's type into the called array when it's called
+        var createCallbackFunction = function( type ){
+          return function( grid ){
+            called.push( type );
+          };
+        };
+        
+        grid.registerDataChangeCallback( createCallbackFunction( constants.ALL ), [constants.ALL] );
+        grid.registerDataChangeCallback( createCallbackFunction( constants.ROW ), [constants.ROW] );
+        grid.registerDataChangeCallback( createCallbackFunction( constants.EDIT ), [constants.EDIT] );
+        grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN ), [constants.COLUMN] );
+        grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN + constants.EDIT ), [constants.COLUMN, constants.EDIT] );
+      });
+      
+      it( 'call of type ALL', function() {
+        grid.callDataChangeCallbacks( constants.ALL );
+        expect( called ).toEqual( [ constants.ALL, constants.ROW, constants.EDIT, constants.COLUMN, constants.COLUMN + constants.EDIT]);
+      });
+
+      it( 'call of type ROW', function() {
+        grid.callDataChangeCallbacks( constants.ROW );
+        expect( called ).toEqual( [ constants.ALL, constants.ROW ]);
+      });
+
+      it( 'call of type EDIT', function() {
+        grid.callDataChangeCallbacks( constants.EDIT );
+        expect( called ).toEqual( [ constants.ALL, constants.EDIT, constants.COLUMN + constants.EDIT ]);
+      });
+
+      it( 'call of type COLUMN', function() {
+        grid.callDataChangeCallbacks( constants.COLUMN );
+        expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+      });
+      
+      it( 'call works via api', function() {
+        grid.api.core.notifyDataChange( grid, constants.COLUMN );
+        expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+      });
     });
   });
 });

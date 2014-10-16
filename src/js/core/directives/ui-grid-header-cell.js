@@ -44,6 +44,39 @@
     
             var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
     
+
+            // apply any headerCellClass
+            var classAdded;
+            var updateClass = function( grid ){
+              var contents = $elm;
+              if ( classAdded ){
+                contents.removeClass( classAdded );
+                classAdded = null;
+              }
+  
+              if (angular.isFunction($scope.col.headerCellClass)) {
+                classAdded = $scope.col.headerCellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex);
+              }
+              else {
+                classAdded = $scope.col.headerCellClass;
+              }
+              contents.addClass(classAdded);
+            };
+  
+            if ($scope.col.headerCellClass) {
+              updateClass();
+            }
+            
+            // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
+            var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+
+            var deregisterFunction = function() {
+              $scope.grid.deregisterDataChangeCallback( watchUid ); 
+            };
+
+            $scope.$on( '$destroy', deregisterFunction );            
+
+
             // Figure out whether this column is sortable or not
             if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
               $scope.sortable = true;

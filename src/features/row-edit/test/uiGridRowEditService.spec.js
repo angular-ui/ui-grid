@@ -133,7 +133,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '1' );
       expect( uiGridRowEditService.saveRow ).not.toHaveBeenCalled();
       expect( grid.rows[0].isDirty ).toEqual( undefined );
-      expect( grid.rowEditDirtyRows ).toEqual( undefined );
+      expect( grid.rowEdit.dirtyRows ).toEqual( undefined );
       
       expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
     });
@@ -149,7 +149,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '2' );
       expect( uiGridRowEditService.saveRow ).toHaveBeenCalledWith( grid, grid.rows[0] );
       expect( grid.rows[0].isDirty ).toEqual( true );
-      expect( grid.rowEditDirtyRows.length ).toEqual( 1 );
+      expect( grid.rowEdit.dirtyRows.length ).toEqual( 1 );
       
       expect( grid.rows[0].rowEditSaveTimer ).not.toEqual( undefined );
       
@@ -166,14 +166,14 @@ describe('ui.grid.edit uiGridRowEditService', function () {
         return function() { called = true;};
       });
       grid.rows[0].isDirty = true;
-      grid.rowEditDirtyRows = [ grid.rows[0] ];
+      grid.rowEdit.dirtyRows = [ grid.rows[0] ];
       
       expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
       
       grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '1' );
       expect( uiGridRowEditService.saveRow ).toHaveBeenCalledWith( grid, grid.rows[0] );
       expect( grid.rows[0].isDirty ).toEqual( true );
-      expect( grid.rowEditDirtyRows.length ).toEqual( 1 );
+      expect( grid.rowEdit.dirtyRows.length ).toEqual( 1 );
       
       expect( grid.rows[0].rowEditSaveTimer ).not.toEqual( undefined );
       
@@ -196,7 +196,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '2' );
       expect( uiGridRowEditService.saveRow ).not.toHaveBeenCalled();
       expect( grid.rows[0].isDirty ).toEqual( true );
-      expect( grid.rowEditDirtyRows.length ).toEqual( 1 );
+      expect( grid.rowEdit.dirtyRows.length ).toEqual( 1 );
       
       expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
       
@@ -221,7 +221,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.api.edit.raise.afterCellEdit( grid.options.data[0], grid.options.columnDefs[0], '1', '2' );
       expect( uiGridRowEditService.saveRow ).toHaveBeenCalledWith( grid, grid.rows[0] );
       expect( grid.rows[0].isDirty ).toEqual( true );
-      expect( grid.rowEditDirtyRows.length ).toEqual( 1 );
+      expect( grid.rowEdit.dirtyRows.length ).toEqual( 1 );
       
       // old interval not called
       $interval.flush(200);
@@ -329,8 +329,8 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       
       grid.rows[0].isDirty = true;
       grid.rows[0].isError = true;
-      grid.rowEditDirtyRows = [ grid.rows[0] ];
-      grid.rowEditErrorRows = [ grid.rows[0] ];
+      grid.rowEdit.dirtyRows = [ grid.rows[0] ];
+      grid.rowEdit.errorRows = [ grid.rows[0] ];
       grid.api.rowEdit.on.saveRow( $scope, function(){
         grid.api.rowEdit.setSavePromise(grid, grid.options.data[0], promise.promise); 
       });
@@ -339,8 +339,8 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isSaving ).toEqual(true);
       expect( grid.rows[0].isDirty ).toEqual(true);
       expect( grid.rows[0].isError ).toEqual(true);
-      expect( grid.rowEditDirtyRows.length ).toEqual(1);
-      expect( grid.rowEditErrorRows.length ).toEqual(1);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( grid.rowEdit.errorRows.length ).toEqual(1);
       
       promise.resolve(1);
       $rootScope.$apply();
@@ -348,15 +348,15 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isSaving ).toEqual(undefined);
       expect( grid.rows[0].isDirty ).toEqual(undefined);
       expect( grid.rows[0].isError ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(0);
-      expect( grid.rowEditErrorRows.length ).toEqual(0);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(0);
+      expect( grid.rowEdit.errorRows.length ).toEqual(0);
     });
 
     it( 'saveRow on dirty row, promise rejected so goes to error state', function() {
       var promise = $q.defer();
       
       grid.rows[0].isDirty = true;
-      grid.rowEditDirtyRows = [ grid.rows[0] ];
+      grid.rowEdit.dirtyRows = [ grid.rows[0] ];
       grid.api.rowEdit.on.saveRow( $scope, function(){
         grid.api.rowEdit.setSavePromise(grid, grid.options.data[0], promise.promise); 
       });
@@ -365,8 +365,8 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isSaving ).toEqual(true);
       expect( grid.rows[0].isDirty ).toEqual(true);
       expect( grid.rows[0].isError ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(1);
-      expect( grid.rowEditErrorRows ).toEqual(undefined);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( grid.rowEdit.errorRows ).toEqual(undefined);
       
       promise.reject();
       $rootScope.$apply();
@@ -374,8 +374,8 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isSaving ).toEqual(undefined);
       expect( grid.rows[0].isDirty ).toEqual(true);
       expect( grid.rows[0].isError ).toEqual(true);
-      expect( grid.rowEditDirtyRows.length ).toEqual(1);
-      expect( grid.rowEditErrorRows.length ).toEqual(1);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( grid.rowEdit.errorRows.length ).toEqual(1);
     });  
   });
   
@@ -397,7 +397,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rows[2].isDirty = true;
       grid.rows[3].isDirty = true;
 
-      grid.rowEditDirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
+      grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
       
       grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
         grid.api.rowEdit.setSavePromise(grid, rowEntity, promises[promiseCounter].promise);
@@ -411,14 +411,14 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[1].isSaving ).toEqual(undefined);
       expect( grid.rows[2].isSaving ).toEqual(true);
       expect( grid.rows[3].isSaving ).toEqual(true);
-      expect( grid.rowEditDirtyRows.length ).toEqual(3);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(3);
       
       promises[0].resolve(1);
       $rootScope.$apply();
       
       expect( grid.rows[0].isSaving ).toEqual(undefined);
       expect( grid.rows[0].isDirty ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(2);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(2);
       expect( success ).toEqual(false);
       
       promises[1].resolve(1);
@@ -429,7 +429,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[2].isDirty ).toEqual(undefined);
       expect( grid.rows[3].isSaving ).toEqual(undefined);
       expect( grid.rows[3].isDirty ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(0);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(0);
       expect( success ).toEqual(true);
       expect( failure ).toEqual(false);
     });
@@ -444,7 +444,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rows[2].isDirty = true;
       grid.rows[3].isDirty = true;
 
-      grid.rowEditDirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
+      grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
       
       grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
         grid.api.rowEdit.setSavePromise(grid, rowEntity, promises[promiseCounter].promise);
@@ -458,14 +458,14 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[1].isSaving ).toEqual(undefined);
       expect( grid.rows[2].isSaving ).toEqual(true);
       expect( grid.rows[3].isSaving ).toEqual(true);
-      expect( grid.rowEditDirtyRows.length ).toEqual(3);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(3);
       
       promises[0].resolve(1);
       $rootScope.$apply();
       
       expect( grid.rows[0].isSaving ).toEqual(undefined);
       expect( grid.rows[0].isDirty ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(2);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(2);
       expect( success ).toEqual(false);
       
       promises[1].reject();
@@ -477,8 +477,8 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[2].isError ).toEqual(true);
       expect( grid.rows[3].isSaving ).toEqual(undefined);
       expect( grid.rows[3].isDirty ).toEqual(undefined);
-      expect( grid.rowEditDirtyRows.length ).toEqual(1);
-      expect( grid.rowEditErrorRows.length ).toEqual(1);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( grid.rowEdit.errorRows.length ).toEqual(1);
       expect( success ).toEqual(false);
       expect( failure ).toEqual(true);
     });  
