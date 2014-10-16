@@ -22,7 +22,7 @@ grunt
 #   In this case just do normal local tests
 if [ $TRAVIS_PULL_REQUEST == "true" ]
 then
-  grunt test
+  grunt test:single
 else
   grunt test:ci
 
