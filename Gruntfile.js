@@ -635,7 +635,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test:e2e:ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
 
   // Test
-  grunt.registerTask('test', 'Run tests on singleRun karma server', function() {
+  grunt.registerTask('test:single', 'Run tests on singleRun karma server', function() {
     // This task can be executed in 2 different environments: local, and Travis-CI
     if (process.env.TRAVIS) {
       grunt.task.run('karma:travis');
