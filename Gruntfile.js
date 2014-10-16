@@ -607,7 +607,7 @@ module.exports = function(grunt) {
   grunt.registerTask('after-test', ['build']);
 
   // Default task.
-  grunt.registerTask('default', ['before-test', 'test', 'after-test']);
+  grunt.registerTask('default', ['before-test', 'test:single', 'after-test']);
 
   // Build with no testing
   grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy']);
