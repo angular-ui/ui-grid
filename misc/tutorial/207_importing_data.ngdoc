@@ -8,12 +8,20 @@ The importer imports files in json or csv format, with the ability to be extende
 to other file formats if demand exists.
 
 For json format files the received elements are assumed to match the column.field 
-attributes in your columnDefs, and are loaded into the provided entity.  Optionally
-you can provide a custom function that maps each entity as it is imported.
+attributes in your columnDefs, and are loaded into the provided entity.  
 
 For csv files the data is mapped to the columnDefs, with columns in the heading row in the 
 csv needing to match either the column.name or column.displayName.  Optionally you can
-provide a custom function that maps headings to column.name, and this will be used instead.
+provide a custom function that maps headings to column.name, and this will be used instead, 
+you could use this to implement a custom "column picker" type routine.  If you are using
+internationalisation on the headers (say, via adding a cellHeaderFilter), then you can
+also optionally pass a filter function into the `importerHeaderFilterCallback` routine.
+This routine will be called on the displayName to try to match the translated text, if
+you provide this routine it must return an immediate translation, not a promise - so if 
+using angular-translate you need to use `$translate.instant`.
+
+Optionally you can provide a custom function that maps the data within each entity as it is 
+imported, refer the documentation for `importerObjectCallback`.
 
 To use the importer you need to include the ui-grid-importer directive on
 your grid, and you must provide a `gridOptions.importerDataAddCallback` function that adds
@@ -22,7 +30,8 @@ the created objects into your data array.
 The options and API for importer can be found at {@link api/ui.grid.importer ui.grid.importer}.
 
 The importer adds menu items to the grid menu, to use the native UI you need to enable
-the grid menu using the gridOption `enableGridMenu`
+the grid menu using the gridOption `enableGridMenu`.  You can turn the menu items off by
+setting `importerShowMenu: false`.
 
 @example
 In this example we use the native grid menu to import a file.  You need to provide a file

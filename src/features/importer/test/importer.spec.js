@@ -76,7 +76,9 @@ describe('ui.grid.importer uiGridImporterService', function () {
           enableImporter: false,
           importerProcessHeaders: uiGridImporterService.processHeaders,
           importerNewObject: undefined,
-          importerShowMenu: true
+          importerShowMenu: true,
+          importerObjectCallback: jasmine.any(Function),
+          importerHeaderFilter: jasmine.any(Function)
         });
       }
       else {
@@ -84,7 +86,9 @@ describe('ui.grid.importer uiGridImporterService', function () {
           enableImporter: false,
           importerProcessHeaders: uiGridImporterService.processHeaders,
           importerNewObject: undefined,
-          importerShowMenu: true
+          importerShowMenu: true,
+          importerObjectCallback: jasmine.any(Function),
+          importerHeaderFilter: jasmine.any(Function)
         });
       }
     });
@@ -110,8 +114,9 @@ describe('ui.grid.importer uiGridImporterService', function () {
           importerProcessHeaders: testFunction,
           importerNewObject: testObject,
           importerShowMenu: true,
-          importerErrorCallback: undefined
-          
+          importerErrorCallback: undefined,
+          importerObjectCallback: jasmine.any(Function),
+          importerHeaderFilter: jasmine.any(Function)
         });
       });
       
@@ -124,8 +129,10 @@ describe('ui.grid.importer uiGridImporterService', function () {
           importerProcessHeaders: testFunction,
           importerNewObject: testObject,
           importerShowMenu: true,
-          importerErrorCallback: function () {},
-          importerDataAddCallback: function () {}   
+          importerErrorCallback: testFunction,
+          importerDataAddCallback: testFunction,
+          importerObjectCallback: testFunction,   
+          importerHeaderFilter: testFunction
         };
         
         uiGridImporterService.defaultGridOptions(options);
@@ -135,8 +142,10 @@ describe('ui.grid.importer uiGridImporterService', function () {
           importerProcessHeaders: testFunction,
           importerNewObject: testObject,
           importerShowMenu: true,
-          importerErrorCallback: jasmine.any(Function),
-          importerDataAddCallback: jasmine.any(Function)
+          importerErrorCallback: testFunction,
+          importerDataAddCallback: testFunction,
+          importerObjectCallback: testFunction,
+          importerHeaderFilter: testFunction
         });
       });
     }
@@ -165,6 +174,31 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         expect( $scope.data.length ).toEqual(4, 'data should now have 4 rows');
         expect( $scope.data[3].field ).toEqual( 'some data' );
+
+        expect( grid.rows.length ).toEqual(4, 'grid should now have 4 rows');
+      });
+
+      it( 'with importerObjectCallback updates', function() {
+        var testFile = {target: {result: '[{"field":"some data","field2":"some more data","status":"Active"}]'}};
+        grid.options.importerObjectCallback = function( grid, newObject ){
+          if ( newObject.status === "Active" ){
+            newObject.status = 1;
+          }
+          return newObject;
+        };
+
+        expect( grid.rows.length ).toEqual(3, 'should start with 3 gridRows');
+        expect( $scope.data.length ).toEqual(3, 'should start with 3 rows in data');
+
+        uiGridImporterService.importJsonClosure( grid )( testFile );
+
+        grid.modifyRows($scope.data);
+        angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
+          callback( grid );
+        });
+
+        expect( $scope.data.length ).toEqual(4, 'data should now have 4 rows');
+        expect( $scope.data[3].status ).toEqual( 1 );
 
         expect( grid.rows.length ).toEqual(4, 'grid should now have 4 rows');
       });
@@ -292,7 +326,6 @@ describe('ui.grid.importer uiGridImporterService', function () {
         ]);
       });
 
-
       it( 'custom processHeader function, maps "col 3" to "col4"', function() {
         var fakeArray = [ ["col1", "col2", "col 3"], ["data 1", "data 2", "data 3"], ["data 4", "data 5", "data 6"]];
         grid.options.importerProcessHeaders = function( theGrid, headerRow ) {
@@ -301,6 +334,24 @@ describe('ui.grid.importer uiGridImporterService', function () {
         
         expect( uiGridImporterService.createCsvObjects( grid, fakeArray )).toEqual([
           { col1: "data 1", col2: "data 2", col4: "data 3"}, 
+          { col1: "data 4", col2: "data 5", col4: "data 6"} 
+        ]);
+      });
+
+      it( 'custom importerObjectCallback function, maps col4: "data 3" to col4: "mapped 3"', function() {
+        var fakeArray = [ ["col1", "col2", "col 3"], ["data 1", "data 2", "data 3"], ["data 4", "data 5", "data 6"]];
+        grid.options.importerProcessHeaders = function( theGrid, headerRow ) {
+          return ["col1", "col2", "col4"];
+        };
+        grid.options.importerObjectCallback = function( grid, newObject ){
+          if ( newObject.col4 === "data 3" ){
+            newObject.col4 = "mapped 3";
+          }
+          return newObject;
+        };
+
+        expect( uiGridImporterService.createCsvObjects( grid, fakeArray )).toEqual([
+          { col1: "data 1", col2: "data 2", col4: "mapped 3"}, 
           { col1: "data 4", col2: "data 5", col4: "data 6"} 
         ]);
       });
@@ -382,12 +433,15 @@ describe('ui.grid.importer uiGridImporterService', function () {
           { displayName: 'Test 3', field: 'test3'}
         ];
         
-        expect( uiGridImporterService.flattenColumnDefs( fakeColumnDefs ) ).toEqual({
+        grid.options.importerHeaderFilter = function( displayName ){ if ( displayName === 'Test 3' ) { return 'Translated 3'; } };
+        
+        expect( uiGridImporterService.flattenColumnDefs( grid, fakeColumnDefs ) ).toEqual({
           test1: "test1",
           test2: "test2",
           should_use_field: "test2",
           "Test 3": "test3",
-          test3: "test3"
+          test3: "test3",
+          "Translated 3": "test3"
         });
       });
     });
