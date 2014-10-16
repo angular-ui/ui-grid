@@ -42,16 +42,36 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
         },
         post: function($scope, $elm, $attrs, uiGridCtrl) {
           $elm.addClass($scope.col.getColClass(false));
-          if ($scope.col.cellClass) {
-            //var contents = angular.element($elm[0].getElementsByClassName('ui-grid-cell-contents'));
+
+          var classAdded;
+          var updateClass = function( grid ){
             var contents = $elm;
+            if ( classAdded ){
+              contents.removeClass( classAdded );
+              classAdded = null;
+            }
+
             if (angular.isFunction($scope.col.cellClass)) {
-              contents.addClass($scope.col.cellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex));
+              classAdded = $scope.col.cellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex);
             }
             else {
-              contents.addClass($scope.col.cellClass);
+              classAdded = $scope.col.cellClass;
             }
+            contents.addClass(classAdded);
+          };
+
+          if ($scope.col.cellClass) {
+            updateClass();
           }
+          
+          // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
+          var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN, uiGridConstants.dataChange.EDIT]);
+          
+          var deregisterFunction = function() {
+           $scope.grid.deregisterDataChangeCallback( watchUid ); 
+          };
+          
+          $scope.$on( '$destroy', deregisterFunction );
         }
       };
     }

@@ -55,6 +55,8 @@
 
               self.grid.preCompileCellTemplates();
 
+              self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
+              
               self.grid.refresh();
             });
         }
@@ -84,9 +86,7 @@
 
                 $scope.$evalAsync(function() {
                   self.grid.refreshCanvas(true);
-                  angular.forEach( self.grid.dataChangeCallbacks, function( callback, uid ){
-                    callback( self.grid );
-                  });
+                  self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.ROW);
                 });
               });
           });

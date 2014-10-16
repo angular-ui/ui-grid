@@ -46,6 +46,9 @@
            *
            *  @description Public Api for rowEdit feature
            */
+          
+          grid.rowEdit = {};
+          
           var publicApi = {
             events: {
               rowEdit: {
@@ -113,7 +116,7 @@
                  * 
                  */
                 getDirtyRows: function (grid) {
-                  return grid.rowEditDirtyRows ? grid.rowEditDirtyRows : [];
+                  return grid.rowEdit.dirtyRows ? grid.rowEdit.dirtyRows : [];
                 },
                 /**
                  * @ngdoc method
@@ -128,7 +131,7 @@
                  * 
                  */
                 getErrorRows: function (grid) {
-                  return grid.rowEditErrorRows ? grid.rowEditErrorRows : [];
+                  return grid.rowEdit.errorRows ? grid.rowEdit.errorRows : [];
                 },
                 /**
                  * @ngdoc method
@@ -272,8 +275,8 @@
             delete gridRow.isDirty;
             delete gridRow.isError;
             delete gridRow.rowEditSaveTimer;
-            self.removeRow( grid.rowEditErrorRows, gridRow );
-            self.removeRow( grid.rowEditDirtyRows, gridRow );
+            self.removeRow( grid.rowEdit.errorRows, gridRow );
+            self.removeRow( grid.rowEdit.dirtyRows, gridRow );
           };
         },
         
@@ -295,11 +298,11 @@
 
             gridRow.isError = true;
             
-            if (!grid.rowEditErrorRows){
-              grid.rowEditErrorRows = [];
+            if (!grid.rowEdit.errorRows){
+              grid.rowEdit.errorRows = [];
             }
-            if (!service.isRowPresent( grid.rowEditErrorRows, gridRow ) ){
-              grid.rowEditErrorRows.push( gridRow );
+            if (!service.isRowPresent( grid.rowEdit.errorRows, gridRow ) ){
+              grid.rowEdit.errorRows.push( gridRow );
             }
           };
         },
@@ -310,7 +313,7 @@
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
          * @name removeRow
          * @description  Removes a row from a cache of rows - either
-         * grid.rowEditErrorRows or grid.rowEditDirtyRows.  If the row
+         * grid.rowEdit.errorRows or grid.rowEdit.dirtyRows.  If the row
          * is not present silently does nothing. 
          * @param {array} rowArray the array from which to remove the row
          * @param {GridRow} gridRow the row that should be removed
@@ -361,7 +364,7 @@
          */
         flushDirtyRows: function(grid){
           var promises = [];
-          angular.forEach(grid.rowEditDirtyRows, function( gridRow ){
+          angular.forEach(grid.rowEdit.dirtyRows, function( gridRow ){
             service.saveRow( grid, gridRow )();
             promises.push( gridRow.rowEditSavePromise );
           });
@@ -387,13 +390,13 @@
           if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, dirty flag cannot be set' ); return; }
 
           if ( newValue !== previousValue || gridRow.isDirty ){
-            if ( !grid.rowEditDirtyRows ){
-              grid.rowEditDirtyRows = [];
+            if ( !grid.rowEdit.dirtyRows ){
+              grid.rowEdit.dirtyRows = [];
             }
             
             if ( !gridRow.isDirty ){
               gridRow.isDirty = true;
-              grid.rowEditDirtyRows.push( gridRow );
+              grid.rowEdit.dirtyRows.push( gridRow );
             }
             
             delete gridRow.isError;
@@ -553,13 +556,13 @@
           myDataRows.forEach( function( value, index ){
             gridRow = grid.getRow( value );
             if ( gridRow ){
-              if ( !grid.rowEditDirtyRows ){
-                grid.rowEditDirtyRows = [];
+              if ( !grid.rowEdit.dirtyRows ){
+                grid.rowEdit.dirtyRows = [];
               }
               
               if ( !gridRow.isDirty ){
                 gridRow.isDirty = true;
-                grid.rowEditDirtyRows.push( gridRow );
+                grid.rowEdit.dirtyRows.push( gridRow );
               }
               
               delete gridRow.isError;

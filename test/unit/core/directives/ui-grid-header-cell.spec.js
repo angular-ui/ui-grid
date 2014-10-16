@@ -1,5 +1,5 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate;
+  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, columnDefs;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -8,27 +8,36 @@ describe('uiGridHeaderCell', function () {
     { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
   ];
   
-  var columnDefs = [
-    { name: 'name'},
-    { name: 'gender' },
+  columnDefs = [
+    { name: 'name', headerCellClass: 'testClass' },
+    { name: 'gender', headerCellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+        if ( col.colDef.noClass ){
+          return '';
+        } else {
+          return 'funcCellClass';
+        }
+      }
+    },
     { name: 'company' }
   ];
 
   beforeEach(module('ui.grid'));
   beforeEach(module('ngAnimateMock'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
     $timeout = _$timeout_;
     $window = _$window_;
     $animate = _$animate_;
+    uiGridConstants = _uiGridConstants_;
 
     $scope.gridOpts = {
       enableSorting: true,
       columnDefs: columnDefs,
-      data: data
+      data: data,
+      onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
     };
 
     recompile = function () {
@@ -146,4 +155,24 @@ describe('uiGridHeaderCell', function () {
     // TODO(c0bra): Allow extra items to be added to a column menu through columnDefs
   });
 
+  describe('headerCellClass', function () {
+    var headerCell1,
+        headerCell2;
+
+    beforeEach(function () {
+      headerCell1 = $(grid).find('.ui-grid-header-cell:nth(0)');
+      headerCell2 = $(grid).find('.ui-grid-header-cell:nth(1)');
+    });
+
+    it('should have the headerCellClass class, from string', inject(function () {
+      expect(headerCell1.hasClass('testClass')).toBe(true);
+    }));
+
+    it('should get cellClass from function, and remove it when data changes', inject(function () {
+      expect(headerCell2.hasClass('funcCellClass')).toBe(true);
+      columnDefs[1].noClass = true;
+      $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+      expect(headerCell2.hasClass('funcCellClass')).toBe(false);
+    }));
+  });
 });
