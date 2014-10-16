@@ -1,13 +1,14 @@
 describe('uiGridCell', function () {
-  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, grid;
+  var gridCell, $scope, $compile, $timeout, GridColumn, recompile, grid, uiGridConstants;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, gridClassFactory) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$timeout_, _GridColumn_, gridClassFactory, _uiGridConstants_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $timeout = _$timeout_;
     GridColumn = _GridColumn_;
+    uiGridConstants = _uiGridConstants_;
 
 
     $scope.grid = gridClassFactory.createGrid();
@@ -46,15 +47,23 @@ describe('uiGridCell', function () {
       expect(gridCell.hasClass('testClass')).toBe(true);
     }));
 
-    it('should get cellClass from function', inject(function () {
+    it('should get cellClass from function, and remove it when data changes', inject(function () {
       $scope.col.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
         if (rowRenderIndex === 2 && colRenderIndex === 2) {
-          return 'funcCellClass';
+          if ( col.noClass ){
+            return '';
+          } else {
+            return 'funcCellClass';
+          }
         }
       };
       recompile();
       var displayHtml = gridCell.html();
       expect(gridCell.hasClass('funcCellClass')).toBe(true);
+      
+      $scope.col.noClass = true;
+      $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.COLUMN );
+      expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
   });
 

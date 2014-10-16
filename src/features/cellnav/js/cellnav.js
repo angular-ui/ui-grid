@@ -554,7 +554,7 @@
 
           function setFocused() {
             var div = $elm.find('div');
-            console.log('setFocused: ' + div[0].parentElement.className);
+            // gridUtil.logDebug('setFocused: ' + div[0].parentElement.className);
             div[0].focus();
             div.attr("tabindex", 0);
             $scope.grid.queueRefresh();

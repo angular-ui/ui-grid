@@ -51,7 +51,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
     grid = gridClassFactory.createGrid(gridOptions);
     
-    _uiGridImporterService_.initializeGrid(grid);
+    _uiGridImporterService_.initializeGrid($scope, grid);
     grid.buildColumns();
     grid.modifyRows(grid.options.data);
     grid.rows[1].visible = false;
@@ -215,8 +215,9 @@ describe('ui.grid.importer uiGridImporterService', function () {
         uiGridImporterService.importJsonClosure( grid )( testFile );
 
         grid.modifyRows($scope.data);
+
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
@@ -225,7 +226,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
         expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
-        expect( grid.rowEditDirtyRows.length).toEqual(2);
+        expect( grid.rowEdit.dirtyRows.length).toEqual(2);
       });  
     });
 
@@ -283,7 +284,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         grid.modifyRows($scope.data);
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
@@ -292,7 +293,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
         expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
-        expect( grid.rowEditDirtyRows.length).toEqual(2);
+        expect( grid.rowEdit.dirtyRows.length).toEqual(2);
       }); 
     });
     
@@ -481,7 +482,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         grid.modifyRows($scope.data);
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');
@@ -490,7 +491,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
         expect( grid.rows.length ).toEqual(5, 'grid should now have 5 rows');
         expect( grid.rows[3].isDirty ).toEqual( true );
         expect( grid.rows[4].isDirty ).toEqual( true );
-        expect( grid.rowEditDirtyRows.length).toEqual(2);
+        expect( grid.rowEdit.dirtyRows.length).toEqual(2);
       });  
     });
     

@@ -214,6 +214,23 @@ angular.module('ui.grid')
    * </pre>
    */
   self.api.registerEvent( 'core', 'sortChanged' );
+
+  /**
+   * @ngdoc method
+   * @name notifyDataChange
+   * @methodOf ui.grid.core.api:PublicApi
+   * @description Notify the grid that a data or config change has occurred,
+   * where that change isn't something the grid was otherwise noticing.  This 
+   * might be particularly relevant where you've changed values within the data
+   * and you'd like cell classes to be re-evaluated, or changed config within 
+   * the columnDef and you'd like headerCellClasses to be re-evaluated.
+   * @param {Grid} grid the grid
+   * @param {string} type one of the 
+   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
+   * us which refreshes to fire.
+   * 
+   */
+  self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
 };
 
     /**
@@ -262,18 +279,41 @@ angular.module('ui.grid')
     this.rowBuilders.push(rowBuilder);
   };
 
+
   /**
    * @ngdoc function
    * @name registerDataChangeCallback
    * @methodOf ui.grid.class:Grid
-   * @description When the data watch notices a change in the data, all the callbacks
-   * in the dataWatchCallback array will be called.
+   * @description When a data change occurs, the data change callbacks of the specified type
+   * will be called.  The rules are:
+   * 
+   * - when the data watch fires, that is considered a ROW change (the data watch only notices
+   *   added or removed rows)
+   * - when the api is called to inform us of a change, the declared type of that change is used
+   * - when a cell edit completes, the EDIT callbacks are triggered
+   * - when the columnDef watch fires, the COLUMN callbacks are triggered
+   * 
+   * For a given event:
+   * - ALL calls ROW, EDIT, COLUMN and ALL callbacks
+   * - ROW calls ROW and ALL callbacks
+   * - EDIT calls EDIT and ALL callbacks
+   * - COLUMN calls COLUMN and ALL callbacks
+   * 
    * @param {function(grid)} callback function to be called
+   * @param {array} types the types of data change you want to be informed of.  Values from 
+   * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN ).  Optional and defaults to
+   * ALL 
    * @returns {string} uid of the callback, can be used to deregister it again
    */
-  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback) {
+  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types) {
     var uid = gridUtil.nextUid();
-    this.dataChangeCallbacks[uid] = callback;
+    if ( !types ){
+      types = [uiGridConstants.dataChange.ALL];
+    }
+    if ( !Array.isArray(types)){
+      gridUtil.logError("Expected types to be an array or null in registerDataChangeCallback, value passed was: " + types );
+    }
+    this.dataChangeCallbacks[uid] = { callback: callback, types: types };
     return uid;
   };
 
@@ -287,6 +327,50 @@ angular.module('ui.grid')
   Grid.prototype.deregisterDataChangeCallback = function deregisterDataChangeCallback(uid) {
     delete this.dataChangeCallbacks[uid];
   };
+
+  /**
+   * @ngdoc function
+   * @name callDataChangeCallbacks
+   * @methodOf ui.grid.class:Grid
+   * @description Calls the callbacks based on the type of data change that
+   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT and COLUMN callbacks if the 
+   * event type is matching, or if the type is ALL.
+   * @param {number} type the type of event that occurred - one of the 
+   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
+   */
+  Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type) {
+    angular.forEach( this.dataChangeCallbacks, function( callback, uid ){
+      if ( callback.types.indexOf( uiGridConstants.dataChange.ALL ) !== -1 ||
+           callback.types.indexOf( type ) !== -1 ||
+           type === uiGridConstants.dataChange.ALL ) {
+        callback.callback( this );
+      }
+    });
+  };
+  
+  /**
+   * @ngdoc function
+   * @name notifyDataChange
+   * @methodOf ui.grid.class:Grid
+   * @description Notifies us that a data change has occurred, used in the public
+   * api for users to tell us when they've changed data or some other event that 
+   * our watches cannot pick up
+   * @param {Grid} grid the grid
+   * @param {string} type the type of event that occurred - one of the 
+   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
+   */
+  Grid.prototype.notifyDataChange = function notifyDataChange(grid, type) {
+    var constants = uiGridConstants.dataChange;
+    if ( type === constants.ALL || 
+         type === constants.COLUMN ||
+         type === constants.EDIT ||
+         type === constants.ROW ){
+      grid.callDataChangeCallbacks( type );
+    } else {
+      gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);
+    }
+  };
+    
 
   /**
    * @ngdoc function

@@ -80,7 +80,14 @@
     },
 
     // TODO(c0bra): Create full list of these somehow. NOTE: do any allow a space before or after them?
-    CURRENCY_SYMBOLS: ['ƒ', '$', '£', '$', '¤', '¥', '៛', '₩', '₱', '฿', '₫']
+    CURRENCY_SYMBOLS: ['ƒ', '$', '£', '$', '¤', '¥', '៛', '₩', '₱', '฿', '₫'],
+    
+    dataChange: {
+      ALL: 'all',
+      EDIT: 'edit',
+      ROW: 'row',
+      COLUMN: 'column'
+    }
   });
 
 })();

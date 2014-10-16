@@ -52,15 +52,17 @@
    *
    *  @description Services for importer feature
    */
-  module.service('uiGridImporterService', ['$q', 'uiGridImporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService', '$window',
-    function ($q, uiGridImporterConstants, gridUtil, $compile, $interval, i18nService, $window) {
+  module.service('uiGridImporterService', ['$q', 'uiGridConstants', 'uiGridImporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService', '$window',
+    function ($q, uiGridConstants, uiGridImporterConstants, gridUtil, $compile, $interval, i18nService, $window) {
 
       var service = {
 
-        initializeGrid: function (grid) {
+        initializeGrid: function ($scope, grid) {
 
           //add feature namespace and any properties to grid for needed state
-          grid.importer = {};
+          grid.importer = {
+            $scope: $scope 
+          };
           
           this.defaultGridOptions(grid.options);
 
@@ -625,6 +627,14 @@
          * @description Inserts our new objects into the grid data, and
          * sets the rows to dirty if the rowEdit feature is being used
          * 
+         * Does this by registering a watch on dataChanges, which essentially
+         * is waiting on the result of the grid data watch, and downstream processing.
+         * 
+         * When the callback is called, it deregisters itself - we don't want to run
+         * again next time data is added.
+         * 
+         * If we never get called, we deregister on destroy.
+         * 
          * @param {Grid} grid the grid we're importing into
          * @param {array} newObjects the objects we want to insert into the grid data
          * @returns {object} the new object
@@ -634,10 +644,17 @@
             var callbackId = grid.registerDataChangeCallback( function() {
               grid.api.rowEdit.setRowsDirty( grid, newObjects );
               grid.deregisterDataChangeCallback( callbackId );
-            });
+            }, [uiGridConstants.dataChange.ROW] );
+            
+            var deregisterClosure = function() {
+              grid.deregisterDataChangeCallback( callbackId );
+            };
+  
+            grid.importer.$scope.$on( '$destroy', deregisterClosure );
           }
 
           grid.options.importerDataAddCallback( grid, newObjects );
+          
         },
         
         
@@ -703,7 +720,7 @@
         require: '^uiGrid',
         scope: false,
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
-          uiGridImporterService.initializeGrid(uiGridCtrl.grid);
+          uiGridImporterService.initializeGrid($scope, uiGridCtrl.grid);
         }
       };
     }

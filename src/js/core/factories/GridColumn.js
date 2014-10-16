@@ -405,6 +405,15 @@ angular.module('ui.grid')
      */
     self.cellClass = colDef.cellClass;
 
+    /**
+     * @ngdoc property
+     * @name headerCellClass
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description headerCellClass can be a string specifying the class to append to a cell
+     * or it can be a function(row,rowRenderIndex, col, colRenderIndex) that returns a class name
+     *
+     */
+    self.headerCellClass = colDef.headerCellClass;
 
     /**
      * @ngdoc property

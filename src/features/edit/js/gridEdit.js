@@ -405,7 +405,7 @@
             }
 
             function beginEditFocus(evt) {
-              console.log('begin edit');
+              // gridUtil.logDebug('begin edit');
               evt.stopPropagation();
               beginEdit();
             }
@@ -569,6 +569,7 @@
               isFocusedBeforeEdit = false;
               inEdit = false;
               registerBeginEditEvents();
+              $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.EDIT );
             }
 
             function cancelEdit() {
