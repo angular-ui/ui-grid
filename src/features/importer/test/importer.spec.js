@@ -10,15 +10,15 @@ describe('ui.grid.importer uiGridImporterService', function () {
   var $window;
   var $interval;
   var $compile;
-  var $log;
   var gridOptions;
+  var gridUtil;
 
   beforeEach(module('ui.grid.importer', 'ui.grid.rowEdit'));
 
 
   beforeEach(inject(function (_uiGridImporterService_, _gridClassFactory_, _uiGridImporterConstants_,
                               _uiGridRowEditService_, _uiGridEditService_, _$interval_,
-                               _$rootScope_, _$window_, _$compile_, _$log_ ) {
+                               _$rootScope_, _$window_, _$compile_, _gridUtil_ ) {
     uiGridImporterService = _uiGridImporterService_;
     uiGridRowEditService = _uiGridRowEditService_;
     uiGridEditService = _uiGridEditService_;
@@ -28,7 +28,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
     $window = _$window_;
     $interval = _$interval_;
     $compile = _$compile_;
-    $log = _$log_;
+    gridUtil = _gridUtil_;
 
     $scope.data = [];
     for (var i = 0; i < 3; i++) {
@@ -486,14 +486,14 @@ describe('ui.grid.importer uiGridImporterService', function () {
     describe( 'alertError', function() {
       it( 'raises an alert and writes a console log', function() {
         spyOn( $window, "alert" ).andCallFake( function() {});
-        spyOn( $log, "error" ).andCallFake( function() {});
+        spyOn( gridUtil, "logError" ).andCallFake( function() {});
 
         uiGridImporterService.alertError( grid, 'importer.noHeaders', 'A message', ["test", "test2"]);
 
         // this will need adjusting whenever the En translation for this element changes, but is needed to 
         // check i18n is working
         expect($window.alert).toHaveBeenCalledWith( 'Column names were unable to be derived, does the file have a header?' );
-        expect($log.error).toHaveBeenCalledWith( 'A message' + ["test", "test2"]);
+        expect(gridUtil.logError).toHaveBeenCalledWith( 'A message' + ["test", "test2"]);
       });
       
       it( 'calls custom error logging function if available', function() {

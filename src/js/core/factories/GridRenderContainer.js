@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridRenderContainer', ['$log', 'gridUtil', function($log, gridUtil) {
+.factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
   function GridRenderContainer(name, grid, options) {
     var self = this;
 
@@ -262,7 +262,7 @@ angular.module('ui.grid')
     // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
     scrollLeft = this.getCanvasWidth() * scrollPercentage;
 
-    //$log.debug('scrollPercentage', scrollPercentage);
+    //gridUtil.logDebug('scrollPercentage', scrollPercentage);
 
     this.adjustColumns(scrollLeft, scrollPercentage);
 

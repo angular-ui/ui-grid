@@ -4,17 +4,17 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
   var grid; 
   var $rootScope;
   var $scope;
-  var $log;
+  var gridUtil;
   var $q;
   
   beforeEach(module('ui.grid'));
 
-  beforeEach( inject(function (_uiGridGridMenuService_, _gridClassFactory_, _$rootScope_, _$log_, _$q_) {
+  beforeEach( inject(function (_uiGridGridMenuService_, _gridClassFactory_, _$rootScope_, _gridUtil_, _$q_) {
     uiGridGridMenuService = _uiGridGridMenuService_;
     gridClassFactory = _gridClassFactory_;
     $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
-    $log = _$log_;
+    gridUtil = _gridUtil_;
     $q = _$q_;
 
     grid = gridClassFactory.createGrid( { id: 1234 });
@@ -67,11 +67,11 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
     });
     
     it('error if no array passed', function () {
-      spyOn($log, 'error').andCallFake( function() {});
+      spyOn(gridUtil, 'logError').andCallFake( function() {});
       
       uiGridGridMenuService.addToGridMenu( grid, grid );
       
-      expect( $log.error ).toHaveBeenCalled();
+      expect( gridUtil.logError ).toHaveBeenCalled();
       expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [] );
     });
 

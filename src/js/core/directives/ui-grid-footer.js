@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridFooter', ['$log', '$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function ($log, $templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
+  angular.module('ui.grid').directive('uiGridFooter', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function ($templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-footer';
 
     return {
@@ -44,7 +44,7 @@
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
 
-            $log.debug('ui-grid-footer link');
+            // gridUtil.logDebug('ui-grid-footer link');
 
             var grid = uiGridCtrl.grid;
 

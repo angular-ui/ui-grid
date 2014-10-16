@@ -17,7 +17,7 @@
    *
    *  @description Service for infinite scroll features
    */
-  module.service('uiGridInfiniteScrollService', ['gridUtil', '$log', '$compile', '$timeout', function (gridUtil, $log, $compile, $timeout) {
+  module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$timeout', function (gridUtil, $compile, $timeout) {
 
     var service = {
 
@@ -169,8 +169,8 @@
    </example>
    */
 
-  module.directive('uiGridInfiniteScroll', ['$log', 'uiGridInfiniteScrollService',
-    function ($log, uiGridInfiniteScrollService) {
+  module.directive('uiGridInfiniteScroll', ['uiGridInfiniteScrollService',
+    function (uiGridInfiniteScrollService) {
       return {
         priority: -200,
         scope: false,
@@ -188,8 +188,8 @@
     }]);
 
   module.directive('uiGridViewport',
-    ['$compile', '$log', 'uiGridInfiniteScrollService', 'uiGridConstants',
-      function ($compile, $log, uiGridInfiniteScrollService, uiGridConstants) {
+    ['$compile', 'gridUtil', 'uiGridInfiniteScrollService', 'uiGridConstants',
+      function ($compile, gridUtil, uiGridInfiniteScrollService, uiGridConstants) {
         return {
           priority: -200,
           scope: false,

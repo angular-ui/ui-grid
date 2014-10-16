@@ -32,8 +32,8 @@
    *
    *  @description Services for selection features
    */
-  module.service('uiGridSelectionService', ['$log', '$q', '$templateCache', 'uiGridSelectionConstants', 'gridUtil',
-    function ($log, $q, $templateCache, uiGridSelectionConstants, gridUtil) {
+  module.service('uiGridSelectionService', ['$q', '$templateCache', 'uiGridSelectionConstants', 'gridUtil',
+    function ($q, $templateCache, uiGridSelectionConstants, gridUtil) {
 
       var service = {
 
@@ -426,8 +426,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridSelection', ['$log', 'uiGridSelectionConstants', 'uiGridSelectionService', '$templateCache',
-    function ($log, uiGridSelectionConstants, uiGridSelectionService, $templateCache) {
+  module.directive('uiGridSelection', ['uiGridSelectionConstants', 'uiGridSelectionService', '$templateCache',
+    function (uiGridSelectionConstants, uiGridSelectionService, $templateCache) {
       return {
         replace: true,
         priority: 0,
@@ -458,8 +458,8 @@
       };
     }]);
 
-  module.directive('uiGridSelectionRowHeaderButtons', ['$log', '$templateCache', 'uiGridSelectionService',
-    function ($log, $templateCache, uiGridSelectionService) {
+  module.directive('uiGridSelectionRowHeaderButtons', ['$templateCache', 'uiGridSelectionService',
+    function ($templateCache, uiGridSelectionService) {
       return {
         replace: true,
         restrict: 'E',
@@ -483,8 +483,8 @@
       };
     }]);
 
-  module.directive('uiGridSelectionSelectAllButtons', ['$log', '$templateCache', 'uiGridSelectionService',
-    function ($log, $templateCache, uiGridSelectionService) {
+  module.directive('uiGridSelectionSelectAllButtons', ['$templateCache', 'uiGridSelectionService',
+    function ($templateCache, uiGridSelectionService) {
       return {
         replace: true,
         restrict: 'E',
@@ -520,8 +520,8 @@
    *  for the grid row
    */
   module.directive('uiGridViewport',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', '$log', '$parse', 'uiGridSelectionService',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, $log, $parse, uiGridSelectionService) {
+    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
+      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
         return {
           priority: -200, // run after default  directive
           scope: false,
@@ -557,8 +557,8 @@
    *  @description Stacks on top of ui.grid.uiGridCell to provide selection feature
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', '$log', '$parse', 'uiGridSelectionService',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, $log, $parse, uiGridSelectionService) {
+    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
+      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
