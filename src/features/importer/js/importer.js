@@ -566,6 +566,8 @@
             angular.forEach( headerRow, function( value, index ) {
               if ( lookupHash[value] ) {
                 headers.push( lookupHash[value] );
+              } else if ( lookupHash[ value.toLowerCase() ] ) {
+                headers.push( lookupHash[ value.toLowerCase() ] );
               } else {
                 headers.push( null );
               }
@@ -579,7 +581,8 @@
          * @name flattenColumnDefs
          * @methodOf ui.grid.importer.service:uiGridImporterService
          * @description Runs through the column defs and creates a hash of
-         * the displayName, name and field, with each pointing to the field or name
+         * the displayName, name and field, and of each of those values forced to lower case,
+         * with each pointing to the field or name
          * (whichever is present).  Used to lookup column headers and decide what 
          * attribute name to give to the resulting field. 
          * @param {Grid} grid the grid we're importing into
@@ -592,18 +595,22 @@
           angular.forEach( columnDefs, function( columnDef, index) {
             if ( columnDef.name ){
               flattenedHash[ columnDef.name ] = columnDef.field || columnDef.name;
+              flattenedHash[ columnDef.name.toLowerCase() ] = columnDef.field || columnDef.name;
             }
             
             if ( columnDef.field ){
               flattenedHash[ columnDef.field ] = columnDef.field || columnDef.name;
+              flattenedHash[ columnDef.field.toLowerCase() ] = columnDef.field || columnDef.name;
             }
             
             if ( columnDef.displayName ){
               flattenedHash[ columnDef.displayName ] = columnDef.field || columnDef.name;
+              flattenedHash[ columnDef.displayName.toLowerCase() ] = columnDef.field || columnDef.name;
             }
             
             if ( columnDef.displayName && grid.options.importerHeaderFilter ){
               flattenedHash[ grid.options.importerHeaderFilter(columnDef.displayName) ] = columnDef.field || columnDef.name;
+              flattenedHash[ grid.options.importerHeaderFilter(columnDef.displayName).toLowerCase() ] = columnDef.field || columnDef.name;
             }
           });
           

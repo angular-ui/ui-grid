@@ -326,6 +326,16 @@ describe('ui.grid.importer uiGridImporterService', function () {
         ]);
       });
 
+      it( 'standard headers processed, objects matched to lower case column defs', function() {
+        var fakeArray = [ ["col1", "COL2", "col 3"], ["data 1", "data 2", "data 3"], ["data 4", "data 5", "data 6"]];
+        
+        expect( uiGridImporterService.createCsvObjects( grid, fakeArray )).toEqual([
+          { col1: "data 1", col2: "data 2"}, 
+          { col1: "data 4", col2: "data 5"} 
+        ]);
+      });
+
+
       it( 'custom processHeader function, maps "col 3" to "col4"', function() {
         var fakeArray = [ ["col1", "col2", "col 3"], ["data 1", "data 2", "data 3"], ["data 4", "data 5", "data 6"]];
         grid.options.importerProcessHeaders = function( theGrid, headerRow ) {
@@ -440,8 +450,10 @@ describe('ui.grid.importer uiGridImporterService', function () {
           test2: "test2",
           should_use_field: "test2",
           "Test 3": "test3",
+          "test 3": "test3",
           test3: "test3",
-          "Translated 3": "test3"
+          "Translated 3": "test3",
+          "translated 3": "test3"
         });
       });
     });
