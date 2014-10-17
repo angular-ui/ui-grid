@@ -1,6 +1,17 @@
 (function(){
 
 angular.module('ui.grid')
+  
+  /**
+   * @ngdoc function
+   * @name ui.grid.class:GridRenderContainer
+   * @description The grid has render containers, allowing the ability to have pinned columns.  If the grid
+   * is right-to-left then there may be a right render container, if left-to-right then there may 
+   * be a left render container.  There is always a body render container.
+   * @param {string} name The name of the render container ('body', 'left', or 'right')
+   * @param {Grid} grid the grid the render container is in
+   * @param {object} options the render container options
+   */
 .factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
   function GridRenderContainer(name, grid, options) {
     var self = this;
@@ -107,10 +118,27 @@ angular.module('ui.grid')
     return this.visibleRowCache.length;
   };
 
+  /**
+   * @ngdoc function
+   * @name registerViewportAdjuster
+   * @methodOf ui.grid.class:GridRenderContainer
+   * @description Registers an adjuster to the render container's available width or height.  Adjusters are used
+   * to tell the render container that there is something else consuming space, and to adjust it's size
+   * appropriately.  
+   * @param {function} func the adjuster function we want to register
+   */
+
   GridRenderContainer.prototype.registerViewportAdjuster = function registerViewportAdjuster(func) {
     this.viewportAdjusters.push(func);
   };
 
+  /**
+   * @ngdoc function
+   * @name removeViewportAdjuster
+   * @methodOf ui.grid.class:GridRenderContainer
+   * @description Removes an adjuster, should be used when your element is destroyed
+   * @param {function} func the adjuster function we want to remove
+   */
   GridRenderContainer.prototype.removeViewportAdjuster = function registerViewportAdjuster(func) {
     var idx = this.viewportAdjusters.indexOf(func);
 
@@ -119,6 +147,13 @@ angular.module('ui.grid')
     }
   };
 
+  /**
+   * @ngdoc function
+   * @name getViewportAdjustment
+   * @methodOf ui.grid.class:GridRenderContainer
+   * @description Gets the adjustment based on the viewportAdjusters.  
+   * @returns {object} a hash of { height: x, width: y }.  Usually the values will be negative
+   */
   GridRenderContainer.prototype.getViewportAdjustment = function getViewportAdjustment() {
     var self = this;
 
