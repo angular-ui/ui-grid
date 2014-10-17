@@ -51,6 +51,9 @@
             }
 
             grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
+              if ( myWidth === 0 ){
+                updateContainerDimensions();
+              }
               // Subtract our own width
               adjustment.width -= myWidth;
 
