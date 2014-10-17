@@ -26,6 +26,7 @@
     "google-code-prettify": "~1.0.2",
     "jquery": "~1.8.0",
     "lodash": "~2.4.1",
-    "pdfmake": "~0.1.8"
+    "pdfmake": "~0.1.8",
+    "csv-js": "*"
   }
 }
