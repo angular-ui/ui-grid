@@ -525,6 +525,7 @@ angular.module('ui.grid')
 
           // Remove this element from the percent array so it's not processed below
           percentArray.splice(i, 1);
+		  i--;
         }
         else if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
           colWidth = column.colDef.maxWidth;
@@ -536,6 +537,7 @@ angular.module('ui.grid')
 
           // Remove this element from the percent array so it's not processed below
           percentArray.splice(i, 1);
+		  i--;
         }
       }
 
@@ -571,6 +573,7 @@ angular.module('ui.grid')
 
           // Remove this element from the percent array so it's not processed below
           asterisksArray.splice(i, 1);
+		  i--;
         }
         else if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
           colWidth = column.colDef.maxWidth;
@@ -583,6 +586,7 @@ angular.module('ui.grid')
 
           // Remove this element from the percent array so it's not processed below
           asterisksArray.splice(i, 1);
+		  i--;
         }
       }
 
