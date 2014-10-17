@@ -1,4 +1,4 @@
-describe('ui.grid.exporter uiGridExporterService', function () {
+ddescribe('ui.grid.exporter uiGridExporterService', function () {
   var uiGridExporterService;
   var uiGridSelectionService;
   var uiGridExporterConstants;
@@ -75,11 +75,13 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
         exporterMenuCsv: true,
-        exporterMenuPdf: true
+        exporterMenuPdf: true,
+        exporterObjectCallback: jasmine.any(Function)
       });
     });
 
     it('set all options to non-default', function() {
+      var callback = function() {};
       options = {
         exporterSuppressButton: true,
         exporterLinkTemplate: 'myCsvLink',
@@ -93,7 +95,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterMenuCsv: false,
-        exporterMenuPdf: false
+        exporterMenuPdf: false,
+        exporterObjectCallback: callback
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -109,7 +112,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterMenuCsv: false,
-        exporterMenuPdf: false
+        exporterMenuPdf: false,
+        exporterObjectCallback: callback
       });
     });    
   });
@@ -130,6 +134,17 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col2', displayName: 'Col2', width: '*', align: 'right'},
         {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
         {name: 'col4', displayName: 'Col4', width: 200, align: 'left'}
+      ]);
+    });
+
+    it('gets all headers using headerFilter', function() {
+      grid.options.exporterHeaderFilter = function( displayName ){ return "mapped_" + displayName; };
+
+      expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
+        {name: 'col1', displayName: 'mapped_Col1', width: 50, align: 'left'},
+        {name: 'col2', displayName: 'mapped_Col2', width: '*', align: 'right'},
+        {name: 'col3', displayName: 'mapped_Col3', width: 100, align: 'left'},
+        {name: 'col4', displayName: 'mapped_Col4', width: 200, align: 'left'}
       ]);
     });
   });
@@ -156,6 +171,22 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ 'a_0', 'b_0', 'd_0' ]
       ]);
     });    
+
+    it('maps data using objectCallback', function() {
+      grid.options.exporterObjectCallback = function( grid, col, row, value ){
+        if ( col.name === 'col2' ){
+          return 'translated';
+        } else {
+          return value;
+        }
+      };
+
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+        [ 'a_0', 'translated', 'c_0', 'd_0' ],
+        [ 'a_1', 'translated', 'c_1', 'd_1' ],
+        [ 'a_2', 'translated', 'c_2', 'd_2' ]
+      ]);
+    });
   });
 
 

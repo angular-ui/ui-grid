@@ -302,8 +302,45 @@
            * @description Add pdf export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuPdf = gridOptions.exporterMenuPdf !== undefined ? gridOptions.exporterMenuPdf : true;
+          
+          /**
+           * @ngdoc object
+           * @name exporterHeaderFilter
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to apply to the header displayNames before exporting.  Useful for internationalisation,
+           * for example if you were using angular-translate you'd set this to `$translate.instant`.  Note that this
+           * call must be synchronous, it cannot be a call that returns a promise.
+           */
 
-
+          /**
+           * @ngdoc method
+           * @name exporterFieldCallback
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to call for each field before exporting it.  Allows 
+           * massaging of raw data into a display format, for example if you have applied 
+           * filters to convert codes into decodes, or you require
+           * a specific date format in the exported content.
+           * 
+           * The method is called once for each field exported, and provides the grid, the
+           * gridCOl and the GridRow for you to use as context in massaging the data.
+           * 
+           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {GridCol} col the column from which the data comes
+           * @param {GridRow} row the row from which the data comes
+           * @param {object} value the value for your massaging
+           * @returns {object} you must return the massaged value ready for exporting
+           * 
+           * @example
+           * <pre>
+           *   gridOptions.exporterObjectCallback = function ( grid, col, row, value ){
+           *     if ( col.name === 'status' ){
+           *       value = decodeStatus( value );
+           *     }
+           *     return value;
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterObjectCallback = gridOptions.exporterObjectCallback ? gridOptions.exporterObjectCallback : function( grid, col, row, value ) { return value; };
         },
 
 
@@ -425,8 +462,6 @@
          * as a title row for the exported file, all headers have 
          * headerCellFilters applied as appropriate.
          * 
-         * TODO: filters
-         * 
          * Column headers are an array of objects, each object has
          * name, displayName, width and align attributes.  Only name is
          * used for csv, all attributes are used for pdf.
@@ -442,10 +477,8 @@
             if (gridCol.visible || colTypes === uiGridExporterConstants.ALL){
               headers.push({
                 name: gridCol.field,
-                displayName: gridCol.displayName,
-                // TODO: should we do something to normalise here if too wide?
+                displayName: grid.options.exporterHeaderFilter ? grid.options.exporterHeaderFilter(gridCol.displayName) : gridCol.displayName,
                 width: gridCol.drawnWidth ? gridCol.drawnWidth : gridCol.width,
-                // TODO: if/when we have an alignment attribute, use it here
                 align: gridCol.colDef.type === 'number' ? 'right' : 'left'
               });
             }
@@ -496,7 +529,7 @@
               var extractedRow = [];
               angular.forEach(grid.columns, function( gridCol, index ) {
                 if (gridCol.visible || colTypes === uiGridExporterConstants.ALL){
-                  extractedRow.push(grid.getCellValue(row, gridCol));
+                  extractedRow.push( grid.options.exporterObjectCallback( grid, gridCol, row, grid.getCellValue( row, gridCol ) ) );
                 }
               });
               
