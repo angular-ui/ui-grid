@@ -21,12 +21,7 @@
 
             $elm.addClass('ui-grid-pinned-container-' + $scope.side);
 
-            function updateContainerDimensions() {
-              // gridUtil.logDebug('update ' + $scope.side + ' dimensions');
-
-              var ret = '';
-
-              // Column containers
+            function updateContainerWidth() {
               if ($scope.side === 'left' || $scope.side === 'right') {
                 var cols = grid.renderContainers[$scope.side].visibleColumnCache;
                 var width = 0;
@@ -36,6 +31,17 @@
                 }
 
                 myWidth = width;
+              }              
+            }
+            
+            function updateContainerDimensions() {
+              // gridUtil.logDebug('update ' + $scope.side + ' dimensions');
+
+              var ret = '';
+              
+              // Column containers
+              if ($scope.side === 'left' || $scope.side === 'right') {
+                updateContainerWidth();
 
                 // gridUtil.logDebug('myWidth', myWidth);
 
@@ -52,7 +58,7 @@
 
             grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
               if ( myWidth === 0 ){
-                updateContainerDimensions();
+                updateContainerWidth();
               }
               // Subtract our own width
               adjustment.width -= myWidth;
