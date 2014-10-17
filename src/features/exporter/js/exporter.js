@@ -70,8 +70,8 @@
    *
    *  @description Services for exporter feature
    */
-  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
-    function ($q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
+  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'uiGridSelectionConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
+    function ($q, uiGridExporterConstants, uiGridSelectionConstants, gridUtil, $compile, $interval, i18nService) {
 
       var service = {
 
@@ -162,13 +162,13 @@
 
           /**
            * @ngdoc object
-           * @name exporterSuppressButton
+           * @name exporterSuppressMenu
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description Don't show the export menu button, implying the user
            * will roll their own UI for calling the exporter
            * <br/>Defaults to false
            */
-          gridOptions.exporterSuppressButton = gridOptions.exporterSuppressButton === true;
+          gridOptions.exporterSuppressMenu = gridOptions.exporterSuppressMenu === true;
           /**
            * @ngdoc object
            * @name exporterLinkTemplate
@@ -200,13 +200,26 @@
           gridOptions.exporterLinkLabel = gridOptions.exporterLinkLabel ? gridOptions.exporterLinkLabel : 'Download CSV';
           /**
            * @ngdoc object
-           * @name exporterButtonLabel
+           * @name exporterMenuLabel
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The text to show on the exporter menu button
            * link
            * <br/>Defaults to 'Export'
            */
-          gridOptions.exporterButtonLabel = gridOptions.exporterButtonLabel ? gridOptions.exporterButtonLabel : 'Export';
+          gridOptions.exporterMenuLabel = gridOptions.exporterMenuLabel ? gridOptions.exporterMenuLabel : 'Export';
+          /**
+           * @ngdoc object
+           * @name exporterSuppressColumns
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Columns that should not be exported.  The selectionRowHeader is already automatically
+           * suppressed, but if you had a button column or some other "system" column that shouldn't be shown in the
+           * output then add it in this list.  You should provide an array of column names.
+           * <br/>Defaults to: []
+           * <pre>
+           *   gridOptions.exporterSuppressColumns = [ 'buttons' ];
+           * </pre>
+           */
+          gridOptions.exporterSuppressColumns = gridOptions.exporterSuppressColumns ? gridOptions.exporterSuppressColumns : [];
           /**
            * @ngdoc object
            * @name exporterPdfDefaultStyle
@@ -302,8 +315,53 @@
            * @description Add pdf export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuPdf = gridOptions.exporterMenuPdf !== undefined ? gridOptions.exporterMenuPdf : true;
+          
+          /**
+           * @ngdoc object
+           * @name exporterHeaderFilter
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to apply to the header displayNames before exporting.  Useful for internationalisation,
+           * for example if you were using angular-translate you'd set this to `$translate.instant`.  Note that this
+           * call must be synchronous, it cannot be a call that returns a promise.
+           * @example
+           * <pre>
+           *   gridOptions.exporterHeaderFilter = function( displayName ){ return 'col: ' + displayName; };
+           * </pre>
+           * OR
+           * <pre>
+           *   gridOptions.exporterHeaderFilter = $translate.instant;
+           * </pre>
+           */
 
-
+          /**
+           * @ngdoc function
+           * @name exporterFieldCallback
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to call for each field before exporting it.  Allows 
+           * massaging of raw data into a display format, for example if you have applied 
+           * filters to convert codes into decodes, or you require
+           * a specific date format in the exported content.
+           * 
+           * The method is called once for each field exported, and provides the grid, the
+           * gridCOl and the GridRow for you to use as context in massaging the data.
+           * 
+           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {GridRow} row the row from which the data comes
+           * @param {GridCol} col the column from which the data comes
+           * @param {object} value the value for your massaging
+           * @returns {object} you must return the massaged value ready for exporting
+           * 
+           * @example
+           * <pre>
+           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ){
+           *     if ( col.name === 'status' ){
+           *       value = decodeStatus( value );
+           *     }
+           *     return value;
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterFieldCallback = gridOptions.exporterFieldCallback ? gridOptions.exporterFieldCallback : function( grid, row, col, value ) { return value; };
         },
 
 
@@ -425,8 +483,6 @@
          * as a title row for the exported file, all headers have 
          * headerCellFilters applied as appropriate.
          * 
-         * TODO: filters
-         * 
          * Column headers are an array of objects, each object has
          * name, displayName, width and align attributes.  Only name is
          * used for csv, all attributes are used for pdf.
@@ -439,13 +495,13 @@
         getColumnHeaders: function (grid, colTypes) {
           var headers = [];
           angular.forEach(grid.columns, function( gridCol, index ) {
-            if (gridCol.visible || colTypes === uiGridExporterConstants.ALL){
+            if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
+                 gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
+                 grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
               headers.push({
                 name: gridCol.field,
-                displayName: gridCol.displayName,
-                // TODO: should we do something to normalise here if too wide?
+                displayName: grid.options.exporterHeaderFilter ? grid.options.exporterHeaderFilter(gridCol.displayName) : gridCol.displayName,
                 width: gridCol.drawnWidth ? gridCol.drawnWidth : gridCol.width,
-                // TODO: if/when we have an alignment attribute, use it here
                 align: gridCol.colDef.type === 'number' ? 'right' : 'left'
               });
             }
@@ -495,8 +551,10 @@
 
               var extractedRow = [];
               angular.forEach(grid.columns, function( gridCol, index ) {
-                if (gridCol.visible || colTypes === uiGridExporterConstants.ALL){
-                  extractedRow.push(grid.getCellValue(row, gridCol));
+              if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
+                   gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
+                   grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
+                  extractedRow.push( grid.options.exporterFieldCallback( grid, row, gridCol, grid.getCellValue( row, gridCol ) ) );
                 }
               });
               
