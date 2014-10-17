@@ -1,3 +1,5 @@
+/* global CSV */
+
 (function () {
   'use strict';
 
@@ -470,34 +472,8 @@
         parseCsv: function( importFile ) {
           var csv = importFile.target.result;
           
-          var reviver = function(r, c, v) { return v; };
-          var chars = csv.split(''), c = 0, cc = chars.length, start, end, table = [], row;
-          while (c < cc) {
-            table.push(row = []);
-            while (c < cc && chars[c] !== '\r' && chars[c] !== '\n' ) {
-              start = end = c;
-              if ( chars[c] === '"'){
-                start = end = ++c;
-                while (c < cc) {
-                  if ( chars[c] === '"' ) {
-                    if ( chars[c+1] !== '"') { break; }
-                    else { chars[++c] = ''; } // unescape ""
-                  }
-                  end = ++c;
-                }
-                if ( chars[c] === '"' ) { ++c; }
-                while (c < cc && chars[c] !== '\r' && chars[c] !== '\n' && chars[c] !== ',') { ++c; }
-              } else {
-                while (c < cc && chars[c] !== '\r' && chars[c] !== '\n' && chars[c] !== ',') { end = ++c; }
-              }
-              end = reviver(table.length-1, row.length, chars.slice(start, end).join(''));
-              row.push(isNaN(end) ? end : +end);
-              if (chars[c] === ',') { ++c; }
-            }
-            if (chars[c] === '\r') { ++c; }
-            if (chars[c] === '\n') { ++c; }
-          }
-          return table;
+          // use the CSV-JS library to parse
+          return CSV.parse(csv);
         },
         
 
@@ -639,7 +615,7 @@
          * @param {array} newObjects the objects we want to insert into the grid data
          * @returns {object} the new object
          */
-        addObjects: function( grid, newObjects ){
+        addObjects: function( grid, newObjects, $scope ){
           if ( grid.api.rowEdit ){
             var callbackId = grid.registerDataChangeCallback( function() {
               grid.api.rowEdit.setRowsDirty( grid, newObjects );
@@ -653,7 +629,7 @@
             grid.importer.$scope.$on( '$destroy', deregisterClosure );
           }
 
-          grid.options.importerDataAddCallback( grid, newObjects );
+          grid.importer.$scope.$apply( grid.options.importerDataAddCallback( grid, newObjects ) );
           
         },
         
