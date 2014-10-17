@@ -2,6 +2,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
   var uiGridExporterService;
   var uiGridSelectionService;
   var uiGridExporterConstants;
+  var uiGridSelectionConstants;
   var gridClassFactory;
   var grid;
   var $compile;
@@ -12,7 +13,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
 
 
   beforeEach(inject(function (_uiGridExporterService_, _uiGridSelectionService_, _gridClassFactory_, _uiGridExporterConstants_,
-                              _$compile_, _$rootScope_, _$document_) {
+                              _$compile_, _$rootScope_, _$document_, _uiGridSelectionConstants_) {
     uiGridExporterService = _uiGridExporterService_;
     uiGridSelectionService = _uiGridSelectionService_;
     uiGridExporterConstants = _uiGridExporterConstants_;
@@ -20,6 +21,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     $compile = _$compile_;
     $scope = _$rootScope_.$new();
     $document = _$document_;
+    uiGridSelectionConstants = _uiGridSelectionConstants_;
 
     grid = gridClassFactory.createGrid({});
     grid.options.columnDefs = [
@@ -63,11 +65,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     it('set all options to default', function() {
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
-        exporterSuppressButton: false,
+        exporterSuppressMenu: false,
         exporterLinkTemplate: 'ui-grid/csvLink',
         exporterHeaderTemplate: 'ui-grid/exporterHeader',
         exporterLinkLabel: 'Download CSV',
-        exporterButtonLabel: 'Export',
+        exporterMenuLabel: 'Export',
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
@@ -75,17 +77,20 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
         exporterMenuCsv: true,
-        exporterMenuPdf: true
+        exporterMenuPdf: true,
+        exporterFieldCallback: jasmine.any(Function),
+        exporterSuppressColumns: []
       });
     });
 
     it('set all options to non-default', function() {
+      var callback = function() {};
       options = {
-        exporterSuppressButton: true,
+        exporterSuppressMenu: true,
         exporterLinkTemplate: 'myCsvLink',
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
-        exporterButtonLabel: 'custom export button',
+        exporterMenuLabel: 'custom export button',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -93,15 +98,17 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterMenuCsv: false,
-        exporterMenuPdf: false
+        exporterMenuPdf: false,
+        exporterFieldCallback: callback,
+        exporterSuppressColumns: [ 'buttons' ]
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
-        exporterSuppressButton: true,
+        exporterSuppressMenu: true,
         exporterLinkTemplate: 'myCsvLink',
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
-        exporterButtonLabel: 'custom export button',
+        exporterMenuLabel: 'custom export button',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -109,7 +116,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterMenuCsv: false,
-        exporterMenuPdf: false
+        exporterMenuPdf: false,
+        exporterFieldCallback: callback,
+        exporterSuppressColumns: [ 'buttons' ]
       });
     });    
   });
@@ -132,6 +141,35 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col4', displayName: 'Col4', width: 200, align: 'left'}
       ]);
     });
+
+    it('ignores selection header', function() {
+      grid.columns[0].name = uiGridSelectionConstants.selectionRowHeaderColName;
+      expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
+        {name: 'col2', displayName: 'Col2', width: '*', align: 'right'},
+        {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
+        {name: 'col4', displayName: 'Col4', width: 200, align: 'left'}
+      ]);
+    });
+
+    it('ignores suppressed header', function() {
+      grid.options.exporterSuppressColumns = [ 'col1'];
+      expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
+        {name: 'col2', displayName: 'Col2', width: '*', align: 'right'},
+        {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
+        {name: 'col4', displayName: 'Col4', width: 200, align: 'left'}
+      ]);
+    });
+
+    it('gets all headers using headerFilter', function() {
+      grid.options.exporterHeaderFilter = function( displayName ){ return "mapped_" + displayName; };
+
+      expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
+        {name: 'col1', displayName: 'mapped_Col1', width: 50, align: 'left'},
+        {name: 'col2', displayName: 'mapped_Col2', width: '*', align: 'right'},
+        {name: 'col3', displayName: 'mapped_Col3', width: 100, align: 'left'},
+        {name: 'col4', displayName: 'mapped_Col4', width: 200, align: 'left'}
+      ]);
+    });
   });
 
 
@@ -141,6 +179,24 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ 'a_0', 'b_0', 'c_0', 'd_0' ],
         [ 'a_1', 'b_1', 'c_1', 'd_1' ],
         [ 'a_2', 'b_2', 'c_2', 'd_2' ]
+      ]);
+    });
+
+    it('ignores selection row header column', function() {
+      grid.columns[0].name = uiGridSelectionConstants.selectionRowHeaderColName;
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+        [ 'b_0', 'c_0', 'd_0' ],
+        [ 'b_1', 'c_1', 'd_1' ],
+        [ 'b_2', 'c_2', 'd_2' ]
+      ]);
+    });
+
+    it('ignores suppressed column', function() {
+      grid.options.exporterSuppressColumns = [ 'col1' ];
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+        [ 'b_0', 'c_0', 'd_0' ],
+        [ 'b_1', 'c_1', 'd_1' ],
+        [ 'b_2', 'c_2', 'd_2' ]
       ]);
     });
 
@@ -156,6 +212,22 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ 'a_0', 'b_0', 'd_0' ]
       ]);
     });    
+
+    it('maps data using objectCallback', function() {
+      grid.options.exporterFieldCallback = function( grid, row, col, value ){
+        if ( col.name === 'col2' ){
+          return 'translated';
+        } else {
+          return value;
+        }
+      };
+
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+        [ 'a_0', 'translated', 'c_0', 'd_0' ],
+        [ 'a_1', 'translated', 'c_1', 'd_1' ],
+        [ 'a_2', 'translated', 'c_2', 'd_2' ]
+      ]);
+    });
   });
 
 
