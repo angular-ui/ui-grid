@@ -6,10 +6,14 @@ This grid example uses the ui-grid-selection directive to row selection. To enab
 module and you must include the ui-grid-selection directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
+By default the selection feature will divide selection changes into batch events and single events, there are
+two different events provided in the api.  By setting `enableSelectionBatchEvent: false` you can cause it to 
+instead just call the single event in a loop - which may be useful if you're doing client rather than server
+side processing of the changes.
 
 By default the module will provide a row header with checkboxes that allow selection of individual rows.  If you set
 the `enableRowHeaderSelection` gridOption to false, then the row header is hidden and a click on the row will
-result in selection of that row.
+result in selection of that row.  You can see that in this tutorial for grid1 by looking at your javascript console.
 
 Setting the `multiSelect` gridOption to true will allow selecting multiple rows, setting to false will allow selection
 of only one row at a time.
@@ -84,6 +88,11 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
           $scope.gridApi = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope,function(row){
             var msg = 'row selected ' + row.isSelected;
+            $log.log(msg);
+          });
+
+          gridApi.selection.on.rowSelectionChangedBatch($scope,function(rows){
+            var msg = 'rows changed ' + rows.length;
             $log.log(msg);
           });
         };
