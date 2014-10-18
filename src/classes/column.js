@@ -106,7 +106,8 @@
         }
         var dir;
         if(self.colDef.sortDirection && !gotUserSortDirection){
-            dir = self.sortDirection === ASC ? ASC : DESC;       
+            dir = self.sortDirection === ASC ? ASC : DESC;
+            gotUserSortDirection = true;
         } else {
             dir = self.sortDirection === ASC ? DESC : ASC;    
         }
