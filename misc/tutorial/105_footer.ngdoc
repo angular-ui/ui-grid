@@ -41,6 +41,7 @@ show the aggregation but without a label.  Refer the third column in the example
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <button id="footerButton" class="btn btn-success" ng-click="gridOptions.showFooter = !gridOptions.showFooter">Toggle Footer</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
