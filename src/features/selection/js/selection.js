@@ -23,7 +23,8 @@
    *  @description constants available in selection module
    */
   module.constant('uiGridSelectionConstants', {
-    featureName: "selection"
+    featureName: "selection",
+    selectionRowHeaderColName: 'selectionRowHeaderCol'
   });
 
   /**
@@ -439,7 +440,7 @@
               uiGridSelectionService.initializeGrid(uiGridCtrl.grid);
               if (uiGridCtrl.grid.options.enableRowHeaderSelection) {
                 var selectionRowHeaderDef = {
-                  name: 'selectionRowHeaderCol',
+                  name: uiGridSelectionConstants.selectionRowHeaderColName,
                   displayName: '',
                   width: 30,
                   cellTemplate: 'ui-grid/selectionRowHeader',
