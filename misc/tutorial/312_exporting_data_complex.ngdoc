@@ -14,7 +14,10 @@ The options and API for exporter can be found at {@link api/ui.grid.exporter ui.
 
 @example
 In this example we provide a custom UI for calling the exporter, and we tailor
-the way the returned data behaves.
+the pdf layout to have different styles than the default.
+
+We also apply a filter to the headers (simulating internationalisation), and we reprocess the grid
+data to apply a filter to decode coded data.
 
 <example module="app">
   <file name="app.js">
@@ -24,8 +27,8 @@ the way the returned data behaves.
       $scope.gridOptions = {
         columnDefs: [
           { field: 'name' },
-          { field: 'gender', visible: false},
-          { field: 'company' }
+          { field: 'gender', cellFilter: 'mapGender' },
+          { field: 'company', visible: false }
         ],
         exporterLinkLabel: 'get your csv here',
         exporterPdfDefaultStyle: {fontSize: 9},
@@ -34,6 +37,30 @@ the way the returned data behaves.
         exporterPdfOrientation: 'portrait',
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
+        exporterHeaderFilter: function( displayName ) { 
+          if( displayName === 'Name' ) { 
+            return 'Person Name'; 
+          } else { 
+            return displayName;
+          } 
+        },
+        exporterFieldCallback: function( grid, row, col, input ) {
+          if( col.name == 'gender' ){
+            switch( input ){
+              case 1:
+                return 'female';
+                break;
+              case 2:
+                return 'male';
+                break;
+              default:
+                return 'unknown';
+                break;
+            }
+          } else {
+            return input;
+          }
+        },
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
         }
@@ -41,6 +68,13 @@ the way the returned data behaves.
       
       $http.get('/data/100.json')
         .success(function(data) {
+          angular.forEach( data, function( row, index ) {
+            if( row.gender === 'female' ){
+              row.gender = 1;
+            } else {
+              row.gender = 2;
+            }
+          });
           $scope.gridOptions.data = data;
         });
         
@@ -54,7 +88,23 @@ the way the returned data behaves.
           $scope.gridApi.exporter.pdfExport( $scope.export_row_type, $scope.export_column_type );
         };
       };
-    }]);
+    }])
+    
+    .filter('mapGender', function() {
+      return function( input ) {
+        switch( input ){
+          case 1:
+            return 'female';
+            break;
+          case 2:
+            return 'male';
+            break;
+          default:
+            return 'unknown';
+            break;
+        }
+      };
+    });
   </file>
   
   <file name="index.html">
