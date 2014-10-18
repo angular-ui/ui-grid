@@ -9,6 +9,7 @@ grunt
 if [ $TRAVIS_PULL_REQUEST != "false" ]
 then
   # Do nothing on a pull request. The default task already runs the test:single test
+  echo "Do nothing on a pull request, and fill in this space to avoid an error"
 else
   grunt test:ci
 
