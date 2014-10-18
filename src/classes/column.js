@@ -99,11 +99,17 @@
     self.noSortVisible = function() {
         return !self.sortDirection;
     };
+    var gotUserSortDirection = false;
     self.sort = function(evt) {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
-        var dir = self.sortDirection === ASC ? DESC : ASC;
+        var dir;
+        if(self.colDef.sortDirection && !gotUserSortDirection){
+            dir = self.sortDirection === ASC ? ASC : DESC;       
+        } else {
+            dir = self.sortDirection === ASC ? DESC : ASC;    
+        }
         self.sortDirection = dir;
         config.sortCallback(self, evt);
         return false;
