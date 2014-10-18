@@ -375,7 +375,7 @@ angular.module('ui.grid')
       self.grid.api.core.raise.sortChanged( self, self.grid.getColumnSorting() );
     };
 
-    self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    self.minWidth = !colDef.minWidth ? 30 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
 
     //use field if it is defined; name if it is not
