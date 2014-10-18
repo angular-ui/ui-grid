@@ -152,13 +152,17 @@
                   }
 
                   grid.rows.forEach(function (row) {
-                    if (row.visible) {
+                    if (row.visible === row.isSelected) {
+                      return;
+                    } else if (row.visible) {
                       row.isSelected = true;
                       grid.api.selection.raise.rowSelectionChanged(row);
                     } else {
                       row.isSelected = false;
                       grid.api.selection.raise.rowSelectionChanged(row);
                     }
+
+                    grid.api.selection.raise.rowSelectionChanged(row);
                   });
                 },
                 /**
