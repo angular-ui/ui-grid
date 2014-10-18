@@ -712,6 +712,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(self.lastSortedColumns, function (c) {
                 c.sortDirection = "";
                 c.sortPriority = null;
+                c.gotUserSortDirection = false;
             });
             self.lastSortedColumns = [];
         } else {
@@ -719,6 +720,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 if (col.index !== c.index) {
                     c.sortDirection = "";
                     c.sortPriority = null;
+                    c.gotUserSortDirection = false;
                 }
             });
             self.lastSortedColumns[0] = col;
