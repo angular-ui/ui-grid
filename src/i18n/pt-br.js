@@ -5,7 +5,7 @@ window.ngGrid.i18n['pt-br'] = {
     ngMenuText: 'Selecione as colunas:',
     ngShowingItemsLabel: 'Mostrando os Itens:',
     ngTotalItemsLabel: 'Total de Itens:',
-    ngSelectedItemsLabel: 'Items Selecionados:',
+    ngSelectedItemsLabel: 'Itens Selecionados:',
     ngPageSizeLabel: 'Tamanho da Página:',
     ngPagerFirstTitle: 'Primeira Página',
     ngPagerNextTitle: 'Próxima Página',
