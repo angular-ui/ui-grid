@@ -103,8 +103,8 @@
        */
 
       loadData: function (grid) {
-        grid.api.infiniteScroll.raise.needLoadMoreData();
-        grid.options.loadTimout = true;
+		grid.options.loadTimout = true;
+        grid.api.infiniteScroll.raise.needLoadMoreData();        
       },
 
       /**
