@@ -83,28 +83,29 @@ in (lower priority gets sorted first).
             sort: {
               direction: 'asc',
               priority: 0,
-              sortingAlgorithm: function(a, b) {
-                var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
-                if( nulls !== null ) {
-                  return nulls;
-                } else {
-                  if( a === b ) {
-                    return 0;
-                  }
-                  if( a === 'male' ) {
-                    return -1;
-                  }
-                  if( b === 'male' ) {
-                    return 1;
-                  }
-                  if( a == 'female' ) {
-                    return -1;
-                  }
-                  if( b === 'female' ) {
-                    return 1;
-                  }
+            },
+            
+            sortingAlgorithm: function(a, b) {
+              var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+              if( nulls !== null ) {
+                return nulls;
+              } else {
+                if( a === b ) {
                   return 0;
                 }
+                if( a === 'male' ) {
+                  return -1;
+                }
+                if( b === 'male' ) {
+                  return 1;
+                }
+                if( a == 'female' ) {
+                  return -1;
+                }
+                if( b === 'female' ) {
+                  return 1;
+                }
+                return 0;
               }
             }
           },
