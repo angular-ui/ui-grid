@@ -35,10 +35,7 @@ angular.module('ui.grid')
   delete options.id;
 
   // Get default options
-  self.options = new GridOptions();
-
-  // Extend the default options with what we were passed in
-  angular.extend(self.options, options);
+  self.options = GridOptions.initialize( options );
 
   self.headerHeight = self.options.headerRowHeight;
   self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
@@ -322,7 +319,7 @@ angular.module('ui.grid')
    * @name deregisterDataChangeCallback
    * @methodOf ui.grid.class:Grid
    * @description Delete the callback identified by the id.
-   * @param {string} uid uid of the callback to be deregistered
+   * @param {string} uid the uid of the function that is to be deregistered
    */
   Grid.prototype.deregisterDataChangeCallback = function deregisterDataChangeCallback(uid) {
     delete this.dataChangeCallbacks[uid];
@@ -333,7 +330,7 @@ angular.module('ui.grid')
    * @name callDataChangeCallbacks
    * @methodOf ui.grid.class:Grid
    * @description Calls the callbacks based on the type of data change that
-   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT and COLUMN callbacks if the 
+   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, and COLUMN callbacks if the 
    * event type is matching, or if the type is ALL.
    * @param {number} type the type of event that occurred - one of the 
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
