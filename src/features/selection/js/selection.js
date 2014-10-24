@@ -646,7 +646,7 @@
             }
 
             function registerRowSelectionEvents() {
-              $elm.on('click', function (evt) {
+              $elm.on('click touchend', function (evt) {
                 if (evt.shiftKey) {
                   uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                 }
