@@ -655,10 +655,16 @@
           
           var linkTemplate = gridUtil.getTemplate(grid.options.exporterLinkTemplate)
           .then(function (contents) {
-            contents = contents.replace(uiGridExporterConstants.LINK_LABEL, grid.options.exporterLinkLabel);
-            contents = contents.replace(uiGridExporterConstants.CSV_CONTENT, encodeURIComponent(csvContent));
-          
-            var template = angular.element(contents);
+
+              var template = angular.element(contents);
+
+              template.children("a").html(
+                  template.children("a").html().replace(
+                      uiGridExporterConstants.LINK_LABEL, grid.options.exporterLinkLabel));
+
+              template.children("a").attr("href", 
+                  template.children("a").attr("href").replace(
+                      uiGridExporterConstants.CSV_CONTENT, encodeURIComponent(csvContent)));
             
             var newElm = $compile(template)(grid.exporter.$scope);
             targetElm.append(newElm);
