@@ -630,18 +630,18 @@
             return '"' + field.replace(/"/g,'""') + '"';
           }
           if (field instanceof Date) {
-            var curr_year = field.getFullYear();
-            var curr_month = field.getMonth() + 1;
-            var curr_date = field.getDate();
-            var curr_hour = field.getHours();
-            var curr_mins = field.getMinutes();
-            var curr_secs = field.getSeconds();
-            if (curr_month < 10) curr_month = "0" + curr_month;
-            if (curr_date < 10) curr_date = "0" + curr_date;
-            if (curr_hour < 10) curr_hour = "0" + curr_hour;
-            if (curr_mins < 10) curr_mins = "0" + curr_mins;
-            if (curr_secs < 10) curr_secs = "0" + curr_secs;
-            return curr_year + "-" + curr_month + "-" + curr_date + " " + curr_hour + ":" + curr_mins + ":" + curr_secs;
+            var field_year = field.getFullYear();
+            var field_month = field.getMonth() + 1;
+            var field_date = field.getDate();
+            var field_hour = field.getHours();
+            var field_mins = field.getMinutes();
+            var field_secs = field.getSeconds();
+            if (field_month < 10) field_month = "0" + field_month;
+            if (field_date < 10) field_date = "0" + field_date;
+            if (field_hour < 10) field_hour = "0" + field_hour;
+            if (field_mins < 10) field_mins = "0" + field_mins;
+            if (field_secs < 10) field_secs = "0" + field_secs;
+            return field_year + "-" + field_month + "-" + field_date + " " + field_hour + ":" + field_mins + ":" + field_secs;
           }
           
           return JSON.stringify(field);        
