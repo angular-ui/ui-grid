@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridFooterCell', ['$timeout', 'gridUtil', '$compile', function ($timeout, gridUtil, $compile) {
+  angular.module('ui.grid').directive('uiGridFooterCell', ['$timeout', 'gridUtil', 'uiGridConstants', '$compile',
+  function ($timeout, gridUtil, uiGridConstants, $compile) {
     var uiGridFooterCell = {
       priority: 0,
       scope: {
@@ -37,6 +38,35 @@
             $scope.grid = uiGridCtrl.grid;
 
             $elm.addClass($scope.col.getColClass(false));
+
+            // apply any footerCellClass
+            var classAdded;
+            var updateClass = function( grid ){
+              var contents = $elm;
+              if ( classAdded ){
+                contents.removeClass( classAdded );
+                classAdded = null;
+              }
+  
+              if (angular.isFunction($scope.col.footerCellClass)) {
+                classAdded = $scope.col.footerCellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex);
+              }
+              else {
+                classAdded = $scope.col.footerCellClass;
+              }
+              contents.addClass(classAdded);
+            };
+  
+            if ($scope.col.footerCellClass) {
+              updateClass();
+            }
+
+            // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
+            var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+
+            $scope.$on( '$destroy', function() {
+              $scope.grid.deregisterDataChangeCallback( watchUid ); 
+            });
           }
         };
       }
