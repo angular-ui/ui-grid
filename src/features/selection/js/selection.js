@@ -646,7 +646,9 @@
             }
 
             function registerRowSelectionEvents() {
-              $elm.on('click touchend', function (evt) {
+              var touchStartTime = 0;
+              var touchTimeout = 300;
+              var selectCells = function(evt){
                 if (evt.shiftKey) {
                   uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
                 }
@@ -657,6 +659,24 @@
                   uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
                 }
                 $scope.$apply();
+              };
+
+              $elm.on('touchstart', function(event) {
+                touchStartTime = (new Date()).getTime();
+              });
+
+              $elm.on('touchend', function (evt) {
+                var touchEndTime = (new Date()).getTime();
+                var touchTime = touchEndTime - touchStartTime;
+
+                if (touchTime < touchTimeout ) {
+                  // short touch
+                  selectCells(evt);
+                }
+              });
+
+              $elm.on('click', function (evt) {
+                selectCells(evt);
               });
             }
           }
