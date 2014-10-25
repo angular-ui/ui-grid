@@ -22,8 +22,8 @@ When sorting using the headers, clicking on a header removes all other sorts unl
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
+      $scope.gridOptions1 = {
         enableSorting: true,
         columnDefs: [
           { field: 'name' },
@@ -32,40 +32,7 @@ When sorting using the headers, clicking on a header removes all other sorts unl
         ]
       };
 
-      $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-        });
-    }]);
-  </file>
-  <file name="index.html">
-    <div ng-controller="MainCtrl">
-      Click on a column header to sort by that column. (The third column has sorting disabled.)
-      <br>
-      <br>
-      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
-    </div>
-  </file>
-  <file name="main.css">
-    .grid {
-      width: 500px;
-      height: 200px;
-    }
-  </file>
-</example>
-
-<h1 id="inital-sort">Initial Sort State</h1>
-
-You can set an initial sort state for the grid by defining the `sort` property on your column definitions. 
-The `direction` sub-property says which way to sort, and the `priority` says what order to sort the columns 
-in (lower priority gets sorted first).
-
-<example module="app2">
-  <file name="app2.js">
-    var app = angular.module('app2', ['ngAnimate', 'ui.grid']);
-
-    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
-      $scope.gridOptions = {
+       $scope.gridOptions2 = {
         enableSorting: true,
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
@@ -81,7 +48,7 @@ in (lower priority gets sorted first).
           {
             field: 'gender',
             sort: {
-              direction: 'asc',
+              direction: uiGridConstants.ASC,
               priority: 0,
             },
             
@@ -94,16 +61,16 @@ in (lower priority gets sorted first).
                   return 0;
                 }
                 if( a === 'male' ) {
-                  return -1;
+                  return 1;
                 }
                 if( b === 'male' ) {
-                  return 1;
-                }
-                if( a == 'female' ) {
                   return -1;
                 }
-                if( b === 'female' ) {
+                if( a == 'female' ) {
                   return 1;
+                }
+                if( b === 'female' ) {
+                  return -1;
                 }
                 return 0;
               }
@@ -113,24 +80,36 @@ in (lower priority gets sorted first).
         ]
       };
 
-      $http.get('/data/100.json')
+     $http.get('/data/100.json')
         .success(function(data) {
-          $scope.gridOptions.data = data;
+          $scope.gridOptions1.data = data;
+          $scope.gridOptions2.data = data;
         });
     }]);
   </file>
-  <file name="index2.html">
+  <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="grid2" ui-grid="gridOptions" class="grid"></div>
+      Click on a column header to sort by that column. (The third column has sorting disabled.)
+      <br>
+      <br>
+      <div id="grid1" ui-grid="gridOptions1" class="grid"></div>
+
+      <br>
+      You can set an initial sort state for the grid by defining the `sort` property on your column definitions. 
+      The `direction` sub-property says which way to sort, and the `priority` says what order to sort the columns 
+      in (lower priority gets sorted first).
+      <br>
+      <br>
+
+      <div id="grid2" ui-grid="gridOptions2" class="grid"></div>
     </div>
   </file>
-  <file name="main2.css">
+  <file name="main.css">
     .grid {
       width: 500px;
       height: 200px;
     }
   </file>
-  
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     
