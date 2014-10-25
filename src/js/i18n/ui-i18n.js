@@ -283,9 +283,9 @@
     };
   };
 
-  DIRECTIVE_ALIASES.forEach(function (alias) {
-    module.directive(alias, ['$parse', 'i18nService', 'i18nConstants', uitDirective]);
-  });
+  angular.forEach( DIRECTIVE_ALIASES, function ( alias ) {
+    module.directive( alias, ['$parse', 'i18nService', 'i18nConstants', uitDirective] );
+  } );
 
   // optional filter syntax
   var uitFilter = function ($parse, i18nService, i18nConstants) {
@@ -296,8 +296,9 @@
     };
   };
 
-  FILTER_ALIASES.forEach(function (alias) {
-    module.filter(alias, ['$parse', 'i18nService', 'i18nConstants', uitFilter]);
-  });
+  angular.forEach( FILTER_ALIASES, function ( alias ) {
+    module.filter( alias, ['$parse', 'i18nService', 'i18nConstants', uitFilter] );
+  } );
+
 
 })();
