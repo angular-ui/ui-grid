@@ -629,7 +629,21 @@
           if (typeof(field) === 'string') {
             return '"' + field.replace(/"/g,'""') + '"';
           }
-
+          if (field instanceof Date) {
+            var field_year = field.getFullYear();
+            var field_month = field.getMonth() + 1;
+            var field_date = field.getDate();
+            var field_hour = field.getHours();
+            var field_mins = field.getMinutes();
+            var field_secs = field.getSeconds();
+            if (field_month < 10) field_month = "0" + field_month;
+            if (field_date < 10) field_date = "0" + field_date;
+            if (field_hour < 10) field_hour = "0" + field_hour;
+            if (field_mins < 10) field_mins = "0" + field_mins;
+            if (field_secs < 10) field_secs = "0" + field_secs;
+            return field_year + "-" + field_month + "-" + field_date + " " + field_hour + ":" + field_mins + ":" + field_secs;
+          }
+          
           return JSON.stringify(field);        
         },
 
