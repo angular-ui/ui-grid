@@ -12,7 +12,7 @@ angular.module('ui.grid')
    * @param {Grid} grid the grid the render container is in
    * @param {object} options the render container options
    */
-.factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
+.factory('GridRenderContainer', ['gridUtil', 'GridRow', function(gridUtil, GridRow) {
   function GridRenderContainer(name, grid, options) {
     var self = this;
 
@@ -247,7 +247,11 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.setRenderedRows = function setRenderedRows(newRows) {
     this.renderedRows.length = newRows.length;
     for (var i = 0; i < newRows.length; i++) {
-      this.renderedRows[i] = newRows[i];
+      if (this.renderedRows[i]) {
+        this.renderedRows[i].copyFrom(newRows[i]);
+      } else {
+        this.renderedRows[i] = newRows[i].clone();
+      }
     }
   };
 
