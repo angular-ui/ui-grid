@@ -56,6 +56,21 @@ angular.module('ui.grid')
     this.height = grid.options.rowHeight;
   }
 
+  GridRow.prototype.clone = function() {
+    var copy = new GridRow(this.entity, null, this.grid);
+    copy.uid = this.uid;
+    copy.visible = this.visible;
+    copy.height = this.height;
+    return copy;
+  };
+
+  GridRow.prototype.copyFrom = function(sourceRow) {
+    this.entity = sourceRow.entity;
+    this.uid = sourceRow.uid;
+    this.visible = sourceRow.visible;
+    this.height = sourceRow.height;
+  };
+
   /**
    * @ngdoc function
    * @name getQualifiedColField
