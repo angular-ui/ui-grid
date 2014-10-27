@@ -519,7 +519,8 @@
                   width: 30,
                   cellTemplate: 'ui-grid/selectionRowHeader',
                   headerCellTemplate: 'ui-grid/selectionHeaderCell',
-                  enableColumnResizing: false
+                  enableColumnResizing: false,
+                  enableColumnMenu: false
                 };
 
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
