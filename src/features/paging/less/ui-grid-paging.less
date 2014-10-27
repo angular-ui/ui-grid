@@ -1,0 +1,95 @@
+.ui-grid-pager-panel {
+    position: relative;
+    left: 0;
+    bottom: -5px;
+    height: 25px;
+    width: 100%;
+
+    &.scrollbars {
+        bottom: -22px; 
+    }
+}
+
+.ui-grid-pager-container {
+    float: left;
+}
+
+.ui-grid-pager-control {
+    margin-right: 10px;
+    margin-left: 10px;
+    min-width: 135px;
+    float: left;
+
+    button {
+        height: 25px;
+        min-width: 26px;
+    }
+
+    input {
+        width: 50px;
+        vertical-align: top;
+    }
+
+    .ui-grid-pager-first-bar {
+        width: 10px;
+        border-left: 2px solid #4d4d4d;
+        margin-top: -6px;
+        height: 12px;
+        margin-left: -3px;
+    }
+
+    .ui-grid-pager-first-triangle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 8.7px 5px 0;
+        border-color: transparent #4d4d4d transparent transparent;
+        margin-left: 2px;
+    }
+
+    .ui-grid-pager-next-triangle {
+        margin-left: 1px;
+    }
+
+    .ui-grid-pager-prev-triangle {
+        margin-left: 0;
+    }
+
+    .ui-grid-pager-last-triangle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 0 5px 8.7px;
+        border-color: transparent transparent transparent #4d4d4d;
+        margin-left: -1px;
+    }
+
+    .ui-grid-pager-last-bar {
+        width: 10px;
+        border-left: 2px solid #4d4d4d;
+        margin-top: -6px;
+        height: 12px;
+        margin-left: 1px;
+    }
+}
+
+.ui-grid-pager-row-count-picker {
+    float: left;
+
+    select {
+        height: 27px;
+        width: 60px;
+    }
+
+    .ui-grid-pager-row-count-label {
+        margin-top: 3px;
+    }
+}
+
+.ui-grid-pager-count-container {
+    float: right;
+
+    .ui-grid-pager-count {
+        margin-right: 10px;
+    }
+}
