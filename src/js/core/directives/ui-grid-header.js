@@ -90,6 +90,7 @@
               var columnCache = containerCtrl.colContainer.visibleColumnCache,
                   canvasWidth = 0,
                   asteriskNum = 0,
+                  leftoverWidth = availableWidth,
                   hasVariableWidth = false;
               
               var getColWidth = function(column){
@@ -100,7 +101,7 @@
                   return parseInt(column.width.replace(/%/g, ''), 10) * availableWidth / 100;
                 }
                 else if (column.widthType === "auto"){ 
-                  var oneAsterisk = parseInt(availableWidth / asteriskNum, 10);
+                  var oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
                   return column.width.length * oneAsterisk; 
                 }
               };
@@ -141,11 +142,10 @@
                 }
                 column.drawnWidth = Math.floor(colWidth);
                 canvasWidth += column.drawnWidth;
+                leftoverWidth -= column.drawnWidth;
               });
               
               // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
-              var leftoverWidth = availableWidth - canvasWidth;
-
               if (hasVariableWidth && leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
                 var prevLeftover = leftoverWidth;
                 var remFn = function (column) {
