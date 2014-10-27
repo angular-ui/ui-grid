@@ -358,7 +358,11 @@ angular.module('ui.grid')
             self.width = parseInt(colDef.width.match(/^(\d+)$/)[1], 10);
           }
           // Otherwise it should be a string of asterisks
-          else if (!colDef.width.match(/^\*+$/)) {
+          else if (colDef.width.match(/^\*+$/)) {
+            self.width = colDef.width;
+          }
+          // If it's not any of those, it's an error
+          else
             throw new Error(parseErrorMsg);
           }
         }
