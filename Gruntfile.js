@@ -214,39 +214,33 @@ module.exports = function(grunt) {
     protractor: {
       options: {
         keepAlive: true,
-        configFile: "./test/protractor.conf.js"
+        configFile: './test/protractor.conf.js',
+        args: {
+          baseUrl: 'http://127.0.0.1:9999'
+        }
       },
       singlerun: {
         options: {
-          keepAlive: false,
-          args: {
-            seleniumPort: 4444,
-            baseUrl: 'http://127.0.0.1:9999',
-            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
-          }
+          keepAlive: false
         }
       },
       ci: {
         options: {
           keepAlive: false,
           args: {
-            // seleniumAddress: 'http://localhost:4445',
-            // seleniumPort: 4445,
-            baseUrl: 'http://127.0.0.1:9999',
-            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
-            sauceUser: process.env.SAUCE_USERNAME,
-            sauceKey: process.env.SAUCE_ACCESS_KEY
+            capabilities: {
+              chromeOptions: {
+                args: ['--no-sandbox']
+              }
+            }
+            // sauceUser: process.env.SAUCE_USERNAME,
+            // sauceKey: process.env.SAUCE_ACCESS_KEY
           }
         }
       },
       auto: {
         options: {
-          keepAlive: true,
-          args: {
-            seleniumPort: 4444,
-            baseUrl: 'http://127.0.0.1:9999',
-            specs: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js']
-          }
+          // Just use base config
         }
       }
       // docs: {
@@ -436,7 +430,7 @@ module.exports = function(grunt) {
     ngdocs: {
       options: {
         dest: '<%= dist %>/docs',
-        testingUrlPrefix: '<%= protractor.auto.options.args.baseUrl %>/docs/#/',
+        testingUrlPrefix: '<%= protractor.options.args.baseUrl %>/docs/#/',
         versionedFiles: {
           default: process.env.TRAVIS ? 'unstable' : 'stable',
           waitEval: "(function() { var ret = true; try { angular.module('ui.grid'); } catch (e) { ret = false; } return ret; })()",
@@ -630,10 +624,10 @@ module.exports = function(grunt) {
   });
 
   // Testing tasks
-  grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce']);
+  grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce', 'test-e2e-ci']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
-  grunt.registerTask('test:e2e:ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
+  grunt.registerTask('test-e2e-ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
 
   // Test
   grunt.registerTask('test:single', 'Run tests on singleRun karma server', function() {
