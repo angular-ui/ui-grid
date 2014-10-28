@@ -16,6 +16,9 @@ exports.config = {
     }
   },
 
+  // Wait 30 seconds for page synchronization
+  allScriptsTimeout: 30000,
+
   // A base URL for your application under test. Calls to protractor.get()
   // with relative paths will be prepended with this.
   // baseUrl: 'http://localhost:9999',
