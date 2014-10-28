@@ -40,8 +40,10 @@ describe('uiGridHeaderCell', function () {
       onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
     };
 
+    $scope.extScope = 'test';
+
     recompile = function () {
-      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" external-scopes="extScope"></div>');
       
       $compile(grid)($scope);
       $document[0].body.appendChild(grid[0]);
@@ -175,4 +177,16 @@ describe('uiGridHeaderCell', function () {
       expect(headerCell2.hasClass('funcCellClass')).toBe(false);
     }));
   });
+
+  describe('externalScope', function() {
+    it('should be present', function () {
+      var elm = recompile();
+
+      var header = $(grid).find('.ui-grid-header-cell:nth(0)');
+      expect(header).toBeDefined();
+      expect(header.scope().getExternalScopes).toBeDefined();
+      expect(header.scope().getExternalScopes()).toBe('test');
+    });
+  });
+
 });

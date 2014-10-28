@@ -156,7 +156,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
   });
 
 
-  ddescribe('scrollTo', function () {
+  describe('scrollTo', function () {
     /*
      * We have 11 rows (10 visible) and 11 columns (10 visible).  The column widths are 
      * 100 for the first 5, and 200 for the second 5.  Column 2 and row 2 are invisible.
