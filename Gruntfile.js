@@ -620,7 +620,7 @@ module.exports = function(grunt) {
   });
 
   // Testing tasks
-  grunt.registerTask('test', ['default']);
+  grunt.registerTask('test', ['before-test', 'test:single']);
   grunt.registerTask('test:ci', ['before-test', 'serialsauce', 'test:ci-e2e']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
