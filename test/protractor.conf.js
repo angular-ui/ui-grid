@@ -6,6 +6,8 @@ exports.config = {
   seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.42.2.jar',
   seleniumPort: 4444,
 
+  specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],
+
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
     'browserName': 'chrome'

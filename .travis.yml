@@ -32,6 +32,11 @@ branches:
   - /^3\.0$/
   - /^release-.*$/
 
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+
 before_script:
   - echo "TRAVIS_PULL_REQUEST $TRAVIS_PULL_REQUEST ${TRAVIS_PULL_REQUEST}"
   - echo "TRAVIS_BRANCH $TRAVIS_BRANCH ${TRAVIS_BRANCH}"
