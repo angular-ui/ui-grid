@@ -393,7 +393,7 @@
               if ( !rowToSelect.isSelected ){
                 rowToSelect.isSelected = true;
                 grid.selection.lastSelectedRow = rowToSelect;
-                service.decideRaiseSelectionEvent( grid, rowToSelect, changedRows );
+                service.decideRaiseSelectionEvent( grid, row, changedRows );
               }
             }
           }
