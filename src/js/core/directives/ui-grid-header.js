@@ -91,7 +91,7 @@
                   canvasWidth = 0,
                   asteriskNum = 0,
                   leftoverWidth = availableWidth,
-				  autoWidth = 0,
+                  autoWidth = 0,
                   hasVariableWidth = false;
               
               var getColWidth = function(column){
@@ -143,10 +143,10 @@
                 }
                 column.drawnWidth = Math.floor(colWidth);
                 canvasWidth += column.drawnWidth;
-				if (column.widthType === "auto") {
-                    autoWidth += column.drawnWidth;
+                if (column.widthType === "auto") {
+                  autoWidth += column.drawnWidth;
                 } else {
-                    leftoverWidth -= column.drawnWidth;
+                  leftoverWidth -= column.drawnWidth;
                 }
               });
               leftoverWidth = leftoverWidth - autoWidth;
