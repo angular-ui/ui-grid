@@ -227,12 +227,8 @@ module.exports = function(grunt) {
       ci: {
         options: {
           keepAlive: false,
+          configFile: './test/protractor.ci.conf.js',
           args: {
-            capabilities: {
-              chromeOptions: {
-                args: ['--no-sandbox']
-              }
-            }
             // sauceUser: process.env.SAUCE_USERNAME,
             // sauceKey: process.env.SAUCE_ACCESS_KEY
           }
