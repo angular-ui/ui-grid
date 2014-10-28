@@ -621,7 +621,7 @@ module.exports = function(grunt) {
 
   // Testing tasks
   grunt.registerTask('test', ['before-test', 'test:single']);
-  grunt.registerTask('test:ci', ['before-test', 'serialsauce', 'test:ci-e2e']);
+  grunt.registerTask('test:ci', ['before-test', 'serialsauce']); // NOTE(c0bra): Removed this task for now, as Selenium is timing out while connecting to the Chromium browser... : 'test:ci-e2e'
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
   grunt.registerTask('test:ci-e2e', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
