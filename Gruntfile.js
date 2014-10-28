@@ -620,10 +620,11 @@ module.exports = function(grunt) {
   });
 
   // Testing tasks
-  grunt.registerTask('test:ci', ['clean', 'jshint', 'jscs', 'ngtemplates', 'serialsauce', 'test-e2e-ci']);
+  grunt.registerTask('test', ['default']);
+  grunt.registerTask('test:ci', ['before-test', 'serialsauce', 'test:ci-e2e']);
   grunt.registerTask('test:docs', ['connect:testserver', 'protractor:docs']);
   grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
-  grunt.registerTask('test-e2e-ci', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
+  grunt.registerTask('test:ci-e2e', ['clean', 'build', 'connect:testserver', 'protractor:ci']);
 
   // Test
   grunt.registerTask('test:single', 'Run tests on singleRun karma server', function() {
