@@ -27,6 +27,7 @@
             var renderContainerCtrl = controllers[1];
 
             $scope.grid = uiGridCtrl.grid;
+            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
