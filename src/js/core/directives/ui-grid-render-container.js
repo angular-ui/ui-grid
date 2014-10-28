@@ -251,58 +251,10 @@
               $document.unbind('touchend', touchend);
               $document.unbind('touchcancel', touchend);
 
-              // Get the distance we moved on the Y axis
-              var scrollTopEnd = containerCtrl.viewport[0].scrollTop;
-              var scrollLeftEnd = containerCtrl.viewport[0].scrollTop;
-              var deltaY = Math.abs(scrollTopEnd - scrollTopStart);
-              var deltaX = Math.abs(scrollLeftEnd - scrollLeftStart);
-
-              // Get the duration it took to move this far
-              var moveDuration = (new Date()) - moveStart;
-
-              // Scale the amount moved by the time it took to move it (i.e. quicker, longer moves == more scrolling after the move is over)
-              var moveYScale = deltaY / moveDuration;
-              var moveXScale = deltaX / moveDuration;
-
-              var decelerateInterval = 63; // 1/16th second
-              var decelerateCount = 8; // == 1/2 second
-              var scrollYLength = 120 * directionY * moveYScale;
-              var scrollXLength = 120 * directionX * moveXScale;
-
-              function decelerate() {
-                $timeout(function() {
-                  var args = { target: event.target };
-
-                  if (scrollYLength !== 0) {
-                    var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYLength) / (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
-
-                    args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
-                  }
-
-                  if (scrollXLength !== 0) {
-                    var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXLength) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-                    args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
-                  }
-
-                  uiGridCtrl.fireScrollingEvent(args);
-
-                  decelerateCount = decelerateCount -1;
-                  scrollYLength = scrollYLength / 2;
-                  scrollXLength = scrollXLength / 2;
-
-                  if (decelerateCount > 0) {
-                    decelerate();
-                  }
-                  else {
-                    uiGridCtrl.scrollbars.forEach(function (sbar) {
-                      sbar.removeClass('ui-grid-scrollbar-visible');
-                      sbar.removeClass('ui-grid-scrolling');
-                    });
-                  }
-                }, decelerateInterval);
-              }
-
-              decelerate();
+			  uiGridCtrl.scrollbars.forEach(function (sbar) {
+				  sbar.removeClass('ui-grid-scrollbar-visible');
+				  sbar.removeClass('ui-grid-scrolling');
+			  });
             }
 
             if (GridUtil.isTouchEnabled()) {
