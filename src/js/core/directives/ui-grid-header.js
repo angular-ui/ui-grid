@@ -154,7 +154,7 @@
               if (hasVariableWidth && leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
                 var prevLeftover = leftoverWidth;
                 var remFn = function (column) {
-                  if (leftoverWidth > 0 && column.widthType === "auto" || column.widthType === "percent") {
+                  if (leftoverWidth > 0 && (column.widthType === "auto" || column.widthType === "percent")) {
                     column.drawnWidth = column.drawnWidth + 1;
                     canvasWidth = canvasWidth + 1;
                     leftoverWidth--;
