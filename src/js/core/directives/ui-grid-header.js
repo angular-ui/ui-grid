@@ -91,6 +91,7 @@
               var columnCache = containerCtrl.colContainer.visibleColumnCache,
                   canvasWidth = 0,
                   asteriskNum = 0,
+                  oneAsterisk = 0,
                   leftoverWidth = availableWidth,
                   autoWidth = 0,
                   hasVariableWidth = false;
@@ -102,8 +103,12 @@
                 else if (column.widthType === "percent"){ 
                   return parseInt(column.width.replace(/%/g, ''), 10) * availableWidth / 100;
                 }
-                else if (column.widthType === "auto"){ 
-                  var oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
+                else if (column.widthType === "auto"){
+                  // leftOverWidth is subtracted from after each call to this
+                  // function so we need to calculate oneAsterisk size only once
+                  if (oneAsterisk === 0) {
+                    oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
+                  }
                   return column.width.length * oneAsterisk; 
                 }
               };
