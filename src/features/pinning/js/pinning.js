@@ -84,12 +84,20 @@
          *  <br/>Defaults to false
          */
         if (colDef.pinnedLeft) {
-          col.renderContainer = 'left';
-          col.grid.createLeftContainer();
+          col.grid.refresh()
+            .then(function () {
+              col.renderContainer = 'left';
+              col.width = col.drawnWidth;
+              col.grid.createLeftContainer();
+            });
         }
         else if (colDef.pinnedRight) {
-          col.renderContainer = 'right';
-          col.grid.createRightContainer();
+          col.grid.refresh()
+            .then(function() {
+              col.renderContainer = 'right';
+              col.width = col.drawnWidth;
+              col.grid.createRightContainer();
+            });
         }
 
         if (!colDef.enablePinning) {
@@ -169,6 +177,7 @@
       return {
         require: 'uiGrid',
         scope: false,
+        priority: -300,
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
