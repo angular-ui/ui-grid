@@ -1193,7 +1193,7 @@ angular.module('ui.grid')
     }
 
     self.refreshCanceller = $timeout(function () {
-      self.refreshCanvas(true);
+      self.refreshCanvas();
     });
 
     self.refreshCanceller.then(function () {
@@ -1605,9 +1605,7 @@ angular.module('ui.grid')
   Grid.prototype.refreshCanvas = function(buildStyles) {
     var self = this;
     
-    if (buildStyles) {
-      self.buildStyles();
-    }
+
 
     var p = $q.defer();
 
@@ -1618,10 +1616,15 @@ angular.module('ui.grid')
         var container = self.renderContainers[containerId];
 
         if (container.header) {
+          container.explicitHeaderHeight = null;
           containerHeadersToRecalc.push(container);
         }
       }
     }
+
+    if (buildStyles) {
+      self.buildStyles();
+    }    
 
     if (containerHeadersToRecalc.length > 0) {
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
@@ -1670,6 +1673,7 @@ angular.module('ui.grid')
           // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
           if (container.headerHeight < maxHeight) {
             container.explicitHeaderHeight = maxHeight;
+            rebuildStyles = true;
           }
         }
 
