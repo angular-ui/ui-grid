@@ -5,9 +5,9 @@
 Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
 
 <pre>
-  $scope.gridOptions.expandable = {
+  $scope.gridOptions = {
     //This is the template that will be used to render subgrid.
-    rowExpandableTemplate: 'rowExpandableTemplate.html',
+    expandableRowTemplate: 'expandableRowTemplate.html',
     //This will be the height of the subgrid
     expandableRowHeight: 140
   }
