@@ -4,10 +4,12 @@ describe('ui.grid.pinning uiGridPinningService', function () {
   var gridClassFactory;
   var grid;
   var GridRenderContainer;
+  var parentScope;
 
   beforeEach(module('ui.grid.pinning'));
 
-  beforeEach(inject(function (_uiGridPinningService_,_gridClassFactory_, $templateCache, _GridRenderContainer_) {
+  beforeEach(inject(function (_$rootScope_, _uiGridPinningService_,_gridClassFactory_, $templateCache, _GridRenderContainer_) {
+    parentScope = _$rootScope_.$new();
     uiGridPinningService = _uiGridPinningService_;
     gridClassFactory = _gridClassFactory_;
     GridRenderContainer = _GridRenderContainer_;
@@ -86,6 +88,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       gridOptions = {enablePinning: false};
 
       uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+      parentScope.$apply();
       expect(grid.renderContainers.left).toEqual(jasmine.any(GridRenderContainer));
       expect(grid.renderContainers.right).not.toBeDefined();
       expect(mockCol.renderContainer).toBe('left');
@@ -96,7 +99,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       gridOptions = {enablePinning: false};
 
       uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
-
+      parentScope.$apply();
       expect(mockCol.renderContainer).toBe('left');
     });
 
@@ -105,6 +108,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       gridOptions = {enablePinning: false};
 
       uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+      parentScope.$apply();
       expect(grid.renderContainers.right).toEqual(jasmine.any(GridRenderContainer));
       expect(grid.renderContainers.left).not.toBeDefined();
 
