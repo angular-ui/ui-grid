@@ -224,8 +224,8 @@
    *  Events that invoke repositioning of column:
    *    - mouseup
    */
-  module.directive('uiGridHeaderCell', ['$q', 'gridUtil', 'uiGridMoveColumnService', 'uiGridConstants',
-    function ($q, gridUtil, uiGridMoveColumnService, uiGridConstants) {
+  module.directive('uiGridHeaderCell', ['$q', 'gridUtil', 'uiGridMoveColumnService', '$document',
+    function ($q, gridUtil, uiGridMoveColumnService, $document) {
       return {
         priority: -10,
         require: '^uiGrid',
@@ -285,16 +285,13 @@
                       }
                     };
 
-                    // NOTE(c0bra0): Can this event be bound to $document rather than <body>?  That would prevent looking up the element w/ closestElm()
-                    var bodyElm = angular.element(gridUtil.closestElm($elm, 'body'));
-                    bodyElm.on('mousemove', mouseMoveHandler);
-
                     // On scope destroy, remove the mouse event handlers from the document body
                     $scope.$on('$destroy', function () {
-                      bodyElm.off('mousemove', mouseMoveHandler);
-                      bodyElm.off('mouseup', mouseUpHandler);
+                      $document.off('mousemove', mouseMoveHandler);
+                      $document.off('mouseup', mouseUpHandler);
                     });
 
+                    $document.on('mousemove', mouseMoveHandler);
                     var mouseUpHandler = function (evt) {
                       var renderIndexDefer = $q.defer();
 
@@ -311,39 +308,53 @@
                           movingElm.remove();
                         }
 
-                        var visibleColumns = $scope.grid.renderContainers['body'].visibleColumnCache;
+                        var renderedColumns = $scope.grid.renderContainers['body'].renderedColumns;
+
+                        //This method will calculate the number of columns hidden in lift due to scroll
+                        //renderContainer.prevColumnScrollIndex could also have been used but this is more accurate
+                        var scrolledColumnCount = 0;
+                        var columns = $scope.grid.columns;
+                        for (var i = 0; i < columns.length; i++) {
+                          if (columns[i].colDef.name !== renderedColumns[0].colDef.name) {
+                            scrolledColumnCount++;
+                          }
+                          else {
+                            break;
+                          }
+                        }
+
                         //Case where column should be moved to a position on its left
                         if (totalMouseMovement < 0) {
                           var totalColumnsLeftWidth = 0;
                           for (var il = renderIndex - 1; il >= 0; il--) {
-                            totalColumnsLeftWidth += visibleColumns[il].drawnWidth;
+                            totalColumnsLeftWidth += renderedColumns[il].drawnWidth;
                             if (totalColumnsLeftWidth > Math.abs(totalMouseMovement)) {
                               uiGridMoveColumnService.redrawColumnAtPosition
-                              ($scope.grid, renderIndex, il + 1);
+                              ($scope.grid, scrolledColumnCount + renderIndex, scrolledColumnCount + il + 1);
                               break;
                             }
                           }
                           //Case where column should be moved to beginning of the grid.
                           if (totalColumnsLeftWidth < Math.abs(totalMouseMovement)) {
                             uiGridMoveColumnService.redrawColumnAtPosition
-                            ($scope.grid, renderIndex, 0);
+                            ($scope.grid, scrolledColumnCount + renderIndex, scrolledColumnCount + 0);
                           }
                         }
                         //Case where column should be moved to a position on its right
                         else if (totalMouseMovement > 0) {
                           var totalColumnsRightWidth = 0;
-                          for (var ir = renderIndex + 1; ir < visibleColumns.length; ir++) {
-                            totalColumnsRightWidth += visibleColumns[ir].drawnWidth;
+                          for (var ir = renderIndex + 1; ir < renderedColumns.length; ir++) {
+                            totalColumnsRightWidth += renderedColumns[ir].drawnWidth;
                             if (totalColumnsRightWidth > totalMouseMovement) {
                               uiGridMoveColumnService.redrawColumnAtPosition
-                              ($scope.grid, renderIndex, ir - 1);
+                              ($scope.grid, scrolledColumnCount + renderIndex, scrolledColumnCount + ir - 1);
                               break;
                             }
                           }
                           //Case where column should be moved to end of the grid.
                           if (totalColumnsRightWidth < totalMouseMovement) {
                             uiGridMoveColumnService.redrawColumnAtPosition
-                            ($scope.grid, renderIndex, visibleColumns.length - 1);
+                            ($scope.grid, scrolledColumnCount + renderIndex, scrolledColumnCount + renderedColumns.length - 1);
                           }
                         }
                         else if (totalMouseMovement === 0) {
@@ -363,12 +374,12 @@
                             });
                         }
 
-                        bodyElm.off('mousemove', mouseMoveHandler);
-                        bodyElm.off('mouseup', mouseUpHandler);
+                        $document.off('mousemove', mouseMoveHandler);
+                        $document.off('mouseup', mouseUpHandler);
                       });
                     };
 
-                    bodyElm.on('mouseup', mouseUpHandler);
+                    $document.on('mouseup', mouseUpHandler);
                   }
                 };
 
