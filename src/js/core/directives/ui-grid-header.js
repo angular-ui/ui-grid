@@ -153,7 +153,6 @@
 
               // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
               if (hasVariableWidth && leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
-                var prevLeftover = leftoverWidth;
                 var remFn = function (column) {
                   if (leftoverWidth > 0 && (column.widthType === "auto" || column.widthType === "percent")) {
                     column.drawnWidth = column.drawnWidth + 1;
@@ -161,10 +160,11 @@
                     leftoverWidth--;
                   }
                 };
-                while (leftoverWidth > 0 && leftoverWidth !== prevLeftover ) {
+                var prevLeftover = 0;
+                do {
                   prevLeftover = leftoverWidth;
                   columnCache.forEach(remFn);
-                }
+                } while (leftoverWidth > 0 && leftoverWidth !== prevLeftover );
               }
               canvasWidth = Math.max(canvasWidth, availableWidth);
 
