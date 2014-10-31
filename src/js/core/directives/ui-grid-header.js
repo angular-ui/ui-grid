@@ -93,7 +93,6 @@
                   asteriskNum = 0,
                   oneAsterisk = 0,
                   leftoverWidth = availableWidth,
-                  autoWidth = 0,
                   hasVariableWidth = false;
               
               var getColWidth = function(column){
@@ -149,13 +148,9 @@
                 }
                 column.drawnWidth = Math.floor(colWidth);
                 canvasWidth += column.drawnWidth;
-                if (column.widthType === "auto") {
-                  autoWidth += column.drawnWidth;
-                } else {
-                  leftoverWidth -= column.drawnWidth;
-                }
+                leftoverWidth -= column.drawnWidth;
               });
-              leftoverWidth = leftoverWidth - autoWidth;
+
               // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
               if (hasVariableWidth && leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
                 var prevLeftover = leftoverWidth;
