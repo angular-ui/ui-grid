@@ -84,12 +84,38 @@
          *  <br/>Defaults to false
          */
         if (colDef.pinnedLeft) {
-          col.renderContainer = 'left';
-          col.grid.createLeftContainer();
+          if (col.width === '*') {
+            // Need to refresh so the width can be calculated.
+            col.grid.refresh()
+                .then(function () {
+                    col.renderContainer = 'left';
+                    // Need to calculate the width. If col.drawnWidth is used instead then the width
+                    // will be 100% if it's the first column, 50% if it's the second etc.
+                    col.width = col.grid.canvasWidth / col.grid.columns.length;
+                    col.grid.createLeftContainer();
+            });
+          }
+          else {
+            col.renderContainer = 'left';
+            col.grid.createLeftContainer();
+          }
         }
         else if (colDef.pinnedRight) {
-          col.renderContainer = 'right';
-          col.grid.createRightContainer();
+            if (col.width === '*') {
+                // Need to refresh so the width can be calculated.
+                col.grid.refresh()
+                    .then(function () {
+                        col.renderContainer = 'right';
+                        // Need to calculate the width. If col.drawnWidth is used instead then the width
+                        // will be 100% if it's the first column, 50% if it's the second etc.
+                        col.width = col.grid.canvasWidth / col.grid.columns.length;
+                        col.grid.createRightContainer();
+                    });
+            }
+            else {
+                col.renderContainer = 'right';
+                col.grid.createRightContainer();
+            }
         }
 
         if (!colDef.enablePinning) {
