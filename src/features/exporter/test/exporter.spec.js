@@ -325,7 +325,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
-        pageOrientation : 'landscape', 
+        pageOrientation : 'landscape',
+        pageSize: 'A4', 
         content : [{ 
           style : 'tableStyle',
           table : { 
@@ -390,7 +391,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
-        pageOrientation : 'portrait', 
+        pageOrientation : 'portrait',
+        pageSize: 'LETTER', 
         content : [ { 
           style : 'tableStyle', 
           table : { 
