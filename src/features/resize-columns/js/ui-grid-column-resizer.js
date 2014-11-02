@@ -8,8 +8,8 @@
   });
 
 
-  module.service('uiGridResizeColumnsService', ['gridUtil','$q',
-    function (gridUtil,$q) {
+  module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$timeout',
+    function (gridUtil, $q, $timeout) {
 
       var service = {
         defaultGridOptions: function(gridOptions){
@@ -66,6 +66,40 @@
           }
 
           return $q.all(promises);
+        },
+        
+        registerPublicApi: function (grid) {
+            /**
+             *  @ngdoc object
+             *  @name ui.grid.resizeColumns.api:PublicApi
+             *  @description Public Api for column resize feature.
+             */
+            var publicApi = {
+              events: {
+                /**
+                 * @ngdoc event
+                 * @name columnSizeChanged
+                 * @eventOf  ui.grid.resizeColumns.api:PublicApi
+                 * @description raised when column is resized
+                 * <pre>
+                 *      gridApi.colResizable.on.columnSizeChanged(scope,function(colDef, deltaChange){})
+                 * </pre>
+                 * @param {object} colDef the column that was resized
+                 * @param {integer} delta of the column size change
+                 */
+                colResizable: {
+                  columnSizeChanged: function (colDef, deltaChange) {
+                  }
+                }
+              }
+            };
+            grid.api.registerEventsFromObject(publicApi.events);
+        },
+        
+        fireColumnSizeChanged: function (grid, colDef, deltaChange) {
+          $timeout(function () {
+            grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
+          });
         }
       };
 
@@ -118,11 +152,10 @@
       scope: false,
       compile: function () {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-
+          pre: function ($scope, $elm, $attrs, uiGridCtrl) {            
             uiGridResizeColumnsService.defaultGridOptions(uiGridCtrl.grid.options);
             uiGridCtrl.grid.registerColumnBuilder( uiGridResizeColumnsService.colResizerColumnBuilder);
-
+            uiGridResizeColumnsService.registerPublicApi(uiGridCtrl.grid);
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
           }
@@ -227,7 +260,7 @@
      </doc:scenario>
    </doc:example>
    */  
-  module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'columnBounds', function ($document, gridUtil, uiGridConstants, columnBounds) {
+  module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'columnBounds', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, columnBounds, uiGridResizeColumnsService) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var resizer = {
@@ -389,6 +422,8 @@
 
           buildColumnsAndRefresh(xDiff);
 
+          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
+
           $document.off('mouseup', mouseup);
           $document.off('mousemove', mousemove);
         }
@@ -492,6 +527,8 @@
           resizeAroundColumn(col);
 
           buildColumnsAndRefresh(xDiff);
+          
+          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
         });
 
         $elm.on('$destroy', function() {
