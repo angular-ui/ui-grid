@@ -70,6 +70,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'ui-grid/exporterHeader',
         exporterLinkLabel: 'Download CSV',
         exporterMenuLabel: 'Export',
+        exporterCsvColumnSeparator: ',',
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
@@ -93,6 +94,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
+        exporterCsvColumnSeparator: ';',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -113,6 +115,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
+        exporterCsvColumnSeparator: ';',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -241,8 +244,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     it('formats empty data as a csv', function() {
       var columnHeaders = [];
       var data = [];
+      var separator = ',';
       
-      expect(uiGridExporterService.formatAsCsv(columnHeaders, data)).toEqual(
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         "\n"
       );
     });
@@ -263,8 +267,33 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ date, 45, 'A string', true ]
       ];
 
-      expect(uiGridExporterService.formatAsCsv(columnHeaders, data)).toEqual(
+      var separator = ',';
+      
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"' + date.toISOString() + '",45,"A string",TRUE'
+      );
+    });
+    
+    it('formats a mix of data as a csv with custom separator', function() {
+      var columnHeaders = [
+        {name: 'col1', displayName: 'Col1', width: 50, align: 'left'},
+        {name: 'col2', displayName: 'Col2', width: '*', align: 'left'},
+        {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
+        {name: 'x', displayName: '12345234', width: 200, align: 'left'}
+      ];
+
+      var date = new Date(2014, 11, 12, 0, 0, 0, 0);
+
+      var data = [
+        [ 'a string', 'a string', 'A string', 'a string' ],
+        [ '', '45', 'A string', false ],
+        [ date, 45, 'A string', true ]
+      ];
+      
+      var separator = ';';
+      
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
+        '"Col1";"Col2";"Col3";"12345234"\n"a string";"a string";"A string";"a string"\n"";"45";"A string";FALSE\n"' + date.toISOString() + '";45;"A string";TRUE'
       );
     });
   });
