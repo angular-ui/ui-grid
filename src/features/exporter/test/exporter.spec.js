@@ -74,14 +74,15 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
         exporterPdfHeader: null,
-        exporterPdfHeaderStyle: { bold: true, fontSize: 14 },
+        exporterPdfFooter: null,
         exporterPdfOrientation : 'landscape',
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
+        exporterPdfCustomFormatter: jasmine.any(Function),
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
-        exporterSuppressColumns: []
+        exporterSuppressColumns: []        
       });
     });
 
@@ -97,10 +98,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfHeader: "My Header",
-        exporterPdfHeaderStyle: { bold: false, fontSize: 16 },
+        exporterPdfFooter: "My Footer",
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
+        exporterPdfCustomFormatter: callback,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -117,10 +119,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfHeader: "My Header",
-        exporterPdfHeaderStyle: { bold: false, fontSize: 16 },
+        exporterPdfFooter: "My Footer",
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
+        exporterPdfCustomFormatter: callback,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -370,6 +373,12 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       grid.options.exporterPdfDefaultStyle = {fontSize: 10};
       grid.options.exporterPdfTableStyle = {margin: [30, 30, 30, 30]};
       grid.options.exporterPdfTableHeaderStyle = {fontSize: 11, bold: true, italic: true};
+      grid.options.exporterPdfHeader = "My Header";
+      grid.options.exporterPdfFooter = "My Footer";
+      grid.options.exporterPdfCustomFormatter = function ( docDefinition ) {
+        docDefinition.styles.headerStyle = { fontSize: 10 };
+        return docDefinition;
+      };
       grid.options.exporterPdfOrientation = 'portrait';
       grid.options.exporterPdfPageSize = 'LETTER';
       grid.options.exporterPdfMaxGridWidth = 500;
@@ -393,31 +402,36 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       expect(result).toEqual({
         pageOrientation : 'portrait',
         pageSize: 'LETTER', 
-        content : [ { 
-          style : 'tableStyle', 
-          table : { 
-            headerRows : 1, 
-            widths : [ 100, '*', 100, 200 ], 
-            body : [ 
-              [ 
-                { text : 'Col1', style : 'tableHeader' }, 
-                { text : 'Col2', style : 'tableHeader' }, 
-                { text : 'Col3', style : 'tableHeader' }, 
-                { text : '12345234', style : 'tableHeader' } 
-              ], 
-              [ 'a string', 'a string', 'A string', 'a string' ], 
-              [ '', '45', 'A string', 'FALSE' ], 
-              [ date.toISOString(), '45', 'A string', 'TRUE' ] 
-            ] 
-          } 
-        } ], 
+        content : [
+          'My Header', 
+          { 
+            style : 'tableStyle', 
+            table : { 
+              headerRows : 1, 
+              widths : [ 100, '*', 100, 200 ], 
+              body : [ 
+                [ 
+                  { text : 'Col1', style : 'tableHeader' }, 
+                  { text : 'Col2', style : 'tableHeader' }, 
+                  { text : 'Col3', style : 'tableHeader' }, 
+                  { text : '12345234', style : 'tableHeader' } 
+                ], 
+                [ 'a string', 'a string', 'A string', 'a string' ], 
+                [ '', '45', 'A string', 'FALSE' ], 
+                [ date.toISOString(), '45', 'A string', 'TRUE' ] 
+              ] 
+            } 
+          },
+          'My Footer'
+         ], 
         styles : { 
           tableStyle : { 
             margin : [ 30, 30, 30, 30 ] 
           }, 
           tableHeader : { 
             fontSize : 11, bold : true, italic : true 
-          } 
+          },
+          headerStyle: { fontSize: 10 }
         }, 
         defaultStyle : { 
           fontSize : 10 
