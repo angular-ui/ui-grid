@@ -263,25 +263,52 @@
           gridOptions.exporterPdfTableHeaderStyle = gridOptions.exporterPdfTableHeaderStyle ? gridOptions.exporterPdfTableHeaderStyle : { bold: true, fontSize: 12, color: 'black' };
           /**
            * @ngdoc object
-           * @name exporterPdfHeaderStyle
-           * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description The header style in pdfMake format
-           * <br/>Defaults to:
-           * <pre>
-           *   {
-           *     bold: true,
-           *     fontSize: 14
-           *   }
-           * </pre>
-           */
-          gridOptions.exporterPdfHeaderStyle = gridOptions.exporterPdfHeaderStyle ? gridOptions.exporterPdfHeaderStyle : { bold: true, fontSize: 14 };
-          /**
-           * @ngdoc object
            * @name exporterPdfHeader
            * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description The header text for pdf exports
+           * @description The header section for pdf exports.  Can be
+           * simple text:
+           * <pre>
+           *   gridOptions.exporterPdfHeader = 'My Header';
+           * </pre>
+           * Can be a more complex object in pdfMake format:
+           * <pre>
+           *   gridOptions.exporterPdfHeader = {
+           *     columns: [
+           *       'Left part',
+           *       { text: 'Right part', alignment: 'right' }
+           *     ]
+           *   };
+           * </pre>
+           * Or can be a function, allowing page numbers and the like
+           * <pre>
+           *   gridOptions.exporterPdfHeader: function(currentPage, pageCount) { return currentPage.toString() + ' of ' + pageCount; };
+           * </pre>
            */
           gridOptions.exporterPdfHeader = gridOptions.exporterPdfHeader ? gridOptions.exporterPdfHeader : null;
+          /**
+           * @ngdoc object
+           * @name exporterPdfFooter
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description The header section for pdf exports.  Can be
+           * simple text:
+           * <pre>
+           *   gridOptions.exporterPdfFooter = 'My Footer';
+           * </pre>
+           * Can be a more complex object in pdfMake format:
+           * <pre>
+           *   gridOptions.exporterPdfFooter = {
+           *     columns: [
+           *       'Left part',
+           *       { text: 'Right part', alignment: 'right' }
+           *     ]
+           *   };
+           * </pre>
+           * Or can be a function, allowing page numbers and the like
+           * <pre>
+           *   gridOptions.exporterPdfFooter: function(currentPage, pageCount) { return currentPage.toString() + ' of ' + pageCount; };
+           * </pre>
+           */
+          gridOptions.exporterPdfFooter = gridOptions.exporterPdfFooter ? gridOptions.exporterPdfFooter : null;
           /**
            * @ngdoc object
            * @name exporterPdfOrientation
@@ -336,6 +363,27 @@
            * @description Add pdf export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuPdf = gridOptions.exporterMenuPdf !== undefined ? gridOptions.exporterMenuPdf : true;
+          
+          /**
+           * @ngdoc object
+           * @name exporterPdfCustomFormatter
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A custom callback routine that changes the pdf document, adding any
+           * custom styling or content that is supported by pdfMake.  Takes in the complete docDefinition, and
+           * must return an updated docDefinition ready for pdfMake.
+           * @example
+           * In this example we add a style to the style array, so that we can use it in our
+           * footer definition.
+           * <pre>
+           *   gridOptions.exporterPdfCustomFormatter = function ( docDefinition ) {
+           *     docDefinition.styles.footerStyle = { bold: true, fontSize: 10 };
+           *     return docDefinition;
+           *   }
+           * 
+           *   gridOptions.exporterPdfFooter = { text: 'My footer', style: 'footerStyle' }
+           * </pre>
+           */
+          gridOptions.exporterPdfCustomFormatter = ( gridOptions.exporterPdfCustomFormatter && typeof( gridOptions.exporterPdfCustomFormatter ) === 'function' ) ? gridOptions.exporterPdfCustomFormatter : function ( docDef ) { return docDef; };
           
           /**
            * @ngdoc object
@@ -699,9 +747,8 @@
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Exports rows from the grid in pdf format, 
          * the data exported is selected based on the provided options.
-         * Note that this function has a dependency on jsPDF, which must
-         * be either included as a script on your page, or downloaded and
-         * served as part of your site.  The resulting pdf opens in a new
+         * Note that this function has a dependency on pdfMake, which must
+         * be installed.  The resulting pdf opens in a new
          * browser window.
          * @param {Grid} grid the grid from which data should be exported
          * @param {string} rowTypes which rows to export, valid values are
@@ -768,10 +815,16 @@
           }
           
           if ( grid.options.exporterPdfHeader ){
-            docDefinition.content.unshift( { text: grid.options.exporterPdfHeader, style: 'headerStyle' } );
-            docDefinition.styles.headerStyle = grid.options.exporterPdfHeaderStyle;
+            docDefinition.content.unshift( grid.options.exporterPdfHeader );
           }
           
+          if ( grid.options.exporterPdfFooter ){
+            docDefinition.content.push( grid.options.exporterPdfFooter );
+          }
+          
+          if ( grid.options.exporterPdfCustomFormatter ){
+            docDefinition = grid.options.exporterPdfCustomFormatter( docDefinition );
+          }
           return docDefinition;
           
         },
