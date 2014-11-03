@@ -42,7 +42,6 @@ In this example we use the native grid menu buttons, and we show both the pdf an
           docDefinition.styles.footerStyle = { fontSize: 10, bold: true }; 
           return docDefinition;
         },
-        exporterPdfHeaderStyle: 
         exporterPdfOrientation: 'portrait',
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
