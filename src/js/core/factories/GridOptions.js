@@ -128,8 +128,11 @@ angular.module('ui.grid')
       baseOptions.getRowIdentity = baseOptions.getRowIdentity || function getRowIdentity(row) {
         return row.$$hashKey;
       };
-  
-      baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
+      if (baseOptions.hideHeader){
+        baseOptions.headerRowHeight = 0;
+      }else {
+        baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
+      }
       baseOptions.rowHeight = baseOptions.rowHeight || 30;
       baseOptions.maxVisibleRowCount = baseOptions.maxVisibleRowCount || 200;
   
