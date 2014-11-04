@@ -103,8 +103,7 @@
         function updateNativeHorizontalScrollbar() {
           var w = colContainer.getCanvasWidth();
 
-          // Scrollbar needs to be negatively positioned beyond the bottom of the relatively-positioned render container
-          var bottom = (scrollBarWidth * -1) + gridBottomBorder;
+          var bottom = gridBottomBorder;
           if (grid.options.showFooter) {
             bottom -= 1;
           }
