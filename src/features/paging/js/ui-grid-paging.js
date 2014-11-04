@@ -103,8 +103,8 @@
     }
   ]);
 
-  module.directive('uiGridPager', ['uiGridPagingService', 'gridUtil', 
-    function (uiGridPagingService, gridUtil) {
+  module.directive('uiGridPager', ['uiGridPagingService', 'uiGridConstants', 
+    function (uiGridPagingService, uiGridConstants) {
       return {
         priority: -200,
         scope: true,
@@ -117,6 +117,13 @@
           });
 
           var options = $scope.grid.options;
+          
+          uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
+            //waiting on bug to be fixed (grid is window)
+            if (!options.useExternalPaging) {
+              options.totalItems = $scope.grid.rows.length;
+            }
+          }, [uiGridConstants.dataChange.ROW]);
 
           var setShowing = function () {
             $scope.showingLow = ((options.pagingCurrentPage - 1) * options.pagingPageSize) + 1;
