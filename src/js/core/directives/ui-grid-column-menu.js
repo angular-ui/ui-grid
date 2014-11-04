@@ -392,7 +392,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
        * an infinite loop
        */
       $scope.hideMenu = function( broadcastTrigger ) {
-        delete $scope.col;
+        // delete $scope.col;
         $scope.menuShown = false;
         
         if ( !broadcastTrigger ){
