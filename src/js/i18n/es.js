@@ -22,6 +22,11 @@
         menu: {
           text: 'Elegir columnas:'
         },
+        sort: {
+          ascending: 'Orden Ascendente',
+          descending: 'Orden Descendente',
+          remove: 'Sin Ordenar'
+        },
         column: {
           hide: 'Ocultar la columna'
         },
@@ -31,6 +36,11 @@
           avg: 'media: ',
           min: 'min: ',
           max: 'max: '
+        },
+        pinning: {
+          pinLeft: 'Fijar a la Izquierda',
+          pinRight: 'Fijar a la Derecha',
+          unpin: 'Quitar Fijación'
         },
         gridMenu: {
           columns: 'Columnas:',
