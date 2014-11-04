@@ -213,6 +213,7 @@
                 scrollTo: function (grid, $scope, rowEntity, colDef) {
                   service.scrollTo(grid, $scope, rowEntity, colDef);
                 },
+
                 /**
                  * @ngdoc function
                  * @name getFocusedCell
@@ -392,6 +393,84 @@
         /**
          * @ngdoc method
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name scrollToIfNecessary
+         * @description Scrolls the grid to make a certain row and column combo visible,
+         *   in the case that it is not completely visible on the screen already.
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} $scope a scope we can broadcast events from
+         * @param {GridRow} gridRow row to make visible
+         * @param {GridCol} gridCol column to make visible
+         */
+        scrollToIfNecessary: function (grid, $scope, gridRow, gridCol) {
+          var args = {};
+
+          // Alias the visible row and column caches 
+          var visRowCache = grid.renderContainers.body.visibleRowCache;
+          var visColCache = grid.renderContainers.body.visibleColumnCache;
+
+          // Get the top, left, right, and bottom "scrolled" edges of the grid
+          var topBound = grid.renderContainers.body.prevScrollTop + grid.headerHeight;
+          topBound = (topBound < 0) ? 0 : topBound;
+
+          var leftBound = grid.renderContainers.body.prevScrollLeft;
+
+          var bottomBound = grid.renderContainers.body.prevScrollTop + grid.gridHeight - grid.headerHeight;
+
+          if (grid.horizontalScrollbarHeight) {
+            bottomBound = bottomBound - grid.horizontalScrollbarHeight;
+          }
+
+          var rightBound = leftBound + grid.gridWidth;
+          if (grid.verticalScrollbarWidth) {
+            rightBound = rightBound - grid.verticalScrollbarWidth;
+          }
+
+          if (gridRow !== null) {
+            var seekRowIndex = visRowCache.indexOf(gridRow);
+            var totalRows = visRowCache.length;
+            // var percentage = ( seekRowIndex + ( seekRowIndex / ( totalRows - 1 ) ) ) / totalRows;
+            // args.y = { percentage:  percentage  };
+            var scrollLength = (grid.renderContainers.body.getCanvasHeight() - grid.renderContainers.body.getViewportHeight());
+
+            // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
+            if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
+              scrollLength = scrollLength + grid.horizontalScrollbarHeight;
+            }
+
+            // var pixelsToSeeRow = (scrollLength * percentage) + grid.options.rowHeight;
+            var pixelsToSeeRow = ((seekRowIndex + 1) * grid.options.rowHeight);
+            pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
+
+            var scrollPixels, percentage;
+            if (pixelsToSeeRow < topBound) {
+              scrollPixels = grid.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
+              percentage = scrollPixels / scrollLength;
+              args.y = { percentage: percentage  };
+            }
+            else if (pixelsToSeeRow > bottomBound) {
+              scrollPixels = pixelsToSeeRow - bottomBound + grid.renderContainers.body.prevScrollTop;
+              percentage = scrollPixels / scrollLength;
+              args.y = { percentage: percentage  };
+            }
+          }
+
+          if (gridCol !== null) {
+            var pixelsToSeeColumn = this.getLeftWidth(grid, gridCol) + gridCol.drawnWidth;
+
+            if (pixelsToSeeColumn < leftBound || pixelsToSeeColumn > rightBound) {
+              args.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, visColCache[visColCache.length - 1] ) };
+            }
+          }
+
+          if (args.y || args.x) {
+            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+          }
+        },
+
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
          * @name getLeftWidth
          * @description Get the current drawn width of the columns in the
          * grid up to the numbered column, and add an apportionment for the
@@ -462,8 +541,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridCellnav', ['$log', 'gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
+    function ($log, gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -150,
@@ -500,21 +579,57 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridRenderContainer', ['$log', '$timeout', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants',
+    function ($log, $timeout, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
-        require: '^uiGrid',
+        require: ['^uiGrid', 'uiGridRenderContainer'],
         scope: false,
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
             },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            post: function ($scope, $elm, $attrs, controllers) {
+              var uiGridCtrl = controllers[0],
+                  renderContainerCtrl = controllers[1];
+
+              var containerId = renderContainerCtrl.containerId;
+
               var grid = uiGridCtrl.grid;
               //needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
+
+              $elm.on('keydown', function (evt) {
+                var direction = uiGridCellNavService.getDirection(evt);
+                if (direction === null) {
+                  return true;
+                }
+
+                var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+                // $log.debug('next id', rowCol.row.entity.id);
+
+                uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                uiGridCellNavService.scrollToIfNecessary(grid, $scope, rowCol.row, rowCol.col);
+                // setTabEnabled();
+
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                return false;
+              });
+
+              // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
+              $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+                // We have to wrap in TWO timeouts so that we run AFTER the scroll event is resolved.
+                $timeout(function () {
+                  $timeout(function () {
+                    var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                    uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
+                  });
+                });
+              });
             }
           };
         }
@@ -528,8 +643,8 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants',
-    function (uiGridCellNavService, gridUtil, uiGridCellNavConstants) {
+  module.directive('uiGridCell', ['$log', '$timeout', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants',
+    function ($log, $timeout, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
@@ -542,25 +657,28 @@
 
           setTabEnabled();
 
-          $elm.on('keydown', function (evt) {
-            var direction = uiGridCellNavService.getDirection(evt);
-            if (direction === null) {
-              return true;
-            }
+          // $elm.on('keydown', function (evt) {
+          //   var direction = uiGridCellNavService.getDirection(evt);
+          //   if (direction === null) {
+          //     return true;
+          //   }
 
-            var rowCol = $scope.colContainer.cellNav.getNextRowCol(direction, $scope.row, $scope.col);
+          //   var rowCol = $scope.colContainer.cellNav.getNextRowCol(direction, $scope.row, $scope.col);
+          //   $log.debug('next id', rowCol.row.entity.id);
 
-            uiGridCtrl.cellNav.broadcastCellNav(rowCol);
-            setTabEnabled();
+          //   uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+          //   setTabEnabled();
+
+          //   evt.stopPropagation();
+          //   evt.preventDefault();
+
+          //   return false;
+          // });
+
+          $elm.find('div').on('click', function (evt) {
+            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col));
 
             evt.stopPropagation();
-            evt.preventDefault();
-
-            return false;
-          });
-
-          $elm.find('div').on('focus', function (evt) {
-            uiGridCtrl.cellNav.broadcastFocus($scope.row, $scope.col);
           });
 
           //this event is fired for all cells.  If the cell matches, then focus is set
@@ -569,7 +687,32 @@
               rowCol.col === $scope.col) {
               setFocused();
             }
+            else {
+              clearFocus();
+            }
+
+            // $scope.grid.queueRefresh();
           });
+
+          // $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+          //   clearFocus();
+
+          //   $log.debug('scrollIndex 1', uiGridCtrl.grid.renderContainers.body.prevRowScrollIndex);
+
+          //   $timeout(function () {
+          //     $log.debug('scrollIndex 2', uiGridCtrl.grid.renderContainers.body.prevRowScrollIndex);
+
+          //     var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+
+          //     if (lastRowCol === null) {
+          //       return;
+          //     }
+
+          //     if (lastRowCol.hasOwnProperty('row') && lastRowCol.row === $scope.row && lastRowCol.hasOwnProperty('col') && lastRowCol.col === $scope.col) {
+          //       setFocused();
+          //     }
+          //   });
+          // });
 
           function setTabEnabled() {
             $elm.find('div').attr("tabindex", -1);
@@ -578,11 +721,24 @@
           function setFocused() {
             var div = $elm.find('div');
             // gridUtil.logDebug('setFocused: ' + div[0].parentElement.className);
-            div[0].focus();
-            div.attr("tabindex", 0);
-            $scope.grid.queueRefresh();
+            // div[0].focus();
+            // div.attr("tabindex", 0);
+            div.addClass('ui-grid-cell-focus');
+            // $scope.grid.queueRefresh();
           }
 
+          function clearFocus() {
+            var div = $elm.find('div');
+            // gridUtil.logDebug('setFocused: ' + div[0].parentElement.className);
+            // div[0].focus();
+            // div.attr("tabindex", 0);
+            div.removeClass('ui-grid-cell-focus');
+            // $scope.grid.queueRefresh();
+          }
+
+          $scope.$on('$destroy', function () {
+            $elm.find('div').off('click');
+          });
         }
       };
     }]);

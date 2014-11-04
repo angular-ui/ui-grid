@@ -1,6 +1,6 @@
 <div class="ui-grid-viewport">
   <div class="ui-grid-canvas">
-    <div ng-repeat="(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid" class="ui-grid-row" ng-style="containerCtrl.rowStyle(rowRenderIndex)">
+    <div ng-repeat="(rowRenderIndex, row) in rowContainer.renderedRows track by $index" class="ui-grid-row" ng-style="containerCtrl.rowStyle(rowRenderIndex)">
       <div ui-grid-row="row" row-render-index="rowRenderIndex"></div>
     </div>
   </div>
