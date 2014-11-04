@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 09/02/2014 10:22
+* Compiled At: 11/04/2014 09:19
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -37,7 +37,11 @@ var ngGridFilters = angular.module('ngGrid.filters', []);
 angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives', 'ngGrid.filters']);
 
 var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
-    if ($scope.selectionProvider.selectedItems === undefined) {
+    if ($scope.selectionProvider.selectedItems === undefined || grid.config.noKeyboardNavigation) {
+        return true;
+    }
+
+    if (document.activeElement.tagName === "INPUT") {
         return true;
     }
 
@@ -58,6 +62,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     if (charCode !== 37 && charCode !== 38 && charCode !== 39 && charCode !== 40 && (grid.config.noTabInterference || charCode !== 9) && charCode !== 13) {
         return true;
     }
+
     if ($scope.enableCellSelection) {
         if (charCode === 9) { 
             evt.preventDefault();
@@ -68,6 +73,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
         var focusedOnLastVisibleColumns = newColumnIndex === (visibleCols.length - 1) || newColumnIndex === (visibleCols.length - 2);
         var focusedOnLastColumn = visibleCols.indexOf($scope.col) === (visibleCols.length - 1);
         var focusedOnLastPinnedColumn = pinnedCols.indexOf($scope.col) === (pinnedCols.length - 1);
+
         if (charCode === 37 || charCode === 9 && evt.shiftKey) {
             var scrollTo = 0;
 
@@ -90,12 +96,13 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
             }
 
             grid.$viewport.scrollLeft(scrollTo);
+
         }
         else if (charCode === 39 || charCode ===  9 && !evt.shiftKey) {
             if (focusedOnLastVisibleColumns) {
                 if (focusedOnLastColumn && charCode ===  9 && !evt.shiftKey) {
                     grid.$viewport.scrollLeft(0);
-                    newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;  
+                    newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;
                     lastInRow = true;
                 }
                 else {
@@ -111,6 +118,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
             }
         }
     }
+
     var items;
     if ($scope.configGroups.length > 0) {
         items = grid.rowFactory.parsedData.filter(function (row) {
@@ -120,6 +128,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     else {
         items = grid.filteredRows;
     }
+
     var offset = 0;
     if (rowIndex !== 0 && (charCode === 38 || charCode === 13 && evt.shiftKey || charCode === 9 && evt.shiftKey && firstInRow)) { 
         offset = -1;
@@ -127,6 +136,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
     else if (rowIndex !== items.length - 1 && (charCode === 40 || charCode === 13 && !evt.shiftKey || charCode === 9 && lastInRow)) {
         offset = 1;
     }
+
     if (offset) {
         var r = items[rowIndex + offset];
         if (r.beforeSelectionChange(r, evt)) {
@@ -141,6 +151,7 @@ var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
             }
       }
     }
+
     if ($scope.enableCellSelection) {
         setTimeout(function(){
             $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf(visibleCols[newColumnIndex]));
@@ -1017,29 +1028,31 @@ var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
     };
     self.setDraggables = function() {
         if (!grid.config.jqueryUIDraggable) {
-            var columns = grid.$root.find('.ngHeaderSortColumn'); 
-            angular.forEach(columns, function(col){
-                if(col.className && col.className.indexOf("ngHeaderSortColumn") !== -1){
-                    col.setAttribute('draggable', 'true');
-                    if (col.addEventListener) { 
-                        col.addEventListener('dragstart', self.dragStart);
+            if (grid.$root) {
+                var columns = grid.$root.find('.ngHeaderSortColumn'); 
+                angular.forEach(columns, function(col){
+                    if(col.className && col.className.indexOf("ngHeaderSortColumn") !== -1){
+                        col.setAttribute('draggable', 'true');
+                        if (col.addEventListener) { 
+                            col.addEventListener('dragstart', self.dragStart);
 
-                        angular.element(col).on('$destroy', function() {
-                            angular.element(col).off('dragstart', self.dragStart);
-                            col.removeEventListener('dragstart', self.dragStart);
-                        });
+                            angular.element(col).on('$destroy', function() {
+                                angular.element(col).off('dragstart', self.dragStart);
+                                col.removeEventListener('dragstart', self.dragStart);
+                            });
+                        }
                     }
+                });
+                if (navigator.userAgent.indexOf("MSIE") !== -1){
+                    var sortColumn = grid.$root.find('.ngHeaderSortColumn');
+                    sortColumn.bind('selectstart', function () { 
+                        this.dragDrop(); 
+                        return false; 
+                    });
+                    angular.element(sortColumn).on('$destroy', function() {
+                        sortColumn.off('selectstart');
+                    });
                 }
-            });
-            if (navigator.userAgent.indexOf("MSIE") !== -1){
-                var sortColumn = grid.$root.find('.ngHeaderSortColumn');
-                sortColumn.bind('selectstart', function () { 
-                    this.dragDrop(); 
-                    return false; 
-                });
-                angular.element(sortColumn).on('$destroy', function() {
-                    sortColumn.off('selectstart');
-                });
             }
         } else {
             if (grid.$root) {
@@ -2679,7 +2692,7 @@ var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
                 if (!wasSelected && checkAll) {
                     self.selectedItems.push(rows[i].entity);
                 } else if (wasSelected && !checkAll) {
-                    index = self.selectedItems.indexOf(rows[i].entity);
+                    index = self.getSelectionIndex(rows[i].entity);
                     if (index > -1) {
                         self.selectedItems.splice(index, 1);
                     }
