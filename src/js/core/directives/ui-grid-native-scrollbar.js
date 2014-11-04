@@ -42,8 +42,8 @@
 
           $elm.addClass('vertical');
 
-          grid.verticalScrollbarWidth = scrollBarWidth;
-          colContainer.verticalScrollbarWidth = scrollBarWidth;
+          grid.verticalScrollbarWidth = grid.options.enableVerticalScrollbar === 2 ? 0 : scrollBarWidth;
+          colContainer.verticalScrollbarWidth = grid.verticalScrollbarWidth;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollTop;
@@ -55,8 +55,8 @@
           $elm.addClass('horizontal');
 
           // Save this scrollbar's dimension in the grid properties
-          grid.horizontalScrollbarHeight = scrollBarWidth;
-          rowContainer.horizontalScrollbarHeight = scrollBarWidth;
+          grid.horizontalScrollbarHeight = grid.options.enableHorizontalScrollbar === 2 ? 0 : scrollBarWidth;
+          rowContainer.horizontalScrollbarHeight = grid.horizontalScrollbarHeight;
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = gridUtil.normalizeScrollLeft($elm);
@@ -86,9 +86,10 @@
 
           // gridUtil.logDebug('headerHeight in scrollbar', headerHeight);
 
+          var ondemand  = grid.options.enableVerticalScrollbar === 2 ? "overflow-y:auto;" : "";
           // var ret = '.grid' + uiGridCtrl.grid.id + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + h + 'px; }';
           var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical .contents { height: ' + contentHeight + 'px; }';
-          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { height: ' + height + 'px; top: ' + headerHeight + 'px}';
+          ret += '\n .grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.vertical { height: ' + height + 'px; top: ' + headerHeight + 'px;' +ondemand +'}';
 
           elmMaxScroll = contentHeight;
 
@@ -107,7 +108,8 @@
           if (grid.options.showFooter) {
             bottom -= 1;
           }
-          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px; }';
+          var ondemand = grid.options.enableHorizontalScrollbar === 2 ? "overflow-x:auto" : "";
+          var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px;' +ondemand + ' }';
           ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
 
           elmMaxScroll = w;
