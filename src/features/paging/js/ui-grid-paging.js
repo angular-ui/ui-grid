@@ -26,15 +26,10 @@
             grid.registerRowsProcessor(function (renderableRows) {
                 //client side paging
                 var pageSize = parseInt(grid.options.pagingPageSize, 10);
-
+                var currentPage = parseInt(grid.options.pagingCurrentPage, 10);
                 var totalPages = Math.max(1, Math.ceil(renderableRows.length / pageSize));
 
-                var firstRow = (grid.options.pagingCurrentPage - 1) * pageSize;
-                if (firstRow >= renderableRows.length) {
-                    grid.options.pagingCurrentPage = totalPages;
-                    firstRow = (grid.options.pagingCurrentPage - 1) * pageSize;
-                }
-
+                var firstRow = (currentPage - 1) * pageSize;
                 return renderableRows.slice(firstRow, firstRow + pageSize);
             });
 
