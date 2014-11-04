@@ -23,6 +23,21 @@
 
           grid.api.registerEventsFromObject(publicApi.events);
           grid.api.registerMethodsFromObject(publicApi.methods);
+            grid.registerRowsProcessor(function (renderableRows) {
+                //client side paging
+                var pageSize = parseInt(grid.options.pagingPageSize, 10);
+
+                var totalPages = Math.max(1, Math.ceil(renderableRows.length / pageSize));
+
+                var firstRow = (grid.options.pagingCurrentPage - 1) * pageSize;
+                if (firstRow >= renderableRows.length) {
+                    grid.options.pagingCurrentPage = totalPages;
+                    firstRow = (grid.options.pagingCurrentPage - 1) * pageSize;
+                }
+
+                return renderableRows.slice(firstRow, firstRow + pageSize);
+            });
+
         },
         defaultGridOptions: function (gridOptions) {
           gridOptions.enablePaging = gridOptions.enablePaging !== false;
@@ -49,7 +64,11 @@
 
         },
         onPagingChanged: function (grid, newPage, pageSize) {
-          grid.api.paging.raise.pagingChanged(newPage, pageSize);
+            if (grid.options.enableServerSidePaging) {
+                grid.api.paging.raise.pagingChanged(newPage, pageSize);  //trigger serverside paging event
+            } else {
+                grid.refresh();  //call client paging
+            }
         }
       };
     return service;
