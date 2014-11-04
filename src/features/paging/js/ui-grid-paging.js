@@ -23,22 +23,25 @@
 
           grid.api.registerEventsFromObject(publicApi.events);
           grid.api.registerMethodsFromObject(publicApi.methods);
-            grid.registerRowsProcessor(function (renderableRows) {
-                //client side paging
-                var pageSize = parseInt(grid.options.pagingPageSize, 10);
-                var currentPage = parseInt(grid.options.pagingCurrentPage, 10);
-                var totalPages = Math.max(1, Math.ceil(renderableRows.length / pageSize));
+          grid.registerRowsProcessor(function (renderableRows) {
+            if (grid.options.useExternalPaging || !grid.options.enablePaging) {
+              return renderableRows;
+            }
+            //client side paging
+            var pageSize = parseInt(grid.options.pagingPageSize, 10);
+            var currentPage = parseInt(grid.options.pagingCurrentPage, 10);
 
-                var firstRow = (currentPage - 1) * pageSize;
-                return renderableRows.slice(firstRow, firstRow + pageSize);
-            });
+            var firstRow = (currentPage - 1) * pageSize;
+            return renderableRows.slice(firstRow, firstRow + pageSize);
+          });
 
         },
         defaultGridOptions: function (gridOptions) {
           gridOptions.enablePaging = gridOptions.enablePaging !== false;
-
-          if (gridUtil.isNullOrUndefined(gridOptions.totalServerItems)) {
-            gridOptions.totalServerItems = 0;
+          gridOptions.useExternalPaging = gridOptions.useExternalPaging === true;
+          
+          if (gridUtil.isNullOrUndefined(gridOptions.totalItems)) {
+            gridOptions.totalItems = 0;
           }
 
           if (gridUtil.isNullOrUndefined(gridOptions.pagingPageSizes)) {
@@ -59,14 +62,14 @@
 
         },
         onPagingChanged: function (grid, newPage, pageSize) {
-            if (grid.options.enableServerSidePaging) {
-                grid.api.paging.raise.pagingChanged(newPage, pageSize);  //trigger serverside paging event
-            } else {
-                grid.refresh();  //call client paging
+            grid.api.paging.raise.pagingChanged(newPage, pageSize);
+            if (!grid.options.useExternalPaging) {
+              grid.refresh(); //client side paging
             }
         }
       };
-    return service;
+      
+      return service;
     }
   ]);
 
@@ -109,25 +112,24 @@
         link: function ($scope, $elm, $attr, uiGridCtrl) {
 
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-          //adjustment.height = adjustment.height - gridUtil.elementHeight($elm);
-          adjustment.height = adjustment.height - 35;
-          return adjustment;
+            adjustment.height = adjustment.height - 35;
+            return adjustment;
           });
 
           var options = $scope.grid.options;
 
           var setShowing = function () {
             $scope.showingLow = ((options.pagingCurrentPage - 1) * options.pagingPageSize) + 1;
-            $scope.showingHigh = Math.min(options.pagingCurrentPage * options.pagingPageSize, options.totalServerItems);
+            $scope.showingHigh = Math.min(options.pagingCurrentPage * options.pagingPageSize, options.totalItems);
           }
 
           var getMaxPages = function () {
-            return (options.totalServerItems === 0)
+            return (options.totalItems === 0)
             ? 1
-            : Math.ceil(options.totalServerItems / options.pagingPageSize);
+            : Math.ceil(options.totalItems / options.pagingPageSize);
           }
 
-          var deregS = $scope.$watchGroup(['grid.options.totalServerItems', 'grid.options.pagingPageSize']
+          var deregS = $scope.$watchGroup(['grid.options.totalItems', 'grid.options.pagingPageSize']
             , function () {
               $scope.currentMaxPages = getMaxPages();
               setShowing();
@@ -143,7 +145,7 @@
                 return;
               }
 
-              if (options.totalServerItems > 0 && options.pagingCurrentPage > getMaxPages()) {
+              if (options.totalItems > 0 && options.pagingCurrentPage > getMaxPages()) {
                 options.pagingCurrentPage = getMaxPages();
                 return;
               }
@@ -159,7 +161,7 @@
           });
 
           $scope.pageForward = function () {
-            if (options.totalServerItems > 0) {
+            if (options.totalItems > 0) {
               options.pagingCurrentPage = Math.min(options.pagingCurrentPage + 1, $scope.currentMaxPages);
             } else {
               options.pagingCurrentPage++;
@@ -179,7 +181,7 @@
           };
 
           $scope.cantPageForward = function () {
-            if (options.totalServerItems > 0) {
+            if (options.totalItems > 0) {
               return options.pagingCurrentPage >= $scope.currentMaxPages;
             } else {
               return options.data.length < 1;
@@ -187,7 +189,7 @@
           };
           
           $scope.cantPageToLast = function () {
-            if (options.totalServerItems > 0) {
+            if (options.totalItems > 0) {
               return $scope.cantPageForward();
             } else {
               return true;
