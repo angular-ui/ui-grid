@@ -1,7 +1,7 @@
   (function(){
 
 angular.module('ui.grid')
-.factory('GridOptions', ['gridUtil', function(gridUtil) {
+.factory('GridOptions', ['gridUtil','uiGridConstants', function(gridUtil,uiGridConstants) {
 
   /**
    * @ngdoc function
@@ -194,12 +194,21 @@ angular.module('ui.grid')
   
       /**
        * @ngdoc boolean
-       * @name enableScrollbars
+       * @name enableVerticalScrollbar
        * @propertyOf ui.grid.class:GridOptions
-       * @description True by default. When enabled, this settings enable vertical
-       * and horizontal scrollbar for grid.
+       * @description uiGridConstants.scrollbar.ALWAYS by default. This settings controls the vertical scrollbar for the grid.
+       * Supported values: uiGridConstants.scrollbar.ALWAYS, uiGridConstants.scrollbar.NEVER, uiGridConstants.scrollbar.WHEN_NEEDED.
        */
-      baseOptions.enableScrollbars = baseOptions.enableScrollbars !== false;
+      baseOptions.enableVerticalScrollbar = typeof(baseOptions.enableVerticalScrollbar) !== "undefined" ? baseOptions.enableVerticalScrollbar : uiGridConstants.scrollbars.ALWAYS;
+      
+      /**
+       * @ngdoc boolean
+       * @name enableHorizontalScrollbar
+       * @propertyOf ui.grid.class:GridOptions
+       * @description uiGridConstants.scrollbar.ALWAYS by default. This settings controls the horizontal scrollbar for the grid.
+       * Supported values: uiGridConstants.scrollbar.ALWAYS, uiGridConstants.scrollbar.NEVER, uiGridConstants.scrollbar.WHEN_NEEDED.
+       */
+      baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;
   
       // Columns can't be smaller than 10 pixels
       baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 10;

@@ -87,6 +87,11 @@
       EDIT: 'edit',
       ROW: 'row',
       COLUMN: 'column'
+    },
+    scrollbars: {
+      NEVER: 0,
+      ALWAYS: 1,
+      WHEN_NEEDED: 2
     }
   });
 
