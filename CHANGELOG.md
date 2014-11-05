@@ -1,3 +1,12 @@
+<a name="v3.0.0-rc.13"></a>
+### v3.0.0-rc.13 (2014-11-05)
+
+
+#### Bug Fixes
+
+* **AutoResize:** Redraw all of grid on resize. ([1bb5367c](http://github.com/angular-ui/ng-grid/commit/1bb5367cb304baeee6ca4ecc084cbc02601fb6f6), closes [#1770](http://github.com/angular-ui/ng-grid/issues/1770))
+* **Importer:** Account for older browsers properly ([52823249](http://github.com/angular-ui/ng-grid/commit/528232492ea9860390dd8da1a604103b25f33719))
+
 <a name="v3.0.0-rc.12"></a>
 ### v3.0.0-rc.12 (2014-10-08)
 
