@@ -45,10 +45,10 @@
                * @name pagingChanged
                * @eventOf ui.grid.paging.api:PublicAPI
                * @description This event fires when the pageSize or currentPage changes
-               * @param {newPage} requested page number
+               * @param {currentPage} requested page number
                * @param {pageSize} requested page size 
                */
-                pagingChanged: function (newPage, pageSize) { }
+                pagingChanged: function (currentPage, pageSize) { }
               }
             },
             methods: {
@@ -138,11 +138,11 @@
          * @name uiGridPagingService
          * @description  Raises pagingChanged and calls refresh for client side paging
          * @param {grid} the grid for which the paging changed
-         * @param {newPage} requested page number
+         * @param {currentPage} requested page number
          * @param {pageSize} requested page size 
          */
-        onPagingChanged: function (grid, newPage, pageSize) {
-            grid.api.paging.raise.pagingChanged(newPage, pageSize);
+        onPagingChanged: function (grid, currentPage, pageSize) {
+            grid.api.paging.raise.pagingChanged(currentPage, pageSize);
             if (!grid.options.useExternalPaging) {
               grid.refresh(); //client side paging
             }
