@@ -270,7 +270,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description When the build creates rows from gridOptions.data, the rowBuilders will be called to add
    * additional properties to the row.
-   * @param {function(colDef, col, gridOptions)} rowBuilder function to be called
+   * @param {function(row, gridOptions)} rowBuilder function to be called
    */
   Grid.prototype.registerRowBuilder = function registerRowBuilder(rowBuilder) {
     this.rowBuilders.push(rowBuilder);
@@ -342,7 +342,7 @@ angular.module('ui.grid')
            type === uiGridConstants.dataChange.ALL ) {
         callback.callback( this );
       }
-    });
+    }, this);
   };
   
   /**
