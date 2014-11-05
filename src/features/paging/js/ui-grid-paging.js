@@ -251,9 +251,8 @@
           var options = $scope.grid.options;
           
           uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
-            //waiting on bug to be fixed (grid is window)
-            if (!options.useExternalPaging) {
-              options.totalItems = $scope.grid.rows.length;
+            if (!grid.options.useExternalPaging) {
+              grid.options.totalItems = grid.rows.length;
             }
           }, [uiGridConstants.dataChange.ROW]);
 
