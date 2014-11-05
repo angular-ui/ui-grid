@@ -342,7 +342,7 @@ angular.module('ui.grid')
            type === uiGridConstants.dataChange.ALL ) {
         callback.callback( this );
       }
-    }, this);
+    });
   };
   
   /**
