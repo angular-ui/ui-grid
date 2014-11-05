@@ -1,3 +1,11 @@
+<a name="v3.0.0-rc.14"></a>
+### v3.0.0-rc.14 (2014-11-05)
+
+
+#### Bug Fixes
+
+* **bower:** Use right angular version spec ([6bd917a0](http://github.com/angular-ui/ng-grid/commit/6bd917a05527afe7f75db51bdaff24b44f554fd9))
+
 <a name="v3.0.0-rc.13"></a>
 ### v3.0.0-rc.13 (2014-11-05)
 
