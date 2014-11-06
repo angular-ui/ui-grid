@@ -235,7 +235,7 @@
               if ($scope.col.colDef.enableColumnMoving) {
 
                 var mouseDownHandler = function (evt) {
-                  if (evt.toElement.className !== 'ui-grid-icon-angle-down') {
+                  if (evt.target.className !== 'ui-grid-icon-angle-down' && evt.target.tagName !== 'I') {
 
                     //Cloning header cell and appending to current header cell.
                     var movingElm = $elm.clone();
