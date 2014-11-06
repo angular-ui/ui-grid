@@ -202,6 +202,8 @@ describe('Grid factory', function () {
 
 
   });
+  
+  
 
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
@@ -379,6 +381,82 @@ describe('Grid factory', function () {
       expect(grid1.columns[4].name).toEqual('5');
       expect(grid1.columns[5].name).toEqual('5.5');      
     });
+  });
+
+  describe('follow source array', function() {
+    it('should insert it on position 0', function() {
+      var dataRows = [{str:'abc'}];
+      var grid = new Grid({ id: 1 });
+
+      grid.modifyRows(dataRows);
+
+
+      expect(grid.rows.length).toBe(1);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      
+      dataRows.splice(0,0,{str:'cba'});
+      grid.modifyRows(dataRows);
+      
+      expect(grid.rows.length).toBe(2);
+      expect(grid.rows[0].entity.str).toBe('cba');
+    });
+    
+    it('should swap', function() {
+        var dataRows = [{str:'abc'},{str:'cba'}];
+        var grid = new Grid({ id: 1 });
+
+        grid.modifyRows(dataRows);
+
+        expect(grid.rows[0].entity.str).toBe('abc');
+        expect(grid.rows[1].entity.str).toBe('cba');
+
+        var tmpRow = dataRows[0];
+        dataRows[0] = dataRows[1];
+        dataRows[1] = tmpRow;
+        grid.modifyRows(dataRows);
+        
+        expect(grid.rows[0].entity.str).toBe('cba');
+        expect(grid.rows[1].entity.str).toBe('abc');
+      });
+    it('should delete and insert new in the middle', function() {
+        var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+        var grid = new Grid({ id: 1 });
+
+        grid.modifyRows(dataRows);
+
+        expect(grid.rows.length).toBe(3);
+        expect(grid.rows[0].entity.str).toBe('abc');
+        expect(grid.rows[1].entity.str).toBe('cba');
+        expect(grid.rows[2].entity.str).toBe('bac');
+
+        dataRows[1] = {str:'xyz'};
+        grid.modifyRows(dataRows);
+        
+        expect(grid.rows.length).toBe(3);
+        expect(grid.rows[0].entity.str).toBe('abc');
+        expect(grid.rows[1].entity.str).toBe('xyz');
+        expect(grid.rows[2].entity.str).toBe('bac');
+      });
+    it('should keep the order of the sort', function() {
+        var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+        var grid = new Grid({ id: 1 });
+        grid.options.columnDefs = [{name:'1',type:'string'}];
+        grid.buildColumns();
+        grid.modifyRows(dataRows);
+
+        expect(grid.rows.length).toBe(3);
+        expect(grid.rows[0].entity.str).toBe('abc');
+        expect(grid.rows[1].entity.str).toBe('cba');
+        expect(grid.rows[2].entity.str).toBe('bac');
+
+        grid.sortColumn(grid.columns[0]);
+        
+        dataRows.splice(0,0,{str:'xyz'});
+        grid.modifyRows(dataRows);
+        expect(grid.rows.length).toBe(4);
+        expect(grid.rows[0].entity.str).toBe('abc');
+        expect(grid.rows[3].entity.str).toBe('xyz');
+      });
   });
 
   describe('binding', function() {
