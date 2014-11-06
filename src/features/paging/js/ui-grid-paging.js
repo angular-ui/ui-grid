@@ -202,7 +202,7 @@
     function (gridUtil, uiGridPagingService) {
     /**
      * @ngdoc property
-     * @name headerCellTemplate
+     * @name pagingTemplate
      * @propertyOf ui.grid.class:GridOptions
      * @description a custom template for the pager.  The default
      * is ui-grid/ui-grid-paging
