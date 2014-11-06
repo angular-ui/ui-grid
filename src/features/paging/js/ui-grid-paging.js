@@ -200,6 +200,13 @@
    */
   module.directive('uiGridPaging', ['gridUtil', 'uiGridPagingService', 
     function (gridUtil, uiGridPagingService) {
+    /**
+     * @ngdoc property
+     * @name headerCellTemplate
+     * @propertyOf ui.grid.class:GridOptions
+     * @description a custom template for the pager.  The default
+     * is ui-grid/ui-grid-paging
+     */
       var defaultTemplate = 'ui-grid/ui-grid-paging';
 
       return {
