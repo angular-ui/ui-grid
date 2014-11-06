@@ -22,7 +22,6 @@ describe('uiGridHeaderCell', function () {
   ];
 
   beforeEach(module('ui.grid'));
-  beforeEach(module('ngAnimateMock'));
 
   beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_) {
     $scope = $rootScope;
@@ -90,8 +89,7 @@ describe('uiGridHeaderCell', function () {
 
         headerCell1.trigger({ type: 'mousedown', button: 3 });
 
-        // the final ng-if call is buried inside a $animate callback, flush it
-        $animate.triggerCallbacks();
+        $timeout.flush();
         $scope.$digest();
 
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
@@ -105,8 +103,7 @@ describe('uiGridHeaderCell', function () {
 
         $document.trigger('click');
 
-        // the final ng-if call is buried inside a $animate callback, flush it
-        $animate.triggerCallbacks();
+        $timeout.flush();
         $scope.$digest();
         
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
@@ -146,8 +143,7 @@ describe('uiGridHeaderCell', function () {
         $(window).trigger('resize');
         $scope.$digest();
 
-        // the final ng-if call is buried inside a $animate callback, flush it
-        $animate.triggerCallbacks();
+        $timeout.flush();
         $scope.$digest();
 
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');

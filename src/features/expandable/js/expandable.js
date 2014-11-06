@@ -279,7 +279,13 @@
 
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
-                      var colWidth = grid.getColumn('expandableButtons').width;
+                      var colWidth = 0;
+                      angular.forEach(grid.columns, function (column) {
+                          if (column.renderContainer === 'left') {
+                            colWidth += column.width;
+                          }
+                      });
+                      colWidth = Math.floor(colWidth);
                       return '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id +
                           ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name +
                           ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + colWidth + 'px; }';
