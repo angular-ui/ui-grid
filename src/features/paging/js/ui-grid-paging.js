@@ -242,16 +242,17 @@
    *
    *  @description Panel for handling paging
    */
-  module.directive('uiGridPager', ['uiGridPagingService', 'uiGridConstants', 
-    function (uiGridPagingService, uiGridConstants) {
+  module.directive('uiGridPager', ['uiGridPagingService', 'uiGridConstants', 'gridUtil',
+    function (uiGridPagingService, uiGridConstants, gridUtil) {
       return {
         priority: -200,
         scope: true,
         require: '^uiGrid',
         link: function ($scope, $elm, $attr, uiGridCtrl) {
 
+          var height = gridUtil.elementHeight($elm);
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - 35;
+            adjustment.height = adjustment.height - height;
             return adjustment;
           });
 
