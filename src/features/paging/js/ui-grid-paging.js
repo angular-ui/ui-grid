@@ -250,13 +250,13 @@
         require: '^uiGrid',
         link: function ($scope, $elm, $attr, uiGridCtrl) {
 
-          var height = gridUtil.elementHeight($elm);
+          var options = $scope.grid.options;
+
+          var height = gridUtil.elementHeight($elm) + (options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS ? -7 : 10);
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - height - 10;
+            adjustment.height = adjustment.height - height;
             return adjustment;
           });
-
-          var options = $scope.grid.options;
           
           uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
             if (!grid.options.useExternalPaging) {
