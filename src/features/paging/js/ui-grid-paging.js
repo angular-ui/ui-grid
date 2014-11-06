@@ -267,24 +267,22 @@
           var setShowing = function () {
             $scope.showingLow = ((options.pagingCurrentPage - 1) * options.pagingPageSize) + 1;
             $scope.showingHigh = Math.min(options.pagingCurrentPage * options.pagingPageSize, options.totalItems);
-          }
+          };
 
           var getMaxPages = function () {
-            return (options.totalItems === 0)
-            ? 1
-            : Math.ceil(options.totalItems / options.pagingPageSize);
-          }
+            return (options.totalItems === 0) ? 1 : Math.ceil(options.totalItems / options.pagingPageSize);
+          };
 
-          var deregT = $scope.$watch('grid.options.totalItems + grid.options.pagingPageSize'
-            , function () {
+          var deregT = $scope.$watch('grid.options.totalItems + grid.options.pagingPageSize', function () {
               $scope.currentMaxPages = getMaxPages();
               setShowing();
             }
           );
 
-          var deregP = $scope.$watch('grid.options.pagingCurrentPage + grid.options.pagingPageSize'
-            , function (newValues, oldValues) {
-              if (newValues === oldValues) return;
+          var deregP = $scope.$watch('grid.options.pagingCurrentPage + grid.options.pagingPageSize', function (newValues, oldValues) {
+              if (newValues === oldValues) { 
+                return; 
+              }
 
               if (!angular.isNumber(options.pagingCurrentPage) || options.pagingCurrentPage < 1) {
                 options.pagingCurrentPage = 1;
@@ -312,11 +310,11 @@
             } else {
               options.pagingCurrentPage++;
             }
-          }
+          };
 
           $scope.pageBackward = function () {
             options.pagingCurrentPage = Math.max(options.pagingCurrentPage - 1, 1);
-          }
+          };
 
           $scope.pageToFirst = function () {
             options.pagingCurrentPage = 1;
