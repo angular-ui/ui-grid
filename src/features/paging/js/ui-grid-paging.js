@@ -252,7 +252,7 @@
 
           var height = gridUtil.elementHeight($elm);
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - height;
+            adjustment.height = adjustment.height - height - 10;
             return adjustment;
           });
 
