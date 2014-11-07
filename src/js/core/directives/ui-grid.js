@@ -210,7 +210,23 @@ angular.module('ui.grid').directive('uiGrid',
                 var footerHeight = grid.options.showFooter ? grid.options.footerRowHeight : 0;
                 var scrollbarHeight = grid.options.enableScrollbars ? gridUtil.getScrollbarWidth() : 0;
 
-                var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight;
+                var maxNumberOfFilters = 0;
+                // Calculates the maximum number of filters in the columns
+                angular.forEach(grid.options.columnDefs, function(col) {
+                  if (col.hasOwnProperty('filter')) {
+                    if (maxNumberOfFilters < 1) {
+                        maxNumberOfFilters = 1;
+                    }
+                  }
+                  else if (col.hasOwnProperty('filters')) {
+                    if (maxNumberOfFilters < col.filters.length) {
+                        maxNumberOfFilters = col.filters.length;
+                    }
+                  }
+                });
+                var filterHeight = maxNumberOfFilters * headerHeight;
+
+                var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight + filterHeight;
 
                 $elm.css('height', newHeight + 'px');
 
