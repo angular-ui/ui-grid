@@ -1,14 +1,21 @@
 describe('ui.grid.utilService', function() {
   var gridUtil,
       $window,
-      Grid;
+      Grid,
+      $rootScope,
+      $q,
+      $interpolateProvider;
 
-  beforeEach(module('ui.grid'));
+  beforeEach(module('ui.grid', function (_$interpolateProvider_) {
+    $interpolateProvider = _$interpolateProvider_;
+  }));
 
-  beforeEach(inject(function(_gridUtil_, _$window_, _Grid_) {
+  beforeEach(inject(function(_$rootScope_, _$q_, _gridUtil_, _$window_, _Grid_) {
     gridUtil = _gridUtil_;
     $window = _$window_;
     Grid = _Grid_;
+    $rootScope = _$rootScope_;
+    $q = _$q_;
   }));
 
   describe('newId()', function() {
@@ -394,6 +401,99 @@ describe('ui.grid.utilService', function() {
 
       expect(uid2).toEqual('uiGrid-002');
       expect(uid3).toEqual('uiGrid-003');
+    });
+  });
+
+  describe('postProcessTemplate', function () {
+    it('should return unmodified template when interpolation symbols are the default values ( {{ / }} )', function () {
+      var tmpl;
+      gridUtil.getTemplate('ui-grid/ui-grid')
+      .then(function (template) {
+        tmpl = template;
+      });
+
+      $rootScope.$digest();
+
+      expect(tmpl).toMatch(/\{\{/, 'template has default start interpolation symbols');
+      expect(tmpl).toMatch(/\}\}/, 'template has default end interpolation symbols');
+    });
+
+    describe('with different interpolation symbols', function () {
+      beforeEach(function () {
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+      });
+
+      it('should alter templates already in $templateCache', function () {
+        var tmpl;
+        gridUtil.getTemplate('ui-grid/ui-grid')
+        .then(function (template) {
+          tmpl = template;
+        });
+
+        $rootScope.$digest();
+
+        expect(tmpl).not.toMatch(/\{\{/, 'template does not have default start interpolation symbols');
+        expect(tmpl).not.toMatch(/\}\}/, 'template does not have default end interpolation symbols');
+
+        expect(tmpl).toMatch(/\[\[/, 'template has custom start interpolation symbols');
+        expect(tmpl).toMatch(/\]\]/, 'template has custom end interpolation symbols');
+      });
+
+      it('should alter template that is just an element', function () {
+        var tmpl;
+        gridUtil.getTemplate('<div>{{ foo }}</div>')
+        .then(function (template) {
+          tmpl = template;
+        });
+
+        $rootScope.$digest();
+
+        expect(tmpl).not.toMatch(/\{\{/, 'template does not have default start interpolation symbols');
+        expect(tmpl).not.toMatch(/\}\}/, 'template does not have default end interpolation symbols');
+
+        expect(tmpl).toMatch(/\[\[/, 'template has custom start interpolation symbols');
+        expect(tmpl).toMatch(/\]\]/, 'template has custom end interpolation symbols');
+      });
+
+      it('should alter template that is a promise', function () {
+        var p = $q.when('<div>{{ foo }}</div>');
+
+        var tmpl;
+        gridUtil.getTemplate(p)
+        .then(function (template) {
+          tmpl = template;
+        });
+
+        $rootScope.$digest();
+
+        expect(tmpl).not.toMatch(/\{\{/, 'template does not have default start interpolation symbols');
+        expect(tmpl).not.toMatch(/\}\}/, 'template does not have default end interpolation symbols');
+
+        expect(tmpl).toMatch(/\[\[/, 'template has custom start interpolation symbols');
+        expect(tmpl).toMatch(/\]\]/, 'template has custom end interpolation symbols');
+      });
+
+      it('should alter template fetched with $http', inject(function ($httpBackend, $timeout) {
+        var html = '<div>{{ foo }}</div>';
+        var url = 'http://someUrl.html';
+        $httpBackend.expectGET(url)
+          .respond(html);
+
+        var result;
+        gridUtil.getTemplate(url).then(function (r) {
+          result = r;
+        });
+        $httpBackend.flush();
+
+        $httpBackend.verifyNoOutstandingRequest();
+
+        expect(result).not.toMatch(/\{\{/, 'template does not have default start interpolation symbols');
+        expect(result).not.toMatch(/\}\}/, 'template does not have default end interpolation symbols');
+
+        expect(result).toMatch(/\[\[/, 'template has custom start interpolation symbols');
+        expect(result).toMatch(/\]\]/, 'template has custom end interpolation symbols');
+      }));
     });
   });
 });
