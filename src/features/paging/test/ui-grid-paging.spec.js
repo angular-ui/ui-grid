@@ -81,7 +81,7 @@ describe('ui.grid.paging uiGridPagingService', function () {
             expect(firstCell.text()).toBe('Ethel Price');
 
             var lastCell = gridRows.eq(4).find('div.ui-grid-cell:last-child');
-            expect(lastCell.text()).toBe('Price');
+            expect(lastCell.text()).toBe('111');
         });
     });
 });
