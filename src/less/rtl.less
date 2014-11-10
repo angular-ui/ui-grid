@@ -46,3 +46,20 @@
 .ui-grid[dir=rtl] .ui-grid-cell:first-child .ui-grid-vertical-bar {
   width: 0;
 }
+
+.ui-grid[dir=rtl] .ui-grid-menu-button {
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: auto;
+  background: @headerBackgroundColor;
+  border: @gridBorderWidth solid @borderColor;
+  cursor: pointer;
+  min-height: 27px;
+  font-weight: normal;
+}
+
+.ui-grid[dir=rtl] .ui-grid-menu-button .ui-grid-menu {
+  left: 0;
+  right: auto;
+}
