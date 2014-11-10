@@ -2,7 +2,7 @@
 @name Tutorial: 201 Edit Feature
 @description
 
-The ui.grid.edit feature allows inline editing of grid data.  To enable, you must include the `'ui.grid.edit'` module 
+The ui.grid.edit feature allows inline editing of grid data.  To enable, you must include the `'ui.grid.edit'` module
 and you must include the `ui-grid-edit` directive on your grid element.
 
 You can use the `enableCellEdit` options in your column definitions to allow a column to be editable.
@@ -10,13 +10,13 @@ You can use the `enableCellEdit` options in your column definitions to allow a c
 Editing is invoked via double-click, f2, or start typing any non-navigable key. Cell editing ends on tab, enter or esc (cancel)
 on an input editor, and tab, left or right arrows, enter or esc for a dropdown.
 
-By default an input element is provided, with numeric, date and checkbox editors for fields specified as `'number'`, `'date'` 
+By default an input element is provided, with numeric, date and checkbox editors for fields specified as `'number'`, `'date'`
 and `'boolean'` types, for all other fields a simple text editor is provided.
 
-A dropdown editor is also available, through setting the `editableCellTemplate` on the `columnDef` to `'ui-grid/dropdownEditor'`.  
+A dropdown editor is also available, through setting the `editableCellTemplate` on the `columnDef` to `'ui-grid/dropdownEditor'`.
 When using a dropdown editor you need to provide an options array through the `editDropDownOptionsArray` property on the `columnDef`.
-This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through 
-using the `editDropdownIdLabel` and `editDropdownNameLabel` options.
+This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through
+using the `editDropdownIdLabel` and `editDropdownValueLabel` options.
 
 Custom edit templates should be used for any editor other than the default editors, but be aware that you will likely also
 need to provide a custom directive similar to the uiGridEditor directive so as to provide `BEGIN_CELL_EDIT, CANCEL_CELL_EDIT
@@ -24,23 +24,23 @@ and END_CELL_EDIT` events.
 
 __ColumnDef Options__:
 
-- `editableCellTemplate` (default: `'ui-grid/cellEditor'`) - Valid html, templateCache Id,  or url that returns html 
+- `editableCellTemplate` (default: `'ui-grid/cellEditor'`) - Valid html, templateCache Id,  or url that returns html
   content to be compiled when edit mode is invoked.
-- `enableCellEdit` (default: `false` for columns of type `'object'`, `true` for all other columns) - `true` will enable 
+- `enableCellEdit` (default: `false` for columns of type `'object'`, `true` for all other columns) - `true` will enable
   editing and `false` will disable it.
-- `cellEditableCondition`  (default: `true`)  Can be set to a boolean or a function that will be called with the cellScope 
+- `cellEditableCondition`  (default: `true`)  Can be set to a boolean or a function that will be called with the cellScope
   to determine if the cell should be invoked in edit mode.
-- `type` (default: `'string'`) If set to `'number'`, `'boolean'` or `'date'` the default editor provided for editing will be numeric 
-  or boolean or date editor respectively.  If set to `'object'` the column will not be editable by default.  Be aware that this 
+- `type` (default: `'string'`) If set to `'number'`, `'boolean'` or `'date'` the default editor provided for editing will be numeric
+  or boolean or date editor respectively.  If set to `'object'` the column will not be editable by default.  Be aware that this
   `type` column is also used for other purposes within ui-grid, including the sorting logic.
 - `editDropdownOptionsArray` If a dropdown, needs to be populated with an array of values, by default those values should be
   `{id: xxx, value: xxx}`, the labels can be adjusted with the next two options
 - `editDropdownIdLabel` (default: `'id'`) Controls the id label in the options array - so if your array happens to contain
    `'code'` instead you can use it without having to reprocess the array
-- `editDropdownValueLabel` (default: `'value'`) Controls the value label in the options array - if your array happens to 
+- `editDropdownValueLabel` (default: `'value'`) Controls the value label in the options array - if your array happens to
   contain `'name'` instead you can use it without having to reprocess the array
 - `editDropdownFilter` (default: `''`) Allows you to apply a filter to the values in the edit dropdown options, for example
-  if you were using angular-translate you would set this to `'translate'`  
+  if you were using angular-translate you would set this to `'translate'`
 
 The following option is available only if using cellNav feature
 
@@ -76,11 +76,11 @@ $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
         { name: 'age', displayName: 'Age' , type: 'number', width: '10%' },
-        { name: 'gender', displayName: 'Gender', editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%', 
+        { name: 'gender', displayName: 'Gender', editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%',
           cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
-          { id: 1, gender: 'male' }, 
-          { id: 2, gender: 'female' } 
-        ] }, 
+          { id: 1, gender: 'male' },
+          { id: 2, gender: 'female' }
+        ] },
         { name: 'registered', displayName: 'Registered' , type: 'date', cellFilter: 'date:"yyyy-MM-dd"', width: '20%' },
         { name: 'address', displayName: 'Address', type: 'object', cellFilter: 'address', width: '30%' },
         { name: 'address.city', displayName: 'Address (even rows editable)', width: '20%',
@@ -119,7 +119,7 @@ $scope.gridOptions.columnDefs = [
         1: 'male',
         2: 'female'
       };
-      
+
       return function(input) {
         if (!input){
           return '';
