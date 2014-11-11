@@ -10,7 +10,7 @@
     <link href="/dist/release/ui-grid.css" rel="stylesheet">
 
     <!--<script src="https://code.jquery.com/jquery-1.11.1.js"></script>-->
-    <script src="/lib/test/angular/1.2.21/angular.js"></script>
+    <script src="/lib/test/angular/1.2.26/angular.js"></script>
     <script src="/dist/release/ui-grid.js"></script>
 
     <style>
@@ -19,8 +19,8 @@
             min-height: 600px;
         }
         .grid {
-            height: 50%;
-            width: auto;
+            width: 500px;
+            height: 400px;
         }
         .placeholder {
             height: 50%;
@@ -35,7 +35,7 @@
 
 <!-- <div class="row main"> -->
 <h2>Grid</h2>
-<div ui-grid="gridOptions" class="grid" ui-grid-selection></div>
+<div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns></div>
 <!-- <div class="placeholder"> -->
 <!-- </div> -->
 
@@ -43,21 +43,28 @@
 <br>
 
 <script>
-    var app = angular.module('test', ['ui.grid', 'ui.grid.selection']);
+    var app = angular.module('test', ['ui.grid', 'ui.grid.pinning', 'ui.grid.resizeColumns']);
     app.controller('Main', function($scope, $http) {
-        // $scope.gridOptions = { data: 'data' };
-        $scope.gridOptions = {
-            enableFiltering: true
-        };
+        $scope.gridOptions = {};
         $scope.gridOptions.columnDefs = [
-            {
-                name : "Name",
-                field: "name",
-                cellTemplate: '/misc/demo/cellTemplate.html'
-            }
+            { name:'id', width:50 },
+            { name:'name', width:100, pinnedLeft:true },
+            { name:'age', width:100, pinnedRight:true  },
+            { name:'address.street', width:150  },
+            { name:'address.city', width:150 },
+            { name:'address.state', width:50 },
+            { name:'address.zip', width:50 },
+            { name:'company', width:100 },
+            { name:'email', width:100 },
+            { name:'phone', width:200 },
+            { name:'about', width:300 },
+            { name:'friends[0].name', displayName:'1st friend', width:150 },
+            { name:'friends[1].name', displayName:'2nd friend', width:150 },
+            { name:'friends[2].name', displayName:'3rd friend', width:150 }
         ];
-        $http.get('/misc/site/data/100.json')
-                .success(function (data) {
+
+        $http.get('https://rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
+                .success(function(data) {
                     $scope.gridOptions.data = data;
                 });
     });

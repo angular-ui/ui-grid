@@ -404,6 +404,22 @@ describe('ui.grid.utilService', function() {
     });
   });
 
+  describe('arrayContainsObjectWithProperty', function () {
+    it('should return true if the array contains an object with the provided key and value, and false if not', function () {
+      var array = [
+        { name: 'Jonah', age: 12},
+        { name: 'Alice', age: 33},
+        { name: 'Joseph', age: 22}
+      ];
+
+      var contains = gridUtil.arrayContainsObjectWithProperty(array, 'name', 'Alice');
+      var notContains = gridUtil.arrayContainsObjectWithProperty(array, 'name', 'Mathias');
+      expect(contains).toEqual(true);
+      expect(notContains).toEqual(false);
+    });
+  });
+
+
   describe('postProcessTemplate', function () {
     it('should return unmodified template when interpolation symbols are the default values ( {{ / }} )', function () {
       var tmpl;

@@ -600,6 +600,16 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
 
+    arrayContainsObjectWithProperty: function(array, propertyName, propertyValue) {
+        var found = false;
+        angular.forEach(array, function (object) {
+            if (object[propertyName] === propertyValue) {
+                found = true;
+            }
+        });
+        return found;
+    },
+
     // Shim requestAnimationFrame
     requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
                            $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||

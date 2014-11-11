@@ -293,6 +293,37 @@ module.exports = {
       headerCell.click();
     },
 
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+   * @name resizeHeaderCell
+   * @description Drags the left resizer border towards the column menu button,
+   * which will perform a column resizing.
+   * @param {string} gridId the id of the grid that you want to adjust
+   * @param {integer} colNumber the number of the column (within the visible columns)
+   * which left resizer border you wish to drag (this will increase the size of colNumber-1).
+   *
+   * @example
+   * <pre>
+   *   gridTestUtils.resizeHeaderCell('myGrid', 1);
+   * </pre>
+   *
+   */
+    resizeHeaderCell: function( gridId, colNumber ) {
+      var headerCell = this.headerCell(gridId, colNumber);
+
+      var resizer = headerCell.all( by.css( '.ui-grid-column-resizer' )).first();
+      var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ));
+
+      protractor.getInstance().actions()
+        .mouseDown(resizer)
+        .mouseMove(menuButton)
+        .mouseUp()
+        .perform();
+
+    },
+
+
 
     /**
      * @ngdoc method
@@ -312,13 +343,13 @@ module.exports = {
      */
     shiftClickHeaderCell: function( gridId, colNumber ) {
       var headerCell = this.headerCell( gridId, colNumber);
-      
+
       protractor.getInstance().actions()
         .keyDown(protractor.Key.SHIFT)
         .click(headerCell)
         .keyUp(protractor.Key.SHIFT)
         .perform();
-    },    
+    },
  
      /**
      * @ngdoc method
