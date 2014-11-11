@@ -215,6 +215,20 @@ angular.module('ui.grid')
 
     return viewPortWidth;
   };
+  GridRenderContainer.prototype.getHeaderViewportHeight = function getHeaderViewportHeight() {
+    var self = this;
+
+    var viewPortHeight = (self.headerHeight) ? self.headerHeight : self.grid.headerHeight;
+
+    return viewPortHeight;
+  };
+
+  GridRenderContainer.prototype.getHeaderHeightIsDefault = function getHeaderHeightIsDefault() {
+    var self = this;
+
+    // 30 should be a constant but then we need to refactor GridOptions.js as well
+    return self.grid.headerHeight === 30;
+  };
 
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
