@@ -1,3 +1,16 @@
+<a name="v3.0.0-rc.15"></a>
+### v3.0.0-rc.15 (2014-11-11)
+
+
+#### Bug Fixes
+
+* **uiGridRenderContainer:** Inherit position ([fd353287](http://github.com/angular-ui/ng-grid/commit/fd353287639276083340ef96aa82749367f1deef), closes [#2030](http://github.com/angular-ui/ng-grid/issues/2030))
+
+
+#### Features
+
+* **Interpolation:** Handle custom symbols ([555ddecd](http://github.com/angular-ui/ng-grid/commit/555ddecddeb967f338f8bdf4da814d74f8b44495), closes [#1576](http://github.com/angular-ui/ng-grid/issues/1576))
+
 <a name="v3.0.0-rc.14"></a>
 ### v3.0.0-rc.14 (2014-11-05)
 
