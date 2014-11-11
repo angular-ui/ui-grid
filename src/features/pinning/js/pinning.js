@@ -181,9 +181,15 @@
           }
         };
 
-        col.menuItems.push(pinColumnLeftAction);
-        col.menuItems.push(pinColumnRightAction);
-        col.menuItems.push(removePinAction);
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Left')) {
+          col.menuItems.push(pinColumnLeftAction);
+        }
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Right')) {
+          col.menuItems.push(pinColumnRightAction);
+        }
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Unpin')) {
+          col.menuItems.push(removePinAction);
+        }
       }
     };
 
