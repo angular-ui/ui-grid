@@ -38,8 +38,8 @@ describe('gridClassFactory', function() {
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
-      expect(testSetup.colDef.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
-      expect(testSetup.colDef.cellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
+      expect(testSetup.col.cellTemplate).toEqual('ui-grid/uiGridCell');
 
       testSetup.$rootScope.$digest();
       
@@ -53,8 +53,8 @@ describe('gridClassFactory', function() {
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
-      expect(testSetup.colDef.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
-      expect(testSetup.colDef.cellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
+      expect(testSetup.col.cellTemplate).toEqual('ui-grid/uiGridCell');
 
       testSetup.$rootScope.$digest();
       
@@ -71,8 +71,8 @@ describe('gridClassFactory', function() {
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
-      expect(testSetup.colDef.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
-      expect(testSetup.colDef.cellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
+      expect(testSetup.col.cellTemplate).toEqual('ui-grid/uiGridCell');
 
       testSetup.$rootScope.$digest();
       
@@ -89,8 +89,8 @@ describe('gridClassFactory', function() {
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
-      expect(testSetup.colDef.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
-      expect(testSetup.colDef.cellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.headerCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
+      expect(testSetup.col.cellTemplate).toEqual('ui-grid/uiGridCell');
 
       testSetup.$rootScope.$digest();
       
