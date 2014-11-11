@@ -549,7 +549,6 @@
 
               var cellElement;
               $scope.$apply(function () {
-                debugger;
                 inEdit = true;
                 cancelBeginEditEvents();
                 var cellElement = angular.element(html);
@@ -677,8 +676,6 @@
                 });
 
                 $elm.on('keydown', function (evt) {
-                  // debugger;
-
                   switch (evt.keyCode) {
                     case uiGridConstants.keymap.ESC:
                       evt.stopPropagation();
