@@ -12,33 +12,40 @@ that default.
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
     
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.columns = [{ field: 'name' }, { field: 'gender' }];
       $scope.gridOptions = {
         enableSorting: true,
-        columnDefs: $scope.columns
+        columnDefs: $scope.columns,
+        onRegisterApi: function(gridApi) {
+          $scope.gridApi = gridApi;
+        }
       };
       
       $scope.remove = function() {
-          $scope.columns.splice($scope.columns.length-1, 1);
+        $scope.columns.splice($scope.columns.length-1, 1);
       }
       
       $scope.add = function() {
-          $scope.columns.push({ field: 'company', enableSorting: false });
+        $scope.columns.push({ field: 'company', enableSorting: false });
       }
 
       $scope.splice = function() {
-          $scope.columns.splice(1, 0, { field: 'company', enableSorting: false });
+        $scope.columns.splice(1, 0, { field: 'company', enableSorting: false });
       }
     
       $scope.unsplice = function() {
-          $scope.columns.splice(1, 1);
+        $scope.columns.splice(1, 1);
+      }
+      
+      $scope.toggleVisible = function() {
+        $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
+        $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.COLUMN);
       }
     
       $http.get('/data/100.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
-          console.log(data)
         });
     }]);
   </file>
@@ -53,6 +60,7 @@ that default.
       <button id="button_remove" class="btn" ng-click="remove()">Remove Last</button>
       <button id="button_splice" class="btn" ng-click="splice()">Splice</button>
       <button id="button_unsplice" class="btn" ng-click="unsplice()">Remove Middle</button>
+      <button id="button_toggle_visible" class="btn" ng-click="toggleVisible()">Toggle Visible</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
@@ -89,7 +97,17 @@ that default.
         element(by.id('button_unsplice')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-      });      
+      }); 
+      
+      it('toggle column 0 visible should make column appear and disappear', function () {
+        element(by.id('button_toggle_visible')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 1 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Gender' );
+
+        element(by.id('button_toggle_visible')).click();
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+      });     
     });    
   </file>
 </example>

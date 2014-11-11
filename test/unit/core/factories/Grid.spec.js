@@ -680,7 +680,7 @@ describe('Grid factory', function () {
       expect( grid.dataChangeCallbacks[uid]).toEqual( { callback: jasmine.any(Function), types: [ uiGridConstants.dataChange.ALL ] } );
       
       grid.deregisterDataChangeCallback( uid );
-      expect( grid.dataChangeCallbacks ).toEqual( {} );
+      expect( grid.dataChangeCallbacks[uid] ).toEqual( undefined );
     });
 
     describe( 'mix of callbacks being called', function() {

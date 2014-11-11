@@ -56,8 +56,6 @@
               self.grid.preCompileCellTemplates();
 
               self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
-              
-              self.grid.refresh();
             });
         }
       }
