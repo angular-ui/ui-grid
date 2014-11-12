@@ -123,9 +123,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       
     // *** Auto hide when click elsewhere ******
       var applyHideMenu = function(){
-        $scope.$apply(function () {
-          $scope.hideMenu();
-        });
+        if ($scope.shown) {
+          $scope.$apply(function () {
+            $scope.hideMenu();
+          });
+        }
       };
     
       if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
