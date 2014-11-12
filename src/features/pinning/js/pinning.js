@@ -123,6 +123,7 @@
         }
 
         var pinColumnLeftAction = {
+          name: 'ui.grid.pinning.pinLeft',
           title: i18nService.get().pinning.pinLeft,
           icon: 'ui-grid-icon-left-open',
           shown: function () {
@@ -143,6 +144,7 @@
         };
 
         var pinColumnRightAction = {
+          name: 'ui.grid.pinning.pinRight',
           title: i18nService.get().pinning.pinRight,
           icon: 'ui-grid-icon-right-open',
           shown: function () {
@@ -164,6 +166,7 @@
         };
 
         var removePinAction = {
+          name: 'ui.grid.pinning.unpin',
           title: i18nService.get().pinning.unpin,
           icon: 'ui-grid-icon-cancel',
           shown: function () {
@@ -181,13 +184,13 @@
           }
         };
 
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Left')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.pinning.pinLeft')) {
           col.menuItems.push(pinColumnLeftAction);
         }
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Right')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.pinning.pinRight')) {
           col.menuItems.push(pinColumnRightAction);
         }
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Unpin')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.pinning.unpin')) {
           col.menuItems.push(removePinAction);
         }
       }
