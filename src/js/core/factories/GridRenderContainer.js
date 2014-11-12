@@ -247,7 +247,12 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.setRenderedRows = function setRenderedRows(newRows) {
     this.renderedRows.length = newRows.length;
     for (var i = 0; i < newRows.length; i++) {
-      this.renderedRows[i] = newRows[i];
+      if (this.renderedRows[i]) {
+        this.renderedRows[i].copyFrom(newRows[i]);
+      } else {
+        this.renderedRows[i] = newRows[i].clone();
+        this.renderedRows[i].renderId = i;
+      }
     }
   };
 
