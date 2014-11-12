@@ -394,7 +394,6 @@
               $elm.on('keydown', beginEditKeyDown);
               if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').on('focus', beginEditFocus);
-                // $elm.find('div').on('click', beginEditFocus);
               }
             }
 
@@ -403,7 +402,6 @@
               $elm.off('keydown', beginEditKeyDown);
               if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').off('focus', beginEditFocus);
-                // $elm.find('div').off('click', beginEditFocus);
               }
             }
 
@@ -418,6 +416,9 @@
               beginEdit();
             }
 
+            // If the cellNagv module is installed and we can get the uiGridCellNavConstants value injected,
+            //   then if the column has enableCellEditOnFocus set to true, we need to listen for cellNav events
+            //   to this cell and start editing when the "focus" reaches us
             try {
               var uiGridCellNavConstants = $injector.get('uiGridCellNavConstants');
 
@@ -512,6 +513,7 @@
              * 
              */
             function beginEdit() {
+              // If we are already editing, then just skip this so we don't try editing twice...
               if (inEdit) {
                 return;
               }

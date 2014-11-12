@@ -745,8 +745,8 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['$timeout', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants',
-    function ($timeout, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants) {
+  module.directive('uiGridCell', ['$timeout', '$document', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants',
+    function ($timeout, $document, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
@@ -772,7 +772,12 @@
               rowCol.col === $scope.col) {
               setFocused();
 
-              if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
+              if (
+                // This cellNav event came from a keydown event so we can safely refocus
+                (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN)
+                // The focus has gone to the body element, because we've probably wrapped around
+                // ($document.activeElement === $document.body)
+              ) {
                 $elm.find('div')[0].focus();
               }
             }
