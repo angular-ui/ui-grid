@@ -181,13 +181,13 @@
           }
         };
 
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Left')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'icon', 'ui-grid-icon-left-open')) {
           col.menuItems.push(pinColumnLeftAction);
         }
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Pin Right')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'icon', 'ui-grid-icon-right-open')) {
           col.menuItems.push(pinColumnRightAction);
         }
-        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'title', 'Unpin')) {
+        if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'icon', 'ui-grid-icon-cancel')) {
           col.menuItems.push(removePinAction);
         }
       }
