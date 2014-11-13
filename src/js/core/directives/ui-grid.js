@@ -76,7 +76,7 @@
             newData.length > 0
           ) {
             // ... then build the column definitions from the data that we have
-            self.grid.buildColumnDefsFromData(n);
+            self.grid.buildColumnDefsFromData(newData);
           }
 
           // If we either have some columns defined, or some data defined
