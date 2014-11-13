@@ -73,7 +73,7 @@
             // ... and we have no pre-defined columns
             self.grid.options.columnDefs.length === 0 &&
             // ... but we DO have data
-            n.length > 0
+            newData.length > 0
           ) {
             // ... then build the column definitions from the data that we have
             self.grid.buildColumnDefsFromData(n);
