@@ -328,6 +328,14 @@
            *  <br/>Defaults to true
            */
           gridOptions.enableSelectionBatchEvent = gridOptions.enableSelectionBatchEvent !== false;
+          /**
+           *  @ngdoc object
+           *  @name selectionRowHeaderWidth
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description can be used to set a custom width for the row header selection column
+           *  <br/>Defaults to 30px
+           */
+          gridOptions.selectionRowHeaderWidth = angular.isDefined(gridOptions.selectionRowHeaderWidth) ? gridOptions.selectionRowHeaderWidth : 30;
         },
 
         /**
@@ -516,7 +524,7 @@
                 var selectionRowHeaderDef = {
                   name: uiGridSelectionConstants.selectionRowHeaderColName,
                   displayName: '',
-                  width: 40,
+                  width:  uiGridCtrl.grid.options.selectionRowHeaderWidth,
                   cellTemplate: 'ui-grid/selectionRowHeader',
                   headerCellTemplate: 'ui-grid/selectionHeaderCell',
                   enableColumnResizing: false,
