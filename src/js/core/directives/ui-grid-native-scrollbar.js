@@ -107,6 +107,10 @@
           if (grid.options.showFooter) {
             bottom -= 1;
           }
+          
+          var adjustment = colContainer.getViewportAdjustment();
+          bottom -= adjustment.height;
+          
           var ondemand = grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? "overflow-x:auto" : "";
           var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px;' +ondemand + ' }';
           ret += '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal .contents { width: ' + w + 'px; }';
