@@ -638,10 +638,13 @@
               //  gridUtil.logDebug('uiGridEdit preLink');
               uiGridCtrl.cellNav.broadcastCellNav = function (newRowCol) {
                 $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
-                uiGridCtrl.cellNav.broadcastFocus(newRowCol.row, newRowCol.col);
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol);
               };
 
-              uiGridCtrl.cellNav.broadcastFocus = function (row, col) {
+              uiGridCtrl.cellNav.broadcastFocus = function (rowCol) {
+                var row = rowCol.row,
+                    col = rowCol.col;
+
                 if (grid.cellNav.lastRowCol === null || (grid.cellNav.lastRowCol.row !== row || grid.cellNav.lastRowCol.col !== col)) {
                   var newRowCol = new RowCol(row, col);
                   grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
@@ -688,8 +691,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function ($timeout, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -706,8 +709,12 @@
               var containerId = renderContainerCtrl.containerId;
 
               var grid = uiGridCtrl.grid;
-              //needs to run last after all renderContainers are built
+
+              // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
+
+              // Let the render container be focus-able
+              $elm.attr("tabindex", -1);
 
               // Bind to keydown events in the render container
               $elm.on('keydown', function (evt) {
@@ -717,6 +724,7 @@
 
               // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
               $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+                // Skip if there's no currently-focused cell
                 if (uiGridCtrl.grid.api.cellNav.getFocusedCell() == null) {
                   return;
                 }
@@ -726,6 +734,13 @@
                   $timeout(function () {
                     // Get the last row+col combo
                     var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+
+                    // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
+                    //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
+                    //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
+                    if ($document.activeElement === $document.body) {
+                      $elm[0].focus();
+                    }
 
                     // Re-broadcast a cellNav event so we re-focus the right cell
                     uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
@@ -772,12 +787,8 @@
               rowCol.col === $scope.col) {
               setFocused();
 
-              if (
-                // This cellNav event came from a keydown event so we can safely refocus
-                (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN)
-                // The focus has gone to the body element, because we've probably wrapped around
-                // ($document.activeElement === $document.body)
-              ) {
+              // This cellNav event came from a keydown event so we can safely refocus
+              if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
                 $elm.find('div')[0].focus();
               }
             }
