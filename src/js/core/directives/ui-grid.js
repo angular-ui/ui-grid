@@ -60,23 +60,36 @@
         }
       }
 
-      function dataWatchFunction(n) {
+      function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
         
-        if (n) {
-          if (self.grid.columns.length === ( self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0 ) ) {
-            // gridUil.logDebug('loading cols in dataWatchFunction');
-            if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
-              self.grid.buildColumnDefsFromData(n);
-            }
+        if (newData) {
+          if (
+            // If we have no columns (i.e. columns length is either 0 or equal to the number of row header columns, which don't count because they're created automatically)
+            self.grid.columns.length === (self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0) &&
+            // ... and we don't have a ui-grid-columns attribute, which would define columns for us
+            !$attrs.uiGridColumns &&
+            // ... and we have no pre-defined columns
+            self.grid.options.columnDefs.length === 0 &&
+            // ... but we DO have data
+            n.length > 0
+          ) {
+            // ... then build the column definitions from the data that we have
+            self.grid.buildColumnDefsFromData(n);
+          }
+
+          // If we either have some columns defined, or some data defined
+          if (self.grid.options.columnDefs.length > 0 || newData.length > 0) {
+            // Build the column set, then pre-compile the column cell templates
             promises.push(self.grid.buildColumns()
               .then(function() {
-                self.grid.preCompileCellTemplates();}
-            ));
+                self.grid.preCompileCellTemplates();
+              }));
           }
+
           $q.all(promises).then(function() {
-            self.grid.modifyRows(n)
+            self.grid.modifyRows(newData)
               .then(function () {
                 // if (self.viewport) {
                   self.grid.redrawInPlace();
