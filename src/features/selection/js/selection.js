@@ -240,9 +240,8 @@
                  * grid doesn't automatically select rows when you add extra data - so when you add data
                  * you need to explicitly check whether the selectAll is set, and then call setVisible rows
                  * if it is
-                 * @param {bool} modifierKeysToMultiSelect true to only allow multiple rows when using ctrlKey or shiftKey is used
                  */
-                getSelectAllState: function (grid) {
+                getSelectAllState: function () {
                   return grid.selection.selectAll;
                 }
                 
