@@ -59,7 +59,7 @@ module.exports = function(grunt) {
         }
       },
       'bower-install': {
-        command: 'bower install'
+        command: 'node ./node_modules/bower/bin/bower install'
       }
     },
 
