@@ -369,13 +369,14 @@
    *
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
-      function ($compile, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
+    ['$compile', '$injector', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
+      function ($compile, $injector, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
         return {
           priority: -100, // run after default uiGridCell directive
           restrict: 'A',
           scope: false,
-          link: function ($scope, $elm, $attrs) {
+          require: '?^uiGrid',
+          link: function ($scope, $elm, $attrs, uiGridCtrl) {
             if (!$scope.col.colDef.enableCellEdit) {
               return;
             }
@@ -406,9 +407,33 @@
 
             function beginEditFocus(evt) {
               // gridUtil.logDebug('begin edit');
+              if (uiGridCtrl && uiGridCtrl.cellNav) {
+                // NOTE(c0bra): This is causing a loop where focusCell causes beginEditFocus to be called....
+                uiGridCtrl.cellNav.focusCell($scope.row, $scope.col);
+              }
+
               evt.stopPropagation();
               beginEdit();
             }
+
+            // If the cellNagv module is installed and we can get the uiGridCellNavConstants value injected,
+            //   then if the column has enableCellEditOnFocus set to true, we need to listen for cellNav events
+            //   to this cell and start editing when the "focus" reaches us
+            try {
+              var uiGridCellNavConstants = $injector.get('uiGridCellNavConstants');
+
+              if ($scope.col.colDef.enableCellEditOnFocus) {
+                $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol) {
+                  if (rowCol.row === $scope.row && rowCol.col === $scope.col) {
+                    beginEdit();
+                  }
+                  else {
+                    endEdit();
+                  }
+                });
+              }
+            }
+            catch (e) {}
 
             function beginEditKeyDown(evt) {
               if (uiGridEditService.isStartEditKey(evt)) {
@@ -488,6 +513,11 @@
              * 
              */
             function beginEdit() {
+              // If we are already editing, then just skip this so we don't try editing twice...
+              if (inEdit) {
+                return;
+              }
+
               if (!shouldEdit($scope.col, $scope.row)) {
                 return;
               }
@@ -521,15 +551,15 @@
 
               var cellElement;
               $scope.$apply(function () {
-                  inEdit = true;
-                  cancelBeginEditEvents();
-                  cellElement = $compile(html)($scope.$new());
-                  var gridCellContentsEl = angular.element($elm.children()[0]);
-                  isFocusedBeforeEdit = gridCellContentsEl.hasClass(':focus');
-                  gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
-                  $elm.append(cellElement);
-                }
-              );
+                inEdit = true;
+                cancelBeginEditEvents();
+                var cellElement = angular.element(html);
+                $elm.append(cellElement);
+                $compile(cellElement)($scope.$new());
+                var gridCellContentsEl = angular.element($elm.children()[0]);
+                isFocusedBeforeEdit = gridCellContentsEl.hasClass('ui-grid-cell-focus');
+                gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
+              });
 
               //stop editing when grid is scrolled
               var deregOnGridScroll = $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
@@ -564,7 +594,7 @@
               angular.element($elm.children()[1]).remove();
               gridCellContentsEl.removeClass('ui-grid-cell-contents-hidden');
               if (retainFocus && isFocusedBeforeEdit) {
-                gridCellContentsEl.focus();
+                gridCellContentsEl[0].focus();
               }
               isFocusedBeforeEdit = false;
               inEdit = false;
@@ -608,18 +638,23 @@
       function (uiGridConstants, uiGridEditConstants) {
         return {
           scope: true,
+          require: ['?^uiGrid', '?^uiGridRenderContainer'],
           compile: function () {
             return {
               pre: function ($scope, $elm, $attrs) {
 
               },
-              post: function ($scope, $elm, $attrs) {
+              post: function ($scope, $elm, $attrs, controllers) {
+                var uiGridCtrl, renderContainerCtrl;
+                if (controllers[0]) { uiGridCtrl = controllers[0]; }
+                if (controllers[1]) { renderContainerCtrl = controllers[1]; }
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
                   $elm[0].focus();
                   $elm[0].select();
                   $elm.on('blur', function (evt) {
+                    console.log('stop edit!');
                     $scope.stopEdit(evt);
                   });
                 });
@@ -671,6 +706,11 @@
                         evt.stopPropagation();
                         break;
                     }
+                  }
+                  // Pass the keydown event off to the cellNav service, if it exists
+                  else if (uiGridCtrl && uiGridCtrl.hasOwnProperty('cellNav') && renderContainerCtrl) {
+                    evt.uiGridTargetRenderContainerId = renderContainerCtrl.containerId;
+                    uiGridCtrl.cellNav.handleKeyDown(evt);
                   }
 
                   return true;

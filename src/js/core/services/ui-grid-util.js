@@ -735,12 +735,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @description wraps the $log method, allowing us to choose different
      * treatment within ui-grid if we so desired.  At present we only log
      * debug messages if uiGridConstants.LOG_DEBUG_MESSAGES is set to true
-     * @param {string} logMessage message to be logged to the console
      * 
      */
-    logDebug: function( logMessage ){
+    logDebug: function() {
       if ( uiGridConstants.LOG_DEBUG_MESSAGES ){
-        $log.debug( logMessage );
+        $log.debug.apply($log, arguments);
       }
     }
 
