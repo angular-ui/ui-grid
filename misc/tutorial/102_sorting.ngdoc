@@ -22,9 +22,6 @@ The sort is automatically recalculated when you edit a field (the edit feature c
 you change the data "behind the scenes" and want the sort to be recalculated, you can notify the grid that your
 data has changed by calling `gridApi.core.notifyDataChange( grid, uiGridUtils.dataChange.EDIT )`
 
-In the example we provide a button that toggles the gender of Alexander Foley on the top grid to demonstrate this,
-you can see this if you sort by gender then name (using shift click), so that Alexander is at the top of the grid.
-
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid']);
@@ -109,6 +106,10 @@ you can see this if you sort by gender then name (using shift click), so that Al
   <file name="index.html">
     <div ng-controller="MainCtrl">
       Click on a column header to sort by that column. (The third column has sorting disabled.)
+      To demonstrate the live sorting we provide a button that toggles the gender of Alexander Foley.
+      Sort by gender (ASC - so click twice) then name (using shift click), so that Alexander is at the top of the grid,
+      then click the toggleGender button.
+
       <br>
       <br>
       <button id='toggleGender' ng-click='toggleGender()'>Toggle Gender</button>
