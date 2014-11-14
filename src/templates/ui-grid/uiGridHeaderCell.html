@@ -16,7 +16,7 @@
     <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-click="$event.stopPropagation()" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
 
     <div class="ui-grid-filter-button" ng-click="colFilter.term = null">
-      <i class="ui-grid-icon-cancel right" ng-show="!!colFilter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
+      <i class="ui-grid-icon-cancel" ng-show="!!colFilter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
     </div>
   </div>
 </div>

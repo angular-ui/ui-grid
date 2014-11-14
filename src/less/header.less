@@ -143,7 +143,7 @@
     bottom: 0;
     right: 0;
 
-    [class^="ui-grid-icon"].right {
+    [class^="ui-grid-icon"] {
       position: absolute;
       top: 50%;
       line-height: 32px;
@@ -155,6 +155,17 @@
         opacity: 1;
       }
     }
+  }
+}
+
+// Position filter-cancel button on the left for rtl grids
+.ui-grid[dir="rtl"] .ui-grid-filter-container .ui-grid-filter-button {
+  right: initial;
+  left: 0;
+
+  [class^="ui-grid-icon"].right {
+    right: initial;
+    left: 10px;
   }
 }
 
