@@ -654,7 +654,6 @@
                   $elm[0].focus();
                   $elm[0].select();
                   $elm.on('blur', function (evt) {
-                    console.log('stop edit!');
                     $scope.stopEdit(evt);
                   });
                 });
