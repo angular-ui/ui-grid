@@ -254,9 +254,9 @@
           $scope.totalItemsLabel = i18nService.getSafeText('paging.totalItems');
           
           var options = $scope.grid.options;
-
-          var height = gridUtil.elementHeight($elm) + (options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS ? -7 : 10);
+          
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
+            var height = gridUtil.elementHeight($elm) + (options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS ? 15 : 10);
             adjustment.height = adjustment.height - height;
             return adjustment;
           });
