@@ -230,6 +230,7 @@ angular.module('ui.grid')
   self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
   
   self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
+  self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
 };
 
     /**
@@ -376,11 +377,27 @@ angular.module('ui.grid')
    * @name columnRefreshCallback
    * @methodOf ui.grid.class:Grid
    * @description refreshes the grid when a column refresh
-   * is notified, which triggers handling of the visible flag 
+   * is notified, which triggers handling of the visible flag. 
+   * This is called on uiGridConstants.dataChange.COLUMN, and is 
+   * registered as a dataChangeCallback in grid.js
    * @param {string} name column name
    */
   Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
     grid.refresh();
+  };
+    
+
+  /**
+   * @ngdoc function
+   * @name processRowsCallback
+   * @methodOf ui.grid.class:Grid
+   * @description calls the row processors, specifically
+   * intended to reset the sorting when an edit is called,
+   * registered as a dataChangeCallback on uiGridConstants.dataChange.EDIT
+   * @param {string} name column name
+   */
+  Grid.prototype.processRowsCallback = function processRowsCallback( grid ){
+    grid.refreshRows();
   };
     
 
@@ -1633,10 +1650,9 @@ angular.module('ui.grid')
       .then(function (renderableRows) {
         self.setVisibleRows(renderableRows);
 
-        // TODO: this method doesn't exist, so clearly refreshRows doesn't work.
-        self.redrawRows();
+        self.redrawInPlace();
 
-        self.refreshCanvas();
+        self.refreshCanvas( true );
       });
   };
 
