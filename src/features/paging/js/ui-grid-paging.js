@@ -273,15 +273,23 @@
             return (options.totalItems === 0) ? 1 : Math.ceil(options.totalItems / options.pagingPageSize);
           };
 
-          var deregT = $scope.$watch('grid.options.totalItems + grid.options.pagingPageSize', function () {
-              $scope.currentMaxPages = getMaxPages();
-              setShowing();
-            }
-          );
+          var deregT = $scope.$watch(
+                function (scope) {
+                  return String(scope.grid.options.totalItems) + String(scope.grid.options.pagingPageSize);
+                },
+                function () {
+                  $scope.currentMaxPages = getMaxPages();
+                  setShowing();
+                }
+              );
 
-          var deregP = $scope.$watch('grid.options.pagingCurrentPage + grid.options.pagingPageSize', function (newValues, oldValues) {
-              if (newValues === oldValues) { 
-                return; 
+          var deregP = $scope.$watch(
+            function (scope) {
+              return String(scope.grid.options.pagingCurrentPage) + String(scope.grid.options.pagingPageSize);
+            },
+            function (newValues, oldValues) {
+              if (newValues === oldValues) {
+                return;
               }
 
               if (!angular.isNumber(options.pagingCurrentPage) || options.pagingCurrentPage < 1) {
