@@ -242,14 +242,17 @@
    *
    *  @description Panel for handling paging
    */
-  module.directive('uiGridPager', ['uiGridPagingService', 'uiGridConstants', 'gridUtil',
-    function (uiGridPagingService, uiGridConstants, gridUtil) {
+  module.directive('uiGridPager', ['uiGridPagingService', 'uiGridConstants', 'gridUtil', 'i18nService',
+    function (uiGridPagingService, uiGridConstants, gridUtil, i18nService) {
       return {
         priority: -200,
         scope: true,
         require: '^uiGrid',
         link: function ($scope, $elm, $attr, uiGridCtrl) {
 
+          $scope.sizesLabel = i18nService.getSafeText('paging.sizes');
+          $scope.totalItemsLabel = i18nService.getSafeText('paging.totalItems');
+          
           var options = $scope.grid.options;
 
           var height = gridUtil.elementHeight($elm) + (options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS ? -7 : 10);
