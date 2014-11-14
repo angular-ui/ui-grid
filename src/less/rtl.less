@@ -63,3 +63,14 @@
   left: 0;
   right: auto;
 }
+
+// Position filter-cancel button on the left for rtl grids
+.ui-grid[dir="rtl"] .ui-grid-filter-container .ui-grid-filter-button {
+  right: initial;
+  left: 0;
+
+  [class^="ui-grid-icon"] {
+    right: initial;
+    left: 10px;
+  }
+}
