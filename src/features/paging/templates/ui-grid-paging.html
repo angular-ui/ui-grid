@@ -1,12 +1,12 @@
 <div class="ui-grid-pager-panel" ui-grid-pager>
   <div class="ui-grid-pager-container">
     <div class="ui-grid-pager-control">
-      <button type="button" ng-click="pageToFirst()" ng-disabled="cantPageBackward()"><div class="first-triangle"><div class="first-bar"></div></div></button>
-      <button type="button" ng-click="pageBackward()" ng-disabled="cantPageBackward()"><div class="first-triangle prev-triangle"></div></button>
+      <button type="button" ng-click="pageToFirst()" ng-disabled="cantPageBackward()"><div class="ui-grid-pager-first-triangle"><div class="ui-grid-pager-first-bar"></div></div></button>
+      <button type="button" ng-click="pageBackward()" ng-disabled="cantPageBackward()"><div class="ui-grid-pager-first-triangle ui-grid-pager-prev-triangle"></div></button>
       <input type="number" ng-model="grid.options.pagingCurrentPage" min="1" max="{{currentMaxPages}}" required />
       <span class="ui-grid-pager-max-pages-number" ng-show="currentMaxPages > 0">/ {{currentMaxPages}}</span>
-      <button type="button" ng-click="pageForward()" ng-disabled="cantPageForward()"><div class="last-triangle next-triangle"></div></button>
-      <button type="button" ng-click="pageToLast()" ng-disabled="cantPageToLast()"><div class="last-triangle"><div class="last-bar"></div></div></button>
+      <button type="button" ng-click="pageForward()" ng-disabled="cantPageForward()"><div class="ui-grid-pager-last-triangle ui-grid-pager-next-triangle"></div></button>
+      <button type="button" ng-click="pageToLast()" ng-disabled="cantPageToLast()"><div class="ui-grid-pager-last-triangle"><div class="ui-grid-pager-last-bar"></div></div></button>
     </div>
     <div class="ui-grid-pager-row-count-picker">
       <select ng-model="grid.options.pagingPageSize" ng-options="o as o for o in grid.options.pagingPageSizes"></select>
