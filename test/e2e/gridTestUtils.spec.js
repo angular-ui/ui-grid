@@ -40,7 +40,7 @@ module.exports = {
      */
     expectRowCount: function( gridId, expectedNumRows ) {
 
-      var rows = element( by.id( gridId ) ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid') );
+      var rows = element( by.id( gridId ) ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
       expect(rows.count()).toEqual(expectedNumRows);
     },
     
@@ -169,7 +169,7 @@ module.exports = {
      * 
      */
     dataCell: function( gridId, fetchRow, fetchCol ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( fetchRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
       return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row( fetchCol ));
     },
 
@@ -240,7 +240,7 @@ module.exports = {
      * 
      */
     expectCellValueMatch: function( gridId, expectedRow, expectedCol, expectedValue ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( expectedRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( expectedRow )  );
       expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(expectedCol)).getText()).toMatch(expectedValue);
     },
     
@@ -263,7 +263,7 @@ module.exports = {
      * 
      */
     expectRowValuesMatch: function( gridId, expectedRow, expectedValueArray ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( expectedRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( expectedRow )  );
 
       for ( var i = 0; i < expectedValueArray.length; i++){
         expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);

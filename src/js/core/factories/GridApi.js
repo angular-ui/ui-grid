@@ -82,7 +82,7 @@
            * @param {Grid} grid the grid you want to get visible rows from
            * @returns {array} an array of gridRow 
            */
-          this.registerMethod( 'core', 'getVisibleRows', GridRow.prototype.getVisibleRows );
+          this.registerMethod( 'core', 'getVisibleRows', this.grid.getVisibleRows );
           
           /**
            * @ngdoc event
