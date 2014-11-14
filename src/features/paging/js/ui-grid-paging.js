@@ -256,8 +256,7 @@
           var options = $scope.grid.options;
           
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            var height = gridUtil.elementHeight($elm) + (options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS ? 15 : 10);
-            adjustment.height = adjustment.height - height;
+            adjustment.height = adjustment.height - gridUtil.elementHeight($elm);
             return adjustment;
           });
           
