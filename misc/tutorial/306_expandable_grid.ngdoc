@@ -9,11 +9,14 @@ Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgri
     //This is the template that will be used to render subgrid.
     expandableRowTemplate: 'expandableRowTemplate.html',
     //This will be the height of the subgrid
-    expandableRowHeight: 140
+    expandableRowHeight: 140,
+    //Variables of object expandableScope will be available in the scope of the expanded subgrid
+    expandableRowScope: expandableScope
   }
 </pre>
 
-rowExpandableTemplate will be template for subgrid and expandableRowHeight will be height of the subgrid. The grid api
+rowExpandableTemplate will be template for subgrid and expandableRowHeight will be height of the subgrid, expandableRowScope can be used
+to added variables to scope of expanded grid. These variables can then be access from expandableRowTemplate. The grid api
 provided following events and methods fos subGrids:
 
 <pre>
@@ -35,7 +38,11 @@ SubGrid nesting can be done upto multiple levels.
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {
         expandableRowTemplate: 'expandableRowTemplate.html',
-        expandableRowHeight: 150
+        expandableRowHeight: 150,
+        //subGridVariable will be available in subGrid scope
+        expandableRowScope: {
+          subGridVariable: 'subGridScopeVariable'
+        }
       }
 
       $scope.gridOptions.columnDefs = [

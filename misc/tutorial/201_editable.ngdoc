@@ -11,7 +11,8 @@ Editing is invoked via double-click, f2, or start typing any non-navigable key. 
 on an input editor, and tab, left or right arrows, enter or esc for a dropdown.
 
 By default an input element is provided, with numeric, date and checkbox editors for fields specified as `'number'`, `'date'`
-and `'boolean'` types, for all other fields a simple text editor is provided.
+and `'boolean'` types, for all other fields a simple text editor is provided. (A point to note about date editors is that for date editors
+to be enabled the datatype of the variable should also be "Date").
 
 A dropdown editor is also available, through setting the `editableCellTemplate` on the `columnDef` to `'ui-grid/dropdownEditor'`.
 When using a dropdown editor you need to provide an options array through the `editDropDownOptionsArray` property on the `columnDef`.
