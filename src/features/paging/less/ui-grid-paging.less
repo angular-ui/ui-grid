@@ -2,10 +2,9 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    height: 35px;
     width: 100%;
-    padding-top: 2px;
-    padding-bottom: 4px;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .ui-grid-pager-container {
@@ -29,7 +28,7 @@
     vertical-align: top;
   }
 
-  .ui-grid-pager-first-bar {
+  .first-bar {
     width: 10px;
     border-left: 2px solid #4d4d4d;
     margin-top: -6px;
@@ -37,7 +36,7 @@
     margin-left: -3px;
   }
 
-  .ui-grid-pager-first-triangle {
+  .first-triangle {
     width: 0;
     height: 0;
     border-style: solid;
@@ -46,15 +45,15 @@
     margin-left: 2px;
   }
 
-  .ui-grid-pager-next-triangle {
+  .next-triangle {
     margin-left: 1px;
   }
 
-  .ui-grid-pager-prev-triangle {
+  .prev-triangle {
     margin-left: 0;
   }
 
-  .ui-grid-pager-last-triangle {
+  .last-triangle {
     width: 0;
     height: 0;
     border-style: solid;
@@ -63,7 +62,7 @@
     margin-left: -1px;
   }
 
-  .ui-grid-pager-last-bar {
+  .last-bar {
     width: 10px;
     border-left: 2px solid #4d4d4d;
     margin-top: -6px;
@@ -87,8 +86,12 @@
 
 .ui-grid-pager-count-container {
   float: right;
+  margin-top: 4px;
+  min-width: 50px;
 
   .ui-grid-pager-count {
     margin-right: 10px;
+    margin-left: 10px;
+    float: right;
   }
 }

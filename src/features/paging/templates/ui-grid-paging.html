@@ -10,13 +10,13 @@
     </div>
     <div class="ui-grid-pager-row-count-picker">
       <select ng-model="grid.options.pagingPageSize" ng-options="o as o for o in grid.options.pagingPageSizes"></select>
-      <span class="ui-grid-pager-row-count-label">&nbsp;items per page</span>
+      <span class="ui-grid-pager-row-count-label">&nbsp;{{sizesLabel}}</span>
     </div>
   </div>
     <div class="ui-grid-pager-count-container">
       <div class="ui-grid-pager-count">
         <span ng-show="grid.options.totalItems > 0">
-            {{showingLow}} - {{showingHigh}} of {{grid.options.totalItems}} items
+            {{showingLow}} - {{showingHigh}} of {{grid.options.totalItems}} {{totalItemsLabel}}
         </span>
       </div>
   </div>

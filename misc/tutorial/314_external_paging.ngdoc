@@ -82,7 +82,7 @@ This shows combined external paging and sorting.
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 600px;
     }
   </file>
 </example>
