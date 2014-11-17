@@ -174,6 +174,21 @@ describe('Grid factory', function () {
       }).toThrow();
     });
   });
+  
+  describe('row builder', function () {
+    function testObj () { }
+    
+    it('should return a defined gridOptions', function () {
+      var testRowBuilder = function (row, gridOptions) {
+        expect(gridOptions).toBeDefined();
+      };
+      var row = new GridRow({str:'abc'}, 0, grid);
+      testObj.testRowBuilder = jasmine.createSpy('testRowBuilder').andCallFake(testRowBuilder);
+      grid.registerRowBuilder(testObj.testRowBuilder);  
+      grid.processRowBuilders(row);
+      expect(testObj.testRowBuilder).toHaveBeenCalled();
+    });
+  });
 
   describe('renderContainers', function () {
     it('should have a body render container', function () {
