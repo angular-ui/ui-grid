@@ -268,7 +268,13 @@
                       var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
                       var currentElmRight = movingElm[0].getBoundingClientRect().right;
                       var changeValue = evt.pageX - previousMouseX;
-                      var newElementLeft = currentElmLeft - gridLeft + changeValue;
+                      var newElementLeft;
+                      if (gridUtil.detectBrowser() === 'ie') {
+                        newElementLeft = currentElmLeft + changeValue;
+                      }
+                      else {
+                        newElementLeft = currentElmLeft - gridLeft + changeValue;
+                      }
                       newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
                       if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
                         movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
