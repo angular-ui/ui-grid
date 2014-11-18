@@ -45,7 +45,7 @@
     "karma-chrome-launcher": "~0.1",
     "karma-firefox-launcher": "~0.1",
     "karma-phantomjs-launcher": "~0.1",
-    "karma-sauce-launcher": "~0.1.5",
+    "karma-sauce-launcher": "~0.2.10",
     "karma-script-launcher": "~0.1",
     "grunt-karma": "~0.8",
     "marked": "~0.2",
