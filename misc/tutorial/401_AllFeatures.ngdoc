@@ -83,12 +83,12 @@ All features are enabled to get an idea of performance
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <button type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>
+      <button id="refreshButton" type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>
       <br>
       <br>
       <strong>{{ myData.length }} rows</strong>
       <br>
-      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -96,5 +96,16 @@ All features are enabled to get an idea of performance
       width: 500px;
       height: 500px;
     }
+  </file>
+  <file name="scenario.js">
+      var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
+      describe('a grid with all features', function () {
+        it('should not duplicate the menu options for pinning when resizing a column', function () {
+          element( by.id('refreshButton') ).click();
+          gridTestUtils.resizeHeaderCell( 'grid1', 1 );
+          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 5)
+        });
+      });
   </file>
 </example>

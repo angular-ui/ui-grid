@@ -279,7 +279,9 @@ angular.module('ui.grid')
       return;
     }
 
-    scrollTop = this.getCanvasHeight() * scrollPercentage;
+    if (typeof(scrollTop) === 'undefined' || scrollTop === undefined || scrollTop === null) {
+      scrollTop = (this.getCanvasHeight() - this.getCanvasWidth()) * scrollPercentage;
+    }
 
     this.adjustRows(scrollTop, scrollPercentage);
 
@@ -294,10 +296,9 @@ angular.module('ui.grid')
       return;
     }
 
-    // scrollLeft = uiGridCtrl.canvas[0].scrollWidth * scrollPercentage;
-    scrollLeft = this.getCanvasWidth() * scrollPercentage;
-
-    //gridUtil.logDebug('scrollPercentage', scrollPercentage);
+    if (typeof(scrollLeft) === 'undefined' || scrollLeft === undefined || scrollLeft === null) {
+      scrollLeft = (this.getCanvasWidth() - this.getViewportWidth()) * scrollPercentage;
+    }
 
     this.adjustColumns(scrollLeft, scrollPercentage);
 

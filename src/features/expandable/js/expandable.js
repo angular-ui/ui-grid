@@ -226,8 +226,8 @@
     }]);
 
   module.directive('uiGridExpandableRow',
-  ['uiGridExpandableService', '$timeout', '$compile', 'uiGridConstants','gridUtil','$interval',
-    function (uiGridExpandableService, $timeout, $compile, uiGridConstants, gridUtil, $interval) {
+  ['uiGridExpandableService', '$timeout', '$compile', 'uiGridConstants','gridUtil','$interval', '$log',
+    function (uiGridExpandableService, $timeout, $compile, uiGridConstants, gridUtil, $interval, $log) {
 
       return {
         replace: false,
@@ -239,6 +239,14 @@
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               gridUtil.getTemplate($scope.grid.options.expandableRowTemplate).then(
                 function (template) {
+                  if ($scope.grid.options.expandableRowScope) {
+                    var expandableRowScope = $scope.grid.options.expandableRowScope;
+                    for (var property in expandableRowScope) {
+                      if (expandableRowScope.hasOwnProperty(property)) {
+                        $scope[property] = expandableRowScope[property];
+                      }
+                    }
+                  }
                   var expandedRowElement = $compile(template)($scope);
                   $elm.append(expandedRowElement);
                   $scope.row.expandedRendered = true;
@@ -279,7 +287,13 @@
 
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
-                      var colWidth = grid.getColumn('expandableButtons').width;
+                      var colWidth = 0;
+                      angular.forEach(grid.columns, function (column) {
+                          if (column.renderContainer === 'left') {
+                            colWidth += column.width;
+                          }
+                      });
+                      colWidth = Math.floor(colWidth);
                       return '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id +
                           ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name +
                           ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + colWidth + 'px; }';

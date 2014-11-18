@@ -110,7 +110,9 @@
            *
            */
           if (!colDef.headerCellTemplate) {
-            colDef.headerCellTemplate = 'ui-grid/uiGridHeaderCell';
+            col.providedHeaderCellTemplate = 'ui-grid/uiGridHeaderCell';
+          } else {
+            col.providedHeaderCellTemplate = colDef.headerCellTemplate;
           }
 
           /**
@@ -123,11 +125,12 @@
            *
            */
           if (!colDef.cellTemplate) {
-            colDef.cellTemplate = 'ui-grid/uiGridCell';
-            col.cellTemplatePromise = gridUtil.getTemplate(colDef.cellTemplate);
+            col.providedCellTemplate = 'ui-grid/uiGridCell';
+          } else {
+            col.providedCellTemplate = colDef.cellTemplate;
           }
 
-          col.cellTemplatePromise = gridUtil.getTemplate(colDef.cellTemplate);
+          col.cellTemplatePromise = gridUtil.getTemplate(col.providedCellTemplate);
           templateGetPromises.push(col.cellTemplatePromise
             .then(
               function (template) {
@@ -138,7 +141,7 @@
               })
           );
 
-          templateGetPromises.push(gridUtil.getTemplate(colDef.headerCellTemplate)
+          templateGetPromises.push(gridUtil.getTemplate(col.providedHeaderCellTemplate)
               .then(
               function (template) {
                 col.headerCellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.headerCellFilter ? "|" + col.headerCellFilter : "");

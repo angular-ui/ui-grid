@@ -71,6 +71,57 @@ describe('ui-grid', function() {
     });
   });
 
+  describe('column width calculation', function () {
+    var element = null, gridApi = null;
+
+    var columnDefs = [
+      { name: 'col1' },
+      { name: 'col2' },
+      { name: 'col3' },
+      { name: 'col4' },
+      { name: 'col5' },
+      { name: 'col6' },
+      { name: 'col7' }
+    ];
+
+    beforeEach(inject(function ($compile, $rootScope, $document) {
+      var scope = $rootScope;
+
+      element = angular.element('<div style="width 333px; height: 150px" ui-grid="gridOptions"></div>');
+      scope.gridOptions = {
+        columnDefs: columnDefs,
+        data: [],
+        onRegisterApi: function( api ){ gridApi = api; }
+      };
+
+      $compile(element)(scope);
+      $document[0].body.appendChild(element[0]);
+
+      scope.$digest();
+    }));
+
+    afterEach(function() {
+      element.remove();
+      angular.forEach(columnDefs, function (c) {
+        delete c.width;
+      });
+    });
+
+    // ideally there should be tests for multiple column configurations here
+    // but need to figure out how to have separate columnDefs for each
+    // expect block below
+
+    it('should distribute extra width', function () {
+      var renderWidth = 0;
+
+      angular.forEach(gridApi.grid.columns, function (c) {
+        renderWidth += c.drawnWidth;
+      });
+
+      expect(renderWidth).toBe(gridApi.grid.gridWidth);
+    });
+  });
+
   describe('watch for new pinned containers', function () {
     var element, scope;
 

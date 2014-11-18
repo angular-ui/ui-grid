@@ -652,7 +652,7 @@ angular.module('ui.grid')
         return self.getAggregationText('aggregation.max', Math.max.apply(null, cellValues));
       }
       else {
-        return null;
+        return '\u00A0';
       }
     };
     

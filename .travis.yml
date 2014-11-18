@@ -7,7 +7,7 @@ notifications:
   irc: "chat.freenode.net#ui-grid"
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/6bdd30ec5170687c7d77
+      - https://webhooks.gitter.im/e/c9dc628573cc153706fa
     on_success: always  # options: [always|never|change] default: always
     on_failure: always  # options: [always|never|change] default: always
     on_start: false     # default: false

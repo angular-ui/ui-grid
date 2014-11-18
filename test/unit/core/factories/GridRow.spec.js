@@ -57,20 +57,22 @@ describe('GridRow factory', function () {
 
       grid.buildColumns();
       grid.modifyRows(grid.options.data);
+      grid.setVisibleRows(grid.rows);
     });
     
     it('should set then unset forceInvisible on visible row, raising visible rows changed event', function () {
       grid.api.core.on.rowsVisibleChanged( $scope, function() { rowsVisibleChanged = true; });
 
-      expect(grid.api.core.getVisibleRows(grid).length).toEqual(10);
+      expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'all rows visible');
       
       grid.api.core.setRowInvisible(grid.rows[0]);
       expect(grid.rows[0].forceInvisible).toBe(true);
       expect(grid.rows[0].visible).toBe(false);
       
       expect(rowsVisibleChanged).toEqual(true);
+      $scope.$apply();
       
-      expect(grid.api.core.getVisibleRows(grid).length).toEqual(9);
+      expect(grid.api.core.getVisibleRows(grid).length).toEqual(9, 'one row now invisible');
       
       rowsVisibleChanged = false;
 
@@ -79,8 +81,9 @@ describe('GridRow factory', function () {
       expect(grid.rows[0].visible).toBe(true);
 
       expect(rowsVisibleChanged).toEqual(true);
+      $scope.$apply();
 
-      expect(grid.api.core.getVisibleRows(grid).length).toEqual(10);
+      expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'should be visible again');
     });
 
     it('should set then clear forceInvisible on invisible row, doesn\'t raise visible rows changed event', function () {

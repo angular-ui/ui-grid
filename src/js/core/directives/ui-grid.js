@@ -56,29 +56,40 @@
               self.grid.preCompileCellTemplates();
 
               self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
-              
-              self.grid.refresh();
             });
         }
       }
 
-      function dataWatchFunction(n) {
+      function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
         
-        if (n) {
-          if (self.grid.columns.length === ( self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0 ) ) {
-            // gridUil.logDebug('loading cols in dataWatchFunction');
-            if (!$attrs.uiGridColumns && self.grid.options.columnDefs.length === 0) {
-              self.grid.buildColumnDefsFromData(n);
-            }
+        if (newData) {
+          if (
+            // If we have no columns (i.e. columns length is either 0 or equal to the number of row header columns, which don't count because they're created automatically)
+            self.grid.columns.length === (self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0) &&
+            // ... and we don't have a ui-grid-columns attribute, which would define columns for us
+            !$attrs.uiGridColumns &&
+            // ... and we have no pre-defined columns
+            self.grid.options.columnDefs.length === 0 &&
+            // ... but we DO have data
+            newData.length > 0
+          ) {
+            // ... then build the column definitions from the data that we have
+            self.grid.buildColumnDefsFromData(newData);
+          }
+
+          // If we either have some columns defined, or some data defined
+          if (self.grid.options.columnDefs.length > 0 || newData.length > 0) {
+            // Build the column set, then pre-compile the column cell templates
             promises.push(self.grid.buildColumns()
               .then(function() {
-                self.grid.preCompileCellTemplates();}
-            ));
+                self.grid.preCompileCellTemplates();
+              }));
           }
+
           $q.all(promises).then(function() {
-            self.grid.modifyRows(n)
+            self.grid.modifyRows(newData)
               .then(function () {
                 // if (self.viewport) {
                   self.grid.redrawInPlace();
@@ -205,7 +216,28 @@ angular.module('ui.grid').directive('uiGrid',
               // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
               if (grid.gridHeight < grid.options.rowHeight) {
                 // Figure out the new height
-                var newHeight = grid.options.minRowsToShow * grid.options.rowHeight;
+                var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
+                var headerHeight = grid.options.hideHeader ? 0 : grid.options.headerRowHeight;
+                var footerHeight = grid.options.showFooter ? grid.options.footerRowHeight : 0;
+                var scrollbarHeight = grid.options.enableScrollbars ? gridUtil.getScrollbarWidth() : 0;
+
+                var maxNumberOfFilters = 0;
+                // Calculates the maximum number of filters in the columns
+                angular.forEach(grid.options.columnDefs, function(col) {
+                  if (col.hasOwnProperty('filter')) {
+                    if (maxNumberOfFilters < 1) {
+                        maxNumberOfFilters = 1;
+                    }
+                  }
+                  else if (col.hasOwnProperty('filters')) {
+                    if (maxNumberOfFilters < col.filters.length) {
+                        maxNumberOfFilters = col.filters.length;
+                    }
+                  }
+                });
+                var filterHeight = maxNumberOfFilters * headerHeight;
+
+                var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight + filterHeight;
 
                 $elm.css('height', newHeight + 'px');
 

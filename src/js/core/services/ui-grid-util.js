@@ -139,8 +139,8 @@ var uidPrefix = 'uiGrid-';
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', 'uiGridConstants',
-  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, uiGridConstants) {
+module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', '$interpolate', 'uiGridConstants',
+  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, $interpolate, uiGridConstants) {
   var s = {
 
     getStyles: getStyles,
@@ -315,25 +315,25 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     getTemplate: function (template) {
       // Try to fetch the template out of the templateCache
       if ($templateCache.get(template)) {
-        return $q.when($templateCache.get(template));
+        return s.postProcessTemplate($templateCache.get(template));
       }
 
       // See if the template is itself a promise
       if (template.hasOwnProperty('then')) {
-        return template;
+        return template.then(s.postProcessTemplate);
       }
 
       // If the template is an element, return the element
       try {
         if (angular.element(template).length > 0) {
-          return $q.when(template);
+          return $q.when(template).then(s.postProcessTemplate);
         }
       }
       catch (err){
         //do nothing; not valid html
       }
 
-      $log.debug('Fetching url', template);
+      s.logDebug('fetching url', template);
 
       // Default to trying to fetch the template as a url with $http
       return $http({ method: 'GET', url: template})
@@ -347,7 +347,22 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           function (err) {
             throw new Error("Could not get template " + template + ": " + err);
           }
-        );
+        )
+        .then(s.postProcessTemplate);
+    },
+
+    // 
+    postProcessTemplate: function (template) {
+      var startSym = $interpolate.startSymbol(),
+          endSym = $interpolate.endSymbol();
+
+      // If either of the interpolation symbols have been changed, we need to alter this template
+      if (startSym !== '{{' || endSym !== '}}') {
+        template = template.replace(/\{\{/g, startSym);
+        template = template.replace(/\}\}/g, endSym);
+      }
+
+      return $q.when(template);
     },
 
     /**
@@ -585,6 +600,16 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       return str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
 
+    arrayContainsObjectWithProperty: function(array, propertyName, propertyValue) {
+        var found = false;
+        angular.forEach(array, function (object) {
+            if (object[propertyName] === propertyValue) {
+                found = true;
+            }
+        });
+        return found;
+    },
+
     // Shim requestAnimationFrame
     requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
                            $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
@@ -710,12 +735,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @description wraps the $log method, allowing us to choose different
      * treatment within ui-grid if we so desired.  At present we only log
      * debug messages if uiGridConstants.LOG_DEBUG_MESSAGES is set to true
-     * @param {string} logMessage message to be logged to the console
      * 
      */
-    logDebug: function( logMessage ){
+    logDebug: function() {
       if ( uiGridConstants.LOG_DEBUG_MESSAGES ){
-        $log.debug( logMessage );
+        $log.debug.apply($log, arguments);
       }
     }
 

@@ -5,15 +5,18 @@
 Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
 
 <pre>
-  $scope.gridOptions.expandable = {
+  $scope.gridOptions = {
     //This is the template that will be used to render subgrid.
-    rowExpandableTemplate: 'rowExpandableTemplate.html',
+    expandableRowTemplate: 'expandableRowTemplate.html',
     //This will be the height of the subgrid
-    expandableRowHeight: 140
+    expandableRowHeight: 140,
+    //Variables of object expandableScope will be available in the scope of the expanded subgrid
+    expandableRowScope: expandableScope
   }
 </pre>
 
-rowExpandableTemplate will be template for subgrid and expandableRowHeight will be height of the subgrid. The grid api
+rowExpandableTemplate will be template for subgrid and expandableRowHeight will be height of the subgrid, expandableRowScope can be used
+to added variables to scope of expanded grid. These variables can then be access from expandableRowTemplate. The grid api
 provided following events and methods fos subGrids:
 
 <pre>
@@ -30,16 +33,20 @@ SubGrid nesting can be done upto multiple levels.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable', 'ui.grid.selection', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {
         expandableRowTemplate: 'expandableRowTemplate.html',
-        expandableRowHeight: 150
+        expandableRowHeight: 150,
+        //subGridVariable will be available in subGrid scope
+        expandableRowScope: {
+          subGridVariable: 'subGridScopeVariable'
+        }
       }
 
       $scope.gridOptions.columnDefs = [
-        { name: 'id'},
+        { name: 'id' },
         { name: 'name'},
         { name: 'age'},
         { name: 'address.city'}
@@ -68,6 +75,32 @@ SubGrid nesting can be done upto multiple levels.
           $scope.gridApi.expandable.collapseAllRows();
         }
     }]);
+
+    app.controller('SecondCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+          $scope.gridOptions = {
+            enableRowSelection: true,
+            expandableRowTemplate: 'expandableRowTemplate.html',
+            expandableRowHeight: 150
+          }
+
+          $scope.gridOptions.columnDefs = [
+            { name: 'id', pinnedLeft:true },
+            { name: 'name'},
+            { name: 'age'},
+            { name: 'address.city'}
+          ];
+
+          $http.get('/data/500_complex.json')
+            .success(function(data) {
+              for(i = 0; i < data.length; i++){
+                data[i].subGridOptions = {
+                  columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
+                  data: data[i].friends
+                }
+              }
+              $scope.gridOptions.data = data;
+            });
+        }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
@@ -76,6 +109,10 @@ SubGrid nesting can be done upto multiple levels.
         <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All"/>
       </div>
       <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable class="grid"></div>
+    </div>
+    Expandable rows works with checkboxes from selection and left pins
+    <div ng-controller="SecondCtrl">
+       <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable ui-grid-selection class="grid"></div>
     </div>
   </file>
   <file name="main.css">

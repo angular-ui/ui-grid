@@ -46,3 +46,31 @@
 .ui-grid[dir=rtl] .ui-grid-cell:first-child .ui-grid-vertical-bar {
   width: 0;
 }
+
+.ui-grid[dir=rtl] .ui-grid-menu-button {
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: auto;
+  background: @headerBackgroundColor;
+  border: @gridBorderWidth solid @borderColor;
+  cursor: pointer;
+  min-height: 27px;
+  font-weight: normal;
+}
+
+.ui-grid[dir=rtl] .ui-grid-menu-button .ui-grid-menu {
+  left: 0;
+  right: auto;
+}
+
+// Position filter-cancel button on the left for rtl grids
+.ui-grid[dir="rtl"] .ui-grid-filter-container .ui-grid-filter-button {
+  right: initial;
+  left: 0;
+
+  [class^="ui-grid-icon"] {
+    right: initial;
+    left: 10px;
+  }
+}

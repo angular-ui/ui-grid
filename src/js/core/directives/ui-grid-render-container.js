@@ -16,7 +16,8 @@
         colContainerName: '=',
         bindScrollHorizontal: '=',
         bindScrollVertical: '=',
-        enableScrollbars: '='
+        enableVerticalScrollbar: '=',
+        enableHorizontalScrollbar: '='
       },
       controller: 'uiGridRenderContainer as RenderContainer',
       compile: function () {

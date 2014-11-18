@@ -35,7 +35,7 @@ There are minified files that can be used as well:
 
 File Name                | Url
 -------------------------|----------------
-ui-grid-unstable.js      | [http://ui-grid.info/release/ui-grid-unstable.js](http://ui-grid.info/release/ui-grid-unstable.js)
+ui-grid-unstable.min.js      | [http://ui-grid.info/release/ui-grid-unstable.min.js](http://ui-grid.info/release/ui-grid-unstable.min.js)
 ui-grid-unstable.min.css | [http://ui-grid.info/release/ui-grid-unstable.min.css](http://ui-grid.info/release/ui-grid-unstable.min.css)
 
 # Building

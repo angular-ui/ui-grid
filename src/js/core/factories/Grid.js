@@ -228,6 +228,9 @@ angular.module('ui.grid')
    * 
    */
   self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
+  
+  self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
+  self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
 };
 
     /**
@@ -270,7 +273,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description When the build creates rows from gridOptions.data, the rowBuilders will be called to add
    * additional properties to the row.
-   * @param {function(colDef, col, gridOptions)} rowBuilder function to be called
+   * @param {function(row, gridOptions)} rowBuilder function to be called
    */
   Grid.prototype.registerRowBuilder = function registerRowBuilder(rowBuilder) {
     this.rowBuilders.push(rowBuilder);
@@ -335,14 +338,14 @@ angular.module('ui.grid')
    * @param {number} type the type of event that occurred - one of the 
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
    */
-  Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type) {
+  Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type, options) {
     angular.forEach( this.dataChangeCallbacks, function( callback, uid ){
       if ( callback.types.indexOf( uiGridConstants.dataChange.ALL ) !== -1 ||
            callback.types.indexOf( type ) !== -1 ||
            type === uiGridConstants.dataChange.ALL ) {
         callback.callback( this );
       }
-    });
+    }, this);
   };
   
   /**
@@ -366,6 +369,35 @@ angular.module('ui.grid')
     } else {
       gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);
     }
+  };
+  
+  
+  /**
+   * @ngdoc function
+   * @name columnRefreshCallback
+   * @methodOf ui.grid.class:Grid
+   * @description refreshes the grid when a column refresh
+   * is notified, which triggers handling of the visible flag. 
+   * This is called on uiGridConstants.dataChange.COLUMN, and is 
+   * registered as a dataChangeCallback in grid.js
+   * @param {string} name column name
+   */
+  Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
+    grid.refresh();
+  };
+    
+
+  /**
+   * @ngdoc function
+   * @name processRowsCallback
+   * @methodOf ui.grid.class:Grid
+   * @description calls the row processors, specifically
+   * intended to reset the sorting when an edit is called,
+   * registered as a dataChangeCallback on uiGridConstants.dataChange.EDIT
+   * @param {string} name column name
+   */
+  Grid.prototype.processRowsCallback = function processRowsCallback( grid ){
+    grid.refreshRows();
   };
     
 
@@ -671,8 +703,39 @@ angular.module('ui.grid')
   Grid.prototype.modifyRows = function modifyRows(newRawData) {
     var self = this,
         i,
+        rowhash,
+        found,
         newRow;
-
+    if ((self.options.useExternalSorting || self.getColumnSorting().length === 0) && newRawData.length > 0) {
+        var oldRowHash = self.rowHashMap;
+        if (!oldRowHash) {
+           oldRowHash = {get: function(){return null;}};
+        }
+        self.createRowHashMap();
+        rowhash = self.rowHashMap;
+        var wasEmpty = self.rows.length === 0;
+        self.rows.length = 0;
+        for (i = 0; i < newRawData.length; i++) {
+            var newRawRow = newRawData[i];
+            found = oldRowHash.get(newRawRow);
+            if (found) {
+              newRow = found.row; 
+            }
+            else {
+              newRow = self.processRowBuilders(new GridRow(newRawRow, i, self));
+            }
+            self.rows.push(newRow);
+            rowhash.put(newRawRow, {
+                i: i,
+                entity: newRawRow,
+                row:newRow
+            });
+        }
+        //now that we have data, it is save to assign types to colDefs
+        if (wasEmpty) {
+           self.assignTypes();
+        }
+    } else {
     if (self.rows.length === 0 && newRawData.length > 0) {
       if (self.options.enableRowHashing) {
         if (!self.rowHashMap) {
@@ -711,7 +774,7 @@ angular.module('ui.grid')
         if (!self.rowHashMap) {
           self.createRowHashMap();
         }
-        var rowhash = self.rowHashMap;
+        rowhash = self.rowHashMap;
         
         // Make sure every new row has a hash
         for (i = 0; i < newRawData.length; i++) {
@@ -724,7 +787,7 @@ angular.module('ui.grid')
           }
 
           // See if the new row is already in the rowhash
-          var found = rowhash.get(newRow);
+          found = rowhash.get(newRow);
           // If so...
           if (found) {
             // See if it's already being used by as GridRow
@@ -788,6 +851,7 @@ angular.module('ui.grid')
 
       // Reset the rows length!
       self.rows.length = 0;
+    }
     }
     
     var p1 = $q.when(self.processRowsProcessors(self.rows))
@@ -853,7 +917,7 @@ angular.module('ui.grid')
     var self = this;
 
     self.rowBuilders.forEach(function (builder) {
-      builder.call(self, gridRow, self.gridOptions);
+      builder.call(self, gridRow, self.options);
     });
 
     return gridRow;
@@ -1188,6 +1252,7 @@ angular.module('ui.grid')
    */
   Grid.prototype.queueRefresh = function queueRefresh() {
     var self = this;
+
     if (self.refreshCanceller) {
       $timeout.cancel(self.refreshCanceller);
     }
@@ -1551,7 +1616,7 @@ angular.module('ui.grid')
    * 
    */
   Grid.prototype.refresh = function refresh() {
-    // gridUtil.logDebug('grid refresh');
+    gridUtil.logDebug('grid refresh');
     
     var self = this;
     
@@ -1585,10 +1650,9 @@ angular.module('ui.grid')
       .then(function (renderableRows) {
         self.setVisibleRows(renderableRows);
 
-        // TODO: this method doesn't exist, so clearly refreshRows doesn't work.
-        self.redrawRows();
+        self.redrawInPlace();
 
-        self.refreshCanvas();
+        self.refreshCanvas( true );
       });
   };
 
@@ -1617,6 +1681,11 @@ angular.module('ui.grid')
       if (self.renderContainers.hasOwnProperty(containerId)) {
         var container = self.renderContainers[containerId];
 
+        // Skip containers that have no canvasWidth set yet
+        if (container.canvasWidth === null || isNaN(container.canvasWidth)) {
+          continue;
+        }
+
         if (container.header) {
           containerHeadersToRecalc.push(container);
         }
@@ -1636,6 +1705,11 @@ angular.module('ui.grid')
         var i, container;
         for (i = 0; i < containerHeadersToRecalc.length; i++) {
           container = containerHeadersToRecalc[i];
+
+          // Skip containers that have no canvasWidth set yet
+          if (container.canvasWidth === null || isNaN(container.canvasWidth)) {
+            continue;
+          }
 
           if (container.header) {
             var oldHeaderHeight = container.headerHeight;
