@@ -130,22 +130,6 @@ angular.module('ui.grid')
     }        
   };
 
-  /**
-   * @ngdoc function
-   * @name getVisibleRows
-   * @methodOf ui.grid.class:GridRow
-   * @description Returns all the visible rows
-   * @param {Grid} grid the grid to return rows from
-   * @returns {array} rows that are currently visible, returns the
-   * GridRows rather than gridRow.entity
-   * TODO: should this come from visible row cache instead?
-   */
-  GridRow.prototype.getVisibleRows = function ( grid ) {
-    return grid.rows.filter(function (row) {
-      return row.visible;
-    });
-  };  
-
   return GridRow;
 }]);
 

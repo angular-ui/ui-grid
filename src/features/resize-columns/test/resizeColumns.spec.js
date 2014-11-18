@@ -22,10 +22,14 @@ describe('ui.grid.resizeColumns', function () {
       data: data
     };
 
+    $scope.gridOpts.onRegisterApi = function (gridApi) {
+      $scope.gridApi = gridApi;
+    };
+    
     recompile = function () {
       gridUtil.resetUids();
 
-      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" ui-grid-resize-columns></div>');
       document.body.appendChild(grid[0]);
       $compile(grid)($scope);
       $scope.$digest();
@@ -40,6 +44,12 @@ describe('ui.grid.resizeColumns', function () {
     grid = null;
   });
 
+  describe('checking grid api for colResizable', function() {
+    it('columnSizeChanged should be defined', function () {
+      expect($scope.gridApi.colResizable.on.columnSizeChanged).toBeDefined();
+    });
+  });
+  
   describe('setting enableColumnResizing', function () {
     xit('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
@@ -145,7 +155,7 @@ describe('ui.grid.resizeColumns', function () {
         initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         initialX = firstResizer.position().left;
-
+        
         $(firstResizer).simulate('mousedown', { clientX: initialX });
         $scope.$digest();
 
@@ -175,7 +185,7 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       describe('then releasing the mouse', function () {
-        beforeEach(function () {
+        beforeEach(function () {       
           $(document).simulate('mouseup', { clientX: initialX + xDiff });
           $scope.$digest();
         });

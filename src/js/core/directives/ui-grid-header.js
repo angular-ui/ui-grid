@@ -91,6 +91,7 @@
               var columnCache = containerCtrl.colContainer.visibleColumnCache,
                   canvasWidth = 0,
                   asteriskNum = 0,
+                  oneAsterisk = 0,
                   leftoverWidth = availableWidth,
                   hasVariableWidth = false;
               
@@ -101,8 +102,12 @@
                 else if (column.widthType === "percent"){ 
                   return parseInt(column.width.replace(/%/g, ''), 10) * availableWidth / 100;
                 }
-                else if (column.widthType === "auto"){ 
-                  var oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
+                else if (column.widthType === "auto"){
+                  // leftOverWidth is subtracted from after each call to this
+                  // function so we need to calculate oneAsterisk size only once
+                  if (oneAsterisk === 0) {
+                    oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
+                  }
                   return column.width.length * oneAsterisk; 
                 }
               };
@@ -145,21 +150,21 @@
                 canvasWidth += column.drawnWidth;
                 leftoverWidth -= column.drawnWidth;
               });
-              
+
               // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
               if (hasVariableWidth && leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
-                var prevLeftover = leftoverWidth;
                 var remFn = function (column) {
-                  if (leftoverWidth > 0 && column.widthType === "auto" || column.widthType === "percent") {
+                  if (leftoverWidth > 0 && (column.widthType === "auto" || column.widthType === "percent")) {
                     column.drawnWidth = column.drawnWidth + 1;
                     canvasWidth = canvasWidth + 1;
                     leftoverWidth--;
                   }
                 };
-                while (leftoverWidth > 0 && leftoverWidth !== prevLeftover ) {
+                var prevLeftover = 0;
+                do {
                   prevLeftover = leftoverWidth;
                   columnCache.forEach(remFn);
-                }
+                } while (leftoverWidth > 0 && leftoverWidth !== prevLeftover );
               }
               canvasWidth = Math.max(canvasWidth, availableWidth);
 

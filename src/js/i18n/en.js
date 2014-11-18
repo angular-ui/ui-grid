@@ -61,6 +61,10 @@
           invalidCsv: 'File was unable to be processed, is it valid CSV?',
           invalidJson: 'File was unable to be processed, is it valid Json?',
           jsonNotArray: 'Imported json file must contain an array, aborting.'
+        },
+        paging: {
+          sizes: 'items per page',
+          totalItems: 'items'
         }
       });
       return $delegate;

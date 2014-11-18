@@ -169,7 +169,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         grid.modifyRows($scope.data);
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(4, 'data should now have 4 rows');
@@ -194,7 +194,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         grid.modifyRows($scope.data);
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(4, 'data should now have 4 rows');
@@ -263,7 +263,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
 
         grid.modifyRows($scope.data);
         angular.forEach( grid.dataChangeCallbacks, function( callback, uid ) {
-          callback( grid );
+          callback.callback( grid );
         });
 
         expect( $scope.data.length ).toEqual(5, 'data should now have 5 rows');

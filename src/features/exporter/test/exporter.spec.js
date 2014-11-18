@@ -70,18 +70,20 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'ui-grid/exporterHeader',
         exporterLinkLabel: 'Download CSV',
         exporterMenuLabel: 'Export',
+        exporterCsvColumnSeparator: ',',
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
         exporterPdfHeader: null,
-        exporterPdfHeaderStyle: { bold: true, fontSize: 14 },
+        exporterPdfFooter: null,
         exporterPdfOrientation : 'landscape',
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
+        exporterPdfCustomFormatter: jasmine.any(Function),
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
-        exporterSuppressColumns: []
+        exporterSuppressColumns: []        
       });
     });
 
@@ -93,14 +95,16 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
+        exporterCsvColumnSeparator: ';',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfHeader: "My Header",
-        exporterPdfHeaderStyle: { bold: false, fontSize: 16 },
+        exporterPdfFooter: "My Footer",
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
+        exporterPdfCustomFormatter: callback,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -113,14 +117,16 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterHeaderTemplate: 'myExporterHeader',
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
+        exporterCsvColumnSeparator: ';',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
         exporterPdfHeader: "My Header",
-        exporterPdfHeaderStyle: { bold: false, fontSize: 16 },
+        exporterPdfFooter: "My Footer",
         exporterPdfOrientation : 'portrait',
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
+        exporterPdfCustomFormatter: callback,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -241,8 +247,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     it('formats empty data as a csv', function() {
       var columnHeaders = [];
       var data = [];
+      var separator = ',';
       
-      expect(uiGridExporterService.formatAsCsv(columnHeaders, data)).toEqual(
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         "\n"
       );
     });
@@ -263,8 +270,33 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ date, 45, 'A string', true ]
       ];
 
-      expect(uiGridExporterService.formatAsCsv(columnHeaders, data)).toEqual(
+      var separator = ',';
+      
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"' + date.toISOString() + '",45,"A string",TRUE'
+      );
+    });
+    
+    it('formats a mix of data as a csv with custom separator', function() {
+      var columnHeaders = [
+        {name: 'col1', displayName: 'Col1', width: 50, align: 'left'},
+        {name: 'col2', displayName: 'Col2', width: '*', align: 'left'},
+        {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
+        {name: 'x', displayName: '12345234', width: 200, align: 'left'}
+      ];
+
+      var date = new Date(2014, 11, 12, 0, 0, 0, 0);
+
+      var data = [
+        [ 'a string', 'a string', 'A string', 'a string' ],
+        [ '', '45', 'A string', false ],
+        [ date, 45, 'A string', true ]
+      ];
+      
+      var separator = ';';
+      
+      expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
+        '"Col1";"Col2";"Col3";"12345234"\n"a string";"a string";"A string";"a string"\n"";"45";"A string";FALSE\n"' + date.toISOString() + '";45;"A string";TRUE'
       );
     });
   });
@@ -325,7 +357,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
-        pageOrientation : 'landscape', 
+        pageOrientation : 'landscape',
+        pageSize: 'A4', 
         content : [{ 
           style : 'tableStyle',
           table : { 
@@ -369,6 +402,12 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       grid.options.exporterPdfDefaultStyle = {fontSize: 10};
       grid.options.exporterPdfTableStyle = {margin: [30, 30, 30, 30]};
       grid.options.exporterPdfTableHeaderStyle = {fontSize: 11, bold: true, italic: true};
+      grid.options.exporterPdfHeader = "My Header";
+      grid.options.exporterPdfFooter = "My Footer";
+      grid.options.exporterPdfCustomFormatter = function ( docDefinition ) {
+        docDefinition.styles.headerStyle = { fontSize: 10 };
+        return docDefinition;
+      };
       grid.options.exporterPdfOrientation = 'portrait';
       grid.options.exporterPdfPageSize = 'LETTER';
       grid.options.exporterPdfMaxGridWidth = 500;
@@ -390,32 +429,38 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
-        pageOrientation : 'portrait', 
-        content : [ { 
-          style : 'tableStyle', 
-          table : { 
-            headerRows : 1, 
-            widths : [ 100, '*', 100, 200 ], 
-            body : [ 
-              [ 
-                { text : 'Col1', style : 'tableHeader' }, 
-                { text : 'Col2', style : 'tableHeader' }, 
-                { text : 'Col3', style : 'tableHeader' }, 
-                { text : '12345234', style : 'tableHeader' } 
-              ], 
-              [ 'a string', 'a string', 'A string', 'a string' ], 
-              [ '', '45', 'A string', 'FALSE' ], 
-              [ date.toISOString(), '45', 'A string', 'TRUE' ] 
-            ] 
-          } 
-        } ], 
+        pageOrientation : 'portrait',
+        pageSize: 'LETTER', 
+        content : [
+          'My Header', 
+          { 
+            style : 'tableStyle', 
+            table : { 
+              headerRows : 1, 
+              widths : [ 100, '*', 100, 200 ], 
+              body : [ 
+                [ 
+                  { text : 'Col1', style : 'tableHeader' }, 
+                  { text : 'Col2', style : 'tableHeader' }, 
+                  { text : 'Col3', style : 'tableHeader' }, 
+                  { text : '12345234', style : 'tableHeader' } 
+                ], 
+                [ 'a string', 'a string', 'A string', 'a string' ], 
+                [ '', '45', 'A string', 'FALSE' ], 
+                [ date.toISOString(), '45', 'A string', 'TRUE' ] 
+              ] 
+            } 
+          },
+          'My Footer'
+         ], 
         styles : { 
           tableStyle : { 
             margin : [ 30, 30, 30, 30 ] 
           }, 
           tableHeader : { 
             fontSize : 11, bold : true, italic : true 
-          } 
+          },
+          headerStyle: { fontSize: 10 }
         }, 
         defaultStyle : { 
           fontSize : 10 

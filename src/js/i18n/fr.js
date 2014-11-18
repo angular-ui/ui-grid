@@ -22,32 +22,42 @@
         menu: {
           text: 'Choisir des colonnes:'
         },
+        sort: {
+          ascending: 'Trier par ordre croissant',
+          descending: 'Trier par ordre décroissant',
+          remove: 'Enlever le tri'
+        },
         column: {
-          hide: 'Colonne de peau'
+          hide: 'Cacher la colonne'
         },
         aggregation: {
-          count: 'total rows: ',
+          count: 'total lignes: ',
           sum: 'total: ',
-          avg: 'avg: ',
+          avg: 'moy: ',
           min: 'min: ',
           max: 'max: '
         },
+        pinning: {
+          pinLeft: 'Épingler à gauche',
+          pinRight: 'Épingler à droite',
+          unpin: 'Détacher'
+        },
         gridMenu: {
-          columns: 'Columns:',
-          importerTitle: 'Import file',
-          exporterAllAsCsv: 'Export all data as csv',
-          exporterVisibleAsCsv: 'Export visible data as csv',
-          exporterSelectedAsCsv: 'Export selected data as csv',
-          exporterAllAsPdf: 'Export all data as pdf',
-          exporterVisibleAsPdf: 'Export visible data as pdf',
-          exporterSelectedAsPdf: 'Export selected data as pdf'
+          columns: 'Colonnes:',
+          importerTitle: 'Importer un fichier',
+          exporterAllAsCsv: 'Exporter toutes les données en CSV',
+          exporterVisibleAsCsv: 'Exporter les données visibles en CSV',
+          exporterSelectedAsCsv: 'Exporter les données sélectionnées en CSV',
+          exporterAllAsPdf: 'Exporter toutes les données en PDF',
+          exporterVisibleAsPdf: 'Exporter les données visibles en PDF',
+          exporterSelectedAsPdf: 'Exporter les données sélectionnées en PDF'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Impossible de déterminer le nom des colonnes, le fichier possède-t-il un en-tête ?',
+          noObjects: 'Aucun objet trouvé, le fichier possède-t-il des données autres que l\'en-tête ?',
+          invalidCsv: 'Le fichier n\'a pas pu être traité, le CSV est-il valide ?',
+          invalidJson: 'Le fichier n\'a pas pu être traité, le JSON est-il valide ?',
+          jsonNotArray: 'Le fichier JSON importé doit contenir un tableau. Abandon.'
         }
       });
       return $delegate;

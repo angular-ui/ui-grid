@@ -82,13 +82,14 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     });
 
     it('should pin left when pinnedLeft=true', function() {
-      colOptions = {pinnedLeft: true};
-      gridOptions = {enablePinning: false};
+        colOptions = {pinnedLeft: true};
+        gridOptions = {enablePinning: false};
 
-      uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
-      expect(grid.renderContainers.left).toEqual(jasmine.any(GridRenderContainer));
-      expect(grid.renderContainers.right).not.toBeDefined();
-      expect(mockCol.renderContainer).toBe('left');
+        uiGridPinningService.pinningColumnBuilder(colOptions, mockCol, gridOptions);
+        expect(grid.renderContainers.left).toEqual(jasmine.any(GridRenderContainer));
+        expect(grid.renderContainers.right).not.toBeDefined();
+
+        expect(mockCol.renderContainer).toBe('left');
     });
 
     it('should pin left if both PinnedLeft and PinnedRight', function() {

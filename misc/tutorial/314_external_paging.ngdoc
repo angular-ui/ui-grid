@@ -1,0 +1,88 @@
+@ngdoc overview
+@name Tutorial: 314 External Paging
+@description
+
+When paging is enabled, the data is displayed in pages that can be browsed using using the built in paging selector.
+
+For external paging, handle the `pagingChanged' to load the page. Set the `gridOptions.totalItems' in the callback.
+
+@example
+This shows combined external paging and sorting.
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ui.grid', 'ui.grid.paging']);
+
+    app.controller('MainCtrl', [
+    '$scope', '$http', 'uiGridConstants', function($scope, $http, uiGridConstants) {
+
+      var pagingOptions = {
+        pageNumber: 1,
+        pageSize: 25,
+        sort: null
+      };
+
+      $scope.gridOptions = {
+        pagingPageSizes: [25, 50, 75],
+        pagingPageSize: 25,
+        useExternalPaging: true,
+        useExternalSorting: true,
+        columnDefs: [
+          { name: 'name' },
+          { name: 'gender', enableSorting: false },
+          { name: 'company', enableSorting: false }
+        ],
+        onRegisterApi: function(gridApi) {
+          $scope.gridApi = gridApi;
+          $scope.gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
+            if (sortColumns.length == 0) {
+              pagingOptions.sort = null;
+            } else {
+              pagingOptions.sort = sortColumns[0].sort.direction;
+            }
+            getPage();
+          });
+          gridApi.paging.on.pagingChanged($scope, function (newPage, pageSize) {
+            pagingOptions.pageNumber = newPage;
+            pagingOptions.pageSize = pageSize;
+            getPage();
+          });
+        }
+      };
+
+      var getPage = function() {
+        var url;
+        switch(pagingOptions.sort) {
+          case uiGridConstants.ASC:
+            url = '/data/100_ASC.json';
+            break;
+          case uiGridConstants.DESC:
+            url = '/data/100_DESC.json';
+            break;
+          default:
+            url = '/data/100.json';
+            break;
+        }
+
+        $http.get(url)
+        .success(function (data) {
+          $scope.gridOptions.totalItems = 100;
+          var firstRow = (pagingOptions.pageNumber - 1) * pagingOptions.pageSize;
+          $scope.gridOptions.data = data.slice(firstRow, firstRow + pagingOptions.pageSize);
+        });
+      };
+
+      getPage();
+    }
+    ]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" ui-grid-paging class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 600px;
+    }
+  </file>
+</example>

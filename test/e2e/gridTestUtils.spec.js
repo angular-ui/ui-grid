@@ -40,7 +40,7 @@ module.exports = {
      */
     expectRowCount: function( gridId, expectedNumRows ) {
 
-      var rows = element( by.id( gridId ) ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid') );
+      var rows = element( by.id( gridId ) ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
       expect(rows.count()).toEqual(expectedNumRows);
     },
     
@@ -169,7 +169,7 @@ module.exports = {
      * 
      */
     dataCell: function( gridId, fetchRow, fetchCol ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( fetchRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
       return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row( fetchCol ));
     },
 
@@ -240,7 +240,7 @@ module.exports = {
      * 
      */
     expectCellValueMatch: function( gridId, expectedRow, expectedCol, expectedValue ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( expectedRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( expectedRow )  );
       expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(expectedCol)).getText()).toMatch(expectedValue);
     },
     
@@ -263,7 +263,7 @@ module.exports = {
      * 
      */
     expectRowValuesMatch: function( gridId, expectedRow, expectedValueArray ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by row.uid').row( expectedRow )  );
+      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( expectedRow )  );
 
       for ( var i = 0; i < expectedValueArray.length; i++){
         expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);
@@ -293,6 +293,37 @@ module.exports = {
       headerCell.click();
     },
 
+  /**
+   * @ngdoc method
+   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+   * @name resizeHeaderCell
+   * @description Drags the left resizer border towards the column menu button,
+   * which will perform a column resizing.
+   * @param {string} gridId the id of the grid that you want to adjust
+   * @param {integer} colNumber the number of the column (within the visible columns)
+   * which left resizer border you wish to drag (this will increase the size of colNumber-1).
+   *
+   * @example
+   * <pre>
+   *   gridTestUtils.resizeHeaderCell('myGrid', 1);
+   * </pre>
+   *
+   */
+    resizeHeaderCell: function( gridId, colNumber ) {
+      var headerCell = this.headerCell(gridId, colNumber);
+
+      var resizer = headerCell.all( by.css( '.ui-grid-column-resizer' )).first();
+      var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ));
+
+      protractor.getInstance().actions()
+        .mouseDown(resizer)
+        .mouseMove(menuButton)
+        .mouseUp()
+        .perform();
+
+    },
+
+
 
     /**
      * @ngdoc method
@@ -312,13 +343,13 @@ module.exports = {
      */
     shiftClickHeaderCell: function( gridId, colNumber ) {
       var headerCell = this.headerCell( gridId, colNumber);
-      
+
       protractor.getInstance().actions()
         .keyDown(protractor.Key.SHIFT)
         .click(headerCell)
         .keyUp(protractor.Key.SHIFT)
         .perform();
-    },    
+    },
  
      /**
      * @ngdoc method

@@ -1,9 +1,14 @@
 
 .ui-grid-render-container {
-  position: relative;
+  position: inherit;
   // overflow: hidden;
 
   .border-radius(0, @gridBorderRadius, @gridBorderRadius, 0);
+
+  // Prevent an outline from showing if we focus the render container element
+  &:focus {
+    outline: none;
+  }
 }
 
 .ui-grid-viewport {
