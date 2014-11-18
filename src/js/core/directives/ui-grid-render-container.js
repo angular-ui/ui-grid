@@ -251,10 +251,10 @@
               $document.unbind('touchend', touchend);
               $document.unbind('touchcancel', touchend);
 
-			  uiGridCtrl.scrollbars.forEach(function (sbar) {
-				  sbar.removeClass('ui-grid-scrollbar-visible');
-				  sbar.removeClass('ui-grid-scrolling');
-			  });
+              uiGridCtrl.scrollbars.forEach(function (sbar) {
+                sbar.removeClass('ui-grid-scrollbar-visible');
+                sbar.removeClass('ui-grid-scrolling');
+              });
             }
 
             if (GridUtil.isTouchEnabled()) {
