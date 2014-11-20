@@ -364,20 +364,22 @@
                           }
                         }
                         else if (totalMouseMovement === 0) {
-                          //sort the current column
-                          var add = false;
-                          if (evt.shiftKey) {
-                            add = true;
-                          }
+                          if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+                            //sort the current column
+                            var add = false;
+                            if (evt.shiftKey) {
+                              add = true;
+                            }
 
-                          // Sort this column then rebuild the grid's rows
-                          uiGridCtrl.grid.sortColumn($scope.col, add)
-                            .then(function () {
-                              if (uiGridCtrl.columnMenuScope) {
-                                uiGridCtrl.columnMenuScope.hideMenu();
-                              }
-                              uiGridCtrl.grid.refresh();
-                            });
+                            // Sort this column then rebuild the grid's rows
+                            uiGridCtrl.grid.sortColumn($scope.col, add)
+                              .then(function () {
+                                if (uiGridCtrl.columnMenuScope) {
+                                  uiGridCtrl.columnMenuScope.hideMenu();
+                                }
+                                uiGridCtrl.grid.refresh();
+                              });
+                          }
                         }
 
                         $document.off('mousemove', mouseMoveHandler);
