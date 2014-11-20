@@ -37,7 +37,7 @@ angular.module('ui.grid')
   // Get default options
   self.options = GridOptions.initialize( options );
 
-  self.headerHeight = self.options.headerRowHeight;
+  self.headerHeight = self.options.hideHeader === false ? self.options.headerRowHeight : 0;
   self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
 
   self.rtl = false;
