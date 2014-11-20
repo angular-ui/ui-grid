@@ -16,7 +16,7 @@
    *  @name ui.grid.moveColumns.service:uiGridMoveColumnService
    *  @description Service for column moving feature.
    */
-  module.service('uiGridMoveColumnService', ['$q', '$timeout', function ($q, $timeout) {
+  module.service('uiGridMoveColumnService', ['$q', '$timeout', '$log', function ($q, $timeout, $log) {
 
     var service = {
       initializeGrid: function (grid) {
@@ -117,7 +117,7 @@
         var findPositionForRenderIndex = function (index) {
           var position = index;
           for (var i = 0; i <= position; i++) {
-            if ((angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false) || columns[i].isRowHeader === true) {
+            if ((angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false)) {
               position++;
             }
           }
@@ -364,20 +364,22 @@
                           }
                         }
                         else if (totalMouseMovement === 0) {
-                          //sort the current column
-                          var add = false;
-                          if (evt.shiftKey) {
-                            add = true;
-                          }
+                          if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+                            //sort the current column
+                            var add = false;
+                            if (evt.shiftKey) {
+                              add = true;
+                            }
 
-                          // Sort this column then rebuild the grid's rows
-                          uiGridCtrl.grid.sortColumn($scope.col, add)
-                            .then(function () {
-                              if (uiGridCtrl.columnMenuScope) {
-                                uiGridCtrl.columnMenuScope.hideMenu();
-                              }
-                              uiGridCtrl.grid.refresh();
-                            });
+                            // Sort this column then rebuild the grid's rows
+                            uiGridCtrl.grid.sortColumn($scope.col, add)
+                              .then(function () {
+                                if (uiGridCtrl.columnMenuScope) {
+                                  uiGridCtrl.columnMenuScope.hideMenu();
+                                }
+                                uiGridCtrl.grid.refresh();
+                              });
+                          }
                         }
 
                         $document.off('mousemove', mouseMoveHandler);
