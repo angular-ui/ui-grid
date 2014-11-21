@@ -11,7 +11,6 @@ angular.module('ui.grid')
  *
  */
 
-
 /**
    * @ngdoc function
    * @name ui.grid.class:Grid
