@@ -129,8 +129,31 @@ angular.module('ui.grid')
         return row.$$hashKey;
       };
   
+      /**
+       * @ngdoc property
+       * @name headerRowHeight
+       * @propertyOf ui.grid.class:GridOptions
+       * @description The height of the header in pixels, defaults to 30
+       *
+       */
       baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
+
+      /**
+       * @ngdoc property
+       * @name rowHeight
+       * @propertyOf ui.grid.class:GridOptions
+       * @description The height of the row in pixels, defaults to 30
+       *
+       */
       baseOptions.rowHeight = baseOptions.rowHeight || 30;
+      
+      /**
+       * @ngdoc property
+       * @name maxVisibleRowCount
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Defaults to 200
+       *
+       */
       baseOptions.maxVisibleRowCount = baseOptions.maxVisibleRowCount || 200;
   
       /**
@@ -141,26 +164,89 @@ angular.module('ui.grid')
        */
       baseOptions.minRowsToShow = typeof(baseOptions.minRowsToShow) !== "undefined" ? baseOptions.minRowsToShow : 10;
   
+      /**
+       * @ngdoc property
+       * @name showFooter
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Whether or not to show the footer, defaults to false
+       *
+       */
       baseOptions.showFooter = baseOptions.showFooter === true;
+
+      /**
+       * @ngdoc property
+       * @name footerRowHeight
+       * @propertyOf ui.grid.class:GridOptions
+       * @description The height of the footer in pixels
+       *
+       */
       baseOptions.footerRowHeight = typeof(baseOptions.footerRowHeight) !== "undefined" ? baseOptions.footerRowHeight : 30;
   
       baseOptions.columnWidth = typeof(baseOptions.columnWidth) !== "undefined" ? baseOptions.columnWidth : 50;
+
+      /**
+       * @ngdoc property
+       * @name maxVisibleColumnCount
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Defaults to 200
+       *
+       */
       baseOptions.maxVisibleColumnCount = typeof(baseOptions.maxVisibleColumnCount) !== "undefined" ? baseOptions.maxVisibleColumnCount : 200;
   
-      // Turn virtualization on when number of data elements goes over this number
+      /**
+       * @ngdoc property
+       * @name virtualizationThreshold
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Turn virtualization on when number of data elements goes over this number, defaults to 20
+       */
       baseOptions.virtualizationThreshold = typeof(baseOptions.virtualizationThreshold) !== "undefined" ? baseOptions.virtualizationThreshold : 20;
   
+      /**
+       * @ngdoc property
+       * @name columnVirtualizationThreshold
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Turn virtualization on when number of columns goes over this number, defaults to 10
+       */
       baseOptions.columnVirtualizationThreshold = typeof(baseOptions.columnVirtualizationThreshold) !== "undefined" ? baseOptions.columnVirtualizationThreshold : 10;
   
-      // Extra rows to to render outside of the viewport
+      /**
+       * @ngdoc property
+       * @name excessRows
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Extra rows to to render outside of the viewport, which helps with smoothness of scrolling.
+       * Defaults to 4
+       */
       baseOptions.excessRows = typeof(baseOptions.excessRows) !== "undefined" ? baseOptions.excessRows : 4;
+      /**
+       * @ngdoc property
+       * @name scrollThreshold
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Defaults to 4
+       */
       baseOptions.scrollThreshold = typeof(baseOptions.scrollThreshold) !== "undefined" ? baseOptions.scrollThreshold : 4;
   
-      // Extra columns to to render outside of the viewport
+      /**
+       * @ngdoc property
+       * @name excessColumns
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Extra columns to to render outside of the viewport, which helps with smoothness of scrolling.
+       * Defaults to 4
+       */
       baseOptions.excessColumns = typeof(baseOptions.excessColumns) !== "undefined" ? baseOptions.excessColumns : 4;
+      /**
+       * @ngdoc property
+       * @name horizontalScrollThreshold
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Defaults to 4
+       */
       baseOptions.horizontalScrollThreshold = typeof(baseOptions.horizontalScrollThreshold) !== "undefined" ? baseOptions.horizontalScrollThreshold : 2;
   
-      // Default time to throttle scroll events to.
+      /**
+       * @ngdoc property
+       * @name scrollThrottle
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Default time to throttle scroll events to, defaults to 70ms
+       */
       baseOptions.scrollThrottle = typeof(baseOptions.scrollThrottle) !== "undefined" ? baseOptions.scrollThrottle : 70;
   
       /**
@@ -210,7 +296,12 @@ angular.module('ui.grid')
        */
       baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;
   
-      // Columns can't be smaller than 10 pixels
+      /**
+       * @ngdoc boolean
+       * @name minimumColumnSize
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Columns can't be smaller than this, defaults to 10 pixels
+       */
       baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 10;
   
       /**
