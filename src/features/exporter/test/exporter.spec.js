@@ -188,40 +188,40 @@ describe('ui.grid.exporter uiGridExporterService', function () {
   describe('getData', function() {
     it('gets all rows and columns', function() {
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
-        [ 'a_0', 'b_0', 'c_0', 'd_0' ],
-        [ 'a_1', 'b_1', 'c_1', 'd_1' ],
-        [ 'a_2', 'b_2', 'c_2', 'd_2' ]
+        [ {value: 'a_0'}, {value: 'b_0'}, {value: 'c_0'}, {value: 'd_0'} ],
+        [ {value: 'a_1'}, {value: 'b_1'}, {value: 'c_1'}, {value: 'd_1'} ],
+        [ {value: 'a_2'}, {value: 'b_2'}, {value: 'c_2'}, {value: 'd_2'} ]
       ]);
     });
 
     it('ignores selection row header column', function() {
       grid.columns[0].name = uiGridSelectionConstants.selectionRowHeaderColName;
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
-        [ 'b_0', 'c_0', 'd_0' ],
-        [ 'b_1', 'c_1', 'd_1' ],
-        [ 'b_2', 'c_2', 'd_2' ]
+        [ {value: 'b_0'}, {value: 'c_0'}, {value: 'd_0'} ],
+        [ {value: 'b_1'}, {value: 'c_1'}, {value: 'd_1'} ],
+        [ {value: 'b_2'}, {value: 'c_2'}, {value: 'd_2'} ]
       ]);
     });
 
     it('ignores suppressed column', function() {
       grid.options.exporterSuppressColumns = [ 'col1' ];
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
-        [ 'b_0', 'c_0', 'd_0' ],
-        [ 'b_1', 'c_1', 'd_1' ],
-        [ 'b_2', 'c_2', 'd_2' ]
+        [ {value: 'b_0'}, {value: 'c_0'}, {value: 'd_0'} ],
+        [ {value: 'b_1'}, {value: 'c_1'}, {value: 'd_1'} ],
+        [ {value: 'b_2'}, {value: 'c_2'}, {value: 'd_2'} ]
       ]);
     });
 
     it('gets visible rows and columns', function() {
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE)).toEqual([
-        [ 'a_0', 'b_0', 'd_0' ],
-        [ 'a_2', 'b_2', 'd_2' ]
+        [ {value: 'a_0'}, {value: 'b_0'}, {value: 'd_0'} ],
+        [ {value: 'a_2'}, {value: 'b_2'}, {value: 'd_2'} ]
       ]);
     });
 
     it('gets selected rows and visible columns', function() {
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE)).toEqual([
-        [ 'a_0', 'b_0', 'd_0' ]
+        [ {value: 'a_0'}, {value: 'b_0'}, {value: 'd_0'} ]
       ]);
     });    
 
@@ -235,9 +235,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       };
 
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
-        [ 'a_0', 'translated', 'c_0', 'd_0' ],
-        [ 'a_1', 'translated', 'c_1', 'd_1' ],
-        [ 'a_2', 'translated', 'c_2', 'd_2' ]
+        [ { value: 'a_0' }, { value: 'translated' }, { value: 'c_0' }, { value: 'd_0' } ],
+        [ { value: 'a_1' }, { value: 'translated' }, { value: 'c_1' }, { value: 'd_1' } ],
+        [ { value: 'a_2' }, { value: 'translated' }, { value: 'c_2' }, { value: 'd_2' } ]
       ]);
     });
   });
@@ -265,9 +265,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var date = new Date(2014, 11, 12, 0, 0, 0, 0);
 
       var data = [
-        [ 'a string', 'a string', 'A string', 'a string' ],
-        [ '', '45', 'A string', false ],
-        [ date, 45, 'A string', true ]
+        [ {value: 'a string'}, {value: 'a string'}, {value: 'A string'}, {value: 'a string'} ],
+        [ {value: ''}, {value: '45'}, {value: 'A string'}, {value: false} ],
+        [ {value: date}, {value: 45}, {value: 'A string'}, {value: true} ]
       ];
 
       var separator = ',';
@@ -288,9 +288,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var date = new Date(2014, 11, 12, 0, 0, 0, 0);
 
       var data = [
-        [ 'a string', 'a string', 'A string', 'a string' ],
-        [ '', '45', 'A string', false ],
-        [ date, 45, 'A string', true ]
+        [ {value: 'a string'}, {value: 'a string'}, {value: 'A string'}, {value: 'a string'} ],
+        [ {value: ''}, {value: '45'}, {value: 'A string'}, {value: false} ],
+        [ {value: date}, {value: 45}, {value: 'A string'}, {value: true} ]
       ];
       
       var separator = ';';
@@ -350,9 +350,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var date = new Date(2014, 11, 12, 0, 0, 0, 0);
 
       var data = [
-        [ 'a string', 'a string', 'A string', 'a string' ],
-        [ '', '45', 'A string', false ],
-        [ date, 45, 'A string', true ]
+        [ {value: 'a string'}, {value: 'a string'}, {value: 'A string'}, {value: 'a string'} ],
+        [ {value: ''}, {value: '45'}, {value: 'A string'}, {value: false} ],
+        [ {value: date}, {value: 45}, {value: 'A string'}, {value: true} ]
       ];
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
@@ -413,18 +413,18 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       grid.options.exporterPdfMaxGridWidth = 500;
       
       var columnHeaders = [
-        {name: 'col1', displayName: 'Col1', width: 100, align: 'left'},
-        {name: 'col2', displayName: 'Col2', width: '*', align: 'left'},
-        {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
+        {name: 'col1', displayName: 'Col1', width: 100, exporterPdfAlign: 'right'},
+        {name: 'col2', displayName: 'Col2', width: '*', exporterPdfAlign: 'left'},
+        {name: 'col3', displayName: 'Col3', width: 100, exporterPdfAlign: 'center'},
         {name: 'x', displayName: '12345234', width: 200, align: 'left'}
       ];
 
       var date = new Date(2014, 12, 12, 0, 0, 0, 0);
 
       var data = [
-        [ 'a string', 'a string', 'A string', 'a string' ],
-        [ '', '45', 'A string', false ],
-        [ date, 45, 'A string', true ]
+        [ {value: 'a string', alignment: 'right'}, {value: 'a string', alignment: 'center'}, {value: 'A string', alignment: 'left'}, {value: 'a string'} ],
+        [ {value: '', alignment: 'right'}, {value: '45', alignment: 'center'}, {value: 'A string', alignment: 'left'}, {value: false} ],
+        [ {value: date, alignment: 'right'}, {value: 45, alignment: 'center'}, {value: 'A string', alignment: 'left'}, {value: true} ]
       ];
       
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
@@ -445,9 +445,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
                   { text : 'Col3', style : 'tableHeader' }, 
                   { text : '12345234', style : 'tableHeader' } 
                 ], 
-                [ 'a string', 'a string', 'A string', 'a string' ], 
-                [ '', '45', 'A string', 'FALSE' ], 
-                [ date.toISOString(), '45', 'A string', 'TRUE' ] 
+                [ {text: 'a string', alignment: 'right'}, { text: 'a string', alignment: 'center'}, { text: 'A string', alignment: 'left'}, 'a string' ], 
+                [ {text: '', alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'FALSE' ], 
+                [ {text: date.toISOString(), alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'TRUE' ] 
               ] 
             } 
           },

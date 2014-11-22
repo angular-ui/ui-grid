@@ -19,6 +19,8 @@ the pdf layout to have different styles than the default.
 We also apply a filter to the headers (simulating internationalisation), and we reprocess the grid
 data to apply a filter to decode coded data.
 
+We also right align the gender column.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.selection', 'ui.grid.exporter']);
@@ -27,7 +29,7 @@ data to apply a filter to decode coded data.
       $scope.gridOptions = {
         columnDefs: [
           { field: 'name' },
-          { field: 'gender', cellFilter: 'mapGender' },
+          { field: 'gender', cellFilter: 'mapGender', exporterPdfAlign: 'right' },
           { field: 'company', visible: false }
         ],
         exporterLinkLabel: 'get your csv here',
