@@ -165,7 +165,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
   var uiGridMenuItem = {
     priority: 0,
     scope: {
-      title: '=',
+      name: '=',
       active: '=',
       action: '=',
       icon: '=',
