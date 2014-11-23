@@ -4,246 +4,246 @@ angular.module('ui.grid')
 .factory('Grid', ['$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout',
     function($q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout) {
 
-/**
- * @ngdoc object
- * @name ui.grid.core.api:PublicApi
- * @description Public Api for the core grid features
- *
- */
-
-/**
+  /**
+   * @ngdoc object
+   * @name ui.grid.core.api:PublicApi
+   * @description Public Api for the core grid features
+   *
+   */
+  
+  /**
    * @ngdoc function
    * @name ui.grid.class:Grid
    * @description Grid is the main viewModel.  Any properties or methods needed to maintain state are defined in
- * * this prototype.  One instance of Grid is created per Grid directive instance.
+   * this prototype.  One instance of Grid is created per Grid directive instance.
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
   var Grid = function Grid(options) {
     var self = this;
-  // Get the id out of the options, then remove it
-  if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
-    if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
-      throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
+    // Get the id out of the options, then remove it
+    if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
+      if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
+        throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
+      }
     }
-  }
-  else {
-    throw new Error('No ID provided. An ID must be given when creating a grid.');
-  }
-
-  self.id = options.id;
-  delete options.id;
-
-  // Get default options
-  self.options = GridOptions.initialize( options );
-
-  self.headerHeight = self.options.headerRowHeight;
-  self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
-
-  self.rtl = false;
-  self.gridHeight = 0;
-  self.gridWidth = 0;
-  self.columnBuilders = [];
-  self.rowBuilders = [];
-  self.rowsProcessors = [];
-  self.columnsProcessors = [];
-  self.styleComputations = [];
-  self.viewportAdjusters = [];
-  self.rowHeaderColumns = [];
-  self.dataChangeCallbacks = {};
-
-  // self.visibleRowCache = [];
-
-  // Set of 'render' containers for self grid, which can render sets of rows
-  self.renderContainers = {};
-
-  // Create a
-  self.renderContainers.body = new GridRenderContainer('body', self);
-
-  self.cellValueGetterCache = {};
-
-  // Cached function to use with custom row templates
-  self.getRowTemplateFn = null;
-
-
-  //representation of the rows on the grid.
-  //these are wrapped references to the actual data rows (options.data)
-  self.rows = [];
-
-  //represents the columns on the grid
-  self.columns = [];
-
-  /**
-   * @ngdoc boolean
-   * @name isScrollingVertically
-   * @propertyOf ui.grid.class:Grid
-   * @description set to true when Grid is scrolling vertically. Set to false via debounced method
-   */
-  self.isScrollingVertically = false;
-
-  /**
-   * @ngdoc boolean
-   * @name isScrollingHorizontally
-   * @propertyOf ui.grid.class:Grid
-   * @description set to true when Grid is scrolling horizontally. Set to false via debounced method
-   */
-  self.isScrollingHorizontally = false;
-
-  var debouncedVertical = gridUtil.debounce(function () {
-    self.isScrollingVertically = false;
-  }, 300);
-
-  var debouncedHorizontal = gridUtil.debounce(function () {
-    self.isScrollingHorizontally = false;
-  }, 300);
-
-
-  /**
-   * @ngdoc function
-   * @name flagScrollingVertically
-   * @methodOf ui.grid.class:Grid
-   * @description sets isScrollingVertically to true and sets it to false in a debounced function
-   */
-  self.flagScrollingVertically = function() {
-    self.isScrollingVertically = true;
-    debouncedVertical();
-  };
-
-  /**
-   * @ngdoc function
-   * @name flagScrollingHorizontally
-   * @methodOf ui.grid.class:Grid
-   * @description sets isScrollingHorizontally to true and sets it to false in a debounced function
-   */
-  self.flagScrollingHorizontally = function() {
-    self.isScrollingHorizontally = true;
-    debouncedHorizontal();
-  };
-
-
-
-  self.api = new GridApi(self);
-
-  /**
-   * @ngdoc function
-   * @name refresh
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen.
-   * 
-   */
-  self.api.registerMethod( 'core', 'refresh', this.refresh );
-
-  /**
-   * @ngdoc function
-   * @name refreshRows
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Refresh the rendered grid on screen?  Note: not functional at present
-   * @returns {promise} promise that is resolved when render completes?
-   * 
-   */
-  self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
-
-  /**
-   * @ngdoc function
-   * @name handleWindowResize
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Trigger a grid resize, normally this would be picked
-   * up by a watch on window size, but in some circumstances it is necessary
-   * to call this manually
-   * @returns {promise} promise that is resolved when render completes?
-   * 
-   */
-  self.api.registerMethod( 'core', 'handleWindowResize', this.handleWindowResize );
-
-
-  /**
-   * @ngdoc function
-   * @name addRowHeaderColumn
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description adds a row header column to the grid
-   * @param {object} column def
-   * 
-   */
-  self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
-
-
-  /**
-   * @ngdoc function
-   * @name sortHandleNulls
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description A null handling method that can be used when building custom sort
-   * functions
-   * @example
-   * <pre>
-   *   mySortFn = function(a, b) {
-   *   var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
-   *   if ( nulls !== null ){
-   *     return nulls;
-   *   } else {
-   *     // your code for sorting here
-   *   };
-   * </pre>
-   * @param {object} a sort value a
-   * @param {object} b sort value b
-   * @returns {number} null if there were no nulls/undefineds, otherwise returns
-   * a sort value that should be passed back from the sort function
-   * 
-   */
-  self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
-
-
-  /**
-   * @ngdoc function
-   * @name sortChanged
-   * @methodOf  ui.grid.core.api:PublicApi
-   * @description The sort criteria on one or more columns has
-   * changed.  Provides as parameters the grid and the output of
-   * getColumnSorting, which is an array of gridColumns
-   * that have sorting on them, sorted in priority order. 
-   * 
-   * @param {Grid} grid the grid
-   * @param {array} sortColumns an array of columns with 
-   * sorts on them, in priority order
-   * 
-   * @example
-   * <pre>
-   *      gridApi.core.on.sortChanged( grid, sortColumns );
-   * </pre>
-   */
-  self.api.registerEvent( 'core', 'sortChanged' );
-
-  /**
-   * @ngdoc method
-   * @name notifyDataChange
-   * @methodOf ui.grid.core.api:PublicApi
-   * @description Notify the grid that a data or config change has occurred,
-   * where that change isn't something the grid was otherwise noticing.  This 
-   * might be particularly relevant where you've changed values within the data
-   * and you'd like cell classes to be re-evaluated, or changed config within 
-   * the columnDef and you'd like headerCellClasses to be re-evaluated.
-   * @param {Grid} grid the grid
-   * @param {string} type one of the 
-   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
-   * us which refreshes to fire.
-   * 
-   */
-  self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
+    else {
+      throw new Error('No ID provided. An ID must be given when creating a grid.');
+    }
   
-  self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
-  self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
-};
-
+    self.id = options.id;
+    delete options.id;
+  
+    // Get default options
+    self.options = GridOptions.initialize( options );
+  
+    self.headerHeight = self.options.headerRowHeight;
+    self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
+  
+    self.rtl = false;
+    self.gridHeight = 0;
+    self.gridWidth = 0;
+    self.columnBuilders = [];
+    self.rowBuilders = [];
+    self.rowsProcessors = [];
+    self.columnsProcessors = [];
+    self.styleComputations = [];
+    self.viewportAdjusters = [];
+    self.rowHeaderColumns = [];
+    self.dataChangeCallbacks = {};
+  
+    // self.visibleRowCache = [];
+  
+    // Set of 'render' containers for self grid, which can render sets of rows
+    self.renderContainers = {};
+  
+    // Create a
+    self.renderContainers.body = new GridRenderContainer('body', self);
+  
+    self.cellValueGetterCache = {};
+  
+    // Cached function to use with custom row templates
+    self.getRowTemplateFn = null;
+  
+  
+    //representation of the rows on the grid.
+    //these are wrapped references to the actual data rows (options.data)
+    self.rows = [];
+  
+    //represents the columns on the grid
+    self.columns = [];
+  
+    /**
+     * @ngdoc boolean
+     * @name isScrollingVertically
+     * @propertyOf ui.grid.class:Grid
+     * @description set to true when Grid is scrolling vertically. Set to false via debounced method
+     */
+    self.isScrollingVertically = false;
+  
+    /**
+     * @ngdoc boolean
+     * @name isScrollingHorizontally
+     * @propertyOf ui.grid.class:Grid
+     * @description set to true when Grid is scrolling horizontally. Set to false via debounced method
+     */
+    self.isScrollingHorizontally = false;
+  
+    var debouncedVertical = gridUtil.debounce(function () {
+      self.isScrollingVertically = false;
+    }, 300);
+  
+    var debouncedHorizontal = gridUtil.debounce(function () {
+      self.isScrollingHorizontally = false;
+    }, 300);
+  
+  
     /**
      * @ngdoc function
-     * @name isRTL
+     * @name flagScrollingVertically
      * @methodOf ui.grid.class:Grid
-     * @description Returns true if grid is RightToLeft
+     * @description sets isScrollingVertically to true and sets it to false in a debounced function
      */
-    Grid.prototype.isRTL = function () {
-      return this.rtl;
+    self.flagScrollingVertically = function() {
+      self.isScrollingVertically = true;
+      debouncedVertical();
     };
+  
+    /**
+     * @ngdoc function
+     * @name flagScrollingHorizontally
+     * @methodOf ui.grid.class:Grid
+     * @description sets isScrollingHorizontally to true and sets it to false in a debounced function
+     */
+    self.flagScrollingHorizontally = function() {
+      self.isScrollingHorizontally = true;
+      debouncedHorizontal();
+    };
+  
+  
+  
+    self.api = new GridApi(self);
+  
+    /**
+     * @ngdoc function
+     * @name refresh
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Refresh the rendered grid on screen.
+     * 
+     */
+    self.api.registerMethod( 'core', 'refresh', this.refresh );
+  
+    /**
+     * @ngdoc function
+     * @name refreshRows
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Refresh the rendered grid on screen?  Note: not functional at present
+     * @returns {promise} promise that is resolved when render completes?
+     * 
+     */
+    self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
+  
+    /**
+     * @ngdoc function
+     * @name handleWindowResize
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Trigger a grid resize, normally this would be picked
+     * up by a watch on window size, but in some circumstances it is necessary
+     * to call this manually
+     * @returns {promise} promise that is resolved when render completes?
+     * 
+     */
+    self.api.registerMethod( 'core', 'handleWindowResize', this.handleWindowResize );
+  
+  
+    /**
+     * @ngdoc function
+     * @name addRowHeaderColumn
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description adds a row header column to the grid
+     * @param {object} column def
+     * 
+     */
+    self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
+  
+  
+    /**
+     * @ngdoc function
+     * @name sortHandleNulls
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description A null handling method that can be used when building custom sort
+     * functions
+     * @example
+     * <pre>
+     *   mySortFn = function(a, b) {
+     *   var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+     *   if ( nulls !== null ){
+     *     return nulls;
+     *   } else {
+     *     // your code for sorting here
+     *   };
+     * </pre>
+     * @param {object} a sort value a
+     * @param {object} b sort value b
+     * @returns {number} null if there were no nulls/undefineds, otherwise returns
+     * a sort value that should be passed back from the sort function
+     * 
+     */
+    self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
+  
+  
+    /**
+     * @ngdoc function
+     * @name sortChanged
+     * @methodOf  ui.grid.core.api:PublicApi
+     * @description The sort criteria on one or more columns has
+     * changed.  Provides as parameters the grid and the output of
+     * getColumnSorting, which is an array of gridColumns
+     * that have sorting on them, sorted in priority order. 
+     * 
+     * @param {Grid} grid the grid
+     * @param {array} sortColumns an array of columns with 
+     * sorts on them, in priority order
+     * 
+     * @example
+     * <pre>
+     *      gridApi.core.on.sortChanged( grid, sortColumns );
+     * </pre>
+     */
+    self.api.registerEvent( 'core', 'sortChanged' );
+  
+    /**
+     * @ngdoc method
+     * @name notifyDataChange
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Notify the grid that a data or config change has occurred,
+     * where that change isn't something the grid was otherwise noticing.  This 
+     * might be particularly relevant where you've changed values within the data
+     * and you'd like cell classes to be re-evaluated, or changed config within 
+     * the columnDef and you'd like headerCellClasses to be re-evaluated.
+     * @param {Grid} grid the grid
+     * @param {string} type one of the 
+     * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
+     * us which refreshes to fire.
+     * 
+     */
+    self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
+    
+    self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
+    self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
+  };
+
+  /**
+   * @ngdoc function
+   * @name isRTL
+   * @methodOf ui.grid.class:Grid
+   * @description Returns true if grid is RightToLeft
+   */
+  Grid.prototype.isRTL = function () {
+    return this.rtl;
+  };
 
 
-      /**
+  /**
    * @ngdoc function
    * @name registerColumnBuilder
    * @methodOf ui.grid.class:Grid

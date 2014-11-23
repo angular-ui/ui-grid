@@ -494,6 +494,8 @@ angular.module('ui.grid')
      * - term: If set, the filter field will be pre-populated
      * with this value.
      * - placeholder: String that will be set to the `<input>.placeholder` attribute.
+     * - noTerm: set this to true if you have defined a custom function in condition, and
+     * your custom function doesn't require a term (so it can run even when the term is null)
      * @example
      * <pre>$scope.gridOptions.columnDefs = [ 
      *   {

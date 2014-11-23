@@ -32,6 +32,10 @@ function myCustomSorter(searchTerm, cellValue, row, column) {
 For an example of this, see the "phone" column below for an example of this; the custom filter condition makes sure to strip the phone number of everything
 except digits to compare to the search term.
 
+You can also optionally create a custom filter condition that doesn't require a term to be provided by the user - for example if you're matching 
+to a variable that you're setting within your code.  If you want to do this, you can set `noTerm: true` inside the filter, and the filter will
+run even when no term is provided.  The filter box will, however, still be shown.   
+
 ### Placeholder
 
 Set the `placeholder` property on the `filter` object to add a `placeholder=""` attribute to the input element. This is set for the "email" and "age" columns below.
