@@ -62,7 +62,9 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
           // pre-populated search field
           { field: 'gender', filter: { term: 'male' } },
           // no filter input
-          { field: 'company', enableFiltering: false  },
+          { field: 'company', enableFiltering: false, filter: {
+            term: '*a*'
+          }},
           // specifies one of the built-in conditions
           // and a placeholder for the input
           {
@@ -107,7 +109,7 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
       You can use asterisks to fuzz-match, i.e. use "*z*" as your filter to show any row where that column contains a "z".
       <br>
       <br>
-      <strong>Note:</strong> The third column has filtering disabled.
+      <strong>Note:</strong> The third column has the filter input disabled, but actually has a filter set in code that requires every company to have an 'a' in their name.
       <br>
       <br>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
@@ -136,19 +138,19 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 5, 2 );
       });
 
-      it('third row should be Bishop Carr - will be Terry Clay if filtering broken', function () {
-        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
+      it('third row should be Hatfield Hudson - will be Terry Clay if filtering broken', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Hatfield Hudson' );
       });
       
-      it('cancel filter on gender column, should now see Terry Clay in third row', function() {
+      it('cancel filter on gender column, should now see Bishop Carr in third row', function() {
         gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
-        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Terry Clay' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
       });
 
       it('filter on email column, should automatically do "ends with"', function() {
         gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
-        gridTestUtils.enterFilterInColumn( 'grid1', 3, 'mixers.com' );        
-        gridTestUtils.expectRowCount( 'grid1', 2 );
+        gridTestUtils.enterFilterInColumn( 'grid1', 3, 'digirang.com' );        
+        gridTestUtils.expectRowCount( 'grid1', 1 );
       });
     });
   </file>  
