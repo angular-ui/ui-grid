@@ -150,7 +150,7 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
       it('filter on email column, should automatically do "ends with"', function() {
         gridTestUtils.cancelFilterInColumn( 'grid1', 1 );        
         gridTestUtils.enterFilterInColumn( 'grid1', 3, 'digirang.com' );        
-        gridTestUtils.expectRowCount( 'grid1', 1 );
+        gridTestUtils.expectRowCount( 'grid1', 2 );
       });
     });
   </file>  
