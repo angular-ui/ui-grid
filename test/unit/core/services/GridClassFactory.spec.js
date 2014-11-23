@@ -35,62 +35,75 @@ describe('gridClassFactory', function() {
     it('column builder with no filters and template has no placeholders', function() {
       testSetup.$templateCache.put('ui-grid/uiGridHeaderCell', '<div>a sample header template with no custom_filters</div>');
       testSetup.$templateCache.put('ui-grid/uiGridCell', '<div>a sample cell template with no custom_filters</div>');
+      testSetup.$templateCache.put('ui-grid/uiGridFooterCell', '<div>a sample footer template with no custom_filters</div>');
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
       expect(testSetup.col.providedHeaderCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
       expect(testSetup.col.providedCellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.providedFooterCellTemplate).toEqual('ui-grid/uiGridFooterCell');
 
       testSetup.$rootScope.$digest();
       
       expect(testSetup.col.headerCellTemplate).toEqual('<div>a sample header template with no custom_filters</div>');
       expect(testSetup.col.cellTemplate).toEqual('<div>a sample cell template with no custom_filters</div>');      
+      expect(testSetup.col.footerCellTemplate).toEqual('<div>a sample footer template with no custom_filters</div>');
     });
 
     it('column builder with no filters and template has placeholders', function() {
       testSetup.$templateCache.put('ui-grid/uiGridHeaderCell', '<div>a sample header template with CUSTOM_FILTERS</div>');
       testSetup.$templateCache.put('ui-grid/uiGridCell', '<div>a sample cell template with CUSTOM_FILTERS</div>');
+      testSetup.$templateCache.put('ui-grid/uiGridFooterCell', '<div>a sample footer template with CUSTOM_FILTERS</div>');
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
       expect(testSetup.col.providedHeaderCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
       expect(testSetup.col.providedCellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.providedFooterCellTemplate).toEqual('ui-grid/uiGridFooterCell');
 
       testSetup.$rootScope.$digest();
       
       expect(testSetup.col.headerCellTemplate).toEqual('<div>a sample header template with </div>');
       expect(testSetup.col.cellTemplate).toEqual('<div>a sample cell template with </div>');      
+      expect(testSetup.col.footerCellTemplate).toEqual('<div>a sample footer template with </div>');      
     });
 
     it('column builder with filters and template has placeholders', function() {
       testSetup.$templateCache.put('ui-grid/uiGridHeaderCell', '<div>a sample header template with CUSTOM_FILTERS</div>');
       testSetup.$templateCache.put('ui-grid/uiGridCell', '<div>a sample cell template with CUSTOM_FILTERS</div>');
+      testSetup.$templateCache.put('ui-grid/uiGridFooterCell', '<div>a sample footer template with CUSTOM_FILTERS</div>');
       
       testSetup.col.cellFilter = 'customCellFilter';
       testSetup.col.headerCellFilter = 'customHeaderCellFilter';
+      testSetup.col.footerCellFilter = 'customFooterCellFilter';
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
       expect(testSetup.col.providedHeaderCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
       expect(testSetup.col.providedCellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.providedFooterCellTemplate).toEqual('ui-grid/uiGridFooterCell');
 
       testSetup.$rootScope.$digest();
       
       expect(testSetup.col.headerCellTemplate).toEqual('<div>a sample header template with |customHeaderCellFilter</div>');
       expect(testSetup.col.cellTemplate).toEqual('<div>a sample cell template with |customCellFilter</div>');      
+      expect(testSetup.col.footerCellTemplate).toEqual('<div>a sample footer template with |customFooterCellFilter</div>');
     });
 
     it('column builder with filters and template has no placeholders', function() {
       testSetup.$templateCache.put('ui-grid/uiGridHeaderCell', '<div>a sample header template with custom_filters</div>');
       testSetup.$templateCache.put('ui-grid/uiGridCell', '<div>a sample cell template with custom_filters</div>');
+      testSetup.$templateCache.put('ui-grid/uiGridFooterCell', '<div>a sample footer template with custom_filters</div>');
       
       testSetup.col.cellFilter = 'customCellFilter';
       testSetup.col.headerCellFilter = 'customHeaderCellFilter';
+      testSetup.col.footerCellFilter = 'customFooterCellFilter';
       
       gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
       
       expect(testSetup.col.providedHeaderCellTemplate).toEqual('ui-grid/uiGridHeaderCell');
       expect(testSetup.col.providedCellTemplate).toEqual('ui-grid/uiGridCell');
+      expect(testSetup.col.providedFooterCellTemplate).toEqual('ui-grid/uiGridFooterCell');
 
       // the code appears to rely on cellTemplate being undefined until properly retrieved (i.e. we cannot
       // just push 'ui-grid/uiGridCell' into here, then later replace it with the template body)
@@ -100,6 +113,7 @@ describe('gridClassFactory', function() {
       
       expect(testSetup.col.headerCellTemplate).toEqual('<div>a sample header template with custom_filters</div>');
       expect(testSetup.col.cellTemplate).toEqual('<div>a sample cell template with custom_filters</div>');      
+      expect(testSetup.col.footerCellTemplate).toEqual('<div>a sample footer template with custom_filters</div>');
     });
     
   });

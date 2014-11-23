@@ -23,18 +23,22 @@ show the aggregation but without a label.  Refer the third column in the example
         showFooter: true,
         enableFiltering: true,
         columnDefs: [
-            { field: 'name', width: 150, aggregationType: uiGridConstants.aggregationTypes.count },
-            { field: 'address.street',aggregationType: uiGridConstants.aggregationTypes.sum, width: 150 },
-            { field: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true, width: 100 },
-            { name: 'ageMin', field: 'age', aggregationType: uiGridConstants.aggregationTypes.min, width: 130, displayName: 'Age for min' },
-            { name: 'ageMax', field: 'age', aggregationType: uiGridConstants.aggregationTypes.max, width: 130, displayName: 'Age for max' },
-            { name: 'customCellTemplate', field: 'age', width: 150, footerCellTemplate: '<div class="ui-grid-cell-contents" style="background-color: Red;color: White">custom template</div>' }
+            { field: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: '13%' },
+            { field: 'address.street',aggregationType: uiGridConstants.aggregationTypes.sum, width: '13%' },
+            { field: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true, width: '13%' },
+            { name: 'ageMin', field: 'age', aggregationType: uiGridConstants.aggregationTypes.min, width: '13%', displayName: 'Age for min' },
+            { name: 'ageMax', field: 'age', aggregationType: uiGridConstants.aggregationTypes.max, width: '13%', displayName: 'Age for max' },
+            { name: 'customCellTemplate', field: 'age', width: '14%', footerCellTemplate: '<div class="ui-grid-cell-contents" style="background-color: Red;color: White">custom template</div>' },
+            { name: 'registered', field: 'registered', width: '20%', cellFilter: 'date', footerCellFilter: 'date', aggregationType: uiGridConstants.aggregationTypes.max }
         ],
         data: data
     }
 
     $http.get('/data/500_complex.json')
       .success(function(data) {
+        angular.forEach(data, function(row) {
+          row.registered = Date.parse(row.registered);
+        });
         $scope.gridOptions.data = data;
       });
     }]);
@@ -56,11 +60,11 @@ show the aggregation but without a label.  Refer the third column in the example
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '105 footer', function() {
       it('grid should have six visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 6 );
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 7 );
       });
   
       it('grid should have six visible columns in footer', function () {
-        gridTestUtils.expectFooterColumnCount( 'grid1', 6 );
+        gridTestUtils.expectFooterColumnCount( 'grid1', 7 );
       });
   
       it('grid should have footers with specific values', function () {
@@ -70,6 +74,7 @@ show the aggregation but without a label.  Refer the third column in the example
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 3, 'min: 20' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 4, 'max: 40' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 5, 'custom template' );
+        gridTestUtils.expectFooterCellValueMatch( 'grid1', 6, 'max: Dec 24, 2013' );
       });
   
       it('filter and expect recalculate', function () {
@@ -80,6 +85,7 @@ show the aggregation but without a label.  Refer the third column in the example
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 3, 'min: 20' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 4, 'max: 39' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 5, 'custom template' );
+        gridTestUtils.expectFooterCellValueMatch( 'grid1', 6, 'max: Dec 17, 2013' );
       });
     });
   </file>

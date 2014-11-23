@@ -101,7 +101,8 @@ describe('GridColumn factory', function () {
       grid.modifyRows(grid.options.data);
       grid.setVisibleRows(grid.rows);
       
-      expect(grid.columns[0].getAggregationValue()).toEqual('total rows: 5');
+      expect(grid.columns[0].getAggregationValue()).toEqual(5);
+      expect(grid.columns[0].getAggregationText()).toEqual('total rows: ');
     });
 
     it('count, without label', function() {
@@ -113,6 +114,7 @@ describe('GridColumn factory', function () {
       grid.setVisibleRows(grid.rows);
       
       expect(grid.columns[0].getAggregationValue()).toEqual(5);
+      expect(grid.columns[0].getAggregationText()).toEqual('');
     });
 
     it('sum, with label', function() {
@@ -122,7 +124,8 @@ describe('GridColumn factory', function () {
       grid.modifyRows(grid.options.data);
       grid.setVisibleRows(grid.rows);
       
-      expect(grid.columns[1].getAggregationValue()).toEqual('total: 15');
+      expect(grid.columns[1].getAggregationValue()).toEqual(15);
+      expect(grid.columns[1].getAggregationText()).toEqual('total: ');
     });
 
     it('sum, without label', function() {
@@ -134,6 +137,7 @@ describe('GridColumn factory', function () {
       grid.setVisibleRows(grid.rows);
       
       expect(grid.columns[1].getAggregationValue()).toEqual(15);
+      expect(grid.columns[1].getAggregationText()).toEqual('');
     });
 
     it('avg, with label', function() {
@@ -143,7 +147,8 @@ describe('GridColumn factory', function () {
       grid.modifyRows(grid.options.data);
       grid.setVisibleRows(grid.rows);
       
-      expect(grid.columns[1].getAggregationValue()).toEqual('avg: 3');
+      expect(grid.columns[1].getAggregationValue()).toEqual(3);
+      expect(grid.columns[1].getAggregationText()).toEqual('avg: ');
     });
 
     it('avg, without label', function() {
@@ -155,6 +160,7 @@ describe('GridColumn factory', function () {
       grid.setVisibleRows(grid.rows);
       
       expect(grid.columns[1].getAggregationValue()).toEqual(3);
+      expect(grid.columns[1].getAggregationText()).toEqual('');
     });    
 
     it('min, with label', function() {
@@ -164,7 +170,8 @@ describe('GridColumn factory', function () {
       grid.modifyRows(grid.options.data);
       grid.setVisibleRows(grid.rows);
       
-      expect(grid.columns[1].getAggregationValue()).toEqual('min: 1');
+      expect(grid.columns[1].getAggregationValue()).toEqual(1);
+      expect(grid.columns[1].getAggregationText()).toEqual('min: ');
     });
 
     it('min, without label', function() {
@@ -176,6 +183,7 @@ describe('GridColumn factory', function () {
       grid.setVisibleRows(grid.rows);
       
       expect(grid.columns[1].getAggregationValue()).toEqual(1);
+      expect(grid.columns[1].getAggregationText()).toEqual('');
     });
 
     it('max, with label', function() {
@@ -185,7 +193,8 @@ describe('GridColumn factory', function () {
       grid.modifyRows(grid.options.data);
       grid.setVisibleRows(grid.rows);
       
-      expect(grid.columns[1].getAggregationValue()).toEqual('max: 5');
+      expect(grid.columns[1].getAggregationValue()).toEqual(5);
+      expect(grid.columns[1].getAggregationText()).toEqual('max: ');
     });
 
     it('max, without label', function() {
@@ -197,6 +206,7 @@ describe('GridColumn factory', function () {
       grid.setVisibleRows(grid.rows);
       
       expect(grid.columns[1].getAggregationValue()).toEqual(5);
+      expect(grid.columns[1].getAggregationText()).toEqual('');
     });
   });
 
