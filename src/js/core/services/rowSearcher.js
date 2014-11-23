@@ -173,7 +173,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     // Term to search for.
     var term = rowSearcher.stripTerm(filter);
 
-    if (term === null || term === undefined || term === '') {
+    if ( !filter.noTerm && (term === null || term === undefined || term === '')) {
       return true;
     }
 
