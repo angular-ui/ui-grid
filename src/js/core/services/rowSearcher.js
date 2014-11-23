@@ -361,7 +361,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (typeof(col.filters) !== 'undefined' && col.filters.length > 0) {
         filterCols.push(col);
       }
-      else if (typeof(col.filter) !== 'undefined' && col.filter && typeof(col.filter.term) !== 'undefined' && col.filter.term) {
+      else if (typeof(col.filter) !== 'undefined' && col.filter && ( typeof(col.filter.term) !== 'undefined' && col.filter.term || col.filter.noTerm ) ) {
         filterCols.push(col);
       }
     });
