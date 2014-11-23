@@ -7,6 +7,9 @@ updates appropriately.  The columns are by default shown in the order of the col
 although if/when the column move feature arrives the end user will be able to alter 
 that default.
 
+You can dynamically change the display name on a column (along with some other column
+def properties), and call the notifyDataChange api to force an update. 
+
 @example
 <example module="app">
   <file name="app.js">
@@ -38,6 +41,15 @@ that default.
         $scope.columns.splice(1, 1);
       }
       
+      $scope.toggleDisplayName = function() {
+        if( $scope.columns[1].displayName === 'GENDER' ){
+          $scope.columns[1].displayName = 'Gender';
+        } else {
+          $scope.columns[1].displayName = 'GENDER';
+        }
+        $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid,  uiGridConstants.dataChange.COLUMN );
+      }
+      
       $scope.toggleVisible = function() {
         $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
         $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.COLUMN);
@@ -61,6 +73,7 @@ that default.
       <button id="button_splice" class="btn" ng-click="splice()">Splice</button>
       <button id="button_unsplice" class="btn" ng-click="unsplice()">Remove Middle</button>
       <button id="button_toggle_visible" class="btn" ng-click="toggleVisible()">Toggle Visible</button>
+      <button id="button_toggle_display_name" class="btn" ng-click="toggleDisplayName()">Toggle Display Name</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
@@ -107,6 +120,14 @@ that default.
         element(by.id('button_toggle_visible')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+      });     
+
+      it('toggle display name should change column header', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+        element(by.id('button_toggle_display_name')).click();
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'GENDER' );
+        element(by.id('button_toggle_display_name')).click();
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
       });     
     });    
   </file>
