@@ -684,8 +684,9 @@ angular.module('ui.grid')
      * @param {object} rowEntity the gridOptions.data array element instance
      */
     Grid.prototype.getRow = function getRow(rowEntity) {
+      var self = this;
       var rows = this.rows.filter(function (row) {
-        return row.entity === rowEntity;
+        return self.options.rowEquality(row.entity, rowEntity);
       });
       return rows.length > 0 ? rows[0] : null;
     };
