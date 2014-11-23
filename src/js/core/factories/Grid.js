@@ -263,7 +263,7 @@ angular.module('ui.grid')
    * @param {function(colDef, col, gridOptions)} rowBuilder function to be called
    */
   Grid.prototype.buildColumnDefsFromData = function (dataRows){
-    this.options.columnDefs =  gridUtil.getColumnsFromData(dataRows,  this.options.excludeProperties);
+    this.options.columnDefs =  gridUtil.getColumnsFromData(dataRows, this.options.excludeProperties);
   };
 
   /**
@@ -382,6 +382,7 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
+    grid.buildColumns();
     grid.refresh();
   };
     

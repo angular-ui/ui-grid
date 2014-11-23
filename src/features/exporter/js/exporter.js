@@ -428,13 +428,6 @@
            * The method is called once for each field exported, and provides the grid, the
            * gridCol and the GridRow for you to use as context in massaging the data.
            * 
-           * Note that the format of the passed in value is along the lines of:
-           * <pre>
-           *   { value: 'cellValue', alignment: 'left' }
-           * </pre>
-           * 
-           * Your returned value needs to follow that format.
-           * 
            * @param {Grid} grid provides the grid in case you have need of it
            * @param {GridRow} row the row from which the data comes
            * @param {GridCol} col the column from which the data comes
@@ -445,7 +438,7 @@
            * <pre>
            *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ){
            *     if ( col.name === 'status' ){
-           *       value = { value: decodeStatus( value ) };
+           *       value = decodeStatus( value );
            *     }
            *     return value;
            *   }
