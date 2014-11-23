@@ -130,6 +130,20 @@
             col.providedCellTemplate = colDef.cellTemplate;
           }
 
+          /**
+           * @ngdoc property
+           * @name footerCellTemplate
+           * @propertyOf ui.grid.class:GridOptions.columnDef
+           * @description a custom template for the footer for this column.  The default
+           * is ui-grid/uiGridFooterCell
+           *
+           */
+          if (!colDef.footerCellTemplate) {
+            col.providedFooterCellTemplate = 'ui-grid/uiGridFooterCell';
+          } else {
+            col.providedFooterCellTemplate = colDef.footerCellTemplate;
+          }
+
           col.cellTemplatePromise = gridUtil.getTemplate(col.providedCellTemplate);
           templateGetPromises.push(col.cellTemplatePromise
             .then(
@@ -148,6 +162,16 @@
               },
               function (res) {
                 throw new Error("Couldn't fetch/use colDef.headerCellTemplate '" + colDef.headerCellTemplate + "'");
+              })
+          );
+
+          templateGetPromises.push(gridUtil.getTemplate(col.providedFooterCellTemplate)
+              .then(
+              function (template) {
+                col.footerCellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.footerCellFilter ? "|" + col.footerCellFilter : "");
+              },
+              function (res) {
+                throw new Error("Couldn't fetch/use colDef.footerCellTemplate '" + colDef.footerCellTemplate + "'");
               })
           );
 
