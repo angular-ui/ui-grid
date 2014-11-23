@@ -110,6 +110,21 @@ describe('uiGridHeaderCell', function () {
       }));
     });
 
+    describe('when window is resized', function () {
+      it('should hide an open menu', function () {
+        openMenu();
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
+        
+        $(window).trigger('resize');
+        $scope.$digest();
+
+        $timeout.flush();
+        $scope.$digest();
+
+        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
+      });
+    });
+
     describe('with enableColumnMenu off', function() {
       it('should not be present', function () {
         $scope.gridOpts.enableColumnMenus = false;
@@ -133,23 +148,6 @@ describe('uiGridHeaderCell', function () {
         expect(headers.length).toEqual(2);
       });
     });
-
-    describe('when window is resized', function () {
-      it('should hide an open menu', function () {
-        delete $scope.gridOpts.columnDefs[0].enableColumnMenu;
-        openMenu();
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
-        
-        $(window).trigger('resize');
-        $scope.$digest();
-
-        $timeout.flush();
-        $scope.$digest();
-
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
-      });
-    });
-
     // TODO(c0bra): Allow extra items to be added to a column menu through columnDefs
   });
 
