@@ -1,0 +1,25 @@
+<div class="ui-grid-header-cell clearfix"
+    ng-if="grid.isSectionVisible(section)"
+    ng-style="{ 'width': grid.getSectionWidth(section) }">
+
+    <div>
+        <div class="ui-grid-vertical-bar">&nbsp;</div>
+        <div class="ui-grid-cell-contents" style="text-align: center;">
+            <span>{{section.displayName}}</span>
+        </div>
+    </div>
+
+    <div ng-repeat="section in section.subSections">
+        <div ui-grid-recursive-section-header></div>
+    </div>
+
+    <div ng-repeat="columnName in section.columns">
+        <div ui-grid-header-cell
+            class="ui-grid-header-cell clearfix"
+            col="grid.getColumn(columnName)"
+            ng-if="grid.getColumn(columnName).visible !== false"
+            render-index="grid.columns.indexOf(grid.getColumn(columnName))">
+        </div>
+    </div>
+
+</div>

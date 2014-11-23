@@ -1,0 +1,13 @@
+<div class="ui-grid-header">
+    <div class="ui-grid-top-panel">
+        <div ui-grid-group-panel ng-show="grid.options.showGroupPanel"></div>
+        <div class="ui-grid-header-viewport">
+            <div class="ui-grid-header-canvas">
+                <div ng-repeat="section in grid.options.sectionHeaders">
+                    <div ui-grid-recursive-section-header></div>
+                </div>
+            </div>
+        </div>
+        <div ui-grid-menu></div>
+    </div>
+</div>

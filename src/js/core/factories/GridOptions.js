@@ -352,7 +352,16 @@ angular.module('ui.grid')
       baseOptions.rowEquality = baseOptions.rowEquality || function(entityA, entityB) {
         return entityA === entityB;
       };
-  
+
+      /**
+       * @ngdoc array
+       * @name sectionHeaders
+       * @propertyOf ui.grid.class:GridOptions
+       * @description This property is an array that specifies sections that headers should be organized into
+       *
+       */
+      baseOptions.sectionHeaders = baseOptions.sectionHeaders || null;
+
       /**
        * @ngdoc string
        * @name headerTemplate
@@ -373,7 +382,7 @@ angular.module('ui.grid')
        * 
        */
       baseOptions.headerTemplate = baseOptions.headerTemplate || null;
-  
+
       /**
        * @ngdoc string
        * @name footerTemplate
