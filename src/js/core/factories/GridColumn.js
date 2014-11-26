@@ -671,9 +671,10 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name getAggregationText
    * @methodOf ui.grid.class:GridColumn
-   * @description Gets the aggregation label using i18n, including 
-   * deciding whether or not to display based on colDef.aggregationHideLabel
-   * 
+   * @description Gets the aggregation label from colDef.aggregationLabel if
+   * specified or by using i18n, including deciding whether or not to display
+   * based on colDef.aggregationHideLabel.
+   *
    * @param {string} label the i18n lookup value to use for the column label
    * 
    */
@@ -681,7 +682,11 @@ angular.module('ui.grid')
     var self = this;
     if ( self.colDef.aggregationHideLabel ){
       return '';
-    } else {
+    }
+    else if ( self.colDef.aggregationLabel ) {
+      return self.colDef.aggregationLabel;
+    }
+    else {
       switch ( self.colDef.aggregationType ){
         case uiGridConstants.aggregationTypes.count:
           return i18nService.getSafeText('aggregation.count');
