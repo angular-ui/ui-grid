@@ -1,9 +1,7 @@
 @import '../../../less/variables';
 
-.ui-grid-row-selected {
-   .ui-grid-cell {
-     background-color: @rowSelected !important;
-  }
+.ui-grid-row-selected > div.ui-grid-cell {
+  background-color: @rowSelected !important;
 }
 
 .ui-grid-disable-selection {
