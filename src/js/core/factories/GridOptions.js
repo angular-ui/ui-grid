@@ -138,6 +138,13 @@ angular.module('ui.grid')
        */
       baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
 
+      if (baseOptions.hideHeader){
+        baseOptions.headerRowHeight = 0;
+      }
+      else {
+        baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
+      }
+
       /**
        * @ngdoc property
        * @name rowHeight

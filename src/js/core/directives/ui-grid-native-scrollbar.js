@@ -80,8 +80,7 @@
           // Update the vertical scrollbar's content height so it's the same as the canvas
           var contentHeight = rowContainer.getCanvasHeight();
 
-          // TODO(c0bra): set scrollbar `top` by height of header row
-          // var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
+          //var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
           var headerHeight = colContainer.headerHeight ? colContainer.headerHeight : grid.headerHeight;
 
           // gridUtil.logDebug('headerHeight in scrollbar', headerHeight);
