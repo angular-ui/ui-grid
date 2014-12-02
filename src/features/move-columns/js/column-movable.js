@@ -301,7 +301,6 @@
 
                       //Increase width of moving column, in case the rightmost column was moved and its width was
                       //decreased because of overflow
-                      previousMouseX = evt.pageX;
                       if (reducedWidth < $scope.col.drawnWidth) {
                         reducedWidth += Math.abs(changeValue);
                         movingElm.css({'width': reducedWidth + 'px'});
@@ -314,7 +313,8 @@
                         cloneElement();
                       }
                       else if (elmCloned) {
-                        moveElement(changeValue);
+                       moveElement(changeValue);
+                       previousMouseX = evt.pageX;
                       }
                     };
 
