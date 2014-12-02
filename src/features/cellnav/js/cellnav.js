@@ -622,6 +622,7 @@
         priority: -150,
         require: '^uiGrid',
         scope: false,
+        controller: function () {},
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
@@ -696,15 +697,17 @@
       return {
         replace: true,
         priority: -99999, //this needs to run very last
-        require: ['^uiGrid', 'uiGridRenderContainer'],
+        require: ['^uiGrid', 'uiGridRenderContainer', '?^uiGridCellnav'],
         scope: false,
         compile: function () {
           return {
-            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            },
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
-                  renderContainerCtrl = controllers[1];
+                  renderContainerCtrl = controllers[1],
+                  cellNavController = controllers[2];
+
+              // Skip attaching cell-nav specific logic if the directive is not attached above us
+              if (!cellNavController) { return; }
 
               var containerId = renderContainerCtrl.containerId;
 
@@ -765,9 +768,15 @@
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
-        require: '^uiGrid',
+        require: ['^uiGrid', '?^uiGridCellnav'],
         scope: false,
-        link: function ($scope, $elm, $attrs, uiGridCtrl) {
+        link: function ($scope, $elm, $attrs, controllers) {
+          var uiGridCtrl = controllers[0],
+              cellNavController = controllers[1];
+
+          // Skip attaching cell-nav specific logic if the directive is not attached above us
+          if (!cellNavController) { return; }
+
           if (!$scope.col.colDef.allowCellFocus) {
             return;
           }
