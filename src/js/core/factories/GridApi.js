@@ -7,7 +7,16 @@
          * @ngdoc function
          * @name ui.grid.class:GridApi
          * @description GridApi provides the ability to register public methods events inside the grid and allow
-         * for other components to use the api via featureName.methodName and featureName.on.eventName(function(args){}
+         * for other components to use the api via featureName.raise.methodName and featureName.on.eventName(function(args){}.
+         * <br/>
+         * To listen to events, you must add a callback to gridOptions.onRegisterApi
+         * <pre>
+         *   $scope.gridOptions.onRegisterApi = function(gridApi){
+         *      gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
+         *          $log.log('navigation event');
+         *      });
+         *   };
+         * </pre>
          * @param {object} grid grid that owns api
          */
         var GridApi = function GridApi(grid) {
@@ -80,7 +89,7 @@
            * @methodOf  ui.grid.core.api:PublicApi
            * @description Returns all visible rows
            * @param {Grid} grid the grid you want to get visible rows from
-           * @returns {array} an array of gridRow 
+           * @returns {array} an array of gridRow
            */
           this.registerMethod( 'core', 'getVisibleRows', this.grid.getVisibleRows );
           
@@ -93,9 +102,9 @@
            * to say which rows changed (unlike in the selection feature).
            * We can plausibly know which row was changed when setRowInvisible
            * is called, but in that situation the user already knows which row
-           * they changed.  When a filter runs we don't know what changed, 
+           * they changed.  When a filter runs we don't know what changed,
            * and that is the one that would have been useful.
-           * 
+           *
            */
           this.registerEvent( 'core', 'rowsVisibleChanged' );
         };
@@ -157,7 +166,8 @@
          * @ngdoc function
          * @name registerEvent
          * @methodOf ui.grid.class:GridApi
-         * @description Registers a new event for the given feature
+         * @description Registers a new event for the given feature.  The event will get a
+         * .raise and .on prepended to it
          * @param {string} featureName name of the feature that raises the event
          * @param {string} eventName  name of the event
          */
