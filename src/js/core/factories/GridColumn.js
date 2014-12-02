@@ -622,37 +622,42 @@ angular.module('ui.grid')
     var self = this;
     var result = 0;
     var visibleRows = self.grid.getVisibleRows();
-    var cellValues = [];
-    angular.forEach(visibleRows, function (row) {
-      var cellValue = self.grid.getCellValue(row, self);
-      if (angular.isNumber(cellValue)) {
-        cellValues.push(cellValue);
-      }
-    });
+
+    var cellValues = function(){
+      var values = [];
+      angular.forEach(visibleRows, function (row) {
+        var cellValue = self.grid.getCellValue(row, self);
+        if (angular.isNumber(cellValue)) {
+          values.push(cellValue);
+        }
+      });
+      return values;
+    };
+
     if (angular.isFunction(self.aggregationType)) {
       return self.aggregationType(visibleRows, self);
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.count) {
-      return self.grid.getVisibleRowCount();
+      return self.getAggregationText('aggregation.count', self.grid.getVisibleRowCount());
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.sum) {
-      angular.forEach(cellValues, function (value) {
+      angular.forEach(cellValues(), function (value) {
         result += value;
       });
-      return result;
+      return self.getAggregationText('aggregation.sum', result);
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.avg) {
-      angular.forEach(cellValues, function (value) {
+      angular.forEach(cellValues(), function (value) {
         result += value;
       });
-      result = result / cellValues.length;
-      return result;
+      result = result / cellValues().length;
+      return self.getAggregationText('aggregation.avg', result);
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.min) {
-      return Math.min.apply(null, cellValues);
+      return self.getAggregationText('aggregation.min', Math.min.apply(null, cellValues()));
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.max) {
-      return Math.max.apply(null, cellValues);
+      return self.getAggregationText('aggregation.max', Math.max.apply(null, cellValues()));
     }
     else {
       return '\u00A0';
