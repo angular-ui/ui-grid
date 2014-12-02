@@ -236,7 +236,8 @@
               if ($scope.col.colDef.enableColumnMoving) {
 
                 var mouseDownHandler = function (evt) {
-                  if (evt.target.className !== 'ui-grid-icon-angle-down' && evt.target.tagName !== 'I') {
+                  if (evt.target.className !== 'ui-grid-icon-angle-down' && evt.target.tagName !== 'I' &&
+                      evt.target.className.indexOf('ui-grid-filter-input') < 0) {
 
                     //Setting some variables required for calculations.
                     var gridLeft = $scope.grid.element[0].getBoundingClientRect().left;
