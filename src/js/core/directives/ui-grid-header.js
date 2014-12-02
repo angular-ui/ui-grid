@@ -24,19 +24,12 @@
 
             containerCtrl.header = $elm;
             containerCtrl.colContainer.header = $elm;
-
-            /**
-             * @ngdoc property
-             * @name hideHeader
-             * @propertyOf ui.grid.class:GridOptions
-             * @description Null by default. When set to true, this setting will replace the
-             * standard header template with '<div></div>', resulting in no header being shown.
-             */
             
             var headerTemplate;
-            if ($scope.grid.options.hideHeader){
+            if (!$scope.grid.options.showHeader) {
               headerTemplate = emptyTemplate;
-            } else {
+            }
+            else {
               headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;            
             }
 

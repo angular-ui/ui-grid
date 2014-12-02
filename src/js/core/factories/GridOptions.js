@@ -128,7 +128,18 @@ angular.module('ui.grid')
       baseOptions.getRowIdentity = baseOptions.getRowIdentity || function getRowIdentity(row) {
         return row.$$hashKey;
       };
-  
+
+      /**
+       * @ngdoc property
+       * @name showHeader
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When set to false, this setting will replace the
+       * standard header template with '<div></div>', resulting in no header being shown.
+       *
+       * It will also set the `headerRowHeight` option to 0.
+       */
+      baseOptions.showHeader = typeof(baseOptions.showHeader) !== "undefined" ? baseOptions.showHeader : true;
+
       /**
        * @ngdoc property
        * @name headerRowHeight
@@ -136,9 +147,7 @@ angular.module('ui.grid')
        * @description The height of the header in pixels, defaults to 30
        *
        */
-      baseOptions.headerRowHeight = typeof(baseOptions.headerRowHeight) !== "undefined" ? baseOptions.headerRowHeight : 30;
-
-      if (baseOptions.hideHeader){
+      if (!baseOptions.showHeader) {
         baseOptions.headerRowHeight = 0;
       }
       else {

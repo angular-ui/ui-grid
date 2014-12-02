@@ -217,7 +217,7 @@ angular.module('ui.grid').directive('uiGrid',
               if (grid.gridHeight < grid.options.rowHeight) {
                 // Figure out the new height
                 var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
-                var headerHeight = grid.options.hideHeader ? 0 : grid.options.headerRowHeight;
+                var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
                 var footerHeight = grid.options.showFooter ? grid.options.footerRowHeight : 0;
                 var scrollbarHeight = grid.options.enableScrollbars ? gridUtil.getScrollbarWidth() : 0;
 
