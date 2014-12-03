@@ -117,7 +117,7 @@
         var findPositionForRenderIndex = function (index) {
           var position = index;
           for (var i = 0; i <= position; i++) {
-            if (angular.isDefined(columns[i]) && angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false) {
+            if (angular.isDefined(columns[i]) && ((angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false) || columns[i].isRowHeader === true)) {
               position++;
             }
           }
@@ -269,9 +269,6 @@
                         movingElementStyles.width = reducedWidth + 'px';
                       }
                       movingElm.css(movingElementStyles);
-
-                      //Binding the mouseup event handler
-                      $document.on('mouseup', mouseUpHandler);
                     };
 
                     var moveElement = function(changeValue) {
@@ -415,6 +412,8 @@
                       });
                     };
 
+                    //Binding the mouseup event handler
+                    $document.on('mouseup', mouseUpHandler);
                   }
                 };
                 $elm.on('mousedown', mouseDownHandler);
