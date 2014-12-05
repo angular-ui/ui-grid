@@ -28,11 +28,11 @@
         // Initialize the dimensions
         getDimensions();
 
-        var canceler;
+        var resizeTimeoutId;
         function startTimeout() {
-          $timeout.cancel(canceler);
+          clearTimeout(resizeTimeoutId);
 
-          canceler = $timeout(function () {
+          resizeTimeoutId = setTimeout(function () {
             var newGridHeight = gridUtil.elementHeight($elm);
             var newGridWidth = gridUtil.elementWidth($elm);
 
@@ -40,12 +40,14 @@
               uiGridCtrl.grid.gridHeight = newGridHeight;
               uiGridCtrl.grid.gridWidth = newGridWidth;
 
-              uiGridCtrl.grid.refresh()
-                .then(function () {
-                  getDimensions();
+              $scope.$apply(function () {
+                uiGridCtrl.grid.refresh()
+                  .then(function () {
+                    getDimensions();
 
-                  startTimeout();
-                });
+                    startTimeout();
+                  });
+              });
             }
             else {
               startTimeout();
@@ -56,7 +58,7 @@
         startTimeout();
 
         $scope.$on('$destroy', function() {
-          $timeout.cancel(canceler);
+          clearTimeout(resizeTimeoutId);
         });
       }
     };
