@@ -638,26 +638,26 @@ angular.module('ui.grid')
       return self.aggregationType(visibleRows, self);
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.count) {
-      return self.getAggregationText('aggregation.count', self.grid.getVisibleRowCount());
+      return self.grid.getVisibleRowCount();
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.sum) {
       angular.forEach(cellValues(), function (value) {
         result += value;
       });
-      return self.getAggregationText('aggregation.sum', result);
+      return result;
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.avg) {
       angular.forEach(cellValues(), function (value) {
         result += value;
       });
       result = result / cellValues().length;
-      return self.getAggregationText('aggregation.avg', result);
+      return result;
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.min) {
-      return self.getAggregationText('aggregation.min', Math.min.apply(null, cellValues()));
+      return Math.min.apply(null, cellValues());
     }
     else if (self.aggregationType === uiGridConstants.aggregationTypes.max) {
-      return self.getAggregationText('aggregation.max', Math.max.apply(null, cellValues()));
+      return Math.max.apply(null, cellValues());
     }
     else {
       return '\u00A0';
