@@ -30,8 +30,8 @@ var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
                     rowsArr = grid.filteredRows;
                 }
 
-                var thisIndx = rowItem.rowIndex;
-                var prevIndx = self.lastClickedRowIndex;
+                var thisIndx = rowsArr.indexOf(rowItem.orig || rowItem);
+                var prevIndx = rowsArr.indexOf(self.lastClickedRow.orig || self.lastClickedRow);
                 
                 if (thisIndx === prevIndx) {
                     return false;
