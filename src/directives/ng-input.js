@@ -5,7 +5,7 @@ ngGridDirectives.directive('ngInput', [function() {
             // Store the initial cell value so we can reset to it if need be
             var oldCellValue;
             var dereg = scope.$watch('ngModel', function() {
-                oldCellValue = ngModel.$modelValue;
+                oldCellValue = ngModel.$viewValue;
                 dereg(); // only run this watch once, we don't want to overwrite our stored value when the input changes
             });
 
