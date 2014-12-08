@@ -1,4 +1,4 @@
-ddescribe('ui.grid.autoResizeGrid', function () {
+describe('ui.grid.autoResizeGrid', function () {
   var gridScope, gridElm, viewportElm, $scope, $compile, recompile, uiGridConstants;
 
   var data = [
