@@ -208,6 +208,36 @@ describe('GridColumn factory', function () {
       expect(grid.columns[1].getAggregationValue()).toEqual(5);
       expect(grid.columns[1].getAggregationText()).toEqual('');
     });
+
+    it('max, with custom label', function() {
+      var customLabel = 'custom label';
+
+      grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.max;
+      grid.options.columnDefs[1].aggregationLabel = customLabel;
+      grid.options.columnDefs[1].aggregationHideLabel = false;
+
+      buildCols();
+      grid.modifyRows(grid.options.data);
+      grid.setVisibleRows(grid.rows);
+
+      expect(grid.columns[1].getAggregationValue()).toEqual(5);
+      expect(grid.columns[1].getAggregationText()).toEqual(customLabel);
+    });
+
+    it('max, with custom label while also being hidden', function() {
+      var customLabel = 'custom label';
+
+      grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.max;
+      grid.options.columnDefs[1].aggregationLabel = customLabel;
+      grid.options.columnDefs[1].aggregationHideLabel = true;
+
+      buildCols();
+      grid.modifyRows(grid.options.data);
+      grid.setVisibleRows(grid.rows);
+
+      expect(grid.columns[1].getAggregationValue()).toEqual(5);
+      expect(grid.columns[1].getAggregationText()).toEqual('');
+    });
   });
 
   describe('unsort', function() {
