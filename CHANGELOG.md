@@ -1,3 +1,10 @@
+<a name="v3.0.0-RC.18"></a>
+### v3.0.0-RC.18 (2014-12-09)
+
+#### Bug Fixes
+
+* **Builds:** Switch to websockets to get SauceLabs tests running again
+
 <a name="v3.0.0-RC.17"></a>
 ### v3.0.0-RC.17 (2014-12-08)
 
