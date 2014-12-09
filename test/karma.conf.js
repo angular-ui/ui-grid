@@ -93,10 +93,7 @@ module.exports = function(config) {
     sauceLabs: {
       username: 'nggrid',
       startConnect: false,
-      testName: 'ui-grid unit tests',
-      options: {
-        'selenium-version': '2.41.0' // NOTE: trying this to see if tests run better
-      }
+      testName: 'ui-grid unit tests'
     },
 
     // For more browsers on Sauce Labs see:
