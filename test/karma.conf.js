@@ -109,7 +109,7 @@ module.exports = function(config) {
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
     config.logLevel = config.LOG_INFO;
-    config.browserNoActivityTimeout: 120000; // NOTE: from angular.js, for socket.io buffer
+    config.browserNoActivityTimeout = 120000; // NOTE: from angular.js, for socket.io buffer
     config.reporters = ['dots', 'coverage'];
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
