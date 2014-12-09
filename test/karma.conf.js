@@ -94,6 +94,9 @@ module.exports = function(config) {
       username: 'nggrid',
       startConnect: false,
       testName: 'ui-grid unit tests',
+      options: {
+        'selenium-version': '2.41.0' // NOTE: trying this to see if tests run better
+      }
     },
 
     // For more browsers on Sauce Labs see:
@@ -105,11 +108,13 @@ module.exports = function(config) {
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
-    config.logLevel = config.LOG_DEBUG;
+    config.logLevel = config.LOG_INFO;
+    config.browserNoActivityTimeout: 120000; // NOTE: from angular.js, for socket.io buffer
+    config.reporters = ['dots', 'coverage'];
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
     
-    config.transports = ['websocket', 'xhr-polling'];
+    // config.transports = ['websocket', 'xhr-polling'];
 
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
@@ -122,6 +127,13 @@ module.exports = function(config) {
       type: 'file',
       filename: process.env.LOGS_DIR + '/' + ('karma.log')
     });
+
+
+    // NOTE: From angular.js project, only applies to SauceLabs -- (thanks Vojta again)
+    // Allocating a browser can take pretty long (eg. if we are out of capacity and need to wait
+    // for another build to finish) and so the `captureTimeout` typically kills
+    // an in-queue-pending request, which makes no sense.
+    config.captureTimeout = 0;
   }
 
   if (grunt.option('browsers')) {

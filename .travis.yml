@@ -35,9 +35,10 @@ branches:
 before_install:
   - "export CHROME_BIN=chromium-browser"
 
+install:
+  - npm config set spin false
+
 before_script:
-  - echo "TRAVIS_PULL_REQUEST $TRAVIS_PULL_REQUEST ${TRAVIS_PULL_REQUEST}"
-  - echo "TRAVIS_BRANCH $TRAVIS_BRANCH ${TRAVIS_BRANCH}"
   - git fetch --tags
   - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
   - export DISPLAY=:99.0
