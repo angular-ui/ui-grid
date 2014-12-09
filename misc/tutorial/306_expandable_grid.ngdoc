@@ -101,6 +101,42 @@ SubGrid nesting can be done upto multiple levels.
               $scope.gridOptions.data = data;
             });
         }]);
+        
+    app.controller('ThirdCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+          $scope.gridOptions = {
+            expandableRowTemplate: 'expandableRowTemplate.html',
+            expandableRowHeight: 150,
+            onRegisterApi: function (gridApi) {
+                gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                    if (row.isExpanded) {
+                      row.entity.subGridOptions = {
+                        columnDefs: [
+                        { name: 'name'},
+                        { name: 'gender'},
+                        { name: 'company'}
+                      ]};
+                    
+                      $http.get('/data/100.json')
+                        .success(function(data) {
+                          row.entity.subGridOptions.data = data;
+                        });
+                    }
+                });
+            }
+          }
+
+          $scope.gridOptions.columnDefs = [
+            { name: 'id', pinnedLeft:true },
+            { name: 'name'},
+            { name: 'age'},
+            { name: 'address.city'}
+          ];
+
+          $http.get('/data/500_complex.json')
+            .success(function(data) {
+              $scope.gridOptions.data = data;
+            });
+        }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
@@ -113,6 +149,10 @@ SubGrid nesting can be done upto multiple levels.
     Expandable rows works with checkboxes from selection and left pins
     <div ng-controller="SecondCtrl">
        <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable ui-grid-selection class="grid"></div>
+    </div>
+    Retrieve data for subGrid when expanding
+    <div ng-controller="ThirdCtrl">
+       <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
     </div>
   </file>
   <file name="main.css">
