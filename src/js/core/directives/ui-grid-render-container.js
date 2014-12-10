@@ -246,8 +246,6 @@
                 event = event.originalEvent;
               }
 
-              event.preventDefault();
-
               $document.unbind('touchmove', touchmove);
               $document.unbind('touchend', touchend);
               $document.unbind('touchcancel', touchend);
@@ -311,8 +309,6 @@
                 if (event.originalEvent) {
                   event = event.originalEvent;
                 }
-
-                event.preventDefault();
 
                 uiGridCtrl.scrollbars.forEach(function (sbar) {
                   sbar.addClass('ui-grid-scrollbar-visible');
