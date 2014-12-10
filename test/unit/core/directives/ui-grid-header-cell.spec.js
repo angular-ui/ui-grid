@@ -1,5 +1,7 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, columnDefs;
+  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, columnDefs;
+
+  var downEvent, upEvent, clickEvent;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -23,7 +25,7 @@ describe('uiGridHeaderCell', function () {
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_, _gridUtil_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
@@ -31,6 +33,19 @@ describe('uiGridHeaderCell', function () {
     $window = _$window_;
     $animate = _$animate_;
     uiGridConstants = _uiGridConstants_;
+    gridUtil = _gridUtil_;
+
+    // Decide whether to use mouse or touch events based on which capabilities the browser has
+    if (gridUtil.isTouchEnabled()) {
+      downEvent = 'touchstart';
+      upEvent = 'touchend';
+      clickEvent = 'touchstart';
+    }
+    else {
+      downEvent = 'mousedown';
+      upEvent = 'mouseup';
+      clickEvent = 'click';
+    }
 
     $scope.gridOpts = {
       enableSorting: true,
@@ -70,7 +85,7 @@ describe('uiGridHeaderCell', function () {
     });
 
     function openMenu() {
-      headerCell1.trigger('mousedown');
+      headerCell1.trigger(downEvent);
       $scope.$digest();
       $timeout.flush();
       $scope.$digest();
@@ -87,7 +102,7 @@ describe('uiGridHeaderCell', function () {
       it('should do nothing', inject(function() {
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not initially visible');
 
-        headerCell1.trigger({ type: 'mousedown', button: 3 });
+        headerCell1.trigger({ type: downEvent, button: 3 });
 
         $timeout.flush();
         $scope.$digest();
@@ -101,7 +116,7 @@ describe('uiGridHeaderCell', function () {
         openMenu();
         expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
 
-        $document.trigger('click');
+        $document.trigger(clickEvent);
 
         $timeout.flush();
         $scope.$digest();
