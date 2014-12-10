@@ -13,7 +13,7 @@
   </div>
 
   <div ng-if="filterable" class="ui-grid-filter-container" ng-repeat="colFilter in col.filters">
-    <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-click="$event.stopPropagation()" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
+    <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
 
     <div class="ui-grid-filter-button" ng-click="colFilter.term = null">
       <i class="ui-grid-icon-cancel" ng-show="!!colFilter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
