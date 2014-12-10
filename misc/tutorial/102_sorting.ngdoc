@@ -24,7 +24,7 @@ data has changed by calling `gridApi.core.notifyDataChange( grid, uiGridUtils.da
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.gridOptions1 = {
