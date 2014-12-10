@@ -1,5 +1,7 @@
-describe('ui.grid.resizeColumns', function () {
+ddescribe('ui.grid.resizeColumns', function () {
   var grid, gridUtil, gridScope, $scope, $compile, recompile, uiGridConstants;
+
+  var downEvent, upEvent, moveEvent;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -16,6 +18,17 @@ describe('ui.grid.resizeColumns', function () {
     $compile = _$compile_;
     uiGridConstants = _uiGridConstants_;
     gridUtil = _gridUtil_;
+
+    if (gridUtil.isTouchEnabled()) {
+      downEvent = 'touchstart';
+      upEvent = 'touchend';
+      moveEvent = 'touchmove';
+    }
+    else {
+      downEvent = 'mousedown';
+      upEvent = 'mouseup';
+      moveEvent = 'mousemove';
+    }
 
     $scope.gridOpts = {
       enableColumnResizing: true,
@@ -133,7 +146,7 @@ describe('ui.grid.resizeColumns', function () {
     it('should cause the column separator overlay to be added', function () {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
-      firstResizer.trigger('mousedown');
+      firstResizer.trigger(downEvent);
       $scope.$digest();
 
       var overlay = $(grid).find('.ui-grid-resize-overlay');
@@ -156,7 +169,7 @@ describe('ui.grid.resizeColumns', function () {
 
         initialX = firstResizer.position().left;
         
-        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $(firstResizer).simulate(downEvent, { clientX: initialX });
         $scope.$digest();
 
         // Get the overlay
@@ -164,7 +177,7 @@ describe('ui.grid.resizeColumns', function () {
         initialOverlayX = $(overlay).position().left;
 
         xDiff = 100;
-        $(document).simulate('mousemove', { clientX: initialX + xDiff });
+        $(document).simulate(moveEvent, { clientX: initialX + xDiff });
         $scope.$digest();
       });
 
@@ -186,7 +199,7 @@ describe('ui.grid.resizeColumns', function () {
 
       describe('then releasing the mouse', function () {
         beforeEach(function () {       
-          $(document).simulate('mouseup', { clientX: initialX + xDiff });
+          $(document).simulate(upEvent, { clientX: initialX + xDiff });
           $scope.$digest();
         });
 
@@ -243,10 +256,10 @@ describe('ui.grid.resizeColumns', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
         initialX = firstResizer.position().left;
 
-        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $(firstResizer).simulate(downEvent, { clientX: initialX });
         $scope.$digest();
 
-        $(document).simulate('mouseup', { clientX: initialX - minWidth });
+        $(document).simulate(upEvent, { clientX: initialX - minWidth });
         $scope.$digest();
       });
 
@@ -297,10 +310,10 @@ describe('ui.grid.resizeColumns', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
         initialX = firstResizer.position().left;
 
-        $(firstResizer).simulate('mousedown', { clientX: initialX });
+        $(firstResizer).simulate(downEvent, { clientX: initialX });
         $scope.$digest();
 
-        $(document).simulate('mouseup', { clientX: initialX + maxWidth });
+        $(document).simulate(upEvent, { clientX: initialX + maxWidth });
         $scope.$digest();
       });
 

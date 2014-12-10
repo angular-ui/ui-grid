@@ -263,6 +263,19 @@
   module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'columnBounds', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, columnBounds, uiGridResizeColumnsService) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
+    var downEvent, upEvent, moveEvent;
+
+    if (gridUtil.isTouchEnabled()) {
+      downEvent = 'touchstart';
+      upEvent = 'touchend';
+      moveEvent = 'touchmove';
+    }
+    else {
+      downEvent = 'mousedown';
+      upEvent = 'mouseup';
+      moveEvent = 'mousemove';
+    }
+
     var resizer = {
       priority: 0,
       scope: {
@@ -321,7 +334,7 @@
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
-          x = event.clientX - gridLeft;
+          x = (event.targetTouches ? event.targetTouches[0] : event).clientX - gridLeft;
 
           if (x < 0) { x = 0; }
           else if (x > uiGridCtrl.grid.gridWidth) { x = uiGridCtrl.grid.gridWidth; }
@@ -379,12 +392,12 @@
           resizeOverlay.remove();
 
           // Resize the column
-          x = event.clientX - gridLeft;
+          x = (event.changedTouches ? event.changedTouches[0] : event).clientX - gridLeft;
           var xDiff = x - startX;
 
           if (xDiff === 0) {
-            $document.off('mouseup', mouseup);
-            $document.off('mousemove', mousemove);
+            $document.off(upEvent, mouseup);
+            $document.off(moveEvent, mousemove);
             return;
           }
 
@@ -431,11 +444,11 @@
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
 
-          $document.off('mouseup', mouseup);
-          $document.off('mousemove', mousemove);
+          $document.off(upEvent, mouseup);
+          $document.off(moveEvent, mousemove);
         }
 
-        $elm.on('mousedown', function(event, args) {
+        $elm.on(downEvent, function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.stopPropagation();
 
@@ -444,7 +457,7 @@
           gridLeft = uiGridCtrl.grid.element[0].getBoundingClientRect().left;
 
           // Get the starting X position, which is the X coordinate of the click minus the grid's offset
-          startX = event.clientX - gridLeft;
+          startX = (event.targetTouches ? event.targetTouches[0] : event).clientX - gridLeft;
 
           // Append the resizer overlay
           uiGridCtrl.grid.element.append(resizeOverlay);
@@ -453,8 +466,8 @@
           resizeOverlay.css({ left: startX });
 
           // Add handlers for mouse move and up events
-          $document.on('mouseup', mouseup);
-          $document.on('mousemove', mousemove);
+          $document.on(upEvent, mouseup);
+          $document.on(moveEvent, mousemove);
         });
 
         // On doubleclick, resize to fit all rendered cells
@@ -539,10 +552,10 @@
         });
 
         $elm.on('$destroy', function() {
-          $elm.off('mousedown');
+          $elm.off(downEvent);
           $elm.off('dblclick');
-          $document.off('mousemove', mousemove);
-          $document.off('mouseup', mouseup);
+          $document.off(moveEvent, mousemove);
+          $document.off(upEvent, mouseup);
         });
       }
     };

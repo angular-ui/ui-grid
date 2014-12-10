@@ -369,8 +369,10 @@
    *
    */
   module.directive('uiGridCell',
-    ['$compile', '$injector', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
-      function ($compile, $injector, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
+    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
+      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
+        var touchstartTimeout = 500;
+
         return {
           priority: -100, // run after default uiGridCell directive
           restrict: 'A',
@@ -386,6 +388,7 @@
             var inEdit = false;
             var isFocusedBeforeEdit = false;
             var cellModel;
+            var cancelTouchstartTimeout;
 
             registerBeginEditEvents();
 
@@ -395,6 +398,37 @@
               if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').on('focus', beginEditFocus);
               }
+
+              // Add touchstart handling. If the users starts a touch and it doesn't end after X milliseconds, then start the edit
+              $elm.on('touchstart', touchStart);
+            }
+
+            function touchStart(event) {
+              // jQuery masks events
+              if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
+                event = event.originalEvent;
+              }
+
+              // Bind touchend handler
+              $elm.on('touchend', touchEnd);
+
+              // Start a timeout
+              cancelTouchstartTimeout = $timeout(function() { }, touchstartTimeout);
+
+              // Timeout's done! Start the edit
+              cancelTouchstartTimeout.then(function () {
+                // Use setTimeout to start the edit because beginEdit expects to be outside of $digest
+                setTimeout(beginEdit, 0);
+
+                // Undbind the touchend handler, we don't need it anymore
+                $elm.off('touchend', touchEnd);
+              });
+            }
+
+            // Cancel any touchstart timeout
+            function touchEnd(event) {
+              $timeout.cancel(cancelTouchstartTimeout);
+              $elm.off('touchend', touchEnd);
             }
 
             function cancelBeginEditEvents() {
@@ -403,6 +437,7 @@
               if ($scope.col.colDef.enableCellEditOnFocus) {
                 $elm.find('div').off('focus', beginEditFocus);
               }
+              $elm.off('touchstart', touchStart);
             }
 
             function beginEditFocus(evt) {
@@ -634,8 +669,8 @@
    *
    */
   module.directive('uiGridEditor',
-    ['uiGridConstants', 'uiGridEditConstants',
-      function (uiGridConstants, uiGridEditConstants) {
+    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants',
+      function (gridUtil, uiGridConstants, uiGridEditConstants) {
         return {
           scope: true,
           require: ['?^uiGrid', '?^uiGridRenderContainer'],
