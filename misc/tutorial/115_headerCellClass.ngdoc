@@ -9,7 +9,7 @@ set the background and foreground color of the header if the sort direction is A
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.gridOptions = {

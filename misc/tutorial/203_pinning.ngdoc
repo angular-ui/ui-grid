@@ -9,7 +9,7 @@ It is also possible to disable pinning on column level. Note the 'id' column def
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.pinning']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {};

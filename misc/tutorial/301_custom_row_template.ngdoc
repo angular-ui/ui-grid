@@ -9,7 +9,7 @@ You can use [external scopes](/docs/#/tutorial/202_externalScopes) in your row t
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
       var start = new Date();

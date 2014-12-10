@@ -14,7 +14,7 @@ show the aggregation but without a label.  Refer the third column in the example
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope','uiGridConstants', '$http', function ($scope, uiGridConstants, $http) {
     var data = [];

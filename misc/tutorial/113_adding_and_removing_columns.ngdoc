@@ -13,7 +13,7 @@ def properties), and call the notifyDataChange api to force an update.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
     
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.columns = [{ field: 'name' }, { field: 'gender' }];

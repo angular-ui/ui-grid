@@ -8,7 +8,7 @@ You can add a row header column, which goes into the left pinned container
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
     
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.columns = [{ field: 'name' }, { field: 'gender' }];

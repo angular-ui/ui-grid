@@ -48,7 +48,7 @@ illustrates that doing so is not mandatory).
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.importer']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.importer']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
       $scope.data = [];

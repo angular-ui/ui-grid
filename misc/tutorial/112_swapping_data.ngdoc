@@ -7,7 +7,7 @@ You can swap out data in the grid by simply providing a different reference.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.swapData = function() {

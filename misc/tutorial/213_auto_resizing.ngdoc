@@ -11,7 +11,7 @@ To use, include the `'ui.grid.autoResize'` module in your angular app's dependen
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.autoResize']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.autoResize']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {};

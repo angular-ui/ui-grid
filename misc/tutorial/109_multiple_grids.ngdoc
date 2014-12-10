@@ -7,7 +7,7 @@ Using multiple grids on a single page
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions1 = {};

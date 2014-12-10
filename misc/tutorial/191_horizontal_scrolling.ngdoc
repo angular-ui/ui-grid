@@ -7,7 +7,7 @@ Demonstrating scrolling with large amount of columns
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
       $scope.gridOptions = {

@@ -7,7 +7,7 @@ When paging is enabled, the data is displayed in pages that can be browsed using
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.paging']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.paging']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {

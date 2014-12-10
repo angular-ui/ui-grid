@@ -19,7 +19,7 @@ Another option is to use the i18nService and use the setCurrentLang method
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
         $scope.langs = i18nService.getAllLangs();

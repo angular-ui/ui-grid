@@ -10,7 +10,7 @@ For external paging, handle the `pagingChanged' to load the page. Set the `gridO
 This shows combined external paging and sorting.
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.paging']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.paging']);
 
     app.controller('MainCtrl', [
     '$scope', '$http', 'uiGridConstants', function($scope, $http, uiGridConstants) {

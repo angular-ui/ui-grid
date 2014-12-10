@@ -7,7 +7,7 @@ Using a grid in a modal popup
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$rootScope', '$scope', '$http', 'modal', function ($rootScope, $scope, $http, modal) {
       var myModal = new modal();
