@@ -68,7 +68,7 @@
             var currentPage = parseInt(grid.options.pagingCurrentPage, 10);
 
             var firstRow = (currentPage - 1) * pageSize;
-            return renderableRows.slice(firstRow, firstRow + pageSize);
+            return renderableRows.filter(function(row) { return row.visible; }).slice(firstRow, firstRow + pageSize);
           });
 
         },
