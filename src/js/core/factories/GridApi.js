@@ -98,6 +98,14 @@
            * 
            */
           this.registerEvent( 'core', 'rowsVisibleChanged' );
+
+          /**
+           * @ngdoc event
+           * @name rowsRendered
+           * @eventOf  ui.grid.core.api:PublicApi
+           * @description  is raised after the cache of visible rows is changed.
+           */
+          this.registerEvent( 'core', 'rowsRendered' );
         };
 
         /**

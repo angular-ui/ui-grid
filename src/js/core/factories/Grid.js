@@ -1111,6 +1111,7 @@ angular.module('ui.grid')
         }
       }
     }
+    self.api.core.raise.rowsRendered(this.api);
   };
 
   /**
