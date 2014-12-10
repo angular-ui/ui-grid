@@ -1,4 +1,4 @@
-ddescribe('ui.grid.resizeColumns', function () {
+describe('ui.grid.resizeColumns', function () {
   var grid, gridUtil, gridScope, $scope, $compile, recompile, uiGridConstants;
 
   var downEvent, upEvent, moveEvent;
