@@ -1,5 +1,6 @@
 /**
  * Created by Oleg on 16/08/14.
+ * Updated by Duanevsky 12/10/14.
  */
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
@@ -34,21 +35,21 @@
           hide: 'спрятать столбец'
         },
         aggregation: {
-          count: 'total rows: ',
-          sum: 'total: ',
-          avg: 'avg: ',
-          min: 'min: ',
-          max: 'max: '
+          count: 'всего строк: ',
+          sum: 'итого: ',
+          avg: 'среднее: ',
+          min: 'мин: ',
+          max: 'макс: '
         },
         gridMenu: {
-          columns: 'Columns:',
+          columns: 'Столбцы:',
           importerTitle: 'Import file',
-          exporterAllAsCsv: 'Export all data as csv',
-          exporterVisibleAsCsv: 'Export visible data as csv',
-          exporterSelectedAsCsv: 'Export selected data as csv',
-          exporterAllAsPdf: 'Export all data as pdf',
-          exporterVisibleAsPdf: 'Export visible data as pdf',
-          exporterSelectedAsPdf: 'Export selected data as pdf'
+          exporterAllAsCsv: 'Экспортировать всё в CSV',
+          exporterVisibleAsCsv: 'Экспортировать видимые данные в CSV',
+          exporterSelectedAsCsv: 'Экспортировать выбранные данные в CSV',
+          exporterAllAsPdf: 'Экспортировать всё в PDF',
+          exporterVisibleAsPdf: 'Экспортировать видимые данные в PDF',
+          exporterSelectedAsPdf: 'Экспортировать выбранные данные в PDF'
         },
         importer: {
           noHeaders: 'Column names were unable to be derived, does the file have a header?',
