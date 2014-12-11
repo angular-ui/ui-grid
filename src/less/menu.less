@@ -1,7 +1,7 @@
 .ui-grid-menu-button {
   z-index: 2;
   position: absolute;
-  right: 0;  
+  right: 0;
   background: @headerBackgroundColor;
   border: @gridBorderWidth solid @borderColor;
   cursor: pointer;
@@ -15,6 +15,11 @@
 
 .ui-grid-menu-button .ui-grid-menu {
   right: 0;
+  .ui-grid-menu-mid {
+    overflow-y: scroll;
+    max-height: 300px;
+    border: @gridBorderWidth solid @borderColor;
+  }
 }
 
 .ui-grid-menu {
