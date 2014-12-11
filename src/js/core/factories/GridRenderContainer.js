@@ -323,7 +323,7 @@ angular.module('ui.grid')
 
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
-      scrollPercentage = scrollTop / self.getCanvasHeight();
+      scrollPercentage = scrollTop / self.getVerticalScrollLength();
     }
     
     var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
