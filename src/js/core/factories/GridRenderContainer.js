@@ -232,6 +232,10 @@ angular.module('ui.grid')
     return ret;
   };
 
+  GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {
+    return this.getCanvasHeight() - this.getViewportHeight();
+  };
+
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
     var self = this;
 
@@ -316,13 +320,10 @@ angular.module('ui.grid')
     var rowCache = self.visibleRowCache;
 
     var maxRowIndex = rowCache.length - minRows;
-    self.maxRowIndex = maxRowIndex;
-
-    var curRowIndex = self.prevRowScrollIndex;
 
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
-      scrollPercentage = scrollTop / self.getCanvasHeight();
+      scrollPercentage = scrollTop / self.getVerticalScrollLength();
     }
     
     var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));

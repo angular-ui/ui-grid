@@ -143,7 +143,7 @@
 
             var yDiff = previousScrollPosition - newScrollTop;
 
-            var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
+            var vertScrollLength = rowContainer.getVerticalScrollLength();
 
             // Subtract the h. scrollbar height from the vertical length if it's present
             if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
@@ -225,13 +225,7 @@
           if ($scope.type === 'vertical') {
             if (args.y && typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
               grid.flagScrollingVertically();
-              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
-
-              var newScrollTop = Math.max(0, args.y.percentage * vertScrollLength);
-
-              $elm[0].scrollTop = newScrollTop;
-
-
+              $elm[0].scrollTop = Math.max(0, args.y.percentage * rowContainer.getVerticalScrollLength());
             }
           }
           else if ($scope.type === 'horizontal') {

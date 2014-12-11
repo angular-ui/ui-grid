@@ -52,7 +52,7 @@
               var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
               // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
-              var vertScrollLength = (rowContainer.getCanvasHeight() - rowContainer.getViewportHeight());
+              var vertScrollLength = rowContainer.getVerticalScrollLength();
               // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
               vertScrollPercentage = newScrollTop / vertScrollLength;
 
