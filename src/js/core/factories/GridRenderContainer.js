@@ -316,9 +316,6 @@ angular.module('ui.grid')
     var rowCache = self.visibleRowCache;
 
     var maxRowIndex = rowCache.length - minRows;
-    self.maxRowIndex = maxRowIndex;
-
-    var curRowIndex = self.prevRowScrollIndex;
 
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
