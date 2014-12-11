@@ -232,6 +232,10 @@ angular.module('ui.grid')
     return ret;
   };
 
+  GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {
+    return this.getCanvasHeight() - this.getViewportHeight();
+  };
+
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
     var self = this;
 
