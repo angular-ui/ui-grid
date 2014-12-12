@@ -717,7 +717,7 @@ angular.module('ui.grid')
 
   GridColumn.prototype.getCompiledElementFn = function () {
     var self = this;
-    
+
     return self.compiledElementFnDefer.promise;
   };
 

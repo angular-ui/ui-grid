@@ -269,7 +269,7 @@ describe('GridColumn factory', function () {
     });
 
     it('should return a promise', function () {
-      expect(col.getCompiledElementFn().hasOwnProperty('then')).toBe(true);
+      expect('then' in col.getCompiledElementFn()).toBe(true);
     });
 
     it('should return a promise that is resolved when the cellTemplate is compiled', function () {
@@ -336,7 +336,7 @@ describe('GridColumn factory', function () {
     });
 
     it('should return a promise', function () {
-      expect(col.getCellTemplate().hasOwnProperty('then')).toBe(true);
+      expect('then' in col.getCellTemplate()).toBe(true);
     });
 
     it('should return a promise that is resolved when a URL-based cellTemplate is available', function () {

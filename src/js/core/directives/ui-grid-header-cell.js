@@ -143,8 +143,6 @@
 
               var downEvent = gridUtil.isTouchEnabled() ? 'touchstart' : 'mousedown';
               $contentsElm.on(downEvent, function(event) {
-                gridUtil.logDebug('mouse event', event.type);
-
                 event.stopPropagation();
 
                 if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
@@ -205,8 +203,6 @@
             if ($scope.sortable) {
               var clickEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'click';
               $contentsElm.on(clickEvent, function(event) {
-                gridUtil.logDebug('mouse event 2', event.type);
-
                 event.stopPropagation();
     
                 $timeout.cancel(cancelMousedownTimeout);
@@ -215,12 +211,10 @@
                 var mousedownTime = mousedownEndTime - mousedownStartTime;
     
                 if (mousedownTime > mousedownTimeout) {
-                  gridUtil.logDebug('long click');
                   // long click, handled above with mousedown
                 }
                 else {
                   // short click
-                  gridUtil.logDebug('short click');
                   handleClick(event);
                 }
               });
