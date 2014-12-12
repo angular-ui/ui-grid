@@ -12,7 +12,7 @@ describe('ui.grid.style', function() {
     var element, scope, compile, recompile;
 
     beforeEach(inject(function($compile, $rootScope) {
-      scope = $rootScope;
+      scope = $rootScope; 
       compile = $compile;
       
       recompile = function() {
@@ -29,11 +29,12 @@ describe('ui.grid.style', function() {
       expect(element.text()).toEqual(scope.foo);
     });
 
-    it("doesn't affect style elements without the directive", function () {
-      element = angular.element('<style>{{ foo }}</style>');
-      recompile();
-      expect(element.text()).toEqual('{{ foo }}');
-    });
+    // Disable as angular 1.3.0 allows expressions in <style> blocks
+    // it("doesn't affect style elements without the directive", function () {
+    //   element = angular.element('<style>{{ foo }}</style>');
+    //   recompile();
+    //   expect(element.text()).toEqual('{{ foo }}');
+    // });
 
     it('does not create useless <br>s', function() {
       element = angular.element("<style ui-grid-style>{{ foo }}</style>");
