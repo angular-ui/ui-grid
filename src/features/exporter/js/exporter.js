@@ -62,7 +62,8 @@
     SELECTED: 'selected',
     CSV_CONTENT: 'CSV_CONTENT',
     LINK_LABEL: 'LINK_LABEL',
-    BUTTON_LABEL: 'BUTTON_LABEL'
+    BUTTON_LABEL: 'BUTTON_LABEL',
+    FILE_NAME: 'FILE_NAME'
   });
 
   /**
@@ -236,6 +237,15 @@
           gridOptions.exporterCsvColumnSeparator = gridOptions.exporterCsvColumnSeparator ? gridOptions.exporterCsvColumnSeparator : ',';
           /**
            * @ngdoc object
+           * @name exporterCsvFilename
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description The default filename to use when saving the downloaded csv
+           * link.  This will only work in some browsers.
+           * <br/>Defaults to 'download.csv'
+           */
+          gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
+          /**
+           * @ngdoc object
            * @name exporterPdfDefaultStyle
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default style in pdfMake format
@@ -401,21 +411,39 @@
           
           /**
            * @ngdoc object
+           * @name exporterHeaderFilterUseName
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Defaults to false, which leads to `displayName` being passed into the headerFilter.
+           * If set to true, then will pass `name` instead.
+           * 
+           * 
+           * @example
+           * <pre>
+           *   gridOptions.exporterHeaderFilterUseName = true;
+           * </pre>
+           */
+          gridOptions.exporterHeaderFilterUseName = gridOptions.exporterHeaderFilterUseName === true;          
+
+          /**
+           * @ngdoc object
            * @name exporterHeaderFilter
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description A function to apply to the header displayNames before exporting.  Useful for internationalisation,
            * for example if you were using angular-translate you'd set this to `$translate.instant`.  Note that this
            * call must be synchronous, it cannot be a call that returns a promise.
+           * 
+           * Behaviour can be changed to pass in `name` instead of `displayName` through use of `exporterHeaderFilterUseName: true`.
+           * 
            * @example
            * <pre>
-           *   gridOptions.exporterHeaderFilter = function( displayName ){ return 'col: ' + displayName; };
+           *   gridOptions.exporterHeaderFilter = function( displayName ){ return 'col: ' + name; };
            * </pre>
            * OR
            * <pre>
            *   gridOptions.exporterHeaderFilter = $translate.instant;
            * </pre>
            */
-
+          
           /**
            * @ngdoc function
            * @name exporterFieldCallback
@@ -583,7 +611,7 @@
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
               headers.push({
                 name: gridCol.field,
-                displayName: grid.options.exporterHeaderFilter ? grid.options.exporterHeaderFilter(gridCol.displayName) : gridCol.displayName,
+                displayName: grid.options.exporterHeaderFilter ? ( grid.options.exporterHeaderFilterUseName ? grid.options.exporterHeaderFilter(gridCol.name) : grid.options.exporterHeaderFilter(gridCol.displayName) ) : gridCol.displayName,
                 width: gridCol.drawnWidth ? gridCol.drawnWidth : gridCol.width,
                 align: gridCol.colDef.type === 'number' ? 'right' : 'left'
               });
@@ -758,6 +786,10 @@
               template.children("a").attr("href", 
                   template.children("a").attr("href").replace(
                       uiGridExporterConstants.CSV_CONTENT, encodeURIComponent(csvContent)));
+
+              template.children("a").attr("download", 
+                  template.children("a").attr("download").replace(
+                      uiGridExporterConstants.FILE_NAME, grid.options.exporterCsvFilename));
             
             var newElm = $compile(template)(grid.exporter.$scope);
             targetElm.append(newElm);
@@ -839,11 +871,11 @@
           }
           
           if ( grid.options.exporterPdfHeader ){
-            docDefinition.content.unshift( grid.options.exporterPdfHeader );
+            docDefinition.header = grid.options.exporterPdfHeader;
           }
           
           if ( grid.options.exporterPdfFooter ){
-            docDefinition.content.push( grid.options.exporterPdfFooter );
+            docDefinition.footer = grid.options.exporterPdfFooter;
           }
           
           if ( grid.options.exporterPdfCustomFormatter ){
