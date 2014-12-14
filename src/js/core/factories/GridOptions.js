@@ -36,6 +36,26 @@ angular.module('ui.grid')
    */
   return {
     initialize: function( baseOptions ){
+      /**
+       * @ngdoc function
+       * @name onRegisterApi
+       * @propertyOf ui.grid.class:GridOptions
+       * @description A callback that returns the gridApi once the grid is instantiated, which is 
+       * then used to interact with the grid programatically.
+       * 
+       * Note that the gridApi.core.renderingComplete event is identical to this 
+       * callback, but has the advantage that it can be called from multiple places
+       * if needed
+       * 
+       * @example
+       * <pre>
+       *   $scope.gridOptions.onRegisterApi = function ( gridApi ) {
+       *     $scope.gridApi = gridApi;
+       *     $scope.gridApi.selection.selectAllRows( $scope.gridApi.grid );
+       *   };
+       * </pre>
+       * 
+       */
       baseOptions.onRegisterApi = baseOptions.onRegisterApi || angular.noop();
   
       /**
