@@ -117,7 +117,7 @@
         var findPositionForRenderIndex = function (index) {
           var position = index;
           for (var i = 0; i <= position; i++) {
-            if (angular.isDefined(columns[i]) && angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false) {
+            if (angular.isDefined(columns[i]) && ((angular.isDefined(columns[i].colDef.visible) && columns[i].colDef.visible === false) || columns[i].isRowHeader === true)) {
               position++;
             }
           }
@@ -255,7 +255,7 @@
 
                       //Cloning header cell and appending to current header cell.
                       movingElm = $elm.clone();
-                      $elm.append(movingElm);
+                      $elm.parent().append(movingElm);
 
                       //Left of cloned element should be aligned to original header cell.
                       movingElm.addClass('movingColumn');
@@ -269,9 +269,6 @@
                         movingElementStyles.width = reducedWidth + 'px';
                       }
                       movingElm.css(movingElementStyles);
-
-                      //Binding the mouseup event handler
-                      $document.on('mouseup', mouseUpHandler);
                     };
 
                     var moveElement = function(changeValue) {
@@ -295,8 +292,8 @@
                         movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
                       }
                       else {
-                        changeValue *= 5;
-                        uiGridCtrl.fireScrollingEvent({ x: { pixels: changeValue * 2.5} });
+                        changeValue *= 6;
+                        uiGridCtrl.fireScrollingEvent({ x: { pixels: changeValue * 4} });
                       }
                       totalMouseMovement += changeValue;
 
@@ -319,11 +316,14 @@
                       }
                     };
 
-                    // On scope destroy, remove the mouse event handlers from the document body
+/*
+//Commenting these lines as they are creating trouble with column moving when grid has huge scroll
+ // On scope destroy, remove the mouse event handlers from the document body
                     $scope.$on('$destroy', function () {
                       $document.off('mousemove', mouseMoveHandler);
                       $document.off('mouseup', mouseUpHandler);
                     });
+*/
                     $document.on('mousemove', mouseMoveHandler);
 
                     var mouseUpHandler = function (evt) {
@@ -415,6 +415,8 @@
                       });
                     };
 
+                    //Binding the mouseup event handler
+                    $document.on('mouseup', mouseUpHandler);
                   }
                 };
                 $elm.on('mousedown', mouseDownHandler);
