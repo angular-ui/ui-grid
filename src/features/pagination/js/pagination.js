@@ -95,18 +95,19 @@
           if (!grid.options.enablePagination) {
             return renderableRows;
           }
+          var visibleRows = renderableRows.filter(function(row) { return row.visible; });
           grid.pagination.totalPages = Math.max(
             1,
-            Math.ceil(renderableRows.length / grid.options.rowsPerPage)
+            Math.ceil(visibleRows.length / grid.options.rowsPerPage)
           );
 
           var firstRow = (grid.pagination.page - 1) * grid.options.rowsPerPage;
-          if (firstRow >= renderableRows.length) {
+          if (firstRow >= visibleRows.length) {
             grid.pagination.page = grid.pagination.totalPages;
             firstRow = (grid.pagination.page - 1) * grid.options.rowsPerPage;
           }
 
-          return renderableRows.slice(
+          return visibleRows.slice(
             firstRow,
             firstRow + grid.options.rowsPerPage
           );

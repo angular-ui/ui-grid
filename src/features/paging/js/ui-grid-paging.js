@@ -66,9 +66,16 @@
             //client side paging
             var pageSize = parseInt(grid.options.pagingPageSize, 10);
             var currentPage = parseInt(grid.options.pagingCurrentPage, 10);
+            
+            var visibleRows = renderableRows.filter(function (row) { return row.visible; });
+            grid.options.totalItems = visibleRows.length;
 
             var firstRow = (currentPage - 1) * pageSize;
-            return renderableRows.slice(firstRow, firstRow + pageSize);
+            if (firstRow > visibleRows.length) {
+              currentPage = grid.options.pagingCurrentPage = 1;
+              firstRow = (currentPage - 1) * pageSize;
+            }
+            return visibleRows.slice(firstRow, firstRow + pageSize);
           });
 
         },
