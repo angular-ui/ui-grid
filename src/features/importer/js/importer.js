@@ -92,7 +92,7 @@
                  * File object
                  */
                 importFile: function ( grid, fileObject ) {
-                  service.importFile( grid, fileObject );
+                  service.importThisFile( grid, fileObject );
                 }
               }
             }
