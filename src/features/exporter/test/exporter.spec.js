@@ -71,6 +71,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterLinkLabel: 'Download CSV',
         exporterMenuLabel: 'Export',
         exporterCsvColumnSeparator: ',',
+        exporterCsvFilename: 'download.csv',
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
@@ -80,6 +81,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
         exporterPdfCustomFormatter: jasmine.any(Function),
+        exporterHeaderFilterUseName: false,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
@@ -96,6 +98,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
         exporterCsvColumnSeparator: ';',
+        exporterCsvFilename: 'myfile.csv',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -105,6 +108,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
+        exporterHeaderFilterUseName: true,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -118,6 +122,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
         exporterCsvColumnSeparator: ';',
+        exporterCsvFilename: 'myfile.csv',
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -127,6 +132,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
+        exporterHeaderFilterUseName: true,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -180,6 +186,18 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         {name: 'col2', displayName: 'mapped_Col2', width: '*', align: 'right'},
         {name: 'col3', displayName: 'mapped_Col3', width: 100, align: 'left'},
         {name: 'col4', displayName: 'mapped_Col4', width: 200, align: 'left'}
+      ]);
+    });
+
+    it('gets all headers using headerFilter, passing name not displayName', function() {
+      grid.options.exporterHeaderFilterUseName = true;
+      grid.options.exporterHeaderFilter = function( name ){ return "mapped_" + name; };
+
+      expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
+        {name: 'col1', displayName: 'mapped_col1', width: 50, align: 'left'},
+        {name: 'col2', displayName: 'mapped_col2', width: '*', align: 'right'},
+        {name: 'col3', displayName: 'mapped_col3', width: 100, align: 'left'},
+        {name: 'col4', displayName: 'mapped_col4', width: 200, align: 'left'}
       ]);
     });
   });
@@ -432,7 +450,6 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         pageOrientation : 'portrait',
         pageSize: 'LETTER', 
         content : [
-          'My Header', 
           { 
             style : 'tableStyle', 
             table : { 
@@ -450,9 +467,10 @@ describe('ui.grid.exporter uiGridExporterService', function () {
                 [ {text: date.toISOString(), alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'TRUE' ] 
               ] 
             } 
-          },
-          'My Footer'
-         ], 
+          }
+         ],
+        header : "My Header",
+        footer : "My Footer",  
         styles : { 
           tableStyle : { 
             margin : [ 30, 30, 30, 30 ] 

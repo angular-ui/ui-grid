@@ -1,4 +1,4 @@
-/* globals protractor, element, by */
+/* globals protractor, element, by, browser */
 /**
  * @ngdoc overview
  * @name ui.grid.e2eTestLibrary
