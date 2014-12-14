@@ -102,7 +102,7 @@
                  * @param {object} colDef the column that was edited
                  */
                 cancelCellEdit: function (rowEntity, colDef) {
-                }                
+                }
               }
             },
             methods: {
@@ -121,7 +121,7 @@
            *  @ngdoc object
            *  @name ui.grid.edit.api:GridOptions
            *
-           *  @description Options for configuring the edit feature, these are available to be  
+           *  @description Options for configuring the edit feature, these are available to be
            *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
@@ -129,15 +129,15 @@
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If defined, sets the default value for the editable flag on each individual colDefs 
-           *  if their individual enableCellEdit configuration is not defined. Defaults to undefined.  
+           *  @description If defined, sets the default value for the editable flag on each individual colDefs
+           *  if their individual enableCellEdit configuration is not defined. Defaults to undefined.
            */
 
           /**
            *  @ngdoc object
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If specified, either a value or function to be used by all columns before editing.  
+           *  @description If specified, either a value or function to be used by all columns before editing.
            *  If falsy, then editing of cell is not allowed.
            *  @example
            *  <pre>
@@ -153,7 +153,7 @@
            *  @ngdoc object
            *  @name editableCellTemplate
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If specified, cellTemplate to use as the editor for all columns.  
+           *  @description If specified, cellTemplate to use as the editor for all columns.
            *  <br/> defaults to 'ui-grid/cellTextEditor'
            */
 
@@ -183,7 +183,7 @@
            *  @ngdoc object
            *  @name ui.grid.edit.api:ColumnDef
            *
-           *  @description Column Definition for edit feature, these are available to be 
+           *  @description Column Definition for edit feature, these are available to be
            *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
            */
 
@@ -201,7 +201,7 @@
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
-           *  @example 
+           *  @example
            *  <pre>
            *  function($scope){
            *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
@@ -477,7 +477,7 @@
             }
 
             function shouldEdit(col, row) {
-              return !row.isSaving && 
+              return !row.isSaving &&
                 ( angular.isFunction(col.colDef.cellEditableCondition) ?
                     col.colDef.cellEditableCondition($scope) :
                     col.colDef.cellEditableCondition );
@@ -491,7 +491,7 @@
              *  @description an array of values in the format
              *  [ {id: xxx, value: xxx} ], which is populated
              *  into the edit dropdown
-             * 
+             *
              */
             /**
              *  @ngdoc property
@@ -502,14 +502,35 @@
              *  to 'id'
              *  @example
              *  <pre>
-             *    $scope.gridOptions = { 
+             *    $scope.gridOptions = {
              *      columnDefs: [
-             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
              *          editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
              *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
              *      ],
              *  </pre>
-             * 
+             *
+             */
+            /**
+             *  @ngdoc property
+             *  @name editDropdownRowEntityOptionsArrayPath
+             *  @propertyOf ui.grid.edit.api:ColumnDef
+             *  @description a path to a property on row.entity containing an
+             *  array of values in the format
+             *  [ {id: xxx, value: xxx} ], which will be used to populate
+             *  the edit dropdown.  This can be used when the dropdown values are dependent on
+             *  the backing row entity.
+             *  If this property is set then editDropdownOptionsArray will be ignored.
+             *  @example
+             *  <pre>
+             *    $scope.gridOptions = {
+             *      columnDefs: [
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
+             *          editDropdownRowEntityOptionsArrayPath: 'foo.bars[0].baz',
+             *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+             *      ],
+             *  </pre>
+             *
              */
             /**
              *  @ngdoc property
@@ -520,14 +541,14 @@
              *  to 'value'
              *  @example
              *  <pre>
-             *    $scope.gridOptions = { 
+             *    $scope.gridOptions = {
              *      columnDefs: [
-             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
              *          editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
              *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
              *      ],
              *  </pre>
-             * 
+             *
              */
             /**
              *  @ngdoc property
@@ -538,14 +559,14 @@
              *  to `'translate'`
              *  @example
              *  <pre>
-             *    $scope.gridOptions = { 
+             *    $scope.gridOptions = {
              *      columnDefs: [
-             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
              *          editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
              *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status', editDropdownFilter: 'translate' }
              *      ],
              *  </pre>
-             * 
+             *
              */
             function beginEdit() {
               // If we are already editing, then just skip this so we don't try editing twice...
@@ -563,8 +584,8 @@
 
               html = $scope.col.editableCellTemplate;
               html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
-              
-              var optionFilter = $scope.col.colDef.editDropdownFilter ? '|' + $scope.col.colDef.editDropdownFilter : ''; 
+
+              var optionFilter = $scope.col.colDef.editDropdownFilter ? '|' + $scope.col.colDef.editDropdownFilter : '';
               html = html.replace(uiGridConstants.CUSTOM_FILTERS, optionFilter);
 
               $scope.inputType = 'text';
@@ -579,10 +600,16 @@
                   $scope.inputType = 'date';
                   break;
               }
-              
-              $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
-              $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';  
-              $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';  
+
+              var editDropdownRowEntityOptionsArrayPath = $scope.col.colDef.editDropdownRowEntityOptionsArrayPath;
+              if (editDropdownRowEntityOptionsArrayPath) {
+                $scope.editDropdownOptionsArray =  resolveObjectFromPath($scope.row.entity, editDropdownRowEntityOptionsArrayPath);
+              }
+              else {
+                $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+              }
+              $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';
+              $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';
 
               var cellElement;
               $scope.$apply(function () {
@@ -648,6 +675,24 @@
               endEdit(true);
             }
 
+            // resolves a string path against the given object
+            // shamelessly borrowed from
+            // http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+            function resolveObjectFromPath(object, path) {
+              path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+              path = path.replace(/^\./, '');           // strip a leading dot
+              var a = path.split('.');
+              while (a.length) {
+                  var n = a.shift();
+                  if (n in object) {
+                      object = object[n];
+                  } else {
+                      return;
+                  }
+              }
+              return object;
+            }
+
           }
         };
       }]);
@@ -693,9 +738,9 @@
                   });
                 });
 
-               
+
                $scope.deepEdit = false;
-               
+
                $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
                     evt.stopPropagation();
@@ -814,8 +859,8 @@
         }
       };
     }]);
-    
-    
+
+
   /**
    *  @ngdoc directive
    *  @name ui.grid.edit.directive:uiGridEditDropdown
@@ -853,7 +898,7 @@
                   });
                 });
 
-               
+
                 $scope.stopEdit = function (evt) {
                   // no need to validate a dropdown - invalid values shouldn't be
                   // available in the list
@@ -891,6 +936,6 @@
             };
           }
         };
-      }]);    
+      }]);
 
 })();
