@@ -36,6 +36,7 @@
     self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
+
     if (config.enableSort) {
         self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
@@ -45,6 +46,7 @@
     if (config.enablePinning) {
         self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
+
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
@@ -55,6 +57,7 @@
         self.cellEditTemplate = colDef.cellEditTemplate || $templateCache.get('cellEditTemplate.html');
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
+
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $templateCache.get(colDef.cellTemplate) || $.ajax({
             type: "GET",
@@ -76,6 +79,18 @@
             async: false
         }).responseText;
     }
+
+    if(colDef.showActionsColumn) {
+        self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
+        self.showDeleteButton = grid.config.rowActionsConfig.showDeleteButton;
+        self.showEditButton = grid.config.rowActionsConfig.showEditButton;
+
+        self.deleteRowCallback = grid.config.rowActionsConfig.deleteRowCallback;
+        self.editRowCallback = grid.config.rowActionsConfig.editRowCallback;
+
+        self.cellTemplate = $templateCache.get('cellGridActionsTemplate.html');
+    }
+
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;

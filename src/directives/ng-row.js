@@ -1,6 +1,7 @@
 ﻿ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
+        transclude: true,
         compile: function() {
             return {
                 pre: function($scope, iElement) {

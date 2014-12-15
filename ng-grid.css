@@ -335,6 +335,21 @@
 .ngRow.selected {
   background-color: #c9dde1;
 }
+.ngRow .rowActionsCell {
+  display: flex;
+}
+.ngRow .rowActionsCell a {
+  color: black;
+  padding: 0 10px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  width: 15px;
+  text-align: center;
+  margin: 4px;
+}
+.ngRow .rowActionsCell a:hover {
+  background: darkgrey;
+}
 .ngCell {
   overflow: hidden;
   position: absolute;

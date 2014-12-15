@@ -20,6 +20,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return true;
         },
 
+        //used to keep the detailsExpanded flag on the rowCache in sync
+        beforeExpansionChange: function(rowIndex, isExpanded){
+            self.rowCache[rowIndex].detailsExpanded = isExpanded;
+        },
+
         //checkbox templates.
         checkboxCellTemplate: undefined,
         checkboxHeaderTemplate: undefined,
@@ -33,6 +38,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
+
+        //Default for expandable rows on load, whether they are expanded or collapsed
+        detailsExpanded: false,
 
         //Enables cell editing.
         enableCellEdit: false,

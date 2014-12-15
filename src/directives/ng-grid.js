@@ -1,6 +1,7 @@
 ﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
     var ngGridDirective = {
         scope: true,
+        transclude: true,
         compile: function() {
             return {
                 pre: function($scope, iElement, iAttrs) {
