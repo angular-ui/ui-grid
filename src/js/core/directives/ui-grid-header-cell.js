@@ -163,6 +163,8 @@
                     uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                   }
                 });
+
+                uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
               });
         
               var upEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'mouseup';
