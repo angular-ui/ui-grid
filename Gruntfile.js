@@ -268,6 +268,9 @@ module.exports = function(grunt) {
         debug: true, // debugger statements allowed
         globals: {
           angular: false,
+          
+          /* Protractor */
+          browser: false,
 
           /* jquery (testing only) */
           $:false,
