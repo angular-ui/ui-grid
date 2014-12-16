@@ -18,20 +18,28 @@
   background-color: @grayBlue; //rgb(201, 221, 225);
 }
 
-.ngRow .rowActionsCell {
-  display: flex;
+.ngRow {
+  .rowActionsCell {
+    display: flex;
 
-  a {
-    color: black;
-    padding: 0 10px;
-    border: 1px solid #000000;
-    border-radius: 5px;
-    width: 15px;
-    text-align: center;
-    margin: 4px;
+    a {
+      color: black;
+      padding: 0 10px;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      width: 15px;
+      text-align: center;
+      margin: 4px;
+    }
+
+    a:hover {
+      background: darkgrey;
+    }
   }
 
-  a:hover {
-    background: darkgrey;
+  .expandedRowDetails {
+    //width: 100%;
+    //border: 1px solid lightgrey;
   }
 }
+

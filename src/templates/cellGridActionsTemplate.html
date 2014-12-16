@@ -1,14 +1,14 @@
 <div class="rowActionsCell">
-    <a ng-show="col.showEditButton" ng-click="row.editRow()">
+    <a ng-show="col.showEditButton" ng-click="row.editRow($event)">
         <i class="fa fa-pencil"></i>
     </a>
-    <a ng-show="col.showExpandButton" ng-click="row.toggleExpansion()">
+    <a ng-show="col.showExpandButton" ng-click="row.toggleExpansion($event)">
         <div ng-switch="row.detailsExpanded">
             <i ng-switch-when="true" class="fa fa-caret-up fa"></i>
             <i ng-switch-default class="fa fa-caret-down fa"></i>
         </div>
     </a>
-    <a ng-show="col.showDeleteButton" ng-click="row.deleteRow()">
+    <a ng-show="col.showDeleteButton" ng-click="row.deleteRow($event)">
         <i class="fa fa-times-circle"></i>
     </a>
 </div>

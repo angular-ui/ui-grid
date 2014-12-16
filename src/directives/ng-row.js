@@ -1,8 +1,7 @@
 ﻿ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
-        transclude: true,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement) {
                     $scope.row.elm = iElement;
@@ -18,8 +17,14 @@
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
+                        var detailsTemplate = iElement.html();  //save details template
+                        iElement.html('<div></div>');           //then clear iElements html
+
+                        var template = $($templateCache.get($scope.gridId + 'rowTemplate.html'));
+                        template.children('.expandedRowDetails').html(detailsTemplate);
+                        iElement.append($compile(template)($scope));
                     }
+
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
 					}));

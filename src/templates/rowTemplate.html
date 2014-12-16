@@ -1,10 +1,9 @@
-<div ng-style="{ 'cursor': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}">
+<div><div ng-style="{ 'cursor': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}">
 	<div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }">&nbsp;</div>
 	<div ng-cell></div>
 </div>
-<div class="expandedRowDetails" ng-show="row.detailsExpanded" ng-style="{ 'position': 'absolute', 'top': row.height() }">
-	<p>This is the new detail</p>
-	<p>This is the new detail</p>
-	<ng-transclude></ng-transclude>
+	<div class="expandedRowDetails" ng-show="row.detailsExpanded" ng-style="{ 'position': 'absolute', 'top': row.height() }" ng-attr-data-height="{ 'height': row.detailHeight() }">
+
+	</div>
 </div>
 

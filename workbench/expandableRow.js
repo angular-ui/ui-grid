@@ -23,12 +23,12 @@ function expandableRowController($scope) {
     ]
 
     $scope.myData = [
-        {id: '1', firstName: 'Adam', email: 'gwin003@gmail.com', age: '26'},
-        {id: '2', firstName: 'Bob', email: 'bob@gmail.com', age: '18'},
-        {id: '3', firstName: 'Chris', email: 'chris@gmail.com', age: '42'},
-        {id: '4', firstName: 'Dave', email: 'dave@gmail.com', age: '35'},
-        {id: '5', firstName: 'Ed', email: 'ed@gmail.com', age: '21'},
-        {id: '6', firstName: 'Frank', email: 'frank@gmail.com', age: '55'}
+        {id: '1', firstName: 'Adam', lastName: 'Gwin', email: 'gwin003@gmail.com', age: '26', state: 'PA'},
+        {id: '2', firstName: 'Bob', lastName: 'Smith', email: 'bob@gmail.com', age: '18', state: 'CA'},
+        {id: '3', firstName: 'Chris', lastName: 'Scott', email: 'chris@gmail.com', age: '42', state: 'NC'},
+        {id: '4', firstName: 'Dave', lastName: 'Thomas', email: 'dave@gmail.com', age: '35', state: 'TX'},
+        {id: '5', firstName: 'Ed', lastName: 'Reed', email: 'ed@gmail.com', age: '21', state: 'ME'},
+        {id: '6', firstName: 'Frank', lastName: 'Thomas', email: 'frank@gmail.com', age: '55', state: 'IL'}
     ]
 
 

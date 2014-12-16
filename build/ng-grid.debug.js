@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/15/2014 11:26
+* Compiled At: 12/16/2014 13:54
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2341,6 +2341,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.detailsExpanded = config.detailsExpanded;
 	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
 	this.rowActionsConfig = config.rowActionsConfig;
+	this.expandedDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -2407,14 +2408,17 @@ ngRow.prototype.height = function(){
 	return this.elm.height();
 };
 ngRow.prototype.detailHeight = function(){
-	if(!this.elm) return 30;		//fix this to be dynamic
-	var details = this.elm.find('.expandedRowDetails');
-	return details.height();
+	var ev = event;	//last click event
+	var hei = $(ev.target).closest('.ngCell').next('.expandedRowDetails').height();
+
+	return 20;
 };
 ngRow.prototype.toggleExpansion = function(){
+
 	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
+	event.stopPropagation();
 };
 ngRow.prototype.collapse = function(){
 	this.detailsExpanded = false;
@@ -2423,9 +2427,11 @@ ngRow.prototype.expand = function(){
 	this.detailsExpanded = true;
 };
 ngRow.prototype.deleteRow = function(){
+	event.stopPropagation();
 	this.rowActionsConfig.deleteRowCallback(this.entity);
 };
 ngRow.prototype.editRow = function(){
+	event.stopPropagation();
 	this.rowActionsConfig.editRowCallback(this.entity);
 };
 var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
@@ -3357,8 +3363,7 @@ ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function
 ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
     var ngGridDirective = {
         scope: true,
-        transclude: true,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement, iAttrs) {
                     var $element = $(iElement);
@@ -3391,6 +3396,11 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     });
 
                     return grid.init().then(function() {
+
+                        //get the row detail html, then clear the html from the element
+                        var rowDetailTemplate = iElement.html().trim();
+                        iElement.html('<div></div>');
+
                         // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                         if (typeof options.columnDefs === "string") {
                             $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
@@ -3468,12 +3478,15 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (options.jqueryUITheme) {
                             iElement.addClass('ui-widget');
                         }
-                        iElement.append($compile($templateCache.get('gridTemplate.html'))($scope)); // make sure that if any of these change, we re-fire the calc logic
+
+                        var gridTemplate = $($templateCache.get('gridTemplate.html'));
+                        gridTemplate.find('.rowDiv').append(rowDetailTemplate);       //for expanding row details
+                        iElement.append($compile(gridTemplate)($scope));       // make sure that if any of these change, we re-fire the calc logic
+
                         //walk the element's graph and the correct properties on the grid
                         domUtilityService.AssignGridContainers($scope, iElement, grid);
                         //now use the manager to assign the event handlers
                         grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
-
                         // method for user to select a specific row programatically
                         options.selectRow = function (rowIndex, state) {
                             if (grid.rowCache[rowIndex]) {
@@ -3549,6 +3562,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (typeof options.init === "function") {
                             options.init(grid, $scope);
                         }
+
                         return null;
                     });
                 }
@@ -3658,8 +3672,7 @@ ngGridDirectives.directive('ngInput', [function() {
 ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
-        transclude: true,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement) {
                     $scope.row.elm = iElement;
@@ -3675,8 +3688,14 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
+                        var detailsTemplate = iElement.html();  //save details template
+                        iElement.html('<div></div>');           //then clear iElements html
+
+                        var template = $($templateCache.get($scope.gridId + 'rowTemplate.html'));
+                        template.children('.expandedRowDetails').html(detailsTemplate);
+                        iElement.append($compile(template)($scope));
                     }
+
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
 					}));
@@ -3936,13 +3955,13 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
   $templateCache.put('cellGridActionsTemplate.html',
     "<div class=\"rowActionsCell\">\r" +
     "\n" +
-    "    <a ng-show=\"col.showEditButton\" ng-click=\"row.editRow()\">\r" +
+    "    <a ng-show=\"col.showEditButton\" ng-click=\"row.editRow($event)\">\r" +
     "\n" +
     "        <i class=\"fa fa-pencil\"></i>\r" +
     "\n" +
     "    </a>\r" +
     "\n" +
-    "    <a ng-show=\"col.showExpandButton\" ng-click=\"row.toggleExpansion()\">\r" +
+    "    <a ng-show=\"col.showExpandButton\" ng-click=\"row.toggleExpansion($event)\">\r" +
     "\n" +
     "        <div ng-switch=\"row.detailsExpanded\">\r" +
     "\n" +
@@ -3954,7 +3973,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    </a>\r" +
     "\n" +
-    "    <a ng-show=\"col.showDeleteButton\" ng-click=\"row.deleteRow()\">\r" +
+    "    <a ng-show=\"col.showDeleteButton\" ng-click=\"row.deleteRow($event)\">\r" +
     "\n" +
     "        <i class=\"fa fa-times-circle\"></i>\r" +
     "\n" +
@@ -4083,7 +4102,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">\r" +
     "\n" +
-    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row>\r" +
+    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row class=\"rowDiv\">\r" +
     "\n" +
     "\r" +
     "\n" +
@@ -4169,7 +4188,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('rowTemplate.html',
-    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
+    "<div><div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
     "\n" +
     "\t<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
     "\n" +
@@ -4177,13 +4196,11 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "</div>\r" +
     "\n" +
-    "<div class=\"expandedRowDetails\" ng-show=\"row.detailsExpanded\" ng-style=\"{ 'position': 'absolute', 'top': row.height() }\">\r" +
+    "\t<div class=\"expandedRowDetails\" ng-show=\"row.detailsExpanded\" ng-style=\"{ 'position': 'absolute', 'top': row.height() }\" ng-attr-data-height=\"{ 'height': row.detailHeight() }\">\r" +
     "\n" +
-    "\t<p>This is the new detail</p>\r" +
+    "\r" +
     "\n" +
-    "\t<p>This is the new detail</p>\r" +
-    "\n" +
-    "\t<ng-transclude></ng-transclude>\r" +
+    "\t</div>\r" +
     "\n" +
     "</div>\r" +
     "\n" +

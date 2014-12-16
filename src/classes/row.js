@@ -13,6 +13,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.detailsExpanded = config.detailsExpanded;
 	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
 	this.rowActionsConfig = config.rowActionsConfig;
+	this.expandedDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -79,14 +80,17 @@ ngRow.prototype.height = function(){
 	return this.elm.height();
 };
 ngRow.prototype.detailHeight = function(){
-	if(!this.elm) return 30;		//fix this to be dynamic
-	var details = this.elm.find('.expandedRowDetails');
-	return details.height();
+	var ev = event;	//last click event
+	var hei = $(ev.target).closest('.ngCell').next('.expandedRowDetails').height();
+
+	return 20;
 };
 ngRow.prototype.toggleExpansion = function(){
+
 	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
+	event.stopPropagation();
 };
 ngRow.prototype.collapse = function(){
 	this.detailsExpanded = false;
@@ -95,8 +99,10 @@ ngRow.prototype.expand = function(){
 	this.detailsExpanded = true;
 };
 ngRow.prototype.deleteRow = function(){
+	event.stopPropagation();
 	this.rowActionsConfig.deleteRowCallback(this.entity);
 };
 ngRow.prototype.editRow = function(){
+	event.stopPropagation();
 	this.rowActionsConfig.editRowCallback(this.entity);
 };

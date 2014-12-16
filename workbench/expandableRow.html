@@ -21,11 +21,11 @@
 </head>
 <body ng-app="myApp" ng-controller="expandableRowController">
 
-<input type="button" value="Expand" ng-click="expand()"/>
-<input type="button" value="Collapse" ng-click="collapse()"/>
-
 <div style="width: 800px; height: 400px; margin: 20px" ng-grid="gridOptions">
-    <div>This is some detail about this row</div>
+    <div>
+        <h4>{{row.entity.firstName}} {{row.entity.lastName}}</h4>
+        <span>State: {{row.entity.state}}</span>
+    </div>
 </div>
 </body>
 </html>
