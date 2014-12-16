@@ -524,6 +524,7 @@
                   name: uiGridSelectionConstants.selectionRowHeaderColName,
                   displayName: '',
                   width:  uiGridCtrl.grid.options.selectionRowHeaderWidth,
+                  minWidth: 10,
                   cellTemplate: 'ui-grid/selectionRowHeader',
                   headerCellTemplate: 'ui-grid/selectionHeaderCell',
                   enableColumnResizing: false,
