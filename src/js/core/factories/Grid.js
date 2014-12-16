@@ -1786,8 +1786,8 @@ angular.module('ui.grid')
 
       // gridUtil.logDebug('redrawing container', i);
 
-      container.adjustRows(container.prevScrollTop, null);
-      container.adjustColumns(container.prevScrollLeft, null);
+      container.adjustRows(null, container.prevScrolltopPercentage);
+      container.adjustColumns(null, container.prevScrollleftPercentage);
     }
   };
 
