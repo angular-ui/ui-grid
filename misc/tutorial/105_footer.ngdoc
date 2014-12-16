@@ -61,7 +61,7 @@ You can override the default grid footer template with gridOptions.footerTemplat
 
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    ddescribe( '105 footer', function() {
+    describe( '105 footer', function() {
       /*
       var $filter = angular.module('[app]').injector().get('$filter');
 

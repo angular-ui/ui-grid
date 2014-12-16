@@ -29,6 +29,7 @@ In this example we use the native grid menu buttons, and we show both the pdf an
           { field: 'company' }
         ],
         enableGridMenu: true,
+        enableSelectAll: true,
         exporterLinkLabel: 'get your csv here',
         exporterPdfDefaultStyle: {fontSize: 9},
         exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
