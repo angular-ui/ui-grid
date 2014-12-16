@@ -23,12 +23,12 @@ function expandableRowController($scope) {
     ]
 
     $scope.myData = [
-        {id: '1', firstName: 'Adam', lastName: 'Gwin', email: 'gwin003@gmail.com', age: '26', state: 'PA'},
-        {id: '2', firstName: 'Bob', lastName: 'Smith', email: 'bob@gmail.com', age: '18', state: 'CA'},
-        {id: '3', firstName: 'Chris', lastName: 'Scott', email: 'chris@gmail.com', age: '42', state: 'NC'},
-        {id: '4', firstName: 'Dave', lastName: 'Thomas', email: 'dave@gmail.com', age: '35', state: 'TX'},
-        {id: '5', firstName: 'Ed', lastName: 'Reed', email: 'ed@gmail.com', age: '21', state: 'ME'},
-        {id: '6', firstName: 'Frank', lastName: 'Thomas', email: 'frank@gmail.com', age: '55', state: 'IL'}
+        {id: '1', firstName: 'Adam', lastName: 'Gwin', email: 'gwin003@gmail.com', age: '26', state: 'PA', sex: 'male'},
+        {id: '2', firstName: 'Bob', lastName: 'Smith', email: 'bob@gmail.com', age: '18', state: 'CA', sex: 'male'},
+        {id: '3', firstName: 'Chris', lastName: 'Scott', email: 'chris@gmail.com', age: '42', state: 'NC', sex: 'male'},
+        {id: '4', firstName: 'Deb', lastName: 'Thomas', email: 'deb@gmail.com', age: '35', state: 'TX', sex: 'female'},
+        {id: '5', firstName: 'Ed', lastName: 'Reed', email: 'ed@gmail.com', age: '21', state: 'ME', sex: 'male'},
+        {id: '6', firstName: 'Frannie', lastName: 'Thomas', email: 'fran@gmail.com', age: '55', state: 'IL', sex: 'female'}
     ]
 
 
@@ -52,6 +52,7 @@ function expandableRowController($scope) {
         showFooter: true,
         enableColumnResize: true,
         detailsExpanded: false,
+        singleDetailExpansionMode: true,        //not functional quite yet
         rowActionsConfig: {
             displayName: "Actions", showExpandButton: true,
             showEditButton: true, editRowCallback: editRow,

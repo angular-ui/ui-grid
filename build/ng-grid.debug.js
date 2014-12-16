@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/16/2014 13:54
+* Compiled At: 12/16/2014 16:23
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1392,8 +1392,18 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         },
 
         //used to keep the detailsExpanded flag on the rowCache in sync
-        beforeExpansionChange: function(rowIndex, isExpanded){
+        beforeExpansionChange: function(rowIndex, isExpanded, detailHeight){
+            //not working yet
+            /*if(self.config.singleDetailExpansionMode) {
+                angular.forEach(self.rowCache, function (value, key) {
+                    value.detailsExpanded = false;
+                });
+                self.rowFactory.renderedChange();
+                debugger;
+            }*/
             self.rowCache[rowIndex].detailsExpanded = isExpanded;
+            self.rowCache[rowIndex].detailHeight(detailHeight);
+
         },
 
         //checkbox templates.
@@ -1533,7 +1543,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false,
-        
+
+        //setting this to true only allows one expansion to be shown at a time
+        singleDetailExpansionMode: false,
+
         /*Enables menu to choose which columns to display and group by. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showColumnMenu: false,
@@ -2341,7 +2354,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.detailsExpanded = config.detailsExpanded;
 	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
 	this.rowActionsConfig = config.rowActionsConfig;
-	this.expandedDetailHeight = 0;
+	this.rowDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -2407,15 +2420,12 @@ ngRow.prototype.setVars = function (fromRow) {
 ngRow.prototype.height = function(){
 	return this.elm.height();
 };
-ngRow.prototype.detailHeight = function(){
-	var ev = event;	//last click event
-	var hei = $(ev.target).closest('.ngCell').next('.expandedRowDetails').height();
-
-	return 20;
+ngRow.prototype.detailHeight = function(height){
+	if(height) this.rowDetailHeight = height;
+	else return this.rowDetailHeight + this.config.rowHeight;
 };
 ngRow.prototype.toggleExpansion = function(){
-
-	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded);
+	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded, this.rowDetailHeight);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
 	event.stopPropagation();
@@ -2546,7 +2556,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
                 var detailsExpandedHeight = 0;
                 for(var j = i; j > self.renderedRange.topRow;j--){
                     if(grid.rowCache[j-1] && grid.rowCache[j-1].detailsExpanded){
-                        detailsExpandedHeight += row.detailHeight();
+                        detailsExpandedHeight += grid.rowCache[j-1].detailHeight();
                     }
                 }
 
@@ -3688,12 +3698,18 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        var detailsTemplate = iElement.html();  //save details template
-                        iElement.html('<div></div>');           //then clear iElements html
+                        var detailsTemplate = iElement.html().trim();  //save details template
+                        //then clear iElements html
+                        iElement.children().addClass('hidden-template').hide();         //this seemed to be the only way to get page working without strange errors
+                        //iElement.empty();                 //errors and breaks page
 
                         var template = $($templateCache.get($scope.gridId + 'rowTemplate.html'));
                         template.children('.expandedRowDetails').html(detailsTemplate);
                         iElement.append($compile(template)($scope));
+
+                        var height = $($(iElement).children()[1]).find('.expandedRowDetails').height();
+                        $scope.row.detailHeight(height);
+                        console.log(height);
                     }
 
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){

@@ -17,12 +17,18 @@
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        var detailsTemplate = iElement.html();  //save details template
-                        iElement.html('<div></div>');           //then clear iElements html
+                        var detailsTemplate = iElement.html().trim();  //save details template
+                        //then clear iElements html
+                        iElement.children().addClass('hidden-template').hide();         //this seemed to be the only way to get page working without strange errors
+                        //iElement.empty();                 //errors and breaks page
 
                         var template = $($templateCache.get($scope.gridId + 'rowTemplate.html'));
                         template.children('.expandedRowDetails').html(detailsTemplate);
                         iElement.append($compile(template)($scope));
+
+                        var height = $($(iElement).children()[1]).find('.expandedRowDetails').height();
+                        $scope.row.detailHeight(height);
+                        console.log(height);
                     }
 
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){

@@ -110,7 +110,7 @@
                 var detailsExpandedHeight = 0;
                 for(var j = i; j > self.renderedRange.topRow;j--){
                     if(grid.rowCache[j-1] && grid.rowCache[j-1].detailsExpanded){
-                        detailsExpandedHeight += row.detailHeight();
+                        detailsExpandedHeight += grid.rowCache[j-1].detailHeight();
                     }
                 }
 

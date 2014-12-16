@@ -21,8 +21,18 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         },
 
         //used to keep the detailsExpanded flag on the rowCache in sync
-        beforeExpansionChange: function(rowIndex, isExpanded){
+        beforeExpansionChange: function(rowIndex, isExpanded, detailHeight){
+            //not working yet
+            /*if(self.config.singleDetailExpansionMode) {
+                angular.forEach(self.rowCache, function (value, key) {
+                    value.detailsExpanded = false;
+                });
+                self.rowFactory.renderedChange();
+                debugger;
+            }*/
             self.rowCache[rowIndex].detailsExpanded = isExpanded;
+            self.rowCache[rowIndex].detailHeight(detailHeight);
+
         },
 
         //checkbox templates.
@@ -162,7 +172,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false,
-        
+
+        //setting this to true only allows one expansion to be shown at a time
+        singleDetailExpansionMode: false,
+
         /*Enables menu to choose which columns to display and group by. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showColumnMenu: false,

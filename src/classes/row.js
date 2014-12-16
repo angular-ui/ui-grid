@@ -13,7 +13,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.detailsExpanded = config.detailsExpanded;
 	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
 	this.rowActionsConfig = config.rowActionsConfig;
-	this.expandedDetailHeight = 0;
+	this.rowDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -79,15 +79,12 @@ ngRow.prototype.setVars = function (fromRow) {
 ngRow.prototype.height = function(){
 	return this.elm.height();
 };
-ngRow.prototype.detailHeight = function(){
-	var ev = event;	//last click event
-	var hei = $(ev.target).closest('.ngCell').next('.expandedRowDetails').height();
-
-	return 20;
+ngRow.prototype.detailHeight = function(height){
+	if(height) this.rowDetailHeight = height;
+	else return this.rowDetailHeight + this.config.rowHeight;
 };
 ngRow.prototype.toggleExpansion = function(){
-
-	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded);
+	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded, this.rowDetailHeight);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
 	event.stopPropagation();
