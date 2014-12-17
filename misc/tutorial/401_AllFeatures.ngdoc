@@ -19,6 +19,7 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.data = 'myData';
       $scope.gridOptions.enableColumnResizing = true;
       $scope.gridOptions.enableFiltering = true;
+      $scope.gridOptions.enableGridMenu = true;
       
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;
