@@ -7,7 +7,7 @@
     self.parsedData = [];
     self.rowConfig = {};
     self.selectionProvider = $scope.selectionProvider;
-    self.rowHeight = 50;
+    self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
     self.rowHeight = grid.config.rowHeight;

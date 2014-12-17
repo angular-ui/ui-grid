@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/17/2014 14:13
+* Compiled At: 12/17/2014 14:15
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2479,7 +2479,7 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
     self.parsedData = [];
     self.rowConfig = {};
     self.selectionProvider = $scope.selectionProvider;
-    self.rowHeight = 50;
+    self.rowHeight = 30;
     self.numberOfAggregates = 0;
     self.groupedData = undefined;
     self.rowHeight = grid.config.rowHeight;
