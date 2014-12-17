@@ -7,8 +7,10 @@ module and you must include the ui-grid-cellNav directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
 
-Also provides an example of requesting a scroll to a specific row or column programatically - useful for
+Provides an example of requesting a scroll to a specific row or column programatically - useful for
 remembering the state of a page and scrolling back to that position when a user returns.
+
+Provides an example of scrolling to and setting the focus on a specific cell, using the scrollToFocus api.
 
 @example
 <example module="app">
