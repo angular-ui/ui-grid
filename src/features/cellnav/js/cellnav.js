@@ -220,6 +220,22 @@
 
                 /**
                  * @ngdoc function
+                 * @name scrollToFocus
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description brings the specified row and column into view, and sets focus
+                 * to that cell
+                 * @param {Grid} grid the grid you'd like to act upon, usually available
+                 * from gridApi.grid
+                 * @param {object} $scope a scope we can broadcast events from
+                 * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus
+                 * @param {object} colDef to make visible and set focus
+                 */
+                scrollToFocus: function (grid, $scope, rowEntity, colDef) {
+                  service.scrollToFocus(grid, $scope, rowEntity, colDef);
+                },
+
+                /**
+                 * @ngdoc function
                  * @name getFocusedCell
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description returns the current (or last if Grid does not have focus) focused row and column
@@ -344,6 +360,37 @@
           this.scrollToInternal(grid, $scope, gridRow, gridCol);
         },
 
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name scrollToFocus
+         * @description Scroll the grid such that the specified
+         * row and column is in view, and set focus to the cell in that row and column
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} $scope a scope we can broadcast events from
+         * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus to
+         * @param {object} colDef to make visible and set focus to
+         */
+        scrollToFocus: function (grid, $scope, rowEntity, colDef) {
+          var gridRow = null, gridCol = null;
+
+          if (rowEntity !== null) {
+            gridRow = grid.getRow(rowEntity);
+          }
+
+          if (colDef !== null) {
+            gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
+          }
+          this.scrollToInternal(grid, $scope, gridRow, gridCol);
+          
+          var rowCol = { row: gridRow, col: gridCol };
+
+          // Broadcast the navigation
+          grid.cellNav.broadcastCellNav(rowCol);
+          
+        },
+        
         /**
          * @ngdoc method
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
@@ -626,6 +673,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+              var _scope = $scope;
 
               var grid = uiGridCtrl.grid;
               uiGridCellNavService.initializeGrid(grid);
@@ -637,8 +685,8 @@
               };
 
               //  gridUtil.logDebug('uiGridEdit preLink');
-              uiGridCtrl.cellNav.broadcastCellNav = function (newRowCol) {
-                $scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
+              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol) {
+                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
                 uiGridCtrl.cellNav.broadcastFocus(newRowCol);
               };
 

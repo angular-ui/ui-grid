@@ -7,8 +7,10 @@ module and you must include the ui-grid-cellNav directive on your grid element.
 
 Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
 
-Also provides an example of requesting a scroll to a specific row or column programatically - useful for
+Provides an example of requesting a scroll to a specific row or column programatically - useful for
 remembering the state of a page and scrolling back to that position when a user returns.
+
+Provides an example of scrolling to and setting the focus on a specific cell, using the scrollToFocus api.
 
 @example
 <example module="app">
@@ -50,6 +52,10 @@ remembering the state of a page and scrolling back to that position when a user 
           $scope.gridApi.cellNav.scrollTo( $scope.gridApi.grid, $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
         };
 
+        $scope.scrollToFocus = function( rowIndex, colIndex ) {
+          $scope.gridApi.cellNav.scrollToFocus( $scope.gridApi.grid, $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+        };
+
         $scope.gridOptions.onRegisterApi = function(gridApi){
            $scope.gridApi = gridApi;
            gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
@@ -69,6 +75,7 @@ remembering the state of a page and scrolling back to that position when a user 
       <button type="button" class="btn btn-success" ng-click="scrollTo(20,0)">Scroll To Row 20</button>
       <button type="button" class="btn btn-success" ng-click="scrollTo(0,7)">Scroll To Balance</button>
       <button type="button" class="btn btn-success" ng-click="scrollTo(50,7)">Scroll To Row 50, Balance</button>
+      <button type="button" class="btn btn-success" ng-click="scrollToFocus(50,7)">Focus Row 50, Balance</button>
       <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <br>
       <br>
