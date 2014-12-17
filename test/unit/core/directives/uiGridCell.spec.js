@@ -65,6 +65,26 @@ describe('uiGridCell', function () {
       $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.COLUMN );
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
+
+    it('should notice col changes and update cellClass', inject(function () {
+      $scope.col.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+        if (rowRenderIndex === 2 && colRenderIndex === 2) {
+          if ( col.noClass ){
+            return '';
+          } else {
+            return 'funcCellClass';
+          }
+        }
+      };
+      recompile();
+      var displayHtml = gridCell.html();
+      expect(gridCell.hasClass('funcCellClass')).toBe(true);
+      
+      $scope.col = new GridColumn({name: 'col2'}, 0, $scope.grid);
+      $scope.$digest();
+      expect(gridCell.hasClass('funcCellClass')).toBe(false);
+    }));
   });
+
 
 });

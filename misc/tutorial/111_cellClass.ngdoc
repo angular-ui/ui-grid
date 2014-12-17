@@ -62,6 +62,12 @@ In this example, we will override the color and background for the first column 
         // color blue for 2,1, which has company name 'Velity'
         gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Velity' );
         expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(0, 0, 255, 1)');
+        
+        // sort by company, 2,1 is no longer Velity so shouldn't be blue, check it's the same colour as row 1
+        gridTestUtils.clickHeaderCell( 'grid1', 1 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Acusage' );
+        expect( gridTestUtils.dataCell( 'grid1', 1, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
+        expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
       });
     });    
   </file>
