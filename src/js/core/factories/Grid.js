@@ -543,7 +543,8 @@ angular.module('ui.grid')
         self.columns.splice(index + headerOffset, 0, col);
       }
       else {
-        col.updateColumnDef(colDef);
+        // tell updateColumnDef that the column was pre-existing
+        col.updateColumnDef(colDef, false);
       }
 
       self.columnBuilders.forEach(function (builder) {

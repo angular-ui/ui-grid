@@ -33,6 +33,7 @@ internationalization function that waits 1 second then prefixes each column with
         exporterMenuCsv: false,
         enableGridMenu: true,
         gridMenuTitleFilter: fakeI18n,
+        gridMenuShowHideColumns: false,
         columnDefs: [
           { name: 'name' },
           { name: 'gender', enableHiding: false },
