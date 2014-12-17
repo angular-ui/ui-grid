@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/17/2014 14:15
+* Compiled At: 12/17/2014 14:53
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2437,8 +2437,12 @@ ngRow.prototype.height = function(){
 	return this.elm.height();
 };
 ngRow.prototype.detailHeight = function(height){
-	if(height) this.rowDetailHeight = height;
-	else return this.rowDetailHeight + this.config.rowHeight;
+	if(height) {
+		this.rowDetailHeight = height;
+	}
+	else {
+		return this.rowDetailHeight + this.config.rowHeight;
+	}
 };
 ngRow.prototype.toggleExpansion = function(){
 	this.beforeDetailExpansionChangeCallback(this);
@@ -2454,7 +2458,9 @@ ngRow.prototype.expand = function(){
 };
 ngRow.prototype.deleteRow = function(){
 	event.stopPropagation();
-	if(this.rowActionsConfig.disableDeleteButton) return;
+	if(this.rowActionsConfig.disableDeleteButton) {
+		return;
+	}
 	if(!this.rowActionsConfig.deleteRowCallback){
 		console.error('You have not provided a callback for the delete button! Set gridOptions.rowActionsConfig.deleteRowCallback or hide the button');
 		return;
@@ -2463,7 +2469,9 @@ ngRow.prototype.deleteRow = function(){
 };
 ngRow.prototype.editRow = function(){
 	event.stopPropagation();
-	if(this.rowActionsConfig.disableEditButton) return;
+	if(this.rowActionsConfig.disableEditButton) {
+		return;
+	}
 	if(!this.rowActionsConfig.editRowCallback){
 		console.error('You have not provided a callback for the edit button! Set gridOptions.rowActionsConfig.editRowCallback or hide the button');
 		return;
