@@ -28,7 +28,15 @@ function expandableRowController($scope) {
         {id: '3', firstName: 'Chris', lastName: 'Scott', email: 'chris@gmail.com', age: '42', state: 'NC', sex: 'male'},
         {id: '4', firstName: 'Deb', lastName: 'Thomas', email: 'deb@gmail.com', age: '35', state: 'TX', sex: 'female'},
         {id: '5', firstName: 'Ed', lastName: 'Reed', email: 'ed@gmail.com', age: '21', state: 'ME', sex: 'male'},
-        {id: '6', firstName: 'Frannie', lastName: 'Thomas', email: 'fran@gmail.com', age: '55', state: 'IL', sex: 'female'}
+        {
+            id: '6',
+            firstName: 'Frannie',
+            lastName: 'Thomas',
+            email: 'fran@gmail.com',
+            age: '55',
+            state: 'IL',
+            sex: 'female'
+        }
     ]
 
 
@@ -40,6 +48,7 @@ function expandableRowController($scope) {
         $scope.gridOptions.detailsExpanded = false;
     }
 
+    var plugin = new ngGridFlexibleHeightPlugin();
     $scope.gridOptions = {
         data: 'myData',
         columnDefs: defs,
@@ -51,12 +60,91 @@ function expandableRowController($scope) {
         enablePaging: true,
         showFooter: true,
         enableColumnResize: true,
-        detailsExpanded: false,
-        singleDetailExpansionMode: true,        //not functional quite yet
+        //plugins: [plugin],
+        onColumnWidthResize: function () {
+            console.log('resize columns');
+        },
         rowActionsConfig: {
-            displayName: "Actions", showExpandButton: true,
-            showEditButton: true, editRowCallback: editRow,
-            showDeleteButton: true, deleteRowCallback: deleteRow
+            displayName: "Actions",
+            showEditButton: true, editRowCallback: editRow, disableEditButton: true,
+            showExpandButton: true, //disableExpandButton: true,
+            showDeleteButton: true, deleteRowCallback: deleteRow, disableDeleteButton: true
         }
     }
+}
+
+function ngGridFlexibleHeightPlugin(opts) {
+    var self = this;
+    self.grid = null;
+    self.scope = null;
+    self.init = function (scope, grid, services) {
+        self.domUtilityService = services.DomUtilityService;
+        self.grid = grid;
+        self.scope = scope;
+        var recalcHeightForData = function () {
+            setTimeout(innerRecalcForData, 10);
+        };
+
+        self.scope.catHashKeys = function () {
+            var hash = '', idx;
+            for (idx = 0; idx < self.scope.renderedRows.count; idx++) {
+                hash += self.scope.renderedRows[idx].$$hashKey;
+            }
+            return hash;
+        };
+        self.scope.catRowCache = function(){
+            var hash = '', idx;
+            for (idx = 0; idx < self.grid.rowCache.length; idx++) {
+                hash += self.grid.rowCache[idx].detailsExpanded;
+            }
+            return hash;
+        }
+        self.scope.$watch('catHashKeys()', innerRecalcForData);
+        self.scope.$watch('catRowCache()', innerRecalcForData);
+        self.scope.$watch(self.grid.config.data, recalcHeightForData);
+
+        //setInterval(innerRecalcForData, 1000);
+    };
+
+    var innerRecalcForData = function () {
+        if (!self.grid.$topPanel) return;
+
+        var gridId = self.grid.gridId;
+        var footerPanelSel = '.' + gridId + ' .ngFooterPanel';
+        var extraHeight = self.grid.$topPanel.height() + $(footerPanelSel).height();
+        var naturalHeight = self.grid.$canvas.height() + 1;
+
+        var expandedRowsHeight = 0;
+        angular.forEach(self.grid.rowCache, function(value, index){
+            if(value.detailsExpanded){
+                expandedRowsHeight += value.detailHeight();
+            }
+        });
+        debugger;
+        //extraHeight += expandedRowsHeight;
+
+        if (opts != null) {
+            if (opts.minHeight != null && (naturalHeight + extraHeight) < opts.minHeight) {
+                naturalHeight = opts.minHeight - extraHeight - 2;
+            }
+            if (opts.maxHeight != null && (naturalHeight + extraHeight) > opts.maxHeight) {
+                naturalHeight = opts.maxHeight;
+            }
+        }
+
+        var newViewportHeight = Math.max(naturalHeight + 20, 100) + expandedRowsHeight;
+
+        self.grid.$viewport.css('height', newViewportHeight + expandedRowsHeight + 'px');
+        self.grid.$root.css('height', (newViewportHeight + extraHeight) + 'px');
+
+        if (self.scope.baseViewportWidth) {
+            self.grid.$viewport.css('width', self.scope.baseViewportWidth);
+            self.grid.$root.css('width', self.scope.baseViewportWidth);
+        }
+        else
+            self.scope.baseViewportWidth = self.grid.$viewport.width();
+
+        self.scope.baseViewportHeight = newViewportHeight;
+        self.domUtilityService.RebuildGrid(self.scope, self.grid);
+    };
 }

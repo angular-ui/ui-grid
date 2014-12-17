@@ -82,8 +82,13 @@
 
     if(colDef.showActionsColumn) {
         self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
+        self.disableExpandButton = grid.config.rowActionsConfig.disableExpandButton;
+
         self.showDeleteButton = grid.config.rowActionsConfig.showDeleteButton;
+        self.disableDeleteButton = grid.config.rowActionsConfig.disableDeleteButton;
+
         self.showEditButton = grid.config.rowActionsConfig.showEditButton;
+        self.disableEditButton = grid.config.rowActionsConfig.disableEditButton;
 
         self.deleteRowCallback = grid.config.rowActionsConfig.deleteRowCallback;
         self.editRowCallback = grid.config.rowActionsConfig.editRowCallback;

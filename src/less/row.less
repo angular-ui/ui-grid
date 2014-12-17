@@ -35,11 +35,17 @@
     a:hover {
       background: darkgrey;
     }
-  }
 
-  .expandedRowDetails {
-    //width: 100%;
-    //border: 1px solid lightgrey;
+    a.disabled {
+      //background: lightgrey;
+      color: lightgrey;
+      border-color: lightgrey;
+      cursor: not-allowed;
+    }
+
+    a.disabled:hover {
+      background: none;
+    }
   }
 }
 

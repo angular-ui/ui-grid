@@ -84,7 +84,7 @@ ngRow.prototype.detailHeight = function(height){
 	else return this.rowDetailHeight + this.config.rowHeight;
 };
 ngRow.prototype.toggleExpansion = function(){
-	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded, this.rowDetailHeight);
+	this.beforeDetailExpansionChangeCallback(this);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
 	event.stopPropagation();
@@ -97,9 +97,19 @@ ngRow.prototype.expand = function(){
 };
 ngRow.prototype.deleteRow = function(){
 	event.stopPropagation();
+	if(this.rowActionsConfig.disableDeleteButton) return;
+	if(!this.rowActionsConfig.deleteRowCallback){
+		console.error('You have not provided a callback for the delete button! Set gridOptions.rowActionsConfig.deleteRowCallback or hide the button');
+		return;
+	}
 	this.rowActionsConfig.deleteRowCallback(this.entity);
 };
 ngRow.prototype.editRow = function(){
 	event.stopPropagation();
+	if(this.rowActionsConfig.disableEditButton) return;
+	if(!this.rowActionsConfig.editRowCallback){
+		console.error('You have not provided a callback for the edit button! Set gridOptions.rowActionsConfig.editRowCallback or hide the button');
+		return;
+	}
 	this.rowActionsConfig.editRowCallback(this.entity);
 };

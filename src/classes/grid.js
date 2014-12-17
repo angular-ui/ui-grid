@@ -20,8 +20,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return true;
         },
 
-        //used to keep the detailsExpanded flag on the rowCache in sync
-        beforeExpansionChange: function(rowIndex, isExpanded, detailHeight){
+        //used to keep the some row data in sync
+        beforeExpansionChange: function(row){
             //not working yet
             /*if(self.config.singleDetailExpansionMode) {
                 angular.forEach(self.rowCache, function (value, key) {
@@ -30,9 +30,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 self.rowFactory.renderedChange();
                 debugger;
             }*/
-            self.rowCache[rowIndex].detailsExpanded = isExpanded;
-            self.rowCache[rowIndex].detailHeight(detailHeight);
-
+            self.rowCache[row.rowIndex].detailsExpanded = !row.detailsExpanded;
+            self.rowCache[row.rowIndex].detailHeight(row.rowDetailHeight);
         },
 
         //checkbox templates.
@@ -291,6 +290,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.calcMaxCanvasHeight = function() {
+
         var calculatedHeight;
         if(self.config.groups.length > 0){
             calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
@@ -298,6 +298,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+            debugger;
+            angular.forEach(self.rowCache, function (value, key) {
+                if(value.detailsExpanded){
+                    calculatedHeight += value.rowDetailHeight;
+                }
+            });
         }
         return calculatedHeight;
     };
@@ -570,6 +576,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 }
             });
         }
+        if($scope.onColumnWidthResizeCallback) {
+            $scope.onColumnWidthResizeCallback();
+        }
     };
     self.init = function() {
         return self.initTemplates().then(function(){
@@ -783,6 +792,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
+
+    //callbacks
+    $scope.onColumnWidthResizeCallback = self.config.onColumnWidthResize;
 
     //i18n support
     $scope.i18n = {};

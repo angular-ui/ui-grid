@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/16/2014 16:23
+* Compiled At: 12/17/2014 13:40
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -844,8 +844,13 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
 
     if(colDef.showActionsColumn) {
         self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
+        self.disableExpandButton = grid.config.rowActionsConfig.disableExpandButton;
+
         self.showDeleteButton = grid.config.rowActionsConfig.showDeleteButton;
+        self.disableDeleteButton = grid.config.rowActionsConfig.disableDeleteButton;
+
         self.showEditButton = grid.config.rowActionsConfig.showEditButton;
+        self.disableEditButton = grid.config.rowActionsConfig.disableEditButton;
 
         self.deleteRowCallback = grid.config.rowActionsConfig.deleteRowCallback;
         self.editRowCallback = grid.config.rowActionsConfig.editRowCallback;
@@ -1391,8 +1396,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return true;
         },
 
-        //used to keep the detailsExpanded flag on the rowCache in sync
-        beforeExpansionChange: function(rowIndex, isExpanded, detailHeight){
+        //used to keep the some row data in sync
+        beforeExpansionChange: function(row){
             //not working yet
             /*if(self.config.singleDetailExpansionMode) {
                 angular.forEach(self.rowCache, function (value, key) {
@@ -1401,9 +1406,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 self.rowFactory.renderedChange();
                 debugger;
             }*/
-            self.rowCache[rowIndex].detailsExpanded = isExpanded;
-            self.rowCache[rowIndex].detailHeight(detailHeight);
-
+            self.rowCache[row.rowIndex].detailsExpanded = !row.detailsExpanded;
+            self.rowCache[row.rowIndex].detailHeight(row.rowDetailHeight);
         },
 
         //checkbox templates.
@@ -1662,6 +1666,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.calcMaxCanvasHeight = function() {
+
         var calculatedHeight;
         if(self.config.groups.length > 0){
             calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
@@ -1669,6 +1674,12 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+            debugger;
+            angular.forEach(self.rowCache, function (value, key) {
+                if(value.detailsExpanded){
+                    calculatedHeight += value.rowDetailHeight;
+                }
+            });
         }
         return calculatedHeight;
     };
@@ -1941,6 +1952,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 }
             });
         }
+        if($scope.onColumnWidthResizeCallback) {
+            $scope.onColumnWidthResizeCallback();
+        }
     };
     self.init = function() {
         return self.initTemplates().then(function(){
@@ -2154,6 +2168,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
+
+    //callbacks
+    $scope.onColumnWidthResizeCallback = self.config.onColumnWidthResize;
 
     //i18n support
     $scope.i18n = {};
@@ -2425,7 +2442,7 @@ ngRow.prototype.detailHeight = function(height){
 	else return this.rowDetailHeight + this.config.rowHeight;
 };
 ngRow.prototype.toggleExpansion = function(){
-	this.beforeDetailExpansionChangeCallback(this.rowIndex, !this.detailsExpanded, this.rowDetailHeight);
+	this.beforeDetailExpansionChangeCallback(this);
 	this.detailsExpanded = !this.detailsExpanded;
 	this.config.triggerRenderChange();
 	event.stopPropagation();
@@ -2438,10 +2455,20 @@ ngRow.prototype.expand = function(){
 };
 ngRow.prototype.deleteRow = function(){
 	event.stopPropagation();
+	if(this.rowActionsConfig.disableDeleteButton) return;
+	if(!this.rowActionsConfig.deleteRowCallback){
+		console.error('You have not provided a callback for the delete button! Set gridOptions.rowActionsConfig.deleteRowCallback or hide the button');
+		return;
+	}
 	this.rowActionsConfig.deleteRowCallback(this.entity);
 };
 ngRow.prototype.editRow = function(){
 	event.stopPropagation();
+	if(this.rowActionsConfig.disableEditButton) return;
+	if(!this.rowActionsConfig.editRowCallback){
+		console.error('You have not provided a callback for the edit button! Set gridOptions.rowActionsConfig.editRowCallback or hide the button');
+		return;
+	}
 	this.rowActionsConfig.editRowCallback(this.entity);
 };
 var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
@@ -3709,7 +3736,6 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
 
                         var height = $($(iElement).children()[1]).find('.expandedRowDetails').height();
                         $scope.row.detailHeight(height);
-                        console.log(height);
                     }
 
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
@@ -3971,13 +3997,13 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
   $templateCache.put('cellGridActionsTemplate.html',
     "<div class=\"rowActionsCell\">\r" +
     "\n" +
-    "    <a ng-show=\"col.showEditButton\" ng-click=\"row.editRow($event)\">\r" +
+    "    <a ng-show=\"col.showEditButton\" ng-click=\"row.editRow($event)\" ng-class=\"{ 'disabled': col.disableEditButton }\">\r" +
     "\n" +
     "        <i class=\"fa fa-pencil\"></i>\r" +
     "\n" +
     "    </a>\r" +
     "\n" +
-    "    <a ng-show=\"col.showExpandButton\" ng-click=\"row.toggleExpansion($event)\">\r" +
+    "    <a ng-show=\"col.showExpandButton\" ng-click=\"row.toggleExpansion($event)\"  ng-class=\"{ 'disabled' : col.disableExpandButton }\">\r" +
     "\n" +
     "        <div ng-switch=\"row.detailsExpanded\">\r" +
     "\n" +
@@ -3989,7 +4015,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    </a>\r" +
     "\n" +
-    "    <a ng-show=\"col.showDeleteButton\" ng-click=\"row.deleteRow($event)\">\r" +
+    "    <a ng-show=\"col.showDeleteButton\" ng-click=\"row.deleteRow($event)\" ng-class=\"{ 'disabled' : col.disableDeleteButton }\">\r" +
     "\n" +
     "        <i class=\"fa fa-times-circle\"></i>\r" +
     "\n" +
@@ -4204,19 +4230,25 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('rowTemplate.html',
-    "<div><div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
+    "<div>\r" +
     "\n" +
-    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
+    "    <div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
     "\n" +
-    "\t<div ng-cell></div>\r" +
+    "        <div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
     "\n" +
-    "</div>\r" +
+    "        <div ng-cell></div>\r" +
     "\n" +
-    "\t<div class=\"expandedRowDetails\" ng-show=\"row.detailsExpanded\" ng-style=\"{ 'position': 'absolute', 'top': row.height() }\" ng-attr-data-height=\"{ 'height': row.detailHeight() }\">\r" +
+    "    </div>\r" +
     "\n" +
-    "\r" +
+    "    <div class=\"expandedRowDetails {{col.cellClass}}\" ng-show=\"row.detailsExpanded\"\r" +
     "\n" +
-    "\t</div>\r" +
+    "         ng-style=\"{ 'position': 'absolute', 'top': row.height() }\"\r" +
+    "\n" +
+    "         ng-attr-data-height=\"{ 'height': row.detailHeight() }\"\r" +
+    "\n" +
+    "         ng-class=\"row.alternatingRowClass()\">\r" +
+    "\n" +
+    "    </div>\r" +
     "\n" +
     "</div>\r" +
     "\n" +

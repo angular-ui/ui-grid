@@ -28,7 +28,6 @@
 
                         var height = $($(iElement).children()[1]).find('.expandedRowDetails').height();
                         $scope.row.detailHeight(height);
-                        console.log(height);
                     }
 
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
