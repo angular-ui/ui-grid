@@ -120,7 +120,6 @@ function ngGridFlexibleHeightPlugin(opts) {
                 expandedRowsHeight += value.detailHeight();
             }
         });
-        debugger;
         //extraHeight += expandedRowsHeight;
 
         if (opts != null) {

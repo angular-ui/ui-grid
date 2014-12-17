@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/17/2014 13:40
+* Compiled At: 12/17/2014 14:13
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -1674,7 +1674,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
-            debugger;
             angular.forEach(self.rowCache, function (value, key) {
                 if(value.detailsExpanded){
                     calculatedHeight += value.rowDetailHeight;

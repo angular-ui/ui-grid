@@ -298,7 +298,6 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
-            debugger;
             angular.forEach(self.rowCache, function (value, key) {
                 if(value.detailsExpanded){
                     calculatedHeight += value.rowDetailHeight;
