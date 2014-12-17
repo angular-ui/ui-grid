@@ -15,6 +15,9 @@ want them also internationalized in the grid menu.  The translate needs to retur
 or a promise that will resolve to a string.  In the example below we create a fake 
 internationalization function that waits 1 second then prefixes each column with "col: ".
 
+You can suppress the ability to show and hide columns by setting the gridOption `gridMenuShowHideColumns: false`,
+you can suppress the ability to hide individual columns by setting `enableHiding` on that columnDef to false.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -33,7 +36,6 @@ internationalization function that waits 1 second then prefixes each column with
         exporterMenuCsv: false,
         enableGridMenu: true,
         gridMenuTitleFilter: fakeI18n,
-        gridMenuShowHideColumns: false,
         columnDefs: [
           { name: 'name' },
           { name: 'gender', enableHiding: false },
@@ -103,21 +105,21 @@ internationalization function that waits 1 second then prefixes each column with
       });
 
       it('grid1 grid menu should have 8 items', function () {
-        gridTestUtils.expectVisibleGridMenuItems( 'grid1', 8 );
+        gridTestUtils.expectVisibleGridMenuItems( 'grid1', 7 );
       });
       
-      it('grid1 hide then show gender column', function () {
+      it('grid1 hide then show company column', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
 
-        gridTestUtils.clickGridMenuItem( 'grid1', 11 );  // there are some hidden menu items, this is gender_hide
+        gridTestUtils.clickGridMenuItem( 'grid1', 11 );  // there are some hidden menu items, this is company_hide
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Company' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
 
-        gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is gender_show
+        gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is company_show
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );

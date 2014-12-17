@@ -315,7 +315,7 @@ module.exports = {
       var resizer = headerCell.all( by.css( '.ui-grid-column-resizer' )).first();
       var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ));
 
-      browser().actions()
+      browser.actions()
         .mouseDown(resizer)
         .mouseMove(menuButton)
         .mouseUp()
@@ -344,7 +344,7 @@ module.exports = {
     shiftClickHeaderCell: function( gridId, colNumber ) {
       var headerCell = this.headerCell( gridId, colNumber);
 
-      browser().actions()
+      browser.actions()
         .keyDown(protractor.Key.SHIFT)
         .click(headerCell)
         .keyUp(protractor.Key.SHIFT)
