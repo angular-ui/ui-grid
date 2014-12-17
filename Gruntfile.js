@@ -287,6 +287,7 @@ module.exports = function(grunt) {
           afterEach: false,
           before: false,
           beforeEach: false,
+          console: false,
           dump: false, 
           describe: false,
           ddescribe: false,
