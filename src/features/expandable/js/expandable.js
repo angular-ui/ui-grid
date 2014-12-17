@@ -212,7 +212,7 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               if ( uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
-                var expandableRowHeaderColDef = {name: 'expandableButtons', enableColumnResizing: false, width: 40};
+                var expandableRowHeaderColDef = {name: 'expandableButtons', displayName: '', enableColumnResizing: false, width: 40};
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
                 uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
               }
