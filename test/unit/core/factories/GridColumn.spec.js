@@ -43,6 +43,31 @@ describe('GridColumn factory', function () {
       });
     });
 
+    it('should add a column with a sort, sort is copied', function () {
+      var sort = { priority: 0, direction: 'asc' };
+      grid.options.columnDefs[1] = { field: 'surname', sort: sort };
+
+      runs(buildCols);
+
+      runs(function () {
+        expect(grid.columns[1].sort).toEqual(sort);
+      });
+    });
+
+    it('should not update sort when updating a column, but visible flag does update', function () {
+      var sort = { priority: 0, direction: 'asc' };
+      grid.options.columnDefs[0].sort = sort;
+      grid.options.columnDefs[0].visible = false;
+
+      runs(buildCols);
+
+      runs(function () {
+        expect(grid.columns[0].sort).toEqual({});
+        expect(grid.columns[0].visible).toEqual(false);
+      });
+    });
+
+
     it('should obey columnDef sort spec', function () {
       // ... TODO(c0bra)
     });
