@@ -67,9 +67,26 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
           // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
           var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN, uiGridConstants.dataChange.EDIT]);
           
-          var deregisterFunction = function() {
-           $scope.grid.deregisterDataChangeCallback( watchUid ); 
+          // watch the col and row to see if they change - which would indicate that we've scrolled or sorted or otherwise
+          // changed the row/col that this cell relates to, and we need to re-evaluate cell classes and maybe other things
+          var cellChangeFunction = function( n, o ){
+            if ( n !== o ) {
+              if ( classAdded || $scope.col.cellClass ){
+                updateClass();
+              }
+            }
           };
+
+          var colWatchDereg = $scope.$watch( 'col', cellChangeFunction );
+          var rowWatchDereg = $scope.$watch( 'row', cellChangeFunction );
+          
+          
+          var deregisterFunction = function() {
+            $scope.grid.deregisterDataChangeCallback( watchUid );
+            colWatchDereg();
+            rowWatchDereg(); 
+          };
+          
           
           $scope.$on( '$destroy', deregisterFunction );
         }
