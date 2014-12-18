@@ -521,7 +521,7 @@ describe('directives', function () {
                         scope.gridOptions.sortBy('age');
                         scope.$digest();
 
-                        var oldRow = elm.find('.ngRow:last');
+                        var oldRow = elm.find('.ngRow.rowDiv:last');        //added .rowDiv since :last would technically return the detail section
                         expect(oldRow.html()).toMatch(/.+\s+.+\s+.+Moroni/);
                         expect(oldRow.html()).toMatch(/\s+.+50.+/);
                         expect(oldRow.hasClass('selected')).toBe(true);

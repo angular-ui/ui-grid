@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/17/2014 14:53
+* Compiled At: 12/18/2014 07:50
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -843,6 +843,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     }
 
     if(colDef.showActionsColumn) {
+        self.sortable = false;
         self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
         self.disableExpandButton = grid.config.rowActionsConfig.disableExpandButton;
 
@@ -4239,7 +4240,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
   $templateCache.put('rowTemplate.html',
     "<div>\r" +
     "\n" +
-    "    <div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
+    "    <div class=\"row\" ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
     "\n" +
     "        <div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
     "\n" +

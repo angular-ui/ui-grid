@@ -81,6 +81,7 @@
     }
 
     if(colDef.showActionsColumn) {
+        self.sortable = false;
         self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
         self.disableExpandButton = grid.config.rowActionsConfig.disableExpandButton;
 
