@@ -62,7 +62,7 @@
           invalidJson: 'Filen kunde inte behandlas, är den en giltig JSON?',
           jsonNotArray: 'Importerad JSON-fil måste innehålla ett fält. Import avbruten.'
         },
-        paging: {
+        pagination: {
           sizes: 'Artiklar per sida',
           totalItems: 'Artiklar'
         }
