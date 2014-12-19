@@ -37,26 +37,26 @@
         var elmMaxScroll = 0;
 
         if ($scope.type === 'vertical') {
-          // Update the width based on native scrollbar width
-          $elm.css('width', scrollBarWidth + 'px');
-
           $elm.addClass('vertical');
 
           grid.verticalScrollbarWidth = grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 0 : scrollBarWidth;
           colContainer.verticalScrollbarWidth = grid.verticalScrollbarWidth;
 
+          // Update the width based on native scrollbar width
+          $elm.css('width',  grid.verticalScrollbarWidth + 'px');
+
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = $elm[0].scrollTop;
         }
         else if ($scope.type === 'horizontal') {
-          // Update the height based on native scrollbar height
-          $elm.css('height', scrollBarWidth + 'px');
-
           $elm.addClass('horizontal');
 
           // Save this scrollbar's dimension in the grid properties
           grid.horizontalScrollbarHeight = grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 0 : scrollBarWidth;
           rowContainer.horizontalScrollbarHeight = grid.horizontalScrollbarHeight;
+
+          // Update the height based on native scrollbar height
+          $elm.css('height', grid.horizontalScrollbarHeight + 'px');
 
           // Save the initial scroll position for use in scroll events
           previousScrollPosition = gridUtil.normalizeScrollLeft($elm);
@@ -79,7 +79,26 @@
 
           // Update the vertical scrollbar's content height so it's the same as the canvas
           var contentHeight = rowContainer.getCanvasHeight();
-
+          
+          if (grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED) {
+              if (grid.verticalScrollbarWidth === 0 && contentHeight > height) {
+                $elm.css('width', scrollBarWidth  + 'px');
+                grid.verticalScrollbarWidth  = scrollBarWidth;
+                colContainer.verticalScrollbarWidth = grid.verticalScrollbarWidth;
+                // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth
+                colContainer.canvasWidth = colContainer.canvasWidth + colContainer.verticalScrollbarWidth;
+              }
+              else if (grid.verticalScrollbarWidth > 0 && contentHeight <= height) {
+                // remove the vertical scrollbar width from the canvas width, it's taken out in getCanvasWidth
+                colContainer.canvasWidth = colContainer.canvasWidth - colContainer.verticalScrollbarWidth;
+                $elm.css('width', 0  + 'px');
+                grid.verticalScrollbarWidth  = 0;
+                colContainer.verticalScrollbarWidth = grid.verticalScrollbarWidth;
+              }
+              // the height could be adjusted because of the scrollbar that is now visible
+              height = rowContainer.getViewportHeight();
+              contentHeight = rowContainer.getCanvasHeight();
+          }
           //var headerHeight = gridUtil.outerElementHeight(containerCtrl.header);
           var headerHeight = colContainer.headerHeight ? colContainer.headerHeight : grid.headerHeight;
 
@@ -107,8 +126,25 @@
             bottom -= 1;
           }
           
+          if (grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED) {
+              if (grid.horizontalScrollbarHeight === 0 && w > (colContainer.getViewportWidth() + colContainer.verticalScrollbarWidth)) {
+                $elm.css('height', scrollBarWidth  + 'px');
+                grid.horizontalScrollbarHeight  = scrollBarWidth;
+                rowContainer.horizontalScrollbarHeight = grid.horizontalScrollbarHeight;
+              }
+              else if (grid.horizontalScrollbarHeight > 0 && w <= (colContainer.getViewportWidth() + colContainer.verticalScrollbarWidth)) {
+                $elm.css('height', 0  + 'px');
+                grid.horizontalScrollbarHeight  = 0;
+                rowContainer.horizontalScrollbarHeight = grid.horizontalScrollbarHeight;
+              }
+              // the widht could be adjusted because of the scrollbar
+              w = colContainer.getCanvasWidth();
+          }          
           var adjustment = colContainer.getViewportAdjustment();
           bottom -= adjustment.height;
+          
+          // the vieport is the size minus the scrollbar height, so place it now just below it.
+          bottom -= rowContainer.horizontalScrollbarHeight;
           
           var ondemand = grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? "overflow-x:auto" : "";
           var ret = '.grid' + grid.id + ' .ui-grid-render-container-' + containerCtrl.containerId + ' .ui-grid-native-scrollbar.horizontal { bottom: ' + bottom + 'px;' +ondemand + ' }';
