@@ -43,6 +43,9 @@
 
           grid.registerColumnBuilder(service.defaultColumnBuilder);
 
+          // Row builder for custom row templates
+          grid.registerRowBuilder(service.rowTemplateAssigner);
+
           // Reset all rows to visible initially
           grid.registerRowsProcessor(function allRowsVisible(rows) {
             rows.forEach(function (row) {
@@ -179,8 +182,49 @@
           col.compiledElementFnDefer = $q.defer();
 
           return $q.all(templateGetPromises);
-        }
+        },
 
+        rowTemplateAssigner: function rowTemplateAssigner(row) {
+          var grid = this;
+
+          // Row has no template assigned to it
+          if (!row.rowTemplate) {
+            // Use the default row template from the grid
+            row.rowTemplate = grid.options.rowTemplate;
+
+            // Use the grid's function for fetching the compiled row template function
+            row.getRowTemplateFn = grid.getRowTemplateFn;
+
+            // Get the compiled row template function...
+            grid.getRowTemplateFn.then(function (rowTemplateFn) {
+              // And assign it to the row
+              row.compiledElementFn = rowTemplateFn;
+            });
+          }
+          // Row has its own template assigned
+          else {
+            // Create a promise for the compiled row template function
+            var perRowTemplateFnPromise = $q.defer();
+            row.getRowTemplateFn = perRowTemplateFnPromise.promise;
+
+            // Get the row template
+            gridUtil.getTemplate(row.rowTemplate)
+              .then(function (template) {
+                // Compile the template
+                var rowTemplateFn = $compile(template);
+
+                // Assign the compiled template function to this row
+                row.compiledElementFn = rowTemplateFn;
+
+                // Resolve the compiled template function promise
+                perRowTemplateFnPromise.resolve(rowTemplateFn);
+              },
+              function (res) {
+                // Todo handle response error here?
+                throw new Error("Couldn't fetch/use row template '" + row.rowTemplate + "'");
+              });
+          }
+        }
       };
 
       //class definitions (moved to separate factories)

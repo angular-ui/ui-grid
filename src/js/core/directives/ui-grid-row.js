@@ -23,10 +23,25 @@
             $scope.grid = uiGridCtrl.grid;
             $scope.colContainer = containerCtrl.colContainer;
 
-            grid.getRowTemplateFn.then(function (templateFn) {
-              templateFn($scope, function(clonedElement, scope) {
-                $elm.replaceWith(clonedElement);
+            // Function for attaching the template to this scope
+            function compileTemplate() {
+              var compiledElementFn = $scope.row.compiledElementFn;
+
+              compiledElementFn($scope, function (clonedElement, scope) {
+                $elm.empty().append(clonedElement);
               });
+            }
+
+            // Initially attach the compiled template to this scope
+            compileTemplate();
+
+            // If the row's compiled element function changes, we need to replace this element's contents with the new compiled template
+            $scope.$watch('row.compiledElementFn', function (newFunc, oldFunc) {
+              if (newFunc !== oldFunc) {
+                newFunc($scope, function (clonedElement, scope) {
+                  $elm.empty().append(clonedElement);
+                });
+              }
             });
           },
           post: function($scope, $elm, $attrs, controllers) {
