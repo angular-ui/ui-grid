@@ -155,7 +155,8 @@ module.exports = {
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest
      * @name dataCell
      * @description Internal method used to return a dataCell element
-     * given the grid and column
+     * given the grid and column, note it only returns from the 'body'
+     * render container
      * @param {string} gridId the id of the grid that you want to inspect
      * @param {integer} fetchRow the number of the row (within the visible rows)
      * that you want to return
@@ -169,7 +170,7 @@ module.exports = {
      * 
      */
     dataCell: function( gridId, fetchRow, fetchCol ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
+      var row = element( by.id( gridId ) ).element( by.css('.ui-grid-render-container-body')).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
       return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row( fetchCol ));
     },
 
@@ -240,8 +241,8 @@ module.exports = {
      * 
      */
     expectCellValueMatch: function( gridId, expectedRow, expectedCol, expectedValue ) {
-      var row = element( by.id( gridId ) ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( expectedRow )  );
-      expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(expectedCol)).getText()).toMatch(expectedValue);
+      var dataCell = this.dataCell( gridId, expectedRow, expectedCol );
+      expect(dataCell.getText()).toMatch(expectedValue);
     },
     
 
@@ -451,7 +452,28 @@ module.exports = {
     clickColumnMenuRemoveSort: function( gridId, colNumber ) {
       this.clickColumnMenu( gridId, colNumber, 2);
     },
-    
+ 
+      /**
+     * @ngdoc method
+     * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+     * @name clickColumnMenuHide
+     * @description Clicks on the hide item within the specified
+     * column menu.  Although it feels cumbersome to write lots of individual
+     * "click this menu item" helpers, it is quite useful if the column menus are
+     * changed to not have to go to every test script and change the menu item number  
+     * @param {string} gridId the id of the grid that you want to inspect
+     * @param {integer} colNumber the number of the column (within the visible columns)
+     * that you want to hide
+     * 
+     * @example 
+     * <pre>
+     *   gridTestUtils.clickColumnMenuHide('myGrid', 0);
+     * </pre>
+     * 
+     */
+    clickColumnMenuHide: function( gridId, colNumber ) {
+      this.clickColumnMenu( gridId, colNumber, 3);
+    },   
      /**
      * @ngdoc method
      * @methodOf ui.grid.e2eTestLibrary.api:gridTest

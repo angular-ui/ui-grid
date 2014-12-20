@@ -208,13 +208,11 @@
                  * @name scrollTo
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description brings the specified row and column into view
-                 * @param {Grid} grid the grid you'd like to act upon, usually available
-                 * from gridApi.grid
                  * @param {object} $scope a scope we can broadcast events from
                  * @param {object} rowEntity gridOptions.data[] array instance to make visible
                  * @param {object} colDef to make visible
                  */
-                scrollTo: function (grid, $scope, rowEntity, colDef) {
+                scrollTo: function ($scope, rowEntity, colDef) {
                   service.scrollTo(grid, $scope, rowEntity, colDef);
                 },
 
@@ -224,13 +222,11 @@
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description brings the specified row and column into view, and sets focus
                  * to that cell
-                 * @param {Grid} grid the grid you'd like to act upon, usually available
-                 * from gridApi.grid
                  * @param {object} $scope a scope we can broadcast events from
                  * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus
                  * @param {object} colDef to make visible and set focus
                  */
-                scrollToFocus: function (grid, $scope, rowEntity, colDef) {
+                scrollToFocus: function ($scope, rowEntity, colDef) {
                   service.scrollToFocus(grid, $scope, rowEntity, colDef);
                 },
 
@@ -350,11 +346,11 @@
         scrollTo: function (grid, $scope, rowEntity, colDef) {
           var gridRow = null, gridCol = null;
 
-          if (rowEntity !== null) {
+          if (rowEntity !== null && typeof(rowEntity) !== 'undefined' ) {
             gridRow = grid.getRow(rowEntity);
           }
 
-          if (colDef !== null) {
+          if (colDef !== null && typeof(colDef) !== 'undefined' ) {
             gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
           }
           this.scrollToInternal(grid, $scope, gridRow, gridCol);
