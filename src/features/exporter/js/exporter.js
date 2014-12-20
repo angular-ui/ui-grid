@@ -158,7 +158,7 @@
            * @ngdoc object
            * @name ui.grid.exporter.api:GridOptions
            *
-           * @description GridOptions for selection feature, these are available to be  
+           * @description GridOptions for exporter feature, these are available to be  
            * set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
           /**
