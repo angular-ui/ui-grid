@@ -1496,7 +1496,7 @@ angular.module('ui.grid')
     var self = this;
 
     self.columns.forEach(function (col) {
-      if (col !== excludeCol) {
+      if (col !== excludeCol && !col.colDef.suppressRemoveSort) {
         col.sort = {};
       }
     });
