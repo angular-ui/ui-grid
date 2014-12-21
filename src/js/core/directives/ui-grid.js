@@ -104,7 +104,6 @@
         }
       }
 
-
       $scope.$on('$destroy', function() {
         dataWatchCollectionDereg();
         columnDefWatchCollectionDereg();
