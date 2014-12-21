@@ -14,6 +14,8 @@ The options and API for exporter can be found at {@link api/ui.grid.exporter ui.
 The exporter adds menu items to the grid menu, to use the native UI you need to enable
 the grid menu using the gridOption `enableGridMenu`
 
+Note that the option to export selected data is only visible if you have data selected.
+
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 
@@ -30,7 +32,7 @@ In this example we use the native grid menu buttons, and we show both the pdf an
         ],
         enableGridMenu: true,
         enableSelectAll: true,
-        exporterLinkLabel: 'get your csv here',
+        exporterCsvFilename: 'myFile.csv',
         exporterPdfDefaultStyle: {fontSize: 9},
         exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
         exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
@@ -62,11 +64,6 @@ In this example we use the native grid menu buttons, and we show both the pdf an
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div class="custom-csv-link-location">
-        <label>Your CSV will show below:</label>
-        <span class="ui-grid-exporter-csv-link">&nbsp</span>
-      </div>
-      
       <div ui-grid="gridOptions" ui-grid-selection ui-grid-exporter class="grid"></div>
     </div>
   </file>
