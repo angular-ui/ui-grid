@@ -38,7 +38,7 @@
 
         /**
          *  @ngdoc object
-         *  @name enableRowSelection
+         *  @name enablePinning
          *  @propertyOf  ui.grid.pinning.api:GridOptions
          *  @description Enable pinning for the entire grid.  
          *  <br/>Defaults to true

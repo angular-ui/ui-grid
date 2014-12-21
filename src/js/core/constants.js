@@ -89,7 +89,8 @@
       ALL: 'all',
       EDIT: 'edit',
       ROW: 'row',
-      COLUMN: 'column'
+      COLUMN: 'column',
+      OPTIONS: 'options'
     },
     scrollbars: {
       NEVER: 0,

@@ -291,16 +291,18 @@ angular.module('ui.grid')
    * - when the api is called to inform us of a change, the declared type of that change is used
    * - when a cell edit completes, the EDIT callbacks are triggered
    * - when the columnDef watch fires, the COLUMN callbacks are triggered
+   * - when the options watch fires, the OPTIONS callbacks are triggered
    * 
    * For a given event:
-   * - ALL calls ROW, EDIT, COLUMN and ALL callbacks
+   * - ALL calls ROW, EDIT, COLUMN, OPTIONS and ALL callbacks
    * - ROW calls ROW and ALL callbacks
    * - EDIT calls EDIT and ALL callbacks
    * - COLUMN calls COLUMN and ALL callbacks
+   * - OPTIONS calls OPTIONS and ALL callbacks
    * 
    * @param {function(grid)} callback function to be called
    * @param {array} types the types of data change you want to be informed of.  Values from 
-   * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN ).  Optional and defaults to
+   * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
    * ALL 
    * @returns {string} uid of the callback, can be used to deregister it again
    */
@@ -332,10 +334,10 @@ angular.module('ui.grid')
    * @name callDataChangeCallbacks
    * @methodOf ui.grid.class:Grid
    * @description Calls the callbacks based on the type of data change that
-   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, and COLUMN callbacks if the 
+   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, COLUMN and OPTIONS callbacks if the 
    * event type is matching, or if the type is ALL.
    * @param {number} type the type of event that occurred - one of the 
-   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
+   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN, OPTIONS)
    */
   Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type, options) {
     angular.forEach( this.dataChangeCallbacks, function( callback, uid ){
@@ -363,7 +365,8 @@ angular.module('ui.grid')
     if ( type === constants.ALL || 
          type === constants.COLUMN ||
          type === constants.EDIT ||
-         type === constants.ROW ){
+         type === constants.ROW ||
+         type === constants.OPTIONS ){
       grid.callDataChangeCallbacks( type );
     } else {
       gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);

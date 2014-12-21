@@ -649,45 +649,74 @@
           scope: false,
           link: function ($scope, $elm, $attrs) {
 
-            if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection) {
-              $elm.addClass('ui-grid-disable-selection');
-              registerRowSelectionEvents();
-            }
+            var touchStartTime = 0;
+            var touchTimeout = 300;
+            var selectCells = function(evt){
+              if (evt.shiftKey) {
+                uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+              }
+              else if (evt.ctrlKey || evt.metaKey) {
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
+              }
+              else {
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+              }
+              $scope.$apply();
+            };
+
+            var touchStart = function(evt){
+              touchStartTime = (new Date()).getTime();
+            };
+            
+            var touchEnd = function(evt) {
+              var touchEndTime = (new Date()).getTime();
+              var touchTime = touchEndTime - touchStartTime;
+
+              if (touchTime < touchTimeout ) {
+                // short touch
+                selectCells(evt);
+              }
+            };
 
             function registerRowSelectionEvents() {
-              var touchStartTime = 0;
-              var touchTimeout = 300;
-              var selectCells = function(evt){
-                if (evt.shiftKey) {
-                  uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-                }
-                else if (evt.ctrlKey || evt.metaKey) {
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
-                }
-                else {
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
-                }
-                $scope.$apply();
-              };
-
-              $elm.on('touchstart', function(event) {
-                touchStartTime = (new Date()).getTime();
-              });
-
-              $elm.on('touchend', function (evt) {
-                var touchEndTime = (new Date()).getTime();
-                var touchTime = touchEndTime - touchStartTime;
-
-                if (touchTime < touchTimeout ) {
-                  // short touch
-                  selectCells(evt);
-                }
-              });
-
-              $elm.on('click', function (evt) {
-                selectCells(evt);
-              });
+              if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection) {
+                $elm.addClass('ui-grid-disable-selection');
+                $elm.on('touchstart', touchStart);
+                $elm.on('touchend', touchEnd);
+                $elm.on('click', selectCells);
+  
+                $scope.registered = true;
+              }
             }
+            
+            function deregisterRowSelectionEvents() {
+              if ($scope.registered){
+                $elm.removeClass('ui-grid-disable-selection');
+
+                $elm.off('touchstart', touchStart);
+                $elm.off('touchend', touchEnd);
+                $elm.off('click', selectCells);
+  
+                $scope.registered = false;
+              }
+            }
+            
+            registerRowSelectionEvents();
+            // register a dataChange callback so that we can change the selection configuration dynamically
+            // if the user changes the options
+            var callbackId = $scope.grid.registerDataChangeCallback( function() {
+              if ( $scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection &&
+                   !$scope.registered ){
+                registerRowSelectionEvents();
+              } else if ( ( !$scope.grid.options.enableRowSelection || $scope.grid.options.enableRowHeaderSelection ) &&
+                          $scope.registered ){
+                deregisterRowSelectionEvents();
+              }
+            }, [uiGridConstants.dataChange.OPTIONS] );
+            
+            $scope.$on( '$destroy', function() {
+              $scope.grid.deregisterDataChangCallback( callbackId );
+            });
           }
         };
       }]);

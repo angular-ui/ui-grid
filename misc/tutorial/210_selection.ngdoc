@@ -101,7 +101,7 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
         };
     }]);
     
-    app.controller('SecondCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+    app.controller('SecondCtrl', ['$scope', '$http', '$interval', 'uiGridConstants', function ($scope, $http, $interval, uiGridConstants) {
       $scope.gridOptions = { enableRowSelection: true, enableRowHeaderSelection: false };
 
       $scope.gridOptions.columnDefs = [
@@ -116,6 +116,12 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       $scope.gridOptions.noUnselect = true;
       $scope.gridOptions.onRegisterApi = function( gridApi ) {
         $scope.gridApi = gridApi;
+      };
+
+      $scope.toggleRowSelection = function() {
+        $scope.gridApi.selection.clearSelectedRows();
+        $scope.gridOptions.enableRowSelection = !$scope.gridOptions.enableRowSelection;
+        $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.OPTIONS);
       };
 
       $http.get('/data/500_complex.json')
@@ -143,7 +149,9 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
     </div>
     <div ng-controller="SecondCtrl">
-      Single selection grid without rowHeader:
+      Single selection grid without rowHeader, and allowing rowSelection to be toggled on and off dynamically:
+      <br/>
+      <button type="button" class="btn btn-success" ng-click="toggleRowSelection()">Toggle rowSelection</button>  <strong>rowSelection:</strong> <span ng-bind="gridApi.grid.options.enableRowSelection"></span>
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
     </div>
   </file>
