@@ -16,7 +16,7 @@
   module.constant('uiGridCellNavConstants', {
     FEATURE_NAME: 'gridCellNav',
     CELL_NAV_EVENT: 'cellNav',
-    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3},
+    direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3, PG_UP: 4, PG_DOWN: 5},
     EVENT_TYPE: {
       KEYDOWN: 0,
       CLICK: 1
@@ -40,6 +40,7 @@
         this.columns = colContainer.visibleColumnCache;
         this.leftColumns = leftColContainer ? leftColContainer.visibleColumnCache : [];
         this.rightColumns = rightColContainer ? rightColContainer.visibleColumnCache : [];
+        this.bodyContainer = rowContainer;
       };
 
       /** returns focusable columns of all containers */
@@ -61,6 +62,10 @@
             return this.getRowColUp(curRow, curCol);
           case uiGridCellNavConstants.direction.DOWN:
             return this.getRowColDown(curRow, curCol);
+          case uiGridCellNavConstants.direction.PG_UP:
+            return this.getRowColPageUp(curRow, curCol);
+          case uiGridCellNavConstants.direction.PG_DOWN:
+            return this.getRowColPageDown(curRow, curCol);
         }
 
       };
@@ -136,6 +141,26 @@
         }
       };
 
+      UiGridCellNav.prototype.getRowColPageDown = function (curRow, curCol) {
+        var focusableCols = this.getFocusableCols();
+        var curColIndex = focusableCols.indexOf(curCol);
+        var curRowIndex = this.rows.indexOf(curRow);
+
+        //could not find column in focusable Columns so set it to 0
+        if (curColIndex === -1) {
+          curColIndex = 0;
+        }
+
+        var pageSize = this.bodyContainer.minRowsToRender();
+        if (curRowIndex >= this.rows.length - pageSize) {
+          return new RowCol(this.rows[this.rows.length - 1], focusableCols[curColIndex]); //return last row
+        }
+        else {
+          //down one page
+          return new RowCol(this.rows[curRowIndex + pageSize], focusableCols[curColIndex]);
+        }
+      };
+
       UiGridCellNav.prototype.getRowColUp = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
         var curColIndex = focusableCols.indexOf(curCol);
@@ -155,6 +180,25 @@
         }
       };
 
+      UiGridCellNav.prototype.getRowColPageUp = function (curRow, curCol) {
+        var focusableCols = this.getFocusableCols();
+        var curColIndex = focusableCols.indexOf(curCol);
+        var curRowIndex = this.rows.indexOf(curRow);
+
+        //could not find column in focusable Columns so set it to 0
+        if (curColIndex === -1) {
+          curColIndex = 0;
+        }
+
+        var pageSize = this.bodyContainer.minRowsToRender();
+        if (curRowIndex - pageSize < 0) {
+          return new RowCol(this.rows[0], focusableCols[curColIndex]); //return first row
+        }
+        else {
+          //up one page
+          return new RowCol(this.rows[curRowIndex - pageSize], focusableCols[curColIndex]);
+        }
+      };
       return UiGridCellNav;
     }]);
 
@@ -289,13 +333,21 @@
           }
 
           if (evt.keyCode === uiGridConstants.keymap.UP ||
-            (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey)) {
+            (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey) ) {
             return uiGridCellNavConstants.direction.UP;
+          }
+
+          if (evt.keyCode === uiGridConstants.keymap.PG_UP){
+            return uiGridCellNavConstants.direction.PG_UP;
           }
 
           if (evt.keyCode === uiGridConstants.keymap.DOWN ||
             evt.keyCode === uiGridConstants.keymap.ENTER) {
             return uiGridCellNavConstants.direction.DOWN;
+          }
+          
+          if (evt.keyCode === uiGridConstants.keymap.PG_DOWN){
+            return uiGridCellNavConstants.direction.PG_DOWN;
           }
 
           return null;

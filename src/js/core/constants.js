@@ -39,6 +39,8 @@
       WIN: 91,
       MAC: 91,
       FN: null,
+      PG_UP: 33,
+      PG_DOWN: 34,
       UP: 38,
       DOWN: 40,
       LEFT: 37,
