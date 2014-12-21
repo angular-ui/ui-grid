@@ -61,7 +61,6 @@
     VISIBLE: 'visible',
     SELECTED: 'selected',
     CSV_CONTENT: 'CSV_CONTENT',
-    LINK_LABEL: 'LINK_LABEL',
     BUTTON_LABEL: 'BUTTON_LABEL',
     FILE_NAME: 'FILE_NAME'
   });
@@ -107,11 +106,9 @@
                  * uiGridExporterConstants.SELECTED
                  * @param {string} colTypes which columns to export, valid values are
                  * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE
-                 * @param {element} $elm (Optional) A UI element into which the
-                 * resulting download link will be placed. 
                  */
-                csvExport: function (rowTypes, colTypes, $elm) {
-                  service.csvExport(grid, rowTypes, colTypes, $elm);
+                csvExport: function (rowTypes, colTypes) {
+                  service.csvExport(grid, rowTypes, colTypes);
                 },
                 /**
                  * @ngdoc function
@@ -177,35 +174,6 @@
           gridOptions.exporterSuppressMenu = gridOptions.exporterSuppressMenu === true;
           /**
            * @ngdoc object
-           * @name exporterLinkTemplate
-           * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description A custom template to use for the resulting
-           * link (for csv export)
-           * <br/>Defaults to ui-grid/csvLink
-           */
-          gridOptions.exporterLinkTemplate = gridOptions.exporterLinkTemplate ? gridOptions.exporterLinkTemplate : 'ui-grid/csvLink';
-          /**
-           * @ngdoc object
-           * @name exporterHeaderTemplate
-           * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description A custom template to use for the header
-           * section, containing the button and csv download link.  Not
-           * needed if you've set suppressButton and are providing a custom
-           * $elm into which the download link will go.
-           * <br/>Defaults to ui-grid/exporterHeader
-           */
-          gridOptions.exporterHeaderTemplate = gridOptions.exporterHeaderTemplate ? gridOptions.exporterHeaderTemplate : 'ui-grid/exporterHeader';
-          /**
-           * @ngdoc object
-           * @name exporterLinkLabel
-           * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description The text to show on the CSV download
-           * link
-           * <br/>Defaults to 'Download CSV'
-           */
-          gridOptions.exporterLinkLabel = gridOptions.exporterLinkLabel ? gridOptions.exporterLinkLabel : 'Download CSV';
-          /**
-           * @ngdoc object
            * @name exporterMenuLabel
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The text to show on the exporter menu button
@@ -239,8 +207,8 @@
            * @ngdoc object
            * @name exporterCsvFilename
            * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description The default filename to use when saving the downloaded csv
-           * link.  This will only work in some browsers.
+           * @description The default filename to use when saving the downloaded csv.  
+           * This will only work in some browsers.
            * <br/>Defaults to 'download.csv'
            */
           gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
@@ -547,13 +515,6 @@
         
 
         /**
-         * @ngdoc object
-         * @name exporterCsvLinkElement
-         * @propertyOf  ui.grid.exporter.api:GridOptions
-         * @description The element that the csv link should be placed into.
-         * Mandatory if using the native UI.
-         */
-        /**
          * @ngdoc function
          * @name csvExport
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
@@ -566,23 +527,13 @@
          * @param {string} colTypes which columns to export, valid values are
          * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
          * uiGridExporterConstants.SELECTED
-         * @param {element} $elm (Optional) A UI element into which the
-         * resulting download link will be placed. 
          */
-        csvExport: function (grid, rowTypes, colTypes, $elm) {
+        csvExport: function (grid, rowTypes, colTypes) {
           var exportColumnHeaders = this.getColumnHeaders(grid, colTypes);
           var exportData = this.getData(grid, rowTypes, colTypes);
           var csvContent = this.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
           
-          if ( !$elm && grid.options.exporterCsvLinkElement ){
-            $elm = grid.options.exporterCsvLinkElement;
-          }
-          
-          if ( $elm ){
-            this.renderCsvLink(grid, csvContent, $elm);
-          } else {
-            gridUtil.logError( 'Exporter asked to export as csv, but no element provided.  Perhaps you should set gridOptions.exporterCsvLinkElement?')
-;          }
+          this.downloadFile (grid.options.exporterCsvFilename, csvContent);
         },
         
         
@@ -754,49 +705,60 @@
           return JSON.stringify(field.value);        
         },
 
+
         /**
          * @ngdoc function
-         * @name renderCsvLink
+         * @name downloadFile
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
-         * @description Creates a download link with the csv content, 
-         * putting it into the default exporter element, or into the element
-         * passed in if provided
-         * @param {Grid} grid the grid from which data should be exported
+         * @description Triggers download of a csv file.  Logic provided
+         * by @cssensei (from his colleagues at https://github.com/ifeelgoods) in issue #2391
+         * @param {string} fileName the filename we'd like our file to be
+         * given
          * @param {string} csvContent the csv content that we'd like to 
-         * make available as a download link
-         * @param {element} $elm (Optional) A UI element into which the
-         * resulting download link will be placed.  If not provided, the
-         * link is put into the default exporter element. 
+         * download as a file
          */
-        renderCsvLink: function (grid, csvContent, $elm) {
-          var targetElm = $elm ? $elm : angular.element( grid.exporter.gridElm[0].querySelectorAll('.ui-grid-exporter-csv-link') );
-          if ( angular.element( targetElm[0].querySelectorAll('.ui-grid-exporter-csv-link-span')) ) {
-            angular.element( targetElm[0].querySelectorAll('.ui-grid-exporter-csv-link-span')).remove();
+        downloadFile: function (fileName, csvContent) {
+          var D = document;
+          var a = D.createElement('a');
+          var strMimeType = 'application/octet-stream;charset=utf-8';
+          var rawFile;
+      
+          // IE10+
+          if (navigator.msSaveBlob) {
+            return navigator.msSaveBlob(new Blob([csvContent], {
+              type: strMimeType
+            }), fileName);
           }
-          
-          var linkTemplate = gridUtil.getTemplate(grid.options.exporterLinkTemplate)
-          .then(function (contents) {
-
-              var template = angular.element(contents);
-
-              template.children("a").html(
-                  template.children("a").html().replace(
-                      uiGridExporterConstants.LINK_LABEL, grid.options.exporterLinkLabel));
-
-              template.children("a").attr("href", 
-                  template.children("a").attr("href").replace(
-                      uiGridExporterConstants.CSV_CONTENT, encodeURIComponent(csvContent)));
-
-              template.children("a").attr("download", 
-                  template.children("a").attr("download").replace(
-                      uiGridExporterConstants.FILE_NAME, grid.options.exporterCsvFilename));
-            
-            var newElm = $compile(template)(grid.exporter.$scope);
-            targetElm.append(newElm);
-          });
-          
+      
+          //html5 A[download]
+          if ('download' in a) {
+            var blob = new Blob([csvContent], {
+              type: strMimeType
+            });
+            rawFile = URL.createObjectURL(blob);
+            a.setAttribute('download', fileName);
+          } else {
+            rawFile = 'data:' + strMimeType + ',' + encodeURIComponent(csvContent);
+            a.setAttribute('target', '_blank');
+          }
+      
+          a.href = rawFile;
+          a.setAttribute('style', 'display:none;');
+          D.body.appendChild(a);
+          setTimeout(function() {
+            if (a.click) {
+              a.click();
+              // Workaround for Safari 5
+            } else if (document.createEvent) {
+              var eventObj = document.createEvent('MouseEvents');
+              eventObj.initEvent('click', true, true);
+              a.dispatchEvent(eventObj);
+            }
+            D.body.removeChild(a);
+    
+          }, 100);
         },
-        
+
         /**
          * @ngdoc function
          * @name pdfExport

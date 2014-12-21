@@ -66,9 +66,6 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
         exporterSuppressMenu: false,
-        exporterLinkTemplate: 'ui-grid/csvLink',
-        exporterHeaderTemplate: 'ui-grid/exporterHeader',
-        exporterLinkLabel: 'Download CSV',
         exporterMenuLabel: 'Export',
         exporterCsvColumnSeparator: ',',
         exporterCsvFilename: 'download.csv',
@@ -93,9 +90,6 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var callback = function() {};
       options = {
         exporterSuppressMenu: true,
-        exporterLinkTemplate: 'myCsvLink',
-        exporterHeaderTemplate: 'myExporterHeader',
-        exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
         exporterCsvColumnSeparator: ';',
         exporterCsvFilename: 'myfile.csv',
@@ -117,9 +111,6 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
         exporterSuppressMenu: true,
-        exporterLinkTemplate: 'myCsvLink',
-        exporterHeaderTemplate: 'myExporterHeader',
-        exporterLinkLabel: 'special download label',
         exporterMenuLabel: 'custom export button',
         exporterCsvColumnSeparator: ';',
         exporterCsvFilename: 'myfile.csv',
@@ -318,38 +309,6 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       );
     });
   });
-  
-/*  
-  describe('renderCSVLink', function() {
-    var csvContent;
-    var elm;
-    beforeEach(function() {
-      csvContent = '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"2014-12-12T00:00:00.000Z",45,"A string",TRUE';
-
-      elm = angular.element('<div class="ui-grid-exporter-header"><button class="ui-grid-exporter-menu-button" ng-if="showButton" ng-click="showExportMenu()"></button><div class="ui-grid-exporter-menu" ui-grid-exporter-menu ui-grid-menu menu-items="menuItems"></div><span class="ui-grid-exporter-csv-link"></span></div><div ui-grid></dev>');
-      
-      $compile(elm)($scope);
-      $document[0].body.appendChild(elm[0]);
-
-      $scope.$digest();
-      
-      grid.exporter.headerElm = elm;
-    });
-
-    it('render a link with no extra options', function() {
-      uiGridExporterService.renderCSVLink( grid, csvContent );
-      
-    });
-
-    it('', function() {
-      
-    });
-
-    it('', function() {
-      
-    });
-  });
-*/
 
   describe( 'prepareAsPdf', function() {
     it( 'prepares standard grid using defaults', function() {
