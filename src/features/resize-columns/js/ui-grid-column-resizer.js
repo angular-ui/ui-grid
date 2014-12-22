@@ -486,7 +486,7 @@
             maxWidth = col.colDef.maxWidth;
           }
 
-          col.width = parseInt(maxWidth, 10);
+          col.width = parseInt(maxWidth + 2, 10);
           
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
