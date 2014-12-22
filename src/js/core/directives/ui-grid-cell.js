@@ -87,8 +87,8 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
             rowWatchDereg(); 
           };
           
-          
           $scope.$on( '$destroy', deregisterFunction );
+          $elm.on( '$destroy', deregisterFunction );
         }
       };
     }
