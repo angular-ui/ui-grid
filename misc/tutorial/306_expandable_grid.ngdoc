@@ -175,6 +175,5 @@ $scope.gridOptions = {
 
     name: 'Custom Name',
     width: 50
-      },
-
+      }
 }
