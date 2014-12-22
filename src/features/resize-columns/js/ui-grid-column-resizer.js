@@ -453,6 +453,9 @@
               var menuButton;
               if (angular.element(cell).parent().hasClass('ui-grid-header-cell')) {
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
+                headerCell = true;
+              } else if (angular.element(cell).parent().parent().hasClass('ui-grid-header-cell')){
+                headerCell = true;
               }
 
               gridUtil.fakeElement(cell, {}, function(newElm) {
@@ -466,6 +469,10 @@
                   var menuButtonWidth = gridUtil.elementWidth(menuButton);
                   width = width + menuButtonWidth;
                 }
+                
+                if (!headerCell) {
+                    width+=17;
+                }
 
                 if (width > maxWidth) {
                   maxWidth = width;
@@ -473,7 +480,7 @@
                 }
               });
             });
-
+          
           // If the new width is less than the minimum width, make it the minimum width
           if (col.colDef.minWidth && maxWidth < col.colDef.minWidth) {
             maxWidth = col.colDef.minWidth;
@@ -486,7 +493,7 @@
             maxWidth = col.colDef.maxWidth;
           }
 
-          col.width = parseInt(maxWidth + 2, 10);
+          col.width = parseInt(maxWidth, 10);
           
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
