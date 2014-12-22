@@ -232,7 +232,7 @@
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
               if ( uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
-                uiGridCtrl.grid.addRowHeaderColumn(grid.options.expandableRowHeaderColDef);
+                uiGridCtrl.grid.addRowHeaderColumn(uiGridCtrl.grid.options.expandableRowHeaderColDef);
               }
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
