@@ -715,7 +715,7 @@
             }, [uiGridConstants.dataChange.OPTIONS] );
             
             $scope.$on( '$destroy', function() {
-              $scope.grid.deregisterDataChangCallback( callbackId );
+              $scope.grid.deregisterDataChangeCallback( callbackId );
             });
           }
         };
