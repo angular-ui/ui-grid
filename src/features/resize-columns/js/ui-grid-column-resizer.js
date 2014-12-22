@@ -450,7 +450,7 @@
               // gridUtil.logDebug('width', gridUtil.elementWidth(cell));
 
               // Account for the menu button if it exists
-              var menuButton;
+              var menuButton, headerCell = false;
               if (angular.element(cell).parent().hasClass('ui-grid-header-cell')) {
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
                 headerCell = true;
