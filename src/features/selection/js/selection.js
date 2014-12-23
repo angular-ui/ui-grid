@@ -155,6 +155,7 @@
                     }
                   });
                   service.decideRaiseSelectionBatchEvent( grid, changedRows );
+                  grid.selection.selectAll = true;
                 },
                 /**
                  * @ngdoc function
@@ -182,6 +183,7 @@
                     }
                   });
                   service.decideRaiseSelectionBatchEvent( grid, changedRows );
+                  grid.selection.selectAll = true;
                 },
                 /**
                  * @ngdoc function
@@ -366,6 +368,8 @@
             row.isSelected = !selected;
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
+            } else {
+              grid.selection.selectAll = false;
             }
             grid.api.selection.raise.rowSelectionChanged(row);
           }
@@ -435,6 +439,7 @@
             }
           });
           service.decideRaiseSelectionBatchEvent( grid, changedRows );
+          grid.selection.selectAll = false;
         },
         
         /**
@@ -714,7 +719,7 @@
               }
             }, [uiGridConstants.dataChange.OPTIONS] );
             
-            $scope.$on( '$destroy', function() {
+            $elm.on( '$destroy', function() {
               $scope.grid.deregisterDataChangeCallback( callbackId );
             });
           }

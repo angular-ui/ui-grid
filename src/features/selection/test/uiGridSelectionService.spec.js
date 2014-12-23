@@ -150,25 +150,43 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     it('should select all rows, and select all rows when already all selected, then unselect again', function () {
       grid.api.selection.selectRow(grid.rows[4].entity);
       expect(grid.rows[4].isSelected).toBe(true);
+      expect(grid.selection.selectAll).toBe(false);
       
       grid.api.selection.selectRow(grid.rows[6].entity);
       expect(grid.rows[4].isSelected).toBe(true);
       expect(grid.rows[6].isSelected).toBe(true);
+      expect(grid.selection.selectAll).toBe(false);
 
       grid.api.selection.selectAllRows();
       for (var i = 0; i < 10; i++) {
         expect(grid.rows[i].isSelected).toBe(true);
       }
+      expect(grid.selection.selectAll).toBe(true);
 
       grid.api.selection.selectAllRows();
       for (i = 0; i < 10; i++) {
         expect(grid.rows[i].isSelected).toBe(true);
       }
+      expect(grid.selection.selectAll).toBe(true);
       
       grid.api.selection.clearSelectedRows();
       for (i = 0; i < 10; i++) {
         expect(grid.rows[i].isSelected).toBe(false);
       }
+      expect(grid.selection.selectAll).toBe(false);
+    });     
+  });
+
+  describe('toggle selected clears selectAll', function() {
+    it('should select all rows, toggle selection for one row removes selectAll', function () {
+      grid.api.selection.selectAllRows();
+      for (var i = 0; i < 10; i++) {
+        expect(grid.rows[i].isSelected).toBe(true);
+      }
+      expect(grid.selection.selectAll).toBe(true);
+
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], false);
+      expect(grid.selection.selectAll).toBe(false);
     });     
   });
 
@@ -186,6 +204,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       grid.rows[6].visible = false;
       grid.rows[7].visible = true;
       grid.rows[9].visible = true;
+      expect(grid.selection.selectAll).toBe(false);
       
       grid.api.selection.selectAllVisibleRows();
       expect(grid.rows[3].isSelected).toBe(true);
@@ -193,6 +212,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[6].isSelected).toBe(false);
       expect(grid.rows[7].isSelected).toBe(true);
       expect(grid.rows[9].isSelected).toBe(true);
+      expect(grid.selection.selectAll).toBe(true);
     });
   });
 
