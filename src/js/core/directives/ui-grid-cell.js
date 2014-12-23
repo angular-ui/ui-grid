@@ -77,6 +77,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
             }
           };
 
+          // TODO(c0bra): Turn this into a deep array watch
           var colWatchDereg = $scope.$watch( 'col', cellChangeFunction );
           var rowWatchDereg = $scope.$watch( 'row', cellChangeFunction );
           

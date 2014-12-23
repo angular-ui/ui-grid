@@ -1,4 +1,4 @@
-ddescribe('uiGridRow', function () {
+describe('uiGridRow', function () {
   var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, GridRow, gridUtil;
 
   data = [
@@ -43,7 +43,7 @@ ddescribe('uiGridRow', function () {
   }));
 
   describe('with different row templates', function () {
-    beforeEach(inject(function($templateCache) {
+    beforeEach(inject(function($templateCache, $q) {
       $templateCache.put('customRowTemplate', '<div><div>The name is: {{ row.entity.name }}</div></div>');
 
       $scope.gridApi.grid.registerRowsProcessor(function alterTemplates(rows, cols) {
@@ -54,7 +54,7 @@ ddescribe('uiGridRow', function () {
             row.rowTemplate = 'customRowTemplate';
             gridUtil.getTemplate(row.rowTemplate)
               .then(function (template) {
-                row.compiledElementFn = $compile(template);
+                row.getRowTemplateFn = $q.when($compile(template));
               });
           }
         });

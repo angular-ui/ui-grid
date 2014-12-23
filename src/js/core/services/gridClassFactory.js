@@ -194,12 +194,6 @@
 
             // Use the grid's function for fetching the compiled row template function
             row.getRowTemplateFn = grid.getRowTemplateFn;
-
-            // Get the compiled row template function...
-            grid.getRowTemplateFn.then(function (rowTemplateFn) {
-              // And assign it to the row
-              row.compiledElementFn = rowTemplateFn;
-            });
           }
           // Row has its own template assigned
           else {
@@ -212,10 +206,7 @@
               .then(function (template) {
                 // Compile the template
                 var rowTemplateFn = $compile(template);
-
-                // Assign the compiled template function to this row
-                row.compiledElementFn = rowTemplateFn;
-
+                
                 // Resolve the compiled template function promise
                 perRowTemplateFnPromise.resolve(rowTemplateFn);
               },
@@ -224,6 +215,8 @@
                 throw new Error("Couldn't fetch/use row template '" + row.rowTemplate + "'");
               });
           }
+
+          return row.getRowTemplateFn;
         }
       };
 
