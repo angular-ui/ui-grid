@@ -108,7 +108,7 @@
             self.grid.modifyRows(newData)
               .then(function () {
                 // if (self.viewport) {
-                  self.grid.redrawInPlace();
+                  self.grid.redrawInPlace(true);
                 // }
 
                 $scope.$evalAsync(function() {

@@ -2001,9 +2001,10 @@ angular.module('ui.grid')
    * @name redrawCanvas
    * @methodOf ui.grid.class:Grid
    * @description Redraw the rows and columns based on our current scroll position
+   * @param {boolean} [rowsAdded] Optional to indicate rows are added and the scroll percentage must be recalculated
    * 
    */
-  Grid.prototype.redrawInPlace = function redrawInPlace() {
+  Grid.prototype.redrawInPlace = function redrawInPlace(rowsAdded) {
     // gridUtil.logDebug('redrawInPlace');
     
     var self = this;
@@ -2012,9 +2013,15 @@ angular.module('ui.grid')
       var container = self.renderContainers[i];
 
       // gridUtil.logDebug('redrawing container', i);
-
-      container.adjustRows(null, container.prevScrolltopPercentage, true);
-      container.adjustColumns(null, container.prevScrollleftPercentage);
+      
+      if (rowsAdded) {
+        container.adjustRows(container.prevScrollTop, null);
+        container.adjustColumns(container.prevScrollTop, null);
+      }
+      else {
+        container.adjustRows(null, container.prevScrolltopPercentage);
+        container.adjustColumns(null, container.prevScrollleftPercentage);
+      }
     }
   };
 
