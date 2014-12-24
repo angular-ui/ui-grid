@@ -254,6 +254,11 @@
           if (args.target && (args.target === $elm || angular.element(args.target).hasClass('ui-grid-native-scrollbar'))) {
             return;
           }
+          
+          // Don't listen to scrolls from other grids
+          if (args.grid && args.grid.id !== grid.id){
+            return;
+          }
 
           // Set the source of the scroll event in our scope so it's available in our 'scroll' event handler
           $scope.scrollSource = args.target;

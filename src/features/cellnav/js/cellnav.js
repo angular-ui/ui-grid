@@ -472,6 +472,8 @@
          */
         scrollToInternal: function (grid, $scope, gridRow, gridCol) {
           var args = {};
+          
+          args.grid = grid;
 
           if (gridRow !== null) {
             var seekRowIndex = grid.renderContainers.body.visibleRowCache.indexOf(gridRow);
@@ -503,6 +505,8 @@
          */
         scrollToIfNecessary: function (grid, $scope, gridRow, gridCol) {
           var args = {};
+          
+          args.grid = grid;
 
           // Alias the visible row and column caches 
           var visRowCache = grid.renderContainers.body.visibleRowCache;
@@ -823,6 +827,11 @@
 
               // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
               $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+                // Skip if not this grid that the event was broadcast for
+                if (args.grid && args.grid.id !== uiGridCtrl.grid.id) {
+                  return;
+                }
+
                 // Skip if there's no currently-focused cell
                 if (uiGridCtrl.grid.api.cellNav.getFocusedCell() == null) {
                   return;
