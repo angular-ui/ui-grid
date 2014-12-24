@@ -54,11 +54,11 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
         };
         
         $scope.scrollTo = function( rowIndex, colIndex ) {
-          $scope.gridApi.cellNav.scrollTo( $scope.gridApi.grid, $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+          $scope.gridApi.cellNav.scrollTo( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
         };
 
         $scope.scrollToFocus = function( rowIndex, colIndex ) {
-          $scope.gridApi.cellNav.scrollToFocus( $scope.gridApi.grid, $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+          $scope.gridApi.cellNav.scrollToFocus( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
         };
 
         $scope.gridOptions.onRegisterApi = function(gridApi){

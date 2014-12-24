@@ -8,10 +8,18 @@ each other.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.cellNav']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
+      $scope.gridOptions = {
+        onRegisterApi: function(gridApi){
+          $scope.gridApi = gridApi;
+        }
+      };
+      
+      $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollTo( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+      };
 
       $http.get('/data/100.json')
         .success(function(data) {
@@ -32,10 +40,11 @@ each other.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="firstGrid" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+      <button type="button" class="btn btn-success" ng-click="scrollTo(20,0)">Scroll To Row 20</button>
+      <div id="firstGrid" ui-grid="gridOptions" ui-grid-selection ui-grid-cellNav class="grid"></div>
     </div>
     <div ng-controller="SecondCtrl">
-      <div id="secondGrid" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+      <div id="secondGrid" ui-grid="gridOptions" ui-grid-selection ui-grid-cellNav class="grid"></div>
     </div>
   </file>
   <file name="main.css">
