@@ -555,7 +555,11 @@ angular.module('ui.grid')
       });
     });
     
-    return $q.all(builderPromises);
+    return $q.all(builderPromises).then(function(){
+      if (self.rows.length > 0){
+        self.assignTypes();
+      }
+    });
   };
 
 /**
@@ -737,9 +741,9 @@ angular.module('ui.grid')
             });
         }
         //now that we have data, it is save to assign types to colDefs
-        if (wasEmpty) {
+//        if (wasEmpty) {
            self.assignTypes();
-        }
+//        }
     } else {
     if (self.rows.length === 0 && newRawData.length > 0) {
       if (self.options.enableRowHashing) {
