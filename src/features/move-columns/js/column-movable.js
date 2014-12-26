@@ -210,7 +210,7 @@
    *
    *  On receiving mouseDown event headerCell is cloned, now as the mouse moves the cloned header cell also moved in the grid.
    *  In case the moving cloned header cell reaches the left or right extreme of grid, grid scrolling is triggered (if horizontal scroll exists).
-   *  On mouseUp event column is repositioned at position where mouse is released and coned header cell is removed.
+   *  On mouseUp event column is repositioned at position where mouse is released and cloned header cell is removed.
    *
    *  Events that invoke cloning of header cell:
    *    - mousedown
