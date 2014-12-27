@@ -160,7 +160,7 @@
            */
           /**
            * @ngdoc object
-           * @name ui.grid.exporter.api:GridOptions.columnDef
+           * @name ui.grid.exporter.api:ColumnDef
            * @description ColumnDef settings for exporter
            */
           /**
@@ -575,18 +575,35 @@
         
         /** 
          * @ngdoc property
-         * @propertyOf ui.grid.exporter.api:GridOptions.columnDef
+         * @propertyOf ui.grid.exporter.api:ColumnDef
          * @name exporterPdfAlign
          * @description the alignment you'd like for this specific column when
          * exported into a pdf.  Can be 'left', 'right', 'center' or any other
          * valid pdfMake alignment option.
          */
+
+
+        /**
+         * @ngdoc object
+         * @name ui.grid.exporter.api:GridRow
+         * @description GridRow settings for exporter
+         */
+        /**
+         * @ngdoc object
+         * @name exporterEnableExporting
+         * @propertyOf  ui.grid.exporter.api:GridRow
+         * @description If set to false, then don't export this row, notwithstanding visible or 
+         * other settings
+         * <br/>Defaults to true
+         */
+
         /**
          * @ngdoc function
          * @name getData
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Gets data from the grid based on the provided options,
-         * all cells have cellFilters applied as appropriate
+         * all cells have cellFilters applied as appropriate.  Any rows marked
+         * `exporterEnableExporting: false` will not be exported
          * @param {Grid} grid the grid from which data should be exported
          * @param {string} rowTypes which rows to export, valid values are
          * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
@@ -618,20 +635,22 @@
           
           angular.forEach(rows, function( row, index ) {
 
-            var extractedRow = [];
-            angular.forEach(grid.columns, function( gridCol, index ) {
-            if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
-                 gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
-                 grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
-                var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, grid.getCellValue( row, gridCol ) ) };
-                if ( gridCol.colDef.exporterPdfAlign ) {
-                  extractedField.alignment = gridCol.colDef.exporterPdfAlign;                 
+            if (row.exporterEnableExporting !== false) {
+              var extractedRow = [];
+              angular.forEach(grid.columns, function( gridCol, index ) {
+              if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
+                   gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
+                   grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
+                  var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, grid.getCellValue( row, gridCol ) ) };
+                  if ( gridCol.colDef.exporterPdfAlign ) {
+                    extractedField.alignment = gridCol.colDef.exporterPdfAlign;                 
+                  }
+                  extractedRow.push(extractedField);
                 }
-                extractedRow.push(extractedField);
-              }
-            });
-            
-            data.push(extractedRow);
+              });
+              
+              data.push(extractedRow);
+            }
           });
           
           return data;
