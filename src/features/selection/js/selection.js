@@ -93,7 +93,7 @@
                  */
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null) {
+                  if (row !== null && row.enableSelection !== false) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -107,7 +107,7 @@
                  */
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && !row.isSelected) {
+                  if (row !== null && !row.isSelected && row.enableSelection !== false) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -124,7 +124,7 @@
                  */
                 selectRowByVisibleIndex: function ( rowNum, evt ) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof(row) !== 'undefined' && !row.isSelected) {
+                  if (row !== null && typeof(row) !== 'undefined' && !row.isSelected && row.enableSelection !== false) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -156,7 +156,7 @@
 
                   var changedRows = [];
                   grid.rows.forEach(function (row) {
-                    if ( !row.isSelected ){
+                    if ( !row.isSelected && row.enableSelection !== false ){
                       row.isSelected = true;
                       service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
                     }
@@ -179,7 +179,7 @@
                   var changedRows = [];
                   grid.rows.forEach(function (row) {
                     if (row.visible) {
-                      if (!row.isSelected){
+                      if (!row.isSelected && row.enableSelection !== false){
                         row.isSelected = true;
                         service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
                       }
@@ -275,6 +275,23 @@
            *  @description GridOptions for selection feature, these are available to be
            *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.selection.api:GridRow
+           *
+           *  @description GridRow options for selection feature
+           */
+          /**
+           *  @ngdoc object
+           *  @name enableSelection
+           *  @propertyOf  ui.grid.selection.api:GridRow
+           *  @description Enable row selection for this row, only settable by internal code.
+           * 
+           *  The grouping feature, for example, might set group header rows to not be selectable.
+           *  <br/>Defaults to true
+           */
+
 
           /**
            *  @ngdoc object
@@ -374,7 +391,7 @@
 
           if (selected && noUnselect){
             // don't deselect the row 
-          } else {
+          } else if (row.enableSelection !== false) {
             row.isSelected = !selected;
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
@@ -412,7 +429,7 @@
           for (var i = fromRow; i <= toRow; i++) {
             var rowToSelect = grid.renderContainers.body.visibleRowCache[i];
             if (rowToSelect) {
-              if ( !rowToSelect.isSelected ){
+              if ( !rowToSelect.isSelected && rowToSelect.enableSelection !== false ){
                 rowToSelect.isSelected = true;
                 grid.selection.lastSelectedRow = rowToSelect;
                 service.decideRaiseSelectionEvent( grid, rowToSelect, changedRows, evt );
