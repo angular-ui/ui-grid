@@ -221,6 +221,14 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       ]);
     });
 
+    it('ignores disabled row', function() {
+      grid.rows[1].exporterEnableExporting = false;
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+        [ {value: 'a_0'}, {value: 'b_0'}, {value: 'c_0'}, {value: 'd_0'} ],
+        [ {value: 'a_2'}, {value: 'b_2'}, {value: 'c_2'}, {value: 'd_2'} ]
+      ]);
+    });
+
     it('gets visible rows and columns', function() {
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE)).toEqual([
         [ {value: 'a_0'}, {value: 'b_0'}, {value: 'd_0'} ],
