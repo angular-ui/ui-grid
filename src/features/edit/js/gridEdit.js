@@ -368,6 +368,22 @@
    *    - uiGridConstants.events.GRID_SCROLL
    *
    */
+
+  /**
+   *  @ngdoc object
+   *  @name ui.grid.edit.api:GridRow
+   *
+   *  @description GridRow options for edit feature, these are available to be
+   *  set internally only, by other features
+   */
+
+  /**
+   *  @ngdoc object
+   *  @name enableCellEdit
+   *  @propertyOf  ui.grid.edit.api:GridRow
+   *  @description enable editing on row, grouping for example might disable editing on group header rows
+   */
+
   module.directive('uiGridCell',
     ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
       function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
@@ -379,7 +395,7 @@
           scope: false,
           require: '?^uiGrid',
           link: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (!$scope.col.colDef.enableCellEdit) {
+            if (!$scope.col.colDef.enableCellEdit || $scope.row.enableCellEdit === false) {
               return;
             }
 
