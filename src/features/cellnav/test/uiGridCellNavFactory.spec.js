@@ -94,6 +94,15 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
     });
 
+    it('should skip row that is not focusable', function () {
+      var col = grid.columns[2];
+      var row = grid.rows[0];
+      grid.rows[1].allowCellFocus = false;
+      var cellNav = new UiGridCellNav(grid.renderContainers.body, grid.renderContainers.body, null, null);
+      var rowCol = cellNav.getNextRowCol(uiGridCellNavConstants.direction.DOWN, row, col);
+      expect(rowCol.row).toBe(grid.rows[2]);
+      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+    });
   });
 
 
