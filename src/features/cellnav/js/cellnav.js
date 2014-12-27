@@ -52,6 +52,13 @@
         });
       };
 
+      /** returns focusable rows */
+      UiGridCellNav.prototype.getFocusableRows = function () {
+        return this.rows.filter(function(row) {
+          return row.allowCellFocus !== false;
+        });
+      };
+
       UiGridCellNav.prototype.getNextRowCol = function (direction, curRow, curCol) {
         switch (direction) {
           case uiGridCellNavConstants.direction.LEFT:
@@ -72,8 +79,9 @@
 
       UiGridCellNav.prototype.getRowColLeft = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 1
         if (curColIndex === -1) {
@@ -89,7 +97,7 @@
           }
           else {
             //up one row and far right column
-            return new RowCol(this.rows[curRowIndex - 1], focusableCols[nextColIndex]);
+            return new RowCol(focusableRows[curRowIndex - 1], focusableCols[nextColIndex]);
           }
         }
         else {
@@ -99,8 +107,9 @@
 
       UiGridCellNav.prototype.getRowColRight = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 0
         if (curColIndex === -1) {
@@ -109,12 +118,12 @@
         var nextColIndex = curColIndex === focusableCols.length - 1 ? 0 : curColIndex + 1;
 
         if (nextColIndex < curColIndex) {
-          if (curRowIndex === this.rows.length - 1) {
+          if (curRowIndex === focusableRows.length - 1) {
             return new RowCol(curRow, focusableCols[nextColIndex]); //return same row
           }
           else {
             //down one row and far left column
-            return new RowCol(this.rows[curRowIndex + 1], focusableCols[nextColIndex]);
+            return new RowCol(focusableRows[curRowIndex + 1], focusableCols[nextColIndex]);
           }
         }
         else {
@@ -124,27 +133,29 @@
 
       UiGridCellNav.prototype.getRowColDown = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 0
         if (curColIndex === -1) {
           curColIndex = 0;
         }
 
-        if (curRowIndex === this.rows.length - 1) {
+        if (curRowIndex === focusableRows.length - 1) {
           return new RowCol(curRow, focusableCols[curColIndex]); //return same row
         }
         else {
           //down one row
-          return new RowCol(this.rows[curRowIndex + 1], focusableCols[curColIndex]);
+          return new RowCol(focusableRows[curRowIndex + 1], focusableCols[curColIndex]);
         }
       };
 
       UiGridCellNav.prototype.getRowColPageDown = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 0
         if (curColIndex === -1) {
@@ -152,19 +163,20 @@
         }
 
         var pageSize = this.bodyContainer.minRowsToRender();
-        if (curRowIndex >= this.rows.length - pageSize) {
-          return new RowCol(this.rows[this.rows.length - 1], focusableCols[curColIndex]); //return last row
+        if (curRowIndex >= focusableRows.length - pageSize) {
+          return new RowCol(focusableRows[focusableRows.length - 1], focusableCols[curColIndex]); //return last row
         }
         else {
           //down one page
-          return new RowCol(this.rows[curRowIndex + pageSize], focusableCols[curColIndex]);
+          return new RowCol(focusableRows[curRowIndex + pageSize], focusableCols[curColIndex]);
         }
       };
 
       UiGridCellNav.prototype.getRowColUp = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 0
         if (curColIndex === -1) {
@@ -176,14 +188,15 @@
         }
         else {
           //up one row
-          return new RowCol(this.rows[curRowIndex - 1], focusableCols[curColIndex]);
+          return new RowCol(focusableRows[curRowIndex - 1], focusableCols[curColIndex]);
         }
       };
 
       UiGridCellNav.prototype.getRowColPageUp = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
         var curColIndex = focusableCols.indexOf(curCol);
-        var curRowIndex = this.rows.indexOf(curRow);
+        var curRowIndex = focusableRows.indexOf(curRow);
 
         //could not find column in focusable Columns so set it to 0
         if (curColIndex === -1) {
@@ -192,11 +205,11 @@
 
         var pageSize = this.bodyContainer.minRowsToRender();
         if (curRowIndex - pageSize < 0) {
-          return new RowCol(this.rows[0], focusableCols[curColIndex]); //return first row
+          return new RowCol(focusableRows[0], focusableCols[curColIndex]); //return first row
         }
         else {
           //up one page
-          return new RowCol(this.rows[curRowIndex - pageSize], focusableCols[curColIndex]);
+          return new RowCol(focusableRows[curRowIndex - pageSize], focusableCols[curColIndex]);
         }
       };
       return UiGridCellNav;
@@ -345,7 +358,7 @@
             evt.keyCode === uiGridConstants.keymap.ENTER) {
             return uiGridCellNavConstants.direction.DOWN;
           }
-          
+
           if (evt.keyCode === uiGridConstants.keymap.PG_DOWN){
             return uiGridCellNavConstants.direction.PG_DOWN;
           }
@@ -431,14 +444,14 @@
             gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
           }
           this.scrollToInternal(grid, $scope, gridRow, gridCol);
-          
+
           var rowCol = { row: gridRow, col: gridCol };
 
           // Broadcast the navigation
           grid.cellNav.broadcastCellNav(rowCol);
-          
+
         },
-        
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
@@ -446,20 +459,20 @@
          * @description Like scrollTo, but takes gridRow and gridCol.
          * In calculating the scroll height we have to deal with wanting
          * 0% for the first row, and 100% for the last row.  Normal maths
-         * for a 10 row list would return 1/10 = 10% for the first row, so 
+         * for a 10 row list would return 1/10 = 10% for the first row, so
          * we need to tweak the numbers to add an extra 10% somewhere.  The
          * formula if we're trying to get to row 0 in a 10 row list (assuming our
          * index is zero based, so the last row is row 9) is:
          * <pre>
          *   0 + 0 / 10 = 0%
          * </pre>
-         * 
-         * To get to row 9 (i.e. the last row) in the same list, we want to 
+         *
+         * To get to row 9 (i.e. the last row) in the same list, we want to
          * go to:
          * <pre>
          *  ( 9 + 1 ) / 10 = 100%
          * </pre>
-         * So we need to apportion one whole row within the overall grid scroll, 
+         * So we need to apportion one whole row within the overall grid scroll,
          * the formula is:
          * <pre>
          *   ( index + ( index / (total rows - 1) ) / total rows
@@ -472,7 +485,7 @@
          */
         scrollToInternal: function (grid, $scope, gridRow, gridCol) {
           var args = {};
-          
+
           args.grid = grid;
 
           if (gridRow !== null) {
@@ -505,10 +518,10 @@
          */
         scrollToIfNecessary: function (grid, $scope, gridRow, gridCol) {
           var args = {};
-          
+
           args.grid = grid;
 
-          // Alias the visible row and column caches 
+          // Alias the visible row and column caches
           var visRowCache = grid.renderContainers.body.visibleRowCache;
           var visColCache = grid.renderContainers.body.visibleColumnCache;
 
@@ -544,7 +557,7 @@
           if (gridRow !== null) {
             // This is the index of the row we want to scroll to, within the list of rows that can be visible
             var seekRowIndex = visRowCache.indexOf(gridRow);
-            
+
             // Total vertical scroll length of the grid
             var scrollLength = (grid.renderContainers.body.getCanvasHeight() - grid.renderContainers.body.getViewportHeight());
 
@@ -587,7 +600,7 @@
           if (gridCol !== null) {
             // This is the index of the row we want to scroll to, within the list of rows that can be visible
             var seekColumnIndex = visColCache.indexOf(gridCol);
-            
+
             // Total vertical scroll length of the grid
             var horizScrollLength = (grid.renderContainers.body.getCanvasWidth() - grid.renderContainers.body.getViewportWidth());
 
@@ -661,20 +674,20 @@
           if (!upToCol) {
             return width;
           }
-          
+
           var lastIndex = grid.renderContainers.body.visibleColumnCache.indexOf( upToCol );
-          
+
           // total column widths up-to but not including the passed in column
           grid.renderContainers.body.visibleColumnCache.forEach( function( col, index ) {
             if ( index < lastIndex ){
-              width += col.drawnWidth;  
+              width += col.drawnWidth;
             }
           });
-          
+
           // pro-rata the final column based on % of total columns.
           var percentage = lastIndex === 0 ? 0 : (lastIndex + 1) / grid.renderContainers.body.visibleColumnCache.length;
           width += upToCol.drawnWidth * percentage;
-           
+
           return width;
         }
       };
@@ -887,7 +900,7 @@
           }
 
           setTabEnabled();
-          
+
           // When a cell is clicked, broadcast a cellNav event saying that this row+col combo is now focused
           $elm.find('div').on('click', function (evt) {
             uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col));
