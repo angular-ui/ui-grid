@@ -499,7 +499,7 @@ angular.module('ui.grid')
         self.buildColumns()
           .then( function() {
             self.preCompileCellTemplates();
-            self.handleWindowResize();
+            self.refresh();
           });
       });
   };
