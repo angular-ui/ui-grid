@@ -1,7 +1,7 @@
 ﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
     var ngGridDirective = {
         scope: true,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement, iAttrs) {
                     var $element = $(iElement);
@@ -9,6 +9,7 @@
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+                    grid.rowDetailTemplate = iElement.html().trim();
 
                     // Set up cleanup now in case something fails
                     $scope.$on('$destroy', function cleanOptions() {
@@ -34,6 +35,11 @@
                     });
 
                     return grid.init().then(function() {
+
+                        //get the row detail html, then clear the html from the element
+                        var rowDetailTemplate = grid.rowDetailTemplate;
+                        iElement.html('<div></div>');
+
                         // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
                         if (typeof options.columnDefs === "string") {
                             $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
@@ -111,12 +117,15 @@
                         if (options.jqueryUITheme) {
                             iElement.addClass('ui-widget');
                         }
-                        iElement.append($compile($templateCache.get('gridTemplate.html'))($scope)); // make sure that if any of these change, we re-fire the calc logic
+
+                        var gridTemplate = $($templateCache.get('gridTemplate.html'));
+                        gridTemplate.find('.rowDiv').append(rowDetailTemplate);       //for expanding row details
+                        iElement.append($compile(gridTemplate)($scope));       // make sure that if any of these change, we re-fire the calc logic
+
                         //walk the element's graph and the correct properties on the grid
                         domUtilityService.AssignGridContainers($scope, iElement, grid);
                         //now use the manager to assign the event handlers
                         grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
-
                         // method for user to select a specific row programatically
                         options.selectRow = function (rowIndex, state) {
                             if (grid.rowCache[rowIndex]) {
@@ -192,6 +201,9 @@
                         if (typeof options.init === "function") {
                             options.init(grid, $scope);
                         }
+
+                        $scope.gridOptions = options;
+
                         return null;
                     });
                 }

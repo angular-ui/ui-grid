@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 11/04/2014 09:19
+* Compiled At: 12/19/2014 11:35
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -753,6 +753,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.pinned = (config.enablePinning && colDef.pinned);
     self.originalIndex = config.originalIndex == null ? self.index : config.originalIndex;
     self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
+
     if (config.enableSort) {
         self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
     }
@@ -762,6 +763,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     if (config.enablePinning) {
         self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
     }
+
     self.sortDirection = undefined;
     self.sortingAlgorithm = colDef.sortFn;
     self.headerClass = colDef.headerClass;
@@ -772,6 +774,7 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
         self.cellEditTemplate = colDef.cellEditTemplate || $templateCache.get('cellEditTemplate.html');
         self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
     }
+
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $templateCache.get(colDef.cellTemplate) || $.ajax({
             type: "GET",
@@ -793,6 +796,24 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
             async: false
         }).responseText;
     }
+
+    if(colDef.showActionsColumn) {
+        self.sortable = false;
+        self.showExpandButton = grid.config.rowActionsConfig.showExpandButton;
+        self.disableExpandButton = grid.config.rowActionsConfig.disableExpandButton;
+
+        self.showDeleteButton = grid.config.rowActionsConfig.showDeleteButton;
+        self.disableDeleteButton = grid.config.rowActionsConfig.disableDeleteButton;
+
+        self.showEditButton = grid.config.rowActionsConfig.showEditButton;
+        self.disableEditButton = grid.config.rowActionsConfig.disableEditButton;
+
+        self.deleteRowCallback = grid.config.rowActionsConfig.deleteRowCallback;
+        self.editRowCallback = grid.config.rowActionsConfig.editRowCallback;
+
+        self.cellTemplate = $templateCache.get('cellGridActionsTemplate.html');
+    }
+
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;
@@ -816,11 +837,18 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
     self.noSortVisible = function() {
         return !self.sortDirection;
     };
+    var gotUserSortDirection = false;
     self.sort = function(evt) {
         if (!self.sortable) {
             return true; 
         }
-        var dir = self.sortDirection === ASC ? DESC : ASC;
+        var dir;
+        if(self.colDef.sortDirection && !gotUserSortDirection){
+            dir = self.sortDirection === ASC ? ASC : DESC;
+            gotUserSortDirection = true;
+        } else {
+            dir = self.sortDirection === ASC ? DESC : ASC;
+        }
         self.sortDirection = dir;
         config.sortCallback(self, evt);
         return false;
@@ -1269,12 +1297,18 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         beforeSelectionChange: function() {
             return true;
         },
+        beforeExpansionChange: function(row){
+            self.rowCache[row.rowIndex].detailsExpanded = !row.detailsExpanded;
+            self.rowCache[row.rowIndex].detailHeight(row.rowDetailHeight);
+            self.calcMaxCanvasHeight();
+        },
         checkboxCellTemplate: undefined,
         checkboxHeaderTemplate: undefined,
         columnDefs: undefined,
         data: [],
         dataUpdated: function() {
         },
+        detailsExpanded: false,
         enableCellEdit: false,
         enableCellEditOnFocus: false,
         enableCellSelection: false,
@@ -1317,6 +1351,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         selectedItems: [],
         selectionCheckboxColumnWidth: 25,
         selectWithCheckboxOnly: false,
+        singleDetailExpansionMode: false,
         showColumnMenu: false,
         showFilter: false,
         showFooter: false,
@@ -1398,6 +1433,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; 
     }
     self.calcMaxCanvasHeight = function() {
+
         var calculatedHeight;
         if(self.config.groups.length > 0){
             calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
@@ -1405,6 +1441,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+            angular.forEach(self.rowCache, function (value, key) {
+                if(value.detailsExpanded){
+                    calculatedHeight += value.detailHeight();
+                }
+            });
         }
         return calculatedHeight;
     };
@@ -1640,6 +1681,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 }
             });
         }
+        if($scope.onColumnWidthResizeCallback) {
+            $scope.onColumnWidthResizeCallback();
+        }
     };
     self.init = function() {
         return self.initTemplates().then(function(){
@@ -1796,6 +1840,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             angular.forEach(self.lastSortedColumns, function (c) {
                 c.sortDirection = "";
                 c.sortPriority = null;
+                c.gotUserSortDirection = false;
             });
             self.lastSortedColumns = [];
         } else {
@@ -1803,6 +1848,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 if (col.index !== c.index) {
                     c.sortDirection = "";
                     c.sortPriority = null;
+                    c.gotUserSortDirection = false;
                 }
             });
             self.lastSortedColumns[0] = col;
@@ -1841,6 +1887,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     $scope.gridId = self.gridId;
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
+    $scope.onColumnWidthResizeCallback = self.config.onColumnWidthResize;
     $scope.i18n = {};
     $utils.seti18n($scope, self.config.i18n);
     $scope.adjustScrollLeft = function (scrollLeft) {
@@ -2028,7 +2075,10 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.beforeSelectionChange = config.beforeSelectionChangeCallback;
 	this.afterSelectionChange = config.afterSelectionChangeCallback;
 	this.offsetTop = this.rowIndex * config.rowHeight;
-	this.rowDisplayIndex = 0;
+	this.detailsExpanded = config.detailsExpanded;
+	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
+	this.rowActionsConfig = config.rowActionsConfig;
+	this.rowDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -2089,6 +2139,55 @@ ngRow.prototype.setVars = function (fromRow) {
 	this.selected = fromRow.selected;
     this.orig = fromRow;
 };
+ngRow.prototype.height = function(){
+	return this.config.rowHeight;
+};
+ngRow.prototype.detailHeight = function(height){
+	if(height) {
+		this.rowDetailHeight = height;
+	}
+	else {
+		return this.rowDetailHeight + this.config.rowHeight;
+	}
+};
+ngRow.prototype.toggleExpansion = function(){
+	event.stopPropagation();
+	this.beforeDetailExpansionChangeCallback(this);
+	this.detailsExpanded = !this.detailsExpanded;
+	this.config.triggerRenderChange();
+
+	setTimeout(function(rowHeight){
+		$('.expandedRowDetails:visible').css('top', rowHeight);		
+	}, 25, this.config.rowHeight);
+};
+ngRow.prototype.collapse = function(){
+	this.detailsExpanded = false;
+};
+ngRow.prototype.expand = function(){
+	this.detailsExpanded = true;
+};
+ngRow.prototype.deleteRow = function(){
+	event.stopPropagation();
+	if(this.rowActionsConfig.disableDeleteButton) {
+		return;
+	}
+	if(!this.rowActionsConfig.deleteRowCallback){
+		console.error('You have not provided a callback for the delete button! Set gridOptions.rowActionsConfig.deleteRowCallback or hide the button');
+		return;
+	}
+	this.rowActionsConfig.deleteRowCallback(this.entity);
+};
+ngRow.prototype.editRow = function(){
+	event.stopPropagation();
+	if(this.rowActionsConfig.disableEditButton) {
+		return;
+	}
+	if(!this.rowActionsConfig.editRowCallback){
+		console.error('You have not provided a callback for the edit button! Set gridOptions.rowActionsConfig.editRowCallback or hide the button');
+		return;
+	}
+	this.rowActionsConfig.editRowCallback(this.entity);
+};
 var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
     var self = this;
     self.aggCache = {};
@@ -2110,14 +2209,16 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
         jqueryUITheme: grid.config.jqueryUITheme,
         enableCellSelection: grid.config.enableCellSelection,
-        rowHeight: grid.config.rowHeight
+        rowHeight: grid.config.rowHeight,
+        detailsExpanded: grid.config.detailsExpanded,
+        beforeDetailExpansionChangeCallback: grid.config.beforeExpansionChange,
+        rowActionsConfig: grid.config.rowActionsConfig
     };
 
     self.renderedRange = new ngRange(0, grid.minRowsToRender() + EXCESS_ROWS);
     self.buildEntityRow = function(entity, rowIndex) {
         return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
-
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; 
         if (!agg) {
@@ -2180,13 +2281,25 @@ var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $u
         grid.setRenderedRows(rowArr);
     };
 
+    self.rowConfig.triggerRenderChange = self.renderedChange;
+
     self.renderedChangeNoGroups = function () {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (grid.filteredRows[i]) {
-                grid.filteredRows[i].rowIndex = i;
-                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(grid.filteredRows[i]);
+                var row = grid.filteredRows[i];
+                row.rowIndex = i;
+
+                var detailsExpandedHeight = 0;
+                for(var j = i; j > self.renderedRange.topRow;j--){
+                    if(grid.rowCache[j-1] && grid.rowCache[j-1].detailsExpanded){
+                        detailsExpandedHeight += grid.rowCache[j-1].detailHeight();
+                    }
+                }
+
+                row.offsetTop = i * grid.config.rowHeight + detailsExpandedHeight;
+
+                rowArr.push(row);
             }
         }
         grid.setRenderedRows(rowArr);
@@ -2569,8 +2682,8 @@ var ngSelectionProvider = function (grid, $scope, $parse, $utils) {
                     rowsArr = grid.filteredRows;
                 }
 
-                var thisIndx = rowItem.rowIndex;
-                var prevIndx = self.lastClickedRowIndex;
+                var thisIndx = rowsArr.indexOf(rowItem.orig || rowItem);
+                var prevIndx = rowsArr.indexOf(self.lastClickedRow.orig || self.lastClickedRow);
                 if (thisIndx === prevIndx) {
                     return false;
                 }
@@ -2954,7 +3067,7 @@ ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function
 ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
     var ngGridDirective = {
         scope: true,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement, iAttrs) {
                     var $element = $(iElement);
@@ -2962,6 +3075,7 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
 
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+                    grid.rowDetailTemplate = iElement.html().trim();
                     $scope.$on('$destroy', function cleanOptions() {
                         options.gridDim = null;
                         options.selectRow = null;
@@ -2981,6 +3095,8 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                     });
 
                     return grid.init().then(function() {
+                        var rowDetailTemplate = grid.rowDetailTemplate;
+                        iElement.html('<div></div>');
                         if (typeof options.columnDefs === "string") {
                             $scope.$on('$destroy', $scope.$parent.$watch(options.columnDefs, function (a) {
                                 if (!a) {
@@ -3046,7 +3162,10 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (options.jqueryUITheme) {
                             iElement.addClass('ui-widget');
                         }
-                        iElement.append($compile($templateCache.get('gridTemplate.html'))($scope));
+
+                        var gridTemplate = $($templateCache.get('gridTemplate.html'));
+                        gridTemplate.find('.rowDiv').append(rowDetailTemplate);
+                        iElement.append($compile(gridTemplate)($scope));
                         domUtilityService.AssignGridContainers($scope, iElement, grid);
                         grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
                         options.selectRow = function (rowIndex, state) {
@@ -3113,6 +3232,9 @@ ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '
                         if (typeof options.init === "function") {
                             options.init(grid, $scope);
                         }
+
+                        $scope.gridOptions = options;
+
                         return null;
                     });
                 }
@@ -3156,7 +3278,7 @@ ngGridDirectives.directive('ngInput', [function() {
         link: function (scope, elm, attrs, ngModel) {
             var oldCellValue;
             var dereg = scope.$watch('ngModel', function() {
-                oldCellValue = ngModel.$modelValue;
+                oldCellValue = ngModel.$viewValue;
                 dereg(); 
             });
 
@@ -3219,7 +3341,7 @@ ngGridDirectives.directive('ngInput', [function() {
 ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
-        compile: function() {
+        compile: function(tElem, tAttrs) {
             return {
                 pre: function($scope, iElement) {
                     $scope.row.elm = iElement;
@@ -3235,8 +3357,16 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
                         }
                         iElement.append($compile(html)($scope));
                     } else {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
+                        var detailsTemplate = iElement.html().trim();
+                        iElement.children().addClass('hidden-template');
+                        iElement.children().css('display', 'none');
+                        var template = $($templateCache.get($scope.gridId + 'rowTemplate.html'));
+                        template.children('.expandedRowDetails').html(detailsTemplate);
+                        iElement.append($compile(template)($scope));
+
+                        $scope.row.detailHeight($scope.gridOptions.detailHeight);
                     }
+
 					$scope.$on('$destroy', $scope.$on('ngGridEventDigestRow', function(){
 						domUtilityService.digest($scope);
 					}));
@@ -3246,6 +3376,7 @@ ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templat
     };
     return ngRow;
 }]);
+
 ngGridDirectives.directive('ngViewport', [function() {
     return function($scope, elm) {
         var isMouseWheelActive;
@@ -3463,7 +3594,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
   $templateCache.put('aggregateTemplate.html',
     "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">\r" +
     "\n" +
-    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>\r" +
+    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}}{{AggItemsLabel}})</span>\r" +
     "\n" +
     "    <div class=\"{{row.aggClass()}}\"></div>\r" +
     "\n" +
@@ -3487,6 +3618,39 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "</div>\r" +
     "\n"
+  );
+  $templateCache.put('cellGridActionsTemplate.html',
+    "<div class=\"rowActionsCell\">\r" +
+    "\n" +
+    "    <a ng-show=\"col.showEditButton\" ng-click=\"row.editRow($event)\" ng-class=\"{ 'disabled': col.disableEditButton }\">\r" +
+    "\n" +
+    "        <i class=\"fa fa-pencil\"></i>\r" +
+    "\n" +
+    "    </a>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <a ng-show=\"col.showDeleteButton\" ng-click=\"row.deleteRow($event)\" ng-class=\"{ 'disabled' : col.disableDeleteButton }\">\r" +
+    "\n" +
+    "        <i class=\"fa fa-times-circle\"></i>\r" +
+    "\n" +
+    "    </a>\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "    <a ng-show=\"col.showExpandButton\" ng-click=\"row.toggleExpansion($event)\"  ng-class=\"{ 'disabled' : col.disableExpandButton }\">\r" +
+    "\n" +
+    "        <div ng-switch=\"row.detailsExpanded\">\r" +
+    "\n" +
+    "            <i ng-switch-when=\"true\" class=\"fa fa-caret-up fa\"></i>\r" +
+    "\n" +
+    "            <i ng-switch-default class=\"fa fa-caret-down fa\"></i>\r" +
+    "\n" +
+    "        </div>\r" +
+    "\n" +
+    "    </a>\r" +
+    "\n" +
+    "</div>"
   );
   $templateCache.put('cellTemplate.html',
     "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
@@ -3597,7 +3761,11 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">\r" +
     "\n" +
-    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>\r" +
+    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row class=\"rowDiv\">\r" +
+    "\n" +
+    "\r" +
+    "\n" +
+    "        </div>\r" +
     "\n" +
     "    </div>\r" +
     "\n" +
@@ -3671,13 +3839,30 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "</div>"
   );
   $templateCache.put('rowTemplate.html',
-    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
+    "<div>\r" +
     "\n" +
-    "\t<div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
+    "    <div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\">\r" +
     "\n" +
-    "\t<div ng-cell></div>\r" +
+    "        <div class=\"ngVerticalBar\" ng-style=\"{height: rowHeight}\" ng-class=\"{ ngVerticalBarVisible: !$last }\">&nbsp;</div>\r" +
     "\n" +
-    "</div>"
+    "        <div ng-cell></div>\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "    <div class=\"expandedRowDetails {{col.cellClass}}\" ng-show=\"row.detailsExpanded\"\r" +
+    "\n" +
+    "         ng-style=\"{ 'position': 'absolute', 'top': row.height() }\"\r" +
+    "\n" +
+    "         ng-attr-data-height=\"{ 'height': row.detailHeight() }\"\r" +
+    "\n" +
+    "         ng-class=\"row.alternatingRowClass()\">\r" +
+    "\n" +
+    "    </div>\r" +
+    "\n" +
+    "</div>\r" +
+    "\n" +
+    "\r" +
+    "\n"
   );
 
 }]);

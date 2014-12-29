@@ -9,7 +9,10 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
 	this.beforeSelectionChange = config.beforeSelectionChangeCallback;
 	this.afterSelectionChange = config.afterSelectionChangeCallback;
 	this.offsetTop = this.rowIndex * config.rowHeight;
-	this.rowDisplayIndex = 0;
+	this.detailsExpanded = config.detailsExpanded;
+	this.beforeDetailExpansionChangeCallback = config.beforeDetailExpansionChangeCallback;
+	this.rowActionsConfig = config.rowActionsConfig;
+	this.rowDetailHeight = 0;
 };
 
 ngRow.prototype.setSelection = function (isSelected) {
@@ -71,4 +74,53 @@ ngRow.prototype.setVars = function (fromRow) {
 	this.entity = fromRow.entity;
 	this.selected = fromRow.selected;
     this.orig = fromRow;
+};
+ngRow.prototype.height = function(){
+	return this.config.rowHeight;
+};
+ngRow.prototype.detailHeight = function(height){
+	if(height) {
+		this.rowDetailHeight = height;
+	}
+	else {
+		return this.rowDetailHeight + this.config.rowHeight;
+	}
+};
+ngRow.prototype.toggleExpansion = function(){
+	event.stopPropagation();
+	this.beforeDetailExpansionChangeCallback(this);
+	this.detailsExpanded = !this.detailsExpanded;
+	this.config.triggerRenderChange();
+
+	setTimeout(function(rowHeight){
+		$('.expandedRowDetails:visible').css('top', rowHeight);		//to make sure the expandable rows are sitting in the correct position
+	}, 25, this.config.rowHeight);
+};
+ngRow.prototype.collapse = function(){
+	this.detailsExpanded = false;
+};
+ngRow.prototype.expand = function(){
+	this.detailsExpanded = true;
+};
+ngRow.prototype.deleteRow = function(){
+	event.stopPropagation();
+	if(this.rowActionsConfig.disableDeleteButton) {
+		return;
+	}
+	if(!this.rowActionsConfig.deleteRowCallback){
+		console.error('You have not provided a callback for the delete button! Set gridOptions.rowActionsConfig.deleteRowCallback or hide the button');
+		return;
+	}
+	this.rowActionsConfig.deleteRowCallback(this.entity);
+};
+ngRow.prototype.editRow = function(){
+	event.stopPropagation();
+	if(this.rowActionsConfig.disableEditButton) {
+		return;
+	}
+	if(!this.rowActionsConfig.editRowCallback){
+		console.error('You have not provided a callback for the edit button! Set gridOptions.rowActionsConfig.editRowCallback or hide the button');
+		return;
+	}
+	this.rowActionsConfig.editRowCallback(this.entity);
 };

@@ -1,4 +1,12 @@
-<div ng-style="{ 'cursor': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}">
-	<div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }">&nbsp;</div>
-	<div ng-cell></div>
+<div>
+    <div ng-style="{ 'cursor': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}">
+        <div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }">&nbsp;</div>
+        <div ng-cell></div>
+    </div>
+    <div class="expandedRowDetails {{col.cellClass}}" ng-show="row.detailsExpanded"
+         ng-style="{ 'position': 'absolute', 'top': row.height() }"
+         ng-attr-data-height="{ 'height': row.detailHeight() }"
+         ng-class="row.alternatingRowClass()">
+    </div>
 </div>
+

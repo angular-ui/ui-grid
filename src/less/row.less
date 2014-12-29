@@ -17,3 +17,34 @@
 .ngRow.selected {
   background-color: @grayBlue; //rgb(201, 221, 225);
 }
+
+.ngRow {
+  .rowActionsCell {
+    display: flex;
+
+    a {
+      color: black;
+      padding: 0 10px;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      text-align: center;
+      margin: 4px;
+    }
+
+    a:hover {
+      background: darkgrey;
+    }
+
+    a.disabled {
+      //background: lightgrey;
+      color: lightgrey;
+      border-color: lightgrey;
+      cursor: not-allowed;
+    }
+
+    a.disabled:hover {
+      background: none;
+    }
+  }
+}
+

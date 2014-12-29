@@ -335,6 +335,28 @@
 .ngRow.selected {
   background-color: #c9dde1;
 }
+.ngRow .rowActionsCell {
+  display: flex;
+}
+.ngRow .rowActionsCell a {
+  color: black;
+  padding: 0 10px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  text-align: center;
+  margin: 4px;
+}
+.ngRow .rowActionsCell a:hover {
+  background: darkgrey;
+}
+.ngRow .rowActionsCell a.disabled {
+  color: lightgrey;
+  border-color: lightgrey;
+  cursor: not-allowed;
+}
+.ngRow .rowActionsCell a.disabled:hover {
+  background: none;
+}
 .ngCell {
   overflow: hidden;
   position: absolute;

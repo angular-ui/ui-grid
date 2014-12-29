@@ -1,0 +1,16 @@
+<div class="rowActionsCell">
+    <a ng-show="col.showEditButton" ng-click="row.editRow($event)" ng-class="{ 'disabled': col.disableEditButton }">
+        <i class="fa fa-pencil"></i>
+    </a>
+
+    <a ng-show="col.showDeleteButton" ng-click="row.deleteRow($event)" ng-class="{ 'disabled' : col.disableDeleteButton }">
+        <i class="fa fa-times-circle"></i>
+    </a>
+
+    <a ng-show="col.showExpandButton" ng-click="row.toggleExpansion($event)"  ng-class="{ 'disabled' : col.disableExpandButton }">
+        <div ng-switch="row.detailsExpanded">
+            <i ng-switch-when="true" class="fa fa-caret-up fa"></i>
+            <i ng-switch-default class="fa fa-caret-down fa"></i>
+        </div>
+    </a>
+</div>

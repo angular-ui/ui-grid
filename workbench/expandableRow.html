@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>ng-grid workbench</title>
+    <link rel="stylesheet" type="text/css" href="../lib/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="../ng-grid.css"/>
+    <script type="text/javascript" src="largeLoad.js"></script>
+    <script type="text/javascript" src="largeTestData.js"></script>
+    <script type="text/javascript" src="../lib/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../lib/jquery-ui-1.9.1.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/angular.js"></script>
+    <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../build/ng-grid.debug.js"></script>
+    <script type="text/javascript" src="expandableRow.js"></script>
+    <script>
+        angular.module('myApp', ['ngGrid']);
+    </script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body ng-app="myApp" ng-controller="expandableRowController">
+
+<div style="width: 800px; height: 400px; margin: 20px" ng-grid="gridOptions">
+    <div>
+        <!--<h4>{{row.entity.firstName}} {{row.entity.lastName}}</h4>-->
+        <!--<span>State: {{row.entity.state}}</span>-->
+        <!--<p>{{row.entity.firstName}} is a {{row.entity.age}} year old {{row.entity.sex}} who lives in {{row.entity.state}}</p>-->
+        <p>{{row.entity.details}}</p>
+    </div>
+</div>
+</body>
+</html>

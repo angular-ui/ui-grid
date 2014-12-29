@@ -20,7 +20,10 @@
         afterSelectionChangeCallback: grid.config.afterSelectionChange,
         jqueryUITheme: grid.config.jqueryUITheme,
         enableCellSelection: grid.config.enableCellSelection,
-        rowHeight: grid.config.rowHeight
+        rowHeight: grid.config.rowHeight,
+        detailsExpanded: grid.config.detailsExpanded,
+        beforeDetailExpansionChangeCallback: grid.config.beforeExpansionChange,
+        rowActionsConfig: grid.config.rowActionsConfig
     };
 
     self.renderedRange = new ngRange(0, grid.minRowsToRender() + EXCESS_ROWS);
@@ -31,7 +34,6 @@
         // build the row
         return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
     };
-
     self.buildAggregateRow = function(aggEntity, rowIndex) {
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
@@ -96,13 +98,25 @@
         grid.setRenderedRows(rowArr);
     };
 
+    self.rowConfig.triggerRenderChange = self.renderedChange;
+
     self.renderedChangeNoGroups = function () {
         var rowArr = [];
         for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
             if (grid.filteredRows[i]) {
-                grid.filteredRows[i].rowIndex = i;
-                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(grid.filteredRows[i]);
+                var row = grid.filteredRows[i];
+                row.rowIndex = i;
+
+                var detailsExpandedHeight = 0;
+                for(var j = i; j > self.renderedRange.topRow;j--){
+                    if(grid.rowCache[j-1] && grid.rowCache[j-1].detailsExpanded){
+                        detailsExpandedHeight += grid.rowCache[j-1].detailHeight();
+                    }
+                }
+
+                row.offsetTop = i * grid.config.rowHeight + detailsExpandedHeight;
+
+                rowArr.push(row);
             }
         }
         grid.setRenderedRows(rowArr);
