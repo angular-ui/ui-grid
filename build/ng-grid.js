@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 12/19/2014 11:35
+* Compiled At: 12/29/2014 15:42
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -813,6 +813,10 @@ var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache
 
         self.cellTemplate = $templateCache.get('cellGridActionsTemplate.html');
     }
+
+    self.textAlign = colDef.textAlign;
+    self.fontWeight = colDef.fontWeight;
+    self.fontStyle = colDef.fontStyle;
 
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
@@ -3653,7 +3657,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "</div>"
   );
   $templateCache.put('cellTemplate.html',
-    "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
+    "<div class=\"ngCellText\" ng-style=\"{ 'text-align': col.textAlign, 'font-weight': col.fontWeight, 'font-style': col.fontStyle }\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
   );
   $templateCache.put('checkboxCellTemplate.html',
     "<div class=\"ngSelectionCell\"><input tabindex=\"-1\" class=\"ngSelectionCheckbox\" type=\"checkbox\" ng-checked=\"row.selected\" /></div>"
@@ -3775,7 +3779,7 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "\n"
   );
   $templateCache.put('headerCellTemplate.html',
-    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{ 'ngSorted': !col.noSortVisible() }\">\r" +
+    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor, 'text-align': col.textAlign}\" ng-class=\"{ 'ngSorted': !col.noSortVisible() }\">\r" +
     "\n" +
     "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>\r" +
     "\n" +

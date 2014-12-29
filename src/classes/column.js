@@ -97,6 +97,10 @@
         self.cellTemplate = $templateCache.get('cellGridActionsTemplate.html');
     }
 
+    self.textAlign = colDef.textAlign;
+    self.fontWeight = colDef.fontWeight;
+    self.fontStyle = colDef.fontStyle;
+
     self.colIndex = function () {
         var classes = self.pinned ? "pinned " : "";
         classes += "col" + self.index + " colt" + self.index;
