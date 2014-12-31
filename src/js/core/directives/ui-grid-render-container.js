@@ -162,7 +162,6 @@
             // Scroll the render container viewport when the mousewheel is used
             $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
               // use wheelDeltaY
-              evt.preventDefault();
 
               var newEvent = GridUtil.normalizeWheelEvent(evt);
 
@@ -192,10 +191,14 @@
 
                 args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
-              
+
+              // Let the parent container scroll if the grid is already at the top/bottom
+              if ((args.y.percentage !== 0 && args.y.percentage !== 1) || (args.x.percentage !== 0 && args.x.percentage !== 1)) {
+                evt.preventDefault();
+              }
+
               uiGridCtrl.fireScrollingEvent(args);
             });
-            
 
             var startY = 0,
             startX = 0,
