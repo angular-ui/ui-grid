@@ -1,30 +1,30 @@
 @ngdoc overview
-@name Tutorial: 314 External Paging
+@name Tutorial: 314 External Pagination
 @description
 
-When paging is enabled, the data is displayed in pages that can be browsed using using the built in paging selector.
+When pagination is enabled, the data is displayed in pages that can be browsed using using the built in pagination selector.
 
-For external paging, handle the `pagingChanged' to load the page. Set the `gridOptions.totalItems' in the callback.
+For external pagination, handle the `paginationChanged' to load the page. Set the `gridOptions.totalItems' in the callback.
 
 @example
-This shows combined external paging and sorting.
+This shows combined external pagination and sorting.
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.paging']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.pagination']);
 
     app.controller('MainCtrl', [
     '$scope', '$http', 'uiGridConstants', function($scope, $http, uiGridConstants) {
 
-      var pagingOptions = {
+      var paginationOptions = {
         pageNumber: 1,
         pageSize: 25,
         sort: null
       };
 
       $scope.gridOptions = {
-        pagingPageSizes: [25, 50, 75],
-        pagingPageSize: 25,
-        useExternalPaging: true,
+        paginationPageSizes: [25, 50, 75],
+        paginationPageSize: 25,
+        useExternalPagination: true,
         useExternalSorting: true,
         columnDefs: [
           { name: 'name' },
@@ -35,15 +35,15 @@ This shows combined external paging and sorting.
           $scope.gridApi = gridApi;
           $scope.gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
             if (sortColumns.length == 0) {
-              pagingOptions.sort = null;
+              paginationOptions.sort = null;
             } else {
-              pagingOptions.sort = sortColumns[0].sort.direction;
+              paginationOptions.sort = sortColumns[0].sort.direction;
             }
             getPage();
           });
-          gridApi.paging.on.pagingChanged($scope, function (newPage, pageSize) {
-            pagingOptions.pageNumber = newPage;
-            pagingOptions.pageSize = pageSize;
+          gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+            paginationOptions.pageNumber = newPage;
+            paginationOptions.pageSize = pageSize;
             getPage();
           });
         }
@@ -51,7 +51,7 @@ This shows combined external paging and sorting.
 
       var getPage = function() {
         var url;
-        switch(pagingOptions.sort) {
+        switch(paginationOptions.sort) {
           case uiGridConstants.ASC:
             url = '/data/100_ASC.json';
             break;
@@ -66,8 +66,8 @@ This shows combined external paging and sorting.
         $http.get(url)
         .success(function (data) {
           $scope.gridOptions.totalItems = 100;
-          var firstRow = (pagingOptions.pageNumber - 1) * pagingOptions.pageSize;
-          $scope.gridOptions.data = data.slice(firstRow, firstRow + pagingOptions.pageSize);
+          var firstRow = (paginationOptions.pageNumber - 1) * paginationOptions.pageSize;
+          $scope.gridOptions.data = data.slice(firstRow, firstRow + paginationOptions.pageSize);
         });
       };
 
@@ -77,7 +77,7 @@ This shows combined external paging and sorting.
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" ui-grid-paging class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-pagination class="grid"></div>
     </div>
   </file>
   <file name="main.css">

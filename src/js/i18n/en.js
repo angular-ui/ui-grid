@@ -62,7 +62,7 @@
           invalidJson: 'File was unable to be processed, is it valid Json?',
           jsonNotArray: 'Imported json file must contain an array, aborting.'
         },
-        paging: {
+        pagination: {
           sizes: 'items per page',
           totalItems: 'items'
         }

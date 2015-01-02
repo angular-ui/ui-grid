@@ -2,7 +2,7 @@
 @name Tutorial: 214 Pagination
 @description
 
-When pagination is enabled, the data is displayed in pages that can be browsed using a page selector.
+When pagination is enabled, the data is displayed in pages that can be browsed using using the built in pagination selector.
 
 @example
 <example module="app">
@@ -10,40 +10,59 @@ When pagination is enabled, the data is displayed in pages that can be browsed u
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.pagination']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {};
+      $scope.gridOptions1 = {
+        paginationPageSizes: [25, 50, 75],
+        paginationPageSize: 25,
+        columnDefs: [
+          { name: 'name' },
+          { name: 'gender' },
+          { name: 'company' }
+        ]
+      };
 
-      $scope.gridOptions.columnDefs = [
-        { name:'name'},
-        { name:'gender' },
-        { name:'company' }
-      ];
+      $scope.gridOptions2 = {
+        enablePaginationControls: false,
+        paginationPageSize: 25,
+        columnDefs: [
+          { name: 'name' },
+          { name: 'gender' },
+          { name: 'company' }
+        ]
+      };
 
-      $scope.gridOptions.onRegisterApi = function (gridApi) {
-        $scope.gridApi = gridApi;
+      $scope.gridOptions2.onRegisterApi = function (gridApi) {
+        $scope.gridApi2 = gridApi;
       }
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-        });
+      .success(function (data) {
+        $scope.gridOptions1.data = data;
+        $scope.gridOptions2.data = data;
+      });
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <p>Page: {{ gridApi.pagination.getPage() }}</p>
-      <p>Total pages: {{ gridApi.pagination.getTotalPages() }}</p>
-      <button type="button" class="btn btn-success" ng-click="gridApi.pagination.previousPage()">
+      <p><strong>Grid with native pagination controls</strong></p>
+      <div ui-grid="gridOptions1" ui-grid-pagination class="grid"></div>
+      <br /><br />
+      <p><strong>Grid pagination controlled via the API</strong></p>
+      <div ui-grid="gridOptions2" ui-grid-pagination class="grid"></div>
+      <p>Current page: {{ gridApi2.pagination.getPage() }} of {{ gridApi2.pagination.getTotalPages() }}</p>
+      <button type="button" class="btn btn-success" ng-click="gridApi2.pagination.previousPage()">
         previous page
       </button>
-      <button type="button" class="btn btn-success" ng-click="gridApi.pagination.nextPage()">
+      <button type="button" class="btn btn-success" ng-click="gridApi2.pagination.nextPage()">
         next page
       </button>
-      <div ui-grid="gridOptions" ui-grid-pagination class="grid"></div>
+      <button type="button" class="btn btn-success" ng-click="gridApi2.pagination.seek(3)">
+        go to page 3
+      </button>
     </div>
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 600px;
     }
   </file>
 </example>

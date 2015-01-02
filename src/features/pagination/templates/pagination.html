@@ -1,0 +1,23 @@
+<div class="ui-grid-pager-panel" ui-grid-pager ng-show="grid.options.enablePaginationControls">
+  <div class="ui-grid-pager-container">
+    <div class="ui-grid-pager-control">
+      <button type="button" ng-click="paginationApi.seek(1)" ng-disabled="cantPageBackward()"><div class="first-triangle"><div class="first-bar"></div></div></button>
+      <button type="button" ng-click="paginationApi.previousPage()" ng-disabled="cantPageBackward()"><div class="first-triangle prev-triangle"></div></button>
+      <input type="number" ng-model="grid.options.paginationCurrentPage" min="1" max="{{ paginationApi.getTotalPages() }}" required />
+      <span class="ui-grid-pager-max-pages-number" ng-show="paginationApi.getTotalPages() > 0">/ {{ paginationApi.getTotalPages() }}</span>
+      <button type="button" ng-click="paginationApi.nextPage()" ng-disabled="cantPageForward()"><div class="last-triangle next-triangle"></div></button>
+      <button type="button" ng-click="paginationApi.seek(paginationApi.getTotalPages())" ng-disabled="cantPageToLast()"><div class="last-triangle"><div class="last-bar"></div></div></button>
+    </div>
+    <div class="ui-grid-pager-row-count-picker">
+      <select ng-model="grid.options.paginationPageSize" ng-options="o as o for o in grid.options.paginationPageSizes"></select>
+      <span class="ui-grid-pager-row-count-label">&nbsp;{{sizesLabel}}</span>
+    </div>
+  </div>
+    <div class="ui-grid-pager-count-container">
+      <div class="ui-grid-pager-count">
+        <span ng-show="grid.options.totalItems > 0">
+            {{showingLow}} - {{showingHigh}} of {{grid.options.totalItems}} {{totalItemsLabel}}
+        </span>
+      </div>
+  </div>
+</div>

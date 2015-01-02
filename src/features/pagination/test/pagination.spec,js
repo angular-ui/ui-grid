@@ -50,7 +50,7 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
         gridApi = api;
       },
       enablePagination: true,
-      rowsPerPage: 10
+      paginationPageSize: 10
     };
 
     var element = angular.element('<div ui-grid="gridOptions" ui-grid-pagination></div>');
