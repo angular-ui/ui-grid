@@ -188,15 +188,6 @@ angular.module('ui.grid')
        *
        */
       baseOptions.rowHeight = baseOptions.rowHeight || 30;
-      
-      /**
-       * @ngdoc property
-       * @name maxVisibleRowCount
-       * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 200
-       *
-       */
-      baseOptions.maxVisibleRowCount = baseOptions.maxVisibleRowCount || 200;
   
       /**
        * @ngdoc integer
