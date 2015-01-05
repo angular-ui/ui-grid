@@ -245,7 +245,8 @@
       
       $rootScope.gridOptionsComplex = {
         enableFiltering: true,
-        showFooter: true,
+        showGridFooter: true,
+        showColumnFooter: true,
         columnDefs: [
           { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
           { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false, 

@@ -208,22 +208,32 @@ angular.module('ui.grid')
   
       /**
        * @ngdoc property
-       * @name showFooter
+       * @name showGridFooter
        * @propertyOf ui.grid.class:GridOptions
        * @description Whether or not to show the footer, defaults to false
-       *
+       * The footer display Total Rows and Visible Rows (filtered rows)
        */
-      baseOptions.showFooter = baseOptions.showFooter === true;
+      baseOptions.showGridFooter = baseOptions.showGridFooter === true;
 
       /**
        * @ngdoc property
-       * @name footerRowHeight
+       * @name showColumnFooter
        * @propertyOf ui.grid.class:GridOptions
-       * @description The height of the footer in pixels
+       * @description Whether or not to show the column footer, defaults to false
+       * The column footer displays column aggregates
+       */
+      baseOptions.showColumnFooter = baseOptions.showColumnFooter === true;
+
+      /**
+       * @ngdoc property
+       * @name columnFooterHeight
+       * @propertyOf ui.grid.class:GridOptions
+       * @description The height of the footer rows (column footer and grid footer) in pixels
        *
        */
-      baseOptions.footerRowHeight = typeof(baseOptions.footerRowHeight) !== "undefined" ? baseOptions.footerRowHeight : 30;
-  
+      baseOptions.columnFooterHeight = typeof(baseOptions.columnFooterHeight) !== "undefined" ? baseOptions.columnFooterHeight : 30;
+      baseOptions.gridFooterHeight = typeof(baseOptions.gridFooterHeight) !== "undefined" ? baseOptions.gridFooterHeight : 30;
+
       baseOptions.columnWidth = typeof(baseOptions.columnWidth) !== "undefined" ? baseOptions.columnWidth : 50;
 
       /**

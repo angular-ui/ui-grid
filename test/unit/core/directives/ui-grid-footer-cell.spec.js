@@ -31,7 +31,7 @@ describe('uiGridFooterCell', function () {
     uiGridConstants = _uiGridConstants_;
 
     $scope.gridOpts = {
-      showFooter: true,
+      showColumnFooter: true,
       columnDefs: columnDefs,
       data: data,
       onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }

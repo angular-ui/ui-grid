@@ -2,7 +2,10 @@
 @name Tutorial: 105 Footer
 @description
 
-The grid supports a footer row, which can be displayed if showFooterRow option is set to true.
+The grid supports a grid footer row, which can be displayed if showGridFooter option is set to true. This footer displays
+Total rows in the grid and the number of filtered rows
+<br/>
+The grid also has column footer, which can be displayed if showColumnFooter option is set to true
 You can set an aggregation function for each column or use a custom footer template to display 
 what ever aggregation you wish.
 Aggregation functions supported are: sum, avg, row count, min, max.
@@ -23,10 +26,11 @@ You can override the default grid footer template with gridOptions.footerTemplat
     var data = [];
 
     $scope.gridOptions = {
-        showFooter: true,
+        showGridFooter: true,
+        showColumnFooter: true,
         enableFiltering: true,
         columnDefs: [
-            { field: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: '13%' },
+            { field: 'name', width: '13%' },
             { field: 'address.street',aggregationType: uiGridConstants.aggregationTypes.sum, width: '13%' },
             { field: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true, width: '13%' },
             { name: 'ageMin', field: 'age', aggregationType: uiGridConstants.aggregationTypes.min, width: '13%', displayName: 'Age for min' },
@@ -34,7 +38,10 @@ You can override the default grid footer template with gridOptions.footerTemplat
             { name: 'customCellTemplate', field: 'age', width: '14%', footerCellTemplate: '<div class="ui-grid-cell-contents" style="background-color: Red;color: White">custom template</div>' },
             { name: 'registered', field: 'registered', width: '20%', cellFilter: 'date', footerCellFilter: 'date', aggregationType: uiGridConstants.aggregationTypes.max }
         ],
-        data: data
+        data: data,
+        onRegisterApi: function(gridApi) {
+                $scope.gridApi = gridApi;
+        }
     }
 
     $http.get('/data/500_complex.json')
@@ -48,7 +55,8 @@ You can override the default grid footer template with gridOptions.footerTemplat
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <button id="footerButton" class="btn btn-success" ng-click="gridOptions.showFooter = !gridOptions.showFooter">Toggle Footer</button>
+      <button id="footerButton" class="btn btn-success" ng-click="gridOptions.showGridFooter = !gridOptions.showGridFooter; $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.OPTIONS);">Toggle Grid Footer</button>
+      <button class="btn btn-success" ng-click="gridOptions.showColumnFooter = !gridOptions.showColumnFooter; $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.OPTIONS);">Toggle Column Footer</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>

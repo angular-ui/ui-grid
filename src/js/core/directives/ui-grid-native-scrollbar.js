@@ -122,7 +122,7 @@
           var w = colContainer.getCanvasWidth();
 
           var bottom = gridBottomBorder;
-          if (grid.options.showFooter) {
+          if (grid.hasFooter()) {
             bottom -= 1;
           }
           
