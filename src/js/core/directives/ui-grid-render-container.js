@@ -135,6 +135,9 @@
                 }
 
                 var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
+
+                // Make the current horizontal scroll position available in the $scope
+                $scope.newScrollLeft = newScrollLeft;
                 
                 // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 

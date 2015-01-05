@@ -276,6 +276,15 @@
                         //Hide column menu
                         uiGridCtrl.fireEvent('hide-menu');
 
+                        //Calculate total column width
+                        var columns = $scope.grid.columns;
+                        var totalColumnWidth = 0;
+                        for (var i = 0; i < columns.length; i++) {
+                          if (angular.isUndefined(columns[i].colDef.visible) || columns[i].colDef.visible === true) {
+                            totalColumnWidth += columns[i].drawnWidth || columns[i].width || columns[i].colDef.width;
+                          }
+                        }
+
                         //Calculate new position of left of column
                         var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
                         var currentElmRight = movingElm[0].getBoundingClientRect().right;
@@ -292,11 +301,29 @@
                         if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
                           movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
                         }
-                        else {
+                        else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
                           changeValue *= 8;
                           uiGridCtrl.fireScrollingEvent({x: {pixels: changeValue}});
                         }
-                        totalMouseMovement += changeValue;
+
+                        //Calculate total width of columns on the left of the moving column and the mouse movement
+                        var totalColumnsLeftWidth = 0;
+                        for (var il = 0; il < columns.length; il++) {
+                          if (angular.isUndefined(columns[il].colDef.visible) || columns[il].colDef.visible === true) {
+                            if (columns[il].colDef.name !== $scope.col.colDef.name) {
+                              totalColumnsLeftWidth += columns[il].drawnWidth || columns[il].width || columns[il].colDef.width;
+                            }
+                            else {
+                              break;
+                            }
+                          }
+                        }
+                        if ($scope.newScrollLeft === undefined) {
+                          totalMouseMovement += changeValue;
+                        }
+                        else {
+                          totalMouseMovement = $scope.newScrollLeft + newElementLeft - totalColumnsLeftWidth;
+                        }
 
                         //Increase width of moving column, in case the rightmost column was moved and its width was
                         //decreased because of overflow
@@ -307,6 +334,9 @@
                       };
 
                       var mouseMoveHandler = function (evt) {
+                        //Disable text selection in Chrome during column move
+                        document.onselectstart = function() { return false; };
+
                         var changeValue = evt.pageX - previousMouseX;
                         if (!elmCloned && Math.abs(changeValue) > 50) {
                           cloneElement();
@@ -328,6 +358,8 @@
                       $document.on('mousemove', mouseMoveHandler);
 
                       var mouseUpHandler = function (evt) {
+                        //Re-enable text selection after column move
+                        document.onselectstart = null;
 
                         //Remove the cloned element on mouse up.
                         if (movingElm) {
