@@ -13,14 +13,17 @@ All features are enabled to get an idea of performance
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns']);
 
-    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', function ($scope, $http, $timeout, $interval) {
+    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants',
+     function ($scope, $http, $timeout, $interval, uiGridConstants) {
 
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
       $scope.gridOptions.enableColumnResizing = true;
       $scope.gridOptions.enableFiltering = true;
       $scope.gridOptions.enableGridMenu = true;
-      
+      $scope.gridOptions.showGridFooter = true;
+      $scope.gridOptions.showColumnFooter = true;
+
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;
       };
@@ -31,7 +34,8 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.columnDefs = [
         { name:'id', width:50 },
         { name:'name', width:100 },
-        { name:'age', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age:{{COL_FIELD}}</span></div>'   },
+        { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg,
+         cellTemplate: '<div class="ui-grid-cell-contents"><span>Age:{{COL_FIELD}}</span></div>'   },
         { name:'address.street', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Street:{{COL_FIELD}}</span></div>'   },
         { name:'address.city', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>City:{{COL_FIELD}}</span></div>'  },
         { name:'address.state', width:50, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>State:{{COL_FIELD}}</span></div>'  },

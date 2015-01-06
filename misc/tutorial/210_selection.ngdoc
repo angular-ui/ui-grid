@@ -47,7 +47,8 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       $scope.gridOptions = { 
         enableRowSelection: true,
         enableSelectAll: true,
-        selectionRowHeaderWidth: 35
+        selectionRowHeaderWidth: 35,
+        showGridFooter:true
       };
 
       $scope.gridOptions.columnDefs = [

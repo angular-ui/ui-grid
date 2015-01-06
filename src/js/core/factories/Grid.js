@@ -37,8 +37,10 @@ angular.module('ui.grid')
     self.options = GridOptions.initialize( options );
   
     self.headerHeight = self.options.headerRowHeight;
-    self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
-  
+
+
+    self.footerHeight = self.calcFooterHeight();
+
     self.rtl = false;
     self.gridHeight = 0;
     self.gridWidth = 0;
@@ -230,6 +232,38 @@ angular.module('ui.grid')
     
     self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
     self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
+
+    self.registerStyleComputation({
+      priority: 10,
+      func: self.getFooterStyles
+    });
+  };
+
+   Grid.prototype.calcFooterHeight = function () {
+     if (!this.hasFooter()) {
+       return 0;
+     }
+
+     var height = 0;
+     if (this.options.showGridFooter) {
+       height += this.options.gridFooterHeight;
+     }
+
+     if (this.options.showColumnFooter) {
+       height += this.options.columnFooterHeight;
+     }
+
+     return height;
+   };
+
+   Grid.prototype.getFooterStyles = function () {
+     var style = '.grid' + this.id + ' .ui-grid-footer-aggregates-row { height: ' + this.options.columnFooterHeight + 'px; }';
+     style += ' .grid' + this.id + ' .ui-grid-footer-info { height: ' + this.options.gridFooterHeight + 'px; }';
+     return style;
+   };
+
+  Grid.prototype.hasFooter = function () {
+   return this.options.showGridFooter || this.options.showColumnFooter;
   };
 
   /**
@@ -306,7 +340,7 @@ angular.module('ui.grid')
    * ALL 
    * @returns {string} uid of the callback, can be used to deregister it again
    */
-  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types) {
+  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
     var uid = gridUtil.nextUid();
     if ( !types ){
       types = [uiGridConstants.dataChange.ALL];
@@ -314,7 +348,7 @@ angular.module('ui.grid')
     if ( !Array.isArray(types)){
       gridUtil.logError("Expected types to be an array or null in registerDataChangeCallback, value passed was: " + types );
     }
-    this.dataChangeCallbacks[uid] = { callback: callback, types: types };
+    this.dataChangeCallbacks[uid] = { callback: callback, types: types, _this:_this };
     return uid;
   };
 
@@ -344,7 +378,12 @@ angular.module('ui.grid')
       if ( callback.types.indexOf( uiGridConstants.dataChange.ALL ) !== -1 ||
            callback.types.indexOf( type ) !== -1 ||
            type === uiGridConstants.dataChange.ALL ) {
-        callback.callback( this );
+        if (callback._this) {
+           callback.callback.apply(callback._this,this);
+        }
+        else {
+          callback.callback( this );
+        }
       }
     }, this);
   };
@@ -388,7 +427,7 @@ angular.module('ui.grid')
     grid.buildColumns();
     grid.refresh();
   };
-    
+
 
   /**
    * @ngdoc function
@@ -1357,7 +1396,7 @@ angular.module('ui.grid')
 
     // Account for native horizontal scrollbar, if present
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
-      viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
+//      viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
     }
 
     var adjustment = self.getViewportAdjustment();

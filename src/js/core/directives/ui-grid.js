@@ -220,7 +220,7 @@ angular.module('ui.grid').directive('uiGrid',
                 // Figure out the new height
                 var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
                 var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
-                var footerHeight = grid.options.showFooter ? grid.options.footerRowHeight : 0;
+                var footerHeight = grid.calcFooterHeight();
                 
                 var scrollbarHeight = 0;
                 if (grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
@@ -253,32 +253,11 @@ angular.module('ui.grid').directive('uiGrid',
               // Run initial canvas refresh
               grid.refreshCanvas();
 
-              //add pinned containers for row headers support
-              //moved from pinning feature
-              var left = angular.element('<div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
-              $elm.prepend(left);
-              uiGridCtrl.innerCompile(left);
-
-              var right = angular.element('<div  ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
-              $elm.append(right);
-              uiGridCtrl.innerCompile(right);
-
-
               //if we add a left container after render, we need to watch and react
               $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
                 if (newValue === oldValue) {
                   return;
                 }
-
-                //todo: remove this code.  it was commented out after moving from pinning because body is already float:left
-//                var bodyContainer = angular.element($elm[0].querySelectorAll('[container-id="body"]'));
-//                if (newValue){
-//                  bodyContainer.attr('style', 'float: left; position: inherit');
-//                }
-//                else {
-//                  bodyContainer.attr('style', 'float: left; position: relative');
-//                }
-
                 grid.refreshCanvas(true);
               });
 

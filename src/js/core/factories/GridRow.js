@@ -65,9 +65,9 @@ angular.module('ui.grid')
    * @param {GridCol} col column instance
    * @returns {string} resulting name that can be evaluated on scope
    */
-  GridRow.prototype.getQualifiedColField = function(col) {
-    return 'row.' + this.getEntityQualifiedColField(col);
-  };
+    GridRow.prototype.getQualifiedColField = function(col) {
+      return 'row.' + this.getEntityQualifiedColField(col);
+    };
 
     /**
      * @ngdoc function

@@ -27,6 +27,58 @@
     selectionRowHeaderColName: 'selectionRowHeaderCol'
   });
 
+  //add methods to GridRow
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('GridRow', ['$delegate', function($delegate) {
+
+      /**
+       *  @ngdoc object
+       *  @name ui.grid.selection.api:GridRow
+       *
+       *  @description GridRow prototype functions added for selection
+       */
+
+      /**
+       *  @ngdoc object
+       *  @name enableSelection
+       *  @propertyOf  ui.grid.selection.api:GridRow
+       *  @description Enable row selection for this row, only settable by internal code.
+       *
+       *  The grouping feature, for example, might set group header rows to not be selectable.
+       *  <br/>Defaults to true
+       */
+
+      /**
+       *  @ngdoc object
+       *  @name isSelected
+       *  @propertyOf  ui.grid.selection.api:GridRow
+       *  @description Selected state of row.  Should be readonly. Make any changes to selected state using setSelected().
+       *  <br/>Defaults to false
+       */
+
+
+        /**
+         * @ngdoc function
+         * @name setSelected
+         * @methodOf ui.grid.selection.api:GridRow
+         * @description Sets the isSelected property and updates the selectedCount
+         * Changes to isSelected state should only be made via this function
+         * @param {bool} selelected value to set
+         */
+        $delegate.prototype.setSelected = function(selected) {
+          this.isSelected = selected;
+          if (selected) {
+            this.grid.selection.selectedCount++;
+          }
+          else {
+            this.grid.selection.selectedCount--;
+          }
+        };
+
+      return $delegate;
+    }]);
+  }]);
+
   /**
    *  @ngdoc service
    *  @name ui.grid.selection.service:uiGridSelectionService
@@ -40,10 +92,27 @@
 
         initializeGrid: function (grid) {
 
-          //add feature namespace and any properties to grid for needed state
+          //add feature namespace and any properties to grid for needed
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.selection.grid:selection
+           *
+           *  @description Grid properties and functions added for selection
+           */
           grid.selection = {};
           grid.selection.lastSelectedRow = null;
           grid.selection.selectAll = false;
+
+
+          /**
+           *  @ngdoc object
+           *  @name selectedCount
+           *  @propertyOf  ui.grid.selection.grid:selection
+           *  @description Current count of selected rows
+           *  @example
+           *  var count = grid.selection.selectedCount
+           */
+          grid.selection.selectedCount = 0;
 
           service.defaultGridOptions(grid.options);
 
@@ -157,7 +226,7 @@
                   var changedRows = [];
                   grid.rows.forEach(function (row) {
                     if ( !row.isSelected && row.enableSelection !== false ){
-                      row.isSelected = true;
+                      row.setSelected(true);
                       service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
                     }
                   });
@@ -180,12 +249,12 @@
                   grid.rows.forEach(function (row) {
                     if (row.visible) {
                       if (!row.isSelected && row.enableSelection !== false){
-                        row.isSelected = true;
+                        row.setSelected(true);
                         service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
                       }
                     } else {
                       if (row.isSelected){
-                        row.isSelected = false;
+                        row.setSelected(false);
                         service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
                       }
                     }
@@ -278,23 +347,6 @@
 
           /**
            *  @ngdoc object
-           *  @name ui.grid.selection.api:GridRow
-           *
-           *  @description GridRow options for selection feature
-           */
-          /**
-           *  @ngdoc object
-           *  @name enableSelection
-           *  @propertyOf  ui.grid.selection.api:GridRow
-           *  @description Enable row selection for this row, only settable by internal code.
-           * 
-           *  The grouping feature, for example, might set group header rows to not be selectable.
-           *  <br/>Defaults to true
-           */
-
-
-          /**
-           *  @ngdoc object
            *  @name enableRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable row selection for entire grid.
@@ -363,6 +415,16 @@
            *  <br/>Defaults to 30px
            */
           gridOptions.selectionRowHeaderWidth = angular.isDefined(gridOptions.selectionRowHeaderWidth) ? gridOptions.selectionRowHeaderWidth : 30;
+
+          /**
+           *  @ngdoc object
+           *  @name enableFooterTotalSelected
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Shows the total number of selected items in footer if true.
+           *  <br/>Defaults to true.
+           *  <br/>GridOptions.showFooter must also be set to true.
+           */
+          gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
         },
 
         /**
@@ -392,7 +454,7 @@
           if (selected && noUnselect){
             // don't deselect the row 
           } else if (row.enableSelection !== false) {
-            row.isSelected = !selected;
+            row.setSelected(!selected);
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
             } else {
@@ -430,7 +492,7 @@
             var rowToSelect = grid.renderContainers.body.visibleRowCache[i];
             if (rowToSelect) {
               if ( !rowToSelect.isSelected && rowToSelect.enableSelection !== false ){
-                rowToSelect.isSelected = true;
+                rowToSelect.setSelected(true);
                 grid.selection.lastSelectedRow = rowToSelect;
                 service.decideRaiseSelectionEvent( grid, rowToSelect, changedRows, evt );
               }
@@ -463,7 +525,7 @@
           var changedRows = [];
           service.getSelectedRows(grid).forEach(function (row) {
             if ( row.isSelected ){
-              row.isSelected = false;
+              row.setSelected(false);
               service.decideRaiseSelectionEvent( grid, row, changedRows, evt );
             }
           });
@@ -756,5 +818,39 @@
           }
         };
       }]);
+
+  module.directive('uiGridGridFooter', ['$compile', 'uiGridConstants', 'gridUtil', function ($compile, uiGridConstants, gridUtil) {
+    return {
+      restrict: 'EA',
+      replace: true,
+      priority: -1000,
+      require: '^uiGrid',
+      scope: true,
+      compile: function ($elm, $attrs) {
+        return {
+          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+            if (!uiGridCtrl.grid.options.showGridFooter) {
+              return;
+            }
+
+
+            gridUtil.getTemplate('ui-grid/gridFooterSelectedItems')
+              .then(function (contents) {
+                var template = angular.element(contents);
+
+                var newElm = $compile(template)($scope);
+
+                angular.element($elm[0].getElementsByClassName('ui-grid-grid-footer')[0]).append(newElm);
+              });
+          },
+
+          post: function ($scope, $elm, $attrs, controllers) {
+
+          }
+        };
+      }
+    };
+  }]);
 
 })();
