@@ -399,9 +399,6 @@
 .ngFooterTotalItems.ngnoMultiSelect {
   padding: 0 !important;
 }
-.ngGridMaxPagesNumber {
-  vertical-align: middle;
-}
 .ngPagerFirstBar {
   width: 10px;
   border-left: 2px solid #4d4d4d;
