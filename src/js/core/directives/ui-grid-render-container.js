@@ -68,9 +68,9 @@
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
 
             // Bind to left/right-scroll events
-            var scrollUnbinder;
+            var scrollUnbinder = function() {};
             if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
-              scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
+              //scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
             }
 
             function scrollHandler (evt, args) {
@@ -404,6 +404,7 @@
             $scope.rowContainer.visibleRowCache[$scope.rowContainer.currentTopRow].height;
 
           // return { 'margin-top': hiddenRowWidth + 'px' };
+          //gridUtil.logDebug('margin-top ' + hiddenRowWidth );
           styles['margin-top'] = hiddenRowWidth + 'px';
         }
       }

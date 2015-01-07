@@ -687,6 +687,34 @@ angular.module('ui.grid')
     this.columnStyles = ret;
   };
 
+  GridRenderContainer.prototype.getViewPortStyle = function () {
+    var self = this;
+    var styles = {};
+
+    if (self.name === 'body') {
+      styles['overflow-x'] = 'scroll';
+      if (self.grid.hasRightContainerColumns()) {
+        styles['overflow-y'] = 'hidden';
+      }
+      else {
+        styles['overflow-y'] = 'scroll';
+      }
+    }
+    else if (self.name === 'left') {
+      styles['overflow-x'] = 'hidden';
+      styles['overflow-y'] = 'hidden';
+    }
+    else {
+      styles['overflow-x'] = 'hidden';
+      styles['overflow-y'] = 'scroll';
+    }
+
+    // if (self.grid.isRTL()) {
+
+    return styles;
+
+  };
+
   return GridRenderContainer;
 }]);
 

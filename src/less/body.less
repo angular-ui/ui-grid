@@ -15,7 +15,6 @@
   // overflow: auto; // TODO(c0bra): turn back on when virtual repeater is hooked up
   min-height: 20px;
   position: relative;
-  overflow: hidden;
 
   :focus {
     outline: none;
@@ -24,6 +23,7 @@
 
 .ui-grid-canvas {
   position: relative;
+  padding-top:1px; //to prevent canvas from absorbing the 1st rendered row's margin
 }
 
 .ui-grid-row {

@@ -1364,7 +1364,7 @@ angular.module('ui.grid')
     
     viewPortHeight = viewPortHeight + adjustment.height;
 
-    // gridUtil.logDebug('viewPortHeight', viewPortHeight);
+    //gridUtil.logDebug('viewPortHeight', viewPortHeight);
 
     return viewPortHeight;
   };
@@ -1382,7 +1382,7 @@ angular.module('ui.grid')
     
     viewPortWidth = viewPortWidth + adjustment.width;
 
-    // gridUtil.logDebug('getviewPortWidth', viewPortWidth);
+    //gridUtil.logDebug('getviewPortWidth', viewPortWidth);
 
     return viewPortWidth;
   };
@@ -1798,6 +1798,28 @@ angular.module('ui.grid')
       container.adjustColumns(null, container.prevScrollleftPercentage);
     }
   };
+
+    /**
+     * @ngdoc function
+     * @name hasLeftContainerColumns
+     * @methodOf ui.grid.class:Grid
+     * @description returns true if leftContainer has columns
+     */
+    Grid.prototype.hasLeftContainerColumns = function () {
+      return this.hasLeftContainer() && this.renderContainers.left.renderedColumns.length > 0;
+    };
+
+    /**
+     * @ngdoc function
+     * @name hasRightContainerColumns
+     * @methodOf ui.grid.class:Grid
+     * @description returns true if rightContainer has columns
+     */
+    Grid.prototype.hasRightContainerColumns = function () {
+      return this.hasRightContainer() && this.renderContainers.right.renderedColumns.length > 0;
+    };
+
+
 
 
   // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)
