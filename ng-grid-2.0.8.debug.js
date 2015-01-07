@@ -14,7 +14,7 @@ var ASC = "asc";
 var DESC = "desc";
 // constant for sorting direction
 var NG_FIELD = '_ng_field_';
-var NG_DEPTH = '_ng_depth_';
+var NG_DEPTH = '_ng_depth_';`
 var NG_HIDDEN = '_ng_hidden_';
 var NG_COLUMN = '_ng_column_';
 var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
