@@ -1626,7 +1626,7 @@ angular.module('ui.grid')
    * 
    */
   Grid.prototype.refresh = function refresh() {
-    gridUtil.logDebug('grid refresh');
+    // gridUtil.logDebug('grid refresh');
     
     var self = this;
     
