@@ -16,7 +16,7 @@
    *  @name ui.grid.moveColumns.service:uiGridMoveColumnService
    *  @description Service for column moving feature.
    */
-  module.service('uiGridMoveColumnService', ['$q', '$timeout', '$log', function ($q, $timeout, $log) {
+  module.service('uiGridMoveColumnService', ['$q', '$timeout', '$log', 'ScrollEvent', function ($q, $timeout, $log, ScrollEvent) {
 
     var service = {
       initializeGrid: function (grid) {
@@ -221,8 +221,8 @@
    *  Events that invoke repositioning of column:
    *    - mouseup
    */
-  module.directive('uiGridHeaderCell', ['$q', 'gridUtil', 'uiGridMoveColumnService', '$document', '$log', 'uiGridConstants',
-    function ($q, gridUtil, uiGridMoveColumnService, $document, $log, uiGridConstants) {
+  module.directive('uiGridHeaderCell', ['$q', 'gridUtil', 'uiGridMoveColumnService', '$document', '$log', 'uiGridConstants', 'ScrollEvent',
+    function ($q, gridUtil, uiGridMoveColumnService, $document, $log, uiGridConstants, ScrollEvent) {
       return {
         priority: -10,
         require: '^uiGrid',
@@ -294,7 +294,9 @@
                         }
                         else {
                           changeValue *= 8;
-                          uiGridCtrl.fireScrollingEvent({x: {pixels: changeValue}});
+                          var scrollEvent = new ScrollEvent($scope.col.grid, null, null, ScrollEvent.Sources.Other);
+                          scrollEvent.x.pixels = changeValue;
+                          scrollEvent.fireScrollingEvent();
                         }
                         totalMouseMovement += changeValue;
 

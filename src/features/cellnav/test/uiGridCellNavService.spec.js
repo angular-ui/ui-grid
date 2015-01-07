@@ -198,11 +198,9 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       }
       
       $scope = $rootScope.$new();
-      
-      evt = null;
+
       args = null;
-      $scope.$on(uiGridConstants.events.GRID_SCROLL, function( receivedEvt, receivedArgs ){
-        evt = receivedEvt;
+      grid.api.core.on.scrollEvent($scope, function( receivedArgs ){
         args = receivedArgs;
       });
       

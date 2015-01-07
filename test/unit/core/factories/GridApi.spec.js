@@ -25,7 +25,7 @@ describe('GridEvent factory', function () {
     var pubArg1Val = '';
     var pubArg2Val = '';
     $timeout(function(){
-      scope.$on(grid.id + 'testFeature' + 'testEvent',function(evt,arg1,arg2){
+      $rootScope.$on(grid.id + 'testFeature' + 'testEvent',function(evt,arg1,arg2){
         onFired = true;
         arg1Val = arg1;
         arg2Val = arg2;
@@ -147,7 +147,7 @@ describe('GridEvent factory', function () {
 
     $timeout(function(){
       //native angular listener
-      scope.$on(grid.id + 'testFeature' + 'testEvent', listener1);
+      $rootScope.$on(grid.id + 'testFeature' + 'testEvent', listener1);
       //grid listener
       gridApi.testFeature.on.testEvent(scope, listener2);
       //grid listener to be suppressed

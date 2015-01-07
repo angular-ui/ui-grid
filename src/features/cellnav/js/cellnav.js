@@ -516,7 +516,7 @@
           }
 
           if (args.y || args.x) {
-            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+            grid.api.core.raise.scrollEvent(args);
           }
         },
 
@@ -666,7 +666,7 @@
 
           // If we need to scroll on either the x or y axes, fire a scroll event
           if (args.y || args.x) {
-            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+            grid.api.core.raise.scrollEvent(args);
           }
         },
 
@@ -855,7 +855,7 @@
               });
 
               // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+              grid.api.core.on.scrollEvent($scope, function (args) {
                 // Skip if not this grid that the event was broadcast for
                 if (args.grid && args.grid.id !== uiGridCtrl.grid.id) {
                   return;

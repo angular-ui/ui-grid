@@ -11,6 +11,12 @@ describe('ui.grid.cellNav directive', function () {
     $scope.gridOpts = {
       data: [{ name: 'Bob' }]
     };
+
+    $scope.gridOpts.onRegisterApi = function(gridApi){
+      $scope.gridApi = gridApi;
+    };
+
+
   }));
 
   it('should not throw exceptions when scrolling when a grid does NOT have the ui-grid-cellNav directive', function () {
@@ -20,7 +26,7 @@ describe('ui.grid.cellNav directive', function () {
     $scope.$digest();
 
     expect(function () {
-      $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, {});
+      $scope.gridApi.core.raise.scrollEvent({});
     }).not.toThrow();
   });
 });

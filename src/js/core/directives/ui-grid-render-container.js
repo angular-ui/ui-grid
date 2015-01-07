@@ -3,8 +3,8 @@
 
   var module = angular.module('ui.grid');
   
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'uiGridConstants', 'gridUtil',
-    function($timeout, $document, uiGridConstants, GridUtil) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'uiGridConstants', 'gridUtil', 'ScrollEvent',
+    function($timeout, $document, uiGridConstants, gridUtil, ScrollEvent) {
     return {
       replace: true,
       transclude: true,
@@ -68,19 +68,21 @@
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
 
             // Bind to left/right-scroll events
-            var scrollUnbinder = function() {};
             if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
-              //scrollUnbinder = $scope.$on(uiGridConstants.events.GRID_SCROLL, scrollHandler);
+              grid.api.core.on.scrollEvent($scope,scrollHandler);
             }
 
-            function scrollHandler (evt, args) {
+            function scrollHandler (args) {
               // exit if not for this grid
               if (args.grid && args.grid.id !== grid.id){
                 return;
               }
+
               
               // Vertical scroll
               if (args.y && $scope.bindScrollVertical) {
+
+
                 containerCtrl.prevScrollArgs = args;
 
                 var scrollLength = rowContainer.getVerticalScrollLength();
@@ -106,7 +108,13 @@
 
                 var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
 
-                containerCtrl.viewport[0].scrollTop = newScrollTop;
+                //gridUtil.logDebug('newScrollTop ' + newScrollTop + ' ' + args);
+                //gridUtil.logDebug('oldScrollTop ' + containerCtrl.viewport[0].scrollTop);
+                if (args.source !== ScrollEvent.Sources.ViewPortScroll ||
+                  args.sourceColContainer !== colContainer) {
+                  containerCtrl.viewport[0].scrollTop = newScrollTop;
+                }
+
                 
                 // TOOD(c0bra): what's this for?
                 // grid.options.offsetTop = newScrollTop;
@@ -118,44 +126,57 @@
               if (args.x && $scope.bindScrollHorizontal) {
                 containerCtrl.prevScrollArgs = args;
 
-                var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
-                // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
-                var oldScrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                //scroll header and footer
+                if (!args.newScrollLeft){
+                  var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
-                var scrollXPercentage;
-                if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
-                  scrollXPercentage = args.x.percentage;
+                  // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
+                  var oldScrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                  containerCtrl.prevScrollArgs.x.pixels = args.newScrollLeft - oldScrollLeft;
+
+                  var scrollXPercentage;
+                  if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
+                    scrollXPercentage = args.x.percentage;
+                  }
+                  else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
+                    scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
+                  }
+                  else {
+                    throw new Error("No percentage or pixel value provided for scroll event X axis");
+                  }
+
+                  args.newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
                 }
-                else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
-                  scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
-                }
-                else {
-                  throw new Error("No percentage or pixel value provided for scroll event X axis");
-                }
 
-                var newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
-                
-                // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
 
-                // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
-                containerCtrl.viewport[0].scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
-
-                containerCtrl.prevScrollLeft = newScrollLeft;
 
                 if (containerCtrl.headerViewport) {
                   // containerCtrl.headerViewport.scrollLeft = newScrollLeft;
-                  containerCtrl.headerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
+                  containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, args.newScrollLeft);
                 }
 
                 if (containerCtrl.footerViewport) {
                   // containerCtrl.footerViewport.scrollLeft = newScrollLeft;
-                  containerCtrl.footerViewport.scrollLeft = GridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, newScrollLeft);
+                  containerCtrl.footerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, args.newScrollLeft);
                 }
+
+                // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
+
+                // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+
+                //scroll came from somewhere else, so the viewport must be positioned
+                if (args.source !== ScrollEvent.Sources.ViewPortScroll) {
+                  containerCtrl.viewport[0].scrollLeft = args.newScrollLeft;
+                }
+
+                containerCtrl.prevScrollLeft = args.newScrollLeft;
+
+
 
                 // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
 
-                containerCtrl.prevScrollArgs.x.pixels = newScrollLeft - oldScrollLeft;
+
               }
             }
 
@@ -163,9 +184,9 @@
             $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
               // use wheelDeltaY
 
-              var newEvent = GridUtil.normalizeWheelEvent(evt);
+              var newEvent = gridUtil.normalizeWheelEvent(evt);
 
-              var args = { target: $elm };
+              var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerMouseWheel);
               if (newEvent.deltaY !== 0) {
                 var scrollYAmount = newEvent.deltaY * -120;
 
@@ -176,28 +197,28 @@
                 if (scrollYPercentage < 0) { scrollYPercentage = 0; }
                 else if (scrollYPercentage > 1) { scrollYPercentage = 1; }
 
-                args.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
+                scrollEvent.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
               }
               if (newEvent.deltaX !== 0) {
                 var scrollXAmount = newEvent.deltaX * -120;
 
                 // Get the scroll percentage
-                var scrollLeft = GridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                var scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
                 var scrollXPercentage = (scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollXPercentage < 0) { scrollXPercentage = 0; }
                 else if (scrollXPercentage > 1) { scrollXPercentage = 1; }
 
-                args.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
+                scrollEvent.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
 
               // Let the parent container scroll if the grid is already at the top/bottom
-              if ((args.y.percentage !== 0 && args.y.percentage !== 1) || (args.x.percentage !== 0 && args.x.percentage !== 1)) {
+              if ((scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1) || (scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
                 evt.preventDefault();
               }
 
-              uiGridCtrl.fireScrollingEvent(args);
+              scrollEvent.fireScrollingEvent();
             });
 
             var startY = 0,
@@ -227,7 +248,7 @@
               deltaY *= 2;
               deltaX *= 2;
 
-              var args = { target: event.target };
+              var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerTouchMove);
 
               if (deltaY !== 0) {
                 var scrollYPercentage = (scrollTopStart + deltaY) / rowContainer.getVerticalScrollLength();
@@ -235,7 +256,7 @@
                 if (scrollYPercentage > 1) { scrollYPercentage = 1; }
                 else if (scrollYPercentage < 0) { scrollYPercentage = 0; }
 
-                args.y = { percentage: scrollYPercentage, pixels: deltaY };
+                scrollEvent.y = { percentage: scrollYPercentage, pixels: deltaY };
               }
               if (deltaX !== 0) {
                 var scrollXPercentage = (scrollLeftStart + deltaX) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
@@ -243,10 +264,10 @@
                 if (scrollXPercentage > 1) { scrollXPercentage = 1; }
                 else if (scrollXPercentage < 0) { scrollXPercentage = 0; }
 
-                args.x = { percentage: scrollXPercentage, pixels: deltaX };
+                scrollEvent.x = { percentage: scrollXPercentage, pixels: deltaX };
               }
 
-              uiGridCtrl.fireScrollingEvent(args);
+              scrollEvent.fireScrollingEvent();
             }
             
             function touchend(event) {
@@ -276,43 +297,43 @@
               var scrollYLength = 120 * directionY * moveYScale;
               var scrollXLength = 120 * directionX * moveXScale;
 
-              function decelerate() {
-                $timeout(function() {
-                  var args = { target: event.target };
-
-                  if (scrollYLength !== 0) {
-                    var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYLength) / rowContainer.getVerticalScrollLength();
-
-                    args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
-                  }
-
-                  if (scrollXLength !== 0) {
-                    var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXLength) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-                    args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
-                  }
-
-                  uiGridCtrl.fireScrollingEvent(args);
-
-                  decelerateCount = decelerateCount -1;
-                  scrollYLength = scrollYLength / 2;
-                  scrollXLength = scrollXLength / 2;
-
-                  if (decelerateCount > 0) {
-                    decelerate();
-                  }
-                  else {
-                    uiGridCtrl.scrollbars.forEach(function (sbar) {
-                      sbar.removeClass('ui-grid-scrollbar-visible');
-                      sbar.removeClass('ui-grid-scrolling');
-                    });
-                  }
-                }, decelerateInterval);
-              }
+              //function decelerate() {
+              //  $timeout(function() {
+              //    var args = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerTouchMove);
+              //
+              //    if (scrollYLength !== 0) {
+              //      var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYLength) / rowContainer.getVerticalScrollLength();
+              //
+              //      args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
+              //    }
+              //
+              //    if (scrollXLength !== 0) {
+              //      var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXLength) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
+              //      args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
+              //    }
+              //
+              //    uiGridCtrl.fireScrollingEvent(args);
+              //
+              //    decelerateCount = decelerateCount -1;
+              //    scrollYLength = scrollYLength / 2;
+              //    scrollXLength = scrollXLength / 2;
+              //
+              //    if (decelerateCount > 0) {
+              //      decelerate();
+              //    }
+              //    else {
+              //      uiGridCtrl.scrollbars.forEach(function (sbar) {
+              //        sbar.removeClass('ui-grid-scrollbar-visible');
+              //        sbar.removeClass('ui-grid-scrolling');
+              //      });
+              //    }
+              //  }, decelerateInterval);
+              //}
 
               // decelerate();
             }
 
-            if (GridUtil.isTouchEnabled()) {
+            if (gridUtil.isTouchEnabled()) {
               $elm.bind('touchstart', function (event) {
                 if (event.originalEvent) {
                   event = event.originalEvent;
@@ -335,7 +356,6 @@
             }
 
             $elm.bind('$destroy', function() {
-              scrollUnbinder();
               $elm.unbind('keydown');
 
               ['touchstart', 'touchmove', 'touchend','keydown', 'wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'].forEach(function (eventName) {

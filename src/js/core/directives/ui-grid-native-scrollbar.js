@@ -282,8 +282,8 @@
           }
         }
 
-     //   var gridScrollDereg = $scope.$on(uiGridConstants.events.GRID_SCROLL, gridScroll);
-     //   $scope.$on('$destroy', gridScrollDereg);
+        var gridScrollDereg = $scope.$on(uiGridConstants.events.GRID_SCROLL, gridScroll);
+        $scope.$on('$destroy', gridScrollDereg);
 
 
 

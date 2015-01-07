@@ -115,6 +115,19 @@
            * @description  is raised after the cache of visible rows is changed.
            */
           this.registerEvent( 'core', 'rowsRendered' );
+
+
+          /**
+           * @ngdoc event
+           * @name scrollEvent
+           * @eventOf  ui.grid.core.api:PublicApi
+           * @description  is raised on a scroll Event.  Called frequently so be careful what you do with it
+           */
+          this.registerEvent( 'core', 'scrollEvent' );
+
+
+
+
         };
 
         /**
@@ -195,7 +208,7 @@
 
           // gridUtil.logDebug('Creating raise event method ' + featureName + '.raise.' + eventName);
           feature.raise[eventName] = function () {
-            $rootScope.$broadcast.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
+            $rootScope.$emit.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
           };
 
           // gridUtil.logDebug('Creating on event method ' + featureName + '.on.' + eventName);
@@ -210,16 +223,19 @@
             //wanted to remove the listener from the array but angular does
             //strange things in scope.$destroy so I could not access the listener array
             scope.$on('$destroy', function() {
+              dereg();
               listener.dereg = null;
               listener.handler = null;
               listener.eventId = null;
               listener.scope = null;
             });
+
+            return dereg;
           };
         };
 
         function registerEventWithAngular(scope, eventId, handler, grid) {
-          return scope.$on(eventId, function (event) {
+          return $rootScope.$on(eventId, function (event) {
             var args = Array.prototype.slice.call(arguments);
             args.splice(0, 1); //remove evt argument
             handler.apply(grid.api, args);

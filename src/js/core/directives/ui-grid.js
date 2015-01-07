@@ -114,13 +114,6 @@
       });
 
 
-      /* Event Methods */
-
-      self.fireScrollingEvent = gridUtil.throttle(function(args) {
-        args.grid = args.grid || self.grid;
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
-      }, self.grid.options.scrollThrottle, {trailing: true});
-
       self.fireEvent = function(eventName, args) {
         // Add the grid to the event arguments if it's not there
         if (typeof(args) === 'undefined' || args === undefined) {

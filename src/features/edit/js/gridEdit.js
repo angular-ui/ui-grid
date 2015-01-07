@@ -641,7 +641,7 @@
               });
 
               //stop editing when grid is scrolled
-              var deregOnGridScroll = $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
+              var deregOnGridScroll = $scope.col.grid.api.core.on.scrollEvent($scope, function () {
                 endEdit(true);
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnGridScroll();
