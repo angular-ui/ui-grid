@@ -236,7 +236,7 @@
                     uiGridCtrl.grid.refresh()
                       .then(function () {
                         if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
-                          var scrollEvent = new ScrollEvent(uiGridCtrl.grid,null,null,ScrollEvent.Sources.Other);
+                          var scrollEvent = new ScrollEvent(uiGridCtrl.grid,null,null,'uiGridHeaderCell.toggleMenu');
                           scrollEvent.y.percentage = uiGridCtrl.prevScrollArgs.y.percentage;
                           scrollEvent.fireScrollingEvent();
                         }

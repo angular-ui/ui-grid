@@ -81,102 +81,38 @@
               
               // Vertical scroll
               if (args.y && $scope.bindScrollVertical) {
-
-
                 containerCtrl.prevScrollArgs = args;
 
-                var scrollLength = rowContainer.getVerticalScrollLength();
+                var newScrollTop = args.getNewScrollTop(rowContainer,containerCtrl.viewport);
 
-                // Add the height of the native horizontal scrollbar, if it's there. Otherwise it will mask over the final row
-                if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
-                  scrollLength = scrollLength + grid.horizontalScrollbarHeight;
-                }
-
-                var oldScrollTop = containerCtrl.viewport[0].scrollTop;
-                
-                var scrollYPercentage;
-                if (typeof(args.y.percentage) !== 'undefined' && args.y.percentage !== undefined) {
-                  scrollYPercentage = args.y.percentage;
-                }
-                else if (typeof(args.y.pixels) !== 'undefined' && args.y.pixels !== undefined) {
-                  scrollYPercentage = args.y.percentage = (oldScrollTop + args.y.pixels) / scrollLength;
-                  // gridUtil.logDebug('y.percentage', args.y.percentage);
-                }
-                else {
-                  throw new Error("No percentage or pixel value provided for scroll event Y axis");
-                }
-
-                var newScrollTop = Math.max(0, scrollYPercentage * scrollLength);
-
-                //gridUtil.logDebug('newScrollTop ' + newScrollTop + ' ' + args);
-                //gridUtil.logDebug('oldScrollTop ' + containerCtrl.viewport[0].scrollTop);
+                //only set scrollTop if we coming from something other than viewPort scrollBar or
+                //another column container
                 if (args.source !== ScrollEvent.Sources.ViewPortScroll ||
-                  args.sourceColContainer !== colContainer) {
+                    args.sourceColContainer !== colContainer) {
                   containerCtrl.viewport[0].scrollTop = newScrollTop;
                 }
 
-                
-                // TOOD(c0bra): what's this for?
-                // grid.options.offsetTop = newScrollTop;
-
-                containerCtrl.prevScrollArgs.y.pixels = newScrollTop - oldScrollTop;
               }
 
               // Horizontal scroll
               if (args.x && $scope.bindScrollHorizontal) {
                 containerCtrl.prevScrollArgs = args;
-
-
-                //scroll header and footer
-                if (!args.newScrollLeft){
-                  var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-
-                  // var oldScrollLeft = containerCtrl.viewport[0].scrollLeft;
-                  var oldScrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
-                  containerCtrl.prevScrollArgs.x.pixels = args.newScrollLeft - oldScrollLeft;
-
-                  var scrollXPercentage;
-                  if (typeof(args.x.percentage) !== 'undefined' && args.x.percentage !== undefined) {
-                    scrollXPercentage = args.x.percentage;
-                  }
-                  else if (typeof(args.x.pixels) !== 'undefined' && args.x.pixels !== undefined) {
-                    scrollXPercentage = args.x.percentage = (oldScrollLeft + args.x.pixels) / scrollWidth;
-                  }
-                  else {
-                    throw new Error("No percentage or pixel value provided for scroll event X axis");
-                  }
-
-                  args.newScrollLeft = Math.max(0, scrollXPercentage * scrollWidth);
-                }
-
-
+                var newScrollLeft = args.getNewScrollLeft(colContainer,containerCtrl.viewport);
 
                 if (containerCtrl.headerViewport) {
-                  // containerCtrl.headerViewport.scrollLeft = newScrollLeft;
-                  containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, args.newScrollLeft);
+                  containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
                 }
 
                 if (containerCtrl.footerViewport) {
-                  // containerCtrl.footerViewport.scrollLeft = newScrollLeft;
-                  containerCtrl.footerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, args.newScrollLeft);
+                  containerCtrl.footerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, newScrollLeft);
                 }
-
-                // uiGridCtrl.adjustScrollHorizontal(newScrollLeft, scrollXPercentage);
-
-                // containerCtrl.viewport[0].scrollLeft = newScrollLeft;
 
                 //scroll came from somewhere else, so the viewport must be positioned
                 if (args.source !== ScrollEvent.Sources.ViewPortScroll) {
-                  containerCtrl.viewport[0].scrollLeft = args.newScrollLeft;
+                  containerCtrl.viewport[0].scrollLeft = newScrollLeft;
                 }
 
-                containerCtrl.prevScrollLeft = args.newScrollLeft;
-
-
-
-                // uiGridCtrl.grid.options.offsetLeft = newScrollLeft;
-
-
+                containerCtrl.prevScrollLeft = newScrollLeft;
               }
             }
 
@@ -213,12 +149,14 @@
                 scrollEvent.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
 
+              // todo: this isn't working when scrolling down.  it works fine for up.  tested on Chrome
               // Let the parent container scroll if the grid is already at the top/bottom
-              if ((scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1) || (scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
+                if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1) ||
+                    (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
                 evt.preventDefault();
               }
 
-              scrollEvent.fireScrollingEvent();
+              scrollEvent.fireThrottledScrollingEvent();
             });
 
             var startY = 0,

@@ -238,8 +238,8 @@
    *  @description Services for cell navigation features. If you don't like the key maps we use,
    *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
-  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav) {
+  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory', 'ScrollEvent',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav, ScrollEvent) {
 
       var service = {
 
@@ -500,23 +500,21 @@
          * @param {GridCol} gridCol column to make visible
          */
         scrollToInternal: function (grid, $scope, gridRow, gridCol) {
-          var args = {};
-
-          args.grid = grid;
+          var scrollEvent = new ScrollEvent(grid,null,null,'uiGridCellNavService.scrollToInternal');
 
           if (gridRow !== null) {
             var seekRowIndex = grid.renderContainers.body.visibleRowCache.indexOf(gridRow);
             var totalRows = grid.renderContainers.body.visibleRowCache.length;
             var percentage = ( seekRowIndex + ( seekRowIndex / ( totalRows - 1 ) ) ) / totalRows;
-            args.y = { percentage:  percentage  };
+            scrollEvent.y = { percentage:  percentage  };
           }
 
           if (gridCol !== null) {
-            args.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
+            scrollEvent.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
           }
 
-          if (args.y || args.x) {
-            grid.api.core.raise.scrollEvent(args);
+          if (scrollEvent.y || scrollEvent.x) {
+            scrollEvent.fireScrollingEvent();
           }
         },
 
@@ -533,9 +531,7 @@
          * @param {GridCol} gridCol column to make visible
          */
         scrollToIfNecessary: function (grid, $scope, gridRow, gridCol) {
-          var args = {};
-
-          args.grid = grid;
+          var scrollEvent = new ScrollEvent(grid,null,null,'uiGridCellNavService.scrollToIfNecessary');
 
           // Alias the visible row and column caches
           var visRowCache = grid.renderContainers.body.visibleRowCache;
@@ -598,7 +594,7 @@
 
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               percentage = scrollPixels / scrollLength;
-              args.y = { percentage: percentage  };
+              scrollEvent.y = { percentage: percentage  };
             }
             // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
             else if (pixelsToSeeRow > bottomBound) {
@@ -608,7 +604,7 @@
 
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               percentage = scrollPixels / scrollLength;
-              args.y = { percentage: percentage  };
+              scrollEvent.y = { percentage: percentage  };
             }
           }
 
@@ -649,7 +645,7 @@
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               horizPercentage = horizScrollPixels / horizScrollLength;
               horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              args.x = { percentage: horizPercentage  };
+              scrollEvent.x = { percentage: horizPercentage  };
             }
             // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
             else if (columnRightEdge > rightBound) {
@@ -660,13 +656,13 @@
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               horizPercentage = horizScrollPixels / horizScrollLength;
               horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              args.x = { percentage: horizPercentage  };
+              scrollEvent.x = { percentage: horizPercentage  };
             }
           }
 
           // If we need to scroll on either the x or y axes, fire a scroll event
-          if (args.y || args.x) {
-            grid.api.core.raise.scrollEvent(args);
+          if (scrollEvent.y || scrollEvent.x) {
+            scrollEvent.fireScrollingEvent();
           }
         },
 

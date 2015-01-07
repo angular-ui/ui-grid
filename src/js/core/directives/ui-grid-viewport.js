@@ -53,9 +53,9 @@
               grid.flagScrollingVertically();
               var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
-              // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
+
               var vertScrollLength = rowContainer.getVerticalScrollLength();
-              // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
+
               vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
@@ -64,9 +64,6 @@
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
 
-        //    if ( !$scope.grid.isScrollingVertically && !$scope.grid.isScrollingHorizontally ){
-              // viewport scroll that didn't come from fireScrollEvent, so fire a scroll to keep
-              // the header in sync
               var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.ViewPortScroll);
               scrollEvent.newScrollLeft = newScrollLeft;
               scrollEvent.newScrollTop = newScrollTop;
@@ -78,7 +75,6 @@
                 scrollEvent.y = { percentage: vertScrollPercentage };
               }
               scrollEvent.fireScrollingEvent();
-       //     }
           });
         }
       };
