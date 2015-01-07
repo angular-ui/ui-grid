@@ -172,8 +172,6 @@
                 event = event.originalEvent;
               }
 
-              event.preventDefault();
-
               var deltaX, deltaY, newX, newY;
               newX = event.targetTouches[0].screenX;
               newY = event.targetTouches[0].screenY;
@@ -205,6 +203,11 @@
                 scrollEvent.x = { percentage: scrollXPercentage, pixels: deltaX };
               }
 
+              // Let the parent container scroll if the grid is already at the top/bottom
+              if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1) ||
+                  (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
+                event.preventDefault();
+              }
               scrollEvent.fireScrollingEvent();
             }
             
