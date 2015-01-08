@@ -193,7 +193,7 @@
               }
 
               // Let the parent container scroll if the grid is already at the top/bottom
-              if ((args.y.percentage !== 0 && args.y.percentage !== 1) || (args.x.percentage !== 0 && args.x.percentage !== 1)) {
+              if ((args.y && args.y.percentage !== 0 && args.y.percentage !== 1) || (args.x && args.x.percentage !== 0 && args.x.percentage !== 1)) {
                 evt.preventDefault();
               }
 
