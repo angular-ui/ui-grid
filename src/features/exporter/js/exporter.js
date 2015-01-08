@@ -744,14 +744,14 @@
       
           // IE10+
           if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(new Blob([csvContent], {
+            return navigator.msSaveBlob(new Blob(["\ufeff", csvContent], {
               type: strMimeType
             }), fileName);
           }
       
           //html5 A[download]
           if ('download' in a) {
-            var blob = new Blob([csvContent], {
+            var blob = new Blob(["\ufeff", csvContent], {
               type: strMimeType
             });
             rawFile = URL.createObjectURL(blob);
