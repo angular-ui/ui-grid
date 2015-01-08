@@ -14,12 +14,12 @@ describe('ui.grid.cellNav directive', function () {
       modifierKeysToMultiSelectCells: true
     };
 
-    $scope.gridOpts.onRegisterApi = function(gridApi){
+    $scope.gridOpts.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
+      $scope.grid = gridApi.grid;
     };
 
-
-
+    elm = angular.element('<div ui-grid="gridOpts" ui-grid-cellNav></div>');
     $scope.gridOpts.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
       $scope.grid = gridApi.grid;
