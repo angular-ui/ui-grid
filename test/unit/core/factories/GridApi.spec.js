@@ -262,6 +262,37 @@ describe('GridEvent factory', function () {
   }));
 
 
+  it('should destroy listener when scope is destroyed', inject(function($timeout, $rootScope) {
+    var grid = new Grid({ id: 1 });
+    var gridApi = new GridApi(grid);
+    var scope = $rootScope.$new();
+
+    function callBackFn(){}
+
+
+    gridApi.registerEvent('testFeature','testEvent');
+    expect($rootScope.$$listeners['1testFeaturetestEvent']).toBeUndefined();
+    expect(gridApi.listeners.length).toBe(0);
+
+
+    //the dereg function should remove the listener from $rootscope
+    var dereg = gridApi.testFeature.on.testEvent(scope, callBackFn);
+    expect($rootScope.$$listeners['1testFeaturetestEvent']).toBeDefined();
+    expect(gridApi.listeners.length).toBe(1);
+    dereg();
+    expect($rootScope.$$listeners['testFeaturetestEvent']).toBeUndefined();
+    expect(gridApi.listeners.length).toBe(0);
+
+
+    //destroying the scope should remove listener from rootscope
+    dereg = gridApi.testFeature.on.testEvent(scope, callBackFn);
+    expect($rootScope.$$listeners['1testFeaturetestEvent']).toBeDefined();
+    scope.$destroy();
+    expect($rootScope.$$listeners['testFeaturetestEvent']).toBeUndefined();
+    expect(gridApi.listeners.length).toBe(0);
+  }));
+
+
 
 
 });

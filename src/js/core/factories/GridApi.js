@@ -189,6 +189,8 @@
          * @methodOf ui.grid.class:GridApi
          * @description Registers a new event for the given feature.  The event will get a
          * .raise and .on prepended to it
+         * <br>
+         * the .on.event returns a dereg funtion that will remove the listener
          * @param {string} featureName name of the feature that raises the event
          * @param {string} eventName  name of the event
          */
@@ -213,24 +215,24 @@
 
           // gridUtil.logDebug('Creating on event method ' + featureName + '.on.' + eventName);
           feature.on[eventName] = function (scope, handler) {
-            var dereg = registerEventWithAngular(scope, eventId, handler, self.grid);
+            var deregAngularOn = registerEventWithAngular(scope, eventId, handler, self.grid);
 
             //track our listener so we can turn off and on
-            var listener = {handler: handler, dereg: dereg, eventId: eventId, scope: scope};
+            var listener = {handler: handler, dereg: deregAngularOn, eventId: eventId, scope: scope};
             self.listeners.push(listener);
 
+            var removeListener = function(){
+              listener.dereg();
+              var index = self.listeners.indexOf(listener);
+              self.listeners.splice(index,1);
+            };
+
             //destroy tracking when scope is destroyed
-            //wanted to remove the listener from the array but angular does
-            //strange things in scope.$destroy so I could not access the listener array
             scope.$on('$destroy', function() {
-              dereg();
-              listener.dereg = null;
-              listener.handler = null;
-              listener.eventId = null;
-              listener.scope = null;
+              removeListener();
             });
 
-            return dereg;
+            return removeListener;
           };
         };
 
