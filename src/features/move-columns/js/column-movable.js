@@ -295,7 +295,7 @@
                         else {
                           changeValue *= 8;
                           var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
-                          scrollEvent.x.pixels = changeValue;
+                          scrollEvent.x = {pixels: changeValue};
                           scrollEvent.fireScrollingEvent();
                         }
                         totalMouseMovement += changeValue;
