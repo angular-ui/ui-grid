@@ -684,7 +684,7 @@
                 }
               });
 
-              $elm.on('click', function (evt) {
+              $elm.on('mousedown', function (evt) {
                 selectCells(evt);
               });
             }
