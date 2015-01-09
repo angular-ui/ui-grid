@@ -17,7 +17,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
 
-    grid = gridClassFactory.createGrid({});
+    grid = gridClassFactory.createGrid({showGridFooter:true});
     grid.options.columnDefs = [
       {field: 'col1', enableCellEdit: true}
     ];
@@ -108,6 +108,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[3].isSelected).toBe(true);
       expect(grid.rows[4].isSelected).toBe(true);
       expect(grid.rows[5].isSelected).toBe(true);
+      expect(grid.selection.selectedCount).toBe(4);
     });
 
     it('should skip non-selectable rows', function () {
@@ -240,6 +241,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[8].isSelected).toBe(undefined);
       expect(grid.rows[9].isSelected).toBe(true);
       expect(grid.selection.selectAll).toBe(true);
+      expect(grid.selection.selectedCount).toBe(8);
     });
   });
 

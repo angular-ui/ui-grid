@@ -51,6 +51,7 @@ describe('uiGridHeaderCell', function () {
       enableSorting: true,
       columnDefs: columnDefs,
       data: data,
+      showGridFooter: false,
       onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
     };
 
@@ -72,7 +73,7 @@ describe('uiGridHeaderCell', function () {
     grid.remove();
   });
 
-  describe('column menu', function (){ 
+  describe('column menu', function (){
     var headerCell1,
         headerCell2,
         menu;
