@@ -751,7 +751,7 @@
       
           //html5 A[download]
           if ('download' in a) {
-            var blob = new Blob(["\ufeff", csvContent], {
+            var blob = new Blob([csvContent], {
               type: strMimeType
             });
             rawFile = URL.createObjectURL(blob);
