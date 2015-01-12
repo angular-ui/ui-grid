@@ -165,3 +165,15 @@ SubGrid nesting can be done upto multiple levels.
     <div ui-grid="row.entity.subGridOptions" style="height:140px;"></div>
   </file>
 </example>
+
+In addition, you can customize the Headers for expandable rows via $scope.gridOptions.expandableRowHeaderColDef. For example, the following will hide the expand button if the subgrid contains no data, assign 'Custon Name' as the column header instead of 'expandableButtons', and increase the width of the column from 40 to 50
+
+@example
+$scope.gridOptions = {
+  expandableRowHeaderColDef: {
+    cellTemplate: "<div style= \"height:32px \" class=\"ui-grid-row-header-cell ui-grid-expandable-buttons-cell\"><div class=\"ui-grid-cell-contents\"><i ng-class=\"{ 'ui-grid-icon-plus-squared' : !row.isExpanded && row.entity.subGridOptions.data.length !== 0, 'ui-grid-icon-minus-squared' : row.isExpanded, 'ng-grid-cell': row.entity.subGridOptions.data.length == 0 }\" ng-click=\"grid.api.expandable.toggleRowExpansion(row.entity)\"></i></div></div>",
+
+    name: 'Custom Name',
+    width: 50
+      }
+}
