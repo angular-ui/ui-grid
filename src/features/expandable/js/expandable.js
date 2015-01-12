@@ -16,7 +16,7 @@
 
   /**
    *  @ngdoc service
-   *  @name ui.grid.edit.service:uiGridExpandableService
+   *  @name ui.grid.expandable.service:uiGridExpandableService
    *
    *  @description Services for the expandable grid
    */
@@ -84,7 +84,6 @@
          *  @description Options for configuring the expandable feature, these are available to be  
          *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
          */
-
         var publicApi = {
           events: {
             expandable: {
@@ -158,7 +157,7 @@
         row.isExpanded = !row.isExpanded;
 
         if (row.isExpanded) {
-          row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight; 
+          row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight;
         }
         else {
           row.height = row.grid.options.rowHeight;
@@ -225,6 +224,61 @@
       };
     }]);
 
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.expandable.directive:uiGrid
+   *  @description stacks on the uiGrid directive to register child grid with parent row when child is created
+   */
+  module.directive('uiGrid', ['uiGridExpandableService', '$templateCache',
+    function (uiGridExpandableService, $templateCache) {
+      return {
+        replace: true,
+        priority: 1000,
+        require: '^uiGrid',
+        scope: false,
+        compile: function () {
+          return {
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+              uiGridCtrl.grid.api.core.on.renderingComplete($scope, function() {
+                //if a parent grid row is on the scope, then add the parentRow property to this childGrid
+                if ($scope.row && $scope.row.grid && $scope.row.grid.options && $scope.row.grid.options.enableExpandable) {
+
+                  /**
+                   *  @ngdoc directive
+                   *  @name ui.grid.expandable.class:Grid
+                   *  @description Additional Grid properties added by expandable module
+                   */
+
+                  /**
+                   *  @ngdoc object
+                   *  @name parentRow
+                   *  @propertyOf ui.grid.expandable.class:Grid
+                   *  @description reference to the expanded parent row that owns this grid
+                   */
+                  uiGridCtrl.grid.parentRow = $scope.row;
+
+                  //todo: adjust height on parent row when child grid height changes. we need some sort of gridHeightChanged event
+                 // uiGridCtrl.grid.core.on.canvasHeightChanged($scope, function(oldHeight, newHeight) {
+                 //   uiGridCtrl.grid.parentRow = newHeight;
+                 // });
+                }
+
+              });
+            },
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+            }
+          };
+        }
+      };
+    }]);
+
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.expandable.directive:uiGridExpandableRow
+   *  @description directive to render the expandable row template
+   */
   module.directive('uiGridExpandableRow',
   ['uiGridExpandableService', '$timeout', '$compile', 'uiGridConstants','gridUtil','$interval', '$log',
     function (uiGridExpandableService, $timeout, $compile, uiGridConstants, gridUtil, $interval, $log) {
@@ -263,6 +317,11 @@
       };
     }]);
 
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.expandable.directive:uiGridRow
+   *  @description stacks on the uiGridRow directive to add support for expandable rows
+   */
   module.directive('uiGridRow',
     ['$compile', 'gridUtil', '$templateCache',
       function ($compile, gridUtil, $templateCache) {
@@ -314,6 +373,12 @@
         };
       }]);
 
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.expandable.directive:uiGridViewport
+   *  @description stacks on the uiGridViewport directive to append the expandable row html elements to the
+   *  default gridRow template
+   */
   module.directive('uiGridViewport',
     ['$compile', 'gridUtil', '$templateCache',
       function ($compile, gridUtil, $templateCache) {

@@ -45,6 +45,22 @@ angular.module('ui.grid')
 
     self.viewportAdjusters = [];
 
+    /**
+     *  @ngdoc boolean
+     *  @name canvasHeightShouldUpdate
+     *  @propertyOf  ui.grid.class:GridRenderContainer
+     *  @description flag to signal that container should recalculate the canvas size
+     */
+    self.canvasHeightShouldUpdate = true;
+
+    /**
+     *  @ngdoc boolean
+     *  @name canvasHeight
+     *  @propertyOf  ui.grid.class:GridRenderContainer
+     *  @description last calculated canvas height value
+     */
+    self.$$canvasHeight = 0;
+
     if (options && angular.isObject(options)) {
       angular.extend(self, options);
     }
@@ -216,20 +232,38 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
+
+  /**
+   * @ngdoc function
+   * @name getCanvasHeight
+   * @methodOf ui.grid.class:GridRenderContainer
+   * @description Returns the total canvas height.   Only recalculates if canvasHeightShouldUpdate = false
+   * @returns {number} total height of all the visible rows in the container
+   */
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret =  0;
+    if (!self.canvasHeightShouldUpdate) {
+      return self.$$canvasHeight;
+    }
+
+    var oldCanvasHeight = self.$$canvasHeight;
+
+    self.$$canvasHeight =  0;
 
     self.visibleRowCache.forEach(function(row){
-      ret += row.height;
+      self.$$canvasHeight += row.height;
     });
 
     if (typeof(self.grid.horizontalScrollbarHeight) !== 'undefined' && self.grid.horizontalScrollbarHeight !== undefined && self.grid.horizontalScrollbarHeight > 0) {
-      ret = ret - self.grid.horizontalScrollbarHeight;
+      self.$$canvasHeight =  self.$$canvasHeight - self.grid.horizontalScrollbarHeight;
     }
 
-    return ret;
+    self.canvasHeightShouldUpdate = false;
+
+    self.grid.api.core.raise.canvasHeightChanged(oldCanvasHeight, self.$$canvasHeight);
+
+    return self.$$canvasHeight;
   };
 
   GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {

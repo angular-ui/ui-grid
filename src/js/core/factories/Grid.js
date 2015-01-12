@@ -1137,6 +1137,7 @@ angular.module('ui.grid')
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
+      container.canvasHeightShouldUpdate = true;
       container.visibleRowCache.length = 0;
     }
     
@@ -1315,6 +1316,23 @@ angular.module('ui.grid')
     });
 
     return self.refreshCanceller;
+  };
+
+  /**
+   * @ngdoc function
+   * @name updateCanvasHeight
+   * @methodOf ui.grid.class:Grid
+   * @description flags all render containers to update their canvas height
+   */
+  Grid.prototype.updateCanvasHeight = function updateCanvasHeight() {
+    var self = this;
+
+    for (var containerId in self.renderContainers) {
+      if (self.renderContainers.hasOwnProperty(containerId)) {
+        var container = self.renderContainers[containerId];
+        container.canvasHeightShouldUpdate = true;
+      }
+    }
   };
 
   /**

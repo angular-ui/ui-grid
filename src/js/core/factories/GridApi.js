@@ -125,9 +125,15 @@
            */
           this.registerEvent( 'core', 'scrollEvent' );
 
-
-
-
+          /**
+           * @ngdoc event
+           * @name canvasHeightChanged
+           * @eventOf  ui.grid.core.api:PublicApi
+           * @description  is raised when the canvas height has changed
+           * <br/>
+           * arguments: oldHeight, newHeight
+           */
+          this.registerEvent( 'core', 'canvasHeightChanged');
         };
 
         /**

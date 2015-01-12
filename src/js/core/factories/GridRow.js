@@ -47,14 +47,29 @@ angular.module('ui.grid')
     // Default to true
     this.visible = true;
 
-  /**
-    *  @ngdoc object
-    *  @name height
-    *  @propertyOf  ui.grid.class:GridRow
-    *  @description height of each individual row
-    */
-    this.height = grid.options.rowHeight;
+
+    this.$$height = grid.options.rowHeight;
+
   }
+
+    /**
+     *  @ngdoc object
+     *  @name height
+     *  @propertyOf  ui.grid.class:GridRow
+     *  @description height of each individual row. changing the height will flag all
+     *  row renderContainers to recalculate their canvas height
+     */
+    Object.defineProperty(GridRow.prototype, 'height', {
+      get: function() {
+        return this.$$height;
+      },
+      set: function(height) {
+        if (height !== this.$$height) {
+          this.grid.updateCanvasHeight();
+          this.$$height = height;
+        }
+      }
+    });
 
   /**
    * @ngdoc function

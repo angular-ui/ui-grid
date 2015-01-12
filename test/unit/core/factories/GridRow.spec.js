@@ -114,6 +114,47 @@ describe('GridRow factory', function () {
     });
   });
 
+  describe('row height', function() {
+    var grid;
+    var rowsVisibleChanged;
+
+    beforeEach(function() {
+      rowsVisibleChanged = false;
+
+      grid = new Grid({id: 'a'});
+
+      grid.options.columnDefs = [{ field: 'col1' }];
+      for (var i = 0; i < 10; i++) {
+        grid.options.data.push({col1:'a_' + i});
+      }
+
+      grid.buildColumns();
+      grid.modifyRows(grid.options.data);
+      grid.setVisibleRows(grid.rows);
+    });
+
+    it('should have a rowheight setter', function () {
+      var gridRow = new GridRow({},0,grid);
+      gridRow.height = 99;
+      expect(gridRow.$$height).toBe(99);
+    });
+
+    it('should flag the grid render containers to upate canvas heights', function () {
+      var gridRow = grid.rows[0];
+      grid.renderContainers.body.getCanvasHeight();
+      expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(false);
+      expect(grid.renderContainers.body.$$canvasHeight).toBe(grid.options.data.length * grid.options.rowHeight);
+
+
+      gridRow.height = grid.options.rowHeight * 2;
+      expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(true);
+      expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(true);
+      expect(grid.renderContainers.body.getCanvasHeight()).toBe((grid.options.data.length * grid.options.rowHeight) + grid.options.rowHeight);
+    });
+
+
+
+  });
 
 });
 
