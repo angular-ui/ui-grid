@@ -22,6 +22,8 @@
             $scope.colContainer = containerCtrl.colContainer;
             $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
+
+
             containerCtrl.header = $elm;
             containerCtrl.colContainer.header = $elm;
             
@@ -73,9 +75,9 @@
               // Get the width of the viewport
               var availableWidth = containerCtrl.colContainer.getViewportWidth();
 
-              if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
-                availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;
-              }
+              //if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
+              //  availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;
+              //}
 
               // The total number of columns
               // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
@@ -169,9 +171,9 @@
               });
 
               // Add the vertical scrollbar width back in to the canvas width, it's taken out in getViewportWidth
-              if (grid.verticalScrollbarWidth) {
-                canvasWidth = canvasWidth + grid.verticalScrollbarWidth;
-              }
+              //if (grid.verticalScrollbarWidth) {
+              //  canvasWidth = canvasWidth + grid.verticalScrollbarWidth;
+              //}
               // canvasWidth = canvasWidth + 1;
 
               // if we have a grid menu, then we prune the width of the last column header

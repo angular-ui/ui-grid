@@ -244,7 +244,7 @@
                       var gridLeft = $scope.grid.element[0].getBoundingClientRect().left;
                       var previousMouseX = evt.pageX;
                       var totalMouseMovement = 0;
-                      var rightMoveLimit = gridLeft + $scope.grid.getViewportWidth() - $scope.grid.verticalScrollbarWidth;
+                      var rightMoveLimit = gridLeft + $scope.grid.getViewportWidth();// - $scope.grid.verticalScrollbarWidth;
 
                       //Clone element should move horizontally with mouse.
                       var elmCloned = false;

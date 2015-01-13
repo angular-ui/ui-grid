@@ -44,7 +44,12 @@
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-              horizScrollPercentage = newScrollLeft / horizScrollLength;
+              if (horizScrollLength !== 0) {
+                horizScrollPercentage = newScrollLeft / horizScrollLength;
+              }
+              else {
+                horizScrollPercentage = 0;
+              }
 
               colContainer.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }

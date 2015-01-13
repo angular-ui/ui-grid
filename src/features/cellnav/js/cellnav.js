@@ -608,17 +608,17 @@
           var bottomBound = grid.renderContainers.body.prevScrollTop + grid.gridHeight - grid.headerHeight;
 
           // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
-          if (grid.horizontalScrollbarHeight) {
-            bottomBound = bottomBound - grid.horizontalScrollbarHeight;
-          }
+          //if (grid.horizontalScrollbarHeight) {
+          //  bottomBound = bottomBound - grid.horizontalScrollbarHeight;
+          //}
 
           // The right position is the current X scroll position minus the grid width
           var rightBound = grid.renderContainers.body.prevScrollLeft + grid.gridWidth;
 
           // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
-          if (grid.verticalScrollbarWidth) {
-            rightBound = rightBound - grid.verticalScrollbarWidth;
-          }
+          //if (grid.verticalScrollbarWidth) {
+          //  rightBound = rightBound - grid.verticalScrollbarWidth;
+          //}
 
           // We were given a row to scroll to
           if (gridRow !== null) {
@@ -629,9 +629,9 @@
             var scrollLength = (grid.renderContainers.body.getCanvasHeight() - grid.renderContainers.body.getViewportHeight());
 
             // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-            if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
-              scrollLength = scrollLength + grid.horizontalScrollbarHeight;
-            }
+            //if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
+            //  scrollLength = scrollLength + grid.horizontalScrollbarHeight;
+            //}
 
             // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
             var pixelsToSeeRow = ((seekRowIndex + 1) * grid.options.rowHeight);
