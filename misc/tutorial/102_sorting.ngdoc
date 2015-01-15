@@ -241,13 +241,13 @@ for that column.  This will let the user change the direction of the sort, but t
       
       it('sort on second column can\'t be removed when cycle through header clicks', function () {
         gridTestUtils.clickHeaderCell( 'grid2', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Cora Chase' );
+        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Ethel Price' );
 
         gridTestUtils.clickHeaderCell( 'grid2', 1 );
-        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Herring Pierce' );
+        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Wilder Gonzales' );
         
         gridTestUtils.clickHeaderCell( 'grid2', 1 );
-        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Cora Chase' );
+        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Ethel Price' );
       });
     });
 
