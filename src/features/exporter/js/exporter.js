@@ -537,6 +537,13 @@
         },
         
         
+        /** 
+         * @ngdoc property
+         * @propertyOf ui.grid.exporter.api:ColumnDef
+         * @name exporterSuppressExport
+         * @description Suppresses export for this column.  Used by selection and expandable.
+         */
+
         /**
          * @ngdoc function
          * @name getColumnHeaders
