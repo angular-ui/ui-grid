@@ -151,8 +151,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       ]);
     });
 
-    it('ignores selection header', function() {
-      grid.columns[0].name = uiGridSelectionConstants.selectionRowHeaderColName;
+    it('ignores suppressed columns', function() {
+      grid.columns[0].colDef.exporterSuppressExport = true;
       expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
         {name: 'col2', displayName: 'Col2', width: '*', align: 'right'},
         {name: 'col3', displayName: 'Col3', width: 100, align: 'left'},
@@ -204,7 +204,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     });
 
     it('ignores selection row header column', function() {
-      grid.columns[0].name = uiGridSelectionConstants.selectionRowHeaderColName;
+      grid.columns[0].colDef.exporterSuppressExport = true;
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
         [ {value: 'b_0'}, {value: 'c_0'}, {value: 'd_0'} ],
         [ {value: 'b_1'}, {value: 'c_1'}, {value: 'd_1'} ],
