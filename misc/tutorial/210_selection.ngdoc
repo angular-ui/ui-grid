@@ -48,6 +48,7 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
         enableRowSelection: true,
         enableSelectAll: true,
         selectionRowHeaderWidth: 35,
+        rowHeight: 35,
         showGridFooter:true
       };
 
