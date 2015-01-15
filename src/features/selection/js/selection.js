@@ -626,7 +626,8 @@
                   cellTemplate: 'ui-grid/selectionRowHeader',
                   headerCellTemplate: 'ui-grid/selectionHeaderCell',
                   enableColumnResizing: false,
-                  enableColumnMenu: false
+                  enableColumnMenu: false,
+                  exporterSuppressExport: true 
                 };
 
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
