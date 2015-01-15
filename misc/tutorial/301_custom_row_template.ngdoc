@@ -4,7 +4,11 @@
 
 Create a grid almost the same as the most basic one, but with a custom row template.
 
-You can use [external scopes](/docs/#/tutorial/202_externalScopes) in your row template to access elements in your controller's scope. The `external-scopes` attribute on the grid will expose the property on your `$scope` with that name in the grid's isolate scope. You can then use `getExternalScopes()` in your row template to access that. More details are on the [external scopes](/docs/#/tutorial/202_externalScopes) tutorial.
+You can use [external scopes](/docs/#/tutorial/305_externalScopes) in your row template to access 
+elements in your controller's scope. The `external-scopes` attribute on the grid will expose the 
+property on your `$scope` with that name in the grid's isolate scope. You can then 
+use `getExternalScopes()` in your row template to access that. More details are on 
+the [external scopes](/docs/#/tutorial/305_externalScopes) tutorial.
 
 @example
 <example module="app">

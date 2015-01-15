@@ -48,6 +48,14 @@ The following option is available only if using cellNav feature
 
 - `enableCellEditOnFocus` - `true` to invoke editor as soon as cell has focus
 
+_Note that the edit functionality uses native html5 edit widgets - the date picker, the dropdown and the input box
+itself.  If your browser does not implement these widgets, then you won't get them.  If your browser implements these
+widgets in a way that isn't ideal (for example, some browsers don't allow number fields to start with '.', so you can't 
+type in '.5'), then you need to provide a custom editor instead.  On the medium term roadmap there is intent
+to provide a bootstrap feature, which would provide directives that were compatible with angular-bootstrap directives, 
+allowing use of the bootstrap datepicker and input fields_
+
+
 <pre>
 $scope.gridOptions.columnDefs = [
    { name: 'name', enableCellEdit: true, editableCellTemplate: 'xxxxxxx' },
