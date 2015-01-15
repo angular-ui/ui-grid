@@ -174,6 +174,47 @@ describe('rowSorter', function() {
     });
   });
 
+  describe('stable sort', function() {
+    var grid, rows, cols;
+
+    beforeEach(function() {
+      grid = new Grid({ id: 123 });
+
+      var e1 = { name: 'Bob', oldIndex: 0 };
+      var e2 = { name: 'Bob', oldIndex: 1 };
+
+      rows = [
+        new GridRow(e1, 0, grid),
+        new GridRow(e2, 1, grid)
+      ];
+
+      cols = [
+        new GridColumn({
+          name: 'name',
+          type: 'string',
+          sort: {
+            direction: uiGridConstants.ASC,
+            priority: 0
+          }
+        }, 0, grid)
+      ];
+    });
+
+    it('should sort this ascending', function() {
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.oldIndex).toEqual(0);
+    });
+
+    it('should sort things descending', function() {
+      cols[0].sort.direction = uiGridConstants.DESC;
+
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.oldIndex).toEqual(0);
+    });
+  });
+
   describe('external sort', function() {
     var grid, rows, cols, column, timeoutRows, returnedRows, $timeout;
 

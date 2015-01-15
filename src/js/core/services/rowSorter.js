@@ -410,9 +410,14 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     // IE9-11 HACK.... the 'rows' variable would be empty where we call rowSorter.getSortFn(...) below. We have to use a separate reference
     // var d = data.slice(0);
     var r = rows.slice(0);
+    
+    // put a custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
+    angular.forEach( rows, function ( row, idx ) {
+      row.entity.$uiGridIndex = idx;
+    });
 
     // Now actually sort the data
-    return rows.sort(function rowSortFn(rowA, rowB) {
+    var newRows = rows.sort(function rowSortFn(rowA, rowB) {
       var tem = 0,
           idx = 0,
           sortFn;
@@ -432,6 +437,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
         idx++;
       }
 
+      // Chrome doesn't implement a stable sort function.  If our sort returns 0 
+      // (i.e. the items are equal), then return the previous order using our custom
+      // index variable
+      if (tem === 0 ) {
+        return rowA.entity.$uiGridIndex - rowB.entity.$uiGridIndex;
+      }
+      
       // Made it this far, we don't have to worry about null & undefined
       if (direction === uiGridConstants.ASC) {
         return tem;
@@ -439,6 +451,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
         return 0 - tem;
       }
     });
+    
+    // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
+    angular.forEach( newRows, function ( row, idx ) {
+      delete row.entity.$uiGridIndex;
+    });
+    
+    return newRows;
   };
 
   return rowSorter;
