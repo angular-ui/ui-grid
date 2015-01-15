@@ -142,6 +142,8 @@ describe('GridEvent factory', function () {
       listener3Call++;
       listener3Val1 = arg1;
       listener3Val2 = arg2;
+      //always this should be grid for this listener
+      expect(this).toBe(grid);
     };
 
 
@@ -150,11 +152,11 @@ describe('GridEvent factory', function () {
       $rootScope.$on(grid.id + 'testFeature' + 'testEvent', listener1);
       //grid listener
       gridApi.testFeature.on.testEvent(scope, listener2);
-      //grid listener to be suppressed
+      //grid listener to be suppressed. grid as this to make sure it is put back
 
-      gridApi.testFeature.on.testEvent(scope, listener3);
+      gridApi.testFeature.on.testEvent(scope, listener3, grid);
       //register again just to make sure all are suppressed
-      gridApi.testFeature.on.testEvent(scope, listener3);
+      gridApi.testFeature.on.testEvent(scope, listener3, grid);
 
       gridApi.suppressEvents(listener3,function(){
         gridApi.testFeature.raise.testEvent('123', '456');
@@ -214,18 +216,18 @@ describe('GridEvent factory', function () {
     expect(gridApi.someOtherFeature.someOtherEvent).toBeDefined();
   }));
 
-  it('should default callbacks this to grid', inject(function($timeout, $rootScope) {
+  it('should default registerMethod callbacks this to grid', inject(function($timeout, $rootScope) {
     var grid = new Grid({ id: 1 });
     var gridApi = new GridApi(grid);
 
     function callBackFn(scope, newRowCol, oldRowCol){
-      expect(this).toBeDefined(grid);
+      expect(this).toBe(grid);
     }
 
     var publicMethods = {
       gridCellNav : {
         cellNav : function(scope, newRowCol, oldRowCol){
-          expect(this).toBeDefined(grid);
+          expect(this).toBe(grid);
         }
       }
     };
@@ -237,7 +239,7 @@ describe('GridEvent factory', function () {
     gridApi.gridCellNav.cellNav();
   }));
 
-  it('should use thisArg in callback', inject(function($timeout, $rootScope) {
+  it('should use thisArg in callback for methods', inject(function($timeout, $rootScope) {
     var grid = new Grid({ id: 1 });
     var gridApi = new GridApi(grid);
     var someThisArg = {};
@@ -292,6 +294,36 @@ describe('GridEvent factory', function () {
     expect(gridApi.listeners.length).toBe(0);
   }));
 
+  it('should use _this argument in event callbacks', inject(function($timeout, $rootScope) {
+    var grid = new Grid({ id: 1 });
+    var gridApi = new GridApi(grid);
+    var scope = $rootScope.$new();
+
+    var callBackFnGridApi_ThisCalled = false;
+    function callBackFnGridApi_This(){
+      expect(this).toBe(grid.api);
+      callBackFnGridApi_ThisCalled = true;
+    }
+
+    var callBackFnGrid_ThisCalled = false;
+    function callBackFnGrid_This(){
+      expect(this).toBe(grid);
+      callBackFnGrid_ThisCalled = true;
+    }
+
+    gridApi.registerEvent('testFeature','testEvent');
+    gridApi.testFeature.on.testEvent(scope, callBackFnGridApi_This);
+    gridApi.testFeature.on.testEvent(scope, callBackFnGrid_This, grid);
+
+    $timeout(function(){
+      gridApi.testFeature.raise.testEvent();
+    });
+    $timeout.flush();
+    expect(callBackFnGridApi_ThisCalled).toBe(true);
+    expect(callBackFnGrid_ThisCalled).toBe(true);
+
+
+  }));
 
 
 

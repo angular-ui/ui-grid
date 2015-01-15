@@ -184,7 +184,7 @@
 
           //reregister all the listeners
           foundListeners.forEach(function(l){
-              l.dereg = registerEventWithAngular(l.scope, l.eventId, l.handler, self.grid);
+              l.dereg = registerEventWithAngular(l.eventId, l.handler, self.grid, l._this);
           });
 
         };
@@ -196,7 +196,19 @@
          * @description Registers a new event for the given feature.  The event will get a
          * .raise and .on prepended to it
          * <br>
-         * the .on.event returns a dereg funtion that will remove the listener
+         * .raise.eventName() - takes no arguments
+         * <br/>
+         * <br/>
+         * .on.eventName(scope, callBackFn, _this)
+         * <br/>
+         * scope - a scope reference to add a deregister call to the scopes .$on('destroy')
+         * <br/>
+         * callBackFn - The function to call
+         * <br/>
+         * _this - optional this context variable for callbackFn. If omitted, grid.api will be used for the context
+         * <br/>
+         * .on.eventName returns a dereg funtion that will remove the listener.  It's not necessary to use it as the listener
+         * will be removed when the scope is destroyed.
          * @param {string} featureName name of the feature that raises the event
          * @param {string} eventName  name of the event
          */
@@ -220,11 +232,11 @@
           };
 
           // gridUtil.logDebug('Creating on event method ' + featureName + '.on.' + eventName);
-          feature.on[eventName] = function (scope, handler) {
-            var deregAngularOn = registerEventWithAngular(scope, eventId, handler, self.grid);
+          feature.on[eventName] = function (scope, handler, _this) {
+            var deregAngularOn = registerEventWithAngular(eventId, handler, self.grid, _this);
 
             //track our listener so we can turn off and on
-            var listener = {handler: handler, dereg: deregAngularOn, eventId: eventId, scope: scope};
+            var listener = {handler: handler, dereg: deregAngularOn, eventId: eventId, scope: scope, _this:_this};
             self.listeners.push(listener);
 
             var removeListener = function(){
@@ -242,11 +254,11 @@
           };
         };
 
-        function registerEventWithAngular(scope, eventId, handler, grid) {
+        function registerEventWithAngular(eventId, handler, grid, _this) {
           return $rootScope.$on(eventId, function (event) {
             var args = Array.prototype.slice.call(arguments);
             args.splice(0, 1); //remove evt argument
-            handler.apply(grid.api, args);
+            handler.apply(_this ? _this : grid.api, args);
           });
         }
 
@@ -293,16 +305,16 @@
          * @param {string} featureName name of the feature
          * @param {string} methodName  name of the method
          * @param {object} callBackFn function to execute
-         * @param {object} thisArg binds callBackFn 'this' to thisArg.  Defaults to gridApi.grid
+         * @param {object} _this binds callBackFn 'this' to _this.  Defaults to gridApi.grid
          */
-        GridApi.prototype.registerMethod = function (featureName, methodName, callBackFn, thisArg) {
+        GridApi.prototype.registerMethod = function (featureName, methodName, callBackFn, _this) {
           if (!this[featureName]) {
             this[featureName] = {};
           }
 
           var feature = this[featureName];
 
-          feature[methodName] = gridUtil.createBoundedWrapper(thisArg || this.grid, callBackFn);
+          feature[methodName] = gridUtil.createBoundedWrapper(_this || this.grid, callBackFn);
         };
 
         /**
@@ -318,9 +330,9 @@
          *          methodNameTwo:function(args){}
          *        }
          * @param {object} eventObjectMap map of feature/event names
-         * @param {object} thisArg binds this to thisArg for all functions.  Defaults to gridApi.grid
+         * @param {object} _this binds this to _this for all functions.  Defaults to gridApi.grid
          */
-        GridApi.prototype.registerMethodsFromObject = function (methodMap, thisArg) {
+        GridApi.prototype.registerMethodsFromObject = function (methodMap, _this) {
           var self = this;
           var features = [];
           angular.forEach(methodMap, function (featProp, featPropName) {
@@ -333,7 +345,7 @@
 
           features.forEach(function (feature) {
             feature.methods.forEach(function (method) {
-              self.registerMethod(feature.name, method.name, method.fn, thisArg);
+              self.registerMethod(feature.name, method.name, method.fn, _this);
             });
           });
 
