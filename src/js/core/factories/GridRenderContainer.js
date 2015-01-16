@@ -12,7 +12,7 @@ angular.module('ui.grid')
    * @param {Grid} grid the grid the render container is in
    * @param {object} options the render container options
    */
-.factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
+.factory('GridRenderContainer', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
   function GridRenderContainer(name, grid, options) {
     var self = this;
 
@@ -719,24 +719,22 @@ angular.module('ui.grid')
     var styles = {};
 
     if (self.name === 'body') {
-      styles['overflow-x'] = 'scroll';
+      styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
       if (self.grid.hasRightContainerColumns()) {
         styles['overflow-y'] = 'hidden';
       }
       else {
-        styles['overflow-y'] = 'scroll';
+        styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
       }
     }
     else if (self.name === 'left') {
       styles['overflow-x'] = 'hidden';
-      styles['overflow-y'] = 'hidden';
+      styles['overflow-y'] = self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
     }
     else {
       styles['overflow-x'] = 'hidden';
-      styles['overflow-y'] = 'scroll';
+      styles['overflow-y'] = !self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
     }
-
-    // if (self.grid.isRTL()) {
 
     return styles;
 
