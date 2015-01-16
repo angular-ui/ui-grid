@@ -145,7 +145,7 @@ For example, to include the selection feature, you would include the module:
 <pre>
   angular.module( 'yourApplication', [
     'ui.grid',
-    'ui.grid.edit'
+    'ui.grid.selection'
   ]);
 </pre>
 
