@@ -27,7 +27,7 @@
                 var width = 0;
                 for (var i = 0; i < cols.length; i++) {
                   var col = cols[i];
-                  width += col.drawnWidth;
+                  width += col.drawnWidth || col.width || 0;
                 }
 
                 myWidth = width;
@@ -57,7 +57,7 @@
             }
 
             grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-              if ( myWidth === 0 ){
+              if ( myWidth === 0 || !myWidth ){
                 updateContainerWidth();
               }
               // Subtract our own width
