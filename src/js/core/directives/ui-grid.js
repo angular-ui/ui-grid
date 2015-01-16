@@ -268,7 +268,7 @@ angular.module('ui.grid').directive('uiGrid',
                 grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
                 grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
-                grid.queueRefresh();
+                grid.refreshCanvas(true);
               }
 
               angular.element($window).on('resize', gridResize);
