@@ -24,6 +24,9 @@
     var service = {
       initializeGrid: function (grid) {
         
+        grid.expandable = {};
+        grid.expandable.expandedAll = false;
+
         /**
          *  @ngdoc object
          *  @name enableExpandable
@@ -53,6 +56,20 @@
          *  </pre>  
          */
         grid.options.expandableRowHeight = grid.options.expandableRowHeight || 150;
+
+        /**
+         *  @ngdoc object
+         *  @name 
+         *  @propertyOf  ui.grid.expandable.api:GridOptions
+         *  @description Width in pixels of the expandable column. Defaults to 40
+         *  @example
+         *  <pre>
+         *    $scope.gridOptions = {
+         *      expandableRowHeaderWidth: 40
+         *    }
+         *  </pre>  
+         */
+        grid.options.expandableRowHeaderWidth = grid.options.expandableRowHeaderWidth || 40;
 
         /**
          *  @ngdoc object
@@ -145,6 +162,19 @@
                */              
               collapseAllRows: function() {
                 service.collapseAllRows(grid);
+              },
+
+              /**
+               * @ngdoc method
+               * @name toggleAllRows
+               * @methodOf  ui.grid.expandable.api:PublicApi
+               * @description Toggle all subgrids.
+               * <pre>
+               *      gridApi.expandable.toggleAllRows();
+               * </pre>
+               */              
+              toggleAllRows: function() {
+                service.toggleAllRows(grid);
               }
             }
           }
@@ -155,14 +185,13 @@
       
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
-
         if (row.isExpanded) {
           row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight;
         }
         else {
           row.height = row.grid.options.rowHeight;
+          grid.expandable.expandedAll = false;
         }
-
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
       
@@ -172,6 +201,7 @@
             service.toggleRowExpansion(grid, row);
           }
         });
+        grid.expandable.expandedAll = true;
         grid.refresh();
       },
       
@@ -181,7 +211,17 @@
             service.toggleRowExpansion(grid, row);
           }
         });
+        grid.expandable.expandedAll = false;
         grid.refresh();
+      },
+
+      toggleAllRows: function(grid) {
+        if (grid.expandable.expandedAll) {
+          service.collapseAllRows(grid);
+        }
+        else {
+          service.expandAllRows(grid);
+        }
       }
     };
     return service;
@@ -217,9 +257,10 @@
                   exporterSuppressExport: true, 
                   enableColumnResizing: false, 
                   enableColumnMenu: false,
-                  width: 40
+                  width: uiGridCtrl.grid.options.expandableRowHeaderWidth || 40
                 };
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
+                expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
                 uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
               }
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
