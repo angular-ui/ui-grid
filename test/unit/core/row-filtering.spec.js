@@ -1,4 +1,4 @@
-describe('rowSearcher', function() {
+ddescribe('rowSearcher', function() {
   var grid, $scope, $compile, recompile,
       rows, columns, rowSearcher, uiGridConstants, filter;
 
