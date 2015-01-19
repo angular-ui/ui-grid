@@ -1148,7 +1148,7 @@ angular.module('ui.grid')
       var container = self.renderContainers[i];
 
       container.canvasHeightShouldUpdate = true;
-      container.visibleRowCache.length = 0;
+      container.visibleRowCache = [];
     }
     
     // rows.forEach(function (row) {
