@@ -1158,7 +1158,12 @@ angular.module('ui.grid')
       var container = self.renderContainers[i];
 
       container.canvasHeightShouldUpdate = true;
-      container.visibleRowCache = [];
+      
+      if ( typeof(container.visibleRowCache) === 'undefined' ){
+        container.visibleRowCache = [];  
+      } else {
+        container.visibleRowCache.length = 0;  
+      }
     }
     
     // rows.forEach(function (row) {
