@@ -35,6 +35,16 @@ angular.module('ui.grid')
   
     // Get default options
     self.options = GridOptions.initialize( options );
+
+    /**
+     * @ngdoc object
+     * @name appScope
+     * @propertyOf ui.grid.class:Grid
+     * @description reference to the application scope (the parent scope of the ui-grid element).  Assigned in ui-grid controller
+     * <br/>
+     * use gridOptions.appScopeProvider to override the default assignment of $scope.$parent with any reference
+     */
+    self.appScope = self.options.appScopeProvider;
   
     self.headerHeight = self.options.headerRowHeight;
 

@@ -45,7 +45,8 @@ describe('GridOptions factory', function () {
         rowEquality: jasmine.any(Function),
         headerTemplate: null,
         footerTemplate: null,
-        rowTemplate: 'ui-grid/ui-grid-row'
+        rowTemplate: 'ui-grid/ui-grid-row',
+        appScopeProvider: null
       });
     });
 
@@ -86,7 +87,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : 'anotherRef'
       };
       expect( GridOptions.initialize(options) ).toEqual({
         onRegisterApi: testFunction,
@@ -123,7 +125,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : 'anotherRef'
       });
     });
 
@@ -201,7 +204,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : null
       });
     });
   });

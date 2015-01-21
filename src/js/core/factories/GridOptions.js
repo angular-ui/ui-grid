@@ -400,11 +400,20 @@ angular.module('ui.grid')
        * custom row template.  Can be set to either the name of a template file:
        * <pre> $scope.gridOptions.rowTemplate = 'row_template.html';</pre>
        * inline html 
-       * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
+       * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="grid.appScope.fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
        * or the id of a precompiled template (TBD how to use this) can be provided.  
        * </br>Refer to the custom row template tutorial for more information.
        */
       baseOptions.rowTemplate = baseOptions.rowTemplate || 'ui-grid/ui-grid-row';
+
+      /**
+       * @ngdoc object
+       * @name appScopeProvider
+       * @propertyOf ui.grid.class:GridOptions
+       * @description by default, the parent scope of the ui-grid element will be assigned to grid.appScope
+       * this property allows you to assign any reference you want to grid.appScope
+       */
+      baseOptions.appScopeProvider = baseOptions.appScopeProvider || null;
       
       return baseOptions;
     }     

@@ -4,11 +4,9 @@
 
 Create a grid almost the same as the most basic one, but with a custom row template.
 
-You can use [external scopes](/docs/#/tutorial/305_externalScopes) in your row template to access 
-elements in your controller's scope. The `external-scopes` attribute on the grid will expose the 
-property on your `$scope` with that name in the grid's isolate scope. You can then 
-use `getExternalScopes()` in your row template to access that. More details are on 
-the [external scopes](/docs/#/tutorial/305_externalScopes) tutorial.
+You can use [grid.appScope](/docs/#/tutorial/305_appScope) in your row template to access
+elements in your controller's scope. More details are on
+the [external scopes](/docs/#/tutorial/305_appScope) tutorial.
 
 @example
 <example module="app">
@@ -27,17 +25,14 @@ the [external scopes](/docs/#/tutorial/305_externalScopes) tutorial.
           $scope.waiting = 'Done!';
           $interval.cancel(sec);
           $scope.wait = '';
-          // Calling the externalScopes() method will allow you to reach up to the controller scope
-          return '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
+          return '<div style="background-color: aquamarine" ng-click="grid.appScope.fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';
         }, 6000);
       }
 
       // Access outside scope functions from row template
-      $scope.myNewModel = {
-        fnOne: function(row) {
+      $scope.fnOne =  function(row) {
           console.log(row);
-        }
-      };
+       };
 
       $scope.waiting = 'Waiting for row template...';
 
@@ -56,9 +51,7 @@ the [external scopes](/docs/#/tutorial/305_externalScopes) tutorial.
     <div ng-controller="MainCtrl">
       <strong ng-bind="waiting"></strong> <strong>{{ wait }}</strong>
       <br>
-      <br>
-      //make sure to set the controller variable in the attribute like so:
-      <div class="grid" ui-grid="gridOptions" external-scopes="myNewModel"></div>
+      <div class="grid" ui-grid="gridOptions" ></div>
     </div>
   </file>
   <file name="main.css">

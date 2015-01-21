@@ -88,9 +88,10 @@ $scope.gridOptions.columnDefs = [...];
 In 2.x you would use `row.getProperty(col.field)` within a cellTemplate to get the value of a cell. In 3.0 this has changed to `grid.getCellValue(row, col)`.
 
 
-### External scopes must be declared ###
+### Grid now uses isolate scope ###
 The grid now uses an isolate scope, meaning that the scope on your controller is not directly accessible
-to widgets that you include in the grid.  You now need to declare an external scope (refer associated tutorial).
+to widgets that you include in the grid.  You can get the parent scope used by the ui-grid element in any template
+with the grid.appScope property.  {{grid.appScope}}
 
 <pre>
 $scope.gridOptions = {
@@ -108,23 +109,9 @@ $scope.gridOptions = {
     columnDefs: [
       {field: 'id', displayName: 'Id'},
       {field: 'name', displayName: 'Name'},
-      {name: 'edit', displayName: 'Edit', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="getExternalScopes().edit(row.entity)" >Edit</button> '}
+      {name: 'edit', displayName: 'Edit', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.edit(row.entity)" >Edit</button> '}
     ]    
   };
-</pre>
-
-You also need to declare the external scope within your controller:
-<pre>
-  $scope.myScope = {
-    edit: function( row ) {
-      // do something
-    }
-  };
-</pre>
-
-And on the grid directive:
-<pre>
-  <div class="gridStyle" ui-grid="gridOptions" external-scopes="myScope" ></div>
 </pre>
 
 

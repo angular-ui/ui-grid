@@ -20,7 +20,6 @@
 
             $scope.grid = uiGridCtrl.grid;
             $scope.colContainer = containerCtrl.colContainer;
-            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
 
 

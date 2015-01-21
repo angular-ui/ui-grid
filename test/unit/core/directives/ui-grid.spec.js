@@ -170,4 +170,40 @@ describe('ui-grid', function() {
 
  });
 
+  describe('appScope is correctly assigned', function () {
+    var element, scope, gridApi;
+
+    it('should assign scope to grid.appScope', inject(function($compile, $rootScope, $timeout) {
+      element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
+      scope = $rootScope;
+      scope.gridOptions = { onRegisterApi: function( api ){ gridApi = api; }};
+      scope.gridOptions.data = [
+        { col1: 'col1', col2: 'col2' }
+      ];
+
+      $timeout(function () {
+        $compile(element)(scope);
+      });
+      $timeout.flush();
+      expect(gridApi.grid.appScope).toBe(scope);
+    }));
+
+    it('should assign gridOptions.appScopeProvider to grid.appScope', inject(function($compile, $rootScope, $timeout) {
+      element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
+      scope = $rootScope;
+      scope.gridOptions = {
+        appScopeProvider : 'someValue',
+        onRegisterApi: function( api ){ gridApi = api; }};
+      scope.gridOptions.data = [
+        { col1: 'col1', col2: 'col2' }
+      ];
+
+      $timeout(function () {
+        $compile(element)(scope);
+      });
+      $timeout.flush();
+      expect(gridApi.grid.appScope).toBe('someValue');
+    }));
+  });
+
 });

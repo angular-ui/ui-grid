@@ -9,15 +9,14 @@
 
       var self = this;
 
-      // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
+
+      //assign $scope.$parent if appScope not already assigned
+      self.grid.appScope = self.grid.appScope || $scope.$parent;
+
       $elm.addClass('grid' + self.grid.id);
       self.grid.rtl = gridUtil.getStyles($elm[0])['direction'] === 'rtl';
 
-
-      //add optional reference to externalScopes function to controller
-      //so it can be retrieved in lower elements that have isolate scope
-      self.getExternalScopes = $scope.getExternalScopes;
 
       // angular.extend(self.grid.options, );
 
@@ -139,8 +138,6 @@
  *  @element div
  *  @restrict EA
  *  @param {Object} uiGrid Options for the grid to use
- *  @param {Object=} external-scopes Add external-scopes='someScopeObjectYouNeed' attribute so you can access
- *            your scopes from within any custom templatedirective.  You access by $scope.getExternalScopes() function
  *
  *  @description Create a very basic grid.
  *
@@ -180,8 +177,7 @@ angular.module('ui.grid').directive('uiGrid',
       return {
         templateUrl: 'ui-grid/ui-grid',
         scope: {
-          uiGrid: '=',
-          getExternalScopes: '&?externalScopes' //optional functionwrapper around any needed external scope instances
+          uiGrid: '='
         },
         replace: true,
         transclude: true,

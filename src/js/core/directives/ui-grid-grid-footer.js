@@ -15,7 +15,6 @@
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
 
             $scope.grid = uiGridCtrl.grid;
-            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
             var footerTemplate = ($scope.grid.options.gridFooterTemplate) ? $scope.grid.options.gridFooterTemplate : defaultTemplate;
             gridUtil.getTemplate(footerTemplate)

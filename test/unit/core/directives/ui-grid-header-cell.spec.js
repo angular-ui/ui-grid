@@ -58,7 +58,7 @@ describe('uiGridHeaderCell', function () {
     $scope.extScope = 'test';
 
     recompile = function () {
-      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" external-scopes="extScope"></div>');
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
       
       $compile(grid)($scope);
       $document[0].body.appendChild(grid[0]);
@@ -194,8 +194,8 @@ describe('uiGridHeaderCell', function () {
 
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
       expect(header).toBeDefined();
-      expect(header.scope().getExternalScopes).toBeDefined();
-      expect(header.scope().getExternalScopes()).toBe('test');
+      expect(header.scope().grid.appScope).toBeDefined();
+      expect(header.scope().grid.appScope.extScope).toBe('test');
     });
   });
 
