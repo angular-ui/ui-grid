@@ -645,6 +645,8 @@
                 endEdit(true);
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnGridScroll();
+                deregOnEndCellEdit();
+                deregOnCancelCellEdit();
               });
 
               //end editing
@@ -652,12 +654,16 @@
                 endEdit(retainFocus);
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnEndCellEdit();
+                deregOnGridScroll();
+                deregOnCancelCellEdit();
               });
 
               //cancel editing
               var deregOnCancelCellEdit = $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
                 cancelEdit();
                 deregOnCancelCellEdit();
+                deregOnGridScroll();
+                deregOnEndCellEdit();
               });
 
               $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT);
