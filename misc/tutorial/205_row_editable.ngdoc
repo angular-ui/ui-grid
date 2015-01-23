@@ -83,7 +83,7 @@ each save will take 3 seconds to complete.  Any row saved with a gender of "male
       $scope.saveRow = function( rowEntity ) {
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         var promise = $q.defer();
-        $scope.gridApi.rowEdit.setSavePromise( $scope.gridApi.grid, rowEntity, promise.promise );
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
        
         // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
         $interval( function() {

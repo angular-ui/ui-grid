@@ -529,7 +529,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf ui.grid.rowEdit.api:PublicApi
+         * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
          * @name setRowsDirty
          * @description Sets each of the rows passed in dataRows
          * to be dirty.  note that if you have only just inserted the
@@ -538,7 +538,7 @@
          * call in a $interval or $timeout
          * <pre>
          *      $interval( function() {
-         *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
+         *        gridApi.rowEdit.setRowsDirty( myDataRows);
          *      }, 0, 1);
          * </pre>
          * @param {object} grid the grid for which rows should be set dirty
