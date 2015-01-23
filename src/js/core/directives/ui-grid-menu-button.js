@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.service('uiGridGridMenuService', [ 'gridUtil', 'i18nService', function( gridUtil, i18nService ) {
+.service('uiGridGridMenuService', [ 'gridUtil', 'i18nService', 'uiGridConstants', function( gridUtil, i18nService, uiGridConstants ) {
   /**
    *  @ngdoc service
    *  @name ui.grid.gridMenuService
@@ -323,6 +323,7 @@ angular.module('ui.grid')
       gridCol.colDef.visible = !( gridCol.colDef.visible === true || gridCol.colDef.visible === undefined ); 
       
       gridCol.grid.refresh();
+      gridCol.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
     }
   };
   

@@ -242,7 +242,6 @@ angular.module('ui.grid')
      * might be particularly relevant where you've changed values within the data
      * and you'd like cell classes to be re-evaluated, or changed config within 
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
-     * @param {Grid} grid the grid
      * @param {string} type one of the 
      * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
      * us which refreshes to fire.
@@ -415,18 +414,17 @@ angular.module('ui.grid')
    * @description Notifies us that a data change has occurred, used in the public
    * api for users to tell us when they've changed data or some other event that 
    * our watches cannot pick up
-   * @param {Grid} grid the grid
    * @param {string} type the type of event that occurred - one of the 
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
    */
-  Grid.prototype.notifyDataChange = function notifyDataChange(grid, type) {
+  Grid.prototype.notifyDataChange = function notifyDataChange(type) {
     var constants = uiGridConstants.dataChange;
     if ( type === constants.ALL || 
          type === constants.COLUMN ||
          type === constants.EDIT ||
          type === constants.ROW ||
          type === constants.OPTIONS ){
-      grid.callDataChangeCallbacks( type );
+      this.callDataChangeCallbacks( type );
     } else {
       gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);
     }

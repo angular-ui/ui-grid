@@ -183,7 +183,7 @@ describe('uiGridHeaderCell', function () {
     it('should get cellClass from function, and remove it when data changes', inject(function () {
       expect(headerCell2.hasClass('funcCellClass')).toBe(true);
       columnDefs[1].noClass = true;
-      $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(headerCell2.hasClass('funcCellClass')).toBe(false);
     }));
   });

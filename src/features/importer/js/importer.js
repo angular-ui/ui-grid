@@ -87,11 +87,10 @@
                  * @methodOf  ui.grid.importer.api:PublicApi
                  * @description Imports a file into the grid using the file object 
                  * provided.  Bypasses the grid menu
-                 * @param {Grid} grid the grid we're importing into
                  * @param {File} fileObject the file we want to import, as a javascript
                  * File object
                  */
-                importFile: function ( grid, fileObject ) {
+                importFile: function ( fileObject ) {
                   service.importThisFile( grid, fileObject );
                 }
               }
@@ -375,7 +374,7 @@
          * @methodOf ui.grid.importer.service:uiGridImporterService
          * @description Creates a function that imports a json file into the grid.
          * The json data is imported into new objects of type `gridOptions.importerNewObject`,
-         * and ift he rowEdit feature is enabled the rows are marked as dirty
+         * and if the rowEdit feature is enabled the rows are marked as dirty
          * @param {Grid} grid the grid we want to import into
          * @param {FileObject} importFile the file that we want to import, as 
          * a FileObject
@@ -618,7 +617,7 @@
         addObjects: function( grid, newObjects, $scope ){
           if ( grid.api.rowEdit ){
             var callbackId = grid.registerDataChangeCallback( function() {
-              grid.api.rowEdit.setRowsDirty( grid, newObjects );
+              grid.api.rowEdit.setRowsDirty( newObjects );
               grid.deregisterDataChangeCallback( callbackId );
             }, [uiGridConstants.dataChange.ROW] );
             

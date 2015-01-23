@@ -20,7 +20,7 @@ When sorting using the headers, clicking on a header removes all other sorts unl
 
 The sort is automatically recalculated when you edit a field (the edit feature calls the dataChange api to notify of a data change).  If
 you change the data "behind the scenes" and want the sort to be recalculated, you can notify the grid that your
-data has changed by calling `gridApi.core.notifyDataChange( grid, uiGridConstants.dataChange.EDIT )`
+data has changed by calling `gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT )`
 
 If you set a default sort, you can prevent the user from removing that sort by setting `suppressRemoveSort: true`
 for that column.  This will let the user change the direction of the sort, but take away the option to remove the sort.
@@ -48,7 +48,7 @@ for that column.  This will let the user change the direction of the sort, but t
         } else {
           $scope.gridOptions1.data[64].gender = 'male';
         };
-        $scope.grid1Api.core.notifyDataChange( $scope.grid1Api.grid, uiGridConstants.dataChange.EDIT );
+        $scope.grid1Api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
       };
 
        $scope.gridOptions2 = {

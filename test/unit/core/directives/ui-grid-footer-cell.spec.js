@@ -71,7 +71,7 @@ describe('uiGridFooterCell', function () {
     it('should get cellClass from function, and remove it when data changes', inject(function () {
       expect(footerCell2.hasClass('funcCellClass')).toBe(true);
       columnDefs[1].noClass = true;
-      $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(footerCell2.hasClass('funcCellClass')).toBe(false);
     }));
   });
