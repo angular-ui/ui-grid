@@ -323,7 +323,7 @@ angular.module('ui.grid')
       gridCol.colDef.visible = !( gridCol.colDef.visible === true || gridCol.colDef.visible === undefined ); 
       
       gridCol.grid.refresh();
-      gridCol.grid.api.core.notifyDataChange( gridCol.grid, uiGridConstants.dataChange.COLUMN );
+      gridCol.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
     }
   };
   

@@ -684,7 +684,7 @@
               isFocusedBeforeEdit = false;
               inEdit = false;
               registerBeginEditEvents();
-              $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.EDIT );
+              $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
             }
 
             function cancelEdit() {

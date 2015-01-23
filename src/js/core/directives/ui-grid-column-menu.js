@@ -446,7 +446,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
 
         $scope.grid.refresh();
         $scope.hideMenu();
-        $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.COLUMN );
+        $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       };
     },
     

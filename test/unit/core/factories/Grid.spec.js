@@ -771,7 +771,7 @@ describe('Grid factory', function () {
       });
       
       it( 'call works via api', function() {
-        grid.api.core.notifyDataChange( grid, constants.COLUMN );
+        grid.api.core.notifyDataChange( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
       });
     });
