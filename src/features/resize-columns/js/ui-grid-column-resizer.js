@@ -175,7 +175,7 @@
   }]);
 
   // Extend the uiGridHeaderCell directive
-  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', 'uiGridResizeColumnsService', function (gridUtil, $templateCache, $compile, $q, uiGridResizeColumnsService) {
+  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', 'uiGridResizeColumnsService', 'uiGridConstants', '$timeout', function (gridUtil, $templateCache, $compile, $q, uiGridResizeColumnsService, uiGridConstants, $timeout) {
     return {
       // Run after the original uiGridHeaderCell
       priority: -10,
@@ -184,37 +184,71 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableColumnResizing) {
+            var grid = uiGridCtrl.grid;
+
+            if (grid.options.enableColumnResizing) {
               var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
     
-              var resizerLeft = angular.element(columnResizerElm).clone();
-              var resizerRight = angular.element(columnResizerElm).clone();
-    
-              resizerLeft.attr('position', 'left');
-              resizerRight.attr('position', 'right');
-    
-              // get the target column for the left resizer
               var rtlMultiplier = 1;
               //when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
-              if (uiGridCtrl.grid.isRTL()) {
+              if (grid.isRTL()) {
                 $scope.position = 'left';
                 rtlMultiplier = -1;
               }
 
-              var otherCol = uiGridResizeColumnsService.findTargetCol($scope.col, 'left', rtlMultiplier);
-              var renderContainer = $scope.col.getRenderContainer();
-  
-              // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
-              if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
-                $elm.prepend(resizerLeft);
-                $compile(resizerLeft)($scope);
-              }
+              var displayResizers = function(){
+                
+                // remove any existing resizers.  This code is ugly, jQlite has lots of limitations!!
+                var children = $elm.children();
+                for ( var i = 0; i < children.length; i++ ){
+                  var isResizer = false;
+                  for ( var j = 0; j < children[i].classList.length; j++ ){
+                    if ( children[i].classList[j] === 'ui-grid-column-resizer'){
+                      isResizer = true;
+                    }
+                  }
+                  if ( isResizer ){
+                    var child = children[i]; // .remove();
+                    angular.element(child).remove();
+                  }
+                } 
+                
+                // get the target column for the left resizer
+                var otherCol = uiGridResizeColumnsService.findTargetCol($scope.col, 'left', rtlMultiplier);
+                var renderContainer = $scope.col.getRenderContainer();
               
-              // Don't append the right resizer if this column has resizing disabled
-              if ($scope.col.colDef.enableColumnResizing !== false) {
-                $elm.append(resizerRight);
-                $compile(resizerRight)($scope);
-              }
+                // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
+                if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
+                  var resizerLeft = angular.element(columnResizerElm).clone();
+                  resizerLeft.attr('position', 'left');
+
+                  $elm.prepend(resizerLeft);
+                  $compile(resizerLeft)($scope);
+                }
+                
+                // Don't append the right resizer if this column has resizing disabled
+                if ($scope.col.colDef.enableColumnResizing !== false) {
+                  var resizerRight = angular.element(columnResizerElm).clone();
+                  resizerRight.attr('position', 'right');
+
+                  $elm.append(resizerRight);
+                  $compile(resizerRight)($scope);
+                }
+              };
+
+              displayResizers();
+              
+              var waitDisplay = function(){
+                $timeout(displayResizers);
+              };
+              
+              var callbackId = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
+              
+              var deregisterClosure = function() {
+                grid.deregisterDataChangeCallback( callbackId );
+              };
+
+              $scope.$on( '$destroy', deregisterClosure );
             }
           }
         };
