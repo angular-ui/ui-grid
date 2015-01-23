@@ -87,11 +87,10 @@
                  * @methodOf  ui.grid.importer.api:PublicApi
                  * @description Imports a file into the grid using the file object 
                  * provided.  Bypasses the grid menu
-                 * @param {Grid} grid the grid we're importing into
                  * @param {File} fileObject the file we want to import, as a javascript
                  * File object
                  */
-                importFile: function ( grid, fileObject ) {
+                importFile: function ( fileObject ) {
                   service.importThisFile( grid, fileObject );
                 }
               }
