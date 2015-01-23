@@ -3,11 +3,6 @@
 
   var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
 
-  module.constant('columnBounds', {
-    minWidth: 35
-  });
-
-
   module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$timeout',
     function (gridUtil, $q, $timeout) {
 
@@ -100,7 +95,22 @@
           $timeout(function () {
             grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
           });
+        },
+        
+        // get either this column, or the column next to this column, to resize,
+        // returns the column we're going to resize
+        findTargetCol: function(col, position, renderIndex){
+          var renderContainer = col.getRenderContainer();
+          if (position === 'left') {
+            // Get the column to the left of this one
+            return renderContainer.renderedColumns[renderIndex - 1];
+          } else {
+            return col;
+          }
         }
+
+        
+        
       };
 
       return service;
@@ -165,7 +175,7 @@
   }]);
 
   // Extend the uiGridHeaderCell directive
-  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', function (gridUtil, $templateCache, $compile, $q) {
+  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', 'uiGridResizeColumnsService', function (gridUtil, $templateCache, $compile, $q, uiGridResizeColumnsService) {
     return {
       // Run after the original uiGridHeaderCell
       priority: -10,
@@ -174,43 +184,30 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-           if (uiGridCtrl.grid.options.enableColumnResizing) {
-              var renderIndexDefer = $q.defer();
-
-              $attrs.$observe('renderIndex', function (n, o) {
-                $scope.renderIndex = $scope.$eval(n);
-
-                renderIndexDefer.resolve();
-              });
-
-              renderIndexDefer.promise.then(function() {
-                var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
-
-                var resizerLeft = angular.element(columnResizerElm).clone();
-                var resizerRight = angular.element(columnResizerElm).clone();
-
-                resizerLeft.attr('position', 'left');
-                resizerRight.attr('position', 'right');
-
-                var col = $scope.col;
-                var renderContainer = col.getRenderContainer();
-
-
-                // Get the column to the left of this one
-                var otherCol = renderContainer.renderedColumns[$scope.renderIndex - 1];
-
-                // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
-                if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
-                  $elm.prepend(resizerLeft);
-                  $compile(resizerLeft)($scope);
-                }
-                
-                // Don't append the right resizer if this column has resizing disabled
-                if ($scope.col.colDef.enableColumnResizing !== false) {
-                  $elm.append(resizerRight);
-                  $compile(resizerRight)($scope);
-                }
-              });
+            if (uiGridCtrl.grid.options.enableColumnResizing) {
+              var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
+    
+              var resizerLeft = angular.element(columnResizerElm).clone();
+              var resizerRight = angular.element(columnResizerElm).clone();
+    
+              resizerLeft.attr('position', 'left');
+              resizerRight.attr('position', 'right');
+    
+              // get the target column for the left resizer
+              var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, $scope.renderIndex);
+              var renderContainer = col.getRenderContainer();
+  
+              // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
+              if (col && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && col.colDef.enableColumnResizing !== false) {
+                $elm.prepend(resizerLeft);
+                $compile(resizerLeft)($scope);
+              }
+              
+              // Don't append the right resizer if this column has resizing disabled
+              if ($scope.col.colDef.enableColumnResizing !== false) {
+                $elm.append(resizerRight);
+                $compile(resizerRight)($scope);
+              }
             }
           }
         };
@@ -260,7 +257,7 @@
      </doc:scenario>
    </doc:example>
    */  
-  module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'columnBounds', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, columnBounds, uiGridResizeColumnsService) {
+  module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, uiGridResizeColumnsService) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
     var downEvent, upEvent, moveEvent;
@@ -332,6 +329,23 @@
             });
         }
 
+        // Check that the requested width isn't wider than the maxWidth, or narrower than the minWidth
+        // Returns the new recommended with, after constraints applied
+        function constrainWidth(col, width){
+          var newWidth = width;
+
+          // If the new width would be less than the column's allowably minimum width, don't allow it
+          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
+            newWidth = col.colDef.minWidth;
+          }
+          else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
+            newWidth = col.colDef.maxWidth;
+          }
+          
+          return newWidth;
+        }
+        
+        
         function mousemove(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
@@ -341,18 +355,7 @@
           if (x < 0) { x = 0; }
           else if (x > uiGridCtrl.grid.gridWidth) { x = uiGridCtrl.grid.gridWidth; }
 
-          // The other column to resize (the one next to this one)
-          var col = $scope.col;
-          var renderContainer = col.getRenderContainer();
-          var otherCol;
-          if ($scope.position === 'left') {
-            // Get the column to the left of this one
-            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
-          }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-          }
+          var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, $scope.renderIndex);
 
           // Don't resize if it's disabled on this column
           if (col.colDef.enableColumnResizing === false) {
@@ -369,21 +372,14 @@
           // Get the width that this mouse would give the column
           var newWidth = parseInt(col.drawnWidth + xDiff * rtlMultiplier, 10);
 
-          // If the new width would be less than the column's allowably minimum width, don't allow it
-          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
-            x = x + (col.colDef.minWidth - newWidth) * rtlMultiplier;
-          }
-          else if (!col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
-            x = x + (col.colDef.minWidth - newWidth);
-          }
-          else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
-            x = x + (col.colDef.maxWidth - newWidth) * rtlMultiplier;
-          }
+          // check we're not outside the allowable bounds for this column
+          x = x + ( constrainWidth(col, newWidth) - newWidth ) * rtlMultiplier;
           
           resizeOverlay.css({ left: x + 'px' });
 
           uiGridCtrl.fireEvent(uiGridConstants.events.ITEM_DRAGGING);
         }
+        
 
         function mouseup(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
@@ -403,19 +399,7 @@
             return;
           }
 
-          // The other column to resize (the one next to this one)
-          var col = $scope.col;
-          var renderContainer = col.getRenderContainer();
-
-          var otherCol;
-          if ($scope.position === 'left') {
-            // Get the column to the left of this one
-            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
-          }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-          }
+          var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, $scope.renderIndex);
 
           // Don't resize if it's disabled on this column
           if (col.colDef.enableColumnResizing === false) {
@@ -425,19 +409,8 @@
           // Get the new width
           var newWidth = parseInt(col.drawnWidth + xDiff * rtlMultiplier, 10);
 
-          // If the new width is less than the minimum width, make it the minimum width
-          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
-            newWidth = col.colDef.minWidth;
-          }
-          else if (!col.colDef.minWidth && columnBounds.minWidth && newWidth < columnBounds.minWidth) {
-            newWidth = columnBounds.minWidth;
-          }
-          // 
-          if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
-            newWidth = col.colDef.maxWidth;
-          }
-          
-          col.width = newWidth;
+          // check we're not outside the allowable bounds for this column
+          col.width = constrainWidth(col, newWidth);
 
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);
@@ -449,6 +422,7 @@
           $document.off(upEvent, mouseup);
           $document.off(moveEvent, mousemove);
         }
+
 
         $elm.on(downEvent, function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
@@ -472,26 +446,12 @@
           $document.on(moveEvent, mousemove);
         });
 
+
         // On doubleclick, resize to fit all rendered cells
         $elm.on('dblclick', function(event, args) {
           event.stopPropagation();
 
-          var col = $scope.col;
-          var renderContainer = col.getRenderContainer();
-
-          var otherCol, multiplier;
-
-          // If we're the left-positioned resizer then we need to resize the column to the left of our column, and not our column itself
-          if ($scope.position === 'left') {
-            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
-            otherCol = $scope.col;
-            multiplier = 1;
-          }
-          else if ($scope.position === 'right') {
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
-            multiplier = -1;
-          }
+          var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, $scope.renderIndex);
 
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;
@@ -531,19 +491,8 @@
               });
             });
 
-          // If the new width is less than the minimum width, make it the minimum width
-          if (col.colDef.minWidth && maxWidth < col.colDef.minWidth) {
-            maxWidth = col.colDef.minWidth;
-          }
-          else if (!col.colDef.minWidth && columnBounds.minWidth && maxWidth < columnBounds.minWidth) {
-            maxWidth = columnBounds.minWidth;
-          }
-          // 
-          if (col.colDef.maxWidth && maxWidth > col.colDef.maxWidth) {
-            maxWidth = col.colDef.maxWidth;
-          }
-
-          col.width = parseInt(maxWidth, 10);
+          // check we're not outside the allowable bounds for this column
+          col.width = constrainWidth(col, maxWidth);
           
           // All other columns because fixed to their drawn width, if they aren't already
           resizeAroundColumn(col);

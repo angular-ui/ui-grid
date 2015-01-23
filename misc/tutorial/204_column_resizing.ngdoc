@@ -46,7 +46,7 @@ $scope.gridOptions = {
         enableSorting: true,
         columnDefs: [
           { field: 'name', minWidth: 200, width: '50%' },
-          { field: 'gender', width: '30%', enableColumnResizing: false },
+          { field: 'gender', width: '30%', enableColumnResizing: true, maxWidth: 200, minWidth: 70 },
           { field: 'company', width: '20%' }
         ]
       };
