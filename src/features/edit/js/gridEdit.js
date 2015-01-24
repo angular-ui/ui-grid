@@ -406,6 +406,8 @@
             var cellModel;
             var cancelTouchstartTimeout;
 
+            var editCellScope;
+
             registerBeginEditEvents();
 
             function registerBeginEditEvents() {
@@ -634,7 +636,8 @@
                 cancelBeginEditEvents();
                 var cellElement = angular.element(html);
                 $elm.append(cellElement);
-                $compile(cellElement)($scope.$new());
+                editCellScope = $scope.$new();
+                $compile(cellElement)(editCellScope);
                 var gridCellContentsEl = angular.element($elm.children()[0]);
                 isFocusedBeforeEdit = gridCellContentsEl.hasClass('ui-grid-cell-focus');
                 gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
@@ -676,6 +679,7 @@
               }
               var gridCellContentsEl = angular.element($elm.children()[0]);
               //remove edit element
+              editCellScope.$destroy();
               angular.element($elm.children()[1]).remove();
               gridCellContentsEl.removeClass('ui-grid-cell-contents-hidden');
               if (retainFocus && isFocusedBeforeEdit) {
