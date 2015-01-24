@@ -198,19 +198,10 @@
 
               var displayResizers = function(){
                 
-                // remove any existing resizers.  This code is ugly, jQlite has lots of limitations!!
-                var children = $elm.children();
-                for ( var i = 0; i < children.length; i++ ){
-                  var isResizer = false;
-                  for ( var j = 0; j < children[i].classList.length; j++ ){
-                    if ( children[i].classList[j] === 'ui-grid-column-resizer'){
-                      isResizer = true;
-                    }
-                  }
-                  if ( isResizer ){
-                    var child = children[i]; // .remove();
-                    angular.element(child).remove();
-                  }
+                // remove any existing resizers.  
+                var resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
+                for ( var i = 0; i < resizers.length; i++ ){
+                  angular.element(resizers[i]).remove();
                 } 
                 
                 // get the target column for the left resizer
