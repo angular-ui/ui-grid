@@ -596,6 +596,11 @@
                 return;
               }
 
+              // if the cell isn't fully visible, and cellNav is present, scroll it to be fully visible before we start
+              if ( $scope.grid.api.cellNav ){
+                $scope.grid.api.cellNav.scrollToIfNecessary( $scope, $scope.row, $scope.col );
+              }
+              
               cellModel = $parse($scope.row.getQualifiedColField($scope.col));
               //get original value from the cell
               origCellValue = cellModel($scope);
