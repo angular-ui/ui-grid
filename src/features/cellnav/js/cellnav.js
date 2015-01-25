@@ -948,7 +948,7 @@
                     }
 */
                     // make a dummy roCol
-                    var rowCol = { col: { uid: null }, row: { uid: null }};
+                    var rowCol = { col: { uid: null }, row: { uid: null } };
 
                     // broadcast a cellNav event so we clear the focus on all cells
                     uiGridCtrl.cellNav.broadcastCellNav(rowCol);
