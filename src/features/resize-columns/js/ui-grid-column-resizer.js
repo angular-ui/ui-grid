@@ -233,13 +233,9 @@
                 $timeout(displayResizers);
               };
               
-              var callbackId = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
+              var dataChangeDereg = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
               
-              var deregisterClosure = function() {
-                grid.deregisterDataChangeCallback( callbackId );
-              };
-
-              $scope.$on( '$destroy', deregisterClosure );
+              $scope.$on( '$destroy', dataChangeDereg );
             }
           }
         };

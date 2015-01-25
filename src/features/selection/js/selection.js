@@ -803,7 +803,7 @@
             registerRowSelectionEvents();
             // register a dataChange callback so that we can change the selection configuration dynamically
             // if the user changes the options
-            var callbackId = $scope.grid.registerDataChangeCallback( function() {
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( function() {
               if ( $scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection &&
                 !$scope.registered ){
                 registerRowSelectionEvents();
@@ -813,9 +813,7 @@
               }
             }, [uiGridConstants.dataChange.OPTIONS] );
 
-            $elm.on( '$destroy', function() {
-              $scope.grid.deregisterDataChangeCallback( callbackId );
-            });
+            $elm.on( '$destroy', dataChangeDereg);
           }
         };
       }]);

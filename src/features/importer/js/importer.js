@@ -616,16 +616,12 @@
          */
         addObjects: function( grid, newObjects, $scope ){
           if ( grid.api.rowEdit ){
-            var callbackId = grid.registerDataChangeCallback( function() {
+            var dataChangeDereg = grid.registerDataChangeCallback( function() {
               grid.api.rowEdit.setRowsDirty( newObjects );
-              grid.deregisterDataChangeCallback( callbackId );
+              dataChangeDereg();
             }, [uiGridConstants.dataChange.ROW] );
             
-            var deregisterClosure = function() {
-              grid.deregisterDataChangeCallback( callbackId );
-            };
-  
-            grid.importer.$scope.$on( '$destroy', deregisterClosure );
+            grid.importer.$scope.$on( '$destroy', dataChangeDereg );
           }
 
           grid.importer.$scope.$apply( grid.options.importerDataAddCallback( grid, newObjects ) );
