@@ -308,6 +308,19 @@
 
                 /**
                  * @ngdoc function
+                 * @name scrollToFocus
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description brings the specified row and column fully into view if it isn't already
+                 * @param {object} $scope a scope we can broadcast events from
+                 * @param {GridRow} row grid row that we should make fully visible
+                 * @param {GridCol} col grid col to make fully visible
+                 */
+                scrollToIfNecessary: function ($scope, row, col) {
+                  service.scrollToIfNecessary(grid, $scope, row, col);
+                },
+
+                /**
+                 * @ngdoc function
                  * @name getFocusedCell
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description returns the current (or last if Grid does not have focus) focused row and column
