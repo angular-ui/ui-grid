@@ -61,11 +61,12 @@
                 classAdded = $scope.col.headerCellClass;
               }
               contents.addClass(classAdded);
+              
+              var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
+              $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
             };
   
-            if ($scope.col.headerCellClass) {
-              updateClass();
-            }
+            updateClass();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
