@@ -47,11 +47,9 @@
             }
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
-            var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
 
-            $scope.$on( '$destroy', function() {
-              $scope.grid.deregisterDataChangeCallback( watchUid ); 
-            });
+            $scope.$on( '$destroy', dataChangeDereg );
           }
         };
       }

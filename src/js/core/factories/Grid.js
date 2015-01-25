@@ -357,7 +357,7 @@ angular.module('ui.grid')
    * @param {array} types the types of data change you want to be informed of.  Values from 
    * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
    * ALL 
-   * @returns {string} uid of the callback, can be used to deregister it again
+   * @returns {function} deregister function - a function that can be called to deregister this callback
    */
   Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
     var uid = gridUtil.nextUid();
@@ -368,18 +368,12 @@ angular.module('ui.grid')
       gridUtil.logError("Expected types to be an array or null in registerDataChangeCallback, value passed was: " + types );
     }
     this.dataChangeCallbacks[uid] = { callback: callback, types: types, _this:_this };
-    return uid;
-  };
-
-  /**
-   * @ngdoc function
-   * @name deregisterDataChangeCallback
-   * @methodOf ui.grid.class:Grid
-   * @description Delete the callback identified by the id.
-   * @param {string} uid the uid of the function that is to be deregistered
-   */
-  Grid.prototype.deregisterDataChangeCallback = function deregisterDataChangeCallback(uid) {
-    delete this.dataChangeCallbacks[uid];
+    
+    var self = this;
+    var deregisterFunction = function() {
+      delete self.dataChangeCallbacks[uid];
+    };
+    return deregisterFunction;
   };
 
   /**
