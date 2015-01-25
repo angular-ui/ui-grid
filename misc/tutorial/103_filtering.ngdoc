@@ -62,12 +62,7 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
           // pre-populated search field
           { field: 'gender', filter: { term: 'male' } },
           // no filter input
-          { field: 'company', enableFiltering: false, filter: {
-            noTerm: true,
-            condition: function(searchTerm, cellValue) {
-              return cellValue.match(/a/);
-            }
-          }},
+          { field: 'company', enableFiltering: false},
           // specifies one of the built-in conditions
           // and a placeholder for the input
           {
