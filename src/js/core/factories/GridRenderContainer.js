@@ -720,11 +720,21 @@ angular.module('ui.grid')
 
     if (self.name === 'body') {
       styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
-      if (self.grid.hasRightContainerColumns()) {
-        styles['overflow-y'] = 'hidden';
+      if (!self.grid.isRTL()) {
+        if (self.grid.hasRightContainerColumns()) {
+          styles['overflow-y'] = 'hidden';
+        }
+        else {
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+        }
       }
       else {
-        styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+        if (self.grid.hasLeftContainerColumns()) {
+          styles['overflow-y'] = 'hidden';
+        }
+        else {
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+        }
       }
     }
     else if (self.name === 'left') {
