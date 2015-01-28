@@ -36,6 +36,8 @@
 <!-- <div class="row main"> -->
 <h2>Grid</h2>
 <button type="button" ng-click="swap()">Swap Columns</button>
+<br>
+<br>
 <div ui-grid="gridOptions" class="grid"></div>
 <!-- <div class="placeholder"> -->
 <!-- </div> -->
@@ -58,8 +60,20 @@
             { field:'id', width:50 }
         ];
 
+        // var cols1 = [
+        //     { name: 'id', field:'id', width:50 },
+        //     { name: 'name', field:'name', width:100 },
+        //     { name: 'age', field:'age', width:100 }
+        // ];
+
+        // var cols2 = [
+        //     { name: 'age', field:'age', width:100 },
+        //     { name: 'name', field:'name', width:100 },
+        //     { name: 'id', field:'id', width:50 }
+        // ];
+
         $scope.gridOptions = {};
-        $scope.gridOptions.columnDefs = cols2;
+        $scope.gridOptions.columnDefs = cols1;
 
         $http.get('https://rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
                 .success(function(data) {
@@ -70,8 +84,6 @@
             ($scope.gridOptions.columnDefs === cols1) ?
                 $scope.gridOptions.columnDefs = cols2 :
                 $scope.gridOptions.columnDefs = cols1;
-
-            console.log($scope.gridOptions.columnDefs[0].field);
         };
     });
 </script>

@@ -66,7 +66,7 @@ describe('uiGridCell', function () {
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
 
-    iit('should notice col changes and update cellClass', inject(function () {
+    it('should notice col changes and update cellClass', inject(function () {
       $scope.col.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
         if (rowRenderIndex === 2 && colRenderIndex === 2) {
           if ( col.noClass ){
@@ -113,7 +113,7 @@ describe('uiGridCell', function () {
     var class1 = _(firstCol[0].classList).find(function(c) { return classRegEx.test(c); });
 
     // The first column should be 100px wide because we said it should be
-    expect(firstCol.outerWidth()).toEqual(100);
+    expect(firstCol.outerWidth()).toEqual(100, 'first cell is 100px');
     expect(firstHeaderCell.innerWidth()).toEqual(100, "header cell is 100px");
 
     // Now swap the columns in the column defs
@@ -128,14 +128,14 @@ describe('uiGridCell', function () {
     expect(class2).not.toEqual(class1);
 
     // The first column should now be 50px wide
-    expect(firstColAgain.outerWidth()).toEqual(50);
-    expect(firstHeaderCellAgain.outerWidth()).toEqual(50);
+    expect(firstColAgain.outerWidth()).toEqual(50, 'first cell again is 50');
+    expect(firstHeaderCellAgain.innerWidth()).toEqual(50, 'header cell again is 50px');
 
     // ... and the last column should now be 100px wide
     var lastCol = $(gridElm).find('.ui-grid-cell').last();
     var lastHeaderCell = $(gridElm).find('.ui-grid-header-cell').last();
-    expect(lastCol.outerWidth()).toEqual(100);
-    expect(lastHeaderCell.outerWidth()).toEqual(100);
+    expect(lastCol.outerWidth()).toEqual(100, 'last cell again is 100px');
+    expect(lastHeaderCell.innerWidth()).toEqual(100, 'last header cell again is 100px');
 
     angular.element(gridElm).remove();
   }));

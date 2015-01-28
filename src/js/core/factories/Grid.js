@@ -605,7 +605,31 @@ angular.module('ui.grid')
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
     });
-    
+
+    /*** Reorder columns if necessary ***/
+
+    // Create a shallow copy of the columns as a cache
+    var columnCache = self.columns.slice(0);
+
+    // Go through all the column defs
+    for (i = 0; i < self.options.columnDefs.length; i++) {
+      // If the column at this index has a different name than the column at the same index in the column defs...
+      if (self.columns[i].name !== self.options.columnDefs[i].name) {
+        // Replace the one in the cache with the appropriate column
+        columnCache[i] = self.getColumn(self.options.columnDefs[i].name);
+      }
+      else {
+        // Otherwise just copy over the one from the initial columns
+        columnCache[i] = self.columns[i];
+      }
+    }
+
+    // Empty out the columns array, non-destructively
+    self.columns.length = 0;
+
+    // And splice in the updated, ordered columns from the cache
+    Array.prototype.splice.apply(self.columns, [0, 0].concat(columnCache));
+
     return $q.all(builderPromises).then(function(){
       if (self.rows.length > 0){
         self.assignTypes();
