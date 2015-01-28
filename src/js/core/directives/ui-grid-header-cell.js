@@ -30,7 +30,8 @@
 
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
-            $elm.addClass($scope.col.getColClass(false));
+            var initColClass = $scope.col.getColClass(false);
+            $elm.addClass(initColClass);
     
             // Hide the menu by default
             $scope.menuShown = false;
@@ -48,6 +49,8 @@
             // apply any headerCellClass
             var classAdded;
             var updateClass = function( grid ){
+              console.log('header cell column change');
+
               var contents = $elm;
               if ( classAdded ){
                 contents.removeClass( classAdded );
@@ -64,7 +67,26 @@
               
               var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
               $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
+
+              console.log($scope.col.uid);
             };
+
+            // $scope.$watch('col', function (n, o) {
+            //   console.log('col watch fired!');
+            //   if (n !== o) {
+            //     // See if the column's internal class has changed
+            //     var newColClass = $scope.col.getColClass(false);
+            //     if (newColClass !== initColClass) {
+            //       $elm.removeClass(initColClass);
+            //       $elm.addClass(newColClass);
+            //       console.log('removing ' + initColClass + ', adding ' + newColClass);
+            //       initColClass = newColClass;
+            //     }
+            //     else {
+            //       console.log(initColClass + ' is the same as ' + newColClass);
+            //     }
+            //   }
+            // });
   
             updateClass();
             

@@ -272,8 +272,11 @@ module.exports = function(grunt) {
           /* Protractor */
           browser: false,
 
+          /* Lodash */
+          _: false,
+
           /* jquery (testing only) */
-          $:false,
+          $: false,
           jQuery: false,
 
 

@@ -41,7 +41,8 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
           }
         },
         post: function($scope, $elm, $attrs, uiGridCtrl) {
-          $elm.addClass($scope.col.getColClass(false));
+          var initColClass = $scope.col.getColClass(false);
+          $elm.addClass(initColClass);
 
           var classAdded;
           var updateClass = function( grid ){
@@ -73,6 +74,14 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
             if ( n !== o ) {
               if ( classAdded || $scope.col.cellClass ){
                 updateClass();
+              }
+
+              // See if the column's internal class has changed
+              var newColClass = $scope.col.getColClass(false);
+              if (newColClass !== initColClass) {
+                $elm.removeClass(initColClass);
+                $elm.addClass(newColClass);
+                initColClass = newColClass;
               }
             }
           };

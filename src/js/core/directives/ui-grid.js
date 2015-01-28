@@ -54,6 +54,7 @@
 
               self.grid.preCompileCellTemplates();
 
+              console.log('column change!');
               self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
             });
         }
