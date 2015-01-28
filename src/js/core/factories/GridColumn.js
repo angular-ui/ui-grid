@@ -105,7 +105,7 @@ angular.module('ui.grid')
     self.grid = grid;
     self.uid = uid;
 
-    self.updateColumnDef(colDef, true );
+    self.updateColumnDef(colDef, true);
   }
 
 

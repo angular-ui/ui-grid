@@ -49,7 +49,7 @@
       function columnDefsWatchFunction(n, o) {
         if (n && n !== o) {
           self.grid.options.columnDefs = n;
-          self.grid.buildColumns()
+          self.grid.buildColumns({ orderByColumnDefs: true })
             .then(function(){
 
               self.grid.preCompileCellTemplates();
