@@ -388,6 +388,7 @@
                           }
                         }
 
+/*
                         else if (totalMouseMovement === 0) {
                           if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
                             //sort the current column
@@ -406,6 +407,7 @@
                               });
                           }
                         }
+*/
 
                         $document.off('mousemove', mouseMoveHandler);
                         $document.off('mouseup', mouseUpHandler);
