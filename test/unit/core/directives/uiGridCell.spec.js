@@ -86,7 +86,7 @@ describe('uiGridCell', function () {
     }));
   });
 
-  iit('should change a columns class when its uid changes', inject(function (gridUtil, $compile, uiGridConstants) {
+  it('should change a columns class when its uid changes', inject(function (gridUtil, $compile, uiGridConstants) {
     // Reset the UIDs (used by columns) so they're fresh and clean
     gridUtil.resetUids();
 
