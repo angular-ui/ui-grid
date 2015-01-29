@@ -19,6 +19,10 @@
   .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
 }
 
+.ui-grid-grid-footer {
+  float: left;
+  width: 100%;
+}
 
 .ui-grid-footer-viewport {
   overflow: hidden; // Disable so menus show up
@@ -54,12 +58,6 @@
   &:last-child {
     border-right: 0;
   }
-}
-
-// Make vertical bar in header row fill the height of the cell completely
-.ui-grid-footer .ui-grid-vertical-bar {
-  top: 0;
-  bottom: 0;
 }
 
 input[type="text"].ui-grid-filter-input {

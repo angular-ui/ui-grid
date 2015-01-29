@@ -12,7 +12,8 @@ describe('ui.grid.expandable', function () {
 
     scope.gridOptions = {
       expandableRowTemplate: 'expandableRowTemplate.html',
-      expandableRowHeight: 150
+      expandableRowHeight: 150,
+      expandableRowHeaderWidth: 40
     };
     scope.gridOptions.data = [
       { col1: 'col1', col2: 'col2' }
@@ -38,6 +39,7 @@ describe('ui.grid.expandable', function () {
     expect(scope.gridApi.expandable.toggleRowExpansion).toBeDefined();
     expect(scope.gridApi.expandable.expandAllRows).toBeDefined();
     expect(scope.gridApi.expandable.collapseAllRows).toBeDefined();
+    expect(scope.gridApi.expandable.toggleAllRows).toBeDefined();
   });
 
   it('expandAll and collapseAll should set and unset row.isExpanded', function () {
@@ -47,6 +49,17 @@ describe('ui.grid.expandable', function () {
     });
     scope.gridApi.expandable.collapseAllRows();
     scope.grid.rows.forEach(function(row) {
+      expect(row.isExpanded).toBe(false);
+    });
+  });
+
+  it('toggleAllRows should set and unset row.isExpanded', function(){
+    scope.gridApi.expandable.toggleAllRows();
+    scope.grid.rows.forEach(function(row){
+      expect(row.isExpanded).toBe(true);
+    });
+    scope.gridApi.expandable.toggleAllRows();
+    scope.grid.rows.forEach(function(row){
       expect(row.isExpanded).toBe(false);
     });
   });

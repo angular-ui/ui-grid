@@ -51,13 +51,14 @@ describe('uiGridHeaderCell', function () {
       enableSorting: true,
       columnDefs: columnDefs,
       data: data,
+      showGridFooter: false,
       onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
     };
 
     $scope.extScope = 'test';
 
     recompile = function () {
-      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" external-scopes="extScope"></div>');
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
       
       $compile(grid)($scope);
       $document[0].body.appendChild(grid[0]);
@@ -72,7 +73,7 @@ describe('uiGridHeaderCell', function () {
     grid.remove();
   });
 
-  describe('column menu', function (){ 
+  describe('column menu', function (){
     var headerCell1,
         headerCell2,
         menu;
@@ -182,7 +183,7 @@ describe('uiGridHeaderCell', function () {
     it('should get cellClass from function, and remove it when data changes', inject(function () {
       expect(headerCell2.hasClass('funcCellClass')).toBe(true);
       columnDefs[1].noClass = true;
-      $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(headerCell2.hasClass('funcCellClass')).toBe(false);
     }));
   });
@@ -193,8 +194,8 @@ describe('uiGridHeaderCell', function () {
 
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
       expect(header).toBeDefined();
-      expect(header.scope().getExternalScopes).toBeDefined();
-      expect(header.scope().getExternalScopes()).toBe('test');
+      expect(header.scope().grid.appScope).toBeDefined();
+      expect(header.scope().grid.appScope.extScope).toBe('test');
     });
   });
 

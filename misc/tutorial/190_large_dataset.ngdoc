@@ -17,7 +17,8 @@ Demonstrates the following:
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {  };
+      $scope.gridOptions = {
+      };
 
       $scope.gridOptions.columnDefs = [
         {name:'id'},

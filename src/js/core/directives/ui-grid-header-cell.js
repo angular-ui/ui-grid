@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
-  function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
+  angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'ScrollEvent',
+  function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, ScrollEvent) {
     // Do stuff after mouse has been down this many ms on the header cell
     var mousedownTimeout = 500;
 
@@ -27,7 +27,6 @@
             var renderContainerCtrl = controllers[1];
 
             $scope.grid = uiGridCtrl.grid;
-            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
             
@@ -62,20 +61,17 @@
                 classAdded = $scope.col.headerCellClass;
               }
               contents.addClass(classAdded);
+              
+              var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
+              $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
             };
   
-            if ($scope.col.headerCellClass) {
-              updateClass();
-            }
+            updateClass();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
-            var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
 
-            var deregisterFunction = function() {
-              $scope.grid.deregisterDataChangeCallback( watchUid ); 
-            };
-
-            $scope.$on( '$destroy', deregisterFunction );            
+            $scope.$on( '$destroy', dataChangeDereg );            
 
 
             // Figure out whether this column is sortable or not
@@ -236,9 +232,10 @@
                     uiGridCtrl.grid.refresh()
                       .then(function () {
                         if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
-                           uiGridCtrl.fireScrollingEvent({ y: { percentage: uiGridCtrl.prevScrollArgs.y.percentage } });
+                          var scrollEvent = new ScrollEvent(uiGridCtrl.grid,null,null,'uiGridHeaderCell.toggleMenu');
+                          scrollEvent.y.percentage = uiGridCtrl.prevScrollArgs.y.percentage;
+                          scrollEvent.fireScrollingEvent();
                         }
-                        // uiGridCtrl.fireEvent('force-vertical-scroll');
                       });
                   }
                 }));  

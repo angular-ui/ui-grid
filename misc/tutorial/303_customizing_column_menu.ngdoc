@@ -2,9 +2,15 @@
 @name Tutorial: 303 Customizing Column Menu
 @description
 
-You can customize a column's menu and provide your own functionality.
+You can customize a column's menu and provide your own functionality.  Each menu item can have:
 
-By default, the `action`, `shown` and `active`'s' contexts will have a reference to the grid added as the 
+- `shown`: a function that determines whether or not to display the item
+- `title`: the title you'd like to have displayed for the menu item (note that you can also 
+use i18n on this through the `gridMenuTitleFilter` setting)
+- `icon`: an icon you'd like displayed alongside the item
+- `action`: a function that will be called when the menu is clicked
+- `active`: a function that highlights the item (giving a toggle type effect - see the sort on the column menus for an example)
+- `context`: by default, the `action`, `shown` and `active`'s' contexts will have a reference to the grid added as the 
 property `grid` (accessible through `this.grid`.  You can pass in your own context by supplying 
 the `context` property to your menu item. It will be accessible through `this.context`.
 

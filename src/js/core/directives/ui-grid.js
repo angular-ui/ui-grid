@@ -9,15 +9,14 @@
 
       var self = this;
 
-      // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
+
+      //assign $scope.$parent if appScope not already assigned
+      self.grid.appScope = self.grid.appScope || $scope.$parent;
+
       $elm.addClass('grid' + self.grid.id);
       self.grid.rtl = gridUtil.getStyles($elm[0])['direction'] === 'rtl';
 
-
-      //add optional reference to externalScopes function to controller
-      //so it can be retrieved in lower elements that have isolate scope
-      self.getExternalScopes = $scope.getExternalScopes;
 
       // angular.extend(self.grid.options, );
 
@@ -114,13 +113,6 @@
       });
 
 
-      /* Event Methods */
-
-      self.fireScrollingEvent = gridUtil.throttle(function(args) {
-        args.grid = args.grid || self.grid;
-        $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
-      }, self.grid.options.scrollThrottle, {trailing: true});
-
       self.fireEvent = function(eventName, args) {
         // Add the grid to the event arguments if it's not there
         if (typeof(args) === 'undefined' || args === undefined) {
@@ -146,8 +138,6 @@
  *  @element div
  *  @restrict EA
  *  @param {Object} uiGrid Options for the grid to use
- *  @param {Object=} external-scopes Add external-scopes='someScopeObjectYouNeed' attribute so you can access
- *            your scopes from within any custom templatedirective.  You access by $scope.getExternalScopes() function
  *
  *  @description Create a very basic grid.
  *
@@ -187,8 +177,7 @@ angular.module('ui.grid').directive('uiGrid',
       return {
         templateUrl: 'ui-grid/ui-grid',
         scope: {
-          uiGrid: '=',
-          getExternalScopes: '&?externalScopes' //optional functionwrapper around any needed external scope instances
+          uiGrid: '='
         },
         replace: true,
         transclude: true,
@@ -220,7 +209,7 @@ angular.module('ui.grid').directive('uiGrid',
                 // Figure out the new height
                 var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
                 var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
-                var footerHeight = grid.options.showFooter ? grid.options.footerRowHeight : 0;
+                var footerHeight = grid.calcFooterHeight();
                 
                 var scrollbarHeight = 0;
                 if (grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
@@ -253,32 +242,11 @@ angular.module('ui.grid').directive('uiGrid',
               // Run initial canvas refresh
               grid.refreshCanvas();
 
-              //add pinned containers for row headers support
-              //moved from pinning feature
-              var left = angular.element('<div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
-              $elm.prepend(left);
-              uiGridCtrl.innerCompile(left);
-
-              var right = angular.element('<div  ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
-              $elm.append(right);
-              uiGridCtrl.innerCompile(right);
-
-
               //if we add a left container after render, we need to watch and react
               $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
                 if (newValue === oldValue) {
                   return;
                 }
-
-                //todo: remove this code.  it was commented out after moving from pinning because body is already float:left
-//                var bodyContainer = angular.element($elm[0].querySelectorAll('[container-id="body"]'));
-//                if (newValue){
-//                  bodyContainer.attr('style', 'float: left; position: inherit');
-//                }
-//                else {
-//                  bodyContainer.attr('style', 'float: left; position: relative');
-//                }
-
                 grid.refreshCanvas(true);
               });
 
@@ -296,7 +264,7 @@ angular.module('ui.grid').directive('uiGrid',
                 grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
                 grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
-                grid.queueRefresh();
+                grid.refreshCanvas(true);
               }
 
               angular.element($window).on('resize', gridResize);

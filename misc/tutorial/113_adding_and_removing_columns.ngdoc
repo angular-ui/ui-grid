@@ -47,12 +47,12 @@ def properties), and call the notifyDataChange api to force an update.
         } else {
           $scope.columns[1].displayName = 'GENDER';
         }
-        $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid,  uiGridConstants.dataChange.COLUMN );
+        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       }
       
       $scope.toggleVisible = function() {
         $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
-        $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.COLUMN);
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
       }
     
       $http.get('/data/100.json')

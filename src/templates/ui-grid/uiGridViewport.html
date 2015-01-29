@@ -1,4 +1,4 @@
-<div class="ui-grid-viewport">
+<div class="ui-grid-viewport"  ng-style="containerCtrl.colContainer.getViewPortStyle()">
   <div class="ui-grid-canvas">
     <div ng-repeat="(rowRenderIndex, row) in rowContainer.renderedRows track by $index" class="ui-grid-row" ng-style="containerCtrl.rowStyle(rowRenderIndex)">
       <div ui-grid-row="row" row-render-index="rowRenderIndex"></div>

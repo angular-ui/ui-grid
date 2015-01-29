@@ -21,11 +21,12 @@ describe('GridOptions factory', function () {
         getRowIdentity: jasmine.any(Function),
         headerRowHeight: 30,
         rowHeight: 30,
-        maxVisibleRowCount: 200,
         minRowsToShow: 10,
         showHeader: true,
-        showFooter: false,
-        footerRowHeight: 30,
+        showGridFooter: false,
+        showColumnFooter: false,
+        columnFooterHeight: 30,
+        gridFooterHeight: 30,
         columnWidth: 50,
         maxVisibleColumnCount: 200,
         virtualizationThreshold: 20,
@@ -44,7 +45,8 @@ describe('GridOptions factory', function () {
         rowEquality: jasmine.any(Function),
         headerTemplate: null,
         footerTemplate: null,
-        rowTemplate: 'ui-grid/ui-grid-row'
+        rowTemplate: 'ui-grid/ui-grid-row',
+        appScopeProvider: null
       });
     });
 
@@ -60,11 +62,12 @@ describe('GridOptions factory', function () {
         getRowIdentity: testFunction,
         headerRowHeight: 40,
         rowHeight: 40,
-        maxVisibleRowCount: 20,
         minRowsToShow: 15,
         showHeader: true,
-        showFooter: true,
-        footerRowHeight: 50,
+        showGridFooter: true,
+        showColumnFooter: true,
+        columnFooterHeight: 50,
+        gridFooterHeight: 50,
         columnWidth: 60,
         maxVisibleColumnCount: 25,
         virtualizationThreshold: 27,
@@ -84,7 +87,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : 'anotherRef'
       };
       expect( GridOptions.initialize(options) ).toEqual({
         onRegisterApi: testFunction,
@@ -96,11 +100,12 @@ describe('GridOptions factory', function () {
         getRowIdentity: testFunction,
         headerRowHeight: 40,
         rowHeight: 40,
-        maxVisibleRowCount: 20,
         minRowsToShow: 15,
         showHeader: true,
-        showFooter: true,
-        footerRowHeight: 50,
+        showGridFooter: true,
+        showColumnFooter: true,
+        columnFooterHeight: 50,
+        gridFooterHeight: 50,
         columnWidth: 60,
         maxVisibleColumnCount: 25,
         virtualizationThreshold: 27,
@@ -120,7 +125,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : 'anotherRef'
       });
     });
 
@@ -136,11 +142,12 @@ describe('GridOptions factory', function () {
         getRowIdentity: testFunction,
         headerRowHeight: 40,
         rowHeight: 40,
-        maxVisibleRowCount: 20,
         minRowsToShow: 15,
         showHeader: false,
-        showFooter: false,
-        footerRowHeight: 50,
+        showGridFooter: false,
+        showColumnFooter: false,
+        columnFooterHeight: 50,
+        gridFooterHeight: 50,
         columnWidth: 60,
         maxVisibleColumnCount: 25,
         virtualizationThreshold: 27,
@@ -172,11 +179,12 @@ describe('GridOptions factory', function () {
         getRowIdentity: testFunction,
         headerRowHeight: 0, // Because of showHeader: false
         rowHeight: 40,
-        maxVisibleRowCount: 20,
         minRowsToShow: 15,
         showHeader: false,
-        showFooter: false,
-        footerRowHeight: 50,
+        showGridFooter: false,
+        showColumnFooter: false,
+        columnFooterHeight: 50,
+        gridFooterHeight: 50,
         columnWidth: 60,
         maxVisibleColumnCount: 25,
         virtualizationThreshold: 27,
@@ -196,7 +204,8 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         rowTemplate: 'testRow',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        appScopeProvider : null
       });
     });
   });

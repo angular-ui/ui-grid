@@ -44,7 +44,7 @@ It is also possible to disable pinning on column level. Note the 'id' column def
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 100%;
       height: 400px;
     }
   </file>

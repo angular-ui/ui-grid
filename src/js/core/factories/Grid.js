@@ -35,10 +35,22 @@ angular.module('ui.grid')
   
     // Get default options
     self.options = GridOptions.initialize( options );
+
+    /**
+     * @ngdoc object
+     * @name appScope
+     * @propertyOf ui.grid.class:Grid
+     * @description reference to the application scope (the parent scope of the ui-grid element).  Assigned in ui-grid controller
+     * <br/>
+     * use gridOptions.appScopeProvider to override the default assignment of $scope.$parent with any reference
+     */
+    self.appScope = self.options.appScopeProvider;
   
     self.headerHeight = self.options.headerRowHeight;
-    self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
-  
+
+
+    self.footerHeight = self.calcFooterHeight();
+
     self.rtl = false;
     self.gridHeight = 0;
     self.gridWidth = 0;
@@ -118,6 +130,16 @@ angular.module('ui.grid')
       self.isScrollingHorizontally = true;
       debouncedHorizontal();
     };
+
+    self.scrollbarHeight = 0;
+    self.scrollbarWidth = 0;
+    if (self.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+      self.scrollbarHeight = gridUtil.getScrollbarWidth();
+    }
+
+    if (self.options.enableVerticalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+      self.scrollbarWidth = gridUtil.getScrollbarWidth();
+    }
   
   
   
@@ -220,7 +242,6 @@ angular.module('ui.grid')
      * might be particularly relevant where you've changed values within the data
      * and you'd like cell classes to be re-evaluated, or changed config within 
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
-     * @param {Grid} grid the grid
      * @param {string} type one of the 
      * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
      * us which refreshes to fire.
@@ -230,6 +251,38 @@ angular.module('ui.grid')
     
     self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
     self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
+
+    self.registerStyleComputation({
+      priority: 10,
+      func: self.getFooterStyles
+    });
+  };
+
+   Grid.prototype.calcFooterHeight = function () {
+     if (!this.hasFooter()) {
+       return 0;
+     }
+
+     var height = 0;
+     if (this.options.showGridFooter) {
+       height += this.options.gridFooterHeight;
+     }
+
+     if (this.options.showColumnFooter) {
+       height += this.options.columnFooterHeight;
+     }
+
+     return height;
+   };
+
+   Grid.prototype.getFooterStyles = function () {
+     var style = '.grid' + this.id + ' .ui-grid-footer-aggregates-row { height: ' + this.options.columnFooterHeight + 'px; }';
+     style += ' .grid' + this.id + ' .ui-grid-footer-info { height: ' + this.options.gridFooterHeight + 'px; }';
+     return style;
+   };
+
+  Grid.prototype.hasFooter = function () {
+   return this.options.showGridFooter || this.options.showColumnFooter;
   };
 
   /**
@@ -304,9 +357,9 @@ angular.module('ui.grid')
    * @param {array} types the types of data change you want to be informed of.  Values from 
    * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
    * ALL 
-   * @returns {string} uid of the callback, can be used to deregister it again
+   * @returns {function} deregister function - a function that can be called to deregister this callback
    */
-  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types) {
+  Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
     var uid = gridUtil.nextUid();
     if ( !types ){
       types = [uiGridConstants.dataChange.ALL];
@@ -314,19 +367,13 @@ angular.module('ui.grid')
     if ( !Array.isArray(types)){
       gridUtil.logError("Expected types to be an array or null in registerDataChangeCallback, value passed was: " + types );
     }
-    this.dataChangeCallbacks[uid] = { callback: callback, types: types };
-    return uid;
-  };
-
-  /**
-   * @ngdoc function
-   * @name deregisterDataChangeCallback
-   * @methodOf ui.grid.class:Grid
-   * @description Delete the callback identified by the id.
-   * @param {string} uid the uid of the function that is to be deregistered
-   */
-  Grid.prototype.deregisterDataChangeCallback = function deregisterDataChangeCallback(uid) {
-    delete this.dataChangeCallbacks[uid];
+    this.dataChangeCallbacks[uid] = { callback: callback, types: types, _this:_this };
+    
+    var self = this;
+    var deregisterFunction = function() {
+      delete self.dataChangeCallbacks[uid];
+    };
+    return deregisterFunction;
   };
 
   /**
@@ -344,7 +391,12 @@ angular.module('ui.grid')
       if ( callback.types.indexOf( uiGridConstants.dataChange.ALL ) !== -1 ||
            callback.types.indexOf( type ) !== -1 ||
            type === uiGridConstants.dataChange.ALL ) {
-        callback.callback( this );
+        if (callback._this) {
+           callback.callback.apply(callback._this,this);
+        }
+        else {
+          callback.callback( this );
+        }
       }
     }, this);
   };
@@ -356,18 +408,17 @@ angular.module('ui.grid')
    * @description Notifies us that a data change has occurred, used in the public
    * api for users to tell us when they've changed data or some other event that 
    * our watches cannot pick up
-   * @param {Grid} grid the grid
    * @param {string} type the type of event that occurred - one of the 
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
    */
-  Grid.prototype.notifyDataChange = function notifyDataChange(grid, type) {
+  Grid.prototype.notifyDataChange = function notifyDataChange(type) {
     var constants = uiGridConstants.dataChange;
     if ( type === constants.ALL || 
          type === constants.COLUMN ||
          type === constants.EDIT ||
          type === constants.ROW ||
          type === constants.OPTIONS ){
-      grid.callDataChangeCallbacks( type );
+      this.callDataChangeCallbacks( type );
     } else {
       gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);
     }
@@ -388,7 +439,7 @@ angular.module('ui.grid')
     grid.buildColumns();
     grid.refresh();
   };
-    
+
 
   /**
    * @ngdoc function
@@ -1098,7 +1149,13 @@ angular.module('ui.grid')
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
-      container.visibleRowCache.length = 0;
+      container.canvasHeightShouldUpdate = true;
+      
+      if ( typeof(container.visibleRowCache) === 'undefined' ){
+        container.visibleRowCache = [];  
+      } else {
+        container.visibleRowCache.length = 0;  
+      }
     }
     
     // rows.forEach(function (row) {
@@ -1280,6 +1337,23 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name updateCanvasHeight
+   * @methodOf ui.grid.class:Grid
+   * @description flags all render containers to update their canvas height
+   */
+  Grid.prototype.updateCanvasHeight = function updateCanvasHeight() {
+    var self = this;
+
+    for (var containerId in self.renderContainers) {
+      if (self.renderContainers.hasOwnProperty(containerId)) {
+        var container = self.renderContainers[containerId];
+        container.canvasHeightShouldUpdate = true;
+      }
+    }
+  };
+
+  /**
+   * @ngdoc function
    * @name buildStyles
    * @methodOf ui.grid.class:Grid
    * @description calls each styleComputation function
@@ -1341,9 +1415,9 @@ angular.module('ui.grid')
     var bodyHeight = this.getViewportHeight();
 
     // Add the horizontal scrollbar height if there is one
-    if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
-      bodyHeight = bodyHeight + this.horizontalScrollbarHeight;
-    }
+    //if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
+    //  bodyHeight = bodyHeight + this.horizontalScrollbarHeight;
+    //}
 
     return bodyHeight;
   };
@@ -1356,15 +1430,15 @@ angular.module('ui.grid')
     var viewPortHeight = this.gridHeight - this.headerHeight - this.footerHeight;
 
     // Account for native horizontal scrollbar, if present
-    if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
-      viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
-    }
+    //if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
+    //  viewPortHeight = viewPortHeight - this.horizontalScrollbarHeight;
+    //}
 
     var adjustment = self.getViewportAdjustment();
     
     viewPortHeight = viewPortHeight + adjustment.height;
 
-    // gridUtil.logDebug('viewPortHeight', viewPortHeight);
+    //gridUtil.logDebug('viewPortHeight', viewPortHeight);
 
     return viewPortHeight;
   };
@@ -1374,15 +1448,15 @@ angular.module('ui.grid')
 
     var viewPortWidth = this.gridWidth;
 
-    if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth - this.verticalScrollbarWidth;
-    }
+    //if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
+    //  viewPortWidth = viewPortWidth - this.verticalScrollbarWidth;
+    //}
 
     var adjustment = self.getViewportAdjustment();
     
     viewPortWidth = viewPortWidth + adjustment.width;
 
-    // gridUtil.logDebug('getviewPortWidth', viewPortWidth);
+    //gridUtil.logDebug('getviewPortWidth', viewPortWidth);
 
     return viewPortWidth;
   };
@@ -1390,9 +1464,9 @@ angular.module('ui.grid')
   Grid.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
     var viewPortWidth = this.getViewportWidth();
 
-    if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth + this.verticalScrollbarWidth;
-    }
+    //if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
+    //  viewPortWidth = viewPortWidth + this.verticalScrollbarWidth;
+    //}
 
     return viewPortWidth;
   };
@@ -1626,7 +1700,7 @@ angular.module('ui.grid')
    * 
    */
   Grid.prototype.refresh = function refresh() {
-    gridUtil.logDebug('grid refresh');
+    // gridUtil.logDebug('grid refresh');
     
     var self = this;
     
@@ -1798,6 +1872,28 @@ angular.module('ui.grid')
       container.adjustColumns(null, container.prevScrollleftPercentage);
     }
   };
+
+    /**
+     * @ngdoc function
+     * @name hasLeftContainerColumns
+     * @methodOf ui.grid.class:Grid
+     * @description returns true if leftContainer has columns
+     */
+    Grid.prototype.hasLeftContainerColumns = function () {
+      return this.hasLeftContainer() && this.renderContainers.left.renderedColumns.length > 0;
+    };
+
+    /**
+     * @ngdoc function
+     * @name hasRightContainerColumns
+     * @methodOf ui.grid.class:Grid
+     * @description returns true if rightContainer has columns
+     */
+    Grid.prototype.hasRightContainerColumns = function () {
+      return this.hasRightContainer() && this.renderContainers.right.renderedColumns.length > 0;
+    };
+
+
 
 
   // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)

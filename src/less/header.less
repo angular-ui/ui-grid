@@ -51,6 +51,8 @@
   top: 0;
   bottom: 0;
   background-color: inherit;
+  border-right: @gridBorderWidth solid;
+  border-color: @headerVerticalBarColor;
 
   .user-select(none);
 
@@ -81,6 +83,10 @@
   .ui-grid-icon-angle-down {
     vertical-align: sub;
   }
+}
+
+.ui-grid-column-menu-button-last-col {
+  margin-right: 25px;
 }
 
 .ui-grid-column-menu {

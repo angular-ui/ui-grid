@@ -332,7 +332,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rowEdit.dirtyRows = [ grid.rows[0] ];
       grid.rowEdit.errorRows = [ grid.rows[0] ];
       grid.api.rowEdit.on.saveRow( $scope, function(){
-        grid.api.rowEdit.setSavePromise(grid, grid.options.data[0], promise.promise); 
+        grid.api.rowEdit.setSavePromise( grid.options.data[0], promise.promise); 
       });
       
       uiGridRowEditService.saveRow( grid, grid.rows[0] )();
@@ -358,7 +358,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rows[0].isDirty = true;
       grid.rowEdit.dirtyRows = [ grid.rows[0] ];
       grid.api.rowEdit.on.saveRow( $scope, function(){
-        grid.api.rowEdit.setSavePromise(grid, grid.options.data[0], promise.promise); 
+        grid.api.rowEdit.setSavePromise( grid.options.data[0], promise.promise); 
       });
       
       uiGridRowEditService.saveRow( grid, grid.rows[0] )();
@@ -400,7 +400,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
       
       grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
-        grid.api.rowEdit.setSavePromise(grid, rowEntity, promises[promiseCounter].promise);
+        grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
         promiseCounter++; 
       });
       
@@ -447,7 +447,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
       
       grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
-        grid.api.rowEdit.setSavePromise(grid, rowEntity, promises[promiseCounter].promise);
+        grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
         promiseCounter++; 
       });
       
@@ -491,7 +491,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       uiGridEditService.initializeGrid( grid );
       grid.renderingComplete();
 
-      grid.api.rowEdit.setRowsDirty( grid, [ grid.options.data[0], grid.options.data[1] ]);
+      grid.api.rowEdit.setRowsDirty( [ grid.options.data[0], grid.options.data[1] ]);
       expect( grid.rows[0].isDirty ).toEqual( true );
       expect( grid.rows[0].rowEditSaveTimer ).not.toEqual( undefined );
       expect( grid.rows[1].isDirty ).toEqual( true );

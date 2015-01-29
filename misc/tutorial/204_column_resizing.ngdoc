@@ -39,14 +39,14 @@ $scope.gridOptions = {
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.resizeColumns']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.moveColumns']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
         enableSorting: true,
         columnDefs: [
-          { field: 'name', minWidth: 200, width: '50%' },
-          { field: 'gender', width: '30%', enableColumnResizing: false },
+          { field: 'name', minWidth: 200, width: '50%', enableColumnResizing: false },
+          { field: 'gender', width: '30%', maxWidth: 200, minWidth: 70 },
           { field: 'company', width: '20%' }
         ]
       };
@@ -65,7 +65,7 @@ $scope.gridOptions = {
       The column will obey any <i>minWidth</i> or <i>maxWidth</i> constraints you give it.
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
+      <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns></div>
     </div>
   </file>
   <file name="main.css">

@@ -721,11 +721,20 @@ describe('Grid factory', function () {
   
   describe( 'data change callbacks', function() {
     it( 'register then deregister data change callback', function() {
-      var uid = grid.registerDataChangeCallback( function() {});
-      expect( grid.dataChangeCallbacks[uid]).toEqual( { callback: jasmine.any(Function), types: [ uiGridConstants.dataChange.ALL ] } );
+      var countCallbacks = function(){
+        var i = 0;
+        angular.forEach(grid.dataChangeCallbacks, function(callback){
+          i++;
+        });
+        return i;
+      };
       
-      grid.deregisterDataChangeCallback( uid );
-      expect( grid.dataChangeCallbacks[uid] ).toEqual( undefined );
+      var prevCount = countCallbacks();
+      var deregFunction = grid.registerDataChangeCallback( function() {});
+      expect( countCallbacks() ).toEqual( prevCount + 1 );
+      
+      deregFunction();
+      expect( countCallbacks() ).toEqual( prevCount );
     });
 
     describe( 'mix of callbacks being called', function() {
@@ -771,7 +780,7 @@ describe('Grid factory', function () {
       });
       
       it( 'call works via api', function() {
-        grid.api.core.notifyDataChange( grid, constants.COLUMN );
+        grid.api.core.notifyDataChange( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
       });
     });

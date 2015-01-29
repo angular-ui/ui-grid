@@ -17,6 +17,9 @@ remembering the state of a page and scrolling back to that position when a user 
 
 Provides an example of scrolling to and setting the focus on a specific cell, using the scrollToFocus api.
 
+Provides an example of utilizing the modifierKeysToMultiSelectCells option and getCurrentSelection API function to
+extract values of selected cells.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -24,7 +27,7 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {};
-
+      $scope.gridOptions.modifierKeysToMultiSelectCells = true;
       $scope.gridOptions.columnDefs = [
         { name: 'id', width:'150' },
         { name: 'name', width:'200' },
@@ -51,6 +54,15 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
           if(rowCol !== null) {
               $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
           }
+        };
+
+        $scope.getCurrentSelection = function() {
+          var values = [];
+          var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+          for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+          }
+          $scope.printSelection = values.toString();
         };
         
         $scope.scrollTo = function( rowIndex, colIndex ) {
@@ -82,6 +94,8 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
       <button type="button" class="btn btn-success" ng-click="scrollTo(50,7)">Scroll To Row 50, Balance</button>
       <button type="button" class="btn btn-success" ng-click="scrollToFocus(50,7)">Focus Row 50, Balance</button>
       <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
+      <button type="button" class="btn btn-success" ng-click="getCurrentSelection()">Get Current focused cell values</button>
+      <input type="text" ng-model="printSelection" placeholder="Click the 'Get current focused cell values' button to print cell values of selection here" class="printSelection">
       <br>
       <br>
       <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-pinning class="grid"></div>
@@ -91,6 +105,10 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
     .grid {
       width: 500px;
       height: 400px;
+    }
+    .printSelection {
+        width: 600px;
+        margin-top: 10px;
     }
   </file>
 </example>

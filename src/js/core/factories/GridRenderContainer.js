@@ -12,7 +12,7 @@ angular.module('ui.grid')
    * @param {Grid} grid the grid the render container is in
    * @param {object} options the render container options
    */
-.factory('GridRenderContainer', ['gridUtil', function(gridUtil) {
+.factory('GridRenderContainer', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
   function GridRenderContainer(name, grid, options) {
     var self = this;
 
@@ -44,6 +44,22 @@ angular.module('ui.grid')
     self.columnStyles = "";
 
     self.viewportAdjusters = [];
+
+    /**
+     *  @ngdoc boolean
+     *  @name canvasHeightShouldUpdate
+     *  @propertyOf  ui.grid.class:GridRenderContainer
+     *  @description flag to signal that container should recalculate the canvas size
+     */
+    self.canvasHeightShouldUpdate = true;
+
+    /**
+     *  @ngdoc boolean
+     *  @name canvasHeight
+     *  @propertyOf  ui.grid.class:GridRenderContainer
+     *  @description last calculated canvas height value
+     */
+    self.$$canvasHeight = 0;
 
     if (options && angular.isObject(options)) {
       angular.extend(self, options);
@@ -173,10 +189,6 @@ angular.module('ui.grid')
 
     var viewPortHeight = self.grid.gridHeight - headerHeight - self.grid.footerHeight;
 
-    // Account for native horizontal scrollbar, if present
-    if (typeof(self.horizontalScrollbarHeight) !== 'undefined' && self.horizontalScrollbarHeight !== undefined && self.horizontalScrollbarHeight > 0) {
-      viewPortHeight = viewPortHeight - self.horizontalScrollbarHeight;
-    }
 
     var adjustment = self.getViewportAdjustment();
     
@@ -190,9 +202,9 @@ angular.module('ui.grid')
 
     var viewPortWidth = self.grid.gridWidth;
 
-    if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth - self.grid.verticalScrollbarWidth;
-    }
+    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
+    //  viewPortWidth = viewPortWidth - self.grid.verticalScrollbarWidth;
+    //}
 
     var adjustment = self.getViewportAdjustment();
     
@@ -206,9 +218,9 @@ angular.module('ui.grid')
 
     var viewPortWidth = this.getViewportWidth();
 
-    if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-      viewPortWidth = viewPortWidth + self.grid.verticalScrollbarWidth;
-    }
+    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
+    //  viewPortWidth = viewPortWidth + self.grid.verticalScrollbarWidth;
+    //}
 
     // var adjustment = self.getViewportAdjustment();
     // viewPortWidth = viewPortWidth + adjustment.width;
@@ -216,20 +228,35 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
+
+  /**
+   * @ngdoc function
+   * @name getCanvasHeight
+   * @methodOf ui.grid.class:GridRenderContainer
+   * @description Returns the total canvas height.   Only recalculates if canvasHeightShouldUpdate = false
+   * @returns {number} total height of all the visible rows in the container
+   */
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret =  0;
-
-    self.visibleRowCache.forEach(function(row){
-      ret += row.height;
-    });
-
-    if (typeof(self.grid.horizontalScrollbarHeight) !== 'undefined' && self.grid.horizontalScrollbarHeight !== undefined && self.grid.horizontalScrollbarHeight > 0) {
-      ret = ret - self.grid.horizontalScrollbarHeight;
+    if (!self.canvasHeightShouldUpdate) {
+      return self.$$canvasHeight;
     }
 
-    return ret;
+    var oldCanvasHeight = self.$$canvasHeight;
+
+    self.$$canvasHeight =  0;
+
+    self.visibleRowCache.forEach(function(row){
+      self.$$canvasHeight += row.height;
+    });
+
+
+    self.canvasHeightShouldUpdate = false;
+
+    self.grid.api.core.raise.canvasHeightChanged(oldCanvasHeight, self.$$canvasHeight);
+
+    return self.$$canvasHeight;
   };
 
   GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {
@@ -241,9 +268,9 @@ angular.module('ui.grid')
 
     var ret = self.canvasWidth;
 
-    if (typeof(self.verticalScrollbarWidth) !== 'undefined' && self.verticalScrollbarWidth !== undefined && self.verticalScrollbarWidth > 0) {
-      ret = ret - self.verticalScrollbarWidth;
-    }
+    //if (typeof(self.verticalScrollbarWidth) !== 'undefined' && self.verticalScrollbarWidth !== undefined && self.verticalScrollbarWidth > 0) {
+    //  ret = ret - self.verticalScrollbarWidth;
+    //}
 
     return ret;
   };
@@ -489,9 +516,9 @@ angular.module('ui.grid')
     // Get the width of the viewport
     var availableWidth = self.getViewportWidth();
 
-    if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-      availableWidth = availableWidth + self.grid.verticalScrollbarWidth;
-    }
+    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
+    //  availableWidth = availableWidth + self.grid.verticalScrollbarWidth;
+    //}
 
     // The total number of columns
     // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
@@ -675,9 +702,9 @@ angular.module('ui.grid')
     });
 
     // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth
-    if (self.grid.verticalScrollbarWidth) {
-      canvasWidth = canvasWidth + self.grid.verticalScrollbarWidth;
-    }
+    //if (self.grid.verticalScrollbarWidth) {
+    //  canvasWidth = canvasWidth + self.grid.verticalScrollbarWidth;
+    //}
     // canvasWidth = canvasWidth + 1;
 
     self.canvasWidth = parseInt(canvasWidth, 10);
@@ -687,6 +714,43 @@ angular.module('ui.grid')
 
     // Set this render container's column styles so they can be used in style computation
     this.columnStyles = ret;
+  };
+
+  GridRenderContainer.prototype.getViewPortStyle = function () {
+    var self = this;
+    var styles = {};
+
+    if (self.name === 'body') {
+      styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+      if (!self.grid.isRTL()) {
+        if (self.grid.hasRightContainerColumns()) {
+          styles['overflow-y'] = 'hidden';
+        }
+        else {
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+        }
+      }
+      else {
+        if (self.grid.hasLeftContainerColumns()) {
+          styles['overflow-y'] = 'hidden';
+        }
+        else {
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+        }
+      }
+    }
+    else if (self.name === 'left') {
+      styles['overflow-x'] = 'hidden';
+      styles['overflow-y'] = self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
+    }
+    else {
+      styles['overflow-x'] = 'hidden';
+      styles['overflow-y'] = !self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
+    }
+
+    return styles;
+
+
   };
 
   return GridRenderContainer;

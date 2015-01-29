@@ -27,7 +27,7 @@ set the background and foreground color of the header if the sort direction is A
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
           $scope.gridApi.core.on.sortChanged( $scope, function( grid, sort ) {
-            $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+            $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
           })
         }
       };

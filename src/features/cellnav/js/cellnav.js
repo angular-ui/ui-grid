@@ -238,8 +238,8 @@
    *  @description Services for cell navigation features. If you don't like the key maps we use,
    *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
-  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav) {
+  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory', 'ScrollEvent',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav, ScrollEvent) {
 
       var service = {
 
@@ -249,6 +249,9 @@
           //create variables for state
           grid.cellNav = {};
           grid.cellNav.lastRowCol = null;
+          grid.cellNav.focusedCells = [];
+
+          service.defaultGridOptions(grid.options);
 
           /**
            *  @ngdoc object
@@ -305,6 +308,19 @@
 
                 /**
                  * @ngdoc function
+                 * @name scrollToFocus
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description brings the specified row and column fully into view if it isn't already
+                 * @param {object} $scope a scope we can broadcast events from
+                 * @param {GridRow} row grid row that we should make fully visible
+                 * @param {GridCol} col grid col to make fully visible
+                 */
+                scrollToIfNecessary: function ($scope, row, col) {
+                  service.scrollToIfNecessary(grid, $scope, row, col);
+                },
+
+                /**
+                 * @ngdoc function
                  * @name getFocusedCell
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description returns the current (or last if Grid does not have focus) focused row and column
@@ -312,6 +328,38 @@
                  */
                 getFocusedCell: function () {
                   return grid.cellNav.lastRowCol;
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name getCurrentSelection
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description returns an array containing the current selection
+                 * <br> array is empty if no selection has occurred
+                 */
+                getCurrentSelection: function () {
+                  return grid.cellNav.focusedCells;
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name rowColSelectIndex
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description returns the index in the order in which the RowCol was selected, returns -1 if the RowCol
+                 * isn't selected
+                 * @param {object} rowCol the rowCol to evaluate
+                 */
+                rowColSelectIndex: function (rowCol) {
+                  //return gridUtil.arrayContainsObjectWithProperty(grid.cellNav.focusedCells, 'col.uid', rowCol.col.uid) &&
+                  var index = -1;
+                  for (var i = 0; i < grid.cellNav.focusedCells.length; i++) {
+                    if (grid.cellNav.focusedCells[i].col.uid === rowCol.col.uid &&
+                      grid.cellNav.focusedCells[i].row.uid === rowCol.row.uid) {
+                      index = i;
+                      break;
+                    }
+                  }
+                  return index;
                 }
               }
             }
@@ -320,6 +368,26 @@
           grid.api.registerEventsFromObject(publicApi.events);
 
           grid.api.registerMethodsFromObject(publicApi.methods);
+
+        },
+
+        defaultGridOptions: function (gridOptions) {
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav.api:GridOptions
+           *
+           *  @description GridOptions for cellNav feature, these are available to be
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
+           */
+
+          /**
+           *  @ngdoc object
+           *  @name modifierKeysToMultiSelectCells
+           *  @propertyOf  ui.grid.cellNav.api:GridOptions
+           *  @description Enable multiple cell selection only when using the ctrlKey or shiftKey.
+           *  <br/>Defaults to false
+           */
+          gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
 
         },
 
@@ -500,23 +568,21 @@
          * @param {GridCol} gridCol column to make visible
          */
         scrollToInternal: function (grid, $scope, gridRow, gridCol) {
-          var args = {};
-
-          args.grid = grid;
+          var scrollEvent = new ScrollEvent(grid,null,null,'uiGridCellNavService.scrollToInternal');
 
           if (gridRow !== null) {
             var seekRowIndex = grid.renderContainers.body.visibleRowCache.indexOf(gridRow);
             var totalRows = grid.renderContainers.body.visibleRowCache.length;
             var percentage = ( seekRowIndex + ( seekRowIndex / ( totalRows - 1 ) ) ) / totalRows;
-            args.y = { percentage:  percentage  };
+            scrollEvent.y = { percentage:  percentage  };
           }
 
           if (gridCol !== null) {
-            args.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
+            scrollEvent.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
           }
 
-          if (args.y || args.x) {
-            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+          if (scrollEvent.y || scrollEvent.x) {
+            scrollEvent.fireScrollingEvent();
           }
         },
 
@@ -533,9 +599,7 @@
          * @param {GridCol} gridCol column to make visible
          */
         scrollToIfNecessary: function (grid, $scope, gridRow, gridCol) {
-          var args = {};
-
-          args.grid = grid;
+          var scrollEvent = new ScrollEvent(grid,null,null,'uiGridCellNavService.scrollToIfNecessary');
 
           // Alias the visible row and column caches
           var visRowCache = grid.renderContainers.body.visibleRowCache;
@@ -557,17 +621,17 @@
           var bottomBound = grid.renderContainers.body.prevScrollTop + grid.gridHeight - grid.headerHeight;
 
           // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
-          if (grid.horizontalScrollbarHeight) {
-            bottomBound = bottomBound - grid.horizontalScrollbarHeight;
-          }
+          //if (grid.horizontalScrollbarHeight) {
+          //  bottomBound = bottomBound - grid.horizontalScrollbarHeight;
+          //}
 
           // The right position is the current X scroll position minus the grid width
           var rightBound = grid.renderContainers.body.prevScrollLeft + grid.gridWidth;
 
           // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
-          if (grid.verticalScrollbarWidth) {
-            rightBound = rightBound - grid.verticalScrollbarWidth;
-          }
+          //if (grid.verticalScrollbarWidth) {
+          //  rightBound = rightBound - grid.verticalScrollbarWidth;
+          //}
 
           // We were given a row to scroll to
           if (gridRow !== null) {
@@ -578,9 +642,9 @@
             var scrollLength = (grid.renderContainers.body.getCanvasHeight() - grid.renderContainers.body.getViewportHeight());
 
             // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-            if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
-              scrollLength = scrollLength + grid.horizontalScrollbarHeight;
-            }
+            //if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
+            //  scrollLength = scrollLength + grid.horizontalScrollbarHeight;
+            //}
 
             // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
             var pixelsToSeeRow = ((seekRowIndex + 1) * grid.options.rowHeight);
@@ -598,7 +662,7 @@
 
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               percentage = scrollPixels / scrollLength;
-              args.y = { percentage: percentage  };
+              scrollEvent.y = { percentage: percentage  };
             }
             // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
             else if (pixelsToSeeRow > bottomBound) {
@@ -608,7 +672,7 @@
 
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               percentage = scrollPixels / scrollLength;
-              args.y = { percentage: percentage  };
+              scrollEvent.y = { percentage: percentage  };
             }
           }
 
@@ -649,7 +713,7 @@
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               horizPercentage = horizScrollPixels / horizScrollLength;
               horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              args.x = { percentage: horizPercentage  };
+              scrollEvent.x = { percentage: horizPercentage  };
             }
             // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
             else if (columnRightEdge > rightBound) {
@@ -660,13 +724,13 @@
               // Turn the scroll position into a percentage and make it an argument for a scroll event
               horizPercentage = horizScrollPixels / horizScrollLength;
               horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              args.x = { percentage: horizPercentage  };
+              scrollEvent.x = { percentage: horizPercentage  };
             }
           }
 
           // If we need to scroll on either the x or y axes, fire a scroll event
-          if (args.y || args.x) {
-            $scope.$broadcast(uiGridConstants.events.GRID_SCROLL, args);
+          if (scrollEvent.y || scrollEvent.x) {
+            scrollEvent.fireScrollingEvent();
           }
         },
 
@@ -766,19 +830,33 @@
               };
 
               //  gridUtil.logDebug('uiGridEdit preLink');
-              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol) {
-                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol);
-                uiGridCtrl.cellNav.broadcastFocus(newRowCol);
+              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown) {
+                modifierDown = !(modifierDown === undefined || !modifierDown);
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown);
+                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol, modifierDown);
               };
 
-              uiGridCtrl.cellNav.broadcastFocus = function (rowCol) {
-                var row = rowCol.row,
-                    col = rowCol.col;
+              uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown) {
+                modifierDown = !(modifierDown === undefined || !modifierDown);
 
-                if (grid.cellNav.lastRowCol === null || (grid.cellNav.lastRowCol.row !== row || grid.cellNav.lastRowCol.col !== col)) {
+                var row = rowCol.row,
+                  col = rowCol.col;
+
+                var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
+
+                if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
                   var newRowCol = new RowCol(row, col);
                   grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
                   grid.cellNav.lastRowCol = newRowCol;
+                  if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown) {
+                    grid.cellNav.focusedCells.push(rowCol);
+                  } else {
+                    grid.cellNav.focusedCells = [rowCol];
+                  }
+                } else if (grid.options.modifierKeysToMultiSelectCells && modifierDown &&
+                  rowColSelectIndex >= 0) {
+
+                  grid.cellNav.focusedCells.splice(rowColSelectIndex, 1);
                 }
               };
 
@@ -832,11 +910,12 @@
           return {
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
-                  renderContainerCtrl = controllers[1],
-                  cellNavController = controllers[2];
+                 renderContainerCtrl = controllers[1],
+                 cellNavController = controllers[2];
 
               // Skip attaching cell-nav specific logic if the directive is not attached above us
               if (!cellNavController) { return; }
+
 
               var containerId = renderContainerCtrl.containerId;
 
@@ -855,7 +934,7 @@
               });
 
               // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, args) {
+              grid.api.core.on.scrollEvent($scope, function (args) {
                 // Skip if not this grid that the event was broadcast for
                 if (args.grid && args.grid.id !== uiGridCtrl.grid.id) {
                   return;
@@ -865,10 +944,12 @@
                 if (uiGridCtrl.grid.api.cellNav.getFocusedCell() == null) {
                   return;
                 }
-
+                
                 // We have to wrap in TWO timeouts so that we run AFTER the scroll event is resolved.
                 $timeout(function () {
                   $timeout(function () {
+
+/* No longer trying to retain focus when scroll - too many side effects, particularly with editOnFocus
                     // Get the last row+col combo
                     var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
 
@@ -878,12 +959,16 @@
                     if ($document.activeElement === $document.body) {
                       $elm[0].focus();
                     }
+*/
+                    // make a dummy roCol
+                    var rowCol = { col: { uid: null }, row: { uid: null } };
 
-                    // Re-broadcast a cellNav event so we re-focus the right cell
-                    uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
+                    // broadcast a cellNav event so we clear the focus on all cells
+                    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
                   });
                 });
-              });
+              });  
+             
             }
           };
         }
@@ -919,23 +1004,28 @@
 
           // When a cell is clicked, broadcast a cellNav event saying that this row+col combo is now focused
           $elm.find('div').on('click', function (evt) {
-            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col));
+            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
 
             evt.stopPropagation();
           });
 
           // This event is fired for all cells.  If the cell matches, then focus is set
-          $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol) {
+          $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol, modifierDown) {
             if (rowCol.row === $scope.row &&
               rowCol.col === $scope.col) {
-              setFocused();
+              if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown &&
+                uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol) === -1) {
+                clearFocus();
+              } else {
+                setFocused();
+              }
 
               // This cellNav event came from a keydown event so we can safely refocus
               if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
                 $elm.find('div')[0].focus();
               }
             }
-            else {
+            else if (!(uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown)) {
               clearFocus();
             }
           });

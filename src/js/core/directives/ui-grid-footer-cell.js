@@ -21,7 +21,6 @@
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             //$elm.addClass($scope.col.getColClass(false));
             $scope.grid = uiGridCtrl.grid;
-            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
 
             $elm.addClass($scope.col.getColClass(false));
 
@@ -48,11 +47,9 @@
             }
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
-            var watchUid = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
 
-            $scope.$on( '$destroy', function() {
-              $scope.grid.deregisterDataChangeCallback( watchUid ); 
-            });
+            $scope.$on( '$destroy', dataChangeDereg );
           }
         };
       }

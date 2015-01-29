@@ -19,9 +19,9 @@ See api docs for default navigation keys and how you can override.
 
       $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false },
-        { name: 'name', displayName: 'Name (editOnFocus)'},
-        { name: 'age', enableCellEditOnFocus:false, displayName:'age (f2/dblClick edit)'  },
-        { name: 'address.city', enableCellEdit: false }
+        { name: 'age', enableCellEditOnFocus:false, displayName:'age (f2/dblClick edit)', width: 200  },
+        { name: 'address.city', enableCellEdit: true, width: 300 },
+        { name: 'name', displayName: 'Name (editOnFocus)', width: 200}
       ];
 
       $http.get('/data/500_complex.json')

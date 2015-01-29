@@ -62,7 +62,7 @@ describe('uiGridCell', function () {
       expect(gridCell.hasClass('funcCellClass')).toBe(true);
       
       $scope.col.noClass = true;
-      $scope.grid.api.core.notifyDataChange( $scope.grid, uiGridConstants.dataChange.COLUMN );
+      $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
 

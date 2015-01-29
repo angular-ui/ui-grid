@@ -87,11 +87,10 @@
                  * @methodOf  ui.grid.importer.api:PublicApi
                  * @description Imports a file into the grid using the file object 
                  * provided.  Bypasses the grid menu
-                 * @param {Grid} grid the grid we're importing into
                  * @param {File} fileObject the file we want to import, as a javascript
                  * File object
                  */
-                importFile: function ( grid, fileObject ) {
+                importFile: function ( fileObject ) {
                   service.importThisFile( grid, fileObject );
                 }
               }
@@ -375,7 +374,7 @@
          * @methodOf ui.grid.importer.service:uiGridImporterService
          * @description Creates a function that imports a json file into the grid.
          * The json data is imported into new objects of type `gridOptions.importerNewObject`,
-         * and ift he rowEdit feature is enabled the rows are marked as dirty
+         * and if the rowEdit feature is enabled the rows are marked as dirty
          * @param {Grid} grid the grid we want to import into
          * @param {FileObject} importFile the file that we want to import, as 
          * a FileObject
@@ -617,16 +616,12 @@
          */
         addObjects: function( grid, newObjects, $scope ){
           if ( grid.api.rowEdit ){
-            var callbackId = grid.registerDataChangeCallback( function() {
-              grid.api.rowEdit.setRowsDirty( grid, newObjects );
-              grid.deregisterDataChangeCallback( callbackId );
+            var dataChangeDereg = grid.registerDataChangeCallback( function() {
+              grid.api.rowEdit.setRowsDirty( newObjects );
+              dataChangeDereg();
             }, [uiGridConstants.dataChange.ROW] );
             
-            var deregisterClosure = function() {
-              grid.deregisterDataChangeCallback( callbackId );
-            };
-  
-            grid.importer.$scope.$on( '$destroy', deregisterClosure );
+            grid.importer.$scope.$on( '$destroy', dataChangeDereg );
           }
 
           grid.importer.$scope.$apply( grid.options.importerDataAddCallback( grid, newObjects ) );
@@ -725,7 +720,7 @@
             var target = event.srcElement || event.target;
             
             if (target && target.files && target.files.length === 1) {
-              var fileObject = event.srcElement.files[0];
+              var fileObject = target.files[0];
               uiGridImporterService.importThisFile( grid, fileObject );
               target.form.reset();
             }

@@ -188,15 +188,6 @@ angular.module('ui.grid')
        *
        */
       baseOptions.rowHeight = baseOptions.rowHeight || 30;
-      
-      /**
-       * @ngdoc property
-       * @name maxVisibleRowCount
-       * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 200
-       *
-       */
-      baseOptions.maxVisibleRowCount = baseOptions.maxVisibleRowCount || 200;
   
       /**
        * @ngdoc integer
@@ -208,22 +199,32 @@ angular.module('ui.grid')
   
       /**
        * @ngdoc property
-       * @name showFooter
+       * @name showGridFooter
        * @propertyOf ui.grid.class:GridOptions
        * @description Whether or not to show the footer, defaults to false
-       *
+       * The footer display Total Rows and Visible Rows (filtered rows)
        */
-      baseOptions.showFooter = baseOptions.showFooter === true;
+      baseOptions.showGridFooter = baseOptions.showGridFooter === true;
 
       /**
        * @ngdoc property
-       * @name footerRowHeight
+       * @name showColumnFooter
        * @propertyOf ui.grid.class:GridOptions
-       * @description The height of the footer in pixels
+       * @description Whether or not to show the column footer, defaults to false
+       * The column footer displays column aggregates
+       */
+      baseOptions.showColumnFooter = baseOptions.showColumnFooter === true;
+
+      /**
+       * @ngdoc property
+       * @name columnFooterHeight
+       * @propertyOf ui.grid.class:GridOptions
+       * @description The height of the footer rows (column footer and grid footer) in pixels
        *
        */
-      baseOptions.footerRowHeight = typeof(baseOptions.footerRowHeight) !== "undefined" ? baseOptions.footerRowHeight : 30;
-  
+      baseOptions.columnFooterHeight = typeof(baseOptions.columnFooterHeight) !== "undefined" ? baseOptions.columnFooterHeight : 30;
+      baseOptions.gridFooterHeight = typeof(baseOptions.gridFooterHeight) !== "undefined" ? baseOptions.gridFooterHeight : 30;
+
       baseOptions.columnWidth = typeof(baseOptions.columnWidth) !== "undefined" ? baseOptions.columnWidth : 50;
 
       /**
@@ -325,7 +326,7 @@ angular.module('ui.grid')
        * @name enableVerticalScrollbar
        * @propertyOf ui.grid.class:GridOptions
        * @description uiGridConstants.scrollbars.ALWAYS by default. This settings controls the vertical scrollbar for the grid.
-       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER, uiGridConstants.scrollbars.WHEN_NEEDED.
+       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableVerticalScrollbar = typeof(baseOptions.enableVerticalScrollbar) !== "undefined" ? baseOptions.enableVerticalScrollbar : uiGridConstants.scrollbars.ALWAYS;
       
@@ -334,7 +335,7 @@ angular.module('ui.grid')
        * @name enableHorizontalScrollbar
        * @propertyOf ui.grid.class:GridOptions
        * @description uiGridConstants.scrollbars.ALWAYS by default. This settings controls the horizontal scrollbar for the grid.
-       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER, uiGridConstants.scrollbars.WHEN_NEEDED.
+       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;
   
@@ -399,11 +400,20 @@ angular.module('ui.grid')
        * custom row template.  Can be set to either the name of a template file:
        * <pre> $scope.gridOptions.rowTemplate = 'row_template.html';</pre>
        * inline html 
-       * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="getExternalScopes().fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
+       * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="grid.appScope.fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
        * or the id of a precompiled template (TBD how to use this) can be provided.  
        * </br>Refer to the custom row template tutorial for more information.
        */
       baseOptions.rowTemplate = baseOptions.rowTemplate || 'ui-grid/ui-grid-row';
+
+      /**
+       * @ngdoc object
+       * @name appScopeProvider
+       * @propertyOf ui.grid.class:GridOptions
+       * @description by default, the parent scope of the ui-grid element will be assigned to grid.appScope
+       * this property allows you to assign any reference you want to grid.appScope
+       */
+      baseOptions.appScopeProvider = baseOptions.appScopeProvider || null;
       
       return baseOptions;
     }     

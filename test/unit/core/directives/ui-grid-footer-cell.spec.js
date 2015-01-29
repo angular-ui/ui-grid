@@ -31,7 +31,7 @@ describe('uiGridFooterCell', function () {
     uiGridConstants = _uiGridConstants_;
 
     $scope.gridOpts = {
-      showFooter: true,
+      showColumnFooter: true,
       columnDefs: columnDefs,
       data: data,
       onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
@@ -40,7 +40,7 @@ describe('uiGridFooterCell', function () {
     $scope.extScope = 'test';
 
     recompile = function () {
-      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" external-scopes="extScope"></div>');
+      grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
       
       $compile(grid)($scope);
       $document[0].body.appendChild(grid[0]);
@@ -71,7 +71,7 @@ describe('uiGridFooterCell', function () {
     it('should get cellClass from function, and remove it when data changes', inject(function () {
       expect(footerCell2.hasClass('funcCellClass')).toBe(true);
       columnDefs[1].noClass = true;
-      $scope.gridApi.core.notifyDataChange( $scope.gridApi.grid, uiGridConstants.dataChange.COLUMN );
+      $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(footerCell2.hasClass('funcCellClass')).toBe(false);
     }));
   });
@@ -82,8 +82,8 @@ describe('uiGridFooterCell', function () {
 
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
       expect(header).toBeDefined();
-      expect(header.scope().getExternalScopes).toBeDefined();
-      expect(header.scope().getExternalScopes()).toBe('test');
+      expect(header.scope().grid.appScope).toBeDefined();
+      expect(header.scope().grid.appScope.extScope).toBe('test');
     });
   });
 });

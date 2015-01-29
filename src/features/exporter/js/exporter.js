@@ -537,6 +537,13 @@
         },
         
         
+        /** 
+         * @ngdoc property
+         * @propertyOf ui.grid.exporter.api:ColumnDef
+         * @name exporterSuppressExport
+         * @description Suppresses export for this column.  Used by selection and expandable.
+         */
+
         /**
          * @ngdoc function
          * @name getColumnHeaders
@@ -558,7 +565,7 @@
           var headers = [];
           angular.forEach(grid.columns, function( gridCol, index ) {
             if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
-                 gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
+                 gridCol.colDef.exporterSuppressExport !== true &&
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
               headers.push({
                 name: gridCol.field,
@@ -639,7 +646,7 @@
               var extractedRow = [];
               angular.forEach(grid.columns, function( gridCol, index ) {
               if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
-                   gridCol.name !== uiGridSelectionConstants.selectionRowHeaderColName &&
+                   gridCol.colDef.exporterSuppressExport !== true &&
                    grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
                   var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, grid.getCellValue( row, gridCol ) ) };
                   if ( gridCol.colDef.exporterPdfAlign ) {
@@ -744,7 +751,7 @@
       
           // IE10+
           if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(new Blob([csvContent], {
+            return navigator.msSaveBlob(new Blob(["\ufeff", csvContent], {
               type: strMimeType
             }), fileName);
           }

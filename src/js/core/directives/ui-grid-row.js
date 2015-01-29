@@ -60,12 +60,7 @@
             });
           },
           post: function($scope, $elm, $attrs, controllers) {
-            var uiGridCtrl = controllers[0];
-            var containerCtrl = controllers[1];
 
-            // Sdd optional reference to externalScopes function to scope
-            //   so it can be retrieved in lower elements
-            $scope.getExternalScopes = uiGridCtrl.getExternalScopes;
           }
         };
       }

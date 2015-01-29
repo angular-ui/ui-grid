@@ -7,7 +7,7 @@ The grid supports RTL languages
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
@@ -38,7 +38,7 @@ The grid supports RTL languages
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" class="grid" dir="rtl" ui-grid-pinning></div>
+      <div ui-grid="gridOptions" class="grid" dir="rtl" ui-grid-pinning ui-grid-resize-columns></div>
     </div>
   </file>
   <file name="main.css">

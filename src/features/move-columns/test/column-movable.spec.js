@@ -80,6 +80,15 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
+  it('expect moveColumn() to not change position of columns if column position given is wrong', function () {
+    scope.gridApi.colMovable.moveColumn(4, 5);
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[1].name).toBe('gender');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
+
   xit('expect event columnPositionChanged to be called when column position is changed', function () {
     var functionCalled = false;
     scope.gridApi.colMovable.on.columnPositionChanged(scope, function (colDef, newPos, oldPos) {

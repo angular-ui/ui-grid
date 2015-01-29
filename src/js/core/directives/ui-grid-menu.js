@@ -147,7 +147,9 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
         angular.element($window).off('resize', applyHideMenu);
       });
 
-      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.GRID_SCROLL, applyHideMenu ));
+      if (uiGridCtrl) {
+       $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollEvent($scope, applyHideMenu ));
+      }
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
     },

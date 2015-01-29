@@ -64,7 +64,7 @@ describe('ui.grid.resizeColumns', function () {
   });
   
   describe('setting enableColumnResizing', function () {
-    xit('should by default cause resizer to be attached to the header elements', function () {
+    it('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
 
       expect(resizers.size()).toEqual(5);
@@ -81,12 +81,12 @@ describe('ui.grid.resizeColumns', function () {
       expect(resizers.first().hasClass('right')).toBe(true);
     });
 
-    xit('should only attach a left resizer to the last column', function () {
+    it('should attach left and right resizers to the last column', function () {
       var firstColumn = $(grid).find('[ui-grid-header-cell]').last();
 
       var resizers = $(firstColumn).find('[ui-grid-column-resizer]');
 
-      expect(resizers.size()).toEqual(1);
+      expect(resizers.size()).toEqual(2);
 
       expect(resizers.first().attr('position')).toEqual('left');
       expect(resizers.first().hasClass('left')).toBe(true);
@@ -105,7 +105,7 @@ describe('ui.grid.resizeColumns', function () {
   });
 
   describe('setting flag on colDef to false', function () {
-    xit('should result in no resizer elements being attached to the column', function () {
+    it('should result in only one resizer elements being attached to the column and the column to it\'s right', function () {
       $scope.gridOpts.columnDefs = [
         { field: 'name' },
         { field: 'gender', enableColumnResizing: false },
@@ -117,7 +117,12 @@ describe('ui.grid.resizeColumns', function () {
       var middleCol = $(grid).find('[ui-grid-header-cell]:nth-child(2)');
       var resizer = middleCol.find('[ui-grid-column-resizer]');
 
-      expect(resizer.size()).toEqual(0);
+      expect(resizer.size()).toEqual(1);
+
+      var lastCol = $(grid).find('[ui-grid-header-cell]:nth-child(3)');
+      resizer = lastCol.find('[ui-grid-column-resizer]');
+
+      expect(resizer.size()).toEqual(1);
     });
   });
 

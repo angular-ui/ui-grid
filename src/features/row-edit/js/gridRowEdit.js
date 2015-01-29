@@ -93,14 +93,13 @@
                  * <pre>
                  *      gridApi.rowEdit.setSavePromise(grid, rowEntity)
                  * </pre>
-                 * @param {object} grid the grid for which dirty rows should be returned
                  * @param {object} rowEntity a data row from the grid for which a save has
                  * been initiated
                  * @param {promise} savePromise the promise that will be resolved when the
                  * save is successful, or rejected if the save fails
                  * 
                  */
-                setSavePromise: function (grid, rowEntity, savePromise) {
+                setSavePromise: function ( rowEntity, savePromise) {
                   service.setSavePromise(grid, rowEntity, savePromise);
                 },
                 /**
@@ -111,11 +110,10 @@
                  * <pre>
                  *      gridApi.rowEdit.getDirtyRows(grid)
                  * </pre>
-                 * @param {object} grid the grid for which dirty rows should be returned
                  * @returns {array} An array of gridRows that are currently dirty
                  * 
                  */
-                getDirtyRows: function (grid) {
+                getDirtyRows: function () {
                   return grid.rowEdit.dirtyRows ? grid.rowEdit.dirtyRows : [];
                 },
                 /**
@@ -126,11 +124,10 @@
                  * <pre>
                  *      gridApi.rowEdit.getErrorRows(grid)
                  * </pre>
-                 * @param {object} grid the grid for which errored rows should be returned
                  * @returns {array} An array of gridRows that are currently in error
                  * 
                  */
-                getErrorRows: function (grid) {
+                getErrorRows: function () {
                   return grid.rowEdit.errorRows ? grid.rowEdit.errorRows : [];
                 },
                 /**
@@ -142,13 +139,12 @@
                  * <pre>
                  *      gridApi.rowEdit.flushDirtyRows(grid)
                  * </pre>
-                 * @param {object} grid the grid for which dirty rows should be flushed
                  * @returns {promise} a promise that represents the aggregate of all
                  * of the individual save promises - i.e. it will be resolved when all
                  * the individual save promises have been resolved.
                  * 
                  */
-                flushDirtyRows: function (grid) {
+                flushDirtyRows: function () {
                   return service.flushDirtyRows(grid);
                 },
                 
@@ -166,12 +162,11 @@
                  *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
                  *      }, 0, 1);
                  * </pre>
-                 * @param {object} grid the grid for which rows should be set dirty
                  * @param {array} dataRows the data entities for which the gridRows
                  * should be set dirty.  
                  * 
                  */
-                setRowsDirty: function (grid, dataRows) {
+                setRowsDirty: function ( dataRows) {
                   service.setRowsDirty(grid, dataRows);
                 }
               }
@@ -534,7 +529,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf ui.grid.rowEdit.api:PublicApi
+         * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
          * @name setRowsDirty
          * @description Sets each of the rows passed in dataRows
          * to be dirty.  note that if you have only just inserted the
@@ -543,7 +538,7 @@
          * call in a $interval or $timeout
          * <pre>
          *      $interval( function() {
-         *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
+         *        gridApi.rowEdit.setRowsDirty( myDataRows);
          *      }, 0, 1);
          * </pre>
          * @param {object} grid the grid for which rows should be set dirty

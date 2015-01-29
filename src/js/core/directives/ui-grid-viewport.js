@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil',
-    function(gridUtil) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent',
+    function(gridUtil, ScrollEvent) {
       return {
         replace: true,
         scope: {},
@@ -40,20 +40,27 @@
             // Handle RTL here
 
             if (newScrollLeft !== colContainer.prevScrollLeft) {
+              grid.flagScrollingHorizontally();
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-              horizScrollPercentage = newScrollLeft / horizScrollLength;
+              if (horizScrollLength !== 0) {
+                horizScrollPercentage = newScrollLeft / horizScrollLength;
+              }
+              else {
+                horizScrollPercentage = 0;
+              }
 
               colContainer.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
             }
 
             if (newScrollTop !== rowContainer.prevScrollTop) {
+              grid.flagScrollingVertically();
               var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
-              // uiGridCtrl.fireScrollingEvent({ y: { pixels: diff } });
+
               var vertScrollLength = rowContainer.getVerticalScrollLength();
-              // var vertScrollPercentage = (uiGridCtrl.prevScrollTop + yDiff) / vertScrollLength;
+
               vertScrollPercentage = newScrollTop / vertScrollLength;
 
               if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
@@ -61,20 +68,18 @@
               
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
-            
-            if ( !$scope.grid.isScrollingVertically && !$scope.grid.isScrollingHorizontally ){
-              // viewport scroll that didn't come from fireScrollEvent, so fire a scroll to keep 
-              // the header in sync
-              var args = {};
+
+              var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.ViewPortScroll);
+              scrollEvent.newScrollLeft = newScrollLeft;
+              scrollEvent.newScrollTop = newScrollTop;
               if ( horizScrollPercentage > -1 ){
-                args.x = { percentage: horizScrollPercentage };
+                scrollEvent.x = { percentage: horizScrollPercentage };
               }
 
               if ( vertScrollPercentage > -1 ){
-                args.y = { percentage: vertScrollPercentage };
+                scrollEvent.y = { percentage: vertScrollPercentage };
               }
-              uiGridCtrl.fireScrollingEvent(args); 
-            }
+              scrollEvent.fireScrollingEvent();
           });
         }
       };

@@ -348,11 +348,13 @@
             return adjustment;
           });
           
-          uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
+          var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
             if (!grid.options.useExternalPagination) {
               grid.options.totalItems = grid.rows.length;
             }
           }, [uiGridConstants.dataChange.ROW]);
+          
+          $scope.$on('$destroy', dataChangeDereg);
 
           var setShowing = function () {
             $scope.showingLow = ((options.paginationCurrentPage - 1) * options.paginationPageSize) + 1;

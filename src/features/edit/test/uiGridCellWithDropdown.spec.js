@@ -141,7 +141,7 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
 
     it('should stop when grid scrolls', function () {
       //stop edit
-      scope.$broadcast(uiGridConstants.events.GRID_SCROLL);
+      scope.grid.api.core.raise.scrollEvent(scope);
       scope.$digest();
       //back to beginning
       expect(element.html()).toBe(displayHtml);
