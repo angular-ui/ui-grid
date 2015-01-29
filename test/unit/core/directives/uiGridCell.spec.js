@@ -86,7 +86,7 @@ describe('uiGridCell', function () {
     }));
   });
 
-  it('should change a columns class when its uid changes', inject(function (gridUtil, $compile, uiGridConstants) {
+  iit('should change a columns class when its uid changes', inject(function (gridUtil, $compile, uiGridConstants) {
     // Reset the UIDs (used by columns) so they're fresh and clean
     gridUtil.resetUids();
 
@@ -110,7 +110,7 @@ describe('uiGridCell', function () {
     var firstCol = $(gridElm).find('.ui-grid-cell').first();
     var firstHeaderCell = $(gridElm).find('.ui-grid-header-cell').first();
     var classRegEx = new RegExp('^' + uiGridConstants.COL_CLASS_PREFIX);
-    var class1 = _(firstCol[0].classList).find(function(c) { return classRegEx.test(c); });
+    var class1 = _(firstCol[0].className.split(/\s+/)).find(function(c) { return classRegEx.test(c); });
 
     // The first column should be 100px wide because we said it should be
     expect(firstCol.outerWidth()).toEqual(100, 'first cell is 100px');
@@ -122,7 +122,7 @@ describe('uiGridCell', function () {
 
     var firstColAgain = $(gridElm).find('.ui-grid-cell').first();
     var firstHeaderCellAgain = $(gridElm).find('.ui-grid-header-cell').first();
-    var class2 = _(firstColAgain[0].classList).find(function(c) { return classRegEx.test(c); });
+    var class2 = _(firstColAgain[0].className.split(/\s+/)).find(function(c) { return classRegEx.test(c); });
 
     // The column root classes should have changed
     expect(class2).not.toEqual(class1);
