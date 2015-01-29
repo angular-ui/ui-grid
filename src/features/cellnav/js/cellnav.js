@@ -910,12 +910,10 @@
           return {
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
-                 renderContainerCtrl = controllers[1],
-                 cellNavController = controllers[2];
+                 renderContainerCtrl = controllers[1];
 
               // Skip attaching cell-nav specific logic if the directive is not attached above us
-              if (!cellNavController) { return; }
-
+              if (!uiGridCtrl.grid.api.cellNav) { return; }
 
               var containerId = renderContainerCtrl.containerId;
 
@@ -987,14 +985,11 @@
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
-        require: ['^uiGrid', '?^uiGridCellnav'],
+        require: '^uiGrid',
         scope: false,
-        link: function ($scope, $elm, $attrs, controllers) {
-          var uiGridCtrl = controllers[0],
-              cellNavController = controllers[1];
-
+        link: function ($scope, $elm, $attrs, uiGridCtrl) {
           // Skip attaching cell-nav specific logic if the directive is not attached above us
-          if (!cellNavController) { return; }
+          if (!uiGridCtrl.grid.api.cellNav) { return; }
 
           if (!$scope.col.colDef.allowCellFocus) {
             return;
