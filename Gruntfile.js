@@ -31,11 +31,12 @@ module.exports = function(grunt) {
     stable_version: util.getStableVersion(),
     dist: 'dist',
     site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %> - ' +
+    banner: '/*!\n' +
+      ' * <%= pkg.title || pkg.name %> - v<%= version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' License: <%= pkg.license %> */\n',
+      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+      ' License: <%= pkg.license %> \n */\n\n',
 
     shell: {
       options: {
@@ -128,18 +129,22 @@ module.exports = function(grunt) {
     less: {
       dist: {
         // paths: ['/bower_components/bootstrap'],
+        options: {
+          banner: '<%= banner %>'
+        },
         files: {
           // 'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/icon/icons.data.svg.css'],
           'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
         }
       },
       min: {
+        options: {
+          banner: '<%= banner %>',
+          compress: true
+        },
         files: {
           // 'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/icon/icons.data.svg.css']
           'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
-        },
-        options: {
-          compress: true
         }
       }
     },
