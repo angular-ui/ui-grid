@@ -410,6 +410,8 @@ angular.module('ui.grid')
     
     var newRange = [];
     if (columnCache.length > self.grid.options.columnVirtualizationThreshold && self.getCanvasWidth() > self.getViewportWidth()) {
+      /* Commented the following lines because otherwise the moved column wasn't visible immediately on the new position
+       * in the case of many columns with horizontal scroll, one had to scroll left or right and then return in order to see it
       // Have we hit the threshold going down?
       if (self.prevScrollLeft < scrollLeft && colIndex < self.prevColumnScrollIndex + self.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
         return;
@@ -417,7 +419,7 @@ angular.module('ui.grid')
       //Have we hit the threshold going up?
       if (self.prevScrollLeft > scrollLeft && colIndex > self.prevColumnScrollIndex - self.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
         return;
-      }
+      }*/
 
       var rangeStart = Math.max(0, colIndex - self.grid.options.excessColumns);
       var rangeEnd = Math.min(columnCache.length, colIndex + minCols + self.grid.options.excessColumns);

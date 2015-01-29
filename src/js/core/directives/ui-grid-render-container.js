@@ -99,6 +99,9 @@
                 containerCtrl.prevScrollArgs = args;
                 var newScrollLeft = args.getNewScrollLeft(colContainer,containerCtrl.viewport);
 
+                // Make the current horizontal scroll position available in the $scope
+                $scope.newScrollLeft = newScrollLeft;                
+
                 if (containerCtrl.headerViewport) {
                   containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
                 }
