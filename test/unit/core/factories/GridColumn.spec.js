@@ -71,6 +71,49 @@ describe('GridColumn factory', function () {
     it('should obey columnDef sort spec', function () {
       // ... TODO(c0bra)
     });
+
+    describe('when handling field-only defs', function () {
+      beforeEach(function () {
+        grid = new Grid({ id: 1 });
+        grid.registerColumnBuilder(gridClassFactory.defaultColumnBuilder);
+      });
+
+      it('should add an incrementing number to column names when they have the same field and no name', function () {
+        var cols = [
+          { field: 'age' },
+          { field: 'name' },
+          { field: 'name' },
+          { field: 'name' }
+        ];
+
+        grid.options.columnDefs = cols;
+
+        buildCols();
+
+        expect(grid.columns[0].displayName).toEqual('Age');
+        expect(grid.columns[1].displayName).toEqual('Name');
+        expect(grid.columns[2].displayName).toEqual('Name2');
+        expect(grid.columns[3].displayName).toEqual('Name3');
+      });
+
+      it('should account for existing incremented names', function () {
+        var cols = [
+          { field: 'age' },
+          { field: 'name' },
+          { field: 'name', name: 'Name3' },
+          { field: 'name' }
+        ];
+
+        grid.options.columnDefs = cols;
+
+        buildCols();
+
+        expect(grid.columns[0].displayName).toEqual('Age');
+        expect(grid.columns[1].displayName).toEqual('Name');
+        expect(grid.columns[2].displayName).toEqual('Name3');
+        expect(grid.columns[3].displayName).toEqual('Name4');
+      });
+    });
   });
 
   describe('getRenderContainer', function () {

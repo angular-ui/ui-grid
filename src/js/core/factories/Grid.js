@@ -622,19 +622,18 @@ angular.module('ui.grid')
       var columnCache = self.columns.slice(0);
 
       // We need to allow for the "row headers" when mapping from the column defs array to the columns array
-      //   If we have a row header in columns[0] and don't account for it we'll overwrite it with the column in columnDefs[0]
-      var rowHeaderOffset = self.rowHeaderColumns.length;
+      //   If we have a row header in columns[0] and don't account for it   we'll overwrite it with the column in columnDefs[0]
 
       // Go through all the column defs
       for (i = 0; i < self.options.columnDefs.length; i++) {
         // If the column at this index has a different name than the column at the same index in the column defs...
-        if (self.columns[i + rowHeaderOffset].name !== self.options.columnDefs[i].name) {
+        if (self.columns[i + headerOffset].name !== self.options.columnDefs[i].name) {
           // Replace the one in the cache with the appropriate column
-          columnCache[i + rowHeaderOffset] = self.getColumn(self.options.columnDefs[i].name);
+          columnCache[i + headerOffset] = self.getColumn(self.options.columnDefs[i].name);
         }
         else {
           // Otherwise just copy over the one from the initial columns
-          columnCache[i + rowHeaderOffset] = self.columns[i + rowHeaderOffset];
+          columnCache[i + headerOffset] = self.columns[i + headerOffset];
         }
       }
 
@@ -738,6 +737,8 @@ angular.module('ui.grid')
    * validates that name or field is present
    */
   Grid.prototype.preprocessColDef = function preprocessColDef(colDef) {
+    var self = this;
+
     if (!colDef.field && !colDef.name) {
       throw new Error('colDef.name or colDef.field property is required');
     }
@@ -745,7 +746,50 @@ angular.module('ui.grid')
     //maintain backwards compatibility with 2.x
     //field was required in 2.x.  now name is required
     if (colDef.name === undefined && colDef.field !== undefined) {
-      colDef.name = colDef.field;
+      // See if the column name already exists:
+      var foundName = self.getColumn(colDef.field);
+
+      // If a column with this name already  exists, we will add an incrementing number to the end of the new column name
+      if (foundName) {
+        // Search through the columns for names in the format: <name><1, 2 ... N>, i.e. 'Age1, Age2, Age3',
+        var nameRE = new RegExp('^' + colDef.field + '(\\d+)$', 'i');
+
+        var foundColumns = self.columns.filter(function (column) {
+          // Test against the displayName, as that's what'll have the incremented number
+          return nameRE.test(column.displayName);
+        })
+        // Sort the found columns by the end-number
+        .sort(function (a, b) {
+          if (a === b) {
+            return 0;
+          }
+          else {
+            var numA = a.match(nameRE)[1];
+            var numB = b.match(nameRE)[1];
+
+            return parseInt(numA, 10) > parseInt(numB, 10) ? 1 : -1;
+          }
+        });
+
+        // Not columns found, so start with number "2"
+        if (foundColumns.length === 0) {
+          colDef.name = colDef.field + '2';
+        }
+        else {
+          // Get the number from the final column
+          var lastNum = foundColumns[foundColumns.length-1].displayName.match(nameRE)[1];
+
+          // Make sure to parse to an int
+          lastNum = parseInt(lastNum, 10);
+
+          // Add 1 to the number from the last column and tack it on to the field to be the name for this new column 
+          colDef.name = colDef.field + (lastNum + 1);
+        }
+      }
+      // ... otherwise just use the field as the column name
+      else {
+        colDef.name = colDef.field;
+      }
     }
 
   };
