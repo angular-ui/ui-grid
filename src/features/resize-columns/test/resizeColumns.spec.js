@@ -240,7 +240,7 @@ describe('ui.grid.resizeColumns', function () {
     });
 
     describe('and you double-click its resizer, the column width', function () {
-      it('should not go below the minWidth', function () {
+      it('should not go below the minWidth less border', function () {
         var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
         $(firstResizer).simulate('dblclick');
@@ -250,7 +250,7 @@ describe('ui.grid.resizeColumns', function () {
 
         var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
-        expect(newWidth >= minWidth).toEqual(true);
+        expect(newWidth >= (minWidth - 1)).toEqual(true);
       });
     });
 
@@ -268,12 +268,12 @@ describe('ui.grid.resizeColumns', function () {
         $scope.$digest();
       });
 
-      it('should not go below the minWidth', function () {
+      it('should not go below the minWidth less border', function () {
         var firstColumnUid = gridScope.grid.columns[0].uid;
 
         var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
-        expect(newWidth >= minWidth).toEqual(true);
+        expect(newWidth >= (minWidth - 1)).toEqual(true);
       });
     });
   });

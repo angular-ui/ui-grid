@@ -114,7 +114,7 @@ describe('uiGridCell', function () {
 
     // The first column should be 100px wide because we said it should be
     expect(firstCol.outerWidth()).toEqual(100, 'first cell is 100px');
-    expect(firstHeaderCell.innerWidth()).toEqual(100, "header cell is 100px");
+    expect(firstHeaderCell.innerWidth()).toEqual(99, "header cell is 100px less border");
 
     // Now swap the columns in the column defs
     $scope.gridOptions.columnDefs = [{ field: 'age', width: 50 }, { field: 'name', width: 100 }];
@@ -129,13 +129,13 @@ describe('uiGridCell', function () {
 
     // The first column should now be 50px wide
     expect(firstColAgain.outerWidth()).toEqual(50, 'first cell again is 50');
-    expect(firstHeaderCellAgain.innerWidth()).toEqual(50, 'header cell again is 50px');
+    expect(firstHeaderCellAgain.innerWidth()).toEqual(49, 'header cell again is 50px less border');
 
     // ... and the last column should now be 100px wide
     var lastCol = $(gridElm).find('.ui-grid-cell').last();
     var lastHeaderCell = $(gridElm).find('.ui-grid-header-cell').last();
     expect(lastCol.outerWidth()).toEqual(100, 'last cell again is 100px');
-    expect(lastHeaderCell.innerWidth()).toEqual(100, 'last header cell again is 100px');
+    expect(lastHeaderCell.innerWidth()).toEqual(99, 'last header cell again is 100px less border');
 
     angular.element(gridElm).remove();
   }));
