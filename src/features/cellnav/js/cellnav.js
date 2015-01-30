@@ -931,6 +931,8 @@
                 return uiGridCtrl.cellNav.handleKeyDown(evt);
               });
 
+              var needFocus = false;
+              
               // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
               grid.api.core.on.scrollEvent($scope, function (args) {
                 // Skip if not this grid that the event was broadcast for
@@ -943,28 +945,82 @@
                   return;
                 }
                 
+                /*
+                 * If we have scrolled due to cellNav, we want to set the focus to the new cell after the 
+                 * virtualisation has run, and after scroll.  If we scrolled through the browser scroll
+                 * bar or other user action, we're going to discard the focus, because it will no longer 
+                 * be valid (and, noting #2423, trying to keep it causes problems)
+                 * 
+                 * If cellNav triggers the scroll, we get a scrollToIfNecessary, then a viewport scroll. We
+                 * want to wait for the viewport scroll to finish, then do a refocus.  
+                 * 
+                 * If someone manually scrolls we get just the viewport scroll, no scrollToIfNecessary.  We
+                 * want to just clear the focus
+                 * 
+                 * Logic is:
+                 *  - if cellNav scroll, set a flag that will be resolved in the native scroll
+                 *  - if native scroll, look for the cellNav promise and resolve it
+                 *    - if not present, then use a timeout to clear focus
+                 *    - if it is present, then instead use a timeout to set focus
+                 */ 
+                
                 // We have to wrap in TWO timeouts so that we run AFTER the scroll event is resolved.
-                $timeout(function () {
-                  $timeout(function () {
-
-/* No longer trying to retain focus when scroll - too many side effects, particularly with editOnFocus
-                    // Get the last row+col combo
-                    var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-
-                    // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
-                    //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
-                    //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
-                    if ($document.activeElement === $document.body) {
-                      $elm[0].focus();
+                if ( args.source === 'uiGridCellNavService.scrollToIfNecessary'){
+                  needFocus = true;
+/*
+                  focusTimeout = $timeout(function () {
+                    if ( clearFocusTimeout ){
+                      $timeout.cancel(clearFocusTimeout);
                     }
-*/
-                    // make a dummy roCol
-                    var rowCol = { col: { uid: null }, row: { uid: null } };
-
-                    // broadcast a cellNav event so we clear the focus on all cells
-                    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                    focusTimeout = $timeout(function () {
+                      if ( clearFocusTimeout ){
+                        $timeout.cancel(clearFocusTimeout);
+                      }
+                      // Get the last row+col combo
+                      var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+  
+                      // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
+                      //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
+                      //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
+                      if ($document.activeElement === $document.body) {
+                        $elm[0].focus();
+                      }
+  
+                      // broadcast a cellNav event so we clear the focus on all cells
+                      uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
+                    });
                   });
-                });
+                  */
+                } else {
+                  if ( needFocus ){
+                    $timeout(function () {
+                      $timeout(function () {
+                        // Get the last row+col combo
+                        var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+    
+                        // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
+                        //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
+                        //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
+                        if ($document.activeElement === $document.body) {
+                          $elm[0].focus();
+                        }
+    
+                        // broadcast a cellNav event so we clear the focus on all cells
+                        uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
+                        
+                        needFocus = false;
+                      });
+                    });
+                  } else {
+                    $timeout(function() {
+                      // make a dummy roCol
+                      var rowCol = { col: { uid: null }, row: { uid: null } };
+    
+                      // broadcast a cellNav event so we clear the focus on all cells
+                      uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                    });
+                  }
+                }
               });  
              
             }
