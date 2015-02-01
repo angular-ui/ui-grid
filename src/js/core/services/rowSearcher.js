@@ -207,13 +207,14 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filter.exactRE) {
       return filter.exactRE.test(value);
     }
-    
+
     if (filter.condition === uiGridConstants.filter.NOT_EQUAL) {
       return angular.equals(value, term);
     }
 
     if (typeof(value) === 'number'){
-      var tempFloat = parseFloat(term);
+      // if the term has a decimal in it, it comes through as '9\.4', we need to take out the \
+      var tempFloat = parseFloat(term.replace(/\\./,'.'));
       if (!isNaN(tempFloat)) {
         term = tempFloat;
       }
