@@ -58,6 +58,10 @@
           invalidCsv: '无法处理文件，确定是合法的CSV文件？',
           invalidJson: '无法处理文件，确定是合法的JSON文件？',
           jsonNotArray: '导入的文件不是JSON数组！'
+        },
+        pagination: {
+          sizes: '行每页',
+          totalItems: '行'
         }
       });
       return $delegate;
