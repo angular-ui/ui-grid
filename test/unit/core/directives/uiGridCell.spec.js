@@ -86,7 +86,7 @@ describe('uiGridCell', function () {
     }));
   });
 
-  it('should change a columns class when its uid changes', inject(function (gridUtil, $compile, uiGridConstants) {
+  it("should change a column's class when its uid changes", inject(function (gridUtil, $compile, uiGridConstants) {
     // Reset the UIDs (used by columns) so they're fresh and clean
     gridUtil.resetUids();
 
@@ -113,8 +113,8 @@ describe('uiGridCell', function () {
     var class1 = _(firstCol[0].className.split(/\s+/)).find(function(c) { return classRegEx.test(c); });
 
     // The first column should be 100px wide because we said it should be
-    expect(firstCol.outerWidth()).toEqual(100, 'first cell is 100px');
-    expect(firstHeaderCell.innerWidth()).toEqual(99, "header cell is 100px less border");
+    expect(firstCol.innerWidth()).toEqual(100, 'first cell is 100px, counting border');
+    expect(firstHeaderCell.innerWidth()).toEqual(100, "header cell is 100px, counting border");
 
     // Now swap the columns in the column defs
     $scope.gridOptions.columnDefs = [{ field: 'age', width: 50 }, { field: 'name', width: 100 }];
@@ -128,14 +128,14 @@ describe('uiGridCell', function () {
     expect(class2).not.toEqual(class1);
 
     // The first column should now be 50px wide
-    expect(firstColAgain.outerWidth()).toEqual(50, 'first cell again is 50');
-    expect(firstHeaderCellAgain.innerWidth()).toEqual(49, 'header cell again is 50px less border');
+    expect(firstColAgain.innerWidth()).toEqual(50, 'first cell again is 50px, counting border');
+    expect(firstHeaderCellAgain.innerWidth()).toEqual(50, 'header cell again is 50px, counting border');
 
     // ... and the last column should now be 100px wide
     var lastCol = $(gridElm).find('.ui-grid-cell').last();
     var lastHeaderCell = $(gridElm).find('.ui-grid-header-cell').last();
-    expect(lastCol.outerWidth()).toEqual(100, 'last cell again is 100px');
-    expect(lastHeaderCell.innerWidth()).toEqual(99, 'last header cell again is 100px less border');
+    expect(lastCol.innerWidth()).toEqual(100, 'last cell again is 100px, counting border');
+    expect(lastHeaderCell.innerWidth()).toEqual(100, 'last header cell again is 100px, counting border');
 
     angular.element(gridElm).remove();
   }));
