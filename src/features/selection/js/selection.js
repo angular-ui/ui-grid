@@ -425,6 +425,15 @@
            *  <br/>GridOptions.showFooter must also be set to true.
            */
           gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
+
+          /**
+           *  @ngdoc object
+           *  @name isRowSelectable
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Makes it possible to specify a method that evaluates for each and sets its "enableSelection" property.
+           */
+
+          gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
         },
 
         /**
@@ -631,6 +640,12 @@
                 };
 
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
+              }
+              
+              if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop) {
+                uiGridCtrl.grid.registerRowBuilder(function(row, options) {
+                  row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
+                });
               }
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
