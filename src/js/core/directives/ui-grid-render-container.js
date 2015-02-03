@@ -175,8 +175,6 @@
                 event = event.originalEvent;
               }
 
-              event.preventDefault();
-
               var deltaX, deltaY, newX, newY;
               newX = event.targetTouches[0].screenX;
               newY = event.targetTouches[0].screenY;
