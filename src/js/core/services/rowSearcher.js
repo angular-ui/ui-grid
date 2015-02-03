@@ -209,7 +209,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     }
 
     if (filter.condition === uiGridConstants.filter.NOT_EQUAL) {
-      return angular.equals(value, term);
+      var regex = new RegExp('^' + term + '$');
+      return !regex.exec(value);
     }
 
     if (typeof(value) === 'number'){
