@@ -58,6 +58,10 @@
           invalidCsv: 'Le fichier n\'a pas pu être traité, le CSV est-il valide ?',
           invalidJson: 'Le fichier n\'a pas pu être traité, le JSON est-il valide ?',
           jsonNotArray: 'Le fichier JSON importé doit contenir un tableau. Abandon.'
+        },
+        pagination: {
+          sizes: 'articles par page',
+          totalItems: 'articles'
         }
       });
       return $delegate;
