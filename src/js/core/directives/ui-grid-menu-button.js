@@ -324,6 +324,7 @@ angular.module('ui.grid')
       
       gridCol.grid.refresh();
       gridCol.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      gridCol.grid.api.core.raise.columnVisibilityChanged( gridCol );
     }
   };
   
