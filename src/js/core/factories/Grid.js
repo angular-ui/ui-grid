@@ -233,6 +233,24 @@ angular.module('ui.grid')
      */
     self.api.registerEvent( 'core', 'sortChanged' );
   
+      /**
+     * @ngdoc function
+     * @name columnVisibilityChanged
+     * @methodOf  ui.grid.core.api:PublicApi
+     * @description The visibility of a column has changed,
+     * the column itself is passed out as a parameter of the event. 
+     * 
+     * @param {GridCol} column the column that changed
+     * 
+     * @example
+     * <pre>
+     *      gridApi.core.on.columnVisibilityChanged( $scope, function (column) {
+     *        // do something
+     *      } );
+     * </pre>
+     */
+    self.api.registerEvent( 'core', 'columnVisibilityChanged' );
+  
     /**
      * @ngdoc method
      * @name notifyDataChange

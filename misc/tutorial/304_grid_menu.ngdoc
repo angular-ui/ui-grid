@@ -68,6 +68,10 @@ you can suppress the ability to hide individual columns by setting `enableHiding
           $interval( function() {
             gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'Dynamic item'}]);
           }, 0, 1);
+          
+          gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
+            $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
+          });
         }
       };
 
@@ -80,6 +84,9 @@ you can suppress the ability to hide individual columns by setting `enableHiding
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <div id="grid1" ui-grid="gridOptions" ui-grid-exporter ui-grid-selection class="grid"></div>
+      <div ng-if='columnChanged'>
+        Column Visibility Changed - name: {{ columnChanged.name }} visible: {{ columnChanged.visible }}
+      </div>
     </div>
   </file>
   <file name="main.css">
