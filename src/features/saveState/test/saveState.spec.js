@@ -250,6 +250,22 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
   describe('restoreColumns', function() {
     it('restore columns', function() {
+      var colVisChangeCount = 0;
+      var colFilterChangeCount = 0;
+      var colSortChangeCount = 0;
+      
+      grid.api.core.on.columnVisibilityChanged( $scope, function( column ) {
+        colVisChangeCount++; 
+      });
+
+      grid.api.core.on.filterChanged( $scope, function() {
+        colFilterChangeCount++; 
+      });
+
+      grid.api.core.on.sortChanged( $scope, function() {
+        colSortChangeCount++; 
+      });
+      
       uiGridSaveStateService.restoreColumns( grid, [
         { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [] },
         { name: 'col1', visible: true, width: '*', sort: [], filters: [ {'blah': 'blah'} ] },
@@ -257,20 +273,20 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         { name: 'col3', visible: true, width: 220, sort: [], filters: [] }
       ]);
       
-      expect( grid.columns[0].name ).toEqual('col2');
-      expect( grid.columns[1].name ).toEqual('col1');
-      expect( grid.columns[2].name ).toEqual('col4');
-      expect( grid.columns[3].name ).toEqual('col3');
+      expect( grid.columns[0].name ).toEqual('col2', 'column 0 name should be col2');
+      expect( grid.columns[1].name ).toEqual('col1', 'column 1 name should be col1');
+      expect( grid.columns[2].name ).toEqual('col4', 'column 2 name should be col4');
+      expect( grid.columns[3].name ).toEqual('col3', 'column 3 name should be col3');
 
-      expect( grid.columns[0].visible ).toEqual(false);
-      expect( grid.columns[1].visible ).toEqual(true);
-      expect( grid.columns[2].visible ).toEqual(false);
-      expect( grid.columns[3].visible ).toEqual(true);
+      expect( grid.columns[0].visible ).toEqual(false, 'column 0 visible should be false');
+      expect( grid.columns[1].visible ).toEqual(true, 'column 1 visible should be true');
+      expect( grid.columns[2].visible ).toEqual(false, 'column 2 visible should be false');
+      expect( grid.columns[3].visible ).toEqual(true, 'column 3 visible should be true');
 
-      expect( grid.columns[0].colDef.visible ).toEqual(false);
-      expect( grid.columns[1].colDef.visible ).toEqual(true);
-      expect( grid.columns[2].colDef.visible ).toEqual(false);
-      expect( grid.columns[3].colDef.visible ).toEqual(true);
+      expect( grid.columns[0].colDef.visible ).toEqual(false, 'coldef 0 visible should be false');
+      expect( grid.columns[1].colDef.visible ).toEqual(true, 'coldef 1 visible should be true');
+      expect( grid.columns[2].colDef.visible ).toEqual(false, 'coldef 2 visible should be false');
+      expect( grid.columns[3].colDef.visible ).toEqual(true, 'coldef 3 visible should be true');
 
       expect( grid.columns[0].width ).toEqual(90);
       expect( grid.columns[1].width ).toEqual('*');
@@ -286,6 +302,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( grid.columns[1].filters ).toEqual([ { blah: 'blah' } ]);
       expect( grid.columns[2].filters ).toEqual([]);
       expect( grid.columns[3].filters ).toEqual([]);
+      
+      expect( colVisChangeCount ).toEqual( 4, '4 columns changed visibility');
+      expect( colFilterChangeCount ).toEqual( 1, '1 columns changed filter');
+      expect( colSortChangeCount ).toEqual( 4, '4 columns changed sort');
     });
   });
   
