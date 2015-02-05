@@ -418,12 +418,26 @@
             if ( currentCol.length > 0 ){
               var currentIndex = grid.columns.indexOf( currentCol[0] );
               
-              grid.columns[currentIndex].visible = columnState.visible;
-              grid.columns[currentIndex].colDef.visible = columnState.visible;
+              if ( grid.columns[currentIndex].visible !== columnState.visible ||
+                   grid.columns[currentIndex].colDef.visible !== columnState.visible ){
+                grid.columns[currentIndex].visible = columnState.visible;
+                grid.columns[currentIndex].colDef.visible = columnState.visible;
+                grid.api.core.raise.columnVisibilityChanged( grid.columns[currentIndex]);
+              }
+              
               grid.columns[currentIndex].width = columnState.width;
-              grid.columns[currentIndex].sort = angular.copy( columnState.sort );
-              grid.columns[currentIndex].filters = angular.copy( columnState.filters );
 
+              if ( !angular.equals(grid.columns[currentIndex].sort, columnState.sort && 
+                   !( grid.columns[currentIndex].sort === undefined && angular.isEmpty(columnState.sort) ) ) ){
+                grid.columns[currentIndex].sort = angular.copy( columnState.sort );
+                grid.api.core.raise.sortChanged();
+              }
+
+              if ( !angular.equals(grid.columns[currentIndex].filters, columnState.filters ) ){
+                grid.columns[currentIndex].filters = angular.copy( columnState.filters );
+                grid.api.core.raise.filterChanged();
+              }
+              
               if ( currentIndex !== index ){
                 var column = grid.columns.splice( currentIndex, 1 )[0];
                 grid.columns.splice( index, 0, column );
