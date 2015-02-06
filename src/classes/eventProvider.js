@@ -60,7 +60,7 @@
     self.setDraggables = function() {
         if (!grid.config.jqueryUIDraggable) {
             //Fix for FireFox. Instead of using jQuery on('dragstart', function) on find, we have to use addEventListeners for each column.
-            var columns = grid.$root.find('.ngHeaderSortColumn'); //have to iterate if using addEventListener
+            var columns = $(grid.$root).find('.ngHeaderSortColumn'); //have to iterate if using addEventListener
             angular.forEach(columns, function(col){
                 if(col.className && col.className.indexOf("ngHeaderSortColumn") !== -1){
                     col.setAttribute('draggable', 'true');
