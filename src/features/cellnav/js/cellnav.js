@@ -626,7 +626,7 @@
           //}
 
           // The right position is the current X scroll position minus the grid width
-          var rightBound = grid.renderContainers.body.prevScrollLeft + grid.gridWidth;
+          var rightBound = grid.renderContainers.body.prevScrollLeft + Math.ceil(grid.gridWidth);
 
           // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
           //if (grid.verticalScrollbarWidth) {
