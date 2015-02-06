@@ -283,10 +283,10 @@
                   event = event.originalEvent;
                 }
 
-                uiGridCtrl.scrollbars.forEach(function (sbar) {
-                  sbar.addClass('ui-grid-scrollbar-visible');
-                  sbar.addClass('ui-grid-scrolling');
-                });
+                //uiGridCtrl.scrollbars.forEach(function (sbar) {
+                //  sbar.addClass('ui-grid-scrollbar-visible');
+                //  sbar.addClass('ui-grid-scrolling');
+                //});
 
                 moveStart = new Date();
                 startY = event.targetTouches[0].screenY;
