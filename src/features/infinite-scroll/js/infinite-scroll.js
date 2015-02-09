@@ -17,7 +17,7 @@
    *
    *  @description Service for infinite scroll features
    */
-  module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$timeout', function (gridUtil, $compile, $timeout) {
+  module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$timeout', 'uiGridConstants', function (gridUtil, $compile, $timeout, uiGridConstants) {
 
     var service = {
 
@@ -50,6 +50,17 @@
                */
 
               needLoadMoreData: function ($scope, fn) {
+              },
+
+              /**
+               * @ngdoc event
+               * @name needLoadMoreDataTop
+               * @eventOf ui.grid.infiniteScroll.api:PublicAPI
+               * @description This event fires when scroll reached top percentage of grid
+               * and needs to load data
+               */
+
+              needLoadMoreDataTop: function ($scope, fn) {
               }
             }
           },
@@ -99,12 +110,16 @@
        * @ngdoc function
        * @name loadData
        * @methodOf ui.grid.infiniteScroll.service:uiGridInfiniteScrollService
-       * @description This function fires 'needLoadMoreData' event
+       * @description This function fires 'needLoadMoreData' or 'needLoadMoreDataTop' event based on scrollDirection
        */
 
       loadData: function (grid) {
-		grid.options.loadTimout = true;
-        grid.api.infiniteScroll.raise.needLoadMoreData();        
+        grid.options.loadTimout = true;
+        if (grid.scrollDirection === uiGridConstants.scrollDirection.UP) {
+          grid.api.infiniteScroll.raise.needLoadMoreDataTop();
+          return;
+        }
+        grid.api.infiniteScroll.raise.needLoadMoreData();
       },
 
       /**
@@ -196,10 +211,14 @@
           link: function ($scope, $elm, $attr){
             if ($scope.grid.options.enableInfiniteScroll) {
               $scope.grid.api.core.on.scrollEvent($scope, function (args) {
-                if (args.y) {
-                  var percentage = 100 - (args.y.percentage * 100);
-                  uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
-                }
+                  //Prevent circular scroll references, if source is coming from ui.grid.adjustInfiniteScrollPosition() function
+                  if (args.y && (args.source !== 'ui.grid.adjustInfiniteScrollPosition')) {
+                    var percentage = 100 - (args.y.percentage * 100);
+                    if ($scope.grid.scrollDirection === uiGridConstants.scrollDirection.UP) {
+                      percentage = (args.y.percentage * 100);
+                    }
+                    uiGridInfiniteScrollService.checkScroll($scope.grid, percentage);
+                  }
               });
             }
           }
