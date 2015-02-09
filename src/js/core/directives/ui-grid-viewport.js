@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent',
-    function(gridUtil, ScrollEvent) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants',
+    function(gridUtil, ScrollEvent, uiGridConstants) {
       return {
         replace: true,
         scope: {},
@@ -43,6 +43,9 @@
               grid.flagScrollingHorizontally();
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
 
+              if (xDiff > 0) { grid.scrollDirection = uiGridConstants.scrollDirection.RIGHT; }
+              if (xDiff < 0) { grid.scrollDirection = uiGridConstants.scrollDirection.LEFT; }
+
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
               if (horizScrollLength !== 0) {
                 horizScrollPercentage = newScrollLeft / horizScrollLength;
@@ -58,6 +61,8 @@
               grid.flagScrollingVertically();
               var yDiff = newScrollTop - rowContainer.prevScrollTop;
 
+              if (yDiff > 0 ) { grid.scrollDirection = uiGridConstants.scrollDirection.DOWN; }
+              if (yDiff < 0 ) { grid.scrollDirection = uiGridConstants.scrollDirection.UP; }
 
               var vertScrollLength = rowContainer.getVerticalScrollLength();
 

@@ -84,7 +84,16 @@
 
     // TODO(c0bra): Create full list of these somehow. NOTE: do any allow a space before or after them?
     CURRENCY_SYMBOLS: ['ƒ', '$', '£', '$', '¤', '¥', '៛', '₩', '₱', '฿', '₫'],
-    
+
+    scrollDirection: {
+      UP: 'up',
+      DOWN: 'down',
+      LEFT: 'left',
+      RIGHT: 'right',
+      NONE: 'none'
+
+    },
+
     dataChange: {
       ALL: 'all',
       EDIT: 'edit',

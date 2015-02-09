@@ -99,14 +99,25 @@ angular.module('ui.grid')
      * @description set to true when Grid is scrolling horizontally. Set to false via debounced method
      */
     self.isScrollingHorizontally = false;
-  
+
+    /**
+     * @ngdoc property
+     * @name scrollDirection
+     * @propertyOf ui.grid.class:Grid
+     * @description set one of the uiGridConstants.scrollDirection values (UP, DOWN, LEFT, RIGHT, NONE), which tells
+     * us which direction we are scrolling. Set to NONE via debounced method
+     */
+    self.scrollDirection = uiGridConstants.scrollDirection.NONE;
+
     var debouncedVertical = gridUtil.debounce(function () {
       self.isScrollingVertically = false;
-    }, 300);
+      self.scrollDirection = uiGridConstants.scrollDirection.NONE;
+    }, 1000);
   
     var debouncedHorizontal = gridUtil.debounce(function () {
       self.isScrollingHorizontally = false;
-    }, 300);
+      self.scrollDirection = uiGridConstants.scrollDirection.NONE;
+    }, 1000);
   
   
     /**
@@ -1853,7 +1864,7 @@ angular.module('ui.grid')
    */
   Grid.prototype.refreshCanvas = function(buildStyles) {
     var self = this;
-    
+
     if (buildStyles) {
       self.buildStyles();
     }
@@ -1969,7 +1980,7 @@ angular.module('ui.grid')
 
       // gridUtil.logDebug('redrawing container', i);
 
-      container.adjustRows(null, container.prevScrolltopPercentage);
+      container.adjustRows(null, container.prevScrolltopPercentage, true);
       container.adjustColumns(null, container.prevScrollleftPercentage);
     }
   };

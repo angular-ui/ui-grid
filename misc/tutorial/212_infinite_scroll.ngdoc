@@ -32,10 +32,20 @@ Specify percentage when lazy load should trigger:
         { name:'name' },
         { name:'age' }
       ];
-      var page = 1;
+      var page = 0;
+      var pageUp = 0;
       var getData = function(data, page) {
         var res = [];
-        for (var i = 0; i < page * 100 && i < data.length; ++i) {
+        for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
+          res.push(data[i]);
+        }
+        return res;
+      };
+
+      var getDataUp = function(data, page) {
+        var res = [];
+        for (var i = data.length - (page * 100) - 1; (data.length - i) < ((page + 1) * 100) && (data.length - i) > 0; --i) {
+          data[i].id = -(data.length - data[i].id)
           res.push(data[i]);
         }
         return res;
@@ -51,8 +61,19 @@ Specify percentage when lazy load should trigger:
         gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
           $http.get('/data/10000_complex.json')
             .success(function(data) {
-              $scope.gridOptions.data = getData(data, page);
+              $scope.gridOptions.data = $scope.gridOptions.data.concat(getData(data, page));
               ++page;
+              gridApi.infiniteScroll.dataLoaded();
+            })
+            .error(function() {
+              gridApi.infiniteScroll.dataLoaded();
+            });
+        });
+        gridApi.infiniteScroll.on.needLoadMoreDataTop($scope,function(){
+          $http.get('/data/10000_complex.json')
+            .success(function(data) {
+              $scope.gridOptions.data = getDataUp(data, pageUp).reverse().concat($scope.gridOptions.data);
+              ++pageUp;
               gridApi.infiniteScroll.dataLoaded();
             })
             .error(function() {
