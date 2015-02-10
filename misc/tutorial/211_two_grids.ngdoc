@@ -18,7 +18,7 @@ each other.
       };
       
       $scope.scrollTo = function( rowIndex, colIndex ) {
-        $scope.gridApi.cellNav.scrollTo( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+        $scope.gridApi.cellNav.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
       };
 
       $http.get('/data/100.json')

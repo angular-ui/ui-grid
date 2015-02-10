@@ -66,11 +66,11 @@ extract values of selected cells.
         };
         
         $scope.scrollTo = function( rowIndex, colIndex ) {
-          $scope.gridApi.cellNav.scrollTo( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+          $scope.gridApi.cellNav.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
         };
 
         $scope.scrollToFocus = function( rowIndex, colIndex ) {
-          $scope.gridApi.cellNav.scrollToFocus( $scope, $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]); 
+          $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
         };
 
         $scope.gridOptions.onRegisterApi = function(gridApi){
