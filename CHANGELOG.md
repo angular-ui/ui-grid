@@ -1,3 +1,83 @@
+<a name="v3.0.0-rc.19"></a>
+### v3.0.0-rc.19 (2015-02-11)
+
+
+#### Bug Fixes
+
+* **Filtering:** Let mobile devices tap filter box ([01c22acf](http://github.com/angular-ui/ng-grid/commit/01c22acf18847cc7646e405c13f50cb0b0407835))
+* **Grid:**
+  * Add css to allow iOS momentum scroll ([48fd5021](http://github.com/angular-ui/ng-grid/commit/48fd5021a19e3792dbc04de55770bfc26a95ce53), closes [#2671](http://github.com/angular-ui/ng-grid/issues/2671))
+  * Allow col reordering with column defs ([865573cd](http://github.com/angular-ui/ng-grid/commit/865573cd61df80ed5de22b8fd5da424d4c9dcd8b), closes [#1948](http://github.com/angular-ui/ng-grid/issues/1948))
+  * refactor(core) ui-grid $parent scope is now automatically assigned to grid.appScope.  gridOptions.appScopeProvider can be used to assign anything to grid.appScope
+
+* **GridColumn:** Allow for duplicate field coldefs ([82a72130](http://github.com/angular-ui/ng-grid/commit/82a7213057a7d4c559e470c534a6ca834cad2fb6), closes [#2364](http://github.com/angular-ui/ng-grid/issues/2364))
+* **GridRenderContainer:** Redraw with scroll % ([bc2c68ab](http://github.com/angular-ui/ng-grid/commit/bc2c68aba48cdd5a3e840a589fb90cdba363618c), closes [#2357](http://github.com/angular-ui/ng-grid/issues/2357))
+* **Mobile:**
+  * Don't prevent default container touches ([8fe4e498](http://github.com/angular-ui/ng-grid/commit/8fe4e498caca973c6bcaac737841e38875ed9d37))
+  * Allow either touch and mouse events ([654e0ce8](http://github.com/angular-ui/ng-grid/commit/654e0ce83f1ebd824341ab3d63b6d38495a67b80))
+  * Bind only to touch or mouse events ([995d3c47](http://github.com/angular-ui/ng-grid/commit/995d3c472530407d19124e622c570fa65319e6fb))
+* **Selection:** Fix selection w/ row templates ([b1a57b69](http://github.com/angular-ui/ng-grid/commit/b1a57b693fb9715198f42d411345ed18548a660b))
+* **Tests:**
+  * Mistakenly using classList ([04d2fa69](http://github.com/angular-ui/ng-grid/commit/04d2fa694a8e0b02baaf6dcabd4b882c72a4157d))
+  * Use fork of csv-js ([ef78823c](http://github.com/angular-ui/ng-grid/commit/ef78823c380dd2ed48829a02d27bdf7f395f23d3))
+  * angular 1.3 compiles style blocks ([c7b0a66f](http://github.com/angular-ui/ng-grid/commit/c7b0a66fd42f14b2f6626660aff97d6ca6ab6c67))
+  * Add global for Protractor ([77969eb6](http://github.com/angular-ui/ng-grid/commit/77969eb6500aa4384286a939eefa8c4ef0332960))
+  * Allow touch event simulation ([2dc02753](http://github.com/angular-ui/ng-grid/commit/2dc0275391b37a1a316dee8a1418c200da5f4347))
+* **Tutorials:** Point back to angular 1.2.26 ([96625e2a](http://github.com/angular-ui/ng-grid/commit/96625e2ac8924051e6b6ec00224e565884a6fdbf))
+* **cellNav:** If cellNav api exists, turn on stuff ([14264540](http://github.com/angular-ui/ng-grid/commit/14264540c4402e77f1cb64458b568146457f6dbe), closes [#2294](http://github.com/angular-ui/ng-grid/issues/2294))
+   *refactor(cellNav) remove unused $scope parameter from api methods
+* **uiGridHeaderCell:**
+  * Change test measure method ([7774d30e](http://github.com/angular-ui/ng-grid/commit/7774d30e6085a0f98850a94880961f0511ddce50))
+  * Adjust test width measure ([1f786b9c](http://github.com/angular-ui/ng-grid/commit/1f786b9c05c5330480809645c4cd3b549861c720))
+* **uiGridRow:**
+  * Use promise to get compiled elm fn ([5160b805](http://github.com/angular-ui/ng-grid/commit/5160b8057301c773a3ec62dab43b5c29819737a8))
+  * Fix memory leak ([64d3918b](http://github.com/angular-ui/ng-grid/commit/64d3918b55c5dcb01772697cf8fcfd10dac945a4))
+* **edit:**   edit cell scope was not being destroyed when element was removed
+* **gridApi** add ability to pass _this variable in api.feature.on.eventName
+
+#### Performance
+* **Grid** encapsulate the renderContainer canvasHeight and GridRow.height properties Changes getCanvasHeight function to only recalculate all the row heights when needed.  Adds a CanvasH
+eightChanged event to api.core
+
+
+
+
+#### Features
+
+* **Core:** Implementation for #2483.  Adds a showGridFooter option that will create a grid  ([d0233601](http://github.com/angular-ui/ng-grid/commit/d0233601a67a445049a710fe84dacdb0b64c1c33))
+          * Adds a showGridFooter option that will create a grid footer with the Total Items and Shown Items displayed.  Also shows Selected Items if using Selection feature.
+
+* **cellnav:** provide row option to disallow all cells from having focus ([1bc05ebc](http://github.com/angular-ui/ng-grid/commit/1bc05ebc775a81fd164c562a343bb5d0dd7e7578))
+* **uiGridRow:** Allow dynamic row templates ([a547a52e](http://github.com/angular-ui/ng-grid/commit/a547a52e7b699ffd33bd4c5eb661b22d4c066b39))
+
+
+#### Breaking Changes
+* getExternalScopes() function is removed.  Use grid.appScope instead.
+  external-scopes attribute is removed.  Use gridOptions.appScopeProvider to assign values other than $scope.$parent to appScope
+
+*removed scope parameter from grid.api.cellNav methods
+  old:
+     scrollTo($scope, rowEntity, colDef)
+ 	  scrollToFocus($scope, rowEntity, colDef)
+ 	  scrollToIfNecessary($scope, row, col)
+ 	 new:
+     scrollTo(rowEntity, colDef)
+ 	  scrollToFocus(rowEntity, colDef)
+ 	  scrollToIfNecessary(row, col
+
+*  scrollbars.WHEN_NEEDED no longer an option
+
+* showFooter option renamed to showColumnFooter;  footerRowHeight option renamed to columnFooterHeight
+ ([d0233601](http://github.com/angular-ui/ng-grid/commit/d0233601a67a445049a710fe84dacdb0b64c1c33))
+* On mobile devices the user will have to long-click to
+edit a cell instead of double-clicking
+ ([654e0ce8](http://github.com/angular-ui/ng-grid/commit/654e0ce83f1ebd824341ab3d63b6d38495a67b80))
+
+* **rowEdit:** * remove grid from all method signatures
+* **importer:** * remove grid from importFile signature
+* **core:** * remove grid from notifyDataChange signature
+
+
 <a name="v3.0.0-RC.18"></a>
 ### v3.0.0-RC.18 (2014-12-09)
 
