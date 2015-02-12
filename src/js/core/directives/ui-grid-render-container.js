@@ -157,9 +157,9 @@
                 if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1 && containerCtrl.viewport[0].scrollTop !== 0 ) ||
                     (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
                   evt.preventDefault();
+                  scrollEvent.fireThrottledScrollingEvent();
               }
-
-              scrollEvent.fireThrottledScrollingEvent();
+              
             });
 
             var startY = 0,
