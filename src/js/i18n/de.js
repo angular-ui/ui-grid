@@ -6,7 +6,7 @@
     $provide.decorator('i18nService', ['$delegate', function ($delegate) {
       $delegate.add('de', {
         aggregate: {
-          label: 'eintrag'
+          label: 'Eintrag'
         },
         groupPanel: {
           description: 'Ziehen Sie eine Spaltenüberschrift hierhin, um nach dieser Spalte zu gruppieren.'
@@ -40,6 +40,11 @@
           min: 'min: ',
           max: 'max: '
         },
+        pinning: {
+            pinLeft: 'Links anheften',
+            pinRight: 'Rechts anheften',
+            unpin: 'Lösen'
+        },
         gridMenu: {
           columns: 'Spalten:',
           importerTitle: 'Datei importieren',
@@ -56,6 +61,10 @@
           invalidCsv: 'Die Datei konnte nicht eingelesen werden, ist es eine gültige CSV-Datei?',
           invalidJson: 'Die Datei konnte nicht eingelesen werden. Enthält sie gültiges JSON?',
           jsonNotArray: 'Die importierte JSON-Datei muß ein Array enthalten. Breche Import ab.'
+        },
+        pagination: {
+            sizes: 'Einträge pro Seite',
+            totalItems: 'Einträge'
         }
       });
       return $delegate;
