@@ -61,7 +61,8 @@ ngGridDirectives.directive('ngInput', [function() {
             }));
 
             angular.element(elm).bind('blur', function () {
-                scope.$emit('ngGridEventEndCellEdit');
+                //provide more information on cell edit event callback
+                scope.$emit('ngGridEventEndCellEdit', ngModel.$modelValue, oldCellValue, scope);
             });
         }
     };

@@ -401,6 +401,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             percentArray = [],
             asteriskNum = 0,
             totalWidth = 0;
+            remainingWidth = 0;
 
         // When rearranging columns, their index in $scope.columns will no longer match the original column order from columnDefs causing
         // their width config to be out of sync. We can use "originalIndex" on the ngColumns to get hold of the correct setup from columnDefs, but to
@@ -451,9 +452,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     totalWidth += ngColumn.width;
                     var temp = ngColumn;
 
-                    $scope.$on('$destroy', $scope.$on("ngGridEventData", function () {
-                        self.resizeOnData(temp);
-                    }));
+                    //delete this resize on every event triggers. That help improve render performance significantly.
 
                     return;
                 } else if (t.indexOf("*") !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
@@ -476,7 +475,14 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         // Now we check if we saved any percentage columns for calculating last
         if (percentArray.length > 0) {
             //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
-            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
+            self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false;
+
+            //adding remaining width to calculate the proper column width with %width and fix width items.
+            remainingWidth = self.rootDim.outerWidth - totalWidth;
+            if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+                remainingWidth -= domUtilityService.ScrollW;
+            }
+
             // If any columns with % widths have been hidden, then let other % based columns use their width
             var percentWidth = 0; // The total % value for all columns setting their width using % (will e.g. be 40 for 2 columns with 20% each)
             var hiddenPercent = 0; // The total % value for all columns setting their width using %, but which have been hidden
@@ -490,7 +496,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     hiddenPercent += percent;
                 }
             });
+
             var percentWidthUsed = percentWidth - hiddenPercent;
+            var availableSpaces = [];
+            var excessWidth = 0;
+            var totalAvailableMinWidth = 0;
 
             // do the math
             angular.forEach(percentArray, function(colDef) {
@@ -506,9 +516,35 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     percent = percent / percentWidth;
                 }
 
-                var pixelsForPercentBasedWidth = self.rootDim.outerWidth * percentWidth;
+                //instead of using the dimension width, use the remaining width (dimension width - fix column width) to calculate the total percent base width
+                //otherwise, your percentbasewidth would be greater than the actual available space available, and a scrollbar will appears
+                var pixelsForPercentBasedWidth = remainingWidth * percentWidth;
                 ngColumn.width = pixelsForPercentBasedWidth * percent;
+                //check if minWidth of the column is greater than the width available. and set the column as fix width with width of minWidth
+                if(ngColumn.width < colDef.minWidth) {
+                    excessWidth += (colDef.minWidth - ngColumn.width);
+                    ngColumn.width = colDef.minWidth;
+                }
+                //use the percentage as the actual width.
+                else {
+                    totalAvailableMinWidth += (ngColumn.width - colDef.minWidth);
+                    availableSpaces.push(colDef);
+                }
                 totalWidth += ngColumn.width;
+            });
+
+            //after the percentage width is calculated. If there are excess width available that is not fill up.
+            //the excess width is fillup porportional to the percentage of each column. leaving no excess column space behind.
+            angular.forEach(availableSpaces, function(colDef) {
+                var ngColumn = $scope.columns[indexMap[colDef.index]];
+                var percentMinAvail = (ngColumn.width - colDef.minWidth) / totalAvailableMinWidth;
+                var newWidth = ngColumn.width - (percentMinAvail * excessWidth);
+                if (newWidth >= colDef.minWidth) {
+                    ngColumn.width = newWidth;
+                }
+                else {
+                    ngColumn.width = colDef.minWidth;
+                }
             });
         }
 
@@ -516,8 +552,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         if (asterisksArray.length > 0) {
             //If they specificy for maintain column ratios to be false in grid config, then it will remain false. If not specifiied or true, will be true.
             self.config.maintainColumnRatios = self.config.maintainColumnRatios !== false; 
-            // get the remaining width
-            var remainingWidth = self.rootDim.outerWidth - totalWidth;
+            // get the remaining width. Using previously assigned variable
+            remainingWidth = self.rootDim.outerWidth - totalWidth;
             // are we overflowing vertically?
             if (self.maxCanvasHt > $scope.viewportDimHeight()) {
                 //compensate for scrollbar
