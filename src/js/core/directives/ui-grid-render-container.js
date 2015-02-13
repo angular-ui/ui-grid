@@ -120,14 +120,10 @@
             }
 
             // Scroll the render container viewport when the mousewheel is used
-            $elm.bind('wheel mousewheel DomMouseScroll MozMousePixelScroll', function(evt) {
-              // use wheelDeltaY
-
-              var newEvent = gridUtil.normalizeWheelEvent(evt);
-
+            gridUtil.on.mousewheel($elm, function (event) {
               var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerMouseWheel);
-              if (newEvent.deltaY !== 0) {
-                var scrollYAmount = newEvent.deltaY * -120;
+              if (event.deltaY !== 0) {
+                var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
                 // Get the scroll percentage
                 var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYAmount) / rowContainer.getVerticalScrollLength();
@@ -138,8 +134,8 @@
 
                 scrollEvent.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
               }
-              if (newEvent.deltaX !== 0) {
-                var scrollXAmount = newEvent.deltaX * -120;
+              if (event.deltaX !== 0) {
+                var scrollXAmount = event.deltaX * -1 * event.deltaFactor;
 
                 // Get the scroll percentage
                 var scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
@@ -154,150 +150,13 @@
 
               // todo: this isn't working when scrolling down.  it works fine for up.  tested on Chrome
               // Let the parent container scroll if the grid is already at the top/bottom
-                if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1 && containerCtrl.viewport[0].scrollTop !== 0 ) ||
-                    (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
-                  evt.preventDefault();
-                  scrollEvent.fireThrottledScrollingEvent();
+              if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1 && containerCtrl.viewport[0].scrollTop !== 0 ) ||
+                 (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
+                   event.preventDefault();
               }
-              
+
+              scrollEvent.fireThrottledScrollingEvent();
             });
-
-            var startY = 0,
-            startX = 0,
-            scrollTopStart = 0,
-            scrollLeftStart = 0,
-            directionY = 1,
-            directionX = 1,
-            moveStart;
-
-            function touchmove(event) {
-              if (event.originalEvent) {
-                event = event.originalEvent;
-              }
-
-              var deltaX, deltaY, newX, newY;
-              newX = event.targetTouches[0].screenX;
-              newY = event.targetTouches[0].screenY;
-              deltaX = -(newX - startX);
-              deltaY = -(newY - startY);
-
-              directionY = (deltaY < 1) ? -1 : 1;
-              directionX = (deltaX < 1) ? -1 : 1;
-
-              deltaY *= 2;
-              deltaX *= 2;
-
-              var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerTouchMove);
-
-              if (deltaY !== 0) {
-                var scrollYPercentage = (scrollTopStart + deltaY) / rowContainer.getVerticalScrollLength();
-
-                if (scrollYPercentage > 1) { scrollYPercentage = 1; }
-                else if (scrollYPercentage < 0) { scrollYPercentage = 0; }
-
-                scrollEvent.y = { percentage: scrollYPercentage, pixels: deltaY };
-              }
-              if (deltaX !== 0) {
-                var scrollXPercentage = (scrollLeftStart + deltaX) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-
-                if (scrollXPercentage > 1) { scrollXPercentage = 1; }
-                else if (scrollXPercentage < 0) { scrollXPercentage = 0; }
-
-                scrollEvent.x = { percentage: scrollXPercentage, pixels: deltaX };
-              }
-
-              // Let the parent container scroll if the grid is already at the top/bottom
-              if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1) ||
-                  (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
-                event.preventDefault();
-              }
-              scrollEvent.fireScrollingEvent();
-            }
-            
-            function touchend(event) {
-              if (event.originalEvent) {
-                event = event.originalEvent;
-              }
-
-              $document.unbind('touchmove', touchmove);
-              $document.unbind('touchend', touchend);
-              $document.unbind('touchcancel', touchend);
-
-              // Get the distance we moved on the Y axis
-              var scrollTopEnd = containerCtrl.viewport[0].scrollTop;
-              var scrollLeftEnd = containerCtrl.viewport[0].scrollTop;
-              var deltaY = Math.abs(scrollTopEnd - scrollTopStart);
-              var deltaX = Math.abs(scrollLeftEnd - scrollLeftStart);
-
-              // Get the duration it took to move this far
-              var moveDuration = (new Date()) - moveStart;
-
-              // Scale the amount moved by the time it took to move it (i.e. quicker, longer moves == more scrolling after the move is over)
-              var moveYScale = deltaY / moveDuration;
-              var moveXScale = deltaX / moveDuration;
-
-              var decelerateInterval = 63; // 1/16th second
-              var decelerateCount = 8; // == 1/2 second
-              var scrollYLength = 120 * directionY * moveYScale;
-              var scrollXLength = 120 * directionX * moveXScale;
-
-              //function decelerate() {
-              //  $timeout(function() {
-              //    var args = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerTouchMove);
-              //
-              //    if (scrollYLength !== 0) {
-              //      var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYLength) / rowContainer.getVerticalScrollLength();
-              //
-              //      args.y = { percentage: scrollYPercentage, pixels: scrollYLength };
-              //    }
-              //
-              //    if (scrollXLength !== 0) {
-              //      var scrollXPercentage = (containerCtrl.viewport[0].scrollLeft + scrollXLength) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
-              //      args.x = { percentage: scrollXPercentage, pixels: scrollXLength };
-              //    }
-              //
-              //    uiGridCtrl.fireScrollingEvent(args);
-              //
-              //    decelerateCount = decelerateCount -1;
-              //    scrollYLength = scrollYLength / 2;
-              //    scrollXLength = scrollXLength / 2;
-              //
-              //    if (decelerateCount > 0) {
-              //      decelerate();
-              //    }
-              //    else {
-              //      uiGridCtrl.scrollbars.forEach(function (sbar) {
-              //        sbar.removeClass('ui-grid-scrollbar-visible');
-              //        sbar.removeClass('ui-grid-scrolling');
-              //      });
-              //    }
-              //  }, decelerateInterval);
-              //}
-
-              // decelerate();
-            }
-
-            if (gridUtil.isTouchEnabled()) {
-              $elm.bind('touchstart', function (event) {
-                if (event.originalEvent) {
-                  event = event.originalEvent;
-                }
-
-                //uiGridCtrl.scrollbars.forEach(function (sbar) {
-                //  sbar.addClass('ui-grid-scrollbar-visible');
-                //  sbar.addClass('ui-grid-scrolling');
-                //});
-
-                moveStart = new Date();
-                startY = event.targetTouches[0].screenY;
-                startX = event.targetTouches[0].screenX;
-                scrollTopStart = containerCtrl.viewport[0].scrollTop;
-                scrollLeftStart = containerCtrl.viewport[0].scrollLeft;
-                
-                $document.on('touchmove', touchmove);
-                $document.on('touchend touchcancel', touchend);
-              });
-            }
 
             $elm.bind('$destroy', function() {
               $elm.unbind('keydown');
