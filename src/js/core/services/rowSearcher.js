@@ -134,7 +134,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
           newFilter.condition = rowSearcher.guessCondition(filter);
         }
 
-        newFilter.flags = angular.extend( { caseSensitive: false }, filter.flags );
+        newFilter.flags = angular.extend( { caseSensitive: false, date: false }, filter.flags );
 
         if (newFilter.condition === uiGridConstants.filter.STARTS_WITH) {
           newFilter.startswithRE = new RegExp('^' + newFilter.term, regexpFlags);
@@ -219,6 +219,12 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (!isNaN(tempFloat)) {
         term = tempFloat;
       }
+    }
+
+    if (filter.flags.date === true) {
+      value = new Date(value);
+      // If the term has a dash in it, it comes through as '\-' -- we need to take out the '\'.
+      term = new Date(term.replace(/\\/g, ''));
     }
 
     if (filter.condition === uiGridConstants.filter.GREATER_THAN) {
