@@ -359,14 +359,14 @@
          * @returns {object} the selection state ready to be saved
          */
         saveSelection: function( grid ){
-          if ( !grid.api.selection ){
+          if ( !grid.api.selection || !grid.options.saveSelection ){
             return {};
           }
-          
+
           var selection = grid.api.selection.getSelectedGridRows().map( function( gridRow ) {
             return service.getRowVal( grid, gridRow );
           });
-          
+
           return selection;
         },
         
