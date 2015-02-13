@@ -1522,6 +1522,64 @@ angular.module('ui.grid')
     return min;
   };
 
+  Grid.prototype.isSectionVisible = function isSectionVisible(section) {
+    var self = this;
+    if (section.subSections) {
+      // check if at least one subsection visible
+      for (var si = 0, sl = section.subSections.length; si < sl; ++si) {
+        if (self.isSectionVisible(section.subSections[si])) {
+          return true;
+        }
+      }
+      return false;
+    } else if (section.columns) {
+      for (var ci = 0, cl = section.columns.length; ci < cl; ++ci) {
+        var c = self.getColumn(section.columns[ci]);
+        if (c && c.visible !== false) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      // a section with no subsections or columns is unexpected
+      return false;
+    }
+  };
+
+  Grid.prototype.getSectionWidth = function getSectionWidth(section) {
+    var self = this;
+    if (section.subSections) {
+      return section.subSections
+        .map(function(subSection) {
+          // recurse for subsections
+          return self.getSectionWidth(subSection);
+        })
+        .reduceRight(function(a, b) {
+          // use reduce to get sum of all subsections
+          return a + b;
+        });
+    } else if (section.columns) {
+      return section.columns
+        .map(function(columnName) {
+
+          // get drawn width of column from its definition object
+          var c = self.getColumn(columnName), colWidth = 0;
+          if (c && c.visible) {
+            colWidth = c.drawnWidth;
+          }
+
+          return colWidth;
+        })
+        .reduceRight(function(a, b) {
+          // use reduce to get sum of all column widths
+          return a + b;
+        });
+    } else {
+      // a section with no subsections or columns is unexpected
+      return 0;
+    }
+  };
+
   Grid.prototype.getBodyHeight = function getBodyHeight() {
     // Start with the viewportHeight
     var bodyHeight = this.getViewportHeight();

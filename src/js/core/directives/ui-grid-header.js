@@ -3,6 +3,7 @@
 
   angular.module('ui.grid').directive('uiGridHeader', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function($templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
     var defaultTemplate = 'ui-grid/ui-grid-header';
+    var sectionHeaderTemplate = 'ui-grid/ui-grid-section-header';
     var emptyTemplate = 'ui-grid/ui-grid-no-header';
 
     return {
@@ -25,19 +26,25 @@
 
             containerCtrl.header = $elm;
             containerCtrl.colContainer.header = $elm;
-            
+
             var headerTemplate;
             if (!$scope.grid.options.showHeader) {
               headerTemplate = emptyTemplate;
             }
+            else if ($scope.grid.options.headerTemplate) {
+              headerTemplate = $scope.grid.options.headerTemplate;
+            }
+            else if ($scope.grid.options.sectionHeaders) {
+              headerTemplate = sectionHeaderTemplate;
+            }
             else {
-              headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;            
+              headerTemplate = defaultTemplate;
             }
 
              gridUtil.getTemplate(headerTemplate)
               .then(function (contents) {
                 var template = angular.element(contents);
-                
+
                 var newElm = $compile(template)($scope);
                 $elm.replaceWith(newElm);
 
@@ -88,12 +95,12 @@
                   oneAsterisk = 0,
                   leftoverWidth = availableWidth,
                   hasVariableWidth = false;
-              
+
               var getColWidth = function(column){
-                if (column.widthType === "manual"){ 
-                  return +column.width; 
+                if (column.widthType === "manual"){
+                  return +column.width;
                 }
-                else if (column.widthType === "percent"){ 
+                else if (column.widthType === "percent"){
                   return parseInt(column.width.replace(/%/g, ''), 10) * availableWidth / 100;
                 }
                 else if (column.widthType === "auto"){
@@ -102,10 +109,10 @@
                   if (oneAsterisk === 0) {
                     oneAsterisk = parseInt(leftoverWidth / asteriskNum, 10);
                   }
-                  return column.width.length * oneAsterisk; 
+                  return column.width.length * oneAsterisk;
                 }
               };
-              
+
               // Populate / determine column width types:
               columnCache.forEach(function(column){
                 column.widthType = null;
@@ -122,12 +129,12 @@
                   hasVariableWidth = true;
                 }
               });
-              
+
               // For sorting, calculate width from first to last:
               var colWidthPriority = ["manual", "percent", "auto"];
               columnCache.filter(function(column){
                 // Only draw visible items with a widthType
-                return (column.visible && column.widthType); 
+                return (column.visible && column.widthType);
               }).sort(function(a,b){
                 // Calculate widths in order, so that manual comes first, etc.
                 return colWidthPriority.indexOf(a.widthType) - colWidthPriority.indexOf(b.widthType);
@@ -186,9 +193,9 @@
               // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
               return ret;
             }
-            
+
             containerCtrl.header = $elm;
-            
+
             var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
             if (headerViewport) {
               containerCtrl.headerViewport = headerViewport;
