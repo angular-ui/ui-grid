@@ -72,7 +72,7 @@
 
             function updateColumnWidths() {
               // Get the width of the viewport
-              var availableWidth = containerCtrl.colContainer.getViewportWidth();
+              var availableWidth = containerCtrl.colContainer.getViewportWidth() - grid.scrollbarWidth;
 
               //if (typeof(uiGridCtrl.grid.verticalScrollbarWidth) !== 'undefined' && uiGridCtrl.grid.verticalScrollbarWidth !== undefined && uiGridCtrl.grid.verticalScrollbarWidth > 0) {
               //  availableWidth = availableWidth + uiGridCtrl.grid.verticalScrollbarWidth;

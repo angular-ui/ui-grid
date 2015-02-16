@@ -16,6 +16,22 @@
   }
 }
 
+// Add a visual border for final column's resizer element
+.ui-grid-header-cell:last-child .ui-grid-column-resizer.right {
+  border-right: @gridBorderWidth solid @borderColor;
+}
+
+// Put visual border on left of last header cell when direction is rtl
+.ui-grid[dir=rtl]  .ui-grid-header-cell:last-child {
+  .ui-grid-column-resizer.right {
+    border-right: 0;
+  }
+
+  .ui-grid-column-resizer.left {
+    border-left: @gridBorderWidth solid @borderColor;
+  }
+}
+
 .ui-grid {
   &.column-resizing {
     cursor: col-resize;

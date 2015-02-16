@@ -545,7 +545,7 @@ angular.module('ui.grid')
         totalWidth = 0;
 
     // Get the width of the viewport
-    var availableWidth = self.getViewportWidth();
+    var availableWidth = self.getViewportWidth() - self.grid.scrollbarWidth;
 
     //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
     //  availableWidth = availableWidth + self.grid.verticalScrollbarWidth;

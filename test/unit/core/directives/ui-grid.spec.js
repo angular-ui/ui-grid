@@ -118,7 +118,7 @@ describe('ui-grid', function() {
         renderWidth += c.drawnWidth;
       });
 
-      expect(renderWidth).toBe(gridApi.grid.gridWidth);
+      expect(renderWidth).toBe(gridApi.grid.getViewportWidth() - gridApi.grid.scrollbarWidth);
     });
   });
 

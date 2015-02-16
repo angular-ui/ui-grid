@@ -55,6 +55,10 @@
   border-right: @gridBorderWidth solid;
   border-color: @headerVerticalBarColor;
 
+  &:last-child {
+    border-right: 0;
+  }
+
   .user-select(none);
 
   // Default to width 0 so header height can calculate right. Otherwise
