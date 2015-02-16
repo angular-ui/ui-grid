@@ -1882,12 +1882,24 @@ angular.module('ui.grid')
           continue;
         }
 
-        if (container.header) {
+        if (container.header || container.headerCanvas) {
           containerHeadersToRecalc.push(container);
         }
       }
     }
 
+    /*
+     *
+     * Here we loop through the headers, measuring each element as well as any header "canvas" it has within it.
+     *
+     * If any header is less than the largest header height, it will be resized to that so that we don't have headers
+     * with different heights, which looks like a rendering problem
+     *
+     * We'll do the same thing with the header canvases, and give the header CELLS an explicit height if their canvas
+     * is smaller than the largest canvas height. That was header cells without extra controls like filtering don't
+     * appear shorter than other cells.
+     *
+     */
     if (containerHeadersToRecalc.length > 0) {
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
       $timeout(function() {
@@ -1897,7 +1909,8 @@ angular.module('ui.grid')
         var rebuildStyles = false;
 
         // Get all the header heights
-        var maxHeight = 0;
+        var maxHeaderHeight = 0;
+        var maxHeaderCanvasHeight = 0;
         var i, container;
         for (i = 0; i < containerHeadersToRecalc.length; i++) {
           container = containerHeadersToRecalc[i];
@@ -1927,8 +1940,24 @@ angular.module('ui.grid')
             container.innerHeaderHeight = innerHeaderHeight;
 
             // Save the largest header height for use later
-            if (innerHeaderHeight > maxHeight) {
-              maxHeight = innerHeaderHeight;
+            if (innerHeaderHeight > maxHeaderHeight) {
+              maxHeaderHeight = innerHeaderHeight;
+            }
+          }
+
+          if (container.headerCanvas) {
+            var oldHeaderCanvasHeight = container.headerCanvasHeight;
+            var headerCanvasHeight = gridUtil.outerElementHeight(container.headerCanvas);
+
+            container.headerCanvasHeight = parseInt(headerCanvasHeight, 10);
+
+            if (oldHeaderCanvasHeight !== headerCanvasHeight) {
+              rebuildStyles = true;
+            }
+
+            // Save the largest header canvas height for use later
+            if (headerCanvasHeight > maxHeaderCanvasHeight) {
+              maxHeaderCanvasHeight = headerCanvasHeight;
             }
           }
         }
@@ -1938,8 +1967,12 @@ angular.module('ui.grid')
           container = containerHeadersToRecalc[i];
 
           // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
-          if (container.headerHeight < maxHeight) {
-            container.explicitHeaderHeight = maxHeight;
+          if (container.headerHeight < maxHeaderHeight) {
+            container.explicitHeaderHeight = maxHeaderHeight;
+          }
+
+          if (container.headerCanvasHeight < maxHeaderCanvasHeight) {
+            container.explicitHeaderCanvasHeight = maxHeaderCanvasHeight;
           }
         }
 

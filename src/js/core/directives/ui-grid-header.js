@@ -21,10 +21,7 @@
             $scope.grid = uiGridCtrl.grid;
             $scope.colContainer = containerCtrl.colContainer;
 
-
-
-            containerCtrl.header = $elm;
-            containerCtrl.colContainer.header = $elm;
+            updateHeaderReferences();
             
             var headerTemplate;
             if (!$scope.grid.options.showHeader) {
@@ -34,19 +31,17 @@
               headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;            
             }
 
-             gridUtil.getTemplate(headerTemplate)
+            gridUtil.getTemplate(headerTemplate)
               .then(function (contents) {
                 var template = angular.element(contents);
                 
                 var newElm = $compile(template)($scope);
                 $elm.replaceWith(newElm);
 
-                // Replace the reference to the container's header element with this new element
-                containerCtrl.header = newElm;
-                containerCtrl.colContainer.header = newElm;
-
                 // And update $elm to be the new element
                 $elm = newElm;
+
+                updateHeaderReferences();
 
                 if (containerCtrl) {
                   // Inject a reference to the header viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
@@ -57,6 +52,19 @@
                   }
                 }
               });
+
+            function updateHeaderReferences() {
+              containerCtrl.header = containerCtrl.colContainer.header = $elm;
+
+              var headerCanvases = $elm[0].getElementsByClassName('ui-grid-header-canvas');
+
+              if (headerCanvases.length > 0) {
+                containerCtrl.headerCanvas = containerCtrl.colContainer.headerCanvas = headerCanvases[0];
+              }
+              else {
+                containerCtrl.headerCanvas = null;
+              }
+            }
           },
 
           post: function ($scope, $elm, $attrs, controllers) {

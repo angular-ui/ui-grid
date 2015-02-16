@@ -197,12 +197,12 @@
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-viewport { width: ' + footerViewportWidth + 'px; }';
 
               // If the render container has an "explicit" header height (such as in the case that its header is smaller than the other headers and needs to be explicitly set to be the same, ue thae)
-              if (renderContainer.explicitHeaderHeight !== undefined && renderContainer.explicitHeaderHeight !== null && renderContainer.explicitHeaderHeight > 0) {
-                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-cell { height: ' + renderContainer.explicitHeaderHeight + 'px; }';
+              if (renderContainer.explicitHeaderCanvasHeight !== undefined && renderContainer.explicitHeaderCanvasHeight !== null && renderContainer.explicitHeaderCanvasHeight > 0) {
+                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-cell { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
               }
-              // Otherwise if the render container has an INNER header height, use that on the header cells (so that all the header cells are the same height and those that have less elements don't have undersized borders)
-              else if (renderContainer.innerHeaderHeight !== undefined && renderContainer.innerHeaderHeight !== null && renderContainer.innerHeaderHeight > 0) {
-                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-cell { height: ' + renderContainer.innerHeaderHeight + 'px; }';
+              // // Otherwise if the render container has an INNER header height, use that on the header cells (so that all the header cells are the same height and those that have less elements don't have undersized borders)
+              else if (renderContainer.headerCanvasHeight !== undefined && renderContainer.headerCanvasHeight !== null && renderContainer.headerCanvasHeight > 0) {
+                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-cell { height: ' + renderContainer.headerCanvasHeight + 'px; }';
               }
 
               return ret;
