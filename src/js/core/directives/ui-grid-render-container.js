@@ -244,7 +244,7 @@
           styles['margin-right'] = $scope.colContainer.columnOffset + 'px';
         }
         else {
-          styles['margin-left'] = $scope.colContainer.columnOffset + 'px';del
+          styles['margin-left'] = $scope.colContainer.columnOffset + 'px';
         }
       }
 
