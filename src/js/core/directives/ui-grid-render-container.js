@@ -135,7 +135,7 @@
                 scrollEvent.y = { percentage: scrollYPercentage, pixels: scrollYAmount };
               }
               if (event.deltaX !== 0) {
-                var scrollXAmount = event.deltaX * -1 * event.deltaFactor;
+                var scrollXAmount = event.deltaX * event.deltaFactor;
 
                 // Get the scroll percentage
                 var scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
@@ -244,7 +244,7 @@
           styles['margin-right'] = $scope.colContainer.columnOffset + 'px';
         }
         else {
-          styles['margin-left'] = $scope.colContainer.columnOffset + 'px';
+          styles['margin-left'] = $scope.colContainer.columnOffset + 'px';del
         }
       }
 
