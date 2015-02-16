@@ -55,7 +55,7 @@ eightChanged event to api.core
 * getExternalScopes() function is removed.  Use grid.appScope instead.
   external-scopes attribute is removed.  Use gridOptions.appScopeProvider to assign values other than $scope.$parent to appScope
 
-*removed scope parameter from grid.api.cellNav methods
+* removed scope parameter from grid.api.cellNav methods
   old:
      scrollTo($scope, rowEntity, colDef)
  	  scrollToFocus($scope, rowEntity, colDef)
@@ -64,15 +64,12 @@ eightChanged event to api.core
      scrollTo(rowEntity, colDef)
  	  scrollToFocus(rowEntity, colDef)
  	  scrollToIfNecessary(row, col
-
-*  scrollbars.WHEN_NEEDED no longer an option
-
+* scrollbars.WHEN_NEEDED no longer an option
 * showFooter option renamed to showColumnFooter;  footerRowHeight option renamed to columnFooterHeight
  ([d0233601](http://github.com/angular-ui/ng-grid/commit/d0233601a67a445049a710fe84dacdb0b64c1c33))
 * On mobile devices the user will have to long-click to
 edit a cell instead of double-clicking
  ([654e0ce8](http://github.com/angular-ui/ng-grid/commit/654e0ce83f1ebd824341ab3d63b6d38495a67b80))
-
 * **rowEdit:** * remove grid from all method signatures
 * **importer:** * remove grid from importFile signature
 * **core:** * remove grid from notifyDataChange signature
