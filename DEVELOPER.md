@@ -397,6 +397,10 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
 
 1. Use snake-case for class names, not camelCase.
 
+# Tests
+
+* **Note:** Safari 5 does not allow creating dates from strings where the delimiter is a dash, i.e. `new Date('2015-5-23')` will fail. This will cause your tests to work on all browsers but bomb on Safari 5 and you will have a hard time discovering why. Instead, use slashes like so: `new Date('2015/5/23')`.
+
 # Performing a release
 
 Run these grunt tasks. Look at the grunt-bump module for how to specify a major/minor/patch/pre-release version. This series will bump the version in package.json, update the changelog for that version, then commit the changes and add a new git tag for the version.
