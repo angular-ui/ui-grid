@@ -45,15 +45,25 @@
   // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
 }
 
+.ui-grid-footer-cell-wrapper {
+  position: relative;
+  display: table;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ui-grid-footer-cell-row {
+  display: table-row;
+}
+
 .ui-grid-footer-cell {
   overflow: hidden;
-  // position: absolute;
   // position: relative; // NOTE: removing so border is visible
-  float: left;
   background-color: inherit;
   border-right: @gridBorderWidth solid;
   border-color: @borderColor;
   box-sizing: border-box;
+  display: table-cell;
 
   &:last-child {
     border-right: 0;

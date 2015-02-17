@@ -585,7 +585,7 @@ angular.module('ui.grid')
    * @description Returns the class definition for th column
    */
   GridColumn.prototype.getColClassDefinition = function () {
-    return ' .grid' + this.grid.id + ' ' + this.getColClass(true) + ' { width: ' + this.drawnWidth + 'px; }';
+    return ' .grid' + this.grid.id + ' ' + this.getColClass(true) + ' { min-width: ' + this.drawnWidth + 'px; max-width: ' + this.drawnWidth + 'px; }';
   };
 
   /**
