@@ -400,7 +400,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         var asterisksArray = [],
             percentArray = [],
             asteriskNum = 0,
-            totalWidth = 0;
+            totalWidth = 0,
             remainingWidth = 0;
 
         // When rearranging columns, their index in $scope.columns will no longer match the original column order from columnDefs causing
