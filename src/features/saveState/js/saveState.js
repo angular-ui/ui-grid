@@ -484,9 +484,9 @@
 
           if ( colDef || entity ) {          
             if (scrollFocusState.focus ){
-              grid.api.cellNav.scrollToFocus( $scope, entity, colDef );
+              grid.api.cellNav.scrollToFocus( entity, colDef );
             } else {
-              grid.api.cellNav.scrollTo( $scope, entity, colDef );
+              grid.api.cellNav.scrollTo( entity, colDef );
             }
           }
         },

@@ -334,7 +334,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, rowVal: { identity: false, row: 2 } } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, grid.rows[3].entity, undefined );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[3].entity, undefined );
     });
 
     it('restores focus row only, with identity function', function() {
@@ -350,7 +350,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, rowVal: { identity: true, row: 'a_3' } } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, grid.rows[3].entity, undefined );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[3].entity, undefined );
     });
 
     it('restores focus col only, without identity function', function() {
@@ -361,7 +361,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, colName: 'col2' } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, null, grid.options.columnDefs[1] );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( null, grid.options.columnDefs[1] );
     });
 
     it('restores focus col only, with identity function', function() {
@@ -377,7 +377,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, colName: 'col2' } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, null, grid.options.columnDefs[1] );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( null, grid.options.columnDefs[1] );
     });
 
     it('restores focus col and row, without identity function', function() {
@@ -388,7 +388,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, colName: 'col2', rowVal: { identity: false, row: 2 } } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, grid.rows[3].entity, grid.options.columnDefs[1] );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[3].entity, grid.options.columnDefs[1] );
     });
 
     it('restores focus col and row, with identity function', function() {
@@ -404,7 +404,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreScrollFocus( grid, $scope, { focus: true, colName: 'col2', rowVal: { identity: true, row: 'a_3' } } );
       
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, grid.rows[3].entity, grid.options.columnDefs[1] );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[3].entity, grid.options.columnDefs[1] );
     });
 
   });
@@ -532,7 +532,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       
       expect( grid.api.selection.getSelectedGridRows() ).toEqual( [ grid.rows[0], grid.rows[3] ] );
       expect( grid.api.cellNav.scrollTo ).not.toHaveBeenCalled();
-      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( $scope, grid.rows[2].entity, grid.options.columnDefs[3] );
+      expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[2].entity, grid.options.columnDefs[3] );
     });
   }); 
 });
