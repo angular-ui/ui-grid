@@ -518,10 +518,10 @@ angular.module('ui.grid')
     return styles;
   };
 
-  GridRenderContainer.prototype.columnStyle = function (index) {
+  GridRenderContainer.prototype.headerCellWrapperStyle = function () {
     var self = this;
     
-    if (index === 0 && self.currentFirstColumn !== 0) {
+    if (self.currentFirstColumn !== 0) {
       var offset = self.columnOffset;
 
       if (self.grid.isRTL()) {

@@ -29,7 +29,6 @@
 }
 
 .ui-grid-header-canvas {
-  position: relative;
 
   // Clearfix for floating header cells
   &:before, &:after {
@@ -45,15 +44,24 @@
   // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
 }
 
+.ui-grid-header-cell-wrapper {
+  position: relative;
+  display: table;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ui-grid-header-cell-row {
+  display: table-row;
+}
+
 .ui-grid-header-cell {
   position: relative;
   box-sizing: border-box;
-  float: left;
-  top: 0;
-  bottom: 0;
   background-color: inherit;
   border-right: @gridBorderWidth solid;
   border-color: @headerVerticalBarColor;
+  display: table-cell;
 
   &:last-child {
     border-right: 0;
