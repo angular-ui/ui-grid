@@ -287,7 +287,7 @@
                         movingElm.css(movingElementStyles);
                       };
 
-                      var moveElement = function (changeValue) {
+                      var moveElement = function (changeValue, cursorLocation) {
                         //Hide column menu
                         uiGridCtrl.fireEvent('hide-menu');
 
@@ -303,13 +303,9 @@
                         //Calculate new position of left of column
                         var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
                         var currentElmRight = movingElm[0].getBoundingClientRect().right;
-                        var newElementLeft;
-                        if (gridUtil.detectBrowser() === 'ie') {
-                          newElementLeft = currentElmLeft + changeValue;
-                        }
-                        else {
-                          newElementLeft = currentElmLeft - gridLeft + changeValue;
-                        }
+                        //keeps the cloned element's center on the cursor's x position unless past boundaries
+                        var currentElmRadius = (currentElmRight-currentElmLeft)/2;
+                        var newElementLeft = cursorLocation - currentElmRadius;
                         newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
 
                         //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
@@ -359,7 +355,7 @@
                           cloneElement();
                         }
                         else if (elmCloned) {
-                          moveElement(changeValue);
+                          moveElement(changeValue, evt.pageX);
                           previousMouseX = evt.pageX;
                         }
                       };
