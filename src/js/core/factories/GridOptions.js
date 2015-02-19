@@ -402,7 +402,18 @@ angular.module('ui.grid')
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
       baseOptions.menuTemplate = baseOptions.menuTemplate || null;
-  
+    
+      /**
+       * @ngdoc string
+       * @name menuItemTemplate
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) Null by default. When provided, this setting uses a custom grid menu item
+       * template. Can be set to either the name of a template file 'menuItem_template.html', inline html
+       * <pre>'<li class="ui-grid-menu-item"><label>{{name}}</label></li>'</pre>, or the id
+       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
+       */
+      baseOptions.menuItemTemplate = baseOptions.menuItemTemplate || null;
+   
       /**
        * @ngdoc string
        * @name rowTemplate
