@@ -1967,11 +1967,11 @@ angular.module('ui.grid')
           container = containerHeadersToRecalc[i];
 
           // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
-          if (container.headerHeight < maxHeaderHeight) {
+          if (maxHeaderHeight > 0 && typeof(container.headerHeight) !== 'undefined' && container.headerHeight !== null && container.headerHeight < maxHeaderHeight) {
             container.explicitHeaderHeight = maxHeaderHeight;
           }
 
-          if (container.headerCanvasHeight < maxHeaderCanvasHeight) {
+          if (typeof(container.headerCanvasHeight) !== 'undefined' && container.headerCanvasHeight !== null && maxHeaderCanvasHeight > 0 && container.headerCanvasHeight < maxHeaderCanvasHeight) {
             container.explicitHeaderCanvasHeight = maxHeaderCanvasHeight;
           }
         }
