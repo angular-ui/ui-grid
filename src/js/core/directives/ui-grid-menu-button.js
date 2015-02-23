@@ -195,6 +195,12 @@ angular.module('ui.grid')
       if ( $scope.grid.options.gridMenuShowHideColumns !== false ){
         menuItems = menuItems.concat( service.showHideColumns( $scope ) );
       }
+
+      if ( $scope.grid.options.menuItemTemplate ) {
+          menuItems.forEach(function (menuItem) {
+              menuItem.templateUrl = $scope.grid.options.menuItemTemplate;
+          });
+      }
       
       return menuItems;
     },
