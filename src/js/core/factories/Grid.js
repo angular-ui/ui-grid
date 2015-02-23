@@ -1809,11 +1809,9 @@ angular.module('ui.grid')
    * @name refresh
    * @methodOf ui.grid.class:Grid
    * @description Refresh the rendered grid on screen.
-   * 
+   * @params {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed.
    */
-  Grid.prototype.refresh = function refresh() {
-    // gridUtil.logDebug('grid refresh');
-    
+  Grid.prototype.refresh = function refresh(rowsAltered) {
     var self = this;
     
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
@@ -1825,11 +1823,11 @@ angular.module('ui.grid')
     });
 
     return $q.all([p1, p2]).then(function () {
-      self.redrawInPlace();
+      self.redrawInPlace(rowsAltered);
 
       self.refreshCanvas(true);
     });
-  };  
+  };
   
   /**
    * @ngdoc function
