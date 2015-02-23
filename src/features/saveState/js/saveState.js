@@ -419,7 +419,8 @@
               var currentIndex = grid.columns.indexOf( currentCol[0] );
               
               if ( grid.columns[currentIndex].visible !== columnState.visible ||
-                   grid.columns[currentIndex].colDef.visible !== columnState.visible ){
+                   !( grid.columns[currentIndex].colDef.visible === undefined) &&
+                    grid.columns[currentIndex].colDef.visible !== columnState.visible ){
                 grid.columns[currentIndex].visible = columnState.visible;
                 grid.columns[currentIndex].colDef.visible = columnState.visible;
                 grid.api.core.raise.columnVisibilityChanged( grid.columns[currentIndex]);
