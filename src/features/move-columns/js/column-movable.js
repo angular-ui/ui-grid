@@ -40,7 +40,7 @@
              * @eventOf  ui.grid.moveColumns.api:PublicApi
              * @description raised when column is moved
              * <pre>
-             *      gridApi.colMovable.on.columnPositionChanged(scope,function(colDef, originalPosition, newPosition){})
+             *      gridApi.colMovable.on.columnPositionChanged(scope,function(colDef, originalPosition, newPosition) {})
              * </pre>
              * @param {object} colDef the column that was moved
              * @param {integer} originalPosition of the column
@@ -396,14 +396,14 @@
                           var visibleColumnIndex = 0;
                           var visibleColumnsCount = 0;
 
-                          if(isColumnDropped){
+                          if (isColumnDropped) {
                             $elm.parent().find('div.new_position_left').removeClass('new_position_left');
                             $elm.parent().find('div.new_position_right').removeClass('new_position_right');
                           }
 
-                          for (var il = 0; il < columns.length; il++) {
-                            if (angular.isUndefined(columns[il].colDef.visible) || columns[il].colDef.visible === true) {
-                              visibleColumnsCount++
+                          for (var j = 0; j < columns.length; j++) {
+                            if (angular.isUndefined(columns[j].colDef.visible) || columns[j].colDef.visible === true) {
+                              visibleColumnsCount++;
                             }
                           }
 
@@ -415,9 +415,9 @@
                               }
                             }
                             else {
-                              if(isColumnDropped){
+                              if (isColumnDropped) {
                                 $elm.parent().find('div.ui-grid-header-cell').eq(visibleColumnIndex).removeClass('old_position');
-                              } else{
+                              } else {
                                 $elm.parent().find('div.ui-grid-header-cell').eq(visibleColumnIndex).addClass('old_position');
                               }
                               break;
@@ -433,10 +433,10 @@
                                 visibleColumnsLeftCount++;
                                 totalColumnsLeftWidth += columns[il].drawnWidth || columns[il].width || columns[il].colDef.width;
                                 if (totalColumnsLeftWidth > Math.abs(totalMouseMovement)) {
-                                  if(isColumnDropped){
+                                  if (isColumnDropped) {
                                     uiGridMoveColumnService.redrawColumnAtPosition
                                     ($scope.grid, columnIndex, il + 1);
-                                  } else{
+                                  } else {
                                     visibleNewIndex = visibleColumnIndex - visibleColumnsLeftCount + 1;
                                   }
                                   break;
@@ -445,10 +445,10 @@
                             }
                             //Case where column should be moved to beginning of the grid.
                             if (totalColumnsLeftWidth < Math.abs(totalMouseMovement)) {
-                              if(isColumnDropped){
+                              if (isColumnDropped) {
                                 uiGridMoveColumnService.redrawColumnAtPosition
                                 ($scope.grid, columnIndex, 0);
-                              } else{
+                              } else {
                                 visibleNewIndex = 0;
                               }
                             }
@@ -463,10 +463,10 @@
                                 visibleColumnsRightCount++;
                                 totalColumnsRightWidth += columns[ir].drawnWidth || columns[ir].width || columns[ir].colDef.width;
                                 if (totalColumnsRightWidth > totalMouseMovement) {
-                                  if(isColumnDropped){
+                                  if (isColumnDropped) {
                                     uiGridMoveColumnService.redrawColumnAtPosition
                                     ($scope.grid, columnIndex, ir - 1);
-                                  } else{
+                                  } else {
                                     visibleNewIndex = visibleColumnIndex + visibleColumnsRightCount - 1;
                                   }
                                   break;
@@ -475,23 +475,22 @@
                             }
                             //Case where column should be moved to end of the grid.
                             if (totalColumnsRightWidth < totalMouseMovement) {
-                              if(isColumnDropped){
+                              if (isColumnDropped) {
                                 uiGridMoveColumnService.redrawColumnAtPosition
                                 ($scope.grid, columnIndex, columns.length - 1);
-                              } else{
+                              } else {
                                 visibleNewIndex = visibleColumnsCount - 1;
                               }
-
                             }
                           }
-                          if(isColumnDropped == false && visibleNewIndex !== null && visibleSavedIndex !== visibleNewIndex){
+                          if (isColumnDropped === false && visibleNewIndex !== null && visibleSavedIndex !== visibleNewIndex) {
                             $elm.parent().find('div.new_position_left').removeClass('new_position_left');
                             $elm.parent().find('div.new_position_right').removeClass('new_position_right');
-                            if(visibleColumnIndex !== visibleNewIndex){
-                              if(totalMouseMovement < 0){
+                            if (visibleColumnIndex !== visibleNewIndex) {
+                              if (totalMouseMovement < 0) {
                                 $elm.parent().find('div.ui-grid-header-cell').eq(visibleNewIndex).addClass('new_position_left');
                               }
-                              else if(totalMouseMovement > 0){
+                              else if (totalMouseMovement > 0) {
                                 $elm.parent().find('div.ui-grid-header-cell').eq(visibleNewIndex).addClass('new_position_right');
                               }
                             }
