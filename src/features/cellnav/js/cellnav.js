@@ -19,7 +19,8 @@
     direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3, PG_UP: 4, PG_DOWN: 5},
     EVENT_TYPE: {
       KEYDOWN: 0,
-      CLICK: 1
+      CLICK: 1,
+      CLEAR: 2
     }
   });
 
@@ -108,6 +109,10 @@
 
         //get column to left
         if (nextColIndex > curColIndex) {
+          // On the first row
+          // if (curRowIndex === 0 && curColIndex === 0) {
+          //   return null;
+          // }
           if (curRowIndex === 0) {
             return new RowCol(curRow, focusableCols[nextColIndex]); //return same row
           }
@@ -800,8 +805,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants) {
       return {
         replace: true,
         priority: -150,
@@ -827,6 +832,10 @@
                 modifierDown = !(modifierDown === undefined || !modifierDown);
                 uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown);
                 _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol, modifierDown);
+              };
+
+              uiGridCtrl.cellNav.clearFocus = grid.cellNav.clearFocus = function () {
+                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, { eventType: uiGridCellNavConstants.EVENT_TYPE.CLEAR });
               };
 
               uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown) {
@@ -869,6 +878,30 @@
                 if (lastRowCol) {
                   // Figure out which new row+combo we're navigating to
                   var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+
+                  // Shift+tab on top-left cell should exit cellnav on render container
+                  if (
+                    // Navigating left
+                    direction === uiGridCellNavConstants.direction.LEFT &&
+                    // Trying to stay on same row
+                    rowCol.row === lastRowCol.row &&
+                    evt.keyCode === uiGridConstants.keymap.TAB &&
+                    evt.shiftKey
+                  ) {
+                    uiGridCtrl.cellNav.clearFocus();
+                    return true;
+                  }
+                  // Tab on bottom-right cell should exit cellnav on render container
+                  else if (
+                    direction === uiGridCellNavConstants.direction.RIGHT &&
+                    rowCol.row === lastRowCol.row &&
+                    evt.keyCode === uiGridConstants.keymap.TAB &&
+                    !evt.shiftKey
+                  ) {
+                    uiGridCtrl.cellNav.clearFocus();
+                    return true;
+                  }
+
 
                   rowCol.eventType = uiGridCellNavConstants.EVENT_TYPE.KEYDOWN;
 
@@ -1045,8 +1078,18 @@
             evt.stopPropagation();
           });
 
+          $elm.find('div').on('focus', function (evt) {
+            console.log('cellNav focus');
+            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
+          });
+
           // This event is fired for all cells.  If the cell matches, then focus is set
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol, modifierDown) {
+            if (evt.eventType === uiGridCellNavConstants.EVENT_TYPE.CLEAR) {
+              clearFocus();
+              return;
+            }
+
             if (rowCol.row === $scope.row &&
               rowCol.col === $scope.col) {
               if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown &&
@@ -1058,6 +1101,7 @@
 
               // This cellNav event came from a keydown event so we can safely refocus
               if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
+                console.log('focus from navEvent');
                 $elm.find('div')[0].focus();
               }
             }
@@ -1067,7 +1111,7 @@
           });
 
           function setTabEnabled() {
-            $elm.find('div').attr("tabindex", -1);
+            $elm.find('div').attr("tabindex", 0);
           }
 
           function setFocused() {

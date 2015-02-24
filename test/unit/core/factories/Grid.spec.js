@@ -396,6 +396,38 @@ describe('Grid factory', function () {
       expect(grid1.columns[4].name).toEqual('5');
       expect(grid1.columns[5].name).toEqual('5.5');      
     });
+
+    describe('when adding the same field multiple times', function () {
+      var grid;
+
+      beforeEach(function () {
+        grid = new Grid({ id: 1 });
+        grid.options.columnDefs = [{ field: 'a' }];
+        grid.buildColumns();
+      });
+
+      it('should not throw an exception', function () {
+        expect(function () {
+          for (var i = 1; i<=4; i++) {
+            grid.options.columnDefs.push({ field: 'a' });
+            grid.buildColumns();
+          }
+        }).not.toThrow();
+      });
+
+      it('should create incremental displayNames', function () {
+        for (var i = 1; i<=4; i++) {
+          grid.options.columnDefs.push({ field: 'a' });
+        }
+        grid.buildColumns();
+
+        expect(grid.columns[0].displayName).toEqual('A');
+        expect(grid.columns[1].displayName).toEqual('A2');
+        expect(grid.columns[2].displayName).toEqual('A3');
+        expect(grid.columns[3].displayName).toEqual('A4');
+        expect(grid.columns[4].displayName).toEqual('A5');
+      });
+    });
   });
 
   describe('follow source array', function() {
