@@ -242,14 +242,7 @@
                 filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
                   if (n !== o) {
                     uiGridCtrl.grid.api.core.raise.filterChanged();
-                    uiGridCtrl.grid.refresh()
-                      .then(function () {
-                        if (uiGridCtrl.prevScrollArgs && uiGridCtrl.prevScrollArgs.y && uiGridCtrl.prevScrollArgs.y.percentage) {
-                          var scrollEvent = new ScrollEvent(uiGridCtrl.grid,null,null,'uiGridHeaderCell.toggleMenu');
-                          scrollEvent.y.percentage = uiGridCtrl.prevScrollArgs.y.percentage;
-                          scrollEvent.fireScrollingEvent();
-                        }
-                      });
+                    uiGridCtrl.grid.refresh(true);
                   }
                 }));  
               });

@@ -793,8 +793,8 @@ angular.module('ui.grid')
             return 0;
           }
           else {
-            var numA = a.match(nameRE)[1];
-            var numB = b.match(nameRE)[1];
+            var numA = a.displayName.match(nameRE)[1];
+            var numB = b.displayName.match(nameRE)[1];
 
             return parseInt(numA, 10) > parseInt(numB, 10) ? 1 : -1;
           }
@@ -1809,11 +1809,9 @@ angular.module('ui.grid')
    * @name refresh
    * @methodOf ui.grid.class:Grid
    * @description Refresh the rendered grid on screen.
-   * 
+   * @params {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed.
    */
-  Grid.prototype.refresh = function refresh() {
-    // gridUtil.logDebug('grid refresh');
-    
+  Grid.prototype.refresh = function refresh(rowsAltered) {
     var self = this;
     
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
@@ -1825,11 +1823,11 @@ angular.module('ui.grid')
     });
 
     return $q.all([p1, p2]).then(function () {
-      self.redrawInPlace();
+      self.redrawInPlace(rowsAltered);
 
       self.refreshCanvas(true);
     });
-  };  
+  };
   
   /**
    * @ngdoc function
@@ -1967,11 +1965,11 @@ angular.module('ui.grid')
           container = containerHeadersToRecalc[i];
 
           // If this header's height is less than another header's height, then explicitly set it so they're the same and one isn't all offset and weird looking
-          if (container.headerHeight < maxHeaderHeight) {
+          if (maxHeaderHeight > 0 && typeof(container.headerHeight) !== 'undefined' && container.headerHeight !== null && container.headerHeight < maxHeaderHeight) {
             container.explicitHeaderHeight = maxHeaderHeight;
           }
 
-          if (container.headerCanvasHeight < maxHeaderCanvasHeight) {
+          if (typeof(container.headerCanvasHeight) !== 'undefined' && container.headerCanvasHeight !== null && maxHeaderCanvasHeight > 0 && container.headerCanvasHeight < maxHeaderCanvasHeight) {
             container.explicitHeaderCanvasHeight = maxHeaderCanvasHeight;
           }
         }
