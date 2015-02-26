@@ -394,6 +394,16 @@ angular.module('ui.grid')
    
       /**
        * @ngdoc string
+       * @name menuButtonTemplate
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) Null by default. When provided, this setting uses a custom grid menu
+       * template. Can be set to either the name of a template file 'menuButton_template.html', inline html
+       * <pre>'<div class="ui-grid-menu-button" ng-click="customToggleMenu()"><div class="ui-grid-icon-container"><i class="ui-grid-icon=menu">&nbsp;</i></div></div><div ui-grid-menu menu-items="menuItems"></div>'</pre>, or the id
+       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
+       */
+      baseOptions.menuButtonTemplate = baseOptions.menuButtonTemplate || null;
+      /**
+       * @ngdoc string
        * @name menuTemplate
        * @propertyOf ui.grid.class:GridOptions
        * @description (optional) Null by default. When provided, this setting uses a custom grid menu
