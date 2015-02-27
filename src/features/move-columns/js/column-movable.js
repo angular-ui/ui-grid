@@ -274,9 +274,10 @@
                         movingElm = $elm.clone();
                         $elm.parent().append(movingElm);
 
-                        //Left of cloned element should be aligned to original header cell.
+                        $('.ui-grid-header-canvas').addClass('headerColumnsAreMoving');
                         $elm.parent().addClass('columnsMoving');
                         movingElm.addClass('movingColumn');
+                        //Left of cloned element should be aligned to original header cell.
                         var movingElementStyles = {};
                         var elmLeft = $elm[0].getBoundingClientRect().left;
                         movingElementStyles.left = (elmLeft - gridLeft) + 'px';
@@ -384,6 +385,7 @@
 
                         moveColumnPosition(true);
                         $elm.parent().removeClass('columnsMoving');
+                        $('.ui-grid-header-canvas').removeClass('headerColumnsAreMoving');
                         $document.off('mousemove', mouseMoveHandler);
                         $document.off('mouseup', mouseUpHandler);
                       };
