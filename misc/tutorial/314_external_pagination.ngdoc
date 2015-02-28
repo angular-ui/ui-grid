@@ -2,9 +2,20 @@
 @name Tutorial: 314 External Pagination
 @description
 
-When pagination is enabled, the data is displayed in pages that can be browsed using using the built in pagination selector.
+When pagination is enabled, the data is displayed in pages that can be browsed using using the built in 
+pagination selector.
 
-For external pagination, handle the `paginationChanged' to load the page. Set the `gridOptions.totalItems' in the callback.
+For external pagination, implement the `gridApi.pagination.on.paginationChanged` callback function. The callback 
+may contain code to update any pagination state variables your application may utilize, e.g. variables containing 
+the `pageNumber` and `pageSize`. The REST call used to fetch the data from the server should be called from within 
+this callback. The URL of the call should contain query parameters that will allow the server-side code to have 
+sufficient information to be able to retrieve the specific subset of data that the client requires from the 
+entire set.
+
+It should also update the `$scope.gridOptions.totalItems` variable with the total count of rows that exist (but 
+were not all fetched in the REST call mentioned above since they exist in other pages of data).
+
+This will allow ui-grid to calculate the correct number of pages on the client-side.
 
 @example
 This shows combined external pagination and sorting.
