@@ -734,6 +734,18 @@
 
         /**
          * @ngdoc function
+         * @name isIE
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Checks whether current browser is IE and returns it's version if it is
+        */
+        isIE: function () {
+            var myNav = navigator.userAgent.toLowerCase();
+            return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
+        },
+
+
+        /**
+         * @ngdoc function
          * @name downloadFile
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Triggers download of a csv file.  Logic provided
@@ -749,6 +761,27 @@
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
       
+          if (!fileName) {
+            var currentDate = new Date();
+            fileName = "CWS Export - " + currentDate.getFullYear() + (currentDate.getMonth() + 1) +
+                       currentDate.getDate() + currentDate.getHours() +
+                       currentDate.getMinutes() + currentDate.getSeconds() + ".csv";
+          }
+
+          if (this.isIE() < 10) {
+            var frame = D.createElement('iframe');
+            document.body.appendChild(frame);
+        
+            frame.contentWindow.document.open("text/html", "replace");
+            frame.contentWindow.document.write('sep=,\r\n' + csvContent);
+            frame.contentWindow.document.close();
+            frame.contentWindow.focus();
+            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
+        
+            document.body.removeChild(frame);
+            return true;
+          }
+        
           // IE10+
           if (navigator.msSaveBlob) {
             return navigator.msSaveBlob(new Blob(["\ufeff", csvContent], {
