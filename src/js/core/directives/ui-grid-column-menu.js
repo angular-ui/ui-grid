@@ -241,6 +241,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       var positionData = {};
       positionData.left = $columnElement[0].offsetLeft;
       positionData.top = $columnElement[0].offsetTop;
+      positionData.parentLeft = $columnElement[0].offsetParent.offsetLeft;
 
       // Get the grid scrollLeft
       positionData.offset = 0;
@@ -301,7 +302,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         }
       }
       
-      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.width - myWidth + paddingRight;
+      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width - myWidth + paddingRight;
       if (left < positionData.offset){
         left = positionData.offset;
       }
