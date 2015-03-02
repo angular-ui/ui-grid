@@ -760,6 +760,7 @@
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
+          var ieVersion;
       
           if (!fileName) {
             var currentDate = new Date();
@@ -768,7 +769,8 @@
                        currentDate.getMinutes() + currentDate.getSeconds() + ".csv";
           }
 
-          if (this.isIE() < 10) {
+          ieVersion = this.isIE();
+          if (ieVersion && ieVersion < 10) {
             var frame = D.createElement('iframe');
             document.body.appendChild(frame);
         
