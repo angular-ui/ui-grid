@@ -795,9 +795,13 @@
             function registerRowSelectionEvents() {
               if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection) {
                 $elm.addClass('ui-grid-disable-selection');
-                $elm.on('touchstart', touchStart);
-                $elm.on('touchend', touchEnd);
-                $elm.on('click', selectCells);
+
+                if (gridUtil.isTouchEnabled()) {
+                  $elm.on('touchstart', touchStart);
+                  $elm.on('touchend', touchEnd);
+                } else {
+                  $elm.on('click', selectCells);
+                }
 
                 $scope.registered = true;
               }
@@ -807,9 +811,12 @@
               if ($scope.registered){
                 $elm.removeClass('ui-grid-disable-selection');
 
-                $elm.off('touchstart', touchStart);
-                $elm.off('touchend', touchEnd);
-                $elm.off('click', selectCells);
+                if (gridUtil.isTouchEnabled()) {
+                  $elm.off('touchstart', touchStart);
+                  $elm.off('touchend', touchEnd);
+                } else {
+                  $elm.off('click', selectCells);
+                }
 
                 $scope.registered = false;
               }
