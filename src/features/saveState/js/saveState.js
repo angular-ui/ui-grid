@@ -427,8 +427,8 @@
               
               grid.columns[currentIndex].width = columnState.width;
 
-              if ( !angular.equals(grid.columns[currentIndex].sort, columnState.sort && 
-                   !( grid.columns[currentIndex].sort === undefined && angular.isEmpty(columnState.sort) ) ) ){
+              if ( !angular.equals(grid.columns[currentIndex].sort, columnState.sort) &&
+                   !( grid.columns[currentIndex].sort === undefined && angular.isEmpty(columnState.sort) ) ){
                 grid.columns[currentIndex].sort = angular.copy( columnState.sort );
                 grid.api.core.raise.sortChanged();
               }
