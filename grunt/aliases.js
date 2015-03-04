@@ -24,9 +24,7 @@ module.exports = function (grunt, options) {
     'test:ci-e2e': ['clean', 'build', 'connect:testserver', 'protractor:ci']
   };
   
-  var e2e = grunt.option('e2e');
-  
-  if (e2e === false){
+  if (grunt.option('e2e') === false || grunt.option('fast') ){
     grunt.log.writeln("Skipping e2e testing...");
     baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
   } else {
