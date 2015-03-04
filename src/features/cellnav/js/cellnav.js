@@ -1079,7 +1079,6 @@
           });
 
           $elm.find('div').on('focus', function (evt) {
-            console.log('cellNav focus');
             uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
           });
 
@@ -1101,7 +1100,6 @@
 
               // This cellNav event came from a keydown event so we can safely refocus
               if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
-                console.log('focus from navEvent');
                 $elm.find('div')[0].focus();
               }
             }
