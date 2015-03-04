@@ -20,7 +20,7 @@ If no condition is set, UI-Grid will take a best guess based on the contents of 
 If you want to create your own filtering logic, the `condition` field of the `filter` object can also be a function that gets run for each 
 row. Such a function has the following signature:
 
-```Javascript
+```javascript
 function myCustomSorter(searchTerm, cellValue, row, column) {
   // Custom logic that returns true if `row`
   // passes the filter and false if it should
