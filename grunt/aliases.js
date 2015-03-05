@@ -10,7 +10,7 @@ module.exports = function (grunt, options) {
     'default': ['before-test', 'test:single', 'after-test'],
     
     // Build with no testing
-    'build': ['ngtemplates', 'concat', 'uglify', 'newer:fontello', 'less', 'ngdocs', 'copy'],
+    'build': ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy'],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],

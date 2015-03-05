@@ -696,16 +696,14 @@ describe('Grid factory', function () {
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC};
-      column.colDef = { suppressRemoveSort: null };
+      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: null};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC};
-      column.colDef = { suppressRemoveSort: false };
+      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: false};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
@@ -713,7 +711,7 @@ describe('Grid factory', function () {
 
     it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC', function() {
       column.sort = {direction: uiGridConstants.DESC};
-      column.colDef = { suppressRemoveSort: true };
+      column.suppressRemoveSort = true;
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);

@@ -109,13 +109,6 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     },
     
     /**
-     * @ngdoc boolean
-     * @name suppressRemoveSort
-     * @propertyOf ui.grid.class:GridOptions.columnDef
-     * @description (optional) False by default. When enabled, this setting hides the removeSort option
-     * in the menu.
-     */
-    /**
      * @ngdoc method
      * @methodOf ui.grid.service:uiGridColumnMenuService
      * @name suppressRemoveSort
@@ -124,7 +117,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * 
      */  
     suppressRemoveSort: function( $scope ) {
-      if ($scope.col && $scope.col.colDef && $scope.col.colDef.suppressRemoveSort) {
+      if ($scope.col && $scope.col.suppressRemoveSort) {
         return true;
       }
       else {

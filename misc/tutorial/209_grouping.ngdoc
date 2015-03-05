@@ -1,0 +1,111 @@
+@ngdoc overview
+@name Tutorial: 209 Grouping
+@description The grouping feature allows you to group rows together based on similar
+values in specific columns, providing an effect similar in some ways to an Excel pivot table.
+
+Grouping leverages the sort functionality, and has some impacts on sorting.  A column(s) that
+is marked as being grouped is always the first column(s) in the sort list.  The actual sort order,
+and therefore group order, is based on the sorting that has been set for that column, so it can
+leverage custom sort functions and external sorting.
+
+Any grouped column has 'suppressRemoveSort' set, when a column is ungrouped then `suppressRemoveSort`
+is returned to the value in the columnDef.
+
+Optionally (and by default) grouped columns are moved to the front of the grid, which provides a more
+visually pleasing effect.  This isn't done with pinning, so as to not create a dependency on pinning, 
+but by moving the columns themselves. 
+
+Aggregation is permitted on any column that isn't being grouped by, so you can obtain counts, sums,
+max or min for any of the non-grouped columns.
+
+Grouping and aggregation should work cleanly with filtering - it should group and aggregate only the 
+filtered rows.
+
+Grouping is still alpha, and under development, however it is included in the distribution files
+to allow people to start using it.  Notable outstandings are:
+
+- does not permit columns that are based on functions or complex objects.  The groupHeader rows create
+  a fake row.entity, and then set the appropriate fields in that entity.  This doesn't work well with 
+  complex column definitions at present
+- doesn't work well with edit yet.  Edit needs to notice that the row is of type internal, and not 
+  attempt to edit it
+- the adding of menu items has a repetitive smell about it, refactor to be cleaner.  Maybe need a remove aggregation item too
+- notify data change capability is needed for when people programmatically change the grouping  
+- aggregation doesn't check data types, it's quite naive.  Things like dates are likely to break somehow
+- some more unit testing
+- enhancement: allow a limit on number of columns grouped
+- enhancement: add average to the aggregations (requires more data to be stored - count, total, value, and they need to 
+  all be initialised) 
+- consideration of RTL - not sure whether the indent/outdent should get reversed?
+
+Options to watch out for include:
+
+- `groupingIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
+  level gets deeper.  Larger values look nicer, but mean that you probably need to make your groupHeader
+  wider if you're allowing deep grouping
+- `groupingRowHeaderWidth`: the width of the grouping row header, important as above 
+   
+
+@example
+In this example we group by the state column then the gender column, and we count the names (a proxy for 
+counting the number of rows), and we find the max age for each grouping.
+
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'ui.grid.pinning' ]);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants ) {
+      $scope.gridOptions = {
+        enableFiltering: true,
+        columnDefs: [
+          { name: 'state', grouping: { groupPriority: 1 }, sort: { direction: 'desc' }, width: '25%' },
+          { name: 'gender', grouping: { groupPriority: 2 }, sort: { direction: 'asc' }, width: '20%' },
+          { name: 'name', grouping: { aggregation: uiGridGroupingConstants.aggregation.COUNT }, width: '30%' },
+          { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
+          { name: 'company', width: '25%' },
+          { name: 'balance', width: '20%' }
+        ],
+        onRegisterApi: function( gridApi ) {
+          $scope.gridApi = gridApi;
+        }
+      };
+
+     $http.get('/data/500_complex.json')
+     .success(function(data) {
+       for ( var i = 0; i < data.length; i++ ){
+         data[i].state = data[i].address.state;
+       }
+       $scope.gridOptions.data = data;
+     });
+ 
+      $scope.expandAll = function(){
+        $scope.gridApi.grouping.expandAllRows();
+      };
+      
+      $scope.toggleRow = function( rowNum ){
+        $scope.gridApi.grouping.toggleRowGroupingState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+      }
+    }]);
+  </file>
+  
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-pinning class="grid"></div>
+      <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
+      <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
+      <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
+    </div>
+  </file>
+  
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '209 grouping', function() {
+    });
+  </file>  
+</example>

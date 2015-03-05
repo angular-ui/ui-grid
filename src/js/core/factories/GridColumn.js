@@ -457,6 +457,17 @@ angular.module('ui.grid')
     self.sortingAlgorithm = colDef.sortingAlgorithm;
 
     /**
+     * @ngdoc boolean
+     * @name suppressRemoveSort
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description (optional) False by default. When enabled, this setting hides the removeSort option
+     * in the menu, and prevents users from manually removing the sort
+     */
+    if ( typeof(self.suppressRemoveSort) === 'undefined'){
+      self.suppressRemoveSort = typeof(colDef.suppressRemoveSort) !== 'undefined' ? colDef.suppressRemoveSort : false;
+    }
+    
+    /**
      * @ngdoc property
      * @name enableFiltering
      * @propertyOf ui.grid.class:GridOptions.columnDef

@@ -1,15 +1,16 @@
 describe('GridRow factory', function () {
-  var $q, $scope, grid, Grid, GridRow, gridUtil, gridClassFactory;
+  var $q, $scope, grid, Grid, GridRow, gridUtil, gridClassFactory, $timeout;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _gridUtil_, _gridClassFactory_) {
+  beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _gridUtil_, _gridClassFactory_, _$timeout_) {
     $q = _$q_;
     $scope = _$rootScope_;
     Grid = _Grid_;
     GridRow = _GridRow_;
     gridUtil = _gridUtil_;
     gridClassFactory = _gridClassFactory_;
+    $timeout = _$timeout_;
   }));
 
 
@@ -66,32 +67,34 @@ describe('GridRow factory', function () {
       expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'all rows visible');
       
       grid.api.core.setRowInvisible(grid.rows[0]);
-      expect(grid.rows[0].forceInvisible).toBe(true);
+      expect(grid.rows[0].invisibleReason.user).toBe(true);
       expect(grid.rows[0].visible).toBe(false);
       
       expect(rowsVisibleChanged).toEqual(true);
       $scope.$apply();
+      $timeout.flush();
       
       expect(grid.api.core.getVisibleRows(grid).length).toEqual(9, 'one row now invisible');
       
       rowsVisibleChanged = false;
 
       grid.api.core.clearRowInvisible(grid.rows[0]);
-      expect(grid.rows[0].forceInvisible).toBe(false);
+      expect(grid.rows[0].invisibleReason.user).toBe(undefined);
       expect(grid.rows[0].visible).toBe(true);
 
       expect(rowsVisibleChanged).toEqual(true);
       $scope.$apply();
+      $timeout.flush();
 
       expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'should be visible again');
     });
 
-    it('should set then clear forceInvisible on invisible row, doesn\'t raise visible rows changed event', function () {
+    it('should set forceInvisible on invisible row, then clear forceInvisible visible row, doesn\'t raise visible rows changed event', function () {
       grid.api.core.on.rowsVisibleChanged( $scope, function() { rowsVisibleChanged = true; });
       grid.rows[0].visible = false;
       
       grid.api.core.setRowInvisible(grid.rows[0]);
-      expect(grid.rows[0].forceInvisible).toBe(true);
+      expect(grid.rows[0].invisibleReason.user).toBe(true);
       expect(grid.rows[0].visible).toBe(false);
       
       expect(rowsVisibleChanged).toEqual(false);
@@ -99,7 +102,7 @@ describe('GridRow factory', function () {
       grid.rows[0].visible = true;
       
       grid.api.core.clearRowInvisible(grid.rows[0]);
-      expect(grid.rows[0].forceInvisible).toBe(false);
+      expect(grid.rows[0].invisibleReason.user).toBe(undefined);
       expect(grid.rows[0].visible).toBe(true);
       
       expect(rowsVisibleChanged).toEqual(false);

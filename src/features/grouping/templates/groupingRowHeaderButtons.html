@@ -1,0 +1,4 @@
+<div class="ui-grid-grouping-row-header-buttons" ng-class="{'ui-grid-group-header': row.groupLevel > - 1}" ng-click="groupButtonClick(row, $event)">
+  <i ng-class="{'ui-grid-icon-minus-squared': row.expandedState.state === 'expanded', 'ui-grid-icon-plus-squared': row.expandedState.state === 'collapsed'}" ng-style="{'padding-left': grid.options.groupingIndent * row.groupLevel + 'px'}"></i>
+  &nbsp;
+</div>

@@ -133,13 +133,13 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
   
   describe('suppressRemoveSort: ', function () {
     it('everything present: is suppressed', function () {
-      $scope.col = { uid: 'ui-grid-01x', colDef: { suppressRemoveSort: true } };
+      $scope.col = { uid: 'ui-grid-01x', suppressRemoveSort: true };
       
       expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( true );
     });  
 
     it('not set: is not suppressed', function () {
-      $scope.col = { uid: 'ui-grid-01x', colDef: {  } };
+      $scope.col = { uid: 'ui-grid-01x' };
       
       expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( false );
     });  
