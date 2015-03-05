@@ -32,19 +32,17 @@ module.exports = function(grunt) {
     },
 
     // configuration variables that can be used within the individual config files
-    data: {
-      pkg: grunt.file.readJSON('package.json'),
-      version: util.getVersion(),
-      stable_version: util.getStableVersion(),
-      dist: 'dist',
-      site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
-      banner: '/*!\n' +
-        ' * <%= pkg.title || pkg.name %> - v<%= version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-        ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' License: <%= pkg.license %> \n */\n\n'
-    }
+    pkg: grunt.file.readJSON('package.json'),
+    version: util.getVersion(),
+    stable_version: util.getStableVersion(),
+    dist: 'dist',
+    site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
+    banner: '/*!\n' +
+      ' * <%= pkg.title || pkg.name %> - v<%= version %> - ' +
+      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+      '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
+      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+      ' License: <%= pkg.license %> \n */\n\n'
 
   });
   
