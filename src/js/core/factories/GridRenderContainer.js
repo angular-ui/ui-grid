@@ -311,7 +311,7 @@ angular.module('ui.grid')
     }
 
     if (typeof(scrollTop) === 'undefined' || scrollTop === undefined || scrollTop === null) {
-      scrollTop = (this.getCanvasHeight() - this.getCanvasWidth()) * scrollPercentage;
+      scrollTop = (this.getCanvasHeight() - this.getViewportHeight()) * scrollPercentage;
     }
 
     this.adjustRows(scrollTop, scrollPercentage, false);
