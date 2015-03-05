@@ -52,4 +52,13 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
       expect(currentRow.enableSelection).toEqual(currentRow.entity.id % 2 === 0);
     }
   });
+
+  it('should add cellFocus to the row header columnDef"', function() {
+    for (var i = 0; i < gridCtrl.grid.columns.length; i++) {
+      var currentCol = gridCtrl.grid.columns[i];
+      if (currentCol.name === "selectionRowHeaderCol"){
+        expect(currentCol.colDef.allowCellFocus).toBe(true);
+      }
+    }
+  });
 });
