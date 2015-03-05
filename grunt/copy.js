@@ -2,7 +2,7 @@ module.exports = function ( grunt ) {
   return {
     site: {
       options: {
-        process: function (content, srcpath) {
+        processContent: function (content, srcpath) {
           return grunt.template.process(content);
         }
       },
