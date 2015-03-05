@@ -636,7 +636,8 @@
                   headerCellTemplate: 'ui-grid/selectionHeaderCell',
                   enableColumnResizing: false,
                   enableColumnMenu: false,
-                  exporterSuppressExport: true 
+                  exporterSuppressExport: true,
+                  allowCellFocus: true
                 };
 
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
@@ -765,6 +766,14 @@
 
             var touchStartTime = 0;
             var touchTimeout = 300;
+
+            $elm.bind('keydown', function (evt) {
+              if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                $scope.$apply();
+              }
+            });
+
             var selectCells = function(evt){
               if (evt.shiftKey) {
                 uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
