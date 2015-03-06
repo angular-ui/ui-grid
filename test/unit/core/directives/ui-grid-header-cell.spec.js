@@ -1,7 +1,7 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, columnDefs;
+  var grid, $scope, $compile, $document, $timeout, recompile, uiGridConstants, gridUtil, columnDefs;
 
-  var downEvent, upEvent, clickEvent;
+  var downEvent, clickEvent;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -30,20 +30,16 @@ describe('uiGridHeaderCell', function () {
     $compile = _$compile_;
     $document = _$document_;
     $timeout = _$timeout_;
-    $window = _$window_;
-    $animate = _$animate_;
     uiGridConstants = _uiGridConstants_;
     gridUtil = _gridUtil_;
 
     // Decide whether to use mouse or touch events based on which capabilities the browser has
     if (gridUtil.isTouchEnabled()) {
       downEvent = 'touchstart';
-      upEvent = 'touchend';
       clickEvent = 'touchstart';
     }
     else {
       downEvent = 'mousedown';
-      upEvent = 'mouseup';
       clickEvent = 'click';
     }
 
@@ -75,13 +71,11 @@ describe('uiGridHeaderCell', function () {
 
   describe('column menu', function (){
     var headerCell1,
-        headerCell2,
         menu;
 
     beforeEach(function () {
       headerCell1 = $(grid).find('.ui-grid-header-cell:nth(0) .ui-grid-cell-contents');
-      headerCell2 = $(grid).find('.ui-grid-header-cell:nth(1) .ui-grid-cell-contents');
-      
+
       menu = $(grid).find('.ui-grid-column-menu');
     });
 
@@ -190,7 +184,7 @@ describe('uiGridHeaderCell', function () {
 
   describe('externalScope', function() {
     it('should be present', function () {
-      var elm = recompile();
+      recompile();
 
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
       expect(header).toBeDefined();
