@@ -193,4 +193,28 @@ describe('uiGridHeaderCell', function () {
     });
   });
 
+  describe('filter', function() {
+    it('watch should trigger on term object property changes', function() {
+      var onRegisterApiPrev = $scope.gridOpts.onRegisterApi,
+        onFilterChangedSpy = jasmine.createSpy('filterChangedSpy'),
+        term = {from: 0, to: 10};
+
+      $scope.gridOpts.enableFiltering = true;
+      $scope.gridOpts.columnDefs[0].filter = {term: term};
+      $scope.gridOpts.onRegisterApi = function(gridApi) {
+        onRegisterApiPrev();
+        gridApi.core.on.filterChanged($scope, onFilterChangedSpy);
+      };
+      recompile();
+
+      $scope.$apply(function(){
+        term.to = 1;
+      });
+      expect(onFilterChangedSpy).toHaveBeenCalled();
+
+      $scope.gridOpts.onRegisterApi = onRegisterApiPrev;
+      delete $scope.gridOpts.enableFiltering;
+      delete $scope.gridOpts.columnDefs[0].filter;
+    });
+  });
 });

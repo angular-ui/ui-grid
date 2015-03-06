@@ -239,12 +239,16 @@
             if ($scope.filterable) {
               var filterDeregisters = [];
               angular.forEach($scope.col.filters, function(filter, i) {
-                filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
-                  if (n !== o) {
-                    uiGridCtrl.grid.api.core.raise.filterChanged();
-                    uiGridCtrl.grid.refresh(true);
-                  }
-                }));  
+                filterDeregisters.push($scope.$watch(
+                  'col.filters[' + i + '].term',
+                  function(n, o) {
+                    if (n !== o) {
+                      uiGridCtrl.grid.api.core.raise.filterChanged();
+                      uiGridCtrl.grid.refresh(true);
+                    }
+                  },
+                  true
+                ));
               });
               $scope.$on('$destroy', function() {
                 angular.forEach(filterDeregisters, function(filterDeregister) {
