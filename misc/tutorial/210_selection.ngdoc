@@ -37,13 +37,14 @@ The selectAll box can be disabled by setting `enableSelectAll` to false.
 You can set the selection row header column width by setting 'selectionRowHeaderWidth' option.
 
 @example
-Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
+Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.  The first example
+auto-selects the first row once the data is loaded.
 
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+    app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', function ($scope, $http, $log, $timeout) {
       $scope.gridOptions = { 
         enableRowSelection: true,
         enableSelectAll: true,
@@ -64,6 +65,11 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
+          $timeout(function() {
+            if($scope.gridApi.selection.selectRow){
+              $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+            }
+          });
         });
 
         $scope.info = {};
