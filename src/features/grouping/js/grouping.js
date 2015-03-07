@@ -76,6 +76,7 @@
    *    uiGridGroupingConstants.aggregation.SUM
    *    uiGridGroupingConstants.aggregation.MAX
    *    uiGridGroupingConstants.aggregation.MIN
+   *    uiGridGroupingConstants.aggregation.AVG
    *  ```
    */
   module.constant('uiGridGroupingConstants', {
@@ -87,7 +88,8 @@
       COUNT: 'count',
       SUM: 'sum',
       MAX: 'max',
-      MIN: 'min'
+      MIN: 'min',
+      AVG: 'avg'
     }
   });
 
@@ -394,58 +396,6 @@
             }
           };
           
-          var aggregateSum = {
-            name: 'ui.grid.grouping.aggregateSum',
-            title: i18nService.get().grouping.aggregate_sum,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.SUM;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.SUM);
-            }
-          };
-          
-          var aggregateCount = {
-            name: 'ui.grid.grouping.aggregateCount',
-            title: i18nService.get().grouping.aggregate_count,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.COUNT;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.COUNT);
-            }
-          };
-
-          var aggregateMax = {
-            name: 'ui.grid.grouping.aggregateMax',
-            title: i18nService.get().grouping.aggregate_max,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.MAX;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.MAX);
-            }
-          };
-
-          var aggregateMin = {
-            name: 'ui.grid.grouping.aggregateMin',
-            title: i18nService.get().grouping.aggregate_min,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.MIN;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.MIN);
-            }
-          };
-
           var aggregateRemove = {
             name: 'ui.grid.grouping.aggregateRemove',
             title: i18nService.get().grouping.aggregate_remove,
@@ -459,6 +409,26 @@
             }
           };
 
+          // generic adder for the aggregation menus, which follow a pattern
+          var addAggregationMenu = function(type){
+            var menuItem = {
+              name: 'ui.grid.grouping.aggregate' + type,
+              title: i18nService.get().grouping['aggregate_' + type],
+              shown: function () {
+                return typeof(this.context.col.grouping) === 'undefined' || 
+                       typeof(this.context.col.grouping.aggregation) === 'undefined' ||
+                       this.context.col.grouping.aggregation !== type;
+              },
+              action: function () {
+                service.aggregateColumn( this.context.col.grid, this.context.col, type);
+              }
+            };
+
+            if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregate' + type)) {
+              col.menuItems.push(menuItem);
+            }
+          };
+          
           if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.group')) {
             col.menuItems.push(groupColumn);
           }
@@ -467,26 +437,15 @@
             col.menuItems.push(ungroupColumn);
           }
           
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateSum')) {
-            col.menuItems.push(aggregateSum);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateCount')) {
-            col.menuItems.push(aggregateCount);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateMax')) {
-            col.menuItems.push(aggregateMax);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateMin')) {
-            col.menuItems.push(aggregateMin);
-          }
+          addAggregationMenu(uiGridGroupingConstants.aggregation.COUNT);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.SUM);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.MAX);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.MIN);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.AVG);
 
           if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateRemove')) {
             col.menuItems.push(aggregateRemove);
           }
-          
         },
         
         
@@ -931,7 +890,12 @@
           // get the aggregation config to copy in
           var aggregations = {};
           angular.forEach(columnSettings.aggregations, function(aggregation, index){
-            aggregations[aggregation.field] = { type: aggregation.aggregation, value: null };
+            
+            if (aggregation.aggregation === uiGridGroupingConstants.aggregation.AVG){
+              aggregations[aggregation.field] = { type: aggregation.aggregation, value: null, sum: null, count: null };
+            } else {
+              aggregations[aggregation.field] = { type: aggregation.aggregation, value: null };  
+            }
           });
           
           angular.forEach(columnSettings.grouping, function( groupItem, index){
@@ -1067,6 +1031,12 @@
               // TODO: i18n on aggregation types
               processingState.currentGroupHeader.entity[fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
               aggregation.value = null;
+              if ( aggregation.sum ){
+                aggregation.sum = null;
+              }
+              if ( aggregation.count ){
+                aggregation.count = null;
+              }
             });
           }
           processingState.currentGroupHeader = null;
@@ -1151,22 +1121,28 @@
           // TODO: check data types, cast as necessary, all that jazz
           angular.forEach( groupFieldState.runningAggregations, function( aggregation, fieldName ){
             if (row.entity[fieldName] ){
+              var fieldValue = row.entity[fieldName];
               switch (aggregation.type) {
                 case uiGridGroupingConstants.aggregation.COUNT:
                   aggregation.value++;
                   break;
                 case uiGridGroupingConstants.aggregation.SUM:
-                  aggregation.value += row.entity[fieldName];
+                  aggregation.value += fieldValue;
                   break;
                 case uiGridGroupingConstants.aggregation.MIN:
                   if (row.entity[fieldName] < aggregation.value){
-                    aggregation.value = row.entity[fieldName];
+                    aggregation.value = fieldValue;
                   }
                   break;
                 case uiGridGroupingConstants.aggregation.MAX:
-                  if (row.entity[fieldName] > aggregation.value){
-                    aggregation.value = row.entity[fieldName];
+                  if (fieldValue > aggregation.value){
+                    aggregation.value = fieldValue;
                   }
+                  break;
+                case uiGridGroupingConstants.aggregation.AVG:
+                  aggregation.count++;
+                  aggregation.sum += fieldValue;
+                  aggregation.value = aggregation.sum / aggregation.count;
                   break;
               }
             }

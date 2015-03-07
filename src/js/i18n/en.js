@@ -73,6 +73,7 @@
           aggregate_sum: 'Agg: Sum',
           aggregate_max: 'Agg: Max',
           aggregate_min: 'Agg: Min',
+          aggregate_avg: 'Agg: Avg',
           aggregate_remove: 'Agg: Remove'
         }
       });
