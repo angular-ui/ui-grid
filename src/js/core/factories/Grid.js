@@ -1182,20 +1182,6 @@ angular.module('ui.grid')
     // Create a shallow copy of the rows so that we can safely sort them without altering the original grid.rows sort order
     var myRenderableRows = renderableRows.slice(0);
     
-    // self.rowsProcessors.forEach(function (processor) {
-    //   myRenderableRows = processor.call(self, myRenderableRows, self.columns);
-
-    //   if (!renderableRows) {
-    //     throw "Processor at index " + i + " did not return a set of renderable rows";
-    //   }
-
-    //   if (!angular.isArray(renderableRows)) {
-    //     throw "Processor at index " + i + " did not return an array";
-    //   }
-
-    //   i++;
-    // });
-
     // Return myRenderableRows with no processing if we have no rows processors 
     if (self.rowsProcessors.length === 0) {
       return $q.when(myRenderableRows);
@@ -1251,11 +1237,10 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    // gridUtil.logDebug('setVisibleRows');
-
+    // this is also setting processedRows, providing a cache of the rows as they
+    // came out of the rowProcessors - in particular they are sorted so we
+    // can process them for grouping
     var self = this;
-
-    //var newVisibleRowCache = [];
 
     // Reset all the render container row caches
     for (var i in self.renderContainers) {
@@ -1274,18 +1259,11 @@ angular.module('ui.grid')
     for (var ri = 0; ri < rows.length; ri++) {
       var row = rows[ri];
 
+      var targetContainer = (typeof(row.renderContainer) !== 'undefined' && row.renderContainer) ? row.renderContainer : 'body';
+
       // If the row is visible
       if (row.visible) {
-        // newVisibleRowCache.push(row);
-
-        // If the row has a container specified
-        if (typeof(row.renderContainer) !== 'undefined' && row.renderContainer) {
-          self.renderContainers[row.renderContainer].visibleRowCache.push(row);
-        }
-        // If not, put it into the body container
-        else {
-          self.renderContainers.body.visibleRowCache.push(row);
-        }
+        self.renderContainers[targetContainer].visibleRowCache.push(row);
       }
     }
     self.api.core.raise.rowsRendered(this.api);
@@ -1427,7 +1405,7 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name queueRefresh
    * @methodOf ui.grid.class:Grid
-   * @description todo: @c0bra can you document this method?
+   * @description queues a grid refreshCanvas, a way of debouncing all the refreshes we might otherwise issue
    */
   Grid.prototype.queueRefresh = function queueRefresh() {
     var self = this;
@@ -1446,6 +1424,32 @@ angular.module('ui.grid')
 
     return self.refreshCanceller;
   };
+
+
+  /**
+   * @ngdoc function
+   * @name queueGridRefresh
+   * @methodOf ui.grid.class:Grid
+   * @description queues a grid refresh, a way of debouncing all the refreshes we might otherwise issue
+   */
+  Grid.prototype.queueGridRefresh = function queueGridRefresh() {
+    var self = this;
+
+    if (self.gridRefreshCanceller) {
+      $timeout.cancel(self.gridRefreshCanceller);
+    }
+
+    self.gridRefreshCanceller = $timeout(function () {
+      self.refresh(true);
+    });
+
+    self.gridRefreshCanceller.then(function () {
+      self.gridRefreshCanceller = null;
+    });
+
+    return self.gridRefreshCanceller;
+  };
+
 
   /**
    * @ngdoc function
@@ -1689,7 +1693,7 @@ angular.module('ui.grid')
     var self = this;
 
     self.columns.forEach(function (col) {
-      if (col !== excludeCol && !col.colDef.suppressRemoveSort) {
+      if (col !== excludeCol && !col.suppressRemoveSort) {
         col.sort = {};
       }
     });
@@ -1765,7 +1769,7 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        if ( column.colDef && column.colDef.suppressRemoveSort ){
+        if ( column.colDef && column.suppressRemoveSort ){
           column.sort.direction = uiGridConstants.ASC;
         } else {
           column.sort.direction = null;

@@ -328,8 +328,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
-        if (row.forceInvisible || !rowSearcher.searchColumn(grid, row, col, filters)) {
-          row.visible = false;
+        if ( !rowSearcher.searchColumn(grid, row, col, filters) ) {
+          row.setThisRowInvisible('filtered', true);
         }
       };
       
