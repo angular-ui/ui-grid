@@ -998,6 +998,8 @@
           headerRow.groupLevel = stateIndex;
           headerRow.groupHeader = true;
           headerRow.internalRow = true;
+          headerRow.enableEditing = false;
+          headerRow.enableSelection = false;
           groupingProcessingState[stateIndex].initialised = true;
           groupingProcessingState[stateIndex].currentValue = newValue;
           groupingProcessingState[stateIndex].currentGroupHeader = headerRow;

@@ -202,7 +202,7 @@
           }
         });
         grid.expandable.expandedAll = true;
-        grid.refresh();
+        grid.queueGridRefresh();
       },
       
       collapseAllRows: function(grid) {
@@ -212,7 +212,7 @@
           }
         });
         grid.expandable.expandedAll = false;
-        grid.refresh();
+        grid.queueGridRefresh();
       },
 
       toggleAllRows: function(grid) {

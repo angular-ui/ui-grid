@@ -121,6 +121,7 @@ describe('uiGridCell', function () {
       // Now swap the columns in the column defs
       $scope.gridOptions.columnDefs = [{ field: 'age', width: 50 }, { field: 'name', width: 100 }];
       $scope.$digest();
+      $timeout.flush();
 
       var firstColAgain = $(gridElm).find('.ui-grid-cell').first();
       var firstHeaderCellAgain = $(gridElm).find('.ui-grid-header-cell').first();

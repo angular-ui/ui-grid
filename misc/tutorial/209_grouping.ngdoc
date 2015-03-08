@@ -2,37 +2,41 @@
 @name Tutorial: 209 Grouping
 @description The grouping feature allows you to group rows together based on similar
 values in specific columns, providing an effect similar in some ways to an Excel pivot table.
+Columns that aren't grouped by can be aggregated, providing for example a running count
+of the number of rows in each group.
 
-Grouping leverages the sort functionality, and has some impacts on sorting.  A column(s) that
-is marked as being grouped is always the first column(s) in the sort list.  The actual sort order,
-and therefore group order, is based on the sorting that has been set for that column, so it can
-leverage custom sort functions and external sorting.
-
-Any grouped column has 'suppressRemoveSort' set, when a column is ungrouped then `suppressRemoveSort`
-is returned to the value in the columnDef.
+Grouping can be set programmatically by using the columnDef option `grouping: { groupPriority: 0 }`,
+or for aggregations on a column by setting `grouping: {aggregation: uiGridGroupingConstants.aggregation.COUNT}`. 
 
 Optionally (and by default) grouped columns are moved to the front of the grid, which provides a more
-visually pleasing effect.  This isn't done with pinning, so as to not create a dependency on pinning, 
-but by moving the columns themselves. 
+visually pleasing effect.  In order to avoid creating a dependency on pinning, this is done by 
+moving the columns themselves as part of the grouping feature, not through use of the pinning feature. 
 
-Aggregation is permitted on any column that isn't being grouped by, so you can obtain counts, sums,
-max or min for any of the non-grouped columns.
+Grouping leverages the sort functionality, allowing a user to change the sort order or use external sort
+functionality and have the resulting list grouped.  A column(s) that is marked as being grouped is always 
+moved to the high order of the sort priority, as the data must be sorted to permit grouping.
+
+Any grouped column has `suppressRemoveSort` set, when a column is ungrouped then `suppressRemoveSort`
+is returned to the value in the columnDef.
 
 Grouping and aggregation should work cleanly with filtering - it should group and aggregate only the 
 filtered rows.
 
+Group header rows cannot be edited, and if using the selection feature, cannot be selected.  They can,
+however, be exported.
+
 Grouping is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
 
-- does not permit columns that are based on functions or complex objects.  The groupHeader rows create
+- does not correctly handle columns that are based on functions or complex objects.  The groupHeader rows create
   a fake row.entity, and then set the appropriate fields in that entity.  This doesn't work well with 
   complex column definitions at present
-- doesn't work well with edit yet.  Edit needs to notice that the row is of type internal, and not 
-  attempt to edit it
 - notify data change capability is needed for when people programmatically change the grouping  
 - some more unit testing
 - enhancement: allow a limit on number of columns grouped
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
+- special formatting for header rows in exporter?
+- add grouping options to saveState
 
 Options to watch out for include:
 
@@ -40,7 +44,7 @@ Options to watch out for include:
   level gets deeper.  Larger values look nicer, but mean that you probably need to make your groupHeader
   wider if you're allowing deep grouping
 - `groupingRowHeaderWidth`: the width of the grouping row header, important as above
-- 'groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
+- `groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
   usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
   an average  

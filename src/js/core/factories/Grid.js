@@ -161,19 +161,52 @@ angular.module('ui.grid')
      * @name refresh
      * @methodOf ui.grid.core.api:PublicApi
      * @description Refresh the rendered grid on screen.
+     * The refresh method re-runs both the columnProcessors and the
+     * rowProcessors, as well as calling refreshCanvas to update all
+     * the grid sizing.  In general you should prefer to use queueGridRefresh
+     * instead, which is basically a debounced version of refresh.
+     * 
+     * If you only want to resize the grid, not regenerate all the rows
+     * and columns, you should consider directly calling refreshCanvas instead.
      * 
      */
     self.api.registerMethod( 'core', 'refresh', this.refresh );
   
     /**
      * @ngdoc function
+     * @name queueGridRefresh
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Request a refresh of the rendered grid on screen, if multiple
+     * calls to queueGridRefresh are made within a digest cycle only one will execute.
+     * The refresh method re-runs both the columnProcessors and the
+     * rowProcessors, as well as calling refreshCanvas to update all
+     * the grid sizing.  In general you should prefer to use queueGridRefresh
+     * instead, which is basically a debounced version of refresh.
+     * 
+     */
+    self.api.registerMethod( 'core', 'queueGridRefresh', this.queueGridRefresh );
+  
+    /**
+     * @ngdoc function
      * @name refreshRows
      * @methodOf ui.grid.core.api:PublicApi
-     * @description Refresh the rendered grid on screen?  Note: not functional at present
+     * @description Runs only the rowProcessors, columns remain as they were.
+     * It then calls redrawInPlace and refreshCanvas, which adjust the grid sizing.
      * @returns {promise} promise that is resolved when render completes?
      * 
      */
     self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
+  
+    /**
+     * @ngdoc function
+     * @name queueRefresh
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Requests execution of refreshCanvas, if multiple requests are made
+     * during a digest cycle only one will run.  RefreshCanvas updates the grid sizing.
+     * @returns {promise} promise that is resolved when render completes?
+     * 
+     */
+    self.api.registerMethod( 'core', 'refreshRows', this.queueRefresh );
   
     /**
      * @ngdoc function
@@ -466,7 +499,7 @@ angular.module('ui.grid')
    */
   Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
     grid.buildColumns();
-    grid.refresh();
+    grid.queueGridRefresh();
   };
 
 
@@ -480,7 +513,7 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.processRowsCallback = function processRowsCallback( grid ){
-    grid.refreshRows();
+    grid.queueGridRefresh();
   };
     
 
@@ -579,7 +612,7 @@ angular.module('ui.grid')
         self.buildColumns()
           .then( function() {
             self.preCompileCellTemplates();
-            self.refresh();
+            self.queueGridRefresh();
           });
       });
   };
@@ -1856,9 +1889,9 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
-   * @name redrawCanvas
+   * @name refreshCanvas
    * @methodOf ui.grid.class:Grid
-   * @description TBD
+   * @description Builds all styles and recalculates much of the grid sizing
    * @params {object} buildStyles optional parameter.  Use TBD
    * @returns {promise} promise that is resolved when the canvas
    * has been refreshed
