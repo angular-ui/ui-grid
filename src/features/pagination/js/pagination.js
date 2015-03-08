@@ -247,7 +247,7 @@
         onPaginationChanged: function (grid, currentPage, pageSize) {
             grid.api.pagination.raise.paginationChanged(currentPage, pageSize);
             if (!grid.options.useExternalPagination) {
-              grid.refresh(); //client side pagination
+              grid.queueGridRefresh(); //client side pagination
             }
         }
       };

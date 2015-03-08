@@ -268,7 +268,7 @@
             service.restoreSelection( grid, state.selection );
           }
           
-          grid.refresh();
+          grid.queueGridRefresh();
         },
         
         
