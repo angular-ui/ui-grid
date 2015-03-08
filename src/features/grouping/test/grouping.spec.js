@@ -68,7 +68,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
   describe( 'moveGroupColumns', function() {
     it( 'move some columns left, and some columns right', function() {
-      
+      // XXXXXX
     });
   });
 
@@ -109,7 +109,13 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[1].grouping = {groupPriority: 3};
       grid.columns[3].grouping = {groupPriority: 2};
 
-      expect(uiGridGroupingService.initialiseProcessingState(grid)).toEqual([
+      var result = uiGridGroupingService.initialiseProcessingState(grid);
+      expect(result[0].col).toEqual(grid.columns[3]);
+      delete result[0].col;
+      expect(result[1].col).toEqual(grid.columns[1]);
+      delete result[1].col;
+      
+      expect(result).toEqual([
         { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {} },
         { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {} }
       ]);
@@ -121,15 +127,29 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[2].grouping = {aggregation: uiGridGroupingConstants.aggregation.SUM};
       grid.columns[3].grouping = {groupPriority: 2};
 
-      expect(uiGridGroupingService.initialiseProcessingState(grid)).toEqual([
-        { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: null },
-          col2: { type: uiGridGroupingConstants.aggregation.SUM, value: null }
-        } },
-        { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: null },
-          col2: { type: uiGridGroupingConstants.aggregation.SUM, value: null }
-        } }
+      // when expected results go wrong the messages suck if columns are in the results...so check them individually then delete them out
+      var result = uiGridGroupingService.initialiseProcessingState(grid);
+      expect(result[0].col).toEqual(grid.columns[3]);
+      delete result[0].col;
+      expect(result[0].runningAggregations[0].col).toEqual(grid.columns[0]);
+      delete result[0].runningAggregations[0].col;
+      expect(result[0].runningAggregations[1].col).toEqual(grid.columns[2]);
+      delete result[0].runningAggregations[1].col;
+      expect(result[1].col).toEqual(grid.columns[1]);
+      delete result[1].col; 
+      expect(result[1].runningAggregations[0].col).toEqual(grid.columns[0]);
+      delete result[1].runningAggregations[0].col;
+      expect(result[1].runningAggregations[1].col).toEqual(grid.columns[2]);
+      delete result[1].runningAggregations[1].col;
+      expect(result).toEqual([
+        { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [
+          { type: uiGridGroupingConstants.aggregation.COUNT, fieldName: 'col0', value: null },
+          { type: uiGridGroupingConstants.aggregation.SUM, fieldName: 'col2', value: null }
+        ] },
+        { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [
+          { type: uiGridGroupingConstants.aggregation.COUNT, fieldName: 'col0', value: null },
+          { type: uiGridGroupingConstants.aggregation.SUM, fieldName: 'col2', value: null }
+        ] }
       ]);
     });
   });
@@ -146,7 +166,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     it('finds one grouping', function() {
       grid.columns[1].grouping = {groupPriority: 0};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({ 
-        grouping: [{ field: 'col1', groupPriority: 0 }],
+        grouping: [{ field: 'col1', col: grid.columns[1], groupPriority: 0 }],
         aggregations: []
       });
     });
@@ -155,14 +175,14 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[1].grouping = {aggregation: uiGridGroupingConstants.aggregation.COUNT};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
         grouping: [],
-        aggregations: [{ field: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT} ]
+        aggregations: [{ field: 'col1', col: grid.columns[1], aggregation: uiGridGroupingConstants.aggregation.COUNT} ]
       });
     });
 
     it('finds one aggregation, has a priority, aggregation is ignored', function() {
       grid.columns[1].grouping = {groupPriority: 0, aggregation: uiGridGroupingConstants.aggregation.COUNT};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
-        grouping: [{ field: 'col1', groupPriority: 0 }],
+        grouping: [{ field: 'col1', col: grid.columns[1], groupPriority: 0 }],
         aggregations: []
       });
     });
@@ -171,7 +191,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[1].grouping = {groupPriority: -1, aggregation: uiGridGroupingConstants.aggregation.COUNT};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
         grouping: [],
-        aggregations: [ { field: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT } ]
+        aggregations: [ { field: 'col1', col: grid.columns[1], aggregation: uiGridGroupingConstants.aggregation.COUNT } ]
       });
     });
 
@@ -181,11 +201,11 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[3].grouping = {groupPriority: 0, aggregation: uiGridGroupingConstants.aggregation.COUNT};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
         grouping: [
-          { field: 'col3', groupPriority: 0 },
-          { field: 'col2', groupPriority: 1 }
+          { field: 'col3', col: grid.columns[3], groupPriority: 0 },
+          { field: 'col2', col: grid.columns[2], groupPriority: 1 }
         ],
         aggregations: [
-          { field: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+          { field: 'col1', col: grid.columns[1], aggregation: uiGridGroupingConstants.aggregation.COUNT}
         ]
       });
     });
@@ -196,9 +216,9 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[3].grouping = {groupPriority: 1};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
         grouping: [
-          { field: 'col1', groupPriority: 0 },
-          { field: 'col3', groupPriority: 1 },
-          { field: 'col2', groupPriority: 2 }
+          { field: 'col1', col: grid.columns[1], groupPriority: 0 },
+          { field: 'col3', col: grid.columns[3], groupPriority: 1 },
+          { field: 'col2', col: grid.columns[2], groupPriority: 2 }
        ],
        aggregations: []
       });
@@ -210,9 +230,9 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[3].grouping = {groupPriority: 4};
       expect(uiGridGroupingService.getGrouping(grid)).toEqual({
         grouping: [
-          { field: 'col1', groupPriority: 0 },
-          { field: 'col3', groupPriority: 1 },
-          { field: 'col2', groupPriority: 2 }
+          { field: 'col1', col: grid.columns[1], groupPriority: 0 },
+          { field: 'col3', col: grid.columns[3], groupPriority: 1 },
+          { field: 'col2', col: grid.columns[2], groupPriority: 2 }
        ],
        aggregations: []
       });
@@ -232,34 +252,37 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
        
       var processingStates = [
         { 
-          fieldName: 'col1', 
+          fieldName: 'col1',
+          col: grid.columns[1], 
           initialised: true,
           currentValue: 'test',
           currentGroupHeader: headerRow1,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          ]
         },
         { 
-          fieldName: 'col2', 
+          fieldName: 'col2',
+          col: grid.columns[2], 
           initialised: true,
           currentValue: 'blah',
           currentGroupHeader: headerRow2,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: 'x'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 22 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: 'x'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 22 }
+          ]
         },
         { 
-          fieldName: 'col3', 
+          fieldName: 'col3',
+          col: grid.columns[3], 
           initialised: true,
           currentValue: 'fred',
           currentGroupHeader: headerRow3,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: 'y'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 13 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: 'y'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 13 }
+          ]
         }
       ];
       
@@ -278,33 +301,36 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect(processingStates).toEqual([
         { 
           fieldName: 'col1', 
+          col: grid.columns[1],
           initialised: true,
           currentValue: 'test',
           currentGroupHeader: 'x',
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          ]
         },
         { 
-          fieldName: 'col2', 
+          fieldName: 'col2',
+          col: grid.columns[2], 
           initialised: true,
           currentValue: 'c_3',
           currentGroupHeader: 'y',
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null },
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null },
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          ]
         },
         { 
           fieldName: 'col3', 
+          col: grid.columns[3],
           initialised: false,
           currentValue: null,
           currentGroupHeader: null,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null },
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null },
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          ]
         }
       ]);
     });
@@ -321,10 +347,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           initialised: true,
           currentValue: 'test',
           currentGroupHeader: headerRow1,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          ]
         }
       ];
       
@@ -337,10 +363,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           initialised: false,
           currentValue: null,
           currentGroupHeader: null,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          ]
         }
       ]);
     });
@@ -356,30 +382,30 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           initialised: true,
           currentValue: 'test',
           currentGroupHeader: headerRow1,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          ]
         },
         { 
           fieldName: 'col2', 
           initialised: true,
           currentValue: 'blah',
           currentGroupHeader: headerRow2,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: 'x'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 22 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: 'x'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 22 }
+          ]
         },
         { 
           fieldName: 'col3', 
           initialised: true,
           currentValue: 'fred',
           currentGroupHeader: headerRow3,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: 'y'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 13 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: 'y'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 13 }
+          ]
         }
       ];
       
@@ -395,30 +421,30 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           initialised: true,
           currentValue: 'test',
           currentGroupHeader: headerRow1,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          ]
         },
         { 
           fieldName: 'col2', 
           initialised: false,
           currentValue: null,
           currentGroupHeader: null,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null },
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null },
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          ]
         },
         { 
           fieldName: 'col3', 
           initialised: false,
           currentValue: null,
           currentGroupHeader: null,
-          runningAggregations: {
-            agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null },
-            agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-          }
+          runningAggregations: [
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null },
+            { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          ]
         }
       ]);
     });    
@@ -432,8 +458,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: true,
         currentValue: 'test',
         currentGroupHeader: null,
-        runningAggregations: {
-        }
+        runningAggregations: [
+        ]
       };
       
       uiGridGroupingService.writeOutAggregation( grid, processingState );
@@ -443,8 +469,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: false,
         currentValue: null,
         currentGroupHeader: null,
-        runningAggregations: {
-        }
+        runningAggregations: [
+        ]
       });
     });
 
@@ -456,8 +482,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: true,
         currentValue: 'test',
         currentGroupHeader: headerRow,
-        runningAggregations: {
-        }
+        runningAggregations: [
+        ]
       };
       
       uiGridGroupingService.writeOutAggregation( grid, processingState );
@@ -468,8 +494,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: false,
         currentValue: null,
         currentGroupHeader: null,
-        runningAggregations: {
-        }
+        runningAggregations: [
+        ]
       });
     });
 
@@ -481,10 +507,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: true,
         currentValue: 'test',
         currentGroupHeader: headerRow,
-        runningAggregations: {
-          agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-          agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
-        }
+        runningAggregations: [
+          { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+          { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+        ]
       };
       
       uiGridGroupingService.writeOutAggregation( grid, processingState );
@@ -495,10 +521,39 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         initialised: false,
         currentValue: null,
         currentGroupHeader: null,
-        runningAggregations: {
-          agg1: { type: uiGridGroupingConstants.aggregation.MAX, value: null},
-          agg2: { type: uiGridGroupingConstants.aggregation.MIN, value: null }
-        }
+        runningAggregations: [
+          { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null},
+          { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+        ]
+      });
+    });
+
+    it('groupingSuppressAggregationText', function() {
+      var headerRow = new GridRow( {}, null, grid );
+       
+      var processingState = { 
+        fieldName: 'col1', 
+        initialised: true,
+        currentValue: 'test',
+        currentGroupHeader: headerRow,
+        runningAggregations: [
+          { fieldName: 'agg1', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+          { fieldName: 'agg2', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+        ]
+      };
+      
+      uiGridGroupingService.writeOutAggregation( grid, processingState );
+      
+      expect(headerRow.entity).toEqual({ agg1: '1234', agg2: 98 });
+      expect(processingState).toEqual({
+        fieldName: 'col1', 
+        initialised: false,
+        currentValue: null,
+        currentGroupHeader: null,
+        runningAggregations: [
+          { fieldName: 'agg1', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MAX, value: null},
+          { fieldName: 'agg2', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+        ]
       });
     });
   });
@@ -638,12 +693,12 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   describe( 'aggregate', function() {
     it( 'aggregates many fields', function() {
       var groupFieldState = {
-        runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: 3 },
-          col1: { type: uiGridGroupingConstants.aggregation.SUM, value: 48 },
-          col2: { type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
-          col3: { type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
-        }
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.COUNT, value: 3 },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.SUM, value: 48 },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
+        ]
       };
       
       var row = new GridRow( { col0: 'x', col1: 10, col2: '7', col3: '22' }, null, grid );
@@ -651,23 +706,23 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       uiGridGroupingService.aggregate( grid, row, groupFieldState);
       
       expect( groupFieldState ).toEqual({
-        runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: 4 },
-          col1: { type: uiGridGroupingConstants.aggregation.SUM, value: 58 },
-          col2: { type: uiGridGroupingConstants.aggregation.MAX, value: '7' },
-          col3: { type: uiGridGroupingConstants.aggregation.MIN, value: '22' }
-        }
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.COUNT, value: 4 },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.SUM, value: 58 },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.MAX, value: '7' },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: '22' }
+        ]
       });
     });
 
     it( 'aggregates many fields, doesn\'t trigger max and min', function() {
        var groupFieldState = {
-        runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: 3 },
-          col1: { type: uiGridGroupingConstants.aggregation.SUM, value: 48 },
-          col2: { type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
-          col3: { type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
-        }
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.COUNT, value: 3 },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.SUM, value: 48 },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
+        ]
       };
       
       var row = new GridRow( { col0: 'x', col1: 10, col2: '3', col3: '30' }, null, grid );
@@ -675,12 +730,80 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       uiGridGroupingService.aggregate( grid, row, groupFieldState);
       
       expect( groupFieldState ).toEqual({
-        runningAggregations: {
-          col0: { type: uiGridGroupingConstants.aggregation.COUNT, value: 4 },
-          col1: { type: uiGridGroupingConstants.aggregation.SUM, value: 58 },
-          col2: { type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
-          col3: { type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
-        }
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.COUNT, value: 4 },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.SUM, value: 58 },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.MAX, value: 5 },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
+        ]
+      });
+    });
+
+    it( 'averages', function() {
+       var groupFieldState = {
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.AVG, value: 3, count: 2, sum: 6 },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.SUM, value: 48 },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.SUM, value: 5 },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
+        ]
+      };
+      
+      var row = new GridRow( { col0: 6, col1: '10', col2: '3.3', col3: '30' }, null, grid );
+      
+      uiGridGroupingService.aggregate( grid, row, groupFieldState);
+      
+      expect(groupFieldState.runningAggregations[0].col).toEqual(grid.columns[0]);
+      expect(groupFieldState.runningAggregations[1].col).toEqual(grid.columns[1]);
+      expect(groupFieldState.runningAggregations[2].col).toEqual(grid.columns[2]);
+      expect(groupFieldState.runningAggregations[3].col).toEqual(grid.columns[3]);
+      delete groupFieldState.runningAggregations[0].col;
+      delete groupFieldState.runningAggregations[1].col;
+      delete groupFieldState.runningAggregations[2].col;
+      delete groupFieldState.runningAggregations[3].col;
+      expect( groupFieldState ).toEqual({
+        runningAggregations: [
+          { fieldName: 'col0', type: uiGridGroupingConstants.aggregation.AVG, value: 4, count: 3, sum: 12 },
+          { fieldName: 'col1', type: uiGridGroupingConstants.aggregation.SUM, value: 58 },
+          { fieldName: 'col2', type: uiGridGroupingConstants.aggregation.SUM, value: 8.3 },
+          { fieldName: 'col3', type: uiGridGroupingConstants.aggregation.MIN, value: 28 }
+        ]
+      });
+    });
+
+    it( 'dates, text', function() {
+      var now = new Date();
+      var nowPlus = new Date();
+      nowPlus.setDate(nowPlus.getDate() + 1);
+      
+      var groupFieldState = {
+        runningAggregations: [
+          { fieldName: 'col0', col: grid.columns[0], type: uiGridGroupingConstants.aggregation.MAX, value: now },
+          { fieldName: 'col1', col: grid.columns[1], type: uiGridGroupingConstants.aggregation.MIN, value: nowPlus },
+          { fieldName: 'col2', col: grid.columns[2], type: uiGridGroupingConstants.aggregation.MAX, value: 'x' },
+          { fieldName: 'col3', col: grid.columns[3], type: uiGridGroupingConstants.aggregation.MIN, value: 'y' }
+        ]
+      };
+      
+      var row = new GridRow( { col0: nowPlus, col1: now, col2: 'y', col3: 'x' }, null, grid );
+      
+      uiGridGroupingService.aggregate( grid, row, groupFieldState);
+      
+      expect(groupFieldState.runningAggregations[0].col).toEqual(grid.columns[0]);
+      expect(groupFieldState.runningAggregations[1].col).toEqual(grid.columns[1]);
+      expect(groupFieldState.runningAggregations[2].col).toEqual(grid.columns[2]);
+      expect(groupFieldState.runningAggregations[3].col).toEqual(grid.columns[3]);
+      delete groupFieldState.runningAggregations[0].col;
+      delete groupFieldState.runningAggregations[1].col;
+      delete groupFieldState.runningAggregations[2].col;
+      delete groupFieldState.runningAggregations[3].col;
+      expect( groupFieldState ).toEqual({
+        runningAggregations: [
+          { fieldName: 'col0', type: uiGridGroupingConstants.aggregation.MAX, value: nowPlus },
+          { fieldName: 'col1', type: uiGridGroupingConstants.aggregation.MIN, value: now },
+          { fieldName: 'col2', type: uiGridGroupingConstants.aggregation.MAX, value: 'y' },
+          { fieldName: 'col3', type: uiGridGroupingConstants.aggregation.MIN, value: 'x' }
+        ]
       });
     });
   });
