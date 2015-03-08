@@ -76,6 +76,7 @@
    *    uiGridGroupingConstants.aggregation.SUM
    *    uiGridGroupingConstants.aggregation.MAX
    *    uiGridGroupingConstants.aggregation.MIN
+   *    uiGridGroupingConstants.aggregation.AVG
    *  ```
    */
   module.constant('uiGridGroupingConstants', {
@@ -87,7 +88,8 @@
       COUNT: 'count',
       SUM: 'sum',
       MAX: 'max',
-      MIN: 'min'
+      MIN: 'min',
+      AVG: 'avg'
     }
   });
 
@@ -366,6 +368,16 @@
             col.suppressRemoveSort = true;
           } 
           
+          /**
+           *  @ngdoc object
+           *  @name groupingSuppressAggregationText
+           *  @propertyOf  ui.grid.grouping.api:ColumnDef
+           *  @description Don't print the aggregation text on this column - useful if you have a cellFilter on the column, which 
+           *  would otherwise be impacted by the text
+           *  <br/>Defaults to false.
+           */
+          col.groupingSuppressAggregationText = colDef.groupingSuppressAggregationText === true;
+          
           var groupColumn = {
             name: 'ui.grid.grouping.group',
             title: i18nService.get().grouping.group,
@@ -394,58 +406,6 @@
             }
           };
           
-          var aggregateSum = {
-            name: 'ui.grid.grouping.aggregateSum',
-            title: i18nService.get().grouping.aggregate_sum,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.SUM;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.SUM);
-            }
-          };
-          
-          var aggregateCount = {
-            name: 'ui.grid.grouping.aggregateCount',
-            title: i18nService.get().grouping.aggregate_count,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.COUNT;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.COUNT);
-            }
-          };
-
-          var aggregateMax = {
-            name: 'ui.grid.grouping.aggregateMax',
-            title: i18nService.get().grouping.aggregate_max,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.MAX;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.MAX);
-            }
-          };
-
-          var aggregateMin = {
-            name: 'ui.grid.grouping.aggregateMin',
-            title: i18nService.get().grouping.aggregate_min,
-            shown: function () {
-              return typeof(this.context.col.grouping) === 'undefined' || 
-                     typeof(this.context.col.grouping.aggregation) === 'undefined' ||
-                     this.context.col.grouping.aggregation !== uiGridGroupingConstants.aggregation.MIN;
-            },
-            action: function () {
-              service.aggregateColumn( this.context.col.grid, this.context.col, uiGridGroupingConstants.aggregation.MIN);
-            }
-          };
-
           var aggregateRemove = {
             name: 'ui.grid.grouping.aggregateRemove',
             title: i18nService.get().grouping.aggregate_remove,
@@ -459,6 +419,26 @@
             }
           };
 
+          // generic adder for the aggregation menus, which follow a pattern
+          var addAggregationMenu = function(type){
+            var menuItem = {
+              name: 'ui.grid.grouping.aggregate' + type,
+              title: i18nService.get().grouping['aggregate_' + type],
+              shown: function () {
+                return typeof(this.context.col.grouping) === 'undefined' || 
+                       typeof(this.context.col.grouping.aggregation) === 'undefined' ||
+                       this.context.col.grouping.aggregation !== type;
+              },
+              action: function () {
+                service.aggregateColumn( this.context.col.grid, this.context.col, type);
+              }
+            };
+
+            if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregate' + type)) {
+              col.menuItems.push(menuItem);
+            }
+          };
+          
           if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.group')) {
             col.menuItems.push(groupColumn);
           }
@@ -467,26 +447,15 @@
             col.menuItems.push(ungroupColumn);
           }
           
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateSum')) {
-            col.menuItems.push(aggregateSum);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateCount')) {
-            col.menuItems.push(aggregateCount);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateMax')) {
-            col.menuItems.push(aggregateMax);
-          }
-          
-          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateMin')) {
-            col.menuItems.push(aggregateMin);
-          }
+          addAggregationMenu(uiGridGroupingConstants.aggregation.COUNT);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.SUM);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.MAX);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.MIN);
+          addAggregationMenu(uiGridGroupingConstants.aggregation.AVG);
 
           if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateRemove')) {
             col.menuItems.push(aggregateRemove);
           }
-          
         },
         
         
@@ -849,6 +818,7 @@
          * ```
          *   {
          *     fieldName: name,
+         *     col: col,
          *     initialised: boolean,
          *     currentValue: value,
          *     currentGroupHeader: gridRow,
@@ -879,7 +849,8 @@
           // processes each of the fields we are grouping by, checks if the value has changed and inserts a groupHeader, 
           // otherwise aggregates.  Broken out as shouldn't create functions in a loop.
           var updateProcessingState = function( groupFieldState, stateIndex ) {
-            if ( typeof(row.entity[groupFieldState.fieldName]) === 'undefined' ){
+            var fieldValue = grid.getCellValue(row, groupFieldState.col); 
+            if ( typeof(fieldValue) === 'undefined' || fieldValue === null ){
               return;
             }
             
@@ -888,7 +859,7 @@
             }
             
             // look for change of value - and insert a header
-            if ( !groupFieldState.initialised || row.entity[groupFieldState.fieldName] !== groupFieldState.currentValue ){
+            if ( !groupFieldState.initialised || fieldValue !== groupFieldState.currentValue ){
               service.insertGroupHeader( grid, renderableRows, i, groupingProcessingState, stateIndex );
               i++;
             }
@@ -928,19 +899,26 @@
           var processingState = [];
           var columnSettings = service.getGrouping( grid );
           
-          // get the aggregation config to copy in
-          var aggregations = {};
-          angular.forEach(columnSettings.aggregations, function(aggregation, index){
-            aggregations[aggregation.field] = { type: aggregation.aggregation, value: null };
-          });
-          
           angular.forEach(columnSettings.grouping, function( groupItem, index){
+            // get the aggregation config to copy in - do this multiple times as shallow copying it
+            // was harder than it looked, and as much work as just creating it again
+            var aggregations = [];
+            angular.forEach(columnSettings.aggregations, function(aggregation, index){
+              
+              if (aggregation.aggregation === uiGridGroupingConstants.aggregation.AVG){
+                aggregations.push({ type: aggregation.aggregation, fieldName: aggregation.field, col: aggregation.col, value: null, sum: null, count: null });
+              } else {
+                aggregations.push({ type: aggregation.aggregation, fieldName: aggregation.field, col: aggregation.col, value: null });  
+              }
+            });
+            
             processingState.push({ 
               fieldName: groupItem.field,
+              col: groupItem.col,
               initialised: false,
               currentValue: null,
               currentGroupHeader: null,
-              runningAggregations: angular.copy(aggregations)
+              runningAggregations: aggregations
             });
           });
           
@@ -965,9 +943,9 @@
           angular.forEach(grid.columns, function(column, columnIndex){
             if ( column.grouping ){
               if ( typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
-                groupArray.push({ field: column.field, groupPriority: column.grouping.groupPriority, grouping: column.grouping });  
+                groupArray.push({ field: column.field, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });  
               } else if ( column.grouping.aggregation ){
-                aggregateArray.push({ field: column.field, aggregation: column.grouping.aggregation });
+                aggregateArray.push({ field: column.field, col: column, aggregation: column.grouping.aggregation });
               }
             }
           });
@@ -1012,9 +990,10 @@
           
           // set the value that caused the end of a group into the header row and the processing state
           var fieldName = groupingProcessingState[stateIndex].fieldName;
+          var col = groupingProcessingState[stateIndex].col;
 
           // TODO: can't just use entity like this, have to use get cell value, need col for that
-          var newValue = renderableRows[rowIndex].entity[fieldName];
+          var newValue = grid.getCellValue(renderableRows[rowIndex], col);
           headerRow.entity[fieldName] = newValue;
           headerRow.groupLevel = stateIndex;
           headerRow.groupHeader = true;
@@ -1063,10 +1042,19 @@
          */
         writeOutAggregation: function( grid, processingState ) {
           if ( processingState.currentGroupHeader ){
-            angular.forEach(processingState.runningAggregations, function( aggregation, fieldName ){
-              // TODO: i18n on aggregation types
-              processingState.currentGroupHeader.entity[fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
+            angular.forEach(processingState.runningAggregations, function( aggregation, index ){
+              if (aggregation.col.groupingSuppressAggregationText){
+                processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
+              } else {
+                processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
+              }
               aggregation.value = null;
+              if ( aggregation.sum ){
+                aggregation.sum = null;
+              }
+              if ( aggregation.count ){
+                aggregation.count = null;
+              }
             });
           }
           processingState.currentGroupHeader = null;
@@ -1149,26 +1137,35 @@
          */
         aggregate: function( grid, row, groupFieldState ){
           // TODO: check data types, cast as necessary, all that jazz
-          angular.forEach( groupFieldState.runningAggregations, function( aggregation, fieldName ){
-            if (row.entity[fieldName] ){
-              switch (aggregation.type) {
-                case uiGridGroupingConstants.aggregation.COUNT:
-                  aggregation.value++;
-                  break;
-                case uiGridGroupingConstants.aggregation.SUM:
-                  aggregation.value += row.entity[fieldName];
-                  break;
-                case uiGridGroupingConstants.aggregation.MIN:
-                  if (row.entity[fieldName] < aggregation.value){
-                    aggregation.value = row.entity[fieldName];
-                  }
-                  break;
-                case uiGridGroupingConstants.aggregation.MAX:
-                  if (row.entity[fieldName] > aggregation.value){
-                    aggregation.value = row.entity[fieldName];
-                  }
-                  break;
-              }
+          angular.forEach( groupFieldState.runningAggregations, function( aggregation, index ){
+            var fieldValue = grid.getCellValue(row, aggregation.col);
+            var numValue = Number(fieldValue);
+            switch (aggregation.type) {
+              case uiGridGroupingConstants.aggregation.COUNT:
+                aggregation.value++;
+                break;
+              case uiGridGroupingConstants.aggregation.SUM:
+                if (!isNaN(numValue)){
+                  aggregation.value += numValue;
+                }
+                break;
+              case uiGridGroupingConstants.aggregation.MIN:
+                if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
+                  aggregation.value = fieldValue;
+                }
+                break;
+              case uiGridGroupingConstants.aggregation.MAX:
+                if (fieldValue > aggregation.value){
+                  aggregation.value = fieldValue;
+                }
+                break;
+              case uiGridGroupingConstants.aggregation.AVG:
+                aggregation.count++;
+                if (!isNaN(numValue)){
+                  aggregation.sum += numValue;
+                }
+                aggregation.value = aggregation.sum / aggregation.count;
+                break;
             }
           });
         }        

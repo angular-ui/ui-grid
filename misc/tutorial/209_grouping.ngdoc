@@ -29,13 +29,9 @@ to allow people to start using it.  Notable outstandings are:
   complex column definitions at present
 - doesn't work well with edit yet.  Edit needs to notice that the row is of type internal, and not 
   attempt to edit it
-- the adding of menu items has a repetitive smell about it, refactor to be cleaner.  Maybe need a remove aggregation item too
 - notify data change capability is needed for when people programmatically change the grouping  
-- aggregation doesn't check data types, it's quite naive.  Things like dates are likely to break somehow
 - some more unit testing
 - enhancement: allow a limit on number of columns grouped
-- enhancement: add average to the aggregations (requires more data to be stored - count, total, value, and they need to 
-  all be initialised) 
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
 
 Options to watch out for include:
@@ -43,12 +39,18 @@ Options to watch out for include:
 - `groupingIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
   level gets deeper.  Larger values look nicer, but mean that you probably need to make your groupHeader
   wider if you're allowing deep grouping
-- `groupingRowHeaderWidth`: the width of the grouping row header, important as above 
+- `groupingRowHeaderWidth`: the width of the grouping row header, important as above
+- 'groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
+  usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
+  visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
+  an average  
    
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for 
-counting the number of rows), and we find the max age for each grouping.
+counting the number of rows), we find the max age for each grouping, and we calculate the average balance.  We
+suppress the aggregation text on the balance column because we want to format as currency...but that means that 
+we can't easily see that it's an average.
 
 <example module="app">
   <file name="app.js">
@@ -63,7 +65,7 @@ counting the number of rows), and we find the max age for each grouping.
           { name: 'name', grouping: { aggregation: uiGridGroupingConstants.aggregation.COUNT }, width: '30%' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
-          { name: 'balance', width: '20%' }
+          { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
@@ -74,6 +76,7 @@ counting the number of rows), and we find the max age for each grouping.
      .success(function(data) {
        for ( var i = 0; i < data.length; i++ ){
          data[i].state = data[i].address.state;
+         data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }
        $scope.gridOptions.data = data;
      });
