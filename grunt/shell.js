@@ -1,11 +1,7 @@
 module.exports = {
-  options: {
-    stdout: true
-  },
   selenium: {
     command: './selenium/start',
     options: {
-      stdout: false,
       async: true
     }
   },
