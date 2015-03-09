@@ -62,7 +62,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       options = {};
     });
     
-    it('set all options to default', function() {
+    iit('set all options to default', function() {
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
         exporterSuppressMenu: false,
