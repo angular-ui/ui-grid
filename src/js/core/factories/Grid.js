@@ -686,8 +686,10 @@ angular.module('ui.grid')
       // We need to allow for the "row headers" when mapping from the column defs array to the columns array
       //   If we have a row header in columns[0] and don't account for it   we'll overwrite it with the column in columnDefs[0]
 
-      // Go through all the column defs
-      for (i = 0; i < self.options.columnDefs.length; i++) {
+      // Go through all the column defs, use the shorter of columns length and colDefs.length because if a user has given two columns the same name then 
+      // columns will be shorter than columnDefs.  In this situation we'll avoid an error, but the user will still get an unexpected result
+      var len = Math.min(self.options.columnDefs.length, self.columns.length);
+      for (i = 0; i < len; i++) {
         // If the column at this index has a different name than the column at the same index in the column defs...
         if (self.columns[i + headerOffset].name !== self.options.columnDefs[i].name) {
           // Replace the one in the cache with the appropriate column

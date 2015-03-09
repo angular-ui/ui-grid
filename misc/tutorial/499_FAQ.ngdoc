@@ -1,0 +1,20 @@
+@ngdoc overview
+@name Tutorial: 499 FAQ Frequently Asked Questions
+@description
+
+There are a number of common gotchas in using the grid, this FAQ aims to cover most of them in an easy to use format.
+
+### My fonts are all "chinese"
+
+  Refer to {@link 116_fonts_and_installation 116 Fonts and Installation}.  The characters are apparently Korean, 
+  and in short, it means your fonts aren't installed properly.
+  
+### One of my columns hasn't turned up
+
+  Your column names must be unique - have you given two columns the same name?  If you want the same `displayName` you can
+  do this, and you can have two columns refer to the same `field`, but each column must have a unique name.
+  
+### How do I get my grid to be responsive / take the full page height / automatically set height / when I use ng-show things go bad
+
+  Refer to {@link 108_hidden_grids 108 Hidden Grids}.  The short answer is the grid doesn't know how high it's content is until
+  it renders, and it doesn't dynamically resize.  You need to give an explicit height or an explicit number of rows to render.
