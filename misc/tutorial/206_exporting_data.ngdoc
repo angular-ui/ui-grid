@@ -16,6 +16,10 @@ the grid menu using the gridOption `enableGridMenu`
 
 Note that the option to export selected data is only visible if you have data selected.
 
+If you are using internet explorer then the pdf will automatically download rather than opening,
+there are issues with pdfMake not being able to automatically open tabs in internet explorer
+(refer https://github.com/bpampuch/pdfmake/issues/16 and other issues in that repo).
+
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 
