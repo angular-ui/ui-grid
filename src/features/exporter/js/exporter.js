@@ -842,7 +842,11 @@
           var exportData = this.getData(grid, rowTypes, colTypes);
           var docDefinition = this.prepareAsPdf(grid, exportColumnHeaders, exportData);
           
-          pdfMake.createPdf(docDefinition).open();
+          if (this.isIE()) {
+            pdfMake.createPdf(docDefinition).download();
+          } else {
+            pdfMake.createPdf(docDefinition).open();
+          }
         },
         
         
