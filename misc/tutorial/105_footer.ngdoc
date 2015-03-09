@@ -96,9 +96,9 @@ You can override the default grid footer template with gridOptions.footerTemplat
       it('grid should have footers with specific values', function () {
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 0, '' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 1, 'total: 281568' );
-        gridTestUtils.expectFooterCellValueMatch( 'grid1', 2, '30.196' );
+        gridTestUtils.expectFooterCellValueMatch( 'grid1', 2, '30.248' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 3, 'min: 20' );
-        gridTestUtils.expectFooterCellValueMatch( 'grid1', 4, 'max: 40' );
+        gridTestUtils.expectFooterCellValueMatch( 'grid1', 4, 'max: 49' );
         gridTestUtils.expectFooterCellValueMatch( 'grid1', 5, 'custom template' );
         // gridTestUtils.expectFooterCellValueMatch( 'grid1', 6, 'max: ' + getMaxDateString() );
         // TODO: need to check item count, not done
