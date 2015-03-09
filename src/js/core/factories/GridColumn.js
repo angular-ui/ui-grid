@@ -654,8 +654,9 @@ angular.module('ui.grid')
       var values = [];
       angular.forEach(visibleRows, function (row) {
         var cellValue = self.grid.getCellValue(row, self);
-        if (angular.isNumber(cellValue)) {
-          values.push(cellValue);
+        var cellNumber = Number(cellValue);
+        if (!isNaN(cellNumber)) {
+          values.push(cellNumber);
         }
       });
       return values;
