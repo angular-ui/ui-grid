@@ -2,19 +2,27 @@
 @name Tutorial: 110 Grid in a Modal
 @description
 
-Using a grid in a modal popup
+Using a grid in a modal popup.
+
+In some cases, and in particular with the bootstrap modal, you may find that your grid renders smaller than the
+available width.  This is because the bootstrap modal animates the initial render and the grid renders whilst the 
+modal is still animating - the available space isn't as expected.  You can correct this by calling `handleWindowResize`. 
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$rootScope', '$scope', '$http', 'modal', function ($rootScope, $scope, $http, modal) {
+    app.controller('MainCtrl', ['$rootScope', '$scope', '$http', 'modal', '$timeout', function ($rootScope, $scope, $http, modal, $timeout) {
       var myModal = new modal();
 
       $scope.hideGrid = true;
 
-      $rootScope.gridOptions = {  };
+      $rootScope.gridOptions = {
+        onRegisterApi: function (gridApi) {
+          $scope.gridApi = gridApi;
+        }
+      };
 
       $http.get('/data/100.json')
         .success(function(data) {
@@ -23,6 +31,11 @@ Using a grid in a modal popup
 
       $scope.showModal = function() {
         myModal.open();
+        
+        // call resize after modal finishes opening - usually only necessary on a bootstrap modal
+        $timeout( function() {
+          $scope.gridApi.core.handleWindowResize();
+        });
       };
     }]);
 
