@@ -214,6 +214,16 @@
           gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
           /**
            * @ngdoc object
+           * @name exporterOlderExcelCompatibility
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Some versions of excel don't like the utf-16 BOM on the front, and it comes
+           * through as ï»¿ in the first column header.  Setting this option to false will suppress this, at the
+           * expense of proper utf-16 handling in applications that do recognise the BOM
+           * <br/>Defaults to false
+           */
+          gridOptions.exporterOlderExcelCompatibility = gridOptions.exporterOlderExcelCompatibility === true; 
+          /**
+           * @ngdoc object
            * @name exporterPdfDefaultStyle
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default style in pdfMake format
@@ -533,7 +543,7 @@
           var exportData = this.getData(grid, rowTypes, colTypes);
           var csvContent = this.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
           
-          this.downloadFile (grid.options.exporterCsvFilename, csvContent);
+          this.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterOlderExcelCompatibility);
         },
         
         
@@ -754,8 +764,9 @@
          * given
          * @param {string} csvContent the csv content that we'd like to 
          * download as a file
+         * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
          */
-        downloadFile: function (fileName, csvContent) {
+        downloadFile: function (fileName, csvContent, exporterOlderExcelCompatibility) {
           var D = document;
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
@@ -786,16 +797,12 @@
         
           // IE10+
           if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(new Blob(["\ufeff", csvContent], {
-              type: strMimeType
-            }), fileName);
+            return navigator.msSaveBlob(new Blob(["\uFEFF", csvContent], { type: strMimeType } ), fileName);
           }
       
           //html5 A[download]
           if ('download' in a) {
-            var blob = new Blob([csvContent], {
-              type: strMimeType
-            });
+            var blob = new Blob(["\uFEFF", csvContent], { type: strMimeType } );
             rawFile = URL.createObjectURL(blob);
             a.setAttribute('download', fileName);
           } else {

@@ -22,7 +22,7 @@ module.exports = function( grunt, options ){
   
     protractor: {
       files: ['.tmp/doc-scenarios/**/*.spec.js', 'test/e2e/**/*.spec.js'],
-      tasks: ['protractor-watch:auto']
+      tasks: ['protractor:auto']
     },
   
     less: {
@@ -52,7 +52,7 @@ module.exports = function( grunt, options ){
   };
   
   if (grunt.option('fast') || grunt.option('e2e') === false){
-    config.protractor.tasks = ['ngdocs'];
+    config.protractor.tasks = [];
   }
   
   return  config;
