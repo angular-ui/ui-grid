@@ -145,7 +145,9 @@ Check that the tutorials are working fine on your local install.
 
 __Pro-tip:__ Running grunt dev can be slow, as it automatically runs all e2e tests and
 unit tests on each change.  You can just skip the testing by running instead `grunt dev --no-e2e`, which
-makes it faster, but gives you less information about where you may have broken things.  
+makes it faster, but gives you less information about where you may have broken things.  You
+can also use `grunt dev --fast`, which runs only the core unit tests, skips e2e testing, and runs
+unit tests against only the most recent angular version (it's an alias for `grunt dev --core --no-e2e --angular=1.3.7`).  
 Or you can edit the tests to target only the specific tests for the area you're working on.
 Pick the tutorial that has e2e tests and is most relevant to the area you're working in,
 and edit the e2e test to have `ddescribe` rather than `describe`.  This will ask jasmine
