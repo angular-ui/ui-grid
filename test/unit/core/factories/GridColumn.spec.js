@@ -155,7 +155,7 @@ describe('GridColumn factory', function () {
       grid.options.data = [
         { name: 'fred', value: 1 },
         { name: 'john', value: 2 },
-        { name: 'james', value: 3 },
+        { name: 'james', value: "3" },
         { name: 'matthew', value: 4 },
         { name: 'murray', value: 5 }
       ];
