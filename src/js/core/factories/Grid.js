@@ -2053,7 +2053,7 @@ angular.module('ui.grid')
       
       if (rowsAdded) {
         container.adjustRows(container.prevScrollTop, null);
-        container.adjustColumns(container.prevScrollTop, null);
+        container.adjustColumns(container.prevScrollLeft, null);
       }
       else {
         container.adjustRows(null, container.prevScrolltopPercentage);
