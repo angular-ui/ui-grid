@@ -28,7 +28,6 @@ module.exports = function (grunt, options) {
     grunt.log.writeln("Skipping e2e testing...");
     baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
   } else {
-    baseTasks['protractor-watch'] = [ 'protractor' ];
     baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
   }
   
