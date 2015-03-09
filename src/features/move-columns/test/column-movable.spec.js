@@ -1,6 +1,6 @@
 describe('ui.grid.moveColumns', function () {
 
-  var scope, element, timeout;
+  var scope, element, timeout, gridUtil;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "age": 25, "company": "Enersol", phone: '111'},
@@ -11,11 +11,13 @@ describe('ui.grid.moveColumns', function () {
 
   beforeEach(module('ui.grid.moveColumns'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, $timeout) {
+  beforeEach(inject(function (_$compile_, $rootScope, $timeout, _gridUtil_) {
 
     var $compile = _$compile_;
     scope = $rootScope;
     timeout = $timeout;
+    gridUtil = _gridUtil_;
+    
 
     scope.gridOptions = {};
     scope.gridOptions.data = data;
@@ -81,24 +83,28 @@ describe('ui.grid.moveColumns', function () {
   });
 
   it('expect moveColumn() to not change position of columns if column position given is wrong', function () {
+    spyOn(gridUtil, 'logError').andCallFake(function() {});
     scope.gridApi.colMovable.moveColumn(4, 5);
     expect(scope.grid.columns[0].name).toBe('name');
     expect(scope.grid.columns[1].name).toBe('gender');
     expect(scope.grid.columns[2].name).toBe('age');
     expect(scope.grid.columns[3].name).toBe('company');
     expect(scope.grid.columns[4].name).toBe('phone');
+    expect(gridUtil.logError).toHaveBeenCalledWith('MoveColumn: Invalid values for originalPosition, finalPosition');
   });
 
-  xit('expect event columnPositionChanged to be called when column position is changed', function () {
+  it('expect event columnPositionChanged to be called when column position is changed', function () {
     var functionCalled = false;
     scope.gridApi.colMovable.on.columnPositionChanged(scope, function (colDef, newPos, oldPos) {
       functionCalled = true;
     });
     scope.gridApi.colMovable.moveColumn(0, 1);
+    timeout.flush();
     expect(functionCalled).toBe(true);
   });
 
-  xit('expect column to move right when dragged right', function () {
+  // this test doesn't currently pass: TODO: fix
+  it('expect column to move right when dragged right', function () {
     var event = jQuery.Event("mousedown");
     event.toElement = {className: '.ui-grid-header-cell'};
     var columnHeader = angular.element(element.find('.ui-grid-header-cell')[0]);
@@ -116,6 +122,7 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
+  // this test doesn't currently pass: TODO: fix
   xit('expect column to move left when dragged left', function () {
     var event = jQuery.Event("mousedown");
     event.toElement = {className: '.ui-grid-header-cell'};
@@ -134,6 +141,7 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
+  // this test doesn't currently pass: TODO: fix
   xit('expect column movement to not happen if enableColumnMoving is false', function () {
     var event = jQuery.Event("mousedown");
     event.toElement = {className: '.ui-grid-header-cell'};
