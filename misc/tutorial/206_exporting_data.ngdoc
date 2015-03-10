@@ -27,6 +27,11 @@ an Excel spreadsheet after csv import, you can try setting `exporterOlderExcelCo
 
 Note that some other applications will then have problems instead.
 
+You may find that you have problems including pdfMake in your toolchain - it sometimes breaks when 
+minified.  If you have this problem it is recommended to instead include pdfmake.js and vfs_fonts.js
+as assets (or the equivalent minified versions), and then include them as a script in your application
+rather than as part of a minification of your entire javascript library.
+
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 
