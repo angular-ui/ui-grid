@@ -311,7 +311,7 @@
 
                 /**
                  * @ngdoc function
-                 * @name scrollToFocus
+                 * @name scrollToIfNecessary
                  * @methodOf  ui.grid.cellNav.api:PublicApi
                  * @description brings the specified row and column fully into view if it isn't already
                  * @param {GridRow} row grid row that we should make fully visible
@@ -503,7 +503,7 @@
           if (colDef !== null && typeof(colDef) !== 'undefined' ) {
             gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
           }
-          this.scrollToInternal(grid, gridRow, gridCol);
+          this.scrollToIfNecessary(grid, gridRow, gridCol);
         },
 
         /**
@@ -520,14 +520,14 @@
         scrollToFocus: function (grid, rowEntity, colDef) {
           var gridRow = null, gridCol = null;
 
-          if (rowEntity !== null) {
+          if (typeof(rowEntity) !== 'undefined' && rowEntity !== null) {
             gridRow = grid.getRow(rowEntity);
           }
 
-          if (colDef !== null) {
+          if (typeof(colDef) !== 'undefined' && colDef !== null) {
             gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
           }
-          this.scrollToInternal(grid, gridRow, gridCol);
+          this.scrollToIfNecessary(grid, gridRow, gridCol);
 
           var rowCol = { row: gridRow, col: gridCol };
 

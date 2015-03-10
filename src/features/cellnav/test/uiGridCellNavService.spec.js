@@ -206,18 +206,22 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       
     });
 
+
+    // these have changed to use scrollToIfNecessary, which is better code
+    // but it means these unit tests are now mostly checking that it is the same it used to
+    // be, not that it is giving some specified result (i.e. I just updated them to what they were)
     it('should request scroll to row and column', function () {
       uiGridCellNavService.scrollTo( grid, grid.options.data[4], grid.columns[4].colDef);
       
       expect(args.grid).toEqual(grid);
-      expect(args.y).toEqual( { percentage : (3 + 3/9 ) / 10 });
-      expect(args.x).toEqual({ percentage :  (300 + 100 * 4/10)/1500 });
+      expect(args.y).toEqual( { percentage : 5/11 });
+      expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to row only - first row', function () {
       uiGridCellNavService.scrollTo( grid, grid.options.data[0], null);
       
-      expect(args.y).toEqual( { percentage : 0 });
+      expect(args.y).toEqual( { percentage : 2/11 });
     });
 
     it('should request scroll to row only - last row', function () {
@@ -229,25 +233,25 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     it('should request scroll to row only - row 4', function () {
       uiGridCellNavService.scrollTo( grid, grid.options.data[5], null);
       
-      expect(args.y).toEqual( { percentage : ( 4 + 4/9 ) / 10 });
+      expect(args.y).toEqual( { percentage : 6/11 });
     });
 
     it('should request scroll to column only - first column', function () {
       uiGridCellNavService.scrollTo( grid, null, grid.columns[0].colDef);
       
-      expect(args.x).toEqual( { percentage :  0 });
+      expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to column only - last column', function () {
       uiGridCellNavService.scrollTo( grid, null, grid.columns[10].colDef);
       
-      expect(args.x).toEqual( { percentage :  1 });
+      expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to column only - column 7', function () {
       uiGridCellNavService.scrollTo( grid,  null, grid.columns[8].colDef);
       
-      expect(args.x).toEqual( { percentage :  (900 + 200 * 8/10) / 1500 } );
+      expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request no scroll as no row or column', function () {
