@@ -58,10 +58,10 @@
           invalidJson: 'Arquivo não pode ser processado. É um Json válido?',
           jsonNotArray: 'Arquivo json importado tem que conter um array. Abortando.'
         },
-		pagination: {
-		  sizes: 'itens por página',
-		  totalItems: 'itens'
-		}		
+        pagination: {
+          sizes: 'itens por página',
+          totalItems: 'itens'
+        }		
       });
       return $delegate;
     }]);
