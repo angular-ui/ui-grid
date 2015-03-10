@@ -385,8 +385,8 @@
    */
 
   module.directive('uiGridCell',
-    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService',
-      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService) {
+    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService', '$rootScope',
+      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService, $rootScope) {
         var touchstartTimeout = 500;
 
         return {
@@ -636,7 +636,7 @@
               $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';
 
               var cellElement;
-              $scope.$apply(function () {
+              var createEditor = function(){
                 inEdit = true;
                 cancelBeginEditEvents();
                 var cellElement = angular.element(html);
@@ -646,7 +646,12 @@
                 var gridCellContentsEl = angular.element($elm.children()[0]);
                 isFocusedBeforeEdit = gridCellContentsEl.hasClass('ui-grid-cell-focus');
                 gridCellContentsEl.addClass('ui-grid-cell-contents-hidden');
-              });
+              };
+              if (!$rootScope.$$phase) {
+                $scope.$apply(createEditor);
+              } else {
+                createEditor();
+              }
 
               //stop editing when grid is scrolled
               var deregOnGridScroll = $scope.col.grid.api.core.on.scrollEvent($scope, function () {
