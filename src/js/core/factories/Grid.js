@@ -364,7 +364,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description When the build creates columns from column definitions, the columnbuilders will be called to add
    * additional properties to the column.
-   * @param {function(colDef, col, gridOptions)} columnsProcessor function to be called
+   * @param {function(colDef, col, gridOptions)} columnBuilder function to be called
    */
   Grid.prototype.registerColumnBuilder = function registerColumnBuilder(columnBuilder) {
     this.columnBuilders.push(columnBuilder);
