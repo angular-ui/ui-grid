@@ -432,7 +432,11 @@
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Makes it possible to specify a method that evaluates for each and sets its "enableSelection" property.
            */
-
+          if (gridOptions.rowTemplate !== false && !angular.isDefined(gridOptions.isRowSelectable)) {
+              gridOptions.isRowSelectable = function() {
+                return true;
+              };
+          }
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
         },
 
@@ -449,7 +453,11 @@
          */
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
           var selected = row.isSelected;
-
+          if (!angular.isDefined(selected) || selected === false) {
+              selected = false;
+          } else {
+              selected = true;
+          }
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid, evt);
           } else if (!multiSelect && selected) {
@@ -461,7 +469,7 @@
           }
 
           if (selected && noUnselect){
-            // don't deselect the row 
+            // don't deselect the row
           } else if (row.enableSelection !== false) {
             row.setSelected(!selected);
             if (row.isSelected === true) {
