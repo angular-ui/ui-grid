@@ -69,11 +69,11 @@ we can't easily see that it's an average.
       $scope.gridOptions = {
         enableFiltering: true,
         columnDefs: [
-          { name: 'state', grouping: { groupPriority: 1 }, sort: { direction: 'desc' }, width: '35%' },
+          { name: 'name', width: '30%' },
           { name: 'gender', grouping: { groupPriority: 2 }, sort: { direction: 'asc' }, width: '20%' },
-          { name: 'name' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
+          { name: 'state', sort: { direction: 'desc' }, width: '35%' },
           { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
         ],
         onRegisterApi: function( gridApi ) {
