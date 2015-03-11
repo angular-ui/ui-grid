@@ -41,5 +41,5 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
   which would be something like:
   
 ```
-  cellTemplate: '<div>{{row.grid.renderContainers.body.visibleRowsCache.indexOf(row)}}</div>
+  cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)}}</div>'
 ```
