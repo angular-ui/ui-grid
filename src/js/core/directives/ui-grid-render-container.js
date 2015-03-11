@@ -97,7 +97,7 @@
               // Horizontal scroll
               if (args.x && $scope.bindScrollHorizontal) {
                 containerCtrl.prevScrollArgs = args;
-                var newScrollLeft = args.getNewScrollLeft(colContainer,containerCtrl.viewport);
+                var newScrollLeft = args.getNewScrollLeft(colContainer, containerCtrl.viewport);
 
                 // Make the current horizontal scroll position available in the $scope
                 $scope.newScrollLeft = newScrollLeft;
@@ -112,7 +112,7 @@
 
                 // Scroll came from somewhere else, so the viewport must be positioned
                 if (args.source !== ScrollEvent.Sources.ViewPortScroll) {
-                  containerCtrl.viewport[0].scrollLeft = newScrollLeft;
+                  containerCtrl.viewport[0].scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
                 }
 
                 containerCtrl.prevScrollLeft = newScrollLeft;
