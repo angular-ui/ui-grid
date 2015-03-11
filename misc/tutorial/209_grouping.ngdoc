@@ -25,6 +25,10 @@ filtered rows.
 Group header rows cannot be edited, and if using the selection feature, cannot be selected.  They can,
 however, be exported.
 
+The group rowHeader by default is only visible when one or more columns are grouped - the aim being
+to have no visual impact when grouping is turned on but unused.  If you'd like the groupRowHeader permanently
+present then set the `groupingRowHeaderAlwaysVisible: true` gridOption.
+
 Grouping is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
 
