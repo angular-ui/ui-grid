@@ -89,7 +89,8 @@
       SUM: 'sum',
       MAX: 'max',
       MIN: 'min',
-      AVG: 'avg'
+      AVG: 'avg',
+      FIELD: '##@@aggregation_running_count@@##'
     }
   });
 
@@ -312,7 +313,16 @@
            *  may be preferable to having the groupHeader come and go
            *  <br/>Defaults to false
            */
-          gridOptions.groupingRowHeaderAlwaysVisible = gridOptions.groupingRowHeaderAlwaysVisible !== false;
+          gridOptions.groupingRowHeaderAlwaysVisible = gridOptions.groupingRowHeaderAlwaysVisible === true;
+
+          /**
+           *  @ngdoc object
+           *  @name groupingShowCounts
+           *  @propertyOf  ui.grid.grouping.api:GridOptions
+           *  @description shows counts on the groupHeader rows
+           *  <br/>Defaults to true
+           */
+          gridOptions.groupingShowCounts = gridOptions.groupingShowCounts !== false;
         },
 
 
@@ -487,7 +497,7 @@
         groupingColumnProcessor: function( columns ) {
           angular.forEach(columns, function(column, index){
             if (column.name === uiGridGroupingConstants.groupingRowHeaderColName) {
-              if (typeof(column.grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || column.grid.options.groupingRowHeaderAlwaysVisible === true) {
+              if (typeof(column.grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || column.grid.options.groupingRowHeaderAlwaysVisible === false) {
                 var groupingConfig = service.getGrouping(column.grid);
                 if (groupingConfig.grouping.length > 0){
                   column.visible = true;
@@ -945,6 +955,10 @@
             // get the aggregation config to copy in - do this multiple times as shallow copying it
             // was harder than it looked, and as much work as just creating it again
             var aggregations = [];
+            if (grid.options.groupingShowCounts){
+              aggregations.push({type: uiGridGroupingConstants.aggregation.COUNT, fieldName: uiGridGroupingConstants.aggregation.FIELD, value: null });
+            } else {
+            }
             angular.forEach(columnSettings.aggregations, function(aggregation, index){
               
               if (aggregation.aggregation === uiGridGroupingConstants.aggregation.AVG){
@@ -1087,17 +1101,23 @@
         writeOutAggregation: function( grid, processingState ) {
           if ( processingState.currentGroupHeader ){
             angular.forEach(processingState.runningAggregations, function( aggregation, index ){
-              if (aggregation.col.groupingSuppressAggregationText){
-                processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
+              if (aggregation.fieldName === uiGridGroupingConstants.aggregation.FIELD){
+                // running total to include in the groupHeader
+                processingState.currentGroupHeader.entity[processingState.fieldName] = processingState.currentValue + ' (' + aggregation.value + ')';
+                aggregation.value = null; 
               } else {
-                processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
-              }
-              aggregation.value = null;
-              if ( aggregation.sum ){
-                aggregation.sum = null;
-              }
-              if ( aggregation.count ){
-                aggregation.count = null;
+                if (aggregation.col.groupingSuppressAggregationText){
+                  processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
+                } else {
+                  processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
+                }
+                aggregation.value = null;
+                if ( aggregation.sum ){
+                  aggregation.sum = null;
+                }
+                if ( aggregation.count ){
+                  aggregation.count = null;
+                }
               }
             });
           }
@@ -1182,34 +1202,36 @@
         aggregate: function( grid, row, groupFieldState ){
           // TODO: check data types, cast as necessary, all that jazz
           angular.forEach( groupFieldState.runningAggregations, function( aggregation, index ){
-            var fieldValue = grid.getCellValue(row, aggregation.col);
-            var numValue = Number(fieldValue);
-            switch (aggregation.type) {
-              case uiGridGroupingConstants.aggregation.COUNT:
-                aggregation.value++;
-                break;
-              case uiGridGroupingConstants.aggregation.SUM:
-                if (!isNaN(numValue)){
-                  aggregation.value += numValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.MIN:
-                if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
-                  aggregation.value = fieldValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.MAX:
-                if (fieldValue > aggregation.value){
-                  aggregation.value = fieldValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.AVG:
-                aggregation.count++;
-                if (!isNaN(numValue)){
-                  aggregation.sum += numValue;
-                }
-                aggregation.value = aggregation.sum / aggregation.count;
-                break;
+            if (aggregation.type === uiGridGroupingConstants.aggregation.COUNT){
+              // don't need getCellValue for counting, and column isn't present sometimes
+              aggregation.value++;
+            } else {
+              var fieldValue = grid.getCellValue(row, aggregation.col);
+              var numValue = Number(fieldValue);
+              switch (aggregation.type) {
+                case uiGridGroupingConstants.aggregation.SUM:
+                  if (!isNaN(numValue)){
+                    aggregation.value += numValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.MIN:
+                  if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
+                    aggregation.value = fieldValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.MAX:
+                  if (fieldValue > aggregation.value){
+                    aggregation.value = fieldValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.AVG:
+                  aggregation.count++;
+                  if (!isNaN(numValue)){
+                    aggregation.sum += numValue;
+                  }
+                  aggregation.value = aggregation.sum / aggregation.count;
+                  break;
+              }
             }
           });
         }        

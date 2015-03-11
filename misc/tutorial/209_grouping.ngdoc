@@ -51,7 +51,8 @@ Options to watch out for include:
 - `groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
   usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
-  an average  
+  an average 
+- `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders 
    
 
 @example
@@ -68,9 +69,9 @@ we can't easily see that it's an average.
       $scope.gridOptions = {
         enableFiltering: true,
         columnDefs: [
-          { name: 'state', grouping: { groupPriority: 1 }, sort: { direction: 'desc' }, width: '25%' },
+          { name: 'state', grouping: { groupPriority: 1 }, sort: { direction: 'desc' }, width: '35%' },
           { name: 'gender', grouping: { groupPriority: 2 }, sort: { direction: 'asc' }, width: '20%' },
-          { name: 'name', grouping: { aggregation: uiGridGroupingConstants.aggregation.COUNT }, width: '30%' },
+          { name: 'name' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
           { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
