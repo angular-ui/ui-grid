@@ -911,11 +911,11 @@
 
                   rowCol.eventType = uiGridCellNavConstants.EVENT_TYPE.KEYDOWN;
 
-                  // Broadcast the navigation
-                  uiGridCtrl.cellNav.broadcastCellNav(rowCol);
-
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
                   uiGridCellNavService.scrollToIfNecessary(grid, rowCol.row, rowCol.col);
+
+                  // Broadcast the navigation
+                  uiGridCtrl.cellNav.broadcastCellNav(rowCol);
 
                   evt.stopPropagation();
                   evt.preventDefault();
