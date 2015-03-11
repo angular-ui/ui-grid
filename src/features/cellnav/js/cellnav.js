@@ -878,12 +878,15 @@
                 if (lastRowCol) {
                   // Figure out which new row+combo we're navigating to
                   var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+                  var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
 
                   // Shift+tab on top-left cell should exit cellnav on render container
                   if (
                     // Navigating left
                     direction === uiGridCellNavConstants.direction.LEFT &&
-                    // Trying to stay on same row
+                    // New col is last col (i.e. wrap around)
+                    rowCol.col === focusableCols[focusableCols.length - 1] &&
+                    // Staying on same row, which means we're at first row
                     rowCol.row === lastRowCol.row &&
                     evt.keyCode === uiGridConstants.keymap.TAB &&
                     evt.shiftKey
@@ -894,6 +897,9 @@
                   // Tab on bottom-right cell should exit cellnav on render container
                   else if (
                     direction === uiGridCellNavConstants.direction.RIGHT &&
+                    // New col is first col (i.e. wrap around)
+                    rowCol.col === focusableCols[0] &&
+                    // Staying on same row, which means we're at first row
                     rowCol.row === lastRowCol.row &&
                     evt.keyCode === uiGridConstants.keymap.TAB &&
                     !evt.shiftKey
