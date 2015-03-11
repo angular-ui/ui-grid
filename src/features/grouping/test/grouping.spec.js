@@ -105,9 +105,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       ]);
     });
     
-    it('no aggregation', function() {
+    it('no aggregation, but groupingShowCounts', function() {
       grid.columns[1].grouping = {groupPriority: 3};
       grid.columns[3].grouping = {groupPriority: 2};
+      grid.options.groupingShowCounts = true;
 
       var result = uiGridGroupingService.initialiseProcessingState(grid);
       expect(result[0].col).toEqual(grid.columns[3]);
@@ -116,8 +117,29 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       delete result[1].col;
       
       expect(result).toEqual([
-        { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {} },
-        { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: {} }
+        { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [ 
+          { type : uiGridGroupingConstants.aggregation.COUNT, fieldName : uiGridGroupingConstants.aggregation.FIELD, value : null } 
+        ] },
+        { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [ 
+          { type : uiGridGroupingConstants.aggregation.COUNT, fieldName : uiGridGroupingConstants.aggregation.FIELD, value : null } 
+        ] }
+      ]);
+    });
+
+    it('no aggregation, without groupingShowCounts', function() {
+      grid.columns[1].grouping = {groupPriority: 3};
+      grid.columns[3].grouping = {groupPriority: 2};
+      grid.options.groupingShowCounts = false;
+
+      var result = uiGridGroupingService.initialiseProcessingState(grid);
+      expect(result[0].col).toEqual(grid.columns[3]);
+      delete result[0].col;
+      expect(result[1].col).toEqual(grid.columns[1]);
+      delete result[1].col;
+      
+      expect(result).toEqual([
+        { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [] },
+        { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [] }
       ]);
     });
     
@@ -126,27 +148,30 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[1].grouping = {groupPriority: 3};
       grid.columns[2].grouping = {aggregation: uiGridGroupingConstants.aggregation.SUM};
       grid.columns[3].grouping = {groupPriority: 2};
+      grid.options.groupingShowCounts = true;
 
       // when expected results go wrong the messages suck if columns are in the results...so check them individually then delete them out
       var result = uiGridGroupingService.initialiseProcessingState(grid);
       expect(result[0].col).toEqual(grid.columns[3]);
       delete result[0].col;
-      expect(result[0].runningAggregations[0].col).toEqual(grid.columns[0]);
-      delete result[0].runningAggregations[0].col;
-      expect(result[0].runningAggregations[1].col).toEqual(grid.columns[2]);
+      expect(result[0].runningAggregations[1].col).toEqual(grid.columns[0]);
       delete result[0].runningAggregations[1].col;
+      expect(result[0].runningAggregations[2].col).toEqual(grid.columns[2]);
+      delete result[0].runningAggregations[2].col;
       expect(result[1].col).toEqual(grid.columns[1]);
       delete result[1].col; 
-      expect(result[1].runningAggregations[0].col).toEqual(grid.columns[0]);
-      delete result[1].runningAggregations[0].col;
-      expect(result[1].runningAggregations[1].col).toEqual(grid.columns[2]);
+      expect(result[1].runningAggregations[1].col).toEqual(grid.columns[0]);
       delete result[1].runningAggregations[1].col;
+      expect(result[1].runningAggregations[2].col).toEqual(grid.columns[2]);
+      delete result[1].runningAggregations[2].col;
       expect(result).toEqual([
         { fieldName: 'col3', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [
+          { type : uiGridGroupingConstants.aggregation.COUNT, fieldName : uiGridGroupingConstants.aggregation.FIELD, value : null }, 
           { type: uiGridGroupingConstants.aggregation.COUNT, fieldName: 'col0', value: null },
           { type: uiGridGroupingConstants.aggregation.SUM, fieldName: 'col2', value: null }
         ] },
         { fieldName: 'col1', initialised: false, currentValue: null, currentGroupHeader: null, runningAggregations: [
+          { type : uiGridGroupingConstants.aggregation.COUNT, fieldName : uiGridGroupingConstants.aggregation.FIELD, value : null }, 
           { type: uiGridGroupingConstants.aggregation.COUNT, fieldName: 'col0', value: null },
           { type: uiGridGroupingConstants.aggregation.SUM, fieldName: 'col2', value: null }
         ] }

@@ -850,7 +850,7 @@
           var docDefinition = this.prepareAsPdf(grid, exportColumnHeaders, exportData);
           
           if (this.isIE()) {
-            pdfMake.createPdf(docDefinition).download();
+            var pdf = pdfMake.createPdf(docDefinition).download();
           } else {
             pdfMake.createPdf(docDefinition).open();
           }

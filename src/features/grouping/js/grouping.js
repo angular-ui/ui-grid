@@ -89,7 +89,8 @@
       SUM: 'sum',
       MAX: 'max',
       MIN: 'min',
-      AVG: 'avg'
+      AVG: 'avg',
+      FIELD: '##@@aggregation_running_count@@##'
     }
   });
 
@@ -312,7 +313,16 @@
            *  may be preferable to having the groupHeader come and go
            *  <br/>Defaults to false
            */
-          gridOptions.groupingRowHeaderAlwaysVisible = gridOptions.groupingRowHeaderAlwaysVisible !== false;
+          gridOptions.groupingRowHeaderAlwaysVisible = gridOptions.groupingRowHeaderAlwaysVisible === true;
+
+          /**
+           *  @ngdoc object
+           *  @name groupingShowCounts
+           *  @propertyOf  ui.grid.grouping.api:GridOptions
+           *  @description shows counts on the groupHeader rows
+           *  <br/>Defaults to true
+           */
+          gridOptions.groupingShowCounts = gridOptions.groupingShowCounts !== false;
         },
 
 
@@ -478,16 +488,20 @@
          * @methodOf  ui.grid.grouping.service:uiGridGroupingService
          * @description Updates the visibility of the groupingRowHeader based on whether or not
          * there are any grouped columns
-         * 
-         * @param {object} colDef columnDef we're basing on
-         * @param {GridCol} col the column we're to update
-         * @param {object} gridOptions the options we should use
-         * @returns {promise} promise for the builder - actually we do it all inline so it's immediately resolved
+         *
+         * @param {array} columns the columns to consider rendering
+         * @param {array} rows the grid rows, which we don't use but are passed to us 
+         * @returns {array} updated columns array
          */
-        groupingColumnProcessor: function( columns ) {
+        groupingColumnProcessor: function( columns, rows ) {
+          var grid = this;
           angular.forEach(columns, function(column, index){
+            // position used to make stable sort in moveGroupColumns
+            column.groupingPosition = index;
+            
+            // find groupingRowHeader and decide whether to make it visible
             if (column.name === uiGridGroupingConstants.groupingRowHeaderColName) {
-              if (typeof(column.grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || column.grid.options.groupingRowHeaderAlwaysVisible === true) {
+              if (typeof(grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || grid.options.groupingRowHeaderAlwaysVisible === false) {
                 var groupingConfig = service.getGrouping(column.grid);
                 if (groupingConfig.grouping.length > 0){
                   column.visible = true;
@@ -497,10 +511,70 @@
               }
             }
           });
+          
+          columns = service.moveGroupColumns(this, columns, rows);
           return columns;
         },
         
         
+        /**
+         * @ngdoc function
+         * @name moveGroupColumns
+         * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+         * @description Moves the column order so that the grouped columns are lined up
+         * to the left (well, unless you're RTL, then it's the right).  By doing this in 
+         * the columnsProcessor, we make it transient - when the column is ungrouped it'll
+         * go back to where it was.
+         * 
+         * Does nothing if the option `moveGroupColumns` is set to false.
+         * 
+         * @param {Grid} grid grid object
+         * @param {array} columns the columns that we should process/move
+         * @param {array} rows the grid rows
+         * @returns {array} updated columns
+         */
+        moveGroupColumns: function( grid, columns, rows ){
+          if ( grid.options.moveGroupColumns === false){
+            return;
+          }
+          
+          // optimisation - this can be done in the groupingColumnProcessor since we were already
+          // iterating.  But commented out and left here to make the code a little more understandable
+          //
+          // angular.forEach(columns, function(column, index) {
+          //   column.groupingPosition = index;
+          // });
+          
+          columns.sort(function(a, b){
+            var a_group, b_group;
+            if ( typeof(a.grouping) === 'undefined' || typeof(a.grouping.groupPriority) === 'undefined' || a.grouping.groupPriority < 0){
+              a_group = null;
+            } else {
+              a_group = a.grouping.groupPriority;
+            }
+
+            if ( typeof(b.grouping) === 'undefined' || typeof(b.grouping.groupPriority) === 'undefined' || b.grouping.groupPriority < 0){
+              b_group = null;
+            } else {
+              b_group = b.grouping.groupPriority;
+            }
+            
+            // groups get sorted to the top
+            if ( a_group !== null && b_group === null) { return -1; }
+            if ( b_group !== null && a_group === null) { return 1; }
+            if ( a_group !== null && b_group !== null) {return a_group - b_group; }
+
+            return a.groupingPosition - b.groupingPosition;
+          });
+          
+          angular.forEach(columns, function(column, index) {
+            delete column.groupingPosition;
+          });
+          
+          return columns;
+        },
+
+
         /**
          * @ngdoc function
          * @name groupColumn
@@ -508,8 +582,8 @@
          * @description Adds this column to the existing grouping, at the end of the priority order.
          * If the column doesn't have a sort, adds one, by default ASC
          * 
-         * If the option `groupMoveColumns` hasn't been set to false, moves the column to the left
-         * to make things look tidier.
+         * This column will move to the left of any non-group columns, the
+         * move is handled in a columnProcessor, so gets called as part of refresh
          * 
          * @param {Grid} grid grid object
          * @param {GridCol} column the column we want to group
@@ -531,7 +605,6 @@
           }
           
           service.tidyPriorities( grid );
-          service.moveGroupColumns( grid );
           
           grid.queueGridRefresh();
         },
@@ -545,7 +618,8 @@
          * column was previously aggregated the aggregation will come back. 
          * The sort will remain.  
          * 
-         * This column will move to the right of any other group columns.
+         * This column will move to the right of any other group columns, the
+         * move is handled in a columnProcessor, so gets called as part of refresh
          * 
          * @param {Grid} grid grid object
          * @param {GridCol} column the column we want to ungroup
@@ -558,7 +632,6 @@
           delete column.grouping.groupPriority;
           
           service.tidyPriorities( grid );
-          service.moveGroupColumns( grid );
           
           grid.queueGridRefresh();
         },
@@ -634,48 +707,6 @@
         },
         
         
-        /**
-         * @ngdoc function
-         * @name moveGroupColumns
-         * @methodOf  ui.grid.grouping.service:uiGridGroupingService
-         * @description Moves the column order so that the grouped columns are lined up
-         * to the left (well, unless you're RTL, then it's the right).  Doesn't change
-         * the columnDefs, just the columns array.  (check move columns that this is how it works)
-         * 
-         * All other columns retain their relative position, after the group columns 
-         * 
-         * Does nothing if the option `moveGroupColumns` is set to false.
-         * 
-         * @param {Grid} grid grid object
-         */
-        moveGroupColumns: function( grid ){
-          if ( grid.options.moveGroupColumns === false){
-            return;
-          }
-          
-          grid.columns.sort(function(a, b){
-            var a_group, b_group;
-            if ( typeof(a.grouping) === 'undefined' || typeof(a.grouping.groupPriority) === 'undefined' || a.grouping.groupPriority < 0){
-              a_group = null;
-            } else {
-              a_group = a.grouping.groupPriority;
-            }
-
-            if ( typeof(b.grouping) === 'undefined' || typeof(b.grouping.groupPriority) === 'undefined' || b.grouping.groupPriority < 0){
-              b_group = null;
-            } else {
-              b_group = b.grouping.groupPriority;
-            }
-            
-            // groups get sorted to the top
-            if ( a_group !== null && b_group === null) { return -1; }
-            if ( b_group !== null && a_group === null) { return 1; }
-            if ( a_group !== null && b_group !== null) {return a_group - b_group; }
-          });
-          grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-        },
-
-
         /**
          * @ngdoc function
          * @name expandAllRows
@@ -945,6 +976,10 @@
             // get the aggregation config to copy in - do this multiple times as shallow copying it
             // was harder than it looked, and as much work as just creating it again
             var aggregations = [];
+            if (grid.options.groupingShowCounts){
+              aggregations.push({type: uiGridGroupingConstants.aggregation.COUNT, fieldName: uiGridGroupingConstants.aggregation.FIELD, value: null });
+            } else {
+            }
             angular.forEach(columnSettings.aggregations, function(aggregation, index){
               
               if (aggregation.aggregation === uiGridGroupingConstants.aggregation.AVG){
@@ -1087,17 +1122,23 @@
         writeOutAggregation: function( grid, processingState ) {
           if ( processingState.currentGroupHeader ){
             angular.forEach(processingState.runningAggregations, function( aggregation, index ){
-              if (aggregation.col.groupingSuppressAggregationText){
-                processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
+              if (aggregation.fieldName === uiGridGroupingConstants.aggregation.FIELD){
+                // running total to include in the groupHeader
+                processingState.currentGroupHeader.entity[processingState.fieldName] = processingState.currentValue + ' (' + aggregation.value + ')';
+                aggregation.value = null; 
               } else {
-                processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
-              }
-              aggregation.value = null;
-              if ( aggregation.sum ){
-                aggregation.sum = null;
-              }
-              if ( aggregation.count ){
-                aggregation.count = null;
+                if (aggregation.col.groupingSuppressAggregationText){
+                  processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
+                } else {
+                  processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
+                }
+                aggregation.value = null;
+                if ( aggregation.sum ){
+                  aggregation.sum = null;
+                }
+                if ( aggregation.count ){
+                  aggregation.count = null;
+                }
               }
             });
           }
@@ -1182,34 +1223,36 @@
         aggregate: function( grid, row, groupFieldState ){
           // TODO: check data types, cast as necessary, all that jazz
           angular.forEach( groupFieldState.runningAggregations, function( aggregation, index ){
-            var fieldValue = grid.getCellValue(row, aggregation.col);
-            var numValue = Number(fieldValue);
-            switch (aggregation.type) {
-              case uiGridGroupingConstants.aggregation.COUNT:
-                aggregation.value++;
-                break;
-              case uiGridGroupingConstants.aggregation.SUM:
-                if (!isNaN(numValue)){
-                  aggregation.value += numValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.MIN:
-                if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
-                  aggregation.value = fieldValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.MAX:
-                if (fieldValue > aggregation.value){
-                  aggregation.value = fieldValue;
-                }
-                break;
-              case uiGridGroupingConstants.aggregation.AVG:
-                aggregation.count++;
-                if (!isNaN(numValue)){
-                  aggregation.sum += numValue;
-                }
-                aggregation.value = aggregation.sum / aggregation.count;
-                break;
+            if (aggregation.type === uiGridGroupingConstants.aggregation.COUNT){
+              // don't need getCellValue for counting, and column isn't present sometimes
+              aggregation.value++;
+            } else {
+              var fieldValue = grid.getCellValue(row, aggregation.col);
+              var numValue = Number(fieldValue);
+              switch (aggregation.type) {
+                case uiGridGroupingConstants.aggregation.SUM:
+                  if (!isNaN(numValue)){
+                    aggregation.value += numValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.MIN:
+                  if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
+                    aggregation.value = fieldValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.MAX:
+                  if (fieldValue > aggregation.value){
+                    aggregation.value = fieldValue;
+                  }
+                  break;
+                case uiGridGroupingConstants.aggregation.AVG:
+                  aggregation.count++;
+                  if (!isNaN(numValue)){
+                    aggregation.sum += numValue;
+                  }
+                  aggregation.value = aggregation.sum / aggregation.count;
+                  break;
+              }
             }
           });
         }        

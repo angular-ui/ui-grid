@@ -478,9 +478,14 @@
               if ($scope.col.colDef.enableCellEditOnFocus) {
                 $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol) {
                   if (rowCol.row === $scope.row && rowCol.col === $scope.col) {
-                    beginEdit();
-                  }
-                  else {
+                    // @PaulL: ugly nested timeout.  Without this, this same scroll event ends the editing before it gets started
+                    // Issue #2896 raised to fix this situation
+                    $timeout(function() {
+                      $timeout(function() {
+                        beginEdit();
+                      });
+                    });
+                  } else {
                     endEdit();
                   }
                 });
