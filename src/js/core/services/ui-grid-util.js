@@ -933,7 +933,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         case 'default':
           return element.scrollWidth - scrollLeft - element.clientWidth;
         case 'negative':
-          return scrollLeft + element.scrollWidth - element.clientWidth;
+          return Math.abs(scrollLeft);
         case 'reverse':
           return scrollLeft;
       }
