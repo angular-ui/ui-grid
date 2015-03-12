@@ -101,9 +101,6 @@
          * @param {object} gridOptions reference to grid options
          */
         defaultColumnBuilder: function (colDef, col, gridOptions) {
-
-          var templateGetPromises = [];
-
           /**
            * @ngdoc property
            * @name headerCellTemplate
@@ -112,11 +109,6 @@
            * is ui-grid/uiGridHeaderCell
            *
            */
-          if (!colDef.headerCellTemplate) {
-            col.providedHeaderCellTemplate = 'ui-grid/uiGridHeaderCell';
-          } else {
-            col.providedHeaderCellTemplate = colDef.headerCellTemplate;
-          }
 
           /**
            * @ngdoc property
@@ -127,11 +119,6 @@
            * must contain a div that can receive focus.
            *
            */
-          if (!colDef.cellTemplate) {
-            col.providedCellTemplate = 'ui-grid/uiGridCell';
-          } else {
-            col.providedCellTemplate = colDef.cellTemplate;
-          }
 
           /**
            * @ngdoc property
@@ -141,42 +128,44 @@
            * is ui-grid/uiGridFooterCell
            *
            */
-          if (!colDef.footerCellTemplate) {
-            col.providedFooterCellTemplate = 'ui-grid/uiGridFooterCell';
-          } else {
-            col.providedFooterCellTemplate = colDef.footerCellTemplate;
+
+          // TODO: this function might be useful in ui-grid-util
+          function lcfirst(str) {
+            return str.charAt(0).toLowerCase() + str.substring(1);
           }
 
-          col.cellTemplatePromise = gridUtil.getTemplate(col.providedCellTemplate);
-          templateGetPromises.push(col.cellTemplatePromise
-            .then(
-              function (template) {
-                col.cellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.cellFilter ? "|" + col.cellFilter : "");
-              },
-              function (res) {
-                throw new Error("Couldn't fetch/use colDef.cellTemplate '" + colDef.cellTemplate + "'");
-              })
-          );
+          function preprocessTemplate(template, definition, outObject) {
+            var
+              lcTemplate = lcfirst(template) + 'Template',
+              provided = definition[lcTemplate] || 'ui-grid/uiGrid' + template,
+              promise = gridUtil.getTemplate(provided);
 
-          templateGetPromises.push(gridUtil.getTemplate(col.providedHeaderCellTemplate)
-              .then(
-              function (template) {
-                col.headerCellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.headerCellFilter ? "|" + col.headerCellFilter : "");
-              },
-              function (res) {
-                throw new Error("Couldn't fetch/use colDef.headerCellTemplate '" + colDef.headerCellTemplate + "'");
-              })
-          );
+            outObject['provided' + template + 'Template'] = provided;
+            outObject[lcTemplate + 'Promise'] = promise;
+            templateGetPromises.push(promise);
 
-          templateGetPromises.push(gridUtil.getTemplate(col.providedFooterCellTemplate)
+            promise
               .then(
-              function (template) {
-                col.footerCellTemplate = template.replace(uiGridConstants.CUSTOM_FILTERS, col.footerCellFilter ? "|" + col.footerCellFilter : "");
-              },
-              function (res) {
-                throw new Error("Couldn't fetch/use colDef.footerCellTemplate '" + colDef.footerCellTemplate + "'");
-              })
-          );
+                function (tpl) {
+                  var filter = outObject[lcfirst(template) + 'Filter'];
+                  outObject[lcTemplate] = tpl.replace(
+                    uiGridConstants.CUSTOM_FILTERS,
+                    filter ? "|" + filter : ""
+                  );
+                },
+                function (res) {
+                  throw new Error("Couldn't fetch/use colDef." + lcTemplate + " '" + definition[lcTemplate] + "'");
+                }
+              );
+          }
+
+          var
+            templates = ['HeaderCell', 'Cell', 'FooterCell'],
+            templateGetPromises = [];
+
+          for (var i = 0; i < templates.length; ++i) {
+            preprocessTemplate(templates[i], colDef, col);
+          }
 
           // Create a promise for the compiled element function
           col.compiledElementFnDefer = $q.defer();
