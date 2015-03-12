@@ -1703,13 +1703,11 @@ angular.module('ui.grid')
    * @param {GridColumn} col Column to access
    */
   Grid.prototype.getCellValue = function getCellValue(row, col){
-    var self = this;
-
-    if (!self.cellValueGetterCache[col.colDef.name]) {
-      self.cellValueGetterCache[col.colDef.name] = $parse(row.getEntityQualifiedColField(col));
+    if (!col.cellValueGetterCache) {
+      col.cellValueGetterCache = $parse(row.getEntityQualifiedColField(col));
     }
 
-    return self.cellValueGetterCache[col.colDef.name](row);
+    return col.cellValueGetterCache(row);
   };
 
   
