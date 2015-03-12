@@ -726,7 +726,13 @@ angular.module('ui.grid')
     this.columns.forEach(function (col) {
       var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
       html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
-
+      
+      if (col.cellTooltip === false){
+        html = html.replace(uiGridConstants.TOOLTIP, '');
+      } else {
+        // gridColumn will have made sure that the col either has false or a function for this value
+        html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col)}}"');
+      }
 
       var compiledElementFn = $compile(html);
       col.compiledElementFn = compiledElementFn;

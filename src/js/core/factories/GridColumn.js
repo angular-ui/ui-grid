@@ -383,6 +383,28 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc property
+     * @name tooltip
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description Whether or not to show a tooltip when a user hovers over the cell.
+     * If set to false, no tooltip.  If true, the cell value is shown in the tooltip (useful
+     * if you have long values in your cells), if a function then that function is called
+     * passing in the row and the col `cellTooltip( row, col )`, and the return value is shown in the tooltip.
+     * 
+     * Defaults to false
+     *
+     */
+    if ( typeof(colDef.cellTooltip) === 'undefined' || colDef.cellTooltip === false ) {
+      self.cellTooltip = false;
+    } else if ( colDef.cellTooltip === true ){
+      self.cellTooltip = function(row, col) {
+        return self.grid.getCellValue( row, col );
+      };
+    } else {
+      self.cellTooltip = colDef.cellTooltip;
+    }
+
+    /**
+     * @ngdoc property
      * @name footerCellClass
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description footerCellClass can be a string specifying the class to append to a cell
