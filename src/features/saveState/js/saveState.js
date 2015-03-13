@@ -332,8 +332,12 @@
             scrollFocus.focus = true;
             var rowCol = grid.api.cellNav.getFocusedCell();
             if ( rowCol !== null ) {
-              scrollFocus.colName = rowCol.col.colDef.name;
-              scrollFocus.rowVal = service.getRowVal( grid, rowCol.row );
+              if ( rowCol.col !== null ){
+                scrollFocus.colName = rowCol.col.colDef.name;  
+              }
+              if ( rowCol.row !== null ){
+                scrollFocus.rowVal = service.getRowVal( grid, rowCol.row );  
+              }
             }
           } else if ( grid.options.saveScroll ) {
             scrollFocus.focus = false;
