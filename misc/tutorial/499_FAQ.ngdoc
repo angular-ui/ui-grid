@@ -43,3 +43,13 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
 ```
   cellTemplate: '<div class="ui-grid-cell-contents">{{grid.renderContainers.body.visibleRowCache.indexOf(row)}}</div>'
 ```
+
+### What browsers are supported by ui.grid
+
+  Our current testing verifies against IE9+, Chrome, Firefox, Safari 5+, Opera and Android.  We expect that the functionality
+  is compatible with any HTML5 compliant and Javascript enabled browser.
+  
+## What angular versions are supported by ui.grid
+
+  Our current testing uses 1.2.8, 1.2.14, 1.2.26, 1.3.0 and 1.3.6.  We intend to remain compatible with all forward versions of 1.3.
+   
