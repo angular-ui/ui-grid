@@ -135,6 +135,26 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, colName: 'col4', rowVal: { identity: false, row: 1 } } );
     });
 
+    it('save focus, focus present, no col', function() {
+      uiGridCellNavService.initializeGrid(grid);
+      
+      spyOn( grid.api.cellNav, 'getFocusedCell' ).andCallFake( function() {
+        return { row: grid.rows[2], col: null };
+      });
+      
+      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, rowVal: { identity: false, row: 1 } } );
+    });
+
+    it('save focus, focus present, no row', function() {
+      uiGridCellNavService.initializeGrid(grid);
+      
+      spyOn( grid.api.cellNav, 'getFocusedCell' ).andCallFake( function() {
+        return { row: null, col: grid.columns[3] };
+      });
+      
+      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, colName: 'col4' } );
+    });
+
     it('save focus, focus present, row identity present', function() {
       uiGridCellNavService.initializeGrid(grid);
       
