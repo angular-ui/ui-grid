@@ -156,6 +156,20 @@ angular.module('ui.grid')
       };
 
       /**
+       * @ngdoc function
+       * @name flatEntityAccess
+       * @methodOf ui.grid.class:GridOptions
+       * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e. 
+       * each of your columns associate directly with a propery one each of the entities in your data array.
+       * 
+       * In that situation we can avoid all the logic associated with complex binding to functions or to properties of sub-objects,
+       * which can provide a significant speed improvement with large data sets, with filtering and with sorting.
+       * 
+       * By default false
+       */
+      baseOptions.flatEntityAccess = baseOptions.flatEntityAccess === true;
+
+      /**
        * @ngdoc property
        * @name showHeader
        * @propertyOf ui.grid.class:GridOptions
