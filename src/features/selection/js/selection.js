@@ -668,6 +668,7 @@
         link: function($scope, $elm, $attrs, uiGridCtrl) {
           var self = uiGridCtrl.grid;
           $scope.selectButtonClick = function(row, evt) {
+            evt.stopPropagation();
             if (evt.shiftKey) {
               uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
             }
