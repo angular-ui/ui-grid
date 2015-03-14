@@ -53,7 +53,7 @@ with a data set of 640,000 rows.
     
       $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
       .success(function(data) {
-        for( var i=0; i<7; i++){
+        for( var i=0; i<6; i++){
           data = data.concat(data);
         }
         $scope.gridOptions.data = data;
