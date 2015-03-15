@@ -287,7 +287,7 @@
          */
         saveColumns: function( grid ) {
           var columns = [];
-          angular.forEach( grid.columns, function( column ) {
+          grid.columns.forEach( function( column ) {
             var savedColumn = {};
             savedColumn.name = column.name;
             savedColumn.visible = column.visible;
@@ -414,7 +414,7 @@
          * @param {object} columnsState the list of columns we had before, with their state
          */
         restoreColumns: function( grid, columnsState ){
-          angular.forEach( columnsState, function( columnState, index ) {
+          columnsState.forEach( function( columnState, index ) {
             var currentCol = grid.columns.filter( function( column ) {
               return column.name === columnState.name;
             });
@@ -513,7 +513,7 @@
           
           grid.api.selection.clearSelectedRows();
 
-          angular.forEach( selectionState, function( rowVal ) {
+          selectionState.forEach(  function( rowVal ) {
             if ( rowVal.identity ){
               var foundRow = service.findRowByIdentity( grid, rowVal );
               

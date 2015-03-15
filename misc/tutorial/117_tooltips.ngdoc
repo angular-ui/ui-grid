@@ -63,23 +63,6 @@ data that won't be displayable within the grid row (e.g. long description fields
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    describe( '115 header cell class', function() {
-      it('grid should have two visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
-      });
-  
-      it('cell classes', function () {
-        // blue for header 0
-        expect( gridTestUtils.headerCell( 'grid1', 0 ).getCssValue('color')).toEqual('rgba(0, 0, 255, 1)');
-
-        // header 2 starts with no coloring, but colors when sort is ASC
-        expect( gridTestUtils.headerCell( 'grid1', 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)', 'normal foreground');
-
-        gridTestUtils.clickHeaderCell( 'grid1', 1 );
-        expect( gridTestUtils.headerCell( 'grid1', 1 ).getCssValue('color')).toEqual('rgba(255, 0, 0, 1)', 'red highlight');
-        
-      });
-    });    
   </file>
 </example>
 

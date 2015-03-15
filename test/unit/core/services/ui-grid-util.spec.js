@@ -102,7 +102,7 @@ describe('ui.grid.utilService', function() {
         ['address.city', 'Address.City']
       ];
 
-      angular.forEach(translationExpects, function (set) {
+      translationExpects.forEach( function (set) {
         var strIn = set[0];
         var strOut = set[1];
         

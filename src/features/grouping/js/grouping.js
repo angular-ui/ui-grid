@@ -289,18 +289,18 @@
            *  @ngdoc object
            *  @name groupingRowHeaderWidth
            *  @propertyOf  ui.grid.grouping.api:GridOptions
-           *  @description Width of the grouping header, if your nested grouping is too
-           *  deep you may need to increase this 
-           *  <br/>Defaults to 40
+           *  @description Base width of the grouping header, provides for a single level of grouping.  This
+           *  is incremented by `groupingIndent` for each extra level
+           *  <br/>Defaults to 30
            */
-          gridOptions.groupingRowHeaderWidth = gridOptions.groupingRowHeaderWidth || 40;
+          gridOptions.groupingRowHeaderBaseWidth = gridOptions.groupingRowHeaderBaseWidth || 30;
 
           /**
            *  @ngdoc object
            *  @name groupingIndent
            *  @propertyOf  ui.grid.grouping.api:GridOptions
            *  @description Number of pixels of indent for the icon at each grouping level, wider indents are visually more pleasing,
-           *  but may result in you having to make the group row header wider
+           *  but will make the group row header wider
            *  <br/>Defaults to 10
            */
           gridOptions.groupingIndent = gridOptions.groupingIndent || 10;
@@ -495,21 +495,27 @@
          */
         groupingColumnProcessor: function( columns, rows ) {
           var grid = this;
-          angular.forEach(columns, function(column, index){
+          columns.forEach( function(column, index){
             // position used to make stable sort in moveGroupColumns
             column.groupingPosition = index;
             
-            // find groupingRowHeader and decide whether to make it visible
+            // find groupingRowHeader
             if (column.name === uiGridGroupingConstants.groupingRowHeaderColName) {
+              var groupingConfig = service.getGrouping(column.grid);
+              // decide whether to make it visible
               if (typeof(grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || grid.options.groupingRowHeaderAlwaysVisible === false) {
-                var groupingConfig = service.getGrouping(column.grid);
                 if (groupingConfig.grouping.length > 0){
                   column.visible = true;
                 } else {
                   column.visible = false;
                 }
               }
+              // set the width based on the depth of grouping
+              var indent = ( groupingConfig.grouping.length - 1 ) * grid.options.groupingIndent;
+              indent = indent > 0 ? indent : 0;
+              column.width = grid.options.groupingRowHeaderBaseWidth + indent; 
             }
+            
           });
           
           columns = service.moveGroupColumns(this, columns, rows);
@@ -541,7 +547,7 @@
           // optimisation - this can be done in the groupingColumnProcessor since we were already
           // iterating.  But commented out and left here to make the code a little more understandable
           //
-          // angular.forEach(columns, function(column, index) {
+          // columns.forEach( function(column, index) {
           //   column.groupingPosition = index;
           // });
           
@@ -567,7 +573,7 @@
             return a.groupingPosition - b.groupingPosition;
           });
           
-          angular.forEach(columns, function(column, index) {
+          columns.forEach( function(column, index) {
             delete column.groupingPosition;
           });
           
@@ -679,7 +685,7 @@
           var groupArray = [];
           var sortArray = [];
           
-          angular.forEach(grid.columns, function(column, index){
+          grid.columns.forEach( function(column, index){
             if ( typeof(column.grouping) !== 'undefined' && typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
               groupArray.push(column);
             } else if ( typeof(column.sort) !== 'undefined' && typeof(column.sort.priority) !== 'undefined' && column.sort.priority >= 0){
@@ -688,7 +694,7 @@
           });
           
           groupArray.sort(function(a, b){ return a.grouping.groupPriority - b.grouping.groupPriority; });
-          angular.forEach(groupArray, function(column, index){
+          groupArray.forEach( function(column, index){
             column.grouping.groupPriority = index;
             column.suppressRemoveSort = true;
             if ( typeof(column.sort) === 'undefined'){
@@ -699,7 +705,7 @@
 
           var i = groupArray.length;
           sortArray.sort(function(a, b){ return a.sort.priority - b.sort.priority; });
-          angular.forEach(sortArray, function(column, index){
+          sortArray.forEach( function(column, index){
             column.sort.priority = i;
             column.suppressRemoveSort = column.colDef.suppressRemoveSort;
             i++;
@@ -752,7 +758,7 @@
           expandedStatesSubset.state = targetState;
           
           // set all child nodes
-          angular.forEach(expandedStatesSubset, function( childNode, key){
+          expandedStatesSubset.forEach( function( childNode, key){
             if (key !== 'state'){
               service.setAllNodes(childNode, targetState);
             }
@@ -944,7 +950,7 @@
           for (var i = 0; i < renderableRows.length; i++ ){
             var row = renderableRows[i];
             
-            angular.forEach(groupingProcessingState, updateProcessingState);
+            groupingProcessingState.forEach( updateProcessingState);
             
             service.setVisibility( grid, row, groupingProcessingState );
           }
@@ -972,7 +978,7 @@
           var processingState = [];
           var columnSettings = service.getGrouping( grid );
           
-          angular.forEach(columnSettings.grouping, function( groupItem, index){
+          columnSettings.grouping.forEach( function( groupItem, index){
             // get the aggregation config to copy in - do this multiple times as shallow copying it
             // was harder than it looked, and as much work as just creating it again
             var aggregations = [];
@@ -980,7 +986,7 @@
               aggregations.push({type: uiGridGroupingConstants.aggregation.COUNT, fieldName: uiGridGroupingConstants.aggregation.FIELD, value: null });
             } else {
             }
-            angular.forEach(columnSettings.aggregations, function(aggregation, index){
+            columnSettings.aggregations.forEach( function(aggregation, index){
               
               if (aggregation.aggregation === uiGridGroupingConstants.aggregation.AVG){
                 aggregations.push({ type: aggregation.aggregation, fieldName: aggregation.field, col: aggregation.col, value: null, sum: null, count: null });
@@ -1017,7 +1023,7 @@
           var aggregateArray = [];
           
           // get all the grouping
-          angular.forEach(grid.columns, function(column, columnIndex){
+          grid.columns.forEach( function(column, columnIndex){
             if ( column.grouping ){
               if ( typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
                 groupArray.push({ field: column.field, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });  
@@ -1033,7 +1039,7 @@
           });
           
           // renumber the priority in case it was somewhat messed up, then remove the grouping reference
-          angular.forEach( groupArray, function( group, index) {
+          groupArray.forEach( function( group, index) {
             group.grouping.groupPriority = index;
             group.groupPriority = index;
             delete group.grouping;
@@ -1121,7 +1127,7 @@
          */
         writeOutAggregation: function( grid, processingState ) {
           if ( processingState.currentGroupHeader ){
-            angular.forEach(processingState.runningAggregations, function( aggregation, index ){
+            processingState.runningAggregations.forEach( function( aggregation, index ){
               if (aggregation.fieldName === uiGridGroupingConstants.aggregation.FIELD){
                 // running total to include in the groupHeader
                 processingState.currentGroupHeader.entity[processingState.fieldName] = processingState.currentValue + ' (' + aggregation.value + ')';
@@ -1222,7 +1228,7 @@
          */
         aggregate: function( grid, row, groupFieldState ){
           // TODO: check data types, cast as necessary, all that jazz
-          angular.forEach( groupFieldState.runningAggregations, function( aggregation, index ){
+          groupFieldState.runningAggregations.forEach(  function( aggregation, index ){
             if (aggregation.type === uiGridGroupingConstants.aggregation.COUNT){
               // don't need getCellValue for counting, and column isn't present sometimes
               aggregation.value++;

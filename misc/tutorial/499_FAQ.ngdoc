@@ -27,7 +27,7 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
   If the latter, then you can do it by just adding a counter column to your data:
 
 ```
-  angular.forEach($scope.myData, function( row, index){
+  $scope.myData.forEach( function( row, index){
     row.sequence = index;
   });
 ```  
