@@ -900,9 +900,9 @@ angular.module('ui.grid')
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
     
-    lookInRows = typeof(lookInRows) === 'undefined' ? this.rows : lookInRows;
+    lookInRows = typeof(lookInRows) === 'undefined' ? self.rows : lookInRows;
     
-    var rows = this.lookInRows.filter(function (row) {
+    var rows = lookInRows.filter(function (row) {
       return self.options.rowEquality(row.entity, rowEntity);
     });
     return rows.length > 0 ? rows[0] : null;
