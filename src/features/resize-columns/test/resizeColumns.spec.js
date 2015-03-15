@@ -58,7 +58,7 @@ describe('ui.grid.resizeColumns', function () {
   });
 
   describe('checking grid api for colResizable', function() {
-    it('columnSizeChanged should be defined', function () {
+    iit('columnSizeChanged should be defined', function () {
       expect($scope.gridApi.colResizable.on.columnSizeChanged).toBeDefined();
     });
   });

@@ -290,6 +290,7 @@
 
     var downEvent, upEvent, moveEvent;
 
+/*
     if (gridUtil.isTouchEnabled()) {
       downEvent = 'touchstart';
       upEvent = 'touchend';
@@ -300,6 +301,7 @@
       upEvent = 'mouseup';
       moveEvent = 'mousemove';
     }
+ */
 
     var resizer = {
       priority: 0,
@@ -374,7 +376,7 @@
         }
         
         
-        function mousemove(event, args) {
+        function moveFunction(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
@@ -409,7 +411,7 @@
         }
         
 
-        function mouseup(event, args) {
+        function upFunction(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
@@ -422,8 +424,14 @@
           var xDiff = x - startX;
 
           if (xDiff === 0) {
-            $document.off(upEvent, mouseup);
-            $document.off(moveEvent, mousemove);
+            // no movement, so just reset event handlers, including turning back on both
+            // down events - we turned one off when this event started
+            $document.off('mouseup', upFunction);
+            $document.off('touchend', upFunction);
+            $document.off('mousemove', moveFunction);
+            $document.off('touchmove', moveFunction);
+            $elm.on('mousedown', downFunction);
+            $elm.on('touchdown', downFunction);
             return;
           }
 
@@ -447,12 +455,18 @@
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
 
-          $document.off(upEvent, mouseup);
-          $document.off(moveEvent, mousemove);
+          // stop listening of up and move events - wait for next down
+          // reset the down events - we will have turned one off when this event started
+          $document.off('mouseup', upFunction);
+          $document.off('touchend', upFunction);
+          $document.off('mousemove', moveFunction);
+          $document.off('touchmove', moveFunction);
+          $elm.on('mousedown', downFunction);
+          $elm.on('touchdown', downFunction);
         }
 
 
-        $elm.on(downEvent, function(event, args) {
+        var downFunction = function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.stopPropagation();
 
@@ -469,11 +483,23 @@
           // Place the resizer overlay at the start position
           resizeOverlay.css({ left: startX });
 
-          // Add handlers for mouse move and up events
-          $document.on(upEvent, mouseup);
-          $document.on(moveEvent, mousemove);
-        });
-
+          // Add handlers for move and up events - if we were mousedown then we listen for mousemove and mouseup, if
+          // we were touchdown then we listen for touchmove and touchup.  Also remove the handler for the equivalent
+          // down event - so if we're touchdown, then remove the mousedown handler until this event is over, if we're
+          // mousedown then remove the touchdown handler until this event is over, this avoids processing duplicate events
+          if ( event.type === 'touchdown' ){
+            $document.on('touchup', upFunction);
+            $document.on('touchmove', moveFunction);
+            $elm.off('mousedown', downFunction);
+          } else {
+            $document.on('mouseup', upFunction);
+            $document.on('mousemove', moveFunction);
+            $elm.off('touchdown', downFunction);
+          }
+        };
+        
+        $elm.on('mousedown', downFunction);
+        $elm.on('touchdown', downFunction);
 
         // On doubleclick, resize to fit all rendered cells
         $elm.on('dblclick', function(event, args) {
@@ -536,10 +562,13 @@
         });
 
         $elm.on('$destroy', function() {
-          $elm.off(downEvent);
+          $elm.off('mousedown');
+          $elm.off('touchdown');
           $elm.off('dblclick');
-          $document.off(moveEvent, mousemove);
-          $document.off(upEvent, mouseup);
+          $document.off('touchmove', moveFunction);
+          $document.off('mousemove', moveFunction);
+          $document.off('touchup', upFunction);
+          $document.off('mouseup', upFunction);
         });
       }
     };
