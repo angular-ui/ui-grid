@@ -289,18 +289,18 @@
            *  @ngdoc object
            *  @name groupingRowHeaderWidth
            *  @propertyOf  ui.grid.grouping.api:GridOptions
-           *  @description Width of the grouping header, if your nested grouping is too
-           *  deep you may need to increase this 
-           *  <br/>Defaults to 40
+           *  @description Base width of the grouping header, provides for a single level of grouping.  This
+           *  is incremented by `groupingIndent` for each extra level
+           *  <br/>Defaults to 30
            */
-          gridOptions.groupingRowHeaderWidth = gridOptions.groupingRowHeaderWidth || 40;
+          gridOptions.groupingRowHeaderBaseWidth = gridOptions.groupingRowHeaderBaseWidth || 30;
 
           /**
            *  @ngdoc object
            *  @name groupingIndent
            *  @propertyOf  ui.grid.grouping.api:GridOptions
            *  @description Number of pixels of indent for the icon at each grouping level, wider indents are visually more pleasing,
-           *  but may result in you having to make the group row header wider
+           *  but will make the group row header wider
            *  <br/>Defaults to 10
            */
           gridOptions.groupingIndent = gridOptions.groupingIndent || 10;
@@ -499,17 +499,23 @@
             // position used to make stable sort in moveGroupColumns
             column.groupingPosition = index;
             
-            // find groupingRowHeader and decide whether to make it visible
+            // find groupingRowHeader
             if (column.name === uiGridGroupingConstants.groupingRowHeaderColName) {
+              var groupingConfig = service.getGrouping(column.grid);
+              // decide whether to make it visible
               if (typeof(grid.options.groupingRowHeaderAlwaysVisible) === 'undefined' || grid.options.groupingRowHeaderAlwaysVisible === false) {
-                var groupingConfig = service.getGrouping(column.grid);
                 if (groupingConfig.grouping.length > 0){
                   column.visible = true;
                 } else {
                   column.visible = false;
                 }
               }
+              // set the width based on the depth of grouping
+              var indent = ( groupingConfig.grouping.length - 1 ) * grid.options.groupingIndent;
+              indent = indent > 0 ? indent : 0;
+              column.width = grid.options.groupingRowHeaderBaseWidth + indent; 
             }
+            
           });
           
           columns = service.moveGroupColumns(this, columns, rows);
