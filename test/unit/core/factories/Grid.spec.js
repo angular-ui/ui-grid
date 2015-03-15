@@ -753,7 +753,7 @@ describe('Grid factory', function () {
     it( 'register then deregister data change callback', function() {
       var countCallbacks = function(){
         var i = 0;
-        angular.forEach(grid.dataChangeCallbacks, function(callback){
+        angular.forEach(grid.dataChangeCallbacks, function(callback, key){
           i++;
         });
         return i;

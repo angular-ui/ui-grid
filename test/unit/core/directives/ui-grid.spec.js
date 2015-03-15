@@ -102,7 +102,7 @@ describe('ui-grid', function() {
 
     afterEach(function() {
       element.remove();
-      angular.forEach(columnDefs, function (c) {
+      columnDefs.forEach( function (c) {
         delete c.width;
       });
     });
@@ -114,7 +114,7 @@ describe('ui-grid', function() {
     it('should distribute extra width', function () {
       var renderWidth = 0;
 
-      angular.forEach(gridApi.grid.columns, function (c) {
+      gridApi.grid.columns.forEach( function (c) {
         renderWidth += c.drawnWidth;
       });
 
