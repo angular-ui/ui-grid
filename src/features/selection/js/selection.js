@@ -770,8 +770,8 @@
    *  @description Stacks on top of ui.grid.uiGridCell to provide selection feature
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
+    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService', '$timeout',
+      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService, $timeout) {
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
@@ -789,6 +789,9 @@
             });
 
             var selectCells = function(evt){
+              // if we get a click, then stop listening for touchend
+              $elm.off('touchend', touchEnd);
+              
               if (evt.shiftKey) {
                 uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
               }
@@ -799,10 +802,19 @@
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
               }
               $scope.$apply();
+              
+              // don't re-enable the touchend handler for a little while - some devices generate both, and it will
+              // take a little while to move your hand from the mouse to the screen if you have both modes of input
+              $timeout(function() {
+                $elm.on('touchend', touchEnd);
+              }, touchTimeout);
             };
 
             var touchStart = function(evt){
               touchStartTime = (new Date()).getTime();
+
+              // if we get a touch event, then stop listening for click
+              $elm.off('click', selectCells);
             };
 
             var touchEnd = function(evt) {
@@ -813,6 +825,12 @@
                 // short touch
                 selectCells(evt);
               }
+              
+              // don't re-enable the click handler for a little while - some devices generate both, and it will
+              // take a little while to move your hand from the screen to the mouse if you have both modes of input
+              $timeout(function() {
+                $elm.on('click', selectCells);
+              }, touchTimeout);
             };
 
             function registerRowSelectionEvents() {
