@@ -888,185 +888,85 @@ angular.module('ui.grid')
     return t;
   };
 
-    /**
-     * @ngdoc function
-     * @name getRow
-     * @methodOf ui.grid.class:Grid
-     * @description returns the GridRow that contains the rowEntity
-     * @param {object} rowEntity the gridOptions.data array element instance
-     */
-    Grid.prototype.getRow = function getRow(rowEntity) {
-      var self = this;
-      var rows = this.rows.filter(function (row) {
-        return self.options.rowEquality(row.entity, rowEntity);
-      });
-      return rows.length > 0 ? rows[0] : null;
-    };
+  /**
+   * @ngdoc function
+   * @name getRow
+   * @methodOf ui.grid.class:Grid
+   * @description returns the GridRow that contains the rowEntity
+   * @param {object} rowEntity the gridOptions.data array element instance
+   * @param {array} rows [optional] the rows to look in - if not provided then
+   * looks in grid.rows
+   */
+  Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
+    var self = this;
+    
+    lookInRows = typeof(lookInRows) === 'undefined' ? this.rows : lookInRows;
+    
+    var rows = this.lookInRows.filter(function (row) {
+      return self.options.rowEquality(row.entity, rowEntity);
+    });
+    return rows.length > 0 ? rows[0] : null;
+  };
 
 
-      /**
+  /**
    * @ngdoc function
    * @name modifyRows
    * @methodOf ui.grid.class:Grid
    * @description creates or removes GridRow objects from the newRawData array.  Calls each registered
    * rowBuilder to further process the row
    *
-   * Rows are identified using the gridOptions.rowEquality function
+   * This method aims to achieve three things:
+   * 1. the resulting rows array is in the same order as the newRawData, we'll call
+   * rowsProcessors immediately after to sort the data anyway
+   * 2. if we have row hashing available, we try to use the rowHash to find the row
+   * 3. no memory leaks - rows that are no longer in newRawData need to be garbage collected
+   * 
+   * The basic logic flow makes use of the newRawData, oldRows and oldHash, and creates
+   * the newRows and newHash
+   * 
+   * ```
+   * newRawData.forEach newEntity
+   *   if (hashing enabled)
+   *     check oldHash for newEntity
+   *   else
+   *     look for old row directly in oldRows
+   *   if !oldRowFound     // must be a new row
+   *     create newRow
+   *   append to the newRows and add to newHash
+   *   run the processors
+   * 
+   * Rows are identified using the hashKey if configured.  If not configured, then rows
+   * are identified using the gridOptions.rowEquality function
    */
   Grid.prototype.modifyRows = function modifyRows(newRawData) {
-    var self = this,
-        i,
-        rowhash,
-        found,
-        newRow;
-    if ((self.options.useExternalSorting || self.getColumnSorting().length === 0) && newRawData.length > 0) {
-        var oldRowHash = self.rowHashMap;
-        if (!oldRowHash) {
-           oldRowHash = {get: function(){return null;}};
-        }
-        self.createRowHashMap();
-        rowhash = self.rowHashMap;
-        var wasEmpty = self.rows.length === 0;
-        self.rows.length = 0;
-        for (i = 0; i < newRawData.length; i++) {
-            var newRawRow = newRawData[i];
-            found = oldRowHash.get(newRawRow);
-            if (found) {
-              newRow = found.row; 
-            }
-            else {
-              newRow = self.processRowBuilders(new GridRow(newRawRow, i, self));
-            }
-            self.rows.push(newRow);
-            rowhash.put(newRawRow, {
-                i: i,
-                entity: newRawRow,
-                row:newRow
-            });
-        }
-        //now that we have data, it is save to assign types to colDefs
-//        if (wasEmpty) {
-           self.assignTypes();
-//        }
-    } else {
-    if (self.rows.length === 0 && newRawData.length > 0) {
-      if (self.options.enableRowHashing) {
-        if (!self.rowHashMap) {
-          self.createRowHashMap();
-        }
-
-        for (i = 0; i < newRawData.length; i++) {
-          newRow = newRawData[i];
-
-          self.rowHashMap.put(newRow, {
-            i: i,
-            entity: newRow
-          });
-        }
-      }
-
-      self.addRows(newRawData);
-      //now that we have data, it is save to assign types to colDefs
-      self.assignTypes();
-    }
-    else if (newRawData.length > 0) {
-      var unfoundNewRows, unfoundOldRows, unfoundNewRowsToFind;
-
-      // If row hashing is turned on
-      if (self.options.enableRowHashing) {
-        // Array of new rows that haven't been found in the old rowset
-        unfoundNewRows = [];
-        // Array of new rows that we explicitly HAVE to search for manually in the old row set. They cannot be looked up by their identity (because it doesn't exist).
-        unfoundNewRowsToFind = [];
-        // Map of rows that have been found in the new rowset
-        var foundOldRows = {};
-        // Array of old rows that have NOT been found in the new rowset
-        unfoundOldRows = [];
-
-        // Create the row HashMap if it doesn't exist already
-        if (!self.rowHashMap) {
-          self.createRowHashMap();
-        }
-        rowhash = self.rowHashMap;
-        
-        // Make sure every new row has a hash
-        for (i = 0; i < newRawData.length; i++) {
-          newRow = newRawData[i];
-
-          // Flag this row as needing to be manually found if it didn't come in with a $$hashKey
-          var mustFind = false;
-          if (!self.options.getRowIdentity(newRow)) {
-            mustFind = true;
-          }
-
-          // See if the new row is already in the rowhash
-          found = rowhash.get(newRow);
-          // If so...
-          if (found) {
-            // See if it's already being used by as GridRow
-            if (found.row) {
-              // If so, mark this new row as being found
-              foundOldRows[self.options.rowIdentity(newRow)] = true;
-            }
-          }
-          else {
-            // Put the row in the hashmap with the index it corresponds to
-            rowhash.put(newRow, {
-              i: i,
-              entity: newRow
-            });
-            
-            // This row has to be searched for manually in the old row set
-            if (mustFind) {
-              unfoundNewRowsToFind.push(newRow);
-            }
-            else {
-              unfoundNewRows.push(newRow);
-            }
-          }
-        }
-
-        // Build the list of unfound old rows
-        for (i = 0; i < self.rows.length; i++) {
-          var row = self.rows[i];
-          var hash = self.options.rowIdentity(row.entity);
-          if (!foundOldRows[hash]) {
-            unfoundOldRows.push(row);
-          }
-        }
-      }
-
-      // Look for new rows
-      var newRows = unfoundNewRows || [];
-
-      // The unfound new rows is either `unfoundNewRowsToFind`, if row hashing is turned on, or straight `newRawData` if it isn't
-      var unfoundNew = (unfoundNewRowsToFind || newRawData);
-
-      // Search for real new rows in `unfoundNew` and concat them onto `newRows`
-      newRows = newRows.concat(self.newInN(self.rows, unfoundNew, 'entity'));
-      
-      self.addRows(newRows); 
-      
-      var deletedRows = self.getDeletedRows((unfoundOldRows || self.rows), newRawData);
-
-      for (i = 0; i < deletedRows.length; i++) {
-        if (self.options.enableRowHashing) {
-          self.rowHashMap.remove(deletedRows[i].entity);
-        }
-
-        self.rows.splice( self.rows.indexOf(deletedRows[i]), 1 );
-      }
-    }
-    // Empty data set
-    else {
-      // Reset the row HashMap
-      self.createRowHashMap();
-
-      // Reset the rows length!
-      self.rows.length = 0;
-    }
-    }
+    var self = this;
+    var oldRows = self.rows.slice(0);
+    var oldRowHash = self.rowHashMap || self.createRowHashMap();
+    self.rowHashMap = self.createRowHashMap();
+    self.rows.length = 0;
     
+    newRawData.forEach( function( newEntity, i ) {
+      var newRow;
+      if ( self.options.enableRowHashing ){
+        // if hashing is enabled, then this row will be in the hash if we already know about it
+        newRow = oldRowHash.get( newEntity );
+      } else {
+        // otherwise, manually search the oldRows to see if we can find this row
+        newRow = self.getRow(newEntity, oldRows);
+      }
+
+      // if we didn't find the row, it must be new, so create it
+      if ( !newRow ){
+        newRow = self.processRowBuilders(new GridRow(newEntity, i, self));
+      }
+
+      self.rows.push( newRow );
+      self.rowHashMap.put( newEntity, newRow );
+    });
+    
+    self.assignTypes();
+
     var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
@@ -1080,18 +980,6 @@ angular.module('ui.grid')
     return $q.all([p1, p2]);
   };
 
-  Grid.prototype.getDeletedRows = function(oldRows, newRows) {
-    var self = this;
-
-    var olds = oldRows.filter(function (oldRow) {
-      return !newRows.some(function (newItem) {
-        return self.options.rowEquality(newItem, oldRow.entity);
-      });
-    });
-    // var olds = self.newInN(newRows, oldRows, null, 'entity');
-    // dump('olds', olds);
-    return olds;
-  };
 
   /**
    * Private Undocumented Method
@@ -1850,7 +1738,7 @@ angular.module('ui.grid')
     var hashMap = new RowHashMap();
     hashMap.grid = self;
 
-    self.rowHashMap = hashMap;
+    return hashMap;
   };
   
   
