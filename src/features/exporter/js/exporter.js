@@ -749,8 +749,8 @@
          * @description Checks whether current browser is IE and returns it's version if it is
         */
         isIE: function () {
-            var myNav = navigator.userAgent.toLowerCase();
-            return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
+          var match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
+          return match ? parseInt(match[1]) : false;
         },
 
 
