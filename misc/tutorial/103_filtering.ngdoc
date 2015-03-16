@@ -56,6 +56,9 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
       $scope.gridOptions = {
         enableFiltering: true,
+        onRegisterApi: function(gridApi){
+          $scope.gridApi = gridApi;
+        },
         columnDefs: [
           // default
           { field: 'name' },
@@ -106,6 +109,11 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
           $scope.gridOptions.data = data;
           $scope.gridOptions.data[0].age = -5;
         });
+        
+      $scope.toggleFiltering = function(){
+        $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      };
     }]);
   </file>
   <file name="index.html">
@@ -116,6 +124,7 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
       <strong>Note:</strong> The third column has the filter input disabled, but actually has a filter set in code that requires every company to have an 'a' in their name.
       <br>
       <br>
+      <button id='toggleFiltering' ng-click="toggleFiltering()" class="btn btn-success">Toggle Filtering</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>

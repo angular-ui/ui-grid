@@ -524,7 +524,7 @@ angular.module('ui.grid')
     if (colDef.filter) {
       defaultFilters.push(colDef.filter);
     }
-    else if (self.enableFiltering && self.grid.options.enableFiltering) {
+    else {
       // Add an empty filter definition object, which will
       // translate to a guessed condition and no pre-populated
       // value for the filter <input>.
