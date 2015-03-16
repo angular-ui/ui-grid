@@ -115,7 +115,20 @@ describe('gridClassFactory', function() {
       expect(testSetup.col.cellTemplate).toEqual('<div>a sample cell template with custom_filters</div>');      
       expect(testSetup.col.footerCellTemplate).toEqual('<div>a sample footer template with custom_filters</div>');
     });
-    
+
+    describe('custom column filter templates', function() {
+      
+      it('filters can have custom templates', function() {
+        testSetup.colDef.filters = [{filterTemplate: 'myownfiltertemplate/0001'}];
+        testSetup.col.filters = [{}];
+
+        testSetup.$templateCache.put('myownfiltertemplate/0001', '<div>SEARCH_FOR_ME</div>');
+
+        gridClassFactory.defaultColumnBuilder( testSetup.colDef, testSetup.col, testSetup.gridOptions );
+
+        expect(testSetup.col.filters[0].providedFilterTemplate).toEqual('myownfiltertemplate/0001');
+      });
+    });
   });
 
 });

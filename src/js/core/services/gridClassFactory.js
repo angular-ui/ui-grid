@@ -160,12 +160,16 @@
           }
 
           var
-            templates = ['HeaderCell', 'Cell', 'FooterCell'],
+            templates = ['HeaderCell', 'Cell', 'FooterCell', 'Filter'],
             templateGetPromises = [];
 
           for (var i = 0; i < templates.length; ++i) {
             preprocessTemplate(templates[i], colDef, col);
           }
+
+          angular.forEach(colDef.filters, function(filter, i) {
+            preprocessTemplate('Filter', filter, col.filters[i]);
+          });
 
           // Create a promise for the compiled element function
           col.compiledElementFnDefer = $q.defer();
