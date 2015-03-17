@@ -311,6 +311,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (!rows) {
       return;
     }
+    
+    // don't filter if filtering currently disabled
+    if (!grid.options.enableFiltering){
+      return rows;
+    }
 
     // Build list of filters to apply
     var filterData = [];

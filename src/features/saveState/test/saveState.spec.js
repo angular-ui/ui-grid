@@ -105,10 +105,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
   describe('saveColumns', function() {
     it('save columns', function() {
       expect( uiGridSaveStateService.saveColumns( grid ) ).toEqual([
-        { name: 'col1', visible: true, width: 50, sort: [], filters: [] },
-        { name: 'col2', visible: true, width: '*', sort: [], filters: [] },
-        { name: 'col3', visible: false, width: 100, sort: [], filters: [] },
-        { name: 'col4', visible: true, width: 200, sort: [], filters: [] }
+        { name: 'col1', visible: true, width: 50, sort: [], filters: [ {} ] },
+        { name: 'col2', visible: true, width: '*', sort: [], filters: [ {} ] },
+        { name: 'col3', visible: false, width: 100, sort: [], filters: [ {} ] },
+        { name: 'col4', visible: true, width: 200, sort: [], filters: [ {} ] }
       ]);
     });
   });
@@ -287,10 +287,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       });
       
       uiGridSaveStateService.restoreColumns( grid, [
-        { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [] },
+        { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [ {} ] },
         { name: 'col1', visible: true, width: '*', sort: [], filters: [ {'blah': 'blah'} ] },
-        { name: 'col4', visible: false, width: 120, sort: [], filters: [] },
-        { name: 'col3', visible: true, width: 220, sort: [], filters: [] }
+        { name: 'col4', visible: false, width: 120, sort: [], filters: [ {} ] },
+        { name: 'col3', visible: true, width: 220, sort: [], filters: [ {} ] }
       ]);
       
       expect( grid.columns[0].name ).toEqual('col2', 'column 0 name should be col2');
@@ -318,10 +318,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( grid.columns[2].sort ).toEqual([]);
       expect( grid.columns[3].sort ).toEqual([]);
 
-      expect( grid.columns[0].filters ).toEqual([]);
+      expect( grid.columns[0].filters ).toEqual([ {} ]);
       expect( grid.columns[1].filters ).toEqual([ { blah: 'blah' } ]);
-      expect( grid.columns[2].filters ).toEqual([]);
-      expect( grid.columns[3].filters ).toEqual([]);
+      expect( grid.columns[2].filters ).toEqual([ {} ]);
+      expect( grid.columns[3].filters ).toEqual([ {} ]);
       
       expect( colVisChangeCount ).toEqual( 4, '4 columns changed visibility');
       expect( colFilterChangeCount ).toEqual( 1, '1 columns changed filter');

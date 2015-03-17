@@ -261,8 +261,9 @@ describe('rowSorter', function() {
             returnedRows = newRows;
           });
 
-        // Have to flush $timeout once per processor, as they run consecutively
-        for (var i = 0; i < grid.rowsProcessors.length; i++) {
+        // Have to flush $timeout once per processor, as they run consecutively.  Magic value - reduce by one
+        // since filter processor is enabled but does nothing
+        for (var i = 0; i < grid.rowsProcessors.length - 1; i++) {
           $timeout.flush();
         }
         
