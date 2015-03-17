@@ -48,7 +48,7 @@
 
             // apply any headerCellClass
             var classAdded;
-            var updateClass = function( grid ){
+            var updateHeaderOptions = function( grid ){
               var contents = $elm;
               if ( classAdded ){
                 contents.removeClass( classAdded );
@@ -65,6 +65,30 @@
               
               var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
               $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
+
+              // Figure out whether this column is sortable or not
+              if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+                $scope.sortable = true;
+              }
+              else {
+                $scope.sortable = false;
+              }
+      
+              // Figure out whether this column is filterable or not
+              if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
+                $scope.filterable = true;
+              }
+              else {
+                $scope.filterable = false;
+              }
+              
+              // figure out whether we support column menus
+              if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false && 
+                      $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false){
+                $scope.colMenu = true;
+              } else {
+                $scope.colMenu = false;
+              }
             };
 
             $scope.$watch('col', function (n, o) {
@@ -79,38 +103,13 @@
               }
             });
   
-            updateClass();
+            updateHeaderOptions();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
-            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateHeaderOptions, [uiGridConstants.dataChange.COLUMN]);
 
             $scope.$on( '$destroy', dataChangeDereg );            
 
-
-            // Figure out whether this column is sortable or not
-            if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
-              $scope.sortable = true;
-            }
-            else {
-              $scope.sortable = false;
-            }
-    
-            // Figure out whether this column is filterable or not
-            if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
-              $scope.filterable = true;
-            }
-            else {
-              $scope.filterable = false;
-            }
-            
-            // figure out whether we support column menus
-            if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false && 
-                    $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false){
-              $scope.colMenu = true;
-            } else {
-              $scope.colMenu = false;
-            }
-    
             function handleClick(event) {
               // If the shift key is being held down, add this column to the sort
               var add = false;
