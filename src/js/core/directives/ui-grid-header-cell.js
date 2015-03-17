@@ -48,7 +48,7 @@
 
             // apply any headerCellClass
             var classAdded;
-            var updateClass = function( grid ){
+            var updateHeaderOptions = function( grid ){
               var contents = $elm;
               if ( classAdded ){
                 contents.removeClass( classAdded );
@@ -65,6 +65,142 @@
               
               var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
               $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
+
+              // Figure out whether this column is sortable or not
+              if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+                $scope.sortable = true;
+              }
+              else {
+                $scope.sortable = false;
+              }
+      
+              // Figure out whether this column is filterable or not
+              if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
+                $scope.filterable = true;
+              }
+              else {
+                $scope.filterable = false;
+              }
+              
+              // figure out whether we support column menus
+              if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false && 
+                      $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false){
+                $scope.colMenu = true;
+              } else {
+                $scope.colMenu = false;
+              }
+              
+              /**
+              * @ngdoc property
+              * @name enableColumnMenu
+              * @propertyOf ui.grid.class:GridOptions.columnDef
+              * @description if column menus are enabled, controls the column menus for this specific
+              * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
+              * using this option. If gridOptions.enableColumnMenus === false then you get no column
+              * menus irrespective of the value of this option ).  Defaults to true.
+              *
+              */
+              /**
+              * @ngdoc property
+              * @name enableColumnMenus
+              * @propertyOf ui.grid.class:GridOptions.columnDef
+              * @description Override for column menus everywhere - if set to false then you get no
+              * column menus.  Defaults to true.
+              *
+              */
+  
+              var downEvent = gridUtil.isTouchEnabled() ? 'touchstart' : 'mousedown';
+              if ($scope.sortable || $scope.colMenu) {
+                // Long-click (for mobile)
+                var cancelMousedownTimeout;
+                var mousedownStartTime = 0;
+  
+                $contentsElm.on(downEvent, function(event) {
+                  event.stopPropagation();
+  
+                  if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
+                    event = event.originalEvent;
+                  }
+        
+                  // Don't show the menu if it's not the left button
+                  if (event.button && event.button !== 0) {
+                    return;
+                  }
+        
+                  mousedownStartTime = (new Date()).getTime();
+        
+                  cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
+        
+                  cancelMousedownTimeout.then(function () {
+                    if ( $scope.colMenu ) {
+                      uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
+                    }
+                  });
+  
+                  uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
+                });
+          
+                var upEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'mouseup';
+                $contentsElm.on(upEvent, function () {
+                  $timeout.cancel(cancelMousedownTimeout);
+                });
+    
+                $scope.$on('$destroy', function () {
+                  $contentsElm.off('mousedown touchstart');
+                });
+              } else {
+                $contentsElm.off(downEvent);
+              } 
+
+              // If this column is sortable, add a click event handler
+              var clickEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'click';
+              if ($scope.sortable) {
+                $contentsElm.on(clickEvent, function(event) {
+                  event.stopPropagation();
+      
+                  $timeout.cancel(cancelMousedownTimeout);
+      
+                  var mousedownEndTime = (new Date()).getTime();
+                  var mousedownTime = mousedownEndTime - mousedownStartTime;
+      
+                  if (mousedownTime > mousedownTimeout) {
+                    // long click, handled above with mousedown
+                  }
+                  else {
+                    // short click
+                    handleClick(event);
+                  }
+                });
+      
+                $scope.$on('$destroy', function () {
+                  // Cancel any pending long-click timeout
+                  $timeout.cancel(cancelMousedownTimeout);
+                });
+              } else {
+                $contentsElm.off(clickEvent);
+              }
+      
+              // if column is filterable add a filter watcher
+              var filterDeregisters = [];
+              if ($scope.filterable) {
+                $scope.col.filters.forEach( function(filter, i) {
+                  filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                    if (n !== o) {
+                      uiGridCtrl.grid.api.core.raise.filterChanged();
+                      uiGridCtrl.grid.refresh(true);
+                    }
+                  }));  
+                });
+                $scope.$on('$destroy', function() {
+                  filterDeregisters.forEach( function(filterDeregister) {
+                    filterDeregister();
+                  });
+                });
+              } else {
+                filterDeregisters.forEach( function(filterDeregister) {
+                  filterDeregister();
+                });
+              }                          
             };
 
             $scope.$watch('col', function (n, o) {
@@ -79,38 +215,13 @@
               }
             });
   
-            updateClass();
+            updateHeaderOptions();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
-            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+            var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateHeaderOptions, [uiGridConstants.dataChange.COLUMN]);
 
             $scope.$on( '$destroy', dataChangeDereg );            
 
-
-            // Figure out whether this column is sortable or not
-            if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
-              $scope.sortable = true;
-            }
-            else {
-              $scope.sortable = false;
-            }
-    
-            // Figure out whether this column is filterable or not
-            if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
-              $scope.filterable = true;
-            }
-            else {
-              $scope.filterable = false;
-            }
-            
-            // figure out whether we support column menus
-            if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false && 
-                    $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false){
-              $scope.colMenu = true;
-            } else {
-              $scope.colMenu = false;
-            }
-    
             function handleClick(event) {
               // If the shift key is being held down, add this column to the sort
               var add = false;
@@ -126,66 +237,6 @@
                 });
             }
     
-            /**
-            * @ngdoc property
-            * @name enableColumnMenu
-            * @propertyOf ui.grid.class:GridOptions.columnDef
-            * @description if column menus are enabled, controls the column menus for this specific
-            * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
-            * using this option. If gridOptions.enableColumnMenus === false then you get no column
-            * menus irrespective of the value of this option ).  Defaults to true.
-            *
-            */
-            /**
-            * @ngdoc property
-            * @name enableColumnMenus
-            * @propertyOf ui.grid.class:GridOptions.columnDef
-            * @description Override for column menus everywhere - if set to false then you get no
-            * column menus.  Defaults to true.
-            *
-            */
-
-            if ($scope.sortable || $scope.colMenu) {
-              // Long-click (for mobile)
-              var cancelMousedownTimeout;
-              var mousedownStartTime = 0;
-
-              var downEvent = gridUtil.isTouchEnabled() ? 'touchstart' : 'mousedown';
-              $contentsElm.on(downEvent, function(event) {
-                event.stopPropagation();
-
-                if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
-                  event = event.originalEvent;
-                }
-      
-                // Don't show the menu if it's not the left button
-                if (event.button && event.button !== 0) {
-                  return;
-                }
-      
-                mousedownStartTime = (new Date()).getTime();
-      
-                cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
-      
-                cancelMousedownTimeout.then(function () {
-                  if ( $scope.colMenu ) {
-                    uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
-                  }
-                });
-
-                uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
-              });
-        
-              var upEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'mouseup';
-              $contentsElm.on(upEvent, function () {
-                $timeout.cancel(cancelMousedownTimeout);
-              });
-  
-              $scope.$on('$destroy', function () {
-                $contentsElm.off('mousedown touchstart');
-              });
-            }
-
 
             $scope.toggleMenu = function(event) {
               event.stopPropagation();
@@ -209,49 +260,6 @@
                 uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
               }
             };
-    
-            // If this column is sortable, add a click event handler
-            if ($scope.sortable) {
-              var clickEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'click';
-              $contentsElm.on(clickEvent, function(event) {
-                event.stopPropagation();
-    
-                $timeout.cancel(cancelMousedownTimeout);
-    
-                var mousedownEndTime = (new Date()).getTime();
-                var mousedownTime = mousedownEndTime - mousedownStartTime;
-    
-                if (mousedownTime > mousedownTimeout) {
-                  // long click, handled above with mousedown
-                }
-                else {
-                  // short click
-                  handleClick(event);
-                }
-              });
-    
-              $scope.$on('$destroy', function () {
-                // Cancel any pending long-click timeout
-                $timeout.cancel(cancelMousedownTimeout);
-              });
-            }
-    
-            if ($scope.filterable) {
-              var filterDeregisters = [];
-              angular.forEach($scope.col.filters, function(filter, i) {
-                filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
-                  if (n !== o) {
-                    uiGridCtrl.grid.api.core.raise.filterChanged();
-                    uiGridCtrl.grid.refresh(true);
-                  }
-                }));  
-              });
-              $scope.$on('$destroy', function() {
-                angular.forEach(filterDeregisters, function(filterDeregister) {
-                  filterDeregister();
-                });
-              });
-            }
           }
         };
       }
