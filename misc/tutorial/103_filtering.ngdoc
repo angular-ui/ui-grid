@@ -46,7 +46,9 @@ Occasionally, you may want to provide two or more filters for a single column. T
 The elements of this array are the same as the contents of the `filter` object in all the previous examples. In fact, `filter: { term: 'xxx' }` is just an alias 
 for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
 
-
+### Date filters
+The example also includes date filters.  These work, however there isn't a date chooser in the filter widget - so you may need to implement a custom field
+if you want to filter dates in this way. 
 
 @example
 <example module="app">
@@ -54,6 +56,10 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
+      var today = new Date();
+      var nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+    
       $scope.gridOptions = {
         enableFiltering: true,
         onRegisterApi: function(gridApi){
@@ -100,7 +106,13 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than'
             }
-          ]}
+          ]},
+          // date filter
+          { field: 'mixedDate', cellFilter: 'date', width: '15%', filter: {
+              condition: uiGridConstants.filter.LESS_THAN,
+              placeholder: 'less than',
+              term: nextWeek
+          }}
         ]
       };
 
@@ -108,6 +120,11 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
         .success(function(data) {
           $scope.gridOptions.data = data;
           $scope.gridOptions.data[0].age = -5;
+
+          data.forEach( function addDates( row, index ){
+            row.mixedDate = new Date();
+            row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
+          });
         });
         
       $scope.toggleFiltering = function(){
@@ -142,13 +159,14 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
         gridTestUtils.expectHeaderColumnCount( 'grid1', 6 );
       });
 
-      it('filter on 4 columns, filter with greater than/less than on one, one with no filter', function () {
+      it('filter on 4 columns, filter with greater than/less than on one, one with no filter, then one with one filter', function () {
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 0, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 1, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 2, 0 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 3, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 4, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 5, 2 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 6, 1 );
       });
 
       it('third row should be Hatfield Hudson - will be Terry Clay if filtering broken', function () {
