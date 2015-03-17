@@ -1,7 +1,7 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, columnDefs;
+  var grid, $scope, $compile, $document, $timeout, recompile, uiGridConstants, gridUtil, columnDefs;
 
-  var downEvent, upEvent, clickEvent;
+  var downEvent, clickEvent;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -30,20 +30,16 @@ describe('uiGridHeaderCell', function () {
     $compile = _$compile_;
     $document = _$document_;
     $timeout = _$timeout_;
-    $window = _$window_;
-    $animate = _$animate_;
     uiGridConstants = _uiGridConstants_;
     gridUtil = _gridUtil_;
 
     // Decide whether to use mouse or touch events based on which capabilities the browser has
     if (gridUtil.isTouchEnabled()) {
       downEvent = 'touchstart';
-      upEvent = 'touchend';
       clickEvent = 'touchstart';
     }
     else {
       downEvent = 'mousedown';
-      upEvent = 'mouseup';
       clickEvent = 'click';
     }
 
@@ -75,13 +71,11 @@ describe('uiGridHeaderCell', function () {
 
   describe('column menu', function (){
     var headerCell1,
-        headerCell2,
         menu;
 
     beforeEach(function () {
       headerCell1 = $(grid).find('.ui-grid-header-cell:nth(0) .ui-grid-cell-contents');
-      headerCell2 = $(grid).find('.ui-grid-header-cell:nth(1) .ui-grid-cell-contents');
-      
+
       menu = $(grid).find('.ui-grid-column-menu');
     });
 
@@ -190,7 +184,7 @@ describe('uiGridHeaderCell', function () {
 
   describe('externalScope', function() {
     it('should be present', function () {
-      var elm = recompile();
+      recompile();
 
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
       expect(header).toBeDefined();
@@ -199,4 +193,28 @@ describe('uiGridHeaderCell', function () {
     });
   });
 
+  describe('filter', function() {
+    it('watch should trigger on term object property changes', function() {
+      var onRegisterApiPrev = $scope.gridOpts.onRegisterApi,
+        onFilterChangedSpy = jasmine.createSpy('filterChangedSpy'),
+        term = {from: 0, to: 10};
+
+      $scope.gridOpts.enableFiltering = true;
+      $scope.gridOpts.columnDefs[0].filter = {term: term};
+      $scope.gridOpts.onRegisterApi = function(gridApi) {
+        onRegisterApiPrev();
+        gridApi.core.on.filterChanged($scope, onFilterChangedSpy);
+      };
+      recompile();
+
+      $scope.$apply(function(){
+        term.to = 1;
+      });
+      expect(onFilterChangedSpy).toHaveBeenCalled();
+
+      $scope.gridOpts.onRegisterApi = onRegisterApiPrev;
+      delete $scope.gridOpts.enableFiltering;
+      delete $scope.gridOpts.columnDefs[0].filter;
+    });
+  });
 });
