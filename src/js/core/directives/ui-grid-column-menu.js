@@ -398,11 +398,15 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
       $scope.$on('menu-hidden', function() {
         if ( $scope.hideThenShow ){
           delete $scope.hideThenShow;
-
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
-          $scope.$broadcast('show-menu');
+          // browdcast the show-menu event after a time out so that the ng-if has a chance to remove
+          // the old menu from the DOM so that we don't get duplicate items.
+          $timeout( function() {
+             $scope.$broadcast('show-menu');
 
-          $scope.menuShown = true;
+             $scope.menuShown = true;
+          });
+
         } else {
           $scope.hideMenu( true );
         }
