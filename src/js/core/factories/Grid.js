@@ -1804,8 +1804,10 @@ angular.module('ui.grid')
     if (!add) {
       self.resetColumnSorting(column);
       column.sort.priority = 0;
+      // Get the actual priority since there may be columns which have suppressRemoveSort set
+      column.sort.priority = self.getNextColumnSortPriority();
     }
-    else {
+    else if (!column.sort.priority){
       column.sort.priority = self.getNextColumnSortPriority();
     }
 
@@ -1818,7 +1820,7 @@ angular.module('ui.grid')
         if ( column.colDef && column.suppressRemoveSort ){
           column.sort.direction = uiGridConstants.ASC;
         } else {
-          column.sort.direction = null;
+          column.sort = {};
         }
       }
       else {

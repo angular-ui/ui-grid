@@ -675,46 +675,52 @@ describe('Grid factory', function () {
       }
     });
     
-    it( 'if sort is currently null, then should toggle to ASC', function() {
+    it( 'if sort is currently null, then should toggle to ASC, and reset priority', function() {
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
-    it( 'if sort is currently ASC, then should toggle to DESC', function() {
-      column.sort = {direction: uiGridConstants.ASC};
+    it( 'if sort is currently ASC, then should toggle to DESC, and reset priortiy', function() {
+      column.sort = {direction: uiGridConstants.ASC, priority: 2};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC};
+    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: null};
+    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: null};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: false};
+    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: false};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC', function() {
-      column.sort = {direction: uiGridConstants.DESC};
+    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 2};
       column.suppressRemoveSort = true;
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
     it( 'if another column has a sort, that sort should be removed', function() {
@@ -724,27 +730,30 @@ describe('Grid factory', function () {
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
       expect( priorColumn.sort ).toEqual({});
     });
 
     it( 'if another column has a sort, and add is set to true, then that sort should not be removed', function() {
-      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC } }, 0, grid);
+      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } }, 0, grid);
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, true );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC });
+      expect( column.sort.priority ).toEqual(2);
+      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
 
     it( 'if another column has a sort, and add is set to false, but that other column has suppressRemoveSort, then it shouldn\'t be removed', function() {
-      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC }, suppressRemoveSort: true }, 0, grid);
+      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 }, suppressRemoveSort: true }, 0, grid);
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC });
+      expect( column.sort.priority ).toEqual(2);
+      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
   });
   
