@@ -236,8 +236,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
               }
 
               $scope.action.call(context, $event, title);
-
-              $scope.$emit('hide-menu');
+              
             }
           };
 
