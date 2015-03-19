@@ -815,7 +815,7 @@
           expandedStatesSubset.state = targetState;
           
           // set all child nodes
-          expandedStatesSubset.forEach( function( childNode, key){
+          angular.forEach(expandedStatesSubset, function( childNode, key){
             if (key !== 'state'){
               service.setAllNodes(childNode, targetState);
             }
