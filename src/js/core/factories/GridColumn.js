@@ -86,7 +86,7 @@ angular.module('ui.grid')
    * @propertyOf ui.grid.class:GridColumn
    * @description Filter on this column.  
    * @example
-   * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', flags: { caseSensitive: false } }</pre>
+   * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', flags: { caseSensitive: false }, type: uiGridConstants.filter.SELECT, [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ] }</pre>
    *
    */
     
@@ -227,7 +227,9 @@ angular.module('ui.grid')
    *         term: 'aa',
    *         condition: uiGridConstants.filter.STARTS_WITH,
    *         placeholder: 'starts with...',
-   *         flags: { caseSensitive: false }
+   *         flags: { caseSensitive: false },
+   *         type: uiGridConstants.filter.SELECT,
+   *         selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ]
    *       },
    *       {
    *         condition: uiGridConstants.filter.ENDS_WITH,
@@ -251,7 +253,9 @@ angular.module('ui.grid')
    *     term: 'foo', // ngModel for <input>
    *     condition: uiGridConstants.filter.STARTS_WITH,
    *     placeholder: 'starts with...',
-   *     flags: { caseSensitive: false }
+   *     flags: { caseSensitive: false },
+   *     type: uiGridConstants.filter.SELECT,
+   *     selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ]
    *   },
    *   {
    *     term: 'baz',
@@ -549,6 +553,10 @@ angular.module('ui.grid')
      * your custom function doesn't require a term (so it can run even when the term is null)
      * - flags: only flag currently available is `caseSensitive`, set to false if you don't want
      * case sensitive matching
+     * - type: defaults to uiGridConstants.filter.INPUT, which gives a text box.  If set to uiGridConstants.filter.SELECT
+     * then a select box will be shown with options selectOptions
+     * - selectOptions: options in the format `[ { value: 1, label: 'male' }]`.  No i18n filter is provided, you need
+     * to perform the i18n on the values before you provide them
      * @example
      * <pre>$scope.gridOptions.columnDefs = [ 
      *   {
@@ -557,7 +565,9 @@ angular.module('ui.grid')
      *       term: 'xx',
      *       condition: uiGridConstants.filter.STARTS_WITH,
      *       placeholder: 'starts with...',
-     *       flags: { caseSensitive: false }
+     *       flags: { caseSensitive: false },
+     *       type: uiGridConstants.filter.SELECT,
+     *       selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ]
      *     }
      *   }
      * ]; </pre>

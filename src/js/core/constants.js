@@ -72,7 +72,9 @@
       GREATER_THAN_OR_EQUAL: 64,
       LESS_THAN: 128,
       LESS_THAN_OR_EQUAL: 256,
-      NOT_EQUAL: 512
+      NOT_EQUAL: 512,
+      SELECT: 'select',
+      INPUT: 'input'
     },
 
     aggregationTypes: {
