@@ -40,7 +40,6 @@ to allow people to start using it.  Notable outstandings are:
 - enhancement: allow a limit on number of columns grouped
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
 - special formatting for header rows in exporter?
-- add grouping options to saveState
 
 Options to watch out for include:
 
@@ -54,6 +53,12 @@ Options to watch out for include:
   an average 
 - `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders 
    
+ If you would like to suppress the data in a grouped column (so it only shows in the groupHeader rows) this can
+ be done by overriding the cellTemplate for any of the columns you allow grouping on as follows:
+   `cellTemplate: '<div ng-if="(!col.grouping || typeof(col.grouping.groupPriority) === \'undefined\') || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
+   
+ In the example below this has been done on the state column only.  This isn't included in the base code as it
+ could potentially interact with people's custom templates.
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for 
@@ -73,7 +78,7 @@ we can't easily see that it's an average.
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { direction: 'asc' }, width: '20%' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
-          { name: 'state', grouping: { groupPriority: 0 }, sort: { direction: 'desc' }, width: '35%' },
+          { name: 'state', grouping: { groupPriority: 0 }, sort: { direction: 'desc' }, width: '35%', cellTemplate: '<div ng-if="(!col.grouping || typeof(col.grouping.groupPriority) === \'undefined\') || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>' },
           { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
         ],
         onRegisterApi: function( gridApi ) {
