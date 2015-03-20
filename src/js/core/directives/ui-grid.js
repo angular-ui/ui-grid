@@ -236,7 +236,7 @@ angular.module('ui.grid').directive('uiGrid',
               grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
               // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
-              if (grid.gridHeight < grid.options.rowHeight) {
+              if (grid.gridHeight < grid.options.rowHeight && grid.options.enableMinHeightCheck) {
                 // Figure out the new height
                 var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
                 var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
