@@ -600,16 +600,16 @@ angular.module('ui.grid')
       self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
     } else if ( self.filters.length === defaultFilters.length ) {
       self.filters.forEach( function( filter, index ){
-        if (typeof(filter.placeholder) !== 'undefined') {
+        if (typeof(defaultFilters[index].placeholder) !== 'undefined') {
           filter.placeholder = defaultFilters[index].placeholder;
         }
-        if (typeof(filter.flags) !== 'undefined') {
+        if (typeof(defaultFilters[index].flags) !== 'undefined') {
           filter.flags = defaultFilters[index].flags;
         }
-        if (typeof(filter.type) !== 'undefined') {
+        if (typeof(defaultFilters[index].type) !== 'undefined') {
           filter.type = defaultFilters[index].type;
         }
-        if (typeof(filter.selectOptions) !== 'undefined') {
+        if (typeof(defaultFilters[index].selectOptions) !== 'undefined') {
           filter.selectOptions = defaultFilters[index].selectOptions;
         }
       });
