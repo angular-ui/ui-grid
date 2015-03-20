@@ -81,17 +81,6 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows );
 
-/*      
-      console.log('data');
-      for (var i = 0; i < 10; i++) {
-        console.log(grid.options.data[i]);
-      }
-      
-      console.log('results');
-      for (i = 0; i < 18; i++) {
-        console.log(grid.rows[i].entity);
-      }
-*/      
       expect( groupedRows.length ).toEqual( 18, 'we\'ve added 3 col0 headers, and 5 col2 headers' );
     });
   });

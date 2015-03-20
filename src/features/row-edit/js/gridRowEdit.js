@@ -226,7 +226,6 @@
             var promise = grid.api.rowEdit.raise.saveRow( gridRow.entity );
             
             if ( gridRow.rowEditSavePromise ){
-              console.log(gridRow.rowEditSavePromise);
               gridRow.rowEditSavePromise.then( self.processSuccessPromise( grid, gridRow ), self.processErrorPromise( grid, gridRow ));
             } else {
               gridUtil.logError( 'A promise was not returned when saveRow event was raised, either nobody is listening to event, or event handler did not return a promise' );
