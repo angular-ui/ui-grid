@@ -320,7 +320,7 @@
             savedColumn.name = column.name;
             
             if ( grid.options.saveVisible ){
-              savedColumn.visible = column.visible;  
+              savedColumn.visible = column.colDef.visible;  
             }
             
             if ( grid.options.saveWidths ){
