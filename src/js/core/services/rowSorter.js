@@ -413,7 +413,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     
     // put a custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
     var setIndex = function( row, idx ){
-      row.entity.$uiGridIndex = idx;
+      row.entity.$$uiGridIndex = idx;
     };
     rows.forEach(setIndex);
 
@@ -443,7 +443,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       // then return the previous order using our custom
       // index variable
       if (tem === 0 ) {
-        return rowA.entity.$uiGridIndex - rowB.entity.$uiGridIndex;
+        return rowA.entity.$$uiGridIndex - rowB.entity.$$uiGridIndex;
       }
       
       // Made it this far, we don't have to worry about null & undefined
@@ -458,9 +458,9 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     
     // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
     var clearIndex = function( row, idx ){
-       delete row.entity.$uiGridIndex;
+       delete row.entity.$$uiGridIndex;
     };
-    rows.forEach(setIndex);
+    rows.forEach(clearIndex);
     
     return newRows;
   };

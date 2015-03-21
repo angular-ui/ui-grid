@@ -528,7 +528,9 @@ angular.module('ui.grid')
     if (colDef.filter) {
       defaultFilters.push(colDef.filter);
     }
-    else {
+    else if ( colDef.filters ){
+      defaultFilters = colDef.filters;
+    } else {
       // Add an empty filter definition object, which will
       // translate to a guessed condition and no pre-populated
       // value for the filter <input>.
@@ -592,9 +594,25 @@ angular.module('ui.grid')
     // Only set filter if this is a newly added column, if we're updating an existing
     // column then we don't want to put the default filter back if the user may have already
     // removed it.
+    // However, we do want to keep the settings if they change, just not the term
     if ( isNew ) {
       self.setPropertyOrDefault(colDef, 'filter');
       self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
+    } else if ( self.filters.length === defaultFilters.length ) {
+      self.filters.forEach( function( filter, index ){
+        if (typeof(defaultFilters[index].placeholder) !== 'undefined') {
+          filter.placeholder = defaultFilters[index].placeholder;
+        }
+        if (typeof(defaultFilters[index].flags) !== 'undefined') {
+          filter.flags = defaultFilters[index].flags;
+        }
+        if (typeof(defaultFilters[index].type) !== 'undefined') {
+          filter.type = defaultFilters[index].type;
+        }
+        if (typeof(defaultFilters[index].selectOptions) !== 'undefined') {
+          filter.selectOptions = defaultFilters[index].selectOptions;
+        }
+      });
     }
 
     // Remove this column from the grid sorting, include inside build columns so has

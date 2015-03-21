@@ -67,6 +67,30 @@ describe('GridColumn factory', function () {
       });
     });
 
+    it('should update everything but term when updating filters', function () {
+      var filter = { term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] };
+      grid.options.columnDefs[0].filter = filter;
+
+      runs(buildCols);
+
+      runs(function () {
+        expect(grid.columns[0].filters).toEqual([ { placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] } ] );
+      });
+    });
+
+
+    it('should update everything but term when updating filters', function () {
+      var filters = [{ term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] }];
+      grid.options.columnDefs[0].filters = filters;
+
+      runs(buildCols);
+
+      runs(function () {
+        expect(grid.columns[0].filters).toEqual([ { placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] } ] );
+      });
+    });
+
+
 
     it('should obey columnDef sort spec', function () {
       // ... TODO(c0bra)

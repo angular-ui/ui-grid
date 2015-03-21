@@ -81,17 +81,6 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows );
 
-/*      
-      console.log('data');
-      for (var i = 0; i < 10; i++) {
-        console.log(grid.options.data[i]);
-      }
-      
-      console.log('results');
-      for (i = 0; i < 18; i++) {
-        console.log(grid.rows[i].entity);
-      }
-*/      
       expect( groupedRows.length ).toEqual( 18, 'we\'ve added 3 col0 headers, and 5 col2 headers' );
     });
   });
@@ -371,6 +360,41 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         ],
         rowExpandedStates: { male: { state: 'expanded' } } 
       });
+    });
+
+  });
+
+
+  describe('clearGrouping', function() {
+    it('no grouping', function() {
+      grid.api.grouping.setGrouping(
+        {}
+      );
+      
+      // really just checking there are no errors, it should do nothing
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: {} }
+      );
+    });
+
+    it('clear grouping, aggregations and rowExpandedStates', function() {
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: { male : { state : 'expanded' } } }
+      );
     });
 
   });
