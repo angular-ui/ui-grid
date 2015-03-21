@@ -363,6 +363,41 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     });
 
   });
+
+
+  describe('clearGrouping', function() {
+    it('no grouping', function() {
+      grid.api.grouping.setGrouping(
+        {}
+      );
+      
+      // really just checking there are no errors, it should do nothing
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: {} }
+      );
+    });
+
+    it('clear grouping, aggregations and rowExpandedStates', function() {
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: { male : { state : 'expanded' } } }
+      );
+    });
+
+  });
     
 
   describe('insertGroupHeader', function() {

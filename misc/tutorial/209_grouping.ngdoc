@@ -29,13 +29,24 @@ The group rowHeader by default is only visible when one or more columns are grou
 to have no visual impact when grouping is turned on but unused.  If you'd like the groupRowHeader permanently
 present then set the `groupingRowHeaderAlwaysVisible: true` gridOption.
 
+If you want to change the grouping programmatically after grid initialisation, you do this through calling the
+provided methods:
+
+  - `groupColumn`: groups an individual column.  Adds it to the end of the current grouping - so you need to remove
+    existing grouped columns first if you wanted this to be the only grouping.  Adds a sort ASC if there isn't one
+  - `ungroupColumn`: ungroups an individual column
+  - `aggregateColumn`: sets aggregation on a column, including setting the aggregation off.  Automatically removes
+    any sort first.
+  - `setGrouping`: sets all the grouping in one go, removing existing grouping
+  - `getGrouping`: gets the grouping config for the grid
+  - `clearGrouping`: clears all current grouping settings
+
 Grouping is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
 
 - does not correctly handle columns that are based on functions or complex objects.  The groupHeader rows create
   a fake row.entity, and then set the appropriate fields in that entity.  This doesn't work well with 
   complex column definitions at present
-- notify data change capability is needed for when people programmatically change the grouping  
 - some more unit testing
 - enhancement: allow a limit on number of columns grouped
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
@@ -52,13 +63,16 @@ Options to watch out for include:
   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
   an average 
 - `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders 
+  
+ 
+If you would like to suppress the data in a grouped column (so it only shows in the groupHeader rows) this can
+be done by overriding the cellTemplate for any of the columns you allow grouping on as follows:
+
+   `cellTemplate: '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
    
- If you would like to suppress the data in a grouped column (so it only shows in the groupHeader rows) this can
- be done by overriding the cellTemplate for any of the columns you allow grouping on as follows:
-   `cellTemplate: '<div ng-if="(!col.grouping || typeof(col.grouping.groupPriority) === \'undefined\') || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
-   
- In the example below this has been done on the state column only.  This isn't included in the base code as it
- could potentially interact with people's custom templates.
+In the example below this has been done on the state column only.  This isn't included in the base code as it
+could potentially interact with people's custom templates.
+
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for 
@@ -75,10 +89,10 @@ we can't easily see that it's an average.
         enableFiltering: true,
         columnDefs: [
           { name: 'name', width: '30%' },
-          { name: 'gender', grouping: { groupPriority: 1 }, sort: { direction: 'asc' }, width: '20%' },
+          { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
-          { name: 'state', grouping: { groupPriority: 0 }, sort: { direction: 'desc' }, width: '35%', cellTemplate: '<div ng-if="(!col.grouping || typeof(col.grouping.groupPriority) === \'undefined\') || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>' },
+          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
           { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
         ],
         onRegisterApi: function( gridApi ) {
@@ -92,6 +106,7 @@ we can't easily see that it's an average.
          data[i].state = data[i].address.state;
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }
+       delete data[2].age;
        $scope.gridOptions.data = data;
      });
  
@@ -101,16 +116,23 @@ we can't easily see that it's an average.
       
       $scope.toggleRow = function( rowNum ){
         $scope.gridApi.grouping.toggleRowGroupingState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
-      }
+      };
+      
+      $scope.changeGrouping = function() {
+        $scope.gridApi.grouping.clearGrouping();
+        $scope.gridApi.grouping.groupColumn('age');
+        $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
+      };
     }]);
   </file>
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-pinning class="grid"></div>
       <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
       <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
       <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
+      <button id="changeGrouping" type="button" class="btn btn-success" ng-click="changeGrouping()">Change Grouping</button>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-pinning class="grid"></div>
     </div>
   </file>
   
