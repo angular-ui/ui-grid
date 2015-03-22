@@ -253,7 +253,8 @@ angular.module('ui.grid')
             shown: function() {
               return this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined;
             },
-            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
+            leaveOpen: true
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
@@ -268,7 +269,8 @@ angular.module('ui.grid')
             shown: function() {
               return !(this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined);
             },
-            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
+            leaveOpen: true
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );

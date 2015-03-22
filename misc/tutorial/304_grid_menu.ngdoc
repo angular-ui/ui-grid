@@ -16,6 +16,7 @@ use i18n on this through the `gridMenuTitleFilter` setting)
 - `context`: by default, the `action`, `shown` and `active`'s' contexts will have a reference to the grid added as the 
 property `grid` (accessible through `this.grid`.  You can pass in your own context by supplying 
 the `context` property to your menu item. It will be accessible through `this.context`.
+- `leaveOpen`: by default false, if set to true the menu will be left open after the action
 
 The exporter feature also adds menu items to this menu.  The `exporterMenuCsv` option is set
 to false, which suppresses csv export.  The 'export selected rows' option is only available
