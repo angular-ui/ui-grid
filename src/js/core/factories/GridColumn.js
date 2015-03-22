@@ -279,7 +279,8 @@ angular.module('ui.grid')
    * - action: the method to call when the menu is clicked
    * - shown: a function to evaluate to determine whether or not to show the item
    * - active: a function to evaluate to determine whether or not the item is currently selected
-   * - context: context to pass to the action function??
+   * - context: context to pass to the action function, available in this.context in your handler
+   * - leaveOpen: if set to true, the menu should stay open after the action, defaults to false
    * @example
    * <pre>  $scope.gridOptions.columnDefs = [ 
    *   { field: 'field1', menuItems: [
