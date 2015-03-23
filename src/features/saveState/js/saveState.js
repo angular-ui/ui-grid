@@ -249,6 +249,7 @@
           savedState.columns = service.saveColumns( grid );
           savedState.scrollFocus = service.saveScrollFocus( grid );
           savedState.selection = service.saveSelection( grid );
+          savedState.pinned = {};
           
           return savedState;
         },
