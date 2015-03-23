@@ -220,7 +220,16 @@
            * 
            * <br/>Defaults to true
            */
-          gridOptions.saveSelection = gridOptions.saveSelection !== false;          
+          gridOptions.saveSelection = gridOptions.saveSelection !== false;
+          /**
+           * @ngdoc object
+           * @name savePinned
+           * @propertyOf ui.grid.saveState.api:GridOptions
+           * @description Save the pinned state for each column
+           *
+           * <br/>Defaults to true
+           */
+          gridOptions.savePinned = gridOptions.savePinned !== false;
         },
 
 
