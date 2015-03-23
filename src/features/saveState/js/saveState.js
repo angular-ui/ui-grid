@@ -20,7 +20,7 @@
    * <div doc-module-components="ui.grid.save-state"></div>
    */
 
-  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav']);
+  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping']);
 
   /**
    *  @ngdoc object
@@ -118,7 +118,7 @@
            * @ngdoc object
            * @name saveOrder
            * @propertyOf  ui.grid.saveState.api:GridOptions
-           * @description Save the current column order.  Note that unless
+           * @description Restore the current column order.  Note that unless
            * you've provided the user with some way to reorder their columns (for
            * example the move columns feature), this makes little sense.
            * <br/>Defaults to true
@@ -221,6 +221,29 @@
            * <br/>Defaults to true
            */
           gridOptions.saveSelection = gridOptions.saveSelection !== false;          
+          /**
+           * @ngdoc object
+           * @name saveGrouping
+           * @propertyOf  ui.grid.saveState.api:GridOptions
+           * @description Save the grouping configuration.  If set to true and the 
+           * grouping feature is not enabled then does nothing.
+           * 
+           * <br/>Defaults to true
+           */
+          gridOptions.saveGrouping = gridOptions.saveGrouping !== false; 
+          /**
+           * @ngdoc object
+           * @name saveGroupingExpandedStates
+           * @propertyOf  ui.grid.saveState.api:GridOptions
+           * @description Save the grouping row expanded states.  If set to true and the 
+           * grouping feature is not enabled then does nothing.
+           * 
+           * This can be quite a bit of data, in many cases you wouldn't want to save this
+           * information.
+           * 
+           * <br/>Defaults to false
+           */
+          gridOptions.saveGroupingExpandedStates = gridOptions.saveGroupingExpandedStates === true; 
         },
 
 
@@ -240,6 +263,7 @@
           savedState.columns = service.saveColumns( grid );
           savedState.scrollFocus = service.saveScrollFocus( grid );
           savedState.selection = service.saveSelection( grid );
+          savedState.grouping = service.saveGrouping( grid );
           
           return savedState;
         },
@@ -268,6 +292,10 @@
             service.restoreSelection( grid, state.selection );
           }
           
+          if ( state.grouping ){
+            service.restoreGrouping( grid, state.grouping );
+          }
+          
           grid.queueGridRefresh();
         },
         
@@ -290,12 +318,24 @@
           grid.columns.forEach( function( column ) {
             var savedColumn = {};
             savedColumn.name = column.name;
-            savedColumn.visible = column.visible;
-            savedColumn.width = column.width;
+            
+            if ( grid.options.saveVisible ){
+              savedColumn.visible = column.visible;  
+            }
+            
+            if ( grid.options.saveWidths ){
+              savedColumn.width = column.width;  
+            }
             
             // these two must be copied, not just pointed too - otherwise our saved state is pointing to the same object as current state
-            savedColumn.sort = angular.copy( column.sort );
-            savedColumn.filters = angular.copy ( column.filters );
+            if ( grid.options.saveSort ){
+              savedColumn.sort = angular.copy( column.sort );  
+            }
+            
+            if ( grid.options.saveFilter ){
+              savedColumn.filters = angular.copy ( column.filters );
+            }
+            
             columns.push( savedColumn );
           });
           
@@ -377,6 +417,23 @@
         
         /**
          * @ngdoc function
+         * @name saveGrouping
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Saves the grouping state, if the grouping feature is enabled
+         * @param {Grid} grid the grid whose state we'd like to save
+         * @returns {object} the grouping state ready to be saved
+         */
+        saveGrouping: function( grid ){
+          if ( !grid.api.grouping || !grid.options.saveGrouping ){
+            return {};
+          }
+
+          return grid.api.grouping.getGrouping( grid.options.saveGroupingExpandedStates );
+        },
+        
+        
+        /**
+         * @ngdoc function
          * @name getRowVal
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
          * @description Helper function that gets either the rowNum or
@@ -415,34 +472,37 @@
          */
         restoreColumns: function( grid, columnsState ){
           columnsState.forEach( function( columnState, index ) {
-            var currentCol = grid.columns.filter( function( column ) {
-              return column.name === columnState.name;
-            });
+            var currentCol = grid.getColumn( columnState.name );
             
-            if ( currentCol.length > 0 ){
-              var currentIndex = grid.columns.indexOf( currentCol[0] );
+            if ( currentCol ){
+              var currentIndex = grid.columns.indexOf( currentCol );
               
-              if ( grid.columns[currentIndex].visible !== columnState.visible ||
-                   grid.columns[currentIndex].colDef.visible !== columnState.visible ){
+              if ( grid.options.saveVisible && 
+                   ( grid.columns[currentIndex].visible !== columnState.visible ||
+                     grid.columns[currentIndex].colDef.visible !== columnState.visible ) ){
                 grid.columns[currentIndex].visible = columnState.visible;
                 grid.columns[currentIndex].colDef.visible = columnState.visible;
                 grid.api.core.raise.columnVisibilityChanged( grid.columns[currentIndex]);
               }
               
-              grid.columns[currentIndex].width = columnState.width;
+              if ( grid.options.saveWidths ){
+                grid.columns[currentIndex].width = columnState.width;
+              }
 
-              if ( !angular.equals(grid.columns[currentIndex].sort, columnState.sort) &&
+              if ( grid.options.saveSort && 
+                   !angular.equals(grid.columns[currentIndex].sort, columnState.sort) &&
                    !( grid.columns[currentIndex].sort === undefined && angular.isEmpty(columnState.sort) ) ){
                 grid.columns[currentIndex].sort = angular.copy( columnState.sort );
                 grid.api.core.raise.sortChanged();
               }
 
-              if ( !angular.equals(grid.columns[currentIndex].filters, columnState.filters ) ){
+              if ( grid.options.saveFilter && 
+                   !angular.equals(grid.columns[currentIndex].filters, columnState.filters ) ){
                 grid.columns[currentIndex].filters = angular.copy( columnState.filters );
                 grid.api.core.raise.filterChanged();
               }
               
-              if ( currentIndex !== index ){
+              if ( grid.options.saveOrder && currentIndex !== index ){
                 var column = grid.columns.splice( currentIndex, 1 )[0];
                 grid.columns.splice( index, 0, column );
               }
@@ -526,7 +586,24 @@
             }
           });
         },
-        
+
+
+        /**
+         * @ngdoc function
+         * @name restoreGrouping
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Restores the grouping configuration, if the grouping feature
+         * is enabled.
+         * @param {Grid} grid the grid whose state we'd like to restore
+         * @param {object} groupingState the grouping state ready to be restored
+         */
+        restoreGrouping: function( grid, groupingState ){
+          if ( !grid.api.grouping || typeof(groupingState) === 'undefined' || groupingState === null || angular.equals(groupingState, {}) ){
+            return;
+          }
+          
+          grid.api.grouping.setGrouping( groupingState );
+        },        
         
         /**
          * @ngdoc function

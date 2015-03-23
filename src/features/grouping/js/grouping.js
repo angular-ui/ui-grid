@@ -253,6 +253,124 @@
                  */
                 collapseRow: function ( row ) {
                   service.collapseRow(grid, row);
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name getGrouping
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Get the grouping configuration for this grid,
+                 * used by the saveState feature
+                 * Returned grouping is an object 
+                 *   `{ grouping: groupArray, aggregations: aggregateArray, expandedState: hash }` 
+                 * where grouping contains an array of objects: 
+                 *   `{ field: column.field, colName: column.name, groupPriority: column.grouping.groupPriority }`
+                 * and aggregations contains an array of objects:
+                 *   `{ field: column.field, colName: column.name, aggregation: column.grouping.aggregation }`
+                 * and expandedState is a hash of the currently expanded nodes
+                 * 
+                 * The groupArray will be sorted by groupPriority.
+                 * 
+                 * @param {boolean} getExpanded whether or not to return the expanded state
+                 * @returns {object} grouping configuration
+                 */
+                getGrouping: function ( getExpanded ) {
+                  var grouping = service.getGrouping(grid);
+                  
+                  grouping.grouping.forEach( function( group ) {
+                    group.colName = group.col.name;
+                    delete group.col;
+                  });
+
+                  grouping.aggregations.forEach( function( aggregation ) {
+                    aggregation.colName = aggregation.col.name;
+                    delete aggregation.col;
+                  });
+                  
+                  if ( getExpanded ){
+                    grouping.rowExpandedStates = grid.grouping.rowExpandedStates;
+                  }
+                  
+                  return grouping;
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name setGrouping
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Set the grouping configuration for this grid, 
+                 * used by the saveState feature, but can also be used by any
+                 * user to specify a combined grouping and aggregation configuration
+                 * @param {object} config the config you want to apply, in the format
+                 * provided out by getGrouping
+                 */
+                setGrouping: function ( config ) {
+                  service.setGrouping(grid, config);
+                },
+                
+                /**
+                 * @ngdoc function
+                 * @name groupColumn
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Adds this column to the existing grouping, at the end of the priority order.
+                 * If the column doesn't have a sort, adds one, by default ASC
+                 * 
+                 * This column will move to the left of any non-group columns, the
+                 * move is handled in a columnProcessor, so gets called as part of refresh
+                 * 
+                 * @param {string} columnName the name of the column we want to group
+                 */
+                groupColumn: function( columnName ) {
+                  var column = grid.getColumn(columnName);
+                  service.groupColumn(grid, column);
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name ungroupColumn
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Removes the groupPriority from this column.  If the
+                 * column was previously aggregated the aggregation will come back. 
+                 * The sort will remain.  
+                 * 
+                 * This column will move to the right of any other group columns, the
+                 * move is handled in a columnProcessor, so gets called as part of refresh
+                 * 
+                 * @param {string} columnName the name of the column we want to ungroup
+                 */
+                ungroupColumn: function( columnName ) {
+                  var column = grid.getColumn(columnName);
+                  service.ungroupColumn(grid, column);
+                },
+                
+                /**
+                 * @ngdoc function
+                 * @name clearGrouping
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Clear any grouped columns and any aggregations.  Doesn't remove sorting,
+                 * as we don't know whether that sorting was added by grouping or was there beforehand
+                 * 
+                 */
+                clearGrouping: function() {
+                  service.clearGrouping(grid);
+                },
+                
+                /**
+                 * @ngdoc function
+                 * @name aggregateColumn
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description Sets the aggregation type on a column, if the 
+                 * column is currently grouped then it removes the grouping first.
+                 * If the aggregationType is null then will result in the aggregation
+                 * being removed
+                 * 
+                 * @param {string} columnName the column we want to aggregate
+                 * @param {string} aggregationType one of the recognised types
+                 * from uiGridGroupingConstants
+                 */
+                aggregateColumn: function( columnName, aggregationType){
+                  var column = grid.getColumn(columnName);
+                  service.aggregateColumn( grid, column, aggregationType );
                 }
               }
             }
@@ -616,7 +734,7 @@
         },
 
 
-        /**
+         /**
          * @ngdoc function
          * @name ungroupColumn
          * @methodOf  ui.grid.grouping.service:uiGridGroupingService
@@ -669,6 +787,85 @@
           grid.queueGridRefresh();
         },
         
+
+       /**
+         * @ngdoc function
+         * @name setGrouping
+         * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+         * @description Set the grouping based on a config object, used by the save state feature 
+         * (more specifically, by the restore function in that feature )
+         * 
+         * @param {Grid} grid grid object
+         * @param {object} config the config we want to set, same format as that returned by getGrouping
+         */
+        setGrouping: function ( grid, config ){
+          if ( typeof(config) === 'undefined' ){
+            return;
+          }
+          
+          // first remove any existing grouping
+          service.clearGrouping(grid);
+          
+          if ( config.grouping && config.grouping.length && config.grouping.length > 0 ){
+            config.grouping.forEach( function( group ) {
+              var col = grid.getColumn(group.colName);
+              
+              if ( col ) {
+                service.groupColumn( grid, col );
+              }
+            });
+          }
+
+          if ( config.aggregations && config.aggregations.length && config.aggregations.length > 0 ){
+            config.aggregations.forEach( function( aggregation ) {
+              var col = grid.getColumn(aggregation.colName);
+              
+              if ( col ) {
+                service.aggregateColumn( grid, col, aggregation.aggregation );
+              }
+            });
+          }
+          
+          if ( config.rowExpandedStates ){
+            grid.grouping.rowExpandedStates = config.rowExpandedStates;
+          }
+        },
+        
+        
+       /**
+         * @ngdoc function
+         * @name clearGrouping
+         * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+         * @description Clear any grouped columns and any aggregations.  Doesn't remove sorting,
+         * as we don't know whether that sorting was added by grouping or was there beforehand
+         * 
+         * @param {Grid} grid grid object
+         */
+        clearGrouping: function( grid ) {
+          var currentGrouping = service.getGrouping(grid);
+          
+          if ( currentGrouping.grouping.length > 0 ){
+            currentGrouping.grouping.forEach( function( group ) {
+              if (!group.col){
+                // should have a group.colName if there's no col
+                group.col = grid.getColumn(group.colName);
+              }
+              service.ungroupColumn(grid, group.col);
+            });
+          }
+          
+          if ( currentGrouping.aggregations.length > 0 ){
+            currentGrouping.aggregations.forEach( function( aggregation ){
+              if (!aggregation.col){
+                // should have a group.colName if there's no col
+                aggregation.col = grid.getColumn(aggregation.colName);
+              }
+              service.aggregateColumn(grid, aggregation.col, null);
+            });
+          }
+          
+        },
+        
         
         /**
          * @ngdoc function
@@ -682,6 +879,11 @@
          * @param {Grid} grid grid object
          */
         tidyPriorities: function( grid ){
+          // if we're called from sortChanged, grid is in this, not passed as param
+          if ( typeof(grid) === 'undefined' && typeof(this.grid) !== 'undefined' ) {
+            grid = this.grid;
+          }
+          
           var groupArray = [];
           var sortArray = [];
           
@@ -758,7 +960,7 @@
           expandedStatesSubset.state = targetState;
           
           // set all child nodes
-          expandedStatesSubset.forEach( function( childNode, key){
+          angular.forEach(expandedStatesSubset, function( childNode, key){
             if (key !== 'state'){
               service.setAllNodes(childNode, targetState);
             }
@@ -1032,7 +1234,7 @@
               }
             }
           });
-          
+
           // sort grouping into priority order
           groupArray.sort( function(a, b){
             return a.groupPriority - b.groupPriority;
@@ -1242,12 +1444,12 @@
                   }
                   break;
                 case uiGridGroupingConstants.aggregation.MIN:
-                  if (fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
+                  if (fieldValue !== undefined && fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
                     aggregation.value = fieldValue;
                   }
                   break;
                 case uiGridGroupingConstants.aggregation.MAX:
-                  if (fieldValue > aggregation.value){
+                  if (fieldValue !== undefined && fieldValue > aggregation.value){
                     aggregation.value = fieldValue;
                   }
                   break;
@@ -1261,8 +1463,7 @@
               }
             }
           });
-        }        
-
+        }
       };
 
       return service;

@@ -50,6 +50,14 @@ for `filters: [{ term: 'xxx' }]`. See the "age" column below for an example.
 The example also includes date filters.  These work, however there isn't a date chooser in the filter widget - so you may need to implement a custom field
 if you want to filter dates in this way. 
 
+### Dropdowns
+Filtering supports dropdowns, in order to set a particular column to use a dropdown you should set:
+  `type: uiGridConstants.filter.SELECT`
+and
+  `selectOptions: [ { value: 'x', label: 'decode of x' } , .... ]`
+  
+If you need to internationalize the labels you'll need to complete that before providing the selectOptions array.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -69,7 +77,12 @@ if you want to filter dates in this way.
           // default
           { field: 'name' },
           // pre-populated search field
-          { field: 'gender', filter: { term: 'male' } },
+          { field: 'gender', filter: { 
+              term: '1', 
+              type: uiGridConstants.filter.SELECT, 
+              selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
+            }, 
+            cellFilter: 'mapGender' },                               
           // no filter input
           { field: 'company', enableFiltering: false, filter: {
             noTerm: true,
@@ -124,6 +137,7 @@ if you want to filter dates in this way.
           data.forEach( function addDates( row, index ){
             row.mixedDate = new Date();
             row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
+            row.gender = row.gender==='male' ? '1' : '2';
           });
         });
         
@@ -131,7 +145,21 @@ if you want to filter dates in this way.
         $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
         $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       };
-    }]);
+    }])
+    .filter('mapGender', function() {
+      var genderHash = {
+        1: 'male',
+        2: 'female'
+      };
+
+      return function(input) {
+        if (!input){
+          return '';
+        } else {
+          return genderHash[input];
+        }
+      };
+    });
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">

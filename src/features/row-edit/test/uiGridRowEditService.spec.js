@@ -341,6 +341,9 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isError ).toEqual(true);
       expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
       expect( grid.rowEdit.errorRows.length ).toEqual(1);
+
+      $rootScope.$apply();
+      expect( grid.rows[0].rowEditSavePromise ).not.toEqual(undefined, 'save promise should be set');
       
       promise.resolve(1);
       $rootScope.$apply();
@@ -350,6 +353,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isError ).toEqual(undefined);
       expect( grid.rowEdit.dirtyRows.length ).toEqual(0);
       expect( grid.rowEdit.errorRows.length ).toEqual(0);
+      expect( grid.rowEdit.rowEditSavePromise ).toEqual(undefined);
     });
 
     it( 'saveRow on dirty row, promise rejected so goes to error state', function() {
@@ -367,6 +371,9 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isError ).toEqual(undefined);
       expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
       expect( grid.rowEdit.errorRows ).toEqual(undefined);
+
+      $rootScope.$apply();
+      expect( grid.rows[0].rowEditSavePromise ).not.toEqual(undefined, 'save promise should be set');
       
       promise.reject();
       $rootScope.$apply();
@@ -376,6 +383,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[0].isError ).toEqual(true);
       expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
       expect( grid.rowEdit.errorRows.length ).toEqual(1);
+      expect( grid.rowEdit.rowEditSavePromise ).toEqual(undefined);
     });  
   });
   
@@ -434,6 +442,45 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( failure ).toEqual(false);
     });
 
+    it( 'one dirty rows, already saving, doesn\'t call save again', function() {
+      var promises = [$q.defer()];
+      var promiseCounter = 0;
+      var success = false;
+      var failure = false;
+      
+      grid.rows[0].isDirty = true;
+
+      grid.rowEdit.dirtyRows = [ grid.rows[0] ];
+      
+      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
+        grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
+        promiseCounter++;
+      });
+      
+      // set row saving
+      uiGridRowEditService.saveRow( grid, grid.rows[0] )();
+      
+      expect( grid.rows[0].isSaving ).toEqual(true);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( promiseCounter ).toEqual(1);
+
+      // flush dirty rows, expect no new promise
+      var overallPromise = uiGridRowEditService.flushDirtyRows( grid );
+      overallPromise.then( function() { success = true; }, function() { failure = true; });
+      
+      expect( grid.rows[0].isSaving ).toEqual(true);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(1);
+      expect( promiseCounter ).toEqual(1);
+      
+      promises[0].resolve(1);
+      $rootScope.$apply();
+      
+      expect( grid.rows[0].isSaving ).toEqual(undefined);
+      expect( grid.rows[0].isDirty ).toEqual(undefined);
+      expect( grid.rowEdit.dirtyRows.length ).toEqual(0);
+      expect( success ).toEqual(true);
+    });
+    
     it( 'three dirty rows, one save fails', function() {
       var promises = [$q.defer(), $q.defer(), $q.defer()];
       var promiseCounter = 0;

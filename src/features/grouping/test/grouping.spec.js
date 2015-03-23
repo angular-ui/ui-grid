@@ -81,17 +81,6 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows );
 
-/*      
-      console.log('data');
-      for (var i = 0; i < 10; i++) {
-        console.log(grid.options.data[i]);
-      }
-      
-      console.log('results');
-      for (i = 0; i < 18; i++) {
-        console.log(grid.rows[i].entity);
-      }
-*/      
       expect( groupedRows.length ).toEqual( 18, 'we\'ve added 3 col0 headers, and 5 col2 headers' );
     });
   });
@@ -263,7 +252,153 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       });
     });
   });
-  
+
+
+  describe('getGrouping via api (returns colName)', function() {
+    it('should find no grouping', function() {
+      expect(grid.api.grouping.getGrouping( true )).toEqual({
+        grouping: [],
+        aggregations: [],
+        rowExpandedStates: {}
+      });
+    });
+    
+    it('should find no grouping, no expanded states', function() {
+      expect(grid.api.grouping.getGrouping( false )).toEqual({
+        grouping: [],
+        aggregations: []
+      });
+    });
+    
+    it('should find no grouping, expanded states present', function() {
+      grid.grouping.rowExpandedStates = { male: { state: 'expanded' } };
+      expect(grid.api.grouping.getGrouping( true )).toEqual({
+        grouping: [],
+        aggregations: [],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+    });
+    
+    it('finds one grouping', function() {
+      grid.columns[1].grouping = {groupPriority: 0};
+      expect(grid.api.grouping.getGrouping(true)).toEqual({
+        grouping: [{ field: 'col1', colName: 'col1', groupPriority: 0 }],
+        aggregations: [],
+        rowExpandedStates: {}
+      });
+    });
+
+    it('finds one aggregation, has no priority', function() {
+      grid.columns[1].grouping = {aggregation: uiGridGroupingConstants.aggregation.COUNT};
+      expect(grid.api.grouping.getGrouping(false)).toEqual({
+        grouping: [],
+        aggregations: [{ field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT} ]
+      });
+    });
+
+    it('finds one aggregation, has a priority, aggregation is ignored', function() {
+      grid.columns[1].grouping = {groupPriority: 0, aggregation: uiGridGroupingConstants.aggregation.COUNT};
+      expect(grid.api.grouping.getGrouping(false)).toEqual({
+        grouping: [{ field: 'col1', colName: 'col1', groupPriority: 0 }],
+        aggregations: []
+      });
+    });
+
+    it('finds one aggregation, has no priority, aggregation is stored', function() {
+      grid.columns[1].grouping = {groupPriority: -1, aggregation: uiGridGroupingConstants.aggregation.COUNT};
+      expect(grid.api.grouping.getGrouping(false)).toEqual({
+        grouping: [],
+        aggregations: [ { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT } ]
+      });
+    });
+
+    it('multiple finds, sorts correctly', function() {
+      grid.columns[1].grouping = {aggregation: uiGridGroupingConstants.aggregation.COUNT};
+      grid.columns[2].grouping = {groupPriority: 1};
+      grid.columns[3].grouping = {groupPriority: 0, aggregation: uiGridGroupingConstants.aggregation.COUNT};
+      expect(grid.api.grouping.getGrouping(false)).toEqual({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ]
+      });
+    });
+  });  
+
+
+  describe('setGrouping', function() {
+    it('no grouping', function() {
+      grid.api.grouping.setGrouping(
+        {}
+      );
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: {} }
+      );
+    });
+
+    it('grouping, aggregations and rowExpandedStates', function() {
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+      expect(grid.api.grouping.getGrouping(true)).toEqual({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+    });
+
+  });
+
+
+  describe('clearGrouping', function() {
+    it('no grouping', function() {
+      grid.api.grouping.setGrouping(
+        {}
+      );
+      
+      // really just checking there are no errors, it should do nothing
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: {} }
+      );
+    });
+
+    it('clear grouping, aggregations and rowExpandedStates', function() {
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: uiGridGroupingConstants.aggregation.COUNT}
+        ],
+        rowExpandedStates: { male: { state: 'expanded' } } 
+      });
+      grid.api.grouping.clearGrouping();
+      
+      expect(grid.api.grouping.getGrouping( true )).toEqual(
+        { grouping: [], aggregations: [], rowExpandedStates: { male : { state : 'expanded' } } }
+      );
+    });
+
+  });
+    
 
   describe('insertGroupHeader', function() {
     it('inserts a header in the middle', function() {

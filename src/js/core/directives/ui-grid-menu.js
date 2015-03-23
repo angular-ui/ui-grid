@@ -192,7 +192,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       icon: '=',
       shown: '=',
       context: '=',
-      templateUrl: '='
+      templateUrl: '=',
+      leaveOpen: '='
     },
     require: ['?^uiGrid', '^uiGridMenu'],
     replace: true,
@@ -252,7 +253,9 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
 
               $scope.action.call(context, $event, title);
 
-              $scope.$emit('hide-menu');
+              if ( !$scope.leaveOpen ){
+                $scope.$emit('hide-menu');
+              }
             }
           };
 

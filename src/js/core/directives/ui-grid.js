@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('ui.grid').controller('uiGridController', ['$scope', '$element', '$attrs', 'gridUtil', '$q', 'uiGridConstants',
-                    '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile', 'ScrollEvent',
+                    '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile',
     function ($scope, $elm, $attrs, gridUtil, $q, uiGridConstants,
-              $templateCache, gridClassFactory, $timeout, $parse, $compile, ScrollEvent) {
+              $templateCache, gridClassFactory, $timeout, $parse, $compile) {
       // gridUtil.logDebug('ui-grid controller');
 
       var self = this;
@@ -59,23 +59,6 @@
         }
       }
 
-      function adjustInfiniteScrollPosition (scrollToRow) {
-
-        var scrollEvent = new ScrollEvent(self.grid, null, null, 'ui.grid.adjustInfiniteScrollPosition');
-        var totalRows = self.grid.renderContainers.body.visibleRowCache.length;
-        var percentage = ( scrollToRow + ( scrollToRow / ( totalRows - 1 ) ) ) / totalRows;
-
-        //for infinite scroll, never allow it to be at the zero position so the up button can be active
-        if ( percentage === 0 ) {
-          scrollEvent.y = {pixels: 1};
-        }
-        else {
-          scrollEvent.y = {percentage: percentage};
-        }
-        scrollEvent.fireScrollingEvent();
-
-      }
-
       function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
@@ -114,20 +97,6 @@
                 $scope.$evalAsync(function() {
                   self.grid.refreshCanvas(true);
                   self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.ROW);
-
-                  $timeout(function () {
-                    //Process post load scroll events if using infinite scroll
-                    if ( self.grid.options.enableInfiniteScroll ) {
-                      //If first load, seed the scrollbar down a little to activate the button
-                      if ( self.grid.renderContainers.body.prevRowScrollIndex === 0 ) {
-                        adjustInfiniteScrollPosition(0);
-                      }
-                      //If we are scrolling up, we need to reseed the grid.
-                      if (self.grid.scrollDirection === uiGridConstants.scrollDirection.UP) {
-                        adjustInfiniteScrollPosition(self.grid.renderContainers.body.prevRowScrollIndex + 1 + self.grid.options.excessRows);
-                      }
-                    }
-                    }, 0);
                 });
               });
           });
@@ -236,7 +205,7 @@ angular.module('ui.grid').directive('uiGrid',
               grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
               // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
-              if (grid.gridHeight < grid.options.rowHeight) {
+              if (grid.gridHeight < grid.options.rowHeight && grid.options.enableMinHeightCheck) {
                 // Figure out the new height
                 var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
                 var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;

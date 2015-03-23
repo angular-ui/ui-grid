@@ -364,48 +364,19 @@ angular.module('ui.grid')
     if (rowCache.length > self.grid.options.virtualizationThreshold) {
       if (!(typeof(scrollTop) === 'undefined' || scrollTop === null)) {
         // Have we hit the threshold going down?
-        if (!self.grid.options.enableInfiniteScroll && self.prevScrollTop < scrollTop && rowIndex < self.prevRowScrollIndex + self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+        if ( !self.grid.suppressParentScrollDown && self.prevScrollTop < scrollTop && rowIndex < self.prevRowScrollIndex + self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
           return;
         }
         //Have we hit the threshold going up?
-        if (!self.grid.options.enableInfiniteScroll && self.prevScrollTop > scrollTop && rowIndex > self.prevRowScrollIndex - self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
+        if ( !self.grid.suppressParentScrollUp && self.prevScrollTop > scrollTop && rowIndex > self.prevRowScrollIndex - self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
           return;
         }
       }
       var rangeStart = {};
       var rangeEnd = {};
 
-      //If infinite scroll is enabled, and we loaded more data coming from redrawInPlace, then recalculate the range and set rowIndex to proper place to scroll to
-      if ( self.grid.options.enableInfiniteScroll && self.grid.scrollDirection !== uiGridConstants.scrollDirection.NONE && postDataLoaded ) {
-        var findIndex = null;
-        var i = null;
-        if ( self.grid.scrollDirection === uiGridConstants.scrollDirection.UP ) {
-          findIndex = rowIndex > 0 ? self.grid.options.excessRows : 0;
-          for ( i = 0; i < rowCache.length; i++) {
-            if (self.grid.options.rowIdentity(rowCache[i].entity) === self.grid.options.rowIdentity(self.renderedRows[findIndex].entity)) {
-              rowIndex = i;
-              break;
-            }
-          }
-          rangeStart = Math.max(0, rowIndex);
-          rangeEnd = Math.min(rowCache.length, rangeStart + self.grid.options.excessRows + minRows);
-        }
-        else if ( self.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN ) {
-          findIndex = minRows;
-          for ( i = 0; i < rowCache.length; i++) {
-            if (self.grid.options.rowIdentity(rowCache[i].entity) === self.grid.options.rowIdentity(self.renderedRows[findIndex].entity)) {
-              rowIndex = i;
-              break;
-            }
-          }
-          rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows - minRows);
-          rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
-        }
-      }
-      else {
-        rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows);
-        rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
-      }
+      rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows);
+      rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
 
       newRange = [rangeStart, rangeEnd];
     }

@@ -430,7 +430,7 @@
            *  @ngdoc object
            *  @name isRowSelectable
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @description Makes it possible to specify a method that evaluates for each and sets its "enableSelection" property.
+           *  @description Makes it possible to specify a method that evaluates for each row and sets its "enableSelection" property.
            */
 
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
@@ -615,8 +615,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridSelection', ['uiGridSelectionConstants', 'uiGridSelectionService', '$templateCache',
-    function (uiGridSelectionConstants, uiGridSelectionService, $templateCache) {
+  module.directive('uiGridSelection', ['uiGridSelectionConstants', 'uiGridSelectionService', '$templateCache', 'uiGridConstants',
+    function (uiGridSelectionConstants, uiGridSelectionService, $templateCache, uiGridConstants) {
       return {
         replace: true,
         priority: 0,
@@ -643,11 +643,24 @@
                 uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef);
               }
               
-              if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop) {
-                uiGridCtrl.grid.registerRowBuilder(function(row, options) {
-                  row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
-                });
-              }
+              var processorSet = false;
+              var updateOptions = function(){
+                if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop && processorSet !== true) {
+                  uiGridCtrl.grid.registerRowsProcessor(function(rows) {
+                    rows.forEach(function(row){
+                      row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
+                    });
+                    return rows;
+                  });
+                  processorSet = true;
+                }
+              };
+              
+              updateOptions();
+
+              var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback( updateOptions, [uiGridConstants.dataChange.OPTIONS] );
+  
+              $scope.$on( '$destroy', dataChangeDereg);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
 
