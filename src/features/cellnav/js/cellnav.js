@@ -616,7 +616,7 @@
 
           // The bottom boundary is the current Y scroll position, plus the height of the grid, but minus the header height and minus the footerHeight.
           //   Basically this is the viewport height added on to the scroll position
-          var bottomBound = grid.renderContainers.body.prevScrollTop + grid.gridHeight - grid.headerHeight - grid.footerHeight;
+          var bottomBound = grid.renderContainers.body.prevScrollTop + grid.renderContainers.body.getViewportHeight();
 
           // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
           //if (grid.horizontalScrollbarHeight) {
