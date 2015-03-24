@@ -384,7 +384,11 @@
             var newObjects = [];
             var newObject;
             
-            angular.forEach( service.parseJson( grid, importFile ), function( value, index ) {
+            var importArray = service.parseJson( grid, importFile );
+            if (importArray === null){
+              return;
+            }
+            importArray.forEach(  function( value, index ) {
               newObject = service.newObject( grid );
               angular.extend( newObject, value );
               newObject = grid.options.importerObjectCallback( grid, newObject );
@@ -488,8 +492,7 @@
          * the columns in the column defs.  The resulting objects will have attributes
          * that are named based on the column.field or column.name, in that order.
          * @param {Grid} grid the grid that we want to import into 
-         * @param {FileObject} importFile the file that we want to import, as a 
-         * file object
+         * @param {Array} importArray the data that we want to import, as an array
          */
         createCsvObjects: function( grid, importArray ){
           // pull off header row and turn into headers
@@ -501,13 +504,15 @@
           
           var newObjects = [];
           var newObject;
-          angular.forEach( importArray, function( row, index ) {
+          importArray.forEach( function( row, index ) {
             newObject = service.newObject( grid );
-            angular.forEach( row, function( field, index ){
-              if ( headerMapping[index] !== null ){
-                newObject[ headerMapping[index] ] = field;
-              }
-            });
+            if ( row !== null ){
+              row.forEach( function( field, index ){
+                if ( headerMapping[index] !== null ){
+                  newObject[ headerMapping[index] ] = field;
+                }
+              });
+            }
             newObject = grid.options.importerObjectCallback( grid, newObject );
             newObjects.push( newObject );
           });
@@ -534,13 +539,13 @@
           if ( !grid.options.columnDefs || grid.options.columnDefs.length === 0 ){
             // we are going to create new columnDefs for all these columns, so just remove
             // spaces from the names to create fields
-            angular.forEach( headerRow, function( value, index ) {
+            headerRow.forEach( function( value, index ) {
               headers.push( value.replace( /[^0-9a-zA-Z\-_]/g, '_' ) );
             });
             return headers;
           } else {
             var lookupHash = service.flattenColumnDefs( grid, grid.options.columnDefs );
-            angular.forEach( headerRow, function( value, index ) {
+            headerRow.forEach(  function( value, index ) {
               if ( lookupHash[value] ) {
                 headers.push( lookupHash[value] );
               } else if ( lookupHash[ value.toLowerCase() ] ) {
@@ -569,7 +574,7 @@
          */
         flattenColumnDefs: function( grid, columnDefs ){
           var flattenedHash = {};
-          angular.forEach( columnDefs, function( columnDef, index) {
+          columnDefs.forEach(  function( columnDef, index) {
             if ( columnDef.name ){
               flattenedHash[ columnDef.name ] = columnDef.field || columnDef.name;
               flattenedHash[ columnDef.name.toLowerCase() ] = columnDef.field || columnDef.name;

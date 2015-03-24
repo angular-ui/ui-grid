@@ -26,8 +26,10 @@ extract values of selected cells.
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
-      $scope.gridOptions.modifierKeysToMultiSelectCells = true;
+      $scope.gridOptions = {
+        modifierKeysToMultiSelectCells: true,
+        showGridFooter: true
+      };
       $scope.gridOptions.columnDefs = [
         { name: 'id', width:'150' },
         { name: 'name', width:'200' },

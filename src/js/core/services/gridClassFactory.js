@@ -49,7 +49,7 @@
           // Reset all rows to visible initially
           grid.registerRowsProcessor(function allRowsVisible(rows) {
             rows.forEach(function (row) {
-              row.visible = !row.forceInvisible;
+              row.visible = true;
             });
 
             return rows;
@@ -74,10 +74,7 @@
           });
 
 
-
-          if (grid.options.enableFiltering) {
-            grid.registerRowsProcessor(grid.searchRows);
-          }
+          grid.registerRowsProcessor(grid.searchRows);
 
           // Register the default row processor, it sorts rows by selected columns
           if (grid.options.externalSort && angular.isFunction(grid.options.externalSort)) {

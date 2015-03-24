@@ -215,7 +215,9 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
 
     if (typeof(value) === 'number'){
       // if the term has a decimal in it, it comes through as '9\.4', we need to take out the \
-      var tempFloat = parseFloat(term.replace(/\\./,'.'));
+      // the same for negative numbers
+      // TODO: I suspect the right answer is to look at escapeRegExp at the top of this code file, maybe it's not needed?
+      var tempFloat = parseFloat(term.replace(/\\\./,'.').replace(/\\\-/,'-'));
       if (!isNaN(tempFloat)) {
         term = tempFloat;
       }
@@ -309,6 +311,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (!rows) {
       return;
     }
+    
+    // don't filter if filtering currently disabled
+    if (!grid.options.enableFiltering){
+      return rows;
+    }
 
     // Build list of filters to apply
     var filterData = [];
@@ -328,8 +335,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
-        if (row.forceInvisible || !rowSearcher.searchColumn(grid, row, col, filters)) {
-          row.visible = false;
+        if ( !rowSearcher.searchColumn(grid, row, col, filters) ) {
+          row.setThisRowInvisible('filtered', true);
         }
       };
       

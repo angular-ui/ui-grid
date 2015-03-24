@@ -103,47 +103,113 @@ angular.module('ui.grid')
    * @name setRowInvisible
    * @methodOf  ui.grid.class:GridRow
    * @description Sets an override on the row that forces it to always
-   * be invisible, and if the row is currently visible then marks it
-   * as invisible and refreshes the grid.  Emits the rowsVisibleChanged
-   * event if it changed the row visibility
-   * @param {GridRow} row row to force invisible, needs to be a GridRow,
-   * which can be found from your data entity using grid.findRow
+   * be invisible. Emits the rowsVisibleChanged event if it changed the row visibility.
+   * 
+   * This method can be called from the api, passing in the gridRow we want
+   * altered.  It should really work by calling gridRow.setRowInvisible, but that's
+   * not the way I coded it, and too late to change now.  Changed to just call
+   * the internal function row.setThisRowInvisible().
+   * 
+   * @param {GridRow} row the row we want to set to invisible
+   * 
    */
-  GridRow.prototype.setRowInvisible = function (row) {
-    if (row !== null) {
-      row.forceInvisible = true;
-      
-      if ( row.visible ){
-        row.visible = false;
-        row.grid.refresh();
-        row.grid.api.core.raise.rowsVisibleChanged();
-      }
-    }        
+  GridRow.prototype.setRowInvisible = function ( row ) {
+    if (row && row.setThisRowInvisible){
+      row.setThisRowInvisible( 'user' );
+    }
   };
+  
+  
+  /**
+   * @ngdoc function
+   * @name clearRowInvisible
+   * @methodOf  ui.grid.class:GridRow
+   * @description Clears an override on the row that forces it to always
+   * be invisible. Emits the rowsVisibleChanged event if it changed the row visibility.
+   * 
+   * This method can be called from the api, passing in the gridRow we want
+   * altered.  It should really work by calling gridRow.clearRowInvisible, but that's
+   * not the way I coded it, and too late to change now.  Changed to just call
+   * the internal function row.clearThisRowInvisible().
+   * 
+   * @param {GridRow} row the row we want to clear the invisible flag
+   * 
+   */
+  GridRow.prototype.clearRowInvisible = function ( row ) {
+    if (row && row.clearThisRowInvisible){
+      row.clearThisRowInvisible( 'user' );
+    }
+  };
+  
+  
+  /**
+   * @ngdoc function
+   * @name setThisRowInvisible
+   * @methodOf  ui.grid.class:GridRow
+   * @description Sets an override on the row that forces it to always
+   * be invisible. Emits the rowsVisibleChanged event if it changed the row visibility
+   *
+   * @param {string} reason the reason (usually the module) for the row to be invisible.
+   * E.g. grouping, user, filter
+   * @param {boolean} fromRowsProcessor whether we were called from a rowsProcessor, passed through to evaluateRowVisibility
+   */
+  GridRow.prototype.setThisRowInvisible = function ( reason, fromRowsProcessor ) {
+    if ( !this.invisibleReason ){
+      this.invisibleReason = {};
+    }
+    this.invisibleReason[reason] = true;
+    this.evaluateRowVisibility( fromRowsProcessor);
+  };
+
 
   /**
    * @ngdoc function
    * @name clearRowInvisible
    * @methodOf ui.grid.class:GridRow
    * @description Clears any override on the row visibility, returning it 
-   * to normal visibility calculations.  If the row is currently invisible
-   * then sets it to visible and calls refresh and emits the rowsVisibleChanged
+   * to normal visibility calculations.  Emits the rowsVisibleChanged
    * event
-   * TODO: if filter in action, then is this right?
-   * @param {GridRow} row row clear force invisible, needs to be a GridRow,
-   * which can be found from your data entity using grid.findRow
+   * 
+   * @param {string} reason the reason (usually the module) for the row to be invisible.
+   * E.g. grouping, user, filter
+   * @param {boolean} fromRowsProcessor whether we were called from a rowsProcessor, passed through to evaluateRowVisibility
    */
-  GridRow.prototype.clearRowInvisible = function (row) {
-    if (row !== null) {
-      row.forceInvisible = false;
-      
-      if ( !row.visible ){
-        row.visible = true;
-        row.grid.refresh();
-        row.grid.api.core.raise.rowsVisibleChanged();
-      }
-    }        
+  GridRow.prototype.clearThisRowInvisible = function ( reason, fromRowsProcessor ) {
+    delete this.invisibleReason.user;
+    this.evaluateRowVisibility( fromRowsProcessor );
   };
+
+
+  /**
+   * @ngdoc function
+   * @name evaluateRowVisibility
+   * @methodOf ui.grid.class:GridRow
+   * @description Determines whether the row should be visible based on invisibleReason, 
+   * and if it changes the row visibility, then emits the rowsVisibleChanged event.
+   * 
+   * Queues a grid refresh, but doesn't call it directly to avoid hitting lots of grid refreshes.
+   * @param {boolean} fromRowProcessor if true, then it won't raise events or queue the refresh, the
+   * row processor does that already
+   */
+  GridRow.prototype.evaluateRowVisibility = function ( fromRowProcessor ) {
+    var newVisibility = true;
+    if ( this.invisibleReason ){
+      angular.forEach(this.invisibleReason, function( value, key ){
+        if ( value ){
+          newVisibility = false;
+        }
+      });
+    }
+    
+    if ( this.visible !== newVisibility ){
+      this.visible = newVisibility;
+      if ( !fromRowProcessor ){
+        this.grid.queueGridRefresh();
+        this.grid.api.core.raise.rowsVisibleChanged(this);
+      }
+    }
+  };
+  
 
   return GridRow;
 }]);

@@ -196,23 +196,23 @@
       },
       
       expandAllRows: function(grid, $scope) {
-        angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+        grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (!row.isExpanded) {
             service.toggleRowExpansion(grid, row);
           }
         });
         grid.expandable.expandedAll = true;
-        grid.refresh();
+        grid.queueGridRefresh();
       },
       
       collapseAllRows: function(grid) {
-        angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+        grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (row.isExpanded) {
             service.toggleRowExpansion(grid, row);
           }
         });
         grid.expandable.expandedAll = false;
-        grid.refresh();
+        grid.queueGridRefresh();
       },
 
       toggleAllRows: function(grid) {
@@ -395,7 +395,7 @@
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
                       var colWidth = 0;
-                      angular.forEach(grid.columns, function (column) {
+                      grid.columns.forEach( function (column) {
                           if (column.renderContainer === 'left') {
                             colWidth += column.width;
                           }

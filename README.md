@@ -84,6 +84,14 @@ You can also use the `--browsers` specify what browsers to test with (PhantomJS 
 By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
 
     > grunt dev --no-e2e
+    
+The grunt task is getting slower as the body of tests gets larger.  If you're only working on the core functionality you can disable the unit tests on the features with the `--core` flag:
+
+    > grunt dev --core
+    
+As a shortcut for options that the developers frequently use, there is also a `--fast` flag, which equates to `--core --no-e2e --angular=<latest>`:
+ 
+    > grunt dev --fast
 
 ## Karmangular
 

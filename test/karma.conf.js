@@ -12,7 +12,11 @@ module.exports = function(config) {
     // frameworks to use
     frameworks: ['jasmine'],
 
-    // list of files / patterns to load in the browser (we add more dynamically in our tasks)
+    // list of files / patterns to load in the browser
+    // note that the karmangular setup from util.createKarmangularConfig seems
+    // to take precedence over this, but we can't remove this because then 
+    // the karmangular task doesn't appear to run.  So includes the features/**/test, but
+    // they don't get run if you've used the --fast or --core options
     files: [
       'bower_components/jquery/jquery.min.js',
       'lib/test/jquery.simulate.js',

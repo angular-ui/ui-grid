@@ -214,6 +214,16 @@
           gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
           /**
            * @ngdoc object
+           * @name exporterOlderExcelCompatibility
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Some versions of excel don't like the utf-16 BOM on the front, and it comes
+           * through as ï»¿ in the first column header.  Setting this option to false will suppress this, at the
+           * expense of proper utf-16 handling in applications that do recognise the BOM
+           * <br/>Defaults to false
+           */
+          gridOptions.exporterOlderExcelCompatibility = gridOptions.exporterOlderExcelCompatibility === true; 
+          /**
+           * @ngdoc object
            * @name exporterPdfDefaultStyle
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default style in pdfMake format
@@ -342,6 +352,14 @@
 
           /**
            * @ngdoc object
+           * @name exporterMenuAllData
+           * @porpertyOf  ui.grid.exporter.api:GridOptions
+           * @description Add export all data as cvs/pdf menu items to the ui-grid grid menu, if it's present.  Defaults to true.
+           */ 
+          gridOptions.exporterMenuAllData = gridOptions.exporterMenuAllData !== undefined ? gridOptions.exporterMenuAllData : true; 
+
+          /**
+           * @ngdoc object
            * @name exporterMenuCsv
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description Add csv export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
@@ -460,7 +478,7 @@
                 this.grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv; 
+                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData; 
               }
             },
             {
@@ -488,7 +506,7 @@
                 this.grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf; 
+                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData; 
               }
             },
             {
@@ -533,7 +551,7 @@
           var exportData = this.getData(grid, rowTypes, colTypes);
           var csvContent = this.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
           
-          this.downloadFile (grid.options.exporterCsvFilename, csvContent);
+          this.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterOlderExcelCompatibility);
         },
         
         
@@ -563,7 +581,7 @@
          */
         getColumnHeaders: function (grid, colTypes) {
           var headers = [];
-          angular.forEach(grid.columns, function( gridCol, index ) {
+          grid.columns.forEach( function( gridCol, index ) {
             if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
                  gridCol.colDef.exporterSuppressExport !== true &&
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
@@ -640,11 +658,11 @@
               break;
           }
           
-          angular.forEach(rows, function( row, index ) {
+          rows.forEach( function( row, index ) {
 
             if (row.exporterEnableExporting !== false) {
               var extractedRow = [];
-              angular.forEach(grid.columns, function( gridCol, index ) {
+              grid.columns.forEach( function( gridCol, index ) {
               if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
                    gridCol.colDef.exporterSuppressExport !== true &&
                    grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
@@ -734,6 +752,18 @@
 
         /**
          * @ngdoc function
+         * @name isIE
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Checks whether current browser is IE and returns it's version if it is
+        */
+        isIE: function () {
+          var match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
+          return match ? parseInt(match[1]) : false;
+        },
+
+
+        /**
+         * @ngdoc function
          * @name downloadFile
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Triggers download of a csv file.  Logic provided
@@ -742,25 +772,45 @@
          * given
          * @param {string} csvContent the csv content that we'd like to 
          * download as a file
+         * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
          */
-        downloadFile: function (fileName, csvContent) {
+        downloadFile: function (fileName, csvContent, exporterOlderExcelCompatibility) {
           var D = document;
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
+          var ieVersion;
       
+          if (!fileName) {
+            var currentDate = new Date();
+            fileName = "CWS Export - " + currentDate.getFullYear() + (currentDate.getMonth() + 1) +
+                       currentDate.getDate() + currentDate.getHours() +
+                       currentDate.getMinutes() + currentDate.getSeconds() + ".csv";
+          }
+
+          ieVersion = this.isIE();
+          if (ieVersion && ieVersion < 10) {
+            var frame = D.createElement('iframe');
+            document.body.appendChild(frame);
+        
+            frame.contentWindow.document.open("text/html", "replace");
+            frame.contentWindow.document.write('sep=,\r\n' + csvContent);
+            frame.contentWindow.document.close();
+            frame.contentWindow.focus();
+            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
+        
+            document.body.removeChild(frame);
+            return true;
+          }
+        
           // IE10+
           if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(new Blob(["\ufeff", csvContent], {
-              type: strMimeType
-            }), fileName);
+            return navigator.msSaveBlob(new Blob(["\uFEFF", csvContent], { type: strMimeType } ), fileName);
           }
       
           //html5 A[download]
           if ('download' in a) {
-            var blob = new Blob([csvContent], {
-              type: strMimeType
-            });
+            var blob = new Blob(["\uFEFF", csvContent], { type: strMimeType } );
             rawFile = URL.createObjectURL(blob);
             a.setAttribute('download', fileName);
           } else {
@@ -807,7 +857,11 @@
           var exportData = this.getData(grid, rowTypes, colTypes);
           var docDefinition = this.prepareAsPdf(grid, exportColumnHeaders, exportData);
           
-          pdfMake.createPdf(docDefinition).open();
+          if (this.isIE()) {
+            var pdf = pdfMake.createPdf(docDefinition).download();
+          } else {
+            pdfMake.createPdf(docDefinition).open();
+          }
         },
         
         
@@ -892,19 +946,19 @@
          * for any column that is a %
          *  
          * @param {Grid} grid the grid from which data should be exported
-         * @param {object} exportHeaders array of header information 
+         * @param {array} exportHeaders array of header information 
          * @returns {object} an array of header widths
          */
         calculatePdfHeaderWidths: function ( grid, exportHeaders ) {
           var baseGridWidth = 0;
-          angular.forEach(exportHeaders, function(value){
+          exportHeaders.forEach( function(value){
             if (typeof(value.width) === 'number'){
               baseGridWidth += value.width;
             }
           });
           
           var extraColumns = 0;
-          angular.forEach(exportHeaders, function(value){
+          exportHeaders.forEach( function(value){
             if (value.width === '*'){
               extraColumns += 100;
             }

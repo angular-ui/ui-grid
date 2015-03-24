@@ -1,74 +1,112 @@
 /* global _ */
 (function () {
-	'use strict';
-	describe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
+  'use strict';
+  describe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
 
-		var uiGridInfiniteScrollService;
-		var grid;
-		var gridClassFactory;
+    var uiGridInfiniteScrollService;
+    var grid;
+    var gridClassFactory;
     var uiGridConstants;
+    var $rootScope;
+    var $scope;
 
-		beforeEach(module('ui.grid.infiniteScroll'));
+    beforeEach(module('ui.grid.infiniteScroll'));
 
-		beforeEach(inject(function (_uiGridInfiniteScrollService_, _gridClassFactory_, _uiGridConstants_) {
-			uiGridInfiniteScrollService = _uiGridInfiniteScrollService_;
-			gridClassFactory = _gridClassFactory_;
+    beforeEach(inject(function (_uiGridInfiniteScrollService_, _gridClassFactory_, _uiGridConstants_, _$rootScope_) {
+      uiGridInfiniteScrollService = _uiGridInfiniteScrollService_;
+      gridClassFactory = _gridClassFactory_;
       uiGridConstants = _uiGridConstants_;
-			
-			grid = gridClassFactory.createGrid({});
+      $rootScope = _$rootScope_;
+      $scope = $rootScope.$new();
+      
+      grid = gridClassFactory.createGrid({});
 
-			grid.options.columnDefs = [
-				{field: 'col1'}
-			];
-			grid.options.infiniteScroll = 20;
-			
-			grid.options.onRegisterApi = function (gridApi) {
-				gridApi.infiniteScroll.on.needLoadMoreData(function(){
-					return [];
-				});
-        gridApi.infiniteScroll.on.needLoadMoreDataTop(function(){
-          return [];
-        });
+      grid.options.columnDefs = [
+        {field: 'col1'}
+      ];
+      grid.options.infiniteScrollPercentage = 20;
 
-      };
-
-			uiGridInfiniteScrollService.initializeGrid(grid);
+      uiGridInfiniteScrollService.initializeGrid(grid, $scope);
       spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreData');
       spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreDataTop');
 
-			grid.options.data = [{col1:'a'},{col1:'b'}];
+      grid.options.data = [{col1:'a'},{col1:'b'}];
 
-			grid.buildColumns();
+      grid.buildColumns();
 
-		}));
+    }));
 
-		describe('event handling', function () {
-			it('should return false if scrollTop is positioned more than 20% of scrollHeight', function() {
-				var scrollHeight = 100;
-				var scrollTop = 80;
-				var callResult = uiGridInfiniteScrollService.checkScroll(grid, scrollTop);
-				expect(callResult).toBe(false);
-			});
-
-			it('should return false if scrollTop is positioned less than 20% of scrollHeight', function() {
-				var scrollHeight = 100;
-				var scrollTop = 19;
-				var callResult = uiGridInfiniteScrollService.checkScroll(grid, scrollTop);
-				expect(callResult).toBe(true);
-			});
-
-			it('should call load data function on grid event raise', function () {
-				uiGridInfiniteScrollService.loadData(grid);
-				expect(grid.api.infiniteScroll.raise.needLoadMoreData).toHaveBeenCalled();
-			});
-
-      it('should call load data top function on grid event raise', function () {
+    describe('event handling', function () {
+      beforeEach(function() {
+        spyOn(uiGridInfiniteScrollService, 'loadData').andCallFake(function() {});
+      });
+      
+      it('should not request more data if scroll up to 21%', function() {
         grid.scrollDirection = uiGridConstants.scrollDirection.UP;
-        uiGridInfiniteScrollService.loadData(grid);
-        expect(grid.api.infiniteScroll.raise.needLoadMoreDataTop).toHaveBeenCalled();
+        uiGridInfiniteScrollService.handleScroll( { grid: grid, y: { percentage: 0.21 }});
+        expect(uiGridInfiniteScrollService.loadData).not.toHaveBeenCalled();
       });
 
+      it('should request more data if scroll up to 20%', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.UP;
+        uiGridInfiniteScrollService.handleScroll( { grid: grid,  y: { percentage: 0.20 }});
+        expect(uiGridInfiniteScrollService.loadData).toHaveBeenCalled();
+      });
+
+      it('should not request more data if scroll down to 79%', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+        uiGridInfiniteScrollService.handleScroll( {grid: grid, y: { percentage: 0.79 }});
+        expect(uiGridInfiniteScrollService.loadData).not.toHaveBeenCalled();
+      });
+
+      it('should request more data if scroll down to 80%', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+        uiGridInfiniteScrollService.handleScroll( { grid: grid, y: { percentage: 0.80 }});
+        expect(uiGridInfiniteScrollService.loadData).toHaveBeenCalled();
+      });
+    });
+    
+    describe('loadData', function() {
+      it('scroll up and there is data up', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.UP;
+        grid.infiniteScroll.scrollUp = true;
+
+        uiGridInfiniteScrollService.loadData(grid);
+        
+        expect(grid.api.infiniteScroll.raise.needLoadMoreDataTop).toHaveBeenCalled();
+        expect(grid.infiniteScroll.previousVisibleRows).toEqual(0);
+        expect(grid.infiniteScroll.direction).toEqual(uiGridConstants.scrollDirection.UP);
+      });
+
+      it('scroll up and there isn\'t data up', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.UP;
+        grid.infiniteScroll.scrollUp = false;
+
+        uiGridInfiniteScrollService.loadData(grid);
+        
+        expect(grid.api.infiniteScroll.raise.needLoadMoreDataTop).not.toHaveBeenCalled();
+      });
+
+      it('scroll down and there is data down', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+        grid.infiniteScroll.scrollDown = true;
+
+        uiGridInfiniteScrollService.loadData(grid);
+        
+        expect(grid.api.infiniteScroll.raise.needLoadMoreData).toHaveBeenCalled();
+        expect(grid.infiniteScroll.previousVisibleRows).toEqual(0);
+        expect(grid.infiniteScroll.direction).toEqual(uiGridConstants.scrollDirection.DOWN);
+      });
+
+      it('scroll down and there isn\'t data down', function() {
+        grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+        grid.infiniteScroll.scrollDown = false;
+
+        uiGridInfiniteScrollService.loadData(grid);
+        
+        expect(grid.api.infiniteScroll.raise.needLoadMoreData).not.toHaveBeenCalled();
+      });
     });
 
-	});
+  });
 })();

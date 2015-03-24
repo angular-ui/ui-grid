@@ -2,85 +2,104 @@
 @name Tutorial: 212 Infinite scroll
 @description
 
-The infinite scroll feature allows the user to lazy load their data to gridOptions.data
+The infinite scroll feature allows the user to lazy load their data to gridOptions.data.  
 
-Specify percentage when lazy load should trigger:
-<pre>
-  $scope.gridOptions.infiniteScroll = 20;
-</pre>
+Once you reach the top (or bottom) of your real data set, you can notify that no more pages exist
+up (or down), and infinite scroll will stop triggering events in that direction.  You can also
+optionally tell us up-front that there are no more pages up through `infiniteScrollUp = true` or down through
+`infiniteScrollDown = true`, and we will never trigger
+pages in that direction.  By default we assume you have pages down but not up.
+
+You can specify the percentage of the grid at which the infinite scroll will trigger a request for
+more data `infiniteScrollPercentage = 20`. By default we trigger when you are 20% away from the end of 
+the grid (in either direction).
+
+We will raise a `needMoreData` or `needMoreDataTop` event, which you must listen to and respond to if
+you have told us that you have more data available.  Once you have retrieved the data and added it to your
+data array (at the top if the event was `needMoreDataTop`), you need to call `dataLoaded` to tell us
+that you have loaded your data.  Optionally, you can tell us that there is no more data, and we won't trigger
+further requests for more data in that direction.
+
+When you have loaded your data we will attempt to adjust the grid scroll to give the appearance of continuous
+scrolling.  This is a little jumpy at present, largely because we work of percentages instead of a number of
+rows from the end.  We basically assume that your user will have reached the end of the scroll (upwards or downwards)
+by the time the data comes back, and scroll the user to the beginning of the newly added data to reflect that.  If
+your user has already scrolled a lot of pages, then they may not be at the end of the data (20% can be a long way).
+Ideally the API would change to a number of rows. 
+
+Finally, we suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
+if infinite scroll is enabled and there is still data in that direction.
 
 
 @example
+In this example we have a data set that starts at page 2 of a 5 page data set.  Each page is 100 records, so we start at 
+record 200, and we can scroll up 2 pages, and scroll down 2 pages.  You should see smooth scrolling as you move up, when
+you hit record zero a touchpad scroll should propagate to the parent page.  You should also see smooth scrolling as you
+move down, and when you hit record 499 a touchpad scroll should propagate to the parent page.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.infiniteScroll']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        infiniteScrollPercentage: 15,
+        infiniteScrollUp: true,
+        infiniteScrollDown: true,
+        columnDefs: [
+          { name:'id'},
+          { name:'name' },
+          { name:'age' }
+        ],
+        data: 'data',
+        onRegisterApi: function(gridApi){
+          gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
+          gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);
+          $scope.gridApi = gridApi;
+        }
+      };
 
-    /**
-      * @ngdoc property
-      * @name infiniteScrollPercentage
-      * @propertyOf ui.grid.class:GridOptions
-      * @description This setting controls at what percentage of the scroll more data
-      * is requested by the infinite scroll
-      */
-      $scope.gridOptions.infiniteScrollPercentage = 15;
+      $scope.data = [];
       
-      $scope.gridOptions.columnDefs = [
-        { name:'id'},
-        { name:'name' },
-        { name:'age' }
-      ];
-      var page = 0;
-      var pageUp = 0;
-      var getData = function(data, page) {
+      var firstPage = 2;
+      var lastPage = 1;
+      
+      $scope.getDataDown = function() {
+        $http.get('/data/10000_complex.json')
+        .success(function(data) {
+          lastPage++;
+          var newData = $scope.getPage(data, lastPage);
+          $scope.data = $scope.data.concat(newData);
+          $scope.gridApi.infiniteScroll.dataLoaded(null, lastPage === 4);
+        })
+        .error(function(error) {
+          $scope.gridApi.infiniteScroll.dataLoaded();
+        });
+      };
+
+      $scope.getDataUp = function() {
+        $http.get('/data/10000_complex.json')
+        .success(function(data) {
+          firstPage--;
+          var newData = $scope.getPage(data, firstPage);
+          $scope.data = newData.concat($scope.data);
+          $scope.gridApi.infiniteScroll.dataLoaded(firstPage === 0, null);
+        })
+        .error(function(error) {
+          $scope.gridApi.infiniteScroll.dataLoaded();
+        });
+      };
+
+
+      $scope.getPage = function(data, page) {
         var res = [];
         for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
           res.push(data[i]);
         }
         return res;
       };
-
-      var getDataUp = function(data, page) {
-        var res = [];
-        for (var i = data.length - (page * 100) - 1; (data.length - i) < ((page + 1) * 100) && (data.length - i) > 0; --i) {
-          data[i].id = -(data.length - data[i].id)
-          res.push(data[i]);
-        }
-        return res;
-      };
-
-      $http.get('/data/10000_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = getData(data, page);
-          ++page;
-        });
-
-      $scope.gridOptions.onRegisterApi = function(gridApi){
-        gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
-          $http.get('/data/10000_complex.json')
-            .success(function(data) {
-              $scope.gridOptions.data = $scope.gridOptions.data.concat(getData(data, page));
-              ++page;
-              gridApi.infiniteScroll.dataLoaded();
-            })
-            .error(function() {
-              gridApi.infiniteScroll.dataLoaded();
-            });
-        });
-        gridApi.infiniteScroll.on.needLoadMoreDataTop($scope,function(){
-          $http.get('/data/10000_complex.json')
-            .success(function(data) {
-              $scope.gridOptions.data = getDataUp(data, pageUp).reverse().concat($scope.gridOptions.data);
-              ++pageUp;
-              gridApi.infiniteScroll.dataLoaded();
-            })
-            .error(function() {
-              gridApi.infiniteScroll.dataLoaded();
-            });
-        });
-      };
+      
+      $scope.getDataDown();
     }]);
   </file>
   <file name="index.html">

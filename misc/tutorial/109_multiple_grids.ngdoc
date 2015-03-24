@@ -39,7 +39,7 @@ Using multiple grids on a single page
   </file>
   <file name="main.css">
     .grid {
-      width: 250px;
+      width: 500px;
       height: 150px;
     }
   </file>

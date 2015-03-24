@@ -1,3 +1,27 @@
+<a name="v3.0.0-rc.20"></a>
+### v3.0.0-rc.20 (2015-02-24)
+
+
+#### Bug Fixes
+
+* **Edit:** Wrong arguments on scrollToIfNecessary ([0fc6b21c](http://github.com/angular-ui/ng-grid/commit/0fc6b21ceff002226697e5d3520b6d4f8374b678))
+* **Filtering:** Redraw grid properly when scrolled ([4c32e3d7](http://github.com/angular-ui/ng-grid/commit/4c32e3d77a1dce55a9354ad4e9d8f59b9fe2732f), closes [#2557](http://github.com/angular-ui/ng-grid/issues/2557))
+* **Grid:**
+  * fix buildColumns handling same field ([dd6dc150](http://github.com/angular-ui/ng-grid/commit/dd6dc1505b68a865b1c37197c133acbf5a5e58e0), closes [#2789](http://github.com/angular-ui/ng-grid/issues/2789))
+  * Redraw needs scrollTop when adding rows ([509e0071](http://github.com/angular-ui/ng-grid/commit/509e0071b1929adecb6e75be20166902a70452ad))
+  * Adjust available width for columns ([cf86090f](http://github.com/angular-ui/ng-grid/commit/cf86090f66ee057f541961d563ca42597112bdb4), closes [#2521](http://github.com/angular-ui/ng-grid/issues/2521), [#2734](http://github.com/angular-ui/ng-grid/issues/2734), [#2592](http://github.com/angular-ui/ng-grid/issues/2592))
+  * Alter mousewheel event handling ([382f0aed](http://github.com/angular-ui/ng-grid/commit/382f0aeda61a5afde845c8faaed7b04def6fa162))
+* **Pinning:** Move rowStyle() to uiGridViewport ([09f478c2](http://github.com/angular-ui/ng-grid/commit/09f478c2af4a5f47f8b144484fe71b96f62aa64b), closes [#2821](http://github.com/angular-ui/ng-grid/issues/2821))
+* **Scrolling:** Don't trap scroll at 100% down ([78a4b433](http://github.com/angular-ui/ng-grid/commit/78a4b433b4f186a23a2ec35afe88660f8f361119))
+* **cellNav:** Allow tabbing out of grid ([aabcd4da](http://github.com/angular-ui/ng-grid/commit/aabcd4da564391296d182d78415ab51f9853df64), closes [#2339](http://github.com/angular-ui/ng-grid/issues/2339))
+* **uiGridHeader:**
+  * Refresh grid with new header ([d841b92b](http://github.com/angular-ui/ng-grid/commit/d841b92b8538f0683a2b4dbaf3d84c1273459eaa), closes [#2822](http://github.com/angular-ui/ng-grid/issues/2822))
+  * Fix dynamic header heights ([893bb13e](http://github.com/angular-ui/ng-grid/commit/893bb13e08c3c8fac9e886b5021777d752761c2d))
+  * Fix header height growth bug ([fee00cdf](http://github.com/angular-ui/ng-grid/commit/fee00cdfa5aeaeb5a10db8ea71e64035eb39bba0), closes [#2781](http://github.com/angular-ui/ng-grid/issues/2781))
+* **uiGridRenderContainer:**
+  * Use header min-height ([4381ca58](http://github.com/angular-ui/ng-grid/commit/4381ca5857ac09a5e752a95bf18a0356e58de9f8), closes [#2768](http://github.com/angular-ui/ng-grid/issues/2768))
+  * Don't reverse X delta ([7a0e075d](http://github.com/angular-ui/ng-grid/commit/7a0e075d73bc9ff876466754404ba6f41decdcfd))
+
 <a name="v3.0.0-rc.19"></a>
 ### v3.0.0-rc.19 (2015-02-11)
 

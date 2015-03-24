@@ -26,7 +26,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     // Cache of sorting functions. Once we create them, we don't want to keep re-doing it
     //   this takes a piece of data from the cell and tries to determine its type and what sorting
     //   function to use for it
-    colSortFnCache: []
+    colSortFnCache: {}
   };
 
 
@@ -412,12 +412,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     var r = rows.slice(0);
     
     // put a custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
-    angular.forEach( rows, function ( row, idx ) {
-      row.entity.$uiGridIndex = idx;
-    });
+    var setIndex = function( row, idx ){
+      row.entity.$$uiGridIndex = idx;
+    };
+    rows.forEach(setIndex);
 
     // Now actually sort the data
-    var newRows = rows.sort(function rowSortFn(rowA, rowB) {
+    var rowSortFn = function (rowA, rowB) {
       var tem = 0,
           idx = 0,
           sortFn;
@@ -438,10 +439,11 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
 
       // Chrome doesn't implement a stable sort function.  If our sort returns 0 
-      // (i.e. the items are equal), then return the previous order using our custom
+      // (i.e. the items are equal), and we're at the last sort column in the list,
+      // then return the previous order using our custom
       // index variable
       if (tem === 0 ) {
-        return rowA.entity.$uiGridIndex - rowB.entity.$uiGridIndex;
+        return rowA.entity.$$uiGridIndex - rowB.entity.$$uiGridIndex;
       }
       
       // Made it this far, we don't have to worry about null & undefined
@@ -450,12 +452,15 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       } else {
         return 0 - tem;
       }
-    });
+    };
+
+    var newRows = rows.sort(rowSortFn);
     
     // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
-    angular.forEach( newRows, function ( row, idx ) {
-      delete row.entity.$uiGridIndex;
-    });
+    var clearIndex = function( row, idx ){
+       delete row.entity.$$uiGridIndex;
+    };
+    rows.forEach(clearIndex);
     
     return newRows;
   };

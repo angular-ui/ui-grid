@@ -16,7 +16,7 @@
    *  @name ui.grid.moveColumns.service:uiGridMoveColumnService
    *  @description Service for column moving feature.
    */
-  module.service('uiGridMoveColumnService', ['$q', '$timeout', '$log', 'ScrollEvent', 'uiGridConstants', function ($q, $timeout, $log, ScrollEvent, uiGridConstants) {
+  module.service('uiGridMoveColumnService', ['$q', '$timeout', '$log', 'ScrollEvent', 'uiGridConstants', 'gridUtil', function ($q, $timeout, $log, ScrollEvent, uiGridConstants, gridUtil) {
 
     var service = {
       initializeGrid: function (grid) {
@@ -67,7 +67,7 @@
               moveColumn: function (originalPosition, finalPosition) {
                 var columns = grid.columns;
                 if (!angular.isNumber(originalPosition) || !angular.isNumber(finalPosition)) {
-                  console.log('Please provide valid values for originalPosition and finalPosition');
+                  gridUtil.logError('MoveColumn: Please provide valid values for originalPosition and finalPosition');
                   return;
                 }
                 var nonMovableColumns = 0;
@@ -77,7 +77,7 @@
                   }
                 }
                 if (originalPosition >= (columns.length - nonMovableColumns) || finalPosition >= (columns.length - nonMovableColumns)) {
-                  console.log('Invalid values for originalPosition, finalPosition');
+                  gridUtil.logError('MoveColumn: Invalid values for originalPosition, finalPosition');
                   return;
                 }
                 var findPositionForRenderIndex = function (index) {
@@ -151,9 +151,9 @@
           }
           columns[newPosition] = originalColumn;
           $timeout(function () {
-            grid.refresh();
-            grid.api.colMovable.raise.columnPositionChanged(originalColumn.colDef, originalPosition, newPosition);
             grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+            grid.queueGridRefresh();
+            grid.api.colMovable.raise.columnPositionChanged(originalColumn.colDef, originalPosition, newPosition);
           });
         }
       }

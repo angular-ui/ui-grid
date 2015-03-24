@@ -244,7 +244,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           return angular.lowercase(angular.uppercase(match.charAt(0)) + match.slice(1));
         })
         // Capitalize the first letter of words
-        .replace(/(\w+)/g, function (match) {
+        .replace(/([\w\u00C0-\u017F]+)/g, function (match) {
           return angular.uppercase(match.charAt(0)) + match.slice(1);
         })
         // Put a space in between words that have partial capilizations (i.e. 'firstName' becomes 'First Name')
@@ -879,6 +879,34 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     return 'unknown';
   };
 
+  // Borrowed from https://github.com/othree/jquery.rtl-scroll-type
+  // Determine the scroll "type" this browser is using for RTL
+  s.rtlScrollType = function rtlScrollType() {
+    if (rtlScrollType.type) {
+      return rtlScrollType.type;
+    }
+
+    var definer = angular.element('<div dir="rtl" style="font-size: 14px; width: 1px; height: 1px; position: absolute; top: -1000px; overflow: scroll">A</div>')[0],
+        type = 'reverse';
+
+    document.body.appendChild(definer);
+
+    if (definer.scrollLeft > 0) {
+      type = 'default';
+    }
+    else {
+      definer.scrollLeft = 1;
+      if (definer.scrollLeft === 0) {
+        type = 'negative';
+      }
+    }
+
+    definer.remove();
+    rtlScrollType.type = type;
+
+    return type;
+  };
+
   /**
     * @ngdoc method
     * @name normalizeScrollLeft
@@ -896,37 +924,22 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       element = element[0];
     }
 
-    var browser = s.detectBrowser();
-
     var scrollLeft = element.scrollLeft;
     
-    var dir = s.getStyles(element)['direction'];
+    var dir = s.getStyles(element).direction;
 
-    // IE stays normal in RTL
-    if (browser === 'ie') {
-      return scrollLeft;
-    }
-    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
-    else if (browser === 'chrome') {
-      if (dir === 'rtl') {
-        // Get the max scroll for the element
-        var maxScrollLeft = element.scrollWidth - element.clientWidth;
-
-        // Subtract the current scroll amount from the max scroll
-        return maxScrollLeft - scrollLeft;
-      }
-      else {
-        return scrollLeft;
+    if (dir === 'rtl') {
+      switch (s.rtlScrollType()) {
+        case 'default':
+          return element.scrollWidth - scrollLeft - element.clientWidth;
+        case 'negative':
+          return Math.abs(scrollLeft);
+        case 'reverse':
+          return scrollLeft;
       }
     }
-    // Firefox goes negative!
-    else if (browser === 'firefox') {
-      return Math.abs(scrollLeft);
-    }
-    else {
-      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
-      return scrollLeft;
-    }
+
+    return scrollLeft;
   };
 
   /**
@@ -947,40 +960,24 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       element = element[0];
     }
 
-    var browser = s.detectBrowser();
+    var dir = s.getStyles(element).direction;
 
-    var dir = s.getStyles(element)['direction'];
+    if (dir === 'rtl') {
+      switch (s.rtlScrollType()) {
+        case 'default':
+          // Get the max scroll for the element
+          var maxScrollLeft = element.scrollWidth - element.clientWidth;
 
-    // IE stays normal in RTL
-    if (browser === 'ie') {
-      return scrollLeft;
+          // Subtract the current scroll amount from the max scroll
+          return maxScrollLeft - scrollLeft;
+        case 'negative':
+          return scrollLeft * -1;
+        case 'reverse':
+          return scrollLeft;
+      }
     }
-    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
-    else if (browser === 'chrome') {
-      if (dir === 'rtl') {
-        // Get the max scroll for the element
-        var maxScrollLeft = element.scrollWidth - element.clientWidth;
 
-        // Subtract the current scroll amount from the max scroll
-        return maxScrollLeft - scrollLeft;
-      }
-      else {
-        return scrollLeft;
-      }
-    }
-    // Firefox goes negative!
-    else if (browser === 'firefox') {
-      if (dir === 'rtl') {
-        return scrollLeft * -1;
-      }
-      else {
-        return scrollLeft;
-      }
-    }
-    else {
-      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
-      return scrollLeft;
-    }
+    return scrollLeft;
   };
 
     /**

@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "3.0.0-rc.19",
+  "version": "3.0.0-rc.20",
   "description": "__Contributors:__",
   "directories": {
     "test": "test"
@@ -64,6 +64,9 @@
     "karma-coverage": "^0.2.5",
     "coveralls": "^2.11.1",
     "jit-grunt": "^0.8.0",
-    "grunt-bump": "0.0.15"
+    "grunt-bump": "0.0.15",
+    "load-grunt-config": "~0.16.0",
+    "time-grunt": "~1.1.0",
+    "grunt-newer": "~1.1.0"
   }
 }

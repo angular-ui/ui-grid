@@ -109,13 +109,6 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     },
     
     /**
-     * @ngdoc boolean
-     * @name suppressRemoveSort
-     * @propertyOf ui.grid.class:GridOptions.columnDef
-     * @description (optional) False by default. When enabled, this setting hides the removeSort option
-     * in the menu.
-     */
-    /**
      * @ngdoc method
      * @methodOf ui.grid.service:uiGridColumnMenuService
      * @name suppressRemoveSort
@@ -124,7 +117,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * 
      */  
     suppressRemoveSort: function( $scope ) {
-      if ($scope.col && $scope.col.colDef && $scope.col.colDef.suppressRemoveSort) {
+      if ($scope.col && $scope.col.suppressRemoveSort) {
         return true;
       }
       else {
@@ -241,6 +234,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       var positionData = {};
       positionData.left = $columnElement[0].offsetLeft;
       positionData.top = $columnElement[0].offsetTop;
+      positionData.parentLeft = $columnElement[0].offsetParent.offsetLeft;
 
       // Get the grid scrollLeft
       positionData.offset = 0;
@@ -301,7 +295,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         }
       }
       
-      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.width - myWidth + paddingRight;
+      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width - myWidth + paddingRight;
       if (left < positionData.offset){
         left = positionData.offset;
       }
@@ -404,11 +398,15 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
       $scope.$on('menu-hidden', function() {
         if ( $scope.hideThenShow ){
           delete $scope.hideThenShow;
-
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
-          $scope.$broadcast('show-menu');
+          // browdcast the show-menu event after a time out so that the ng-if has a chance to remove
+          // the old menu from the DOM so that we don't get duplicate items.
+          $timeout( function() {
+             $scope.$broadcast('show-menu');
 
-          $scope.menuShown = true;
+             $scope.menuShown = true;
+          });
+
         } else {
           $scope.hideMenu( true );
         }

@@ -16,6 +16,22 @@ the grid menu using the gridOption `enableGridMenu`
 
 Note that the option to export selected data is only visible if you have data selected.
 
+If you are using internet explorer then the pdf will automatically download rather than opening,
+there are issues with pdfMake not being able to automatically open tabs in internet explorer
+(refer https://github.com/bpampuch/pdfmake/issues/16 and other issues in that repo).
+
+Some earlier versions of Excel don't like the utf-16 BOM - the first handful of characters
+that say a csv file contains utf-16 content.  Most other applications, and newer Excel versions,
+do use it successfully.  If you have a problem with getting `ï»¿` as the first few characters in
+an Excel spreadsheet after csv import, you can try setting `exporterOlderExcelCompatibility: true`
+
+Note that some other applications will then have problems instead.
+
+You may find that you have problems including pdfMake in your toolchain - it sometimes breaks when 
+minified.  If you have this problem it is recommended to instead include pdfmake.js and vfs_fonts.js
+as assets (or the equivalent minified versions), and then include them as a script in your application
+rather than as part of a minification of your entire javascript library.
+
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 

@@ -3,6 +3,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
   var uiGridSaveStateConstants;
   var uiGridSelectionService;
   var uiGridCellNavService;
+  var uiGridGroupingService;
   var gridClassFactory;
   var grid;
   var $compile;
@@ -14,11 +15,12 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
   beforeEach(inject(function (_uiGridSaveStateService_, _gridClassFactory_, _uiGridSaveStateConstants_,
                               _$compile_, _$rootScope_, _$document_, _uiGridSelectionService_,
-                              _uiGridCellNavService_ ) {
+                              _uiGridCellNavService_, _uiGridGroupingService_ ) {
     uiGridSaveStateService = _uiGridSaveStateService_;
     uiGridSaveStateConstants = _uiGridSaveStateConstants_;
     uiGridSelectionService = _uiGridSelectionService_;
     uiGridCellNavService = _uiGridCellNavService_;
+    uiGridGroupingService = _uiGridGroupingService_;
     gridClassFactory = _gridClassFactory_;
     $compile = _$compile_;
     $scope = _$rootScope_.$new();
@@ -71,7 +73,9 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveVisible: true,
         saveSort: true,
         saveFilter: true,
-        saveSelection: true
+        saveSelection: true,
+        saveGrouping: true,
+        saveGroupingExpandedStates: false
       });
     });
 
@@ -85,7 +89,9 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveVisible: false,
         saveSort: false,
         saveFilter: false,
-        saveSelection: false
+        saveSelection: false,
+        saveGrouping: false,
+        saveGroupingExpandedStates: true
       };
       uiGridSaveStateService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -96,7 +102,9 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveVisible: false,
         saveSort: false,
         saveFilter: false,
-        saveSelection: false
+        saveSelection: false,
+        saveGrouping: false,
+        saveGroupingExpandedStates: true
       });
     });    
   });
@@ -105,10 +113,24 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
   describe('saveColumns', function() {
     it('save columns', function() {
       expect( uiGridSaveStateService.saveColumns( grid ) ).toEqual([
-        { name: 'col1', visible: true, width: 50, sort: [], filters: [] },
-        { name: 'col2', visible: true, width: '*', sort: [], filters: [] },
-        { name: 'col3', visible: false, width: 100, sort: [], filters: [] },
-        { name: 'col4', visible: true, width: 200, sort: [], filters: [] }
+        { name: 'col1', visible: true, width: 50, sort: [], filters: [ {} ] },
+        { name: 'col2', visible: true, width: '*', sort: [], filters: [ {} ] },
+        { name: 'col3', visible: false, width: 100, sort: [], filters: [ {} ] },
+        { name: 'col4', visible: true, width: 200, sort: [], filters: [ {} ] }
+      ]);
+    });
+    
+    it('save columns with most options turned off', function() {
+      grid.options.saveWidths = false;
+      grid.options.saveVisible = false;
+      grid.options.saveSort = false;
+      grid.options.saveFilter = false;
+      
+      expect( uiGridSaveStateService.saveColumns( grid ) ).toEqual([
+        { name: 'col1' },
+        { name: 'col2' },
+        { name: 'col3' },
+        { name: 'col4' }
       ]);
     });
   });
@@ -133,6 +155,26 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       });
       
       expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, colName: 'col4', rowVal: { identity: false, row: 1 } } );
+    });
+
+    it('save focus, focus present, no col', function() {
+      uiGridCellNavService.initializeGrid(grid);
+      
+      spyOn( grid.api.cellNav, 'getFocusedCell' ).andCallFake( function() {
+        return { row: grid.rows[2], col: null };
+      });
+      
+      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, rowVal: { identity: false, row: 1 } } );
+    });
+
+    it('save focus, focus present, no row', function() {
+      uiGridCellNavService.initializeGrid(grid);
+      
+      spyOn( grid.api.cellNav, 'getFocusedCell' ).andCallFake( function() {
+        return { row: null, col: grid.columns[3] };
+      });
+      
+      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true, colName: 'col4' } );
     });
 
     it('save focus, focus present, row identity present', function() {
@@ -249,7 +291,13 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
 
   describe('restoreColumns', function() {
-    it('restore columns', function() {
+    it('restore columns, all options turned on', function() {
+      grid.options.saveWidths = true;
+      grid.options.saveOrder = true;
+      grid.options.saveVisible = true;
+      grid.options.saveSort = true;
+      grid.options.saveFilter = true;
+      
       var colVisChangeCount = 0;
       var colFilterChangeCount = 0;
       var colSortChangeCount = 0;
@@ -267,10 +315,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       });
       
       uiGridSaveStateService.restoreColumns( grid, [
-        { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [] },
+        { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [ {} ] },
         { name: 'col1', visible: true, width: '*', sort: [], filters: [ {'blah': 'blah'} ] },
-        { name: 'col4', visible: false, width: 120, sort: [], filters: [] },
-        { name: 'col3', visible: true, width: 220, sort: [], filters: [] }
+        { name: 'col4', visible: false, width: 120, sort: [], filters: [ {} ] },
+        { name: 'col3', visible: true, width: 220, sort: [], filters: [ {} ] }
       ]);
       
       expect( grid.columns[0].name ).toEqual('col2', 'column 0 name should be col2');
@@ -298,15 +346,80 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( grid.columns[2].sort ).toEqual([]);
       expect( grid.columns[3].sort ).toEqual([]);
 
-      expect( grid.columns[0].filters ).toEqual([]);
+      expect( grid.columns[0].filters ).toEqual([ {} ]);
       expect( grid.columns[1].filters ).toEqual([ { blah: 'blah' } ]);
-      expect( grid.columns[2].filters ).toEqual([]);
-      expect( grid.columns[3].filters ).toEqual([]);
+      expect( grid.columns[2].filters ).toEqual([ {} ]);
+      expect( grid.columns[3].filters ).toEqual([ {} ]);
       
       expect( colVisChangeCount ).toEqual( 4, '4 columns changed visibility');
       expect( colFilterChangeCount ).toEqual( 1, '1 columns changed filter');
       expect( colSortChangeCount ).toEqual( 4, '4 columns changed sort');
     });
+    
+    it('restore columns, all options turned off', function() {
+      grid.options.saveWidths = false;
+      grid.options.saveOrder = false;
+      grid.options.saveVisible = false;
+      grid.options.saveSort = false;
+      grid.options.saveFilter = false;
+      
+      var colVisChangeCount = 0;
+      var colFilterChangeCount = 0;
+      var colSortChangeCount = 0;
+      
+      grid.api.core.on.columnVisibilityChanged( $scope, function( column ) {
+        colVisChangeCount++; 
+      });
+
+      grid.api.core.on.filterChanged( $scope, function() {
+        colFilterChangeCount++; 
+      });
+
+      grid.api.core.on.sortChanged( $scope, function() {
+        colSortChangeCount++; 
+      });
+      
+      uiGridSaveStateService.restoreColumns( grid, [
+        { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [ {} ] },
+        { name: 'col1', visible: true, width: '*', sort: [], filters: [ {'blah': 'blah'} ] },
+        { name: 'col4', visible: false, width: 120, sort: [], filters: [ {} ] },
+        { name: 'col3', visible: true, width: 220, sort: [], filters: [ {} ] }
+      ]);
+      
+      expect( grid.columns[0].name ).toEqual('col1', 'column 0 name should be col1');
+      expect( grid.columns[1].name ).toEqual('col2', 'column 1 name should be col2');
+      expect( grid.columns[2].name ).toEqual('col3', 'column 2 name should be col3');
+      expect( grid.columns[3].name ).toEqual('col4', 'column 3 name should be col4');
+
+      expect( grid.columns[0].visible ).toEqual(true, 'column 0 visible should be true');
+      expect( grid.columns[1].visible ).toEqual(true, 'column 1 visible should be true');
+      expect( grid.columns[2].visible ).toEqual(false, 'column 2 visible should be false');
+      expect( grid.columns[3].visible ).toEqual(true, 'column 3 visible should be true');
+
+      expect( grid.columns[0].colDef.visible ).toEqual(undefined, 'coldef 0 visible should be undefined');
+      expect( grid.columns[1].colDef.visible ).toEqual(undefined, 'coldef 1 visible should be undefined');
+      expect( grid.columns[2].colDef.visible ).toEqual(undefined, 'coldef 2 visible should be undefined');
+      expect( grid.columns[3].colDef.visible ).toEqual(undefined, 'coldef 3 visible should be undefined');
+
+      expect( grid.columns[0].width ).toEqual(50);
+      expect( grid.columns[1].width ).toEqual('*');
+      expect( grid.columns[2].width ).toEqual(100);
+      expect( grid.columns[3].width ).toEqual(200);
+
+      expect( grid.columns[0].sort ).toEqual([]);
+      expect( grid.columns[1].sort ).toEqual([]);
+      expect( grid.columns[2].sort ).toEqual([]);
+      expect( grid.columns[3].sort ).toEqual([]);
+
+      expect( grid.columns[0].filters ).toEqual([ {} ]);
+      expect( grid.columns[1].filters ).toEqual([ {} ]);
+      expect( grid.columns[2].filters ).toEqual([ {} ]);
+      expect( grid.columns[3].filters ).toEqual([ {} ]);
+      
+      expect( colVisChangeCount ).toEqual( 0, '0 columns changed visibility');
+      expect( colFilterChangeCount ).toEqual( 0, '0 columns changed filter');
+      expect( colSortChangeCount ).toEqual( 0, '0 columns changed sort');
+    });    
   });
   
 
@@ -478,6 +591,25 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreSelection( grid, [ { identity: true, row: 'x_0' } ] );
 
       expect( grid.api.selection.getSelectedGridRows().length ).toEqual( 0 );
+    });
+  });
+  
+  describe('restoreGrouping', function() {
+    beforeEach( function() {
+      grid.api.grouping = { setGrouping: function() {}};
+      spyOn( grid.api.grouping, 'setGrouping' ).andCallFake(function() {});
+    });
+    
+    it( 'calls setGrouping with config', function() {
+      uiGridSaveStateService.restoreGrouping( grid, { grouping: [], aggregations: [] });
+      
+      expect(grid.api.grouping.setGrouping).toHaveBeenCalledWith( { grouping: [], aggregations: [] });
+    });
+
+    it( 'doesn\'t call setGrouping when config missing', function() {
+      uiGridSaveStateService.restoreGrouping( grid, undefined);
+      
+      expect(grid.api.grouping.setGrouping).not.toHaveBeenCalled();
     });
   });
 

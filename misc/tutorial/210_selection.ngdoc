@@ -36,14 +36,20 @@ The selectAll box can be disabled by setting `enableSelectAll` to false.
 
 You can set the selection row header column width by setting 'selectionRowHeaderWidth' option.
 
+You can use an `isRowSelectable` function to determine which rows are selectable.  If you set this function in the options
+after grid initialisation you need to call `gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS)` to enable
+the option.  In the grid below pressing the button to "set selectable" will set any rows that have an age > 30 to not be
+selectable, and also set the age of the first row to 31.
+
 @example
-Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.
+Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.  The first example
+auto-selects the first row once the data is loaded.
 
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+    app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', 'uiGridConstants', function ($scope, $http, $log, $timeout, uiGridConstants) {
       $scope.gridOptions = { 
         enableRowSelection: true,
         enableSelectAll: true,
@@ -64,6 +70,11 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
+          $timeout(function() {
+            if($scope.gridApi.selection.selectRow){
+              $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+            }
+          });
         });
 
         $scope.info = {};
@@ -86,6 +97,22 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
 
         $scope.toggleRow1 = function() {
           $scope.gridApi.selection.toggleRowSelection($scope.gridOptions.data[0]);
+        };
+        
+        $scope.setSelectable = function() {
+          $scope.gridApi.selection.clearSelectedRows();
+
+          $scope.gridOptions.isRowSelectable = function(row){
+            if(row.entity.age > 30){
+              return false;
+            } else {
+              return true;
+            }
+          };
+          $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
+          
+          $scope.gridOptions.data[0].age = 31;
+          $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
         };
 
         $scope.gridOptions.onRegisterApi = function(gridApi){
@@ -146,6 +173,7 @@ Two examples are provided, the first with rowHeaderSelection and multi-select, t
       <br/>
       <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button>
       <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
+      <button type="button" class="btn btn-success" ng-click="setSelectable()">Set Selectable</button>
       <br/>
 
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>

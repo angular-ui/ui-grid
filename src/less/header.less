@@ -166,6 +166,26 @@
       }
     }
   }
+
+  .ui-grid-filter-button-select {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+    [class^="ui-grid-icon"] {
+      position: absolute;
+      top: 50%;
+      line-height: 32px;
+      margin-top: -16px;
+      right: 0px;
+      opacity: 0.66;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 input[type="text"].ui-grid-filter-input {
@@ -173,6 +193,20 @@ input[type="text"].ui-grid-filter-input {
   margin: 0;
   border: 0;
   width: 100%;
+
+  border: @gridBorderWidth solid  @borderColor;
+  .border-radius(@gridBorderRadius);
+
+  &:hover {
+    border: @gridBorderWidth solid  @borderColor;
+  }
+}
+
+select.ui-grid-filter-select {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 90%;
 
   border: @gridBorderWidth solid  @borderColor;
   .border-radius(@gridBorderRadius);
