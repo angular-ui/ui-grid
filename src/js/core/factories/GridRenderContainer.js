@@ -698,13 +698,13 @@ angular.module('ui.grid')
     var styles = {};
 
     if (self.name === 'body') {
-      styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+      styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll';
       if (!self.grid.isRTL()) {
         if (self.grid.hasRightContainerColumns()) {
           styles['overflow-y'] = 'hidden';
         }
         else {
-          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll';
         }
       }
       else {
@@ -712,17 +712,17 @@ angular.module('ui.grid')
           styles['overflow-y'] = 'hidden';
         }
         else {
-          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
+          styles['overflow-y'] = self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll';
         }
       }
     }
     else if (self.name === 'left') {
       styles['overflow-x'] = 'hidden';
-      styles['overflow-y'] = self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
+      styles['overflow-y'] = self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll') : 'hidden';
     }
     else {
       styles['overflow-x'] = 'hidden';
-      styles['overflow-y'] = !self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll') : 'hidden';
+      styles['overflow-y'] = !self.grid.isRTL() ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll') : 'hidden';
     }
 
     return styles;

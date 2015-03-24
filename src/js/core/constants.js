@@ -106,8 +106,8 @@
     },
     scrollbars: {
       NEVER: 0,
-      ALWAYS: 1
-      //WHEN_NEEDED: 2
+      ALWAYS: 1,
+      WHEN_NEEDED: 2
     }
   });
 
