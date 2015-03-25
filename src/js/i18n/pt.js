@@ -44,6 +44,7 @@
         },
         gridMenu: {
           columns: 'Colunas:',
+          importerTitle: 'Importar ficheiro',
           exporterAllAsCsv: 'Exportar todos os dados como csv',
           exporterVisibleAsCsv: 'Exportar dados visíveis como csv',
           exporterSelectedAsCsv: 'Exportar dados selecionados como csv',
@@ -52,16 +53,26 @@
           exporterSelectedAsPdf: 'Exportar dados selecionados como pdf'
         },
         importer: {
-          noHeaders: 'Nomes de colunas não puderam ser derivados. O arquivo tem um cabeçalho?',
-          noObjects: 'Objetos não puderam ser derivados. Havia dados no arquivo, além dos cabeçalhos?',
-          invalidCsv: 'Arquivo não pode ser processado. É um CSV válido?',
-          invalidJson: 'Arquivo não pode ser processado. É um Json válido?',
-          jsonNotArray: 'Arquivo json importado tem que conter um array. Abortando.'
+          noHeaders: 'Nomes de colunas não puderam ser derivados. O ficheiro tem um cabeçalho?',
+          noObjects: 'Objetos não puderam ser derivados. Havia dados no ficheiro, além dos cabeçalhos?',
+          invalidCsv: 'Ficheiro não pode ser processado. É um CSV válido?',
+          invalidJson: 'Ficheiro não pode ser processado. É um Json válido?',
+          jsonNotArray: 'Ficheiro json importado tem que conter um array. Interrompendo.'
         },
         pagination: {
           sizes: 'itens por página',
           totalItems: 'itens'
-        }		
+        },
+        grouping: {
+          group: 'Agrupar',
+          ungroup: 'Desagrupar',
+          aggregate_count: 'Agr: Contar',
+          aggregate_sum: 'Agr: Soma',
+          aggregate_max: 'Agr: Max',
+          aggregate_min: 'Agr: Min',
+          aggregate_avg: 'Agr: Med',
+          aggregate_remove: 'Agr: Remover'
+        }        
       });
       return $delegate;
     }]);
