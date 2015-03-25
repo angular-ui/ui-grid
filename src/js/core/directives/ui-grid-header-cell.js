@@ -145,7 +145,7 @@
                   $timeout.cancel(cancelMousedownTimeout);
                 });
     
-                $scope.$on('$destroy', function () {
+                $scope.on('$destroy', function () {
                   $contentsElm.off('mousedown touchstart');
                 });
               } else {
