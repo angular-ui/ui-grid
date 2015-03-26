@@ -41,7 +41,7 @@
         }
 
         if (grid.options.enableInfiniteScroll) {
-          grid.api.core.on.scrollEvent($scope, service.handleScroll);
+          grid.api.core.on.scrollEnd($scope, service.handleScroll);
         }
         
         // tweak the scroll for infinite scroll up (if enabled)

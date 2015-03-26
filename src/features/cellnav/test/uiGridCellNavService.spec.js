@@ -223,7 +223,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       $timeout.flush();
 
       expect(args.grid).toEqual(grid);
-      expect(args.y.percentage).toBe(0.41515151515151516);
+      expect(Math.round(args.y.percentage * 10)/10).toBe(0.4);
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
@@ -233,7 +233,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       });
       $timeout.flush();
       
-      expect(args.y.percentage).toBe(0.14242424242424243);
+      expect(Math.round(args.y.percentage * 10)/10).toBe(0.1);
     });
 
     it('should request scroll to row only - last row', function () {
@@ -252,7 +252,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       });
       $timeout.flush();
       
-      expect(args.y.percentage).toEqual( 0.5060606060606061);
+      expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.5);
       expect(args.x).toBe(null);
     });
 
