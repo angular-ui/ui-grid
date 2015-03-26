@@ -6,7 +6,6 @@
       return {
         replace: true,
         scope: {},
-        controllerAs: 'Viewport',
         templateUrl: 'ui-grid/uiGridViewport',
         require: ['^uiGrid', '^uiGridRenderContainer'],
         link: function($scope, $elm, $attrs, controllers) {
@@ -87,34 +86,7 @@
               }
               scrollEvent.fireScrollingEvent();
           });
-        },
-        controller: ['$scope', function ($scope) {
-          this.rowStyle = function (index) {
-            var rowContainer = $scope.rowContainer;
-            var colContainer = $scope.colContainer;
-
-            var styles = {};
-
-            if (index === 0 && rowContainer.currentTopRow !== 0) {
-              // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-              var hiddenRowWidth = (rowContainer.currentTopRow) * rowContainer.grid.options.rowHeight;
-
-              // return { 'margin-top': hiddenRowWidth + 'px' };
-              styles['margin-top'] = hiddenRowWidth + 'px';
-            }
-
-            if (colContainer.currentFirstColumn !== 0) {
-              if (colContainer.grid.isRTL()) {
-                styles['margin-right'] = colContainer.columnOffset + 'px';
-              }
-              else {
-                styles['margin-left'] = colContainer.columnOffset + 'px';
-              }
-            }
-
-            return styles;
-          };
-        }]
+        }
       };
     }
   ]);

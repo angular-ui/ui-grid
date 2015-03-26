@@ -51,8 +51,6 @@
                     containerCtrl.headerViewport = headerViewport;
                   }
                 }
-
-                $scope.grid.queueRefresh();
               });
 
             function updateHeaderReferences() {

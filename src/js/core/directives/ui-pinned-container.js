@@ -1,8 +1,6 @@
 (function(){
   'use strict';
 
-  // TODO: rename this file to ui-grid-pinned-container.js
-
   angular.module('ui.grid').directive('uiGridPinnedContainer', ['gridUtil', function (gridUtil) {
     return {
       restrict: 'EA',
