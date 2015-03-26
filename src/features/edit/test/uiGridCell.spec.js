@@ -119,7 +119,7 @@ describe('ui.grid.edit GridCellDirective', function () {
 
     it('should stop when grid scrolls', function () {
       //stop edit
-      scope.grid.api.core.raise.scrollEvent();
+      scope.grid.api.core.raise.scrollBegin();
       scope.$digest();
       //back to beginning
       expect(element.html()).toBe(displayHtml);

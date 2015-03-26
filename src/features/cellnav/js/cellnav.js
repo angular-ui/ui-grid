@@ -251,7 +251,12 @@
         initializeGrid: function (grid) {
           grid.registerColumnBuilder(service.cellNavColumnBuilder);
 
-          //create variables for state
+
+          /**
+           *  @ngdoc object
+           *  @name ui.grid.cellNav:Grid.cellNav
+           * @description cellNav properties added to grid class
+           */
           grid.cellNav = {};
           grid.cellNav.lastRowCol = null;
           grid.cellNav.focusedCells = [];
@@ -278,24 +283,23 @@
                  * @param {object} newRowCol new position
                  * @param {object} oldRowCol old position
                  */
-                navigate: function (newRowCol, oldRowCol) {
-                }
+                navigate: function (newRowCol, oldRowCol) {},
+                /**
+                 * @ngdoc event
+                 * @name viewPortKeyDown
+                 * @eventOf  ui.grid.cellNav.api:PublicApi
+                 * @description  is raised when the viewPort receives a keyDown event. Cells never get focus in uiGrid
+                 * due to the difficulties of setting focus on a cell that is not visible in the viewport.  Use this
+                 * event whenever you need a keydown event on a cell
+                 * <br/>
+                 * @param {object} event keydown event
+                 * @param {object} rowCol current rowCol position
+                 */
+                viewPortKeyDown: function (event, rowCol) {}
               }
             },
             methods: {
               cellNav: {
-                /**
-                 * @ngdoc function
-                 * @name scrollTo
-                 * @methodOf  ui.grid.cellNav.api:PublicApi
-                 * @description brings the specified row and column into view
-                 * @param {object} rowEntity gridOptions.data[] array instance to make visible
-                 * @param {object} colDef to make visible
-                 */
-                scrollTo: function (rowEntity, colDef) {
-                  service.scrollTo(grid, rowEntity, colDef);
-                },
-
                 /**
                  * @ngdoc function
                  * @name scrollToFocus
@@ -304,21 +308,10 @@
                  * to that cell
                  * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus
                  * @param {object} colDef to make visible and set focus
+                 * @returns {promise} a promise that is resolved after any scrolling is finished
                  */
                 scrollToFocus: function (rowEntity, colDef) {
-                  service.scrollToFocus(grid, rowEntity, colDef);
-                },
-
-                /**
-                 * @ngdoc function
-                 * @name scrollToIfNecessary
-                 * @methodOf  ui.grid.cellNav.api:PublicApi
-                 * @description brings the specified row and column fully into view if it isn't already
-                 * @param {GridRow} row grid row that we should make fully visible
-                 * @param {GridCol} col grid col to make fully visible
-                 */
-                scrollToIfNecessary: function (row, col) {
-                  service.scrollToIfNecessary(grid, row, col);
+                  return service.scrollToFocus(grid, rowEntity, colDef);
                 },
 
                 /**
@@ -485,30 +478,6 @@
         /**
          * @ngdoc method
          * @methodOf ui.grid.cellNav.service:uiGridCellNavService
-         * @name scrollTo
-         * @description Scroll the grid such that the specified
-         * row and column is in view
-         * @param {Grid} grid the grid you'd like to act upon, usually available
-         * from gridApi.grid
-         * @param {object} rowEntity gridOptions.data[] array instance to make visible
-         * @param {object} colDef to make visible
-         */
-        scrollTo: function (grid, rowEntity, colDef) {
-          var gridRow = null, gridCol = null;
-
-          if (rowEntity !== null && typeof(rowEntity) !== 'undefined' ) {
-            gridRow = grid.getRow(rowEntity);
-          }
-
-          if (colDef !== null && typeof(colDef) !== 'undefined' ) {
-            gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
-          }
-          this.scrollToIfNecessary(grid, gridRow, gridCol);
-        },
-
-        /**
-         * @ngdoc method
-         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
          * @name scrollToFocus
          * @description Scroll the grid such that the specified
          * row and column is in view, and set focus to the cell in that row and column
@@ -516,6 +485,7 @@
          * from gridApi.grid
          * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus to
          * @param {object} colDef to make visible and set focus to
+         * @returns {promise} a promise that is resolved after any scrolling is finished
          */
         scrollToFocus: function (grid, rowEntity, colDef) {
           var gridRow = null, gridCol = null;
@@ -527,12 +497,14 @@
           if (typeof(colDef) !== 'undefined' && colDef !== null) {
             gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
           }
-          this.scrollToIfNecessary(grid, gridRow, gridCol);
+          return grid.api.core.scrollToIfNecessary(gridRow, gridCol).then(function () {
+            var rowCol = { row: gridRow, col: gridCol };
 
-          var rowCol = { row: gridRow, col: gridCol };
+            // Broadcast the navigation
+            grid.cellNav.broadcastCellNav(rowCol);
+          });
 
-          // Broadcast the navigation
-          grid.cellNav.broadcastCellNav(rowCol);
+
 
         },
 
@@ -581,156 +553,10 @@
           }
 
           if (scrollEvent.y || scrollEvent.x) {
-            scrollEvent.fireScrollingEvent();
+            grid.scrollContainers('', scrollEvent);
           }
         },
 
-        /**
-         * @ngdoc method
-         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
-         * @name scrollToIfNecessary
-         * @description Scrolls the grid to make a certain row and column combo visible,
-         *   in the case that it is not completely visible on the screen already.
-         * @param {Grid} grid the grid you'd like to act upon, usually available
-         * from gridApi.grid
-         * @param {GridRow} gridRow row to make visible
-         * @param {GridCol} gridCol column to make visible
-         */
-        scrollToIfNecessary: function (grid, gridRow, gridCol) {
-          var scrollEvent = new ScrollEvent(grid, 'uiGridCellNavService.scrollToIfNecessary');
-
-          // Alias the visible row and column caches
-          var visRowCache = grid.renderContainers.body.visibleRowCache;
-          var visColCache = grid.renderContainers.body.visibleColumnCache;
-
-          /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
-
-          // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
-          var topBound = grid.renderContainers.body.prevScrollTop + grid.headerHeight;
-
-          // Don't the let top boundary be less than 0
-          topBound = (topBound < 0) ? 0 : topBound;
-
-          // The left boundary is the current X scroll position
-          var leftBound = grid.renderContainers.body.prevScrollLeft;
-
-          // The bottom boundary is the current Y scroll position, plus the height of the grid, but minus the header height and minus the footerHeight.
-          //   Basically this is the viewport height added on to the scroll position
-          var bottomBound = grid.renderContainers.body.prevScrollTop + grid.gridHeight - grid.headerHeight - grid.footerHeight;
-
-          // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
-          //if (grid.horizontalScrollbarHeight) {
-          //  bottomBound = bottomBound - grid.horizontalScrollbarHeight;
-          //}
-
-          // The right position is the current X scroll position minus the grid width
-          var rightBound = grid.renderContainers.body.prevScrollLeft + Math.ceil(grid.gridWidth);
-
-          // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
-          //if (grid.verticalScrollbarWidth) {
-          //  rightBound = rightBound - grid.verticalScrollbarWidth;
-          //}
-
-          // We were given a row to scroll to
-          if (gridRow !== null) {
-            // This is the index of the row we want to scroll to, within the list of rows that can be visible
-            var seekRowIndex = visRowCache.indexOf(gridRow);
-
-            // Total vertical scroll length of the grid
-            var scrollLength = (grid.renderContainers.body.getCanvasHeight() - grid.renderContainers.body.getViewportHeight());
-
-            // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-            //if (grid.horizontalScrollbarHeight && grid.horizontalScrollbarHeight > 0) {
-            //  scrollLength = scrollLength + grid.horizontalScrollbarHeight;
-            //}
-
-            // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-            var pixelsToSeeRow = ((seekRowIndex + 1) * grid.options.rowHeight);
-
-            // Don't let the pixels required to see the row be less than zero
-            pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
-
-            var scrollPixels, percentage;
-
-            // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the grid...
-            if (pixelsToSeeRow < topBound) {
-              // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
-              //   to get the full position we need
-              scrollPixels = grid.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
-
-              // Turn the scroll position into a percentage and make it an argument for a scroll event
-              percentage = scrollPixels / scrollLength;
-              scrollEvent.y = { percentage: percentage  };
-            }
-            // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
-            else if (pixelsToSeeRow > bottomBound) {
-              // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
-              //   to get the full position we need
-              scrollPixels = pixelsToSeeRow - bottomBound + grid.renderContainers.body.prevScrollTop;
-
-              // Turn the scroll position into a percentage and make it an argument for a scroll event
-              percentage = scrollPixels / scrollLength;
-              scrollEvent.y = { percentage: percentage  };
-            }
-          }
-
-          // We were given a column to scroll to
-          if (gridCol !== null) {
-            // This is the index of the row we want to scroll to, within the list of rows that can be visible
-            var seekColumnIndex = visColCache.indexOf(gridCol);
-
-            // Total vertical scroll length of the grid
-            var horizScrollLength = (grid.renderContainers.body.getCanvasWidth() - grid.renderContainers.body.getViewportWidth());
-
-            // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-            // if (grid.verticalScrollbarWidth && grid.verticalScrollbarWidth > 0) {
-            //   horizScrollLength = horizScrollLength + grid.verticalScrollbarWidth;
-            // }
-
-            // This is the minimum amount of pixels we need to scroll vertical in order to see this column
-            var columnLeftEdge = 0;
-            for (var i = 0; i < seekColumnIndex; i++) {
-              var col = visColCache[i];
-              columnLeftEdge += col.drawnWidth;
-            }
-            columnLeftEdge = (columnLeftEdge < 0) ? 0 : columnLeftEdge;
-
-            var columnRightEdge = columnLeftEdge + gridCol.drawnWidth;
-
-            // Don't let the pixels required to see the column be less than zero
-            columnRightEdge = (columnRightEdge < 0) ? 0 : columnRightEdge;
-
-            var horizScrollPixels, horizPercentage;
-
-            // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the grid...
-            if (columnLeftEdge < leftBound) {
-              // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
-              //   to get the full position we need
-              horizScrollPixels = grid.renderContainers.body.prevScrollLeft - (leftBound - columnLeftEdge);
-
-              // Turn the scroll position into a percentage and make it an argument for a scroll event
-              horizPercentage = horizScrollPixels / horizScrollLength;
-              horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              scrollEvent.x = { percentage: horizPercentage  };
-            }
-            // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the grid...
-            else if (columnRightEdge > rightBound) {
-              // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
-              //   to get the full position we need
-              horizScrollPixels = columnRightEdge - rightBound + grid.renderContainers.body.prevScrollLeft;
-
-              // Turn the scroll position into a percentage and make it an argument for a scroll event
-              horizPercentage = horizScrollPixels / horizScrollLength;
-              horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
-              scrollEvent.x = { percentage: horizPercentage  };
-            }
-          }
-
-          // If we need to scroll on either the x or y axes, fire a scroll event
-          if (scrollEvent.y || scrollEvent.x) {
-            scrollEvent.fireScrollingEvent();
-          }
-        },
 
         /**
          * @ngdoc method
@@ -805,8 +631,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', '$timeout',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, $timeout) {
       return {
         replace: true,
         priority: -150,
@@ -823,11 +649,22 @@
 
               uiGridCtrl.cellNav = {};
 
-              uiGridCtrl.cellNav.focusCell = function (row, col) {
-                uiGridCtrl.cellNav.broadcastCellNav({ row: row, col: col });
+              //uiGridCtrl.cellNav.focusActiveCell = function () {
+              //  var elms = $elm[0].getElementsByClassName('ui-grid-cell-focus');
+              //  if (elms.length > 0){
+              //    elms[0].focus();
+              //  }
+              //};
+
+              uiGridCtrl.cellNav.getActiveCell = function () {
+                var elms = $elm[0].getElementsByClassName('ui-grid-cell-focus');
+                if (elms.length > 0){
+                  return elms[0];
+                }
+
+                return undefined;
               };
 
-              //  gridUtil.logDebug('uiGridEdit preLink');
               uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown) {
                 modifierDown = !(modifierDown === undefined || !modifierDown);
                 uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown);
@@ -848,6 +685,7 @@
 
                 if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
                   var newRowCol = new RowCol(row, col);
+
                   grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
                   grid.cellNav.lastRowCol = newRowCol;
                   if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown) {
@@ -865,7 +703,7 @@
               uiGridCtrl.cellNav.handleKeyDown = function (evt) {
                 var direction = uiGridCellNavService.getDirection(evt);
                 if (direction === null) {
-                  return true;
+                  return null;
                 }
 
                 var containerId = 'body';
@@ -909,13 +747,15 @@
                   }
 
 
-                  rowCol.eventType = uiGridCellNavConstants.EVENT_TYPE.KEYDOWN;
+               //   rowCol.eventType = uiGridCellNavConstants.EVENT_TYPE.KEYDOWN;
+
+
 
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
-                  uiGridCellNavService.scrollToIfNecessary(grid, rowCol.row, rowCol.col);
+                  grid.scrollToIfNecessary(rowCol.row, rowCol.col).then(function () {
+                    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                  });
 
-                  // Broadcast the navigation
-                  uiGridCtrl.cellNav.broadcastCellNav(rowCol);
 
                   evt.stopPropagation();
                   evt.preventDefault();
@@ -931,8 +771,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -954,99 +794,96 @@
               // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
 
+            }
+          };
+        }
+      };
+    }]);
+
+  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+      return {
+        replace: true,
+        priority: -99999, //this needs to run very last
+        require: ['^uiGrid', '^uiGridRenderContainer', '?^uiGridCellnav'],
+        scope: false,
+        compile: function () {
+          return {
+            post: function ($scope, $elm, $attrs, controllers) {
+              var uiGridCtrl = controllers[0],
+                renderContainerCtrl = controllers[1];
+
+              // Skip attaching cell-nav specific logic if the directive is not attached above us
+              if (!uiGridCtrl.grid.api.cellNav) { return; }
+
+              var containerId = renderContainerCtrl.containerId;
+
+              var grid = uiGridCtrl.grid;
+
+
               // Let the render container be focus-able
               $elm.attr("tabindex", -1);
 
               // Bind to keydown events in the render container
               $elm.on('keydown', function (evt) {
                 evt.uiGridTargetRenderContainerId = containerId;
-                return uiGridCtrl.cellNav.handleKeyDown(evt);
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
+                if (result === null) {
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                }
               });
 
-              var needFocus = false;
-              
-              // When there's a scroll event we need to make sure to re-focus the right row, because the cell contents may have changed
-              grid.api.core.on.scrollEvent($scope, function (args) {
-                // Skip if not this grid that the event was broadcast for
-                if (args.grid && args.grid.id !== uiGridCtrl.grid.id) {
+
+              grid.api.core.on.scrollBegin($scope, function (args) {
+
+                // Skip if there's no currently-focused cell
+                var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                if (lastRowCol == null) {
                   return;
                 }
 
-                // Skip if there's no currently-focused cell
-                if (uiGridCtrl.grid.api.cellNav.getFocusedCell() == null) {
+                //if not in my container, move on
+                //todo: worry about horiz scroll
+                if (!renderContainerCtrl.colContainer.containsColumn(lastRowCol.col)) {
                   return;
                 }
-                
-                /*
-                 * If we have scrolled due to cellNav, we want to set the focus to the new cell after the 
-                 * virtualisation has run, and after scroll.  If we scrolled through the browser scroll
-                 * bar or other user action, we're going to discard the focus, because it will no longer 
-                 * be valid (and, noting #2423, trying to keep it causes problems)
-                 * 
-                 * If cellNav triggers the scroll, we get a scrollToIfNecessary, then a viewport scroll. We
-                 * want to wait for the viewport scroll to finish, then do a refocus.  
-                 * 
-                 * If someone manually scrolls we get just the viewport scroll, no scrollToIfNecessary.  We
-                 * want to just clear the focus
-                 * 
-                 * Logic is:
-                 *  - if cellNav scroll, set a flag that will be resolved in the native scroll
-                 *  - if native scroll, look for the cellNav promise and resolve it
-                 *    - if not present, then use a timeout to clear focus
-                 *    - if it is present, then instead use a timeout to set focus
-                 */ 
-                
-                // We have to wrap in TWO timeouts so that we run AFTER the scroll event is resolved.
-                if ( args.source === 'uiGridCellNavService.scrollToIfNecessary'){
-                  needFocus = true;
-/*
-                  focusTimeout = $timeout(function () {
-                    if ( clearFocusTimeout ){
-                      $timeout.cancel(clearFocusTimeout);
-                    }
-                    focusTimeout = $timeout(function () {
-                      if ( clearFocusTimeout ){
-                        $timeout.cancel(clearFocusTimeout);
-                      }
-                      // Get the last row+col combo
-                      var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-  
-                      // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
-                      //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
-                      //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
-                      if ($document.activeElement === $document.body) {
-                        $elm[0].focus();
-                      }
-  
-                      // broadcast a cellNav event so we clear the focus on all cells
-                      uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
-                    });
-                  });
-                  */
-                } else {
-                  if ( needFocus ){
-                    $timeout(function () {
-                      $timeout(function () {
-                        // Get the last row+col combo
-                        var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-    
-                        // If the body element becomes active, re-focus on the render container so we can capture cellNav events again.
-                        //   NOTE: this happens when we navigate LET from the left-most cell (RIGHT from the right-most) and have to re-render a new
-                        //   set of cells. The cell element we are navigating to doesn't exist and focus gets lost. This will re-capture it, imperfectly...
-                        if ($document.activeElement === $document.body) {
-                          $elm[0].focus();
-                        }
-    
-                        // broadcast a cellNav event so we clear the focus on all cells
-                        uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
-                        
-                        needFocus = false;
-                      });
-                    });
-                  }
+
+                //clear dom of focused cell
+
+                var elements = $elm[0].getElementsByClassName('ui-grid-cell-focus');
+                Array.prototype.forEach.call(elements,function(e){angular.element(e).removeClass('ui-grid-cell-focus');});
+
+              });
+
+              grid.api.core.on.scrollEnd($scope, function (args) {
+
+
+                // Skip if there's no currently-focused cell
+                var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                if (lastRowCol == null) {
+                  return;
                 }
-              });  
-             
+
+                //if not in my container, move on
+                //todo: worry about horiz scroll
+                if (!renderContainerCtrl.colContainer.containsColumn(lastRowCol.col)) {
+                  return;
+                }
+
+                //focus the viewport
+                //$elm[0].focus();
+
+                uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
+
+              });
+
+              grid.api.cellNav.on.navigate($scope, function () {
+                //focus the viewport because this can sometimes be lost
+                $elm[0].focus();
+              });
+
+
             }
           };
         }
@@ -1075,7 +912,7 @@
             return;
           }
 
-          setTabEnabled();
+          //setTabEnabled();
 
           // When a cell is clicked, broadcast a cellNav event saying that this row+col combo is now focused
           $elm.find('div').on('click', function (evt) {
@@ -1104,10 +941,10 @@
                 setFocused();
               }
 
-              // This cellNav event came from a keydown event so we can safely refocus
-              if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
-                $elm.find('div')[0].focus();
-              }
+             // // This cellNav event came from a keydown event so we can safely refocus
+             // if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
+             ////   $elm.find('div')[0].focus();
+             // }
             }
             else if (!(uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown)) {
               clearFocus();

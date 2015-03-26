@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout',
-    function($q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout) {
+.factory('Grid', ['$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout','ScrollEvent',
+    function($q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout, ScrollEvent) {
 
   /**
    * @ngdoc object
@@ -49,7 +49,22 @@ angular.module('ui.grid')
     self.headerHeight = self.options.headerRowHeight;
 
 
+    /**
+     * @ngdoc object
+     * @name footerHeight
+     * @propertyOf ui.grid.class:Grid
+     * @description returns the total footer height gridFooter + columnFooter
+     */
     self.footerHeight = self.calcFooterHeight();
+
+
+    /**
+     * @ngdoc object
+     * @name columnFooterHeight
+     * @propertyOf ui.grid.class:Grid
+     * @description returns the total column footer height
+     */
+    self.columnFooterHeight = self.calcColumnFooterHeight();
 
     self.rtl = false;
     self.gridHeight = 0;
@@ -62,7 +77,9 @@ angular.module('ui.grid')
     self.viewportAdjusters = [];
     self.rowHeaderColumns = [];
     self.dataChangeCallbacks = {};
-  
+    self.verticalScrollSyncCallBackFns = {};
+    self.horizontalScrollSyncCallBackFns = {};
+
     // self.visibleRowCache = [];
   
     // Set of 'render' containers for self grid, which can render sets of rows
@@ -109,16 +126,24 @@ angular.module('ui.grid')
      */
     self.scrollDirection = uiGridConstants.scrollDirection.NONE;
 
-    var debouncedVertical = gridUtil.debounce(function () {
+    function vertical (scrollEvent) {
       self.isScrollingVertically = false;
+      self.api.core.raise.scrollEnd(scrollEvent);
       self.scrollDirection = uiGridConstants.scrollDirection.NONE;
-    }, 1000);
-  
-    var debouncedHorizontal = gridUtil.debounce(function () {
+    }
+
+    var debouncedVertical = gridUtil.debounce(vertical, self.options.scrollDebounce);
+    var debouncedVerticalMinDelay = gridUtil.debounce(vertical, 0);
+
+    function horizontal (scrollEvent) {
       self.isScrollingHorizontally = false;
+      self.api.core.raise.scrollEnd(scrollEvent);
       self.scrollDirection = uiGridConstants.scrollDirection.NONE;
-    }, 1000);
-  
+    }
+
+    var debouncedHorizontal = gridUtil.debounce(horizontal, self.options.scrollDebounce);
+    var debouncedHorizontalMinDelay = gridUtil.debounce(horizontal, 0);
+
   
     /**
      * @ngdoc function
@@ -126,9 +151,17 @@ angular.module('ui.grid')
      * @methodOf ui.grid.class:Grid
      * @description sets isScrollingVertically to true and sets it to false in a debounced function
      */
-    self.flagScrollingVertically = function() {
+    self.flagScrollingVertically = function(scrollEvent) {
+      if (!self.isScrollingVertically && !self.isScrollingHorizontally) {
+        self.api.core.raise.scrollBegin(scrollEvent);
+      }
       self.isScrollingVertically = true;
-      debouncedVertical();
+      if (self.options.scrollDebounce === 0 || !scrollEvent.withDelay) {
+        debouncedVerticalMinDelay(scrollEvent);
+      }
+      else {
+        debouncedVertical(scrollEvent);
+      }
     };
   
     /**
@@ -137,9 +170,17 @@ angular.module('ui.grid')
      * @methodOf ui.grid.class:Grid
      * @description sets isScrollingHorizontally to true and sets it to false in a debounced function
      */
-    self.flagScrollingHorizontally = function() {
+    self.flagScrollingHorizontally = function(scrollEvent) {
+      if (!self.isScrollingVertically && !self.isScrollingHorizontally) {
+        self.api.core.raise.scrollBegin(scrollEvent);
+      }
       self.isScrollingHorizontally = true;
-      debouncedHorizontal();
+      if (self.options.scrollDebounce === 0 || !scrollEvent.withDelay) {
+        debouncedHorizontalMinDelay(scrollEvent);
+      }
+      else {
+        debouncedHorizontal(scrollEvent);
+      }
     };
 
     self.scrollbarHeight = 0;
@@ -230,8 +271,34 @@ angular.module('ui.grid')
      * 
      */
     self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
-  
-  
+
+    /**
+     * @ngdoc function
+     * @name scrollToIfNecessary
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Scrolls the grid to make a certain row and column combo visible,
+     *   in the case that it is not completely visible on the screen already.
+     * @param {GridRow} gridRow row to make visible
+     * @param {GridCol} gridCol column to make visible
+     * @returns {promise} a promise that is resolved when scrolling is complete
+     *
+     */
+    self.api.registerMethod( 'core', 'scrollToIfNecessary', function(gridRow, gridCol) { return self.scrollToIfNecessary(gridRow, gridCol);} );
+
+    /**
+     * @ngdoc function
+     * @name scrollTo
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Scroll the grid such that the specified
+     * row and column is in view
+     * @param {object} rowEntity gridOptions.data[] array instance to make visible
+     * @param {object} colDef to make visible
+     * @returns {promise} a promise that is resolved after any scrolling is finished
+     */
+    self.api.registerMethod( 'core', 'scrollTo', function (rowEntity, colDef) { return self.scrollTo(rowEntity, colDef);}  );
+
+
+
     /**
      * @ngdoc function
      * @name sortHandleNulls
@@ -329,6 +396,14 @@ angular.module('ui.grid')
      if (this.options.showGridFooter) {
        height += this.options.gridFooterHeight;
      }
+
+     height += this.calcColumnFooterHeight();
+
+     return height;
+   };
+
+   Grid.prototype.calcColumnFooterHeight = function () {
+     var height = 0;
 
      if (this.options.showColumnFooter) {
        height += this.options.columnFooterHeight;
@@ -1519,6 +1594,67 @@ angular.module('ui.grid')
     return viewPortWidth;
   };
 
+  Grid.prototype.addVerticalScrollSync = function (containerId, callBackFn) {
+    this.verticalScrollSyncCallBackFns[containerId] = callBackFn;
+  };
+
+  Grid.prototype.addHorizontalScrollSync = function (containerId, callBackFn) {
+    this.horizontalScrollSyncCallBackFns[containerId] = callBackFn;
+  };
+
+/**
+ * Scroll needed containers by calling their ScrollSyncs
+ * @param sourceContainerId the containerId that has already set it's top/left.
+ *         can be empty string which means all containers need to set top/left
+ * @param scrollEvent
+ */
+  Grid.prototype.scrollContainers = function (sourceContainerId, scrollEvent) {
+
+    if (scrollEvent.y) {
+      //default for no container Id (ex. mousewheel means that all containers must set scrollTop/Left)
+      var verts = ['body','left', 'right'];
+
+      this.flagScrollingVertically(scrollEvent);
+
+      if (sourceContainerId === 'body') {
+        verts = ['left', 'right'];
+      }
+      else if (sourceContainerId === 'left') {
+        verts = ['body', 'right'];
+      }
+      else if (sourceContainerId === 'right') {
+        verts = ['body', 'left'];
+      }
+
+      for (var i = 0; i < verts.length; i++) {
+        var id = verts[i];
+        if (this.verticalScrollSyncCallBackFns[id]) {
+          this.verticalScrollSyncCallBackFns[id](scrollEvent);
+        }
+      }
+
+    }
+
+    if (scrollEvent.x) {
+      //default for no container Id (ex. mousewheel means that all containers must set scrollTop/Left)
+      var horizs = ['body','bodyheader', 'bodyfooter'];
+
+      this.flagScrollingHorizontally(scrollEvent);
+      if (sourceContainerId === 'body') {
+        horizs = ['bodyheader', 'bodyfooter'];
+      }
+
+      for (var j = 0; j < horizs.length; j++) {
+        var idh = horizs[j];
+        if (this.horizontalScrollSyncCallBackFns[idh]) {
+          this.horizontalScrollSyncCallBackFns[idh](scrollEvent);
+        }
+      }
+
+    }
+
+  };
+
   Grid.prototype.registerViewportAdjuster = function registerViewportAdjuster(func) {
     this.viewportAdjusters.push(func);
   };
@@ -1983,10 +2119,191 @@ angular.module('ui.grid')
       return this.hasRightContainer() && this.renderContainers.right.renderedColumns.length > 0;
     };
 
+    /**
+     * @ngdoc method
+     * @methodOf  ui.grid.class:Grid
+     * @name scrollToIfNecessary
+     * @description Scrolls the grid to make a certain row and column combo visible,
+     *   in the case that it is not completely visible on the screen already.
+     * @param {GridRow} gridRow row to make visible
+     * @param {GridCol} gridCol column to make visible
+     * @returns {promise} a promise that is resolved when scrolling is complete
+     */
+    Grid.prototype.scrollToIfNecessary = function (gridRow, gridCol) {
+      var self = this;
+
+      var scrollEvent = new ScrollEvent(self, 'uiGrid.scrollToIfNecessary');
+
+      // Alias the visible row and column caches
+      var visRowCache = self.renderContainers.body.visibleRowCache;
+      var visColCache = self.renderContainers.body.visibleColumnCache;
+
+      /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
+
+      // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
+      var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+
+      // Don't the let top boundary be less than 0
+      topBound = (topBound < 0) ? 0 : topBound;
+
+      // The left boundary is the current X scroll position
+      var leftBound = self.renderContainers.body.prevScrollLeft;
+
+      // The bottom boundary is the current Y scroll position, plus the height of the grid, but minus the header height.
+      //   Basically this is the viewport height added on to the scroll position
+      var bottomBound = self.renderContainers.body.prevScrollTop + self.gridHeight - self.renderContainers.body.headerHeight - self.footerHeight -  self.scrollbarWidth;
+
+      // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
+      //if (self.horizontalScrollbarHeight) {
+      //  bottomBound = bottomBound - self.horizontalScrollbarHeight;
+      //}
+
+      // The right position is the current X scroll position minus the grid width
+      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.gridWidth);
+
+      // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
+      //if (self.verticalScrollbarWidth) {
+      //  rightBound = rightBound - self.verticalScrollbarWidth;
+      //}
+
+      // We were given a row to scroll to
+      if (gridRow !== null) {
+        // This is the index of the row we want to scroll to, within the list of rows that can be visible
+        var seekRowIndex = visRowCache.indexOf(gridRow);
+
+        // Total vertical scroll length of the grid
+        var scrollLength = (self.renderContainers.body.getCanvasHeight() - self.renderContainers.body.getViewportHeight());
+
+        // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
+        //if (self.horizontalScrollbarHeight && self.horizontalScrollbarHeight > 0) {
+        //  scrollLength = scrollLength + self.horizontalScrollbarHeight;
+        //}
+
+        // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
+        var pixelsToSeeRow = ((seekRowIndex + 1) * self.options.rowHeight);
+
+        // Don't let the pixels required to see the row be less than zero
+        pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
+
+        var scrollPixels, percentage;
+
+        // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
+        if (pixelsToSeeRow < topBound) {
+          // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
+          //   to get the full position we need
+          scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
+
+          // Turn the scroll position into a percentage and make it an argument for a scroll event
+          percentage = scrollPixels / scrollLength;
+          scrollEvent.y = { percentage: percentage  };
+        }
+        // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
+        else if (pixelsToSeeRow > bottomBound) {
+          // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
+          //   to get the full position we need
+          scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
+
+          // Turn the scroll position into a percentage and make it an argument for a scroll event
+          percentage = scrollPixels / scrollLength;
+          scrollEvent.y = { percentage: percentage  };
+        }
+      }
+
+      // We were given a column to scroll to
+      if (gridCol !== null) {
+        // This is the index of the row we want to scroll to, within the list of rows that can be visible
+        var seekColumnIndex = visColCache.indexOf(gridCol);
+
+        // Total vertical scroll length of the grid
+        var horizScrollLength = (self.renderContainers.body.getCanvasWidth() - self.renderContainers.body.getViewportWidth());
+
+        // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
+        // if (self.verticalScrollbarWidth && self.verticalScrollbarWidth > 0) {
+        //   horizScrollLength = horizScrollLength + self.verticalScrollbarWidth;
+        // }
+
+        // This is the minimum amount of pixels we need to scroll vertical in order to see this column
+        var columnLeftEdge = 0;
+        for (var i = 0; i < seekColumnIndex; i++) {
+          var col = visColCache[i];
+          columnLeftEdge += col.drawnWidth;
+        }
+        columnLeftEdge = (columnLeftEdge < 0) ? 0 : columnLeftEdge;
+
+        var columnRightEdge = columnLeftEdge + gridCol.drawnWidth;
+
+        // Don't let the pixels required to see the column be less than zero
+        columnRightEdge = (columnRightEdge < 0) ? 0 : columnRightEdge;
+
+        var horizScrollPixels, horizPercentage;
+
+        // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
+        if (columnLeftEdge < leftBound) {
+          // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
+          //   to get the full position we need
+          horizScrollPixels = self.renderContainers.body.prevScrollLeft - (leftBound - columnLeftEdge);
+
+          // Turn the scroll position into a percentage and make it an argument for a scroll event
+          horizPercentage = horizScrollPixels / horizScrollLength;
+          horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
+          scrollEvent.x = { percentage: horizPercentage  };
+        }
+        // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
+        else if (columnRightEdge > rightBound) {
+          // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
+          //   to get the full position we need
+          horizScrollPixels = columnRightEdge - rightBound + self.renderContainers.body.prevScrollLeft;
+
+          // Turn the scroll position into a percentage and make it an argument for a scroll event
+          horizPercentage = horizScrollPixels / horizScrollLength;
+          horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
+          scrollEvent.x = { percentage: horizPercentage  };
+        }
+      }
+
+      var deferred = $q.defer();
+
+      // If we need to scroll on either the x or y axes, fire a scroll event
+      if (scrollEvent.y || scrollEvent.x) {
+        scrollEvent.withDelay = false;
+        self.scrollContainers('',scrollEvent);
+        var dereg = self.api.core.on.scrollEnd(null,function() {
+          deferred.resolve(scrollEvent);
+          dereg();
+        });
+      }
+      else {
+        deferred.resolve();
+      }
+
+      return deferred.promise;
+    };
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.class:Grid
+     * @name scrollTo
+     * @description Scroll the grid such that the specified
+     * row and column is in view
+     * @param {object} rowEntity gridOptions.data[] array instance to make visible
+     * @param {object} colDef to make visible
+     * @returns {promise} a promise that is resolved after any scrolling is finished
+     */
+    Grid.prototype.scrollTo = function (rowEntity, colDef) {
+      var gridRow = null, gridCol = null;
+
+      if (rowEntity !== null && typeof(rowEntity) !== 'undefined' ) {
+        gridRow = this.getRow(rowEntity);
+      }
+
+      if (colDef !== null && typeof(colDef) !== 'undefined' ) {
+        gridCol = this.getColumn(colDef.name ? colDef.name : colDef.field);
+      }
+      return this.scrollToIfNecessary(gridRow, gridCol);
+    };
 
 
-
-  // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)
+      // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)
   function RowHashMap() {}
 
   RowHashMap.prototype = {

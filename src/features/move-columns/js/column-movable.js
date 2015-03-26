@@ -320,7 +320,7 @@
                           changeValue *= 8;
                           var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
                           scrollEvent.x = {pixels: changeValue};
-                          scrollEvent.fireScrollingEvent();
+                          scrollEvent.grid.scrollContainers('',scrollEvent);
                         }
 
                         //Calculate total width of columns on the left of the moving column and the mouse movement

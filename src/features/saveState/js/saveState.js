@@ -550,7 +550,7 @@
             if (scrollFocusState.focus ){
               grid.api.cellNav.scrollToFocus( entity, colDef );
             } else {
-              grid.api.cellNav.scrollTo( entity, colDef );
+              grid.scrollTo( entity, colDef );
             }
           }
         },
