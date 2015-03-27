@@ -1,7 +1,7 @@
 /* global _ */
 (function () {
   'use strict';
-  describe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
+  ddescribe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
 
     var uiGridInfiniteScrollService;
     var grid;
@@ -108,5 +108,18 @@
       });
     });
 
+
+    describe( 'dataRemovedTop', function() {
+      it( 'adjusts scroll as expected', function() {
+        
+      });
+    });
+
+
+    describe( 'dataRemovedBottom', function() {
+      it( 'adjusts scroll as expected', function() {
+        
+      });
+    });
   });
 })();

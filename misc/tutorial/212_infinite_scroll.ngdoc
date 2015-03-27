@@ -30,6 +30,15 @@ Ideally the API would change to a number of rows.
 Finally, we suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
 if infinite scroll is enabled and there is still data in that direction.
 
+If you are using {@link 307_external_sorting external sorting} or {@link 308_external_filtering external filtering} you may
+reload your data whenever scroll or filter events occur.  In this situation you'll want to call `resetScroll` to tell the
+grid not to try to preserve the previous scroll position.  You may also use this call when you've otherwise reset the data
+in the grid.  You must also tell us whether you allow scrollUp or scrollDown from this position as part of the call.
+
+You may sometimes remove data, for example if you're keeping 10 pages of data in memory, and you start discarding data
+from the top as you add data to the bottom.  In this situation you can call optionally provide a scroll percentage to the
+`resetScroll`, 
+
 
 @example
 In this example we have a data set that starts at page 2 of a 5 page data set.  Each page is 100 records, so we start at 
@@ -37,11 +46,17 @@ record 200, and we can scroll up 2 pages, and scroll down 2 pages.  You should s
 you hit record zero a touchpad scroll should propagate to the parent page.  You should also see smooth scrolling as you
 move down, and when you hit record 499 a touchpad scroll should propagate to the parent page.
 
+We also remove data from the data set in memory, we've decided that we only ever want to hold 4 pages in memory, so we
+will discard pages and reset the scrollUp and scrollDown appropriately.  Again, when this happens the grid should still
+hold the scroll position.
+
+Finally, we can reset the data, which gets us back to the middle page and sets the scroll to the top.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.infiniteScroll']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$q', function ($scope, $http, $timeout, $q) {
       $scope.gridOptions = {
         infiniteScrollPercentage: 15,
         infiniteScrollUp: true,
@@ -61,33 +76,54 @@ move down, and when you hit record 499 a touchpad scroll should propagate to the
 
       $scope.data = [];
       
-      var firstPage = 2;
-      var lastPage = 1;
+      $scope.firstPage = 2;
+      $scope.lastPage = 2;
       
-      $scope.getDataDown = function() {
+      $scope.getFirstData = function() {
+        var promise = $q.defer();
         $http.get('/data/10000_complex.json')
         .success(function(data) {
-          lastPage++;
-          var newData = $scope.getPage(data, lastPage);
+          var newData = $scope.getPage(data, $scope.lastPage);
           $scope.data = $scope.data.concat(newData);
-          $scope.gridApi.infiniteScroll.dataLoaded(null, lastPage === 4);
+          promise.resolve();
+        });
+        return promise.promise;
+      };
+      
+      $scope.getDataDown = function() {
+        var promise = $q.defer();
+        $http.get('/data/10000_complex.json')
+        .success(function(data) {
+          $scope.lastPage++;
+          var newData = $scope.getPage(data, $scope.lastPage);
+          $scope.data = $scope.data.concat(newData);
+          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');}).then(function() {
+            promise.resolve();
+          });
         })
         .error(function(error) {
           $scope.gridApi.infiniteScroll.dataLoaded();
+          promise.reject();
         });
+        return promise.promise;
       };
 
       $scope.getDataUp = function() {
+        var promise = $q.defer();
         $http.get('/data/10000_complex.json')
         .success(function(data) {
-          firstPage--;
-          var newData = $scope.getPage(data, firstPage);
+          $scope.firstPage--;
+          var newData = $scope.getPage(data, $scope.firstPage);
           $scope.data = newData.concat($scope.data);
-          $scope.gridApi.infiniteScroll.dataLoaded(firstPage === 0, null);
+          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');}).then(function() {
+            promise.resolve();
+          });
         })
         .error(function(error) {
           $scope.gridApi.infiniteScroll.dataLoaded();
+          promise.reject();
         });
+        return promise.promise;
       };
 
 
@@ -99,11 +135,61 @@ move down, and when you hit record 499 a touchpad scroll should propagate to the
         return res;
       };
       
-      $scope.getDataDown();
+      $scope.checkDataLength = function( discardDirection) {
+        // work out whether we need to discard a page, if so discard from the direction passed in
+        if( $scope.lastPage - $scope.firstPage > 3 ){
+          // we want to remove a page
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          
+          if( discardDirection === 'up' ){
+            $scope.data = $scope.data.slice(100);
+            $scope.firstPage++;
+            $timeout(function() {
+              // wait for grid to ingest data changes
+              $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
+            });
+          } else {
+            $scope.data = $scope.data.slice(0, 400);
+            $scope.lastPage--;
+            $timeout(function() {
+              // wait for grid to ingest data changes
+              $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
+            });
+          }
+        }
+      };
+      
+      $scope.reset = function() {
+        $scope.firstPage = 2;
+        $scope.lastPage = 2;
+        
+        // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
+        $scope.gridApi.infiniteScroll.setScrollDirections( false, false );
+        $scope.data = [];
+
+        $scope.getFirstData().then(function(){
+          $timeout(function() {
+            // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
+            $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+          });
+        });
+      };
+      
+      $scope.getFirstData().then(function(){
+        $timeout(function() {
+          // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
+          // you need to call resetData once you've loaded your data if you want to enable scroll up,
+          // it adjusts the scroll position down one pixel so that we can generate scroll up events 
+          $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+        });
+      });
+      
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <button id="reset" class="button" ng-click="reset()">Reset</button>
+      <span> &nbsp; &nbsp; First page: {{ firstPage }} &nbsp; &nbsp; Last page: {{ lastPage }}  &nbsp; &nbsp; data.length: {{ data.length }} </span>
       <div ui-grid="gridOptions" class="grid" ui-grid-infinite-scroll></div>
     </div>
   </file>
