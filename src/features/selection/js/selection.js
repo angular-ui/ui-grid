@@ -422,7 +422,7 @@
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Shows the total number of selected items in footer if true.
            *  <br/>Defaults to true.
-           *  <br/>GridOptions.showFooter must also be set to true.
+           *  <br/>GridOptions.showGridFooter must also be set to true.
            */
           gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
 
