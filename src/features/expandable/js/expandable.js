@@ -392,6 +392,10 @@
                   return ret;
                 };
 
+ /*
+  * Commented out @PaulL1.  This has no purpose that I can see, and causes #2964.  If this code needs to be reinstated for some
+  * reason it needs to use drawnWidth, not width, and needs to check column visibility.  It should really use render container
+  * visible column cache also instead of checking column.renderContainer. 
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
                       var colWidth = 0;
@@ -411,7 +415,7 @@
                           priority: 15,
                           func: updateRowContainerWidth
                       });
-                  }
+                  }*/
 
               },
               post: function ($scope, $elm, $attrs, controllers) {
