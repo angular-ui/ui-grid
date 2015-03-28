@@ -150,9 +150,9 @@
             }
           }
           columns[newPosition] = originalColumn;
+          grid.queueGridRefresh();
           $timeout(function () {
             grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-            grid.queueGridRefresh();
             grid.api.colMovable.raise.columnPositionChanged(originalColumn.colDef, originalPosition, newPosition);
           });
         }
