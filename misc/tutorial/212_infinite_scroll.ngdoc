@@ -10,8 +10,8 @@ optionally tell us up-front that there are no more pages up through `infiniteScr
 `infiniteScrollDown = true`, and we will never trigger
 pages in that direction.  By default we assume you have pages down but not up.
 
-You can specify the percentage of the grid at which the infinite scroll will trigger a request for
-more data `infiniteScrollPercentage = 20`. By default we trigger when you are 20% away from the end of 
+You can specify the number of rows from the end of the dataset at which the infinite scroll will trigger a request for
+more data `infiniteScrollRowsFromEnd = 20`. By default we trigger when you are 20 rows away from the end of 
 the grid (in either direction).
 
 We will raise a `needMoreData` or `needMoreDataTop` event, which you must listen to and respond to if
@@ -21,14 +21,18 @@ that you have loaded your data.  Optionally, you can tell us that there is no mo
 further requests for more data in that direction.
 
 When you have loaded your data we will attempt to adjust the grid scroll to give the appearance of continuous
-scrolling.  This is a little jumpy at present, largely because we work of percentages instead of a number of
-rows from the end.  We basically assume that your user will have reached the end of the scroll (upwards or downwards)
-by the time the data comes back, and scroll the user to the beginning of the newly added data to reflect that.  If
-your user has already scrolled a lot of pages, then they may not be at the end of the data (20% can be a long way).
-Ideally the API would change to a number of rows. 
+scrolling.  We basically assume that your user will have reached the end of the scroll (upwards or downwards)
+by the time the data comes back, and scroll the user to the beginning of the newly added data to reflect that.
+In some circumstances this can give "jumpy" scrolling, particularly if you have set your rowsFromEnd to quite a high
+value so that you're prefetching the data - if the user is scrolling slowly they might be 50 rows from the end, and 
+when we process the dataLoaded we suddenly move them to what used to be the end.  To avoid this, you can explicitly
+save the scroll position before you add data to your data array, through calling `saveScrollPosition`, and the
+`dataLoaded` call will then take that position into account, and attempt to adjust the scroll so that the same
+rows are showing once the grid has ingested the data you have added.   
 
-Finally, we suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
-if infinite scroll is enabled and there is still data in that direction.
+We suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
+if infinite scroll is enabled and if there is still data in that direction - so if there are pages upwards then
+scrolling to the top will get those pages rather than hitting the top and then scrolling your whole page upwards.
 
 If you are using {@link 307_external_sorting external sorting} or {@link 308_external_filtering external filtering} you may
 reload your data whenever scroll or filter events occur.  In this situation you'll want to call `resetScroll` to tell the
@@ -36,8 +40,8 @@ grid not to try to preserve the previous scroll position.  You may also use this
 in the grid.  You must also tell us whether you allow scrollUp or scrollDown from this position as part of the call.
 
 You may sometimes remove data, for example if you're keeping 10 pages of data in memory, and you start discarding data
-from the top as you add data to the bottom.  In this situation you can call optionally provide a scroll percentage to the
-`resetScroll`, 
+from the top as you add data to the bottom.  You can use the `dataRemovedTop` and `dataRemovedBottom` to tell
+us that you've discarded data, and we'll aim to set the scroll back to where it was before you removed that data. 
 
 
 @example
@@ -58,7 +62,7 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
 
     app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$q', function ($scope, $http, $timeout, $q) {
       $scope.gridOptions = {
-        infiniteScrollPercentage: 15,
+        infiniteScrollRowsFromEnd: 40,
         infiniteScrollUp: true,
         infiniteScrollDown: true,
         columnDefs: [
@@ -96,6 +100,7 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
         .success(function(data) {
           $scope.lastPage++;
           var newData = $scope.getPage(data, $scope.lastPage);
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = $scope.data.concat(newData);
           $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');}).then(function() {
             promise.resolve();
@@ -114,6 +119,7 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
         .success(function(data) {
           $scope.firstPage--;
           var newData = $scope.getPage(data, $scope.firstPage);
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = newData.concat($scope.data);
           $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');}).then(function() {
             promise.resolve();

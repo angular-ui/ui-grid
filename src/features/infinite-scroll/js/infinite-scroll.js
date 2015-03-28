@@ -80,9 +80,15 @@
                * @name dataLoaded
                * @methodOf ui.grid.infiniteScroll.api:PublicAPI
                * @description Call this function when you have loaded the additional data
-               * requested.  You can set noMoreDataTop or noMoreDataBottom to indicate
-               * that we've reached the end of your data set, we won't fire any more events
-               * for scroll in that direction.
+               * requested.  You should set scrollUp and scrollDown to indicate
+               * whether there are still more pages in each direction.
+               * 
+               * If you call dataLoaded without first calling `saveScrollPercentage` then we will
+               * scroll the user to the start of the newly loaded data, which usually gives a smooth scroll
+               * experience, but can give a jumpy experience with large `infiniteScrollRowsFromEnd` values, and 
+               * on variable speed internet connections.  Using `saveScrollPercentage` as demonstrated in the tutorial
+               * should give a smoother scrolling experience for users.
+               *  
                * See infinite_scroll tutorial for example of usage
                * @param {boolean} scrollUp if set to false flags that there are no more pages upwards, so don't fire
                * any more infinite scroll events upward
@@ -92,10 +98,13 @@
                * planning to remove pages, you should wait on this promise first, or you'll break the scroll positioning
                */
               dataLoaded: function( scrollUp, scrollDown ) {
-                grid.infiniteScroll.dataLoading = false;
                 service.setScrollDirections(grid, scrollUp, scrollDown);
                 
-                return service.adjustScroll(grid);
+                var promise = service.adjustScroll(grid).then(function() {
+                  grid.infiniteScroll.dataLoading = false;
+                });
+                
+                return promise;
               },
               
               /**
@@ -205,17 +214,19 @@
 
         /**
          * @ngdoc property
-         * @name infiniteScrollPercentage
+         * @name infiniteScrollRowsFromEnd
          * @propertyOf ui.grid.class:GridOptions
-         * @description This setting controls at what percentage remaining more data
-         * is requested by the infinite scroll, whether scrolling up or down.
+         * @description This setting controls how close to the end of the dataset a user gets before
+         * more data is requested by the infinite scroll, whether scrolling up or down.  This allows you to
+         * 'prefetch' rows before the user actually runs out of scrolling.
          * 
-         * TODO: it would be nice if this were percentage of a page, not percentage of the
-         * total scroll - as you get more and more data, the needMoreData event is triggered
-         * further and further away from the end (in terms of number of rows)
+         * Note that if you set this value too high it may give jumpy scrolling behaviour, if you're getting
+         * this behaviour you could use the `saveScrollPercentageMethod` right before loading your data, and we'll
+         * preserve that scroll position
+         * 
          * <br> Defaults to 20
          */
-        gridOptions.infiniteScrollPercentage = gridOptions.infiniteScrollPercentage || 20;
+        gridOptions.infiniteScrollRowsFromEnd = gridOptions.infiniteScrollRowsFromEnd || 20;
 
         /**
          * @ngdoc property
@@ -276,14 +287,15 @@
 
         if (args.y) {
           var percentage;
+          var targetPercentage = args.grid.options.infiniteScrollRowsFromEnd / args.grid.renderContainers.body.visibleRowCache.length;
           if (args.grid.scrollDirection === uiGridConstants.scrollDirection.UP ) {
             percentage = args.y.percentage;
-            if (percentage <= args.grid.options.infiniteScrollPercentage / 100){
+            if (percentage <= targetPercentage){
               service.loadData(args.grid);
             }
           } else if (args.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN) {
             percentage = 1 - args.y.percentage;
-            if (percentage <= args.grid.options.infiniteScrollPercentage / 100){
+            if (percentage <= targetPercentage){
               service.loadData(args.grid);
             }
           }
@@ -296,7 +308,8 @@
        * @name loadData
        * @methodOf ui.grid.infiniteScroll.service:uiGridInfiniteScrollService
        * @description This function fires 'needLoadMoreData' or 'needLoadMoreDataTop' event based on scrollDirection
-       * and whether there are more pages upwards or downwards
+       * and whether there are more pages upwards or downwards.  It also stores the number of rows that we had previously,
+       * and clears out any saved scroll position so that we know whether or not the user calls `saveScrollPercentage`
        * @param {Grid} grid the grid we're working on
        */
       loadData: function (grid) {
@@ -304,6 +317,7 @@
         // to be at approximately the row we're currently at
         grid.infiniteScroll.previousVisibleRows = grid.renderContainers.body.visibleRowCache.length;
         grid.infiniteScroll.direction = grid.scrollDirection;
+        delete grid.infiniteScroll.prevScrolltopPercentage;
         
         if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp ) {
           grid.infiniteScroll.dataLoading = true;
@@ -339,7 +353,7 @@
       adjustScroll: function(grid){
         var promise = $q.defer();
         $timeout(function () {
-          var percentage;
+          var newPercentage;
           
           if ( grid.infiniteScroll.direction === undefined ){
             // called from initialize, tweak our scroll up a little
@@ -347,16 +361,24 @@
           }
 
           var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
+          var oldPercentage, oldTopRow;
+          
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
-            percentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows ) / newVisibleRows;
-            service.adjustInfiniteScrollPosition(grid, percentage).then(function() {
+            console.log( 'prevTop was: ' + grid.infiniteScroll.prevScrolltopPercentage);
+            console.log( 'grid was: ' + grid);
+            oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 0;
+            oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
+            newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow ) / newVisibleRows;
+            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
               promise.resolve();
             });  
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
-            percentage = grid.infiniteScroll.previousVisibleRows / newVisibleRows;            
-            service.adjustInfiniteScrollPosition(grid, percentage).then(function() {
+            oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 1;
+            oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
+            newPercentage = oldTopRow / newVisibleRows;            
+            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
               promise.resolve();
             });  
           }
