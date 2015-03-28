@@ -328,22 +328,6 @@
           $elm.addClass('right');
         }
 
-        // Resize all the other columns around col
-        function resizeAroundColumn(col) {
-          // Get this column's render container
-          var renderContainer = col.getRenderContainer();
-
-          renderContainer.visibleColumnCache.forEach(function (column) {
-            // Skip the column we just resized
-            if (column === col) { return; }
-            
-            var colDef = column.colDef;
-            if (!colDef.width || (angular.isString(colDef.width) && (colDef.width.indexOf('*') !== -1 || colDef.width.indexOf('%') !== -1))) {
-              column.width = column.drawnWidth;
-            }
-          });
-        }
-
         // Build the columns then refresh the grid canvas
         //   takes an argument representing the diff along the X-axis that the resize had
         function buildColumnsAndRefresh(xDiff) {
@@ -440,9 +424,6 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, newWidth);
 
-          // All other columns because fixed to their drawn width, if they aren't already
-          resizeAroundColumn(col);
-
           buildColumnsAndRefresh(xDiff);
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
@@ -527,9 +508,6 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, maxWidth);
           
-          // All other columns because fixed to their drawn width, if they aren't already
-          resizeAroundColumn(col);
-
           buildColumnsAndRefresh(xDiff);
           
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
