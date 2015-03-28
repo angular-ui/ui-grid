@@ -1,7 +1,7 @@
 /* global _ */
 (function () {
   'use strict';
-  ddescribe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
+  describe('ui.grid.infiniteScroll uiGridInfiniteScrollService', function () {
 
     var uiGridInfiniteScrollService;
     var grid;
