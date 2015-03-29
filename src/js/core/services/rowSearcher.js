@@ -226,7 +226,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filter.flags.date === true) {
       value = new Date(value);
       // If the term has a dash in it, it comes through as '\-' -- we need to take out the '\'.
-      term = new Date(term.replace(/\\/g, ''));
+      if (column.cellFilter) {
+        term = moment(term.replace(/\\/g, ''), column.cellFilter.split(':')[1].toUpperCase()).toDate();
+      } else {
+        term = new Date(term.replace(/\\/g, ''));
+      }
     }
 
     if (filter.condition === uiGridConstants.filter.GREATER_THAN) {
