@@ -141,10 +141,10 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( {} );
     });
 
-    it('save focus, no focus present', function() {
+    it('save focus, no focus present, tries to save scroll instead', function() {
       uiGridCellNavService.initializeGrid(grid);
       
-      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: true } );
+      expect( uiGridSaveStateService.saveScrollFocus( grid ) ).toEqual( { focus: false } );
     });
 
     it('save focus, focus present, no row identity', function() {

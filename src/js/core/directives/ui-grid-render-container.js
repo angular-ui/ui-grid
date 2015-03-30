@@ -123,7 +123,7 @@
             function update() {
               var ret = '';
 
-              var canvasWidth = colContainer.getCanvasWidth();
+              var canvasWidth = colContainer.canvasWidth;
               var viewportWidth = colContainer.getViewportWidth();
 
               var canvasHeight = rowContainer.getCanvasHeight();

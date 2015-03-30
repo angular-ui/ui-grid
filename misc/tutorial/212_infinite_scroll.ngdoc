@@ -10,8 +10,8 @@ optionally tell us up-front that there are no more pages up through `infiniteScr
 `infiniteScrollDown = true`, and we will never trigger
 pages in that direction.  By default we assume you have pages down but not up.
 
-You can specify the percentage of the grid at which the infinite scroll will trigger a request for
-more data `infiniteScrollPercentage = 20`. By default we trigger when you are 20% away from the end of 
+You can specify the number of rows from the end of the dataset at which the infinite scroll will trigger a request for
+more data `infiniteScrollRowsFromEnd = 20`. By default we trigger when you are 20 rows away from the end of 
 the grid (in either direction).
 
 We will raise a `needMoreData` or `needMoreDataTop` event, which you must listen to and respond to if
@@ -21,14 +21,27 @@ that you have loaded your data.  Optionally, you can tell us that there is no mo
 further requests for more data in that direction.
 
 When you have loaded your data we will attempt to adjust the grid scroll to give the appearance of continuous
-scrolling.  This is a little jumpy at present, largely because we work of percentages instead of a number of
-rows from the end.  We basically assume that your user will have reached the end of the scroll (upwards or downwards)
-by the time the data comes back, and scroll the user to the beginning of the newly added data to reflect that.  If
-your user has already scrolled a lot of pages, then they may not be at the end of the data (20% can be a long way).
-Ideally the API would change to a number of rows. 
+scrolling.  We basically assume that your user will have reached the end of the scroll (upwards or downwards)
+by the time the data comes back, and scroll the user to the beginning of the newly added data to reflect that.
+In some circumstances this can give "jumpy" scrolling, particularly if you have set your rowsFromEnd to quite a high
+value so that you're prefetching the data - if the user is scrolling slowly they might be 50 rows from the end, and 
+when we process the dataLoaded we suddenly move them to what used to be the end.  To avoid this, you can explicitly
+save the scroll position before you add data to your data array, through calling `saveScrollPosition`, and the
+`dataLoaded` call will then take that position into account, and attempt to adjust the scroll so that the same
+rows are showing once the grid has ingested the data you have added.   
 
-Finally, we suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
-if infinite scroll is enabled and there is still data in that direction.
+We suppress the normal grid behaviour of propagating the scroll to the parent container when you reach the end
+if infinite scroll is enabled and if there is still data in that direction - so if there are pages upwards then
+scrolling to the top will get those pages rather than hitting the top and then scrolling your whole page upwards.
+
+If you are using {@link 307_external_sorting external sorting} or {@link 308_external_filtering external filtering} you may
+reload your data whenever scroll or filter events occur.  In this situation you'll want to call `resetScroll` to tell the
+grid not to try to preserve the previous scroll position.  You may also use this call when you've otherwise reset the data
+in the grid.  You must also tell us whether you allow scrollUp or scrollDown from this position as part of the call.
+
+You may sometimes remove data, for example if you're keeping 10 pages of data in memory, and you start discarding data
+from the top as you add data to the bottom.  You can use the `dataRemovedTop` and `dataRemovedBottom` to tell
+us that you've discarded data, and we'll aim to set the scroll back to where it was before you removed that data. 
 
 
 @example
@@ -37,13 +50,19 @@ record 200, and we can scroll up 2 pages, and scroll down 2 pages.  You should s
 you hit record zero a touchpad scroll should propagate to the parent page.  You should also see smooth scrolling as you
 move down, and when you hit record 499 a touchpad scroll should propagate to the parent page.
 
+We also remove data from the data set in memory, we've decided that we only ever want to hold 4 pages in memory, so we
+will discard pages and reset the scrollUp and scrollDown appropriately.  Again, when this happens the grid should still
+hold the scroll position.
+
+Finally, we can reset the data, which gets us back to the middle page and sets the scroll to the top.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.infiniteScroll']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$q', function ($scope, $http, $timeout, $q) {
       $scope.gridOptions = {
-        infiniteScrollPercentage: 15,
+        infiniteScrollRowsFromEnd: 40,
         infiniteScrollUp: true,
         infiniteScrollDown: true,
         columnDefs: [
@@ -61,33 +80,56 @@ move down, and when you hit record 499 a touchpad scroll should propagate to the
 
       $scope.data = [];
       
-      var firstPage = 2;
-      var lastPage = 1;
+      $scope.firstPage = 2;
+      $scope.lastPage = 2;
       
-      $scope.getDataDown = function() {
+      $scope.getFirstData = function() {
+        var promise = $q.defer();
         $http.get('/data/10000_complex.json')
         .success(function(data) {
-          lastPage++;
-          var newData = $scope.getPage(data, lastPage);
+          var newData = $scope.getPage(data, $scope.lastPage);
           $scope.data = $scope.data.concat(newData);
-          $scope.gridApi.infiniteScroll.dataLoaded(null, lastPage === 4);
+          promise.resolve();
+        });
+        return promise.promise;
+      };
+      
+      $scope.getDataDown = function() {
+        var promise = $q.defer();
+        $http.get('/data/10000_complex.json')
+        .success(function(data) {
+          $scope.lastPage++;
+          var newData = $scope.getPage(data, $scope.lastPage);
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          $scope.data = $scope.data.concat(newData);
+          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');}).then(function() {
+            promise.resolve();
+          });
         })
         .error(function(error) {
           $scope.gridApi.infiniteScroll.dataLoaded();
+          promise.reject();
         });
+        return promise.promise;
       };
 
       $scope.getDataUp = function() {
+        var promise = $q.defer();
         $http.get('/data/10000_complex.json')
         .success(function(data) {
-          firstPage--;
-          var newData = $scope.getPage(data, firstPage);
+          $scope.firstPage--;
+          var newData = $scope.getPage(data, $scope.firstPage);
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = newData.concat($scope.data);
-          $scope.gridApi.infiniteScroll.dataLoaded(firstPage === 0, null);
+          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');}).then(function() {
+            promise.resolve();
+          });
         })
         .error(function(error) {
           $scope.gridApi.infiniteScroll.dataLoaded();
+          promise.reject();
         });
+        return promise.promise;
       };
 
 
@@ -99,11 +141,61 @@ move down, and when you hit record 499 a touchpad scroll should propagate to the
         return res;
       };
       
-      $scope.getDataDown();
+      $scope.checkDataLength = function( discardDirection) {
+        // work out whether we need to discard a page, if so discard from the direction passed in
+        if( $scope.lastPage - $scope.firstPage > 3 ){
+          // we want to remove a page
+          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          
+          if( discardDirection === 'up' ){
+            $scope.data = $scope.data.slice(100);
+            $scope.firstPage++;
+            $timeout(function() {
+              // wait for grid to ingest data changes
+              $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
+            });
+          } else {
+            $scope.data = $scope.data.slice(0, 400);
+            $scope.lastPage--;
+            $timeout(function() {
+              // wait for grid to ingest data changes
+              $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
+            });
+          }
+        }
+      };
+      
+      $scope.reset = function() {
+        $scope.firstPage = 2;
+        $scope.lastPage = 2;
+        
+        // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
+        $scope.gridApi.infiniteScroll.setScrollDirections( false, false );
+        $scope.data = [];
+
+        $scope.getFirstData().then(function(){
+          $timeout(function() {
+            // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
+            $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+          });
+        });
+      };
+      
+      $scope.getFirstData().then(function(){
+        $timeout(function() {
+          // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
+          // you need to call resetData once you've loaded your data if you want to enable scroll up,
+          // it adjusts the scroll position down one pixel so that we can generate scroll up events 
+          $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+        });
+      });
+      
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <button id="reset" class="button" ng-click="reset()">Reset</button>
+      <span> &nbsp; &nbsp; First page: {{ firstPage }} &nbsp; &nbsp; Last page: {{ lastPage }}  &nbsp; &nbsp; data.length: {{ data.length }} </span>
       <div ui-grid="gridOptions" class="grid" ui-grid-infinite-scroll></div>
     </div>
   </file>

@@ -89,9 +89,6 @@
             col.grid.refresh()
                 .then(function () {
                     col.renderContainer = 'left';
-                    // Need to calculate the width. If col.drawnWidth is used instead then the width
-                    // will be 100% if it's the first column, 50% if it's the second etc.
-                    col.width = col.grid.canvasWidth / col.grid.columns.length;
                     col.grid.createLeftContainer();
             });
           }
@@ -106,9 +103,6 @@
                 col.grid.refresh()
                     .then(function () {
                         col.renderContainer = 'right';
-                        // Need to calculate the width. If col.drawnWidth is used instead then the width
-                        // will be 100% if it's the first column, 50% if it's the second etc.
-                        col.width = col.grid.canvasWidth / col.grid.columns.length;
                         col.grid.createRightContainer();
                     });
             }
@@ -134,12 +128,7 @@
             this.context.col.width = this.context.col.drawnWidth;
             this.context.col.grid.createLeftContainer();
 
-            // Need to call refresh twice; once to move our column over to the new render container and then
-            //   a second time to update the grid viewport dimensions with our adjustments
-            col.grid.refresh()
-              .then(function () {
-                col.grid.refresh();
-              });
+            col.grid.refresh();
           }
         };
 
@@ -155,13 +144,7 @@
             this.context.col.width = this.context.col.drawnWidth;
             this.context.col.grid.createRightContainer();
 
-
-            // Need to call refresh twice; once to move our column over to the new render container and then
-            //   a second time to update the grid viewport dimensions with our adjustments
-            col.grid.refresh()
-              .then(function () {
-                col.grid.refresh();
-              });
+            col.grid.refresh();
           }
         };
 
@@ -175,12 +158,7 @@
           action: function () {
             this.context.col.renderContainer = null;
 
-            // Need to call refresh twice; once to move our column over to the new render container and then
-            //   a second time to update the grid viewport dimensions with our adjustments
-            col.grid.refresh()
-              .then(function () {
-                col.grid.refresh();
-              });
+            col.grid.refresh();
           }
         };
 
