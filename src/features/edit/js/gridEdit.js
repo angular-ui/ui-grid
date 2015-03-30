@@ -340,8 +340,8 @@
    *  @description Adds keydown listeners to renderContainer element so we can capture when to begin edits
    *
    */
-  module.directive('uiGridViewport', ['$timeout', '$injector', 'gridUtil', 'uiGridEditConstants',
-    function ($timeout, $injector, gridUtil, uiGridEditConstants) {
+  module.directive('uiGridViewport', [ 'uiGridEditConstants',
+    function ( uiGridEditConstants) {
       return {
         replace: true,
         priority: -99998, //run before cellNav
@@ -350,17 +350,10 @@
         compile: function () {
           return {
             post: function ($scope, $elm, $attrs, controllers) {
-              var uiGridCtrl = controllers[0],
-                renderContainerCtrl = controllers[1];
+              var uiGridCtrl = controllers[0];
 
               // Skip attaching if edit and cellNav is not enabled
               if (!uiGridCtrl.grid.api.edit || !uiGridCtrl.grid.api.cellNav) { return; }
-
-              //var uiGridCellNavService = $injector.get('uiGridCellNavService');
-
-              //var containerId = renderContainerCtrl.containerId;
-
-             // var grid = uiGridCtrl.grid;
 
               $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
                 $elm[0].focus();
@@ -464,13 +457,12 @@
                   return;
                 }
 
-                //important to do this before scrollToIfNecessary
-                if (rowCol.row === $scope.row &&
-                  rowCol.col === $scope.col) {
+                if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
+                  //important to do this before scrollToIfNecessary
                   beginEditKeyDown(evt);
+                  uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
                 }
 
-                uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
               });
             }
 
@@ -483,17 +475,18 @@
               // Add touchstart handling. If the users starts a touch and it doesn't end after X milliseconds, then start the edit
               $elm.on('touchstart', touchStart);
 
-              if ($scope.col.colDef.enableCellEditOnFocus) {
-                if (uiGridCtrl.grid.api.cellNav) {
-                  cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+              if (uiGridCtrl.grid.api.cellNav) {
+                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+                  if ($scope.col.colDef.enableCellEditOnFocus) {
                     if (newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
                       $timeout(function () {
                         beginEdit();
                       });
                     }
-                  });
-                }
+                  }
+                });
               }
+
 
 
             }

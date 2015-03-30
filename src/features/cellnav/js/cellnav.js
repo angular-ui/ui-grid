@@ -94,6 +94,18 @@
 
       };
 
+      UiGridCellNav.prototype.initializeSelection = function () {
+        var focusableCols = this.getFocusableCols();
+        var focusableRows = this.getFocusableRows();
+        if (focusableCols.length === 0 || focusableRows.length === 0) {
+          return null;
+        }
+
+        var curRowIndex = 0;
+        var curColIndex = 0;
+        return new RowCol(focusableRows[0], focusableCols[0]); //return same row
+      };
+
       UiGridCellNav.prototype.getRowColLeft = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
         var focusableRows = this.getFocusableRows();
@@ -125,6 +137,8 @@
           return new RowCol(curRow, focusableCols[nextColIndex]);
         }
       };
+
+
 
       UiGridCellNav.prototype.getRowColRight = function (curRow, curCol) {
         var focusableCols = this.getFocusableCols();
@@ -508,55 +522,6 @@
 
         },
 
-        /**
-         * @ngdoc method
-         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
-         * @name scrollToInternal
-         * @description Like scrollTo, but takes gridRow and gridCol.
-         * In calculating the scroll height we have to deal with wanting
-         * 0% for the first row, and 100% for the last row.  Normal maths
-         * for a 10 row list would return 1/10 = 10% for the first row, so
-         * we need to tweak the numbers to add an extra 10% somewhere.  The
-         * formula if we're trying to get to row 0 in a 10 row list (assuming our
-         * index is zero based, so the last row is row 9) is:
-         * <pre>
-         *   0 + 0 / 10 = 0%
-         * </pre>
-         *
-         * To get to row 9 (i.e. the last row) in the same list, we want to
-         * go to:
-         * <pre>
-         *  ( 9 + 1 ) / 10 = 100%
-         * </pre>
-         * So we need to apportion one whole row within the overall grid scroll,
-         * the formula is:
-         * <pre>
-         *   ( index + ( index / (total rows - 1) ) / total rows
-         * </pre>
-         * @param {Grid} grid the grid you'd like to act upon, usually available
-         * from gridApi.grid
-         * @param {GridRow} gridRow row to make visible
-         * @param {GridCol} gridCol column to make visible
-         */
-        scrollToInternal: function (grid, gridRow, gridCol) {
-          var scrollEvent = new ScrollEvent(grid,null,null,'uiGridCellNavService.scrollToInternal');
-
-          if (gridRow !== null) {
-            var seekRowIndex = grid.renderContainers.body.visibleRowCache.indexOf(gridRow);
-            var totalRows = grid.renderContainers.body.visibleRowCache.length;
-            var percentage = ( seekRowIndex + ( seekRowIndex / ( totalRows - 1 ) ) ) / totalRows;
-            scrollEvent.y = { percentage:  percentage  };
-          }
-
-          if (gridCol !== null) {
-            scrollEvent.x = { percentage: this.getLeftWidth(grid, gridCol) / this.getLeftWidth(grid, grid.renderContainers.body.visibleColumnCache[grid.renderContainers.body.visibleColumnCache.length - 1] ) };
-          }
-
-          if (scrollEvent.y || scrollEvent.x) {
-            grid.scrollContainers('', scrollEvent);
-          }
-        },
-
 
         /**
          * @ngdoc method
@@ -649,13 +614,6 @@
 
               uiGridCtrl.cellNav = {};
 
-              //uiGridCtrl.cellNav.focusActiveCell = function () {
-              //  var elms = $elm[0].getElementsByClassName('ui-grid-cell-focus');
-              //  if (elms.length > 0){
-              //    elms[0].focus();
-              //  }
-              //};
-
               uiGridCtrl.cellNav.getActiveCell = function () {
                 var elms = $elm[0].getElementsByClassName('ui-grid-cell-focus');
                 if (elms.length > 0){
@@ -746,11 +704,6 @@
                     return true;
                   }
 
-
-               //   rowCol.eventType = uiGridCellNavConstants.EVENT_TYPE.KEYDOWN;
-
-
-
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
                   grid.scrollToIfNecessary(rowCol.row, rowCol.col).then(function () {
                     uiGridCtrl.cellNav.broadcastCellNav(rowCol);
@@ -794,6 +747,17 @@
               // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
 
+              //enable tabbing to renderContainer
+              $elm.attr("tabindex", 0);
+
+              $elm.on('focus', function (evt) {
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                if (!rowCol) {
+                  rowCol = grid.renderContainers.body.cellNav.initializeSelection();
+                  uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                }
+              });
+
             }
           };
         }
@@ -834,7 +798,6 @@
                 }
               });
 
-
               grid.api.core.on.scrollBegin($scope, function (args) {
 
                 // Skip if there's no currently-focused cell
@@ -857,8 +820,6 @@
               });
 
               grid.api.core.on.scrollEnd($scope, function (args) {
-
-
                 // Skip if there's no currently-focused cell
                 var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
                 if (lastRowCol == null) {
@@ -871,9 +832,6 @@
                   return;
                 }
 
-                //focus the viewport
-                //$elm[0].focus();
-
                 uiGridCtrl.cellNav.broadcastCellNav(lastRowCol);
 
               });
@@ -882,7 +840,6 @@
                 //focus the viewport because this can sometimes be lost
                 $elm[0].focus();
               });
-
 
             }
           };

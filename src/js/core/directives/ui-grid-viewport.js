@@ -31,18 +31,22 @@
           // Register this viewport with its container 
           containerCtrl.viewport = $elm;
 
+
           $elm.on('scroll', scrollHandler);
 
           var ignoreScroll = false;
+
           function scrollHandler(evt) {
-            if (ignoreScroll && (grid.isScrollingHorizontally || grid.isScrollingHorizontally)) {
-              //don't ask for scrollTop if we just set it
-              ignoreScroll = false;
-              return;
-            }
-
-
-            ignoreScroll = true;
+            //Leaving in this commented code in case it can someday be used
+            //It does improve performance, but because the horizontal scroll is normalized,
+            //  using this code will lead to the column header getting slightly out of line with columns
+            //
+            //if (ignoreScroll && (grid.isScrollingHorizontally || grid.isScrollingHorizontally)) {
+            //  //don't ask for scrollTop if we just set it
+            //  ignoreScroll = false;
+            //  return;
+            //}
+            //ignoreScroll = true;
 
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);

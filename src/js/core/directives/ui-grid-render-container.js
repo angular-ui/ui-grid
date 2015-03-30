@@ -23,7 +23,6 @@
       compile: function () {
         return {
           pre: function prelink($scope, $elm, $attrs, controllers) {
-            // gridUtil.logDebug('render container ' + $scope.containerId + ' pre-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -53,7 +52,6 @@
             containerCtrl.colContainer = colContainer;
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
-            // gridUtil.logDebug('render container ' + $scope.containerId + ' post-link');
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
@@ -66,55 +64,6 @@
 
             // Put the container name on this element as a class
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
-
-            // Bind to left/right-scroll events
-            //if ($scope.bindScrollHorizontal || $scope.bindScrollVertical) {
-            //  grid.api.core.on.scrollEvent($scope,scrollHandler);
-            //}
-
-
-//            function scrollHandler (args) {
-//
-//              // Vertical scroll
-//              if (args.y && $scope.bindScrollVertical) {
-//                containerCtrl.prevScrollArgs = args;
-//
-//                var newScrollTop = args.getNewScrollTop(rowContainer,containerCtrl.viewport);
-//
-//                //only set scrollTop if we coming from something other than viewPort scrollBar or
-//                //another column container
-//                if (args.source !== ScrollEvent.Sources.ViewPortScroll ||
-//                    args.sourceColContainer !== colContainer) {
-//                  containerCtrl.viewport[0].scrollTop = newScrollTop;
-//                }
-//
-//              }
-//
-//              // Horizontal scroll
-//              if (args.x && $scope.bindScrollHorizontal) {
-//                containerCtrl.prevScrollArgs = args;
-//
-//                var newScrollLeft = args.getNewScrollLeft(colContainer, containerCtrl.viewport);
-//
-//                // Make the current horizontal scroll position available in the $scope
-//                $scope.newScrollLeft = newScrollLeft;
-//
-//                if (containerCtrl.headerViewport) {
-//                  containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.headerViewport, newScrollLeft);
-//                }
-//
-//                if (containerCtrl.footerViewport) {
-//                  containerCtrl.footerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.footerViewport, newScrollLeft);
-//                }
-//
-//                // Scroll came from somewhere else, so the viewport must be positioned
-//                if (args.source !== ScrollEvent.Sources.ViewPortScroll) {
-//                  containerCtrl.viewport[0].scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.viewport, newScrollLeft);
-//                }
-//
-//                containerCtrl.prevScrollLeft = newScrollLeft;
-//              }
-//            }
 
             // Scroll the render container viewport when the mousewheel is used
             gridUtil.on.mousewheel($elm, function (event) {
