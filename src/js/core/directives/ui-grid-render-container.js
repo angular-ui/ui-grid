@@ -93,15 +93,19 @@
 
                 scrollEvent.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
-
-
-              scrollEvent.fireThrottledScrollingEvent('', scrollEvent);
-
+              
               // Let the parent container scroll if the grid is already at the top/bottom
-              if ((scrollEvent.y && scrollEvent.y.percentage !== 0 && scrollEvent.y.percentage !== 1 && containerCtrl.viewport[0].scrollTop !== 0  ) ||
-                 (scrollEvent.x && scrollEvent.x.percentage !== 0 && scrollEvent.x.percentage !== 1)) {
-                  event.preventDefault();
+              if (scrollEvent.atTop(scrollTop) ||
+                scrollEvent.atBottom(scrollTop) ||
+                scrollEvent.atLeft(scrollLeft) ||
+                scrollEvent.atRight(scrollLeft)) {
+                //parent controller scrolls
               }
+              else {
+                event.preventDefault();
+                scrollEvent.fireThrottledScrollingEvent('', scrollEvent);
+              }
+
             });
 
             $elm.bind('$destroy', function() {
