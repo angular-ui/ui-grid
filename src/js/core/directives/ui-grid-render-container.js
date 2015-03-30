@@ -26,7 +26,6 @@
 
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
-
             var grid = $scope.grid = uiGridCtrl.grid;
 
             // Verify that the render container for this element exists
@@ -59,6 +58,9 @@
             var grid = uiGridCtrl.grid;
             var rowContainer = containerCtrl.rowContainer;
             var colContainer = containerCtrl.colContainer;
+            var scrollTop = null;
+            var scrollLeft = null;
+
 
             var renderContainer = grid.renderContainers[$scope.containerId];
 
@@ -71,8 +73,9 @@
               if (event.deltaY !== 0) {
                 var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
+                scrollTop = containerCtrl.viewport[0].scrollTop;
                 // Get the scroll percentage
-                var scrollYPercentage = (containerCtrl.viewport[0].scrollTop + scrollYAmount) / rowContainer.getVerticalScrollLength();
+                var scrollYPercentage = (scrollTop + scrollYAmount) / rowContainer.getVerticalScrollLength();
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollYPercentage < 0) { scrollYPercentage = 0; }
@@ -84,7 +87,7 @@
                 var scrollXAmount = event.deltaX * event.deltaFactor;
 
                 // Get the scroll percentage
-                var scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
                 var scrollXPercentage = (scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 // Keep scrollPercentage within the range 0-1.
@@ -93,7 +96,7 @@
 
                 scrollEvent.x = { percentage: scrollXPercentage, pixels: scrollXAmount };
               }
-              
+
               // Let the parent container scroll if the grid is already at the top/bottom
               if (scrollEvent.atTop(scrollTop) ||
                 scrollEvent.atBottom(scrollTop) ||
