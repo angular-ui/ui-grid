@@ -1860,9 +1860,7 @@ angular.module('ui.grid')
 
           if (container.header) {
             var oldHeaderHeight = container.headerHeight;
-            var headerHeight = gridUtil.outerElementHeight(container.header);
-
-            container.headerHeight = parseInt(headerHeight, 10);
+            var headerHeight = container.headerHeight = parseInt(gridUtil.outerElementHeight(container.header), 10);
 
             if (oldHeaderHeight !== headerHeight) {
               rebuildStyles = true;
@@ -1886,9 +1884,7 @@ angular.module('ui.grid')
 
           if (container.headerCanvas) {
             var oldHeaderCanvasHeight = container.headerCanvasHeight;
-            var headerCanvasHeight = gridUtil.outerElementHeight(container.headerCanvas);
-
-            container.headerCanvasHeight = parseInt(headerCanvasHeight, 10);
+            var headerCanvasHeight = container.headerCanvasHeight = parseInt(gridUtil.outerElementHeight(container.headerCanvas), 10);
 
             if (oldHeaderCanvasHeight !== headerCanvasHeight) {
               rebuildStyles = true;
