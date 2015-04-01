@@ -591,7 +591,7 @@ angular.module('ui.grid')
     var columnsToChange = true; 
     
     var processColumn = function(column){
-      if (isNaN(column.width) && column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
+      if ( column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
         column.drawnWidth++;
         usedWidthSum++;
         leftoverWidth--;
@@ -601,7 +601,7 @@ angular.module('ui.grid')
     
     while (leftoverWidth > 0 && columnsToChange) {
       columnsToChange = false;
-      columnCache.forEach(processColumn);
+      asterisksArray.forEach(processColumn);
     }
 
     // all that was across all the renderContainers, now we need to work out what that calculation decided for
