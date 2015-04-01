@@ -396,7 +396,15 @@
                   //Left of cloned element should be aligned to original header cell.
                   movingElm.addClass('movingColumn');
                   var movingElementStyles = {};
-                  var elmLeft = $elm[0].getBoundingClientRect().left;
+                  var elmLeft;
+                  if (gridUtil.detectBrowser() === 'safari') {
+                    //Correction for Safari getBoundingClientRect,
+                    //which does not correctly compute when there is an horizontal scroll
+                    elmLeft = $elm[0].offsetLeft + $elm[0].offsetWidth - $elm[0].getBoundingClientRect().width;
+                  }
+                  else {
+                    elmLeft = $elm[0].getBoundingClientRect().left;
+                  }
                   movingElementStyles.left = (elmLeft - gridLeft) + 'px';
                   var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
                   var elmRight = $elm[0].getBoundingClientRect().right;

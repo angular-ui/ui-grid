@@ -44,8 +44,7 @@ appears to be to accomodate filters.
 
 The style builders include:
 
-- `GridRenderContainer`, which appears to currently apply no styles
-- `uiGrid.updateColumnWidths`, which calculates column widths based on the defined settings, including resolving * and ** etc.  No rendering 
+- `GridRenderContainer.updateColumnWidths`, which calculates column widths based on the defined settings, including resolving * and ** etc.  No rendering 
   is involved - all based on the availableWidth.  This may be the source of some of the iteration - because availableWidth must in some way be
   based on columnWidth - the canvas doesn't really have an available width.  I also have question on why we calculate widths on the grid
   and not on the renderContainer, that may be another source of iteration.  Having said that, things like % and * probably apply to the
@@ -54,6 +53,7 @@ The style builders include:
 width of each column in the render container, and the width of the overall render container.
 - `Grid.prototype.getFooterStyles()`, sets the columnFooterHeight and the gridFooterHeight based on fixed values declared in the options
 - when there are multiple renderContainers (e.g. a left container), the non-body render containers appear to execute first
+- `ui-pinned-container.updateContainerDimensions()`: sets the width of a pinned container.  How does this interact with render container width?
 
 ### Vision
 The vision is to make the style calculations more deterministic, and remove any iteration or other dependencies.  A single pass through
