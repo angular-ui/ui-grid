@@ -785,8 +785,8 @@
               var grid = uiGridCtrl.grid;
 
 
-              // Let the render container be focus-able
-              $elm.attr("tabindex", -1);
+              //// Let the render container be focus-able
+              //$elm.attr("tabindex", -1);
 
               // Bind to keydown events in the render container
               $elm.on('keydown', function (evt) {
@@ -869,8 +869,6 @@
             return;
           }
 
-          //setTabEnabled();
-
           // When a cell is clicked, broadcast a cellNav event saying that this row+col combo is now focused
           $elm.find('div').on('click', function (evt) {
             uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
@@ -907,10 +905,6 @@
               clearFocus();
             }
           });
-
-          function setTabEnabled() {
-            $elm.find('div').attr("tabindex", 0);
-          }
 
           function setFocused() {
             var div = $elm.find('div');
