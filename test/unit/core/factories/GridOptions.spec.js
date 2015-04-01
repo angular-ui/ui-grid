@@ -47,6 +47,9 @@ describe('GridOptions factory', function () {
         rowEquality: jasmine.any(Function),
         headerTemplate: null,
         footerTemplate: null,
+        menuButtonTemplate: null,
+        menuTemplate: null,
+        menuItemTemplate: null,
         rowTemplate: 'ui-grid/ui-grid-row',
         appScopeProvider: null
       });
@@ -90,6 +93,9 @@ describe('GridOptions factory', function () {
         rowEquality: testFunction,
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
@@ -130,6 +136,9 @@ describe('GridOptions factory', function () {
         rowEquality: testFunction,
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
@@ -174,6 +183,9 @@ describe('GridOptions factory', function () {
         rowEquality: testFunction,
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption'
       };
@@ -213,6 +225,9 @@ describe('GridOptions factory', function () {
         rowEquality: testFunction,
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : null
