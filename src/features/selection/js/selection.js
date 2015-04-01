@@ -644,14 +644,17 @@
               }
               
               var processorSet = false;
+              
+              var processSelectableRows = function( rows ){
+                rows.forEach(function(row){
+                  row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
+                });
+                return rows;
+              };
+              
               var updateOptions = function(){
                 if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop && processorSet !== true) {
-                  uiGridCtrl.grid.registerRowsProcessor(function(rows) {
-                    rows.forEach(function(row){
-                      row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
-                    });
-                    return rows;
-                  });
+                  uiGridCtrl.grid.registerRowsProcessor(processSelectableRows, 500);
                   processorSet = true;
                 }
               };

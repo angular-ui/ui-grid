@@ -173,7 +173,7 @@
 
           service.defaultGridOptions(grid.options);
           
-          grid.registerRowsProcessor(service.groupRows);
+          grid.registerRowsProcessor(service.groupRows, 400);
           
           grid.registerColumnsProcessor(service.groupingColumnProcessor);
           
