@@ -71,7 +71,7 @@
       });
     });
     
-    ddescribe('loadData', function() {
+    describe('loadData', function() {
       it('scroll up and there is data up', function() {
         grid.scrollDirection = uiGridConstants.scrollDirection.UP;
         grid.infiniteScroll.scrollUp = true;

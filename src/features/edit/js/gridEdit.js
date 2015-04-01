@@ -475,7 +475,7 @@
               // Add touchstart handling. If the users starts a touch and it doesn't end after X milliseconds, then start the edit
               $elm.on('touchstart', touchStart);
 
-              if (uiGridCtrl.grid.api.cellNav) {
+              if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     if (newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
