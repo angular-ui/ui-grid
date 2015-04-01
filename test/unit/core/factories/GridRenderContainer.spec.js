@@ -103,6 +103,7 @@ describe('GridRenderContainer factory', function () {
       grid.buildColumns();
       grid.setVisibleColumns(grid.columns);
       spyOn(grid, 'getViewportWidth').andCallFake(function() { return 415;});  // actual width 400 after scrollbar
+      grid.scrollbarWidth = 15;
     });
     
     it('all percentages', function() {
