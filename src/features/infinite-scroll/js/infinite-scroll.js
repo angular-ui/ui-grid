@@ -407,13 +407,7 @@
         else {
           scrollEvent.y = {percentage: percentage};
         }
-        scrollEvent.fireScrollingEvent();
-        // change this once @swalters has merged his scrolling changes, which will return a promise from the fireScrollingEvent
-        var promise = $q.defer();
-        $timeout(function(){
-          promise.resolve();
-        });
-        return promise.promise;
+        return grid.scrollContainers('body', scrollEvent);
       },
       
       
