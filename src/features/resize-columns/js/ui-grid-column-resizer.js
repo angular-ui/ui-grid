@@ -288,19 +288,6 @@
   module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, uiGridResizeColumnsService) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
-    var downEvent, upEvent, moveEvent;
-
-    if (gridUtil.isTouchEnabled()) {
-      downEvent = 'touchstart';
-      upEvent = 'touchend';
-      moveEvent = 'touchmove';
-    }
-    else {
-      downEvent = 'mousedown';
-      upEvent = 'mouseup';
-      moveEvent = 'mousemove';
-    }
-
     var resizer = {
       priority: 0,
       scope: {
@@ -358,7 +345,15 @@
         }
         
         
-        function mousemove(event, args) {
+        /*
+         * Our approach to event handling aims to deal with both touch devices and mouse devices
+         * We register down handlers on both touch and mouse.  When a touchstart or mousedown event
+         * occurs, we register the corresponding touchmove/touchend, or mousemove/mouseend events.
+         * 
+         * This way we can listen for both without worrying about the fact many touch devices also emulate
+         * mouse events - basically whichever one we hear first is what we'll go with.
+         */
+        function moveFunction(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
@@ -393,7 +388,7 @@
         }
         
 
-        function mouseup(event, args) {
+        function upFunction(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
@@ -406,8 +401,10 @@
           var xDiff = x - startX;
 
           if (xDiff === 0) {
-            $document.off(upEvent, mouseup);
-            $document.off(moveEvent, mousemove);
+            // no movement, so just reset event handlers, including turning back on both
+            // down events - we turned one off when this event started
+            offAllEvents();
+            onDownEvents();
             return;
           }
 
@@ -428,12 +425,14 @@
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
 
-          $document.off(upEvent, mouseup);
-          $document.off(moveEvent, mousemove);
+          // stop listening of up and move events - wait for next down
+          // reset the down events - we will have turned one off when this event started
+          offAllEvents();
+          onDownEvents();
         }
 
 
-        $elm.on(downEvent, function(event, args) {
+        var downFunction = function(event, args) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.stopPropagation();
 
@@ -450,14 +449,40 @@
           // Place the resizer overlay at the start position
           resizeOverlay.css({ left: startX });
 
-          // Add handlers for mouse move and up events
-          $document.on(upEvent, mouseup);
-          $document.on(moveEvent, mousemove);
-        });
-
+          // Add handlers for move and up events - if we were mousedown then we listen for mousemove and mouseup, if
+          // we were touchdown then we listen for touchmove and touchup.  Also remove the handler for the equivalent
+          // down event - so if we're touchdown, then remove the mousedown handler until this event is over, if we're
+          // mousedown then remove the touchdown handler until this event is over, this avoids processing duplicate events
+          if ( event.type === 'touchstart' ){
+            $document.on('touchend', upFunction);
+            $document.on('touchmove', moveFunction);
+            $elm.off('mousedown', downFunction);
+          } else {
+            $document.on('mouseup', upFunction);
+            $document.on('mousemove', moveFunction);
+            $elm.off('touchstart', downFunction);
+          }
+        };
+        
+        var onDownEvents = function() {
+          $elm.on('mousedown', downFunction);
+          $elm.on('touchstart', downFunction);
+        };
+        
+        var offAllEvents = function() {
+          $document.off('mouseup', upFunction);
+          $document.off('touchend', upFunction);
+          $document.off('mousemove', moveFunction);
+          $document.off('touchmove', moveFunction);
+          $elm.off('mousedown', downFunction);
+          $elm.off('touchstart', downFunction);
+        };
+        
+        onDownEvents();
+        
 
         // On doubleclick, resize to fit all rendered cells
-        $elm.on('dblclick', function(event, args) {
+        var dblClickFn = function(event, args){
           event.stopPropagation();
 
           var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, rtlMultiplier);
@@ -510,14 +535,12 @@
           
           buildColumnsAndRefresh(xDiff);
           
-          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
-        });
+          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);        };
+        $elm.on('dblclick', dblClickFn);
 
         $elm.on('$destroy', function() {
-          $elm.off(downEvent);
-          $elm.off('dblclick');
-          $document.off(moveEvent, mousemove);
-          $document.off(upEvent, mouseup);
+          $elm.off('dblclick', dblClickFn);
+          offAllEvents();
         });
       }
     };

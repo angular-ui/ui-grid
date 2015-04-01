@@ -632,16 +632,11 @@ angular.module('ui.grid')
       });
     }
 
-
     // If the grid width didn't divide evenly into the column widths and we have pixels left over, or our  
     // calculated widths would have the grid narrower than the available space, 
     // dole the remainder out one by one to make everything fit
-    var leftoverWidth = availableWidth - usedWidthSum;
-
-    var columnsToChange = true; 
-    
-    var processColumn = function(column){
-      if (isNaN(column.width) && column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
+    var processColumnUpwards = function(column){
+      if ( column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
         column.drawnWidth++;
         usedWidthSum++;
         leftoverWidth--;
@@ -649,10 +644,33 @@ angular.module('ui.grid')
       }
     };
     
+    var leftoverWidth = availableWidth - usedWidthSum;
+    var columnsToChange = true; 
+
     while (leftoverWidth > 0 && columnsToChange) {
       columnsToChange = false;
-      columnCache.forEach(processColumn);
+      asterisksArray.forEach(processColumnUpwards);
     }
+
+    // We can end up with too much width even though some columns aren't at their max width, in this situation
+    // we can trim the columns a little
+    var processColumnDownwards = function(column){
+      if ( column.drawnWidth > column.minWidth && excessWidth > 0) {
+        column.drawnWidth--;
+        usedWidthSum--;
+        excessWidth--;
+        columnsToChange = true;
+      }
+    };
+    
+    var excessWidth =  usedWidthSum - availableWidth;
+    columnsToChange = true; 
+
+    while (excessWidth > 0 && columnsToChange) {
+      columnsToChange = false;
+      asterisksArray.forEach(processColumnDownwards);
+    }
+
 
     // all that was across all the renderContainers, now we need to work out what that calculation decided for
     // our renderContainer

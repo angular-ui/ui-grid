@@ -281,7 +281,7 @@
     function (uiGridExpandableService, $templateCache) {
       return {
         replace: true,
-        priority: 1000,
+        priority: 599,
         require: '^uiGrid',
         scope: false,
         compile: function () {
