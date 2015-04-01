@@ -597,7 +597,7 @@
          * @param {GridCol} gridCol column to make visible
          */
         scrollToIfNecessary: function (grid, gridRow, gridCol) {
-          var scrollEvent = new ScrollEvent(grid, 'uiGridCellNavService.scrollToIfNecessary');
+          var scrollEvent = new ScrollEvent(grid, null, null, 'uiGridCellNavService.scrollToIfNecessary');
 
           // Alias the visible row and column caches
           var visRowCache = grid.renderContainers.body.visibleRowCache;
