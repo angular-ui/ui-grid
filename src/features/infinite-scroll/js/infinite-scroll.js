@@ -369,18 +369,16 @@
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 0;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
             newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow ) / newVisibleRows;
-            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
-              promise.resolve();
-            });  
+            service.adjustInfiniteScrollPosition(grid, newPercentage);
+            promise.resolve();
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 1;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
             newPercentage = oldTopRow / newVisibleRows;            
-            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
-              promise.resolve();
-            });  
+            service.adjustInfiniteScrollPosition(grid, newPercentage);
+            promise.resolve();
           }
         }, 0);
         
@@ -407,7 +405,7 @@
         else {
           scrollEvent.y = {percentage: percentage};
         }
-        return grid.scrollContainers('body', scrollEvent);
+        grid.scrollContainers('body', scrollEvent);
       },
       
       

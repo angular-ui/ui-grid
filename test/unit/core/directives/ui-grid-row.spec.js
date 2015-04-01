@@ -57,7 +57,7 @@ describe('uiGridRow', function () {
                 row.getRowTemplateFn = $q.when($compile(template));
               });
           }
-        });
+        }, 10);
 
         return rows;
       });

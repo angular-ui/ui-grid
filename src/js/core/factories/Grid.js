@@ -1149,13 +1149,23 @@ angular.module('ui.grid')
      the grid calls each registered "rows processor", which has a chance
      to alter the set of rows (sorting, etc) as long as the count is not
      modified.
+     
+     @param {function} processor a function that takes in rows, and returns updated rows
+     @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
+     for other people to inject rows processors at intermediate priorities.  Lower priority rowsProcessors run earlier.
+     
+     At present all rows visible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
+     
    */
-  Grid.prototype.registerRowsProcessor = function registerRowsProcessor(processor) {
+  Grid.prototype.registerRowsProcessor = function registerRowsProcessor(processor, priority) {
     if (!angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
     }
 
-    this.rowsProcessors.push(processor);
+    this.rowsProcessors.push({processor: processor, priority: priority});
+    this.rowsProcessors.sort(function sortByPriority( a, b ){
+      return a.priority - b.priority;
+    });
   };
 
   /**
@@ -1166,9 +1176,14 @@ angular.module('ui.grid')
    * @description Remove a registered rows processor
    */
   Grid.prototype.removeRowsProcessor = function removeRowsProcessor(processor) {
-    var idx = this.rowsProcessors.indexOf(processor);
+    var idx = -1;
+    this.rowsProcessors.forEach(function(rowsProcessor, index){
+      if ( rowsProcessor.processor === processor ){
+        idx = index;
+      }
+    });
 
-    if (typeof(idx) !== 'undefined' && idx !== undefined) {
+    if ( idx !== -1 ) {
       this.rowsProcessors.splice(idx, 1);
     }
   };
@@ -1206,7 +1221,7 @@ angular.module('ui.grid')
     //   the result.
     function startProcessor(i, renderedRowsToProcess) {
       // Get the processor at 'i'
-      var processor = self.rowsProcessors[i];
+      var processor = self.rowsProcessors[i].processor;
 
       // Call the processor, passing in the rows to process and the current columns
       //   (note: it's wrapped in $q.when() in case the processor does not return a promise)
