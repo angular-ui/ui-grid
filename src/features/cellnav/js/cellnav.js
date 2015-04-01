@@ -747,16 +747,16 @@
               // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
 
-              //enable tabbing to renderContainer
-              $elm.attr("tabindex", 0);
-
-              $elm.on('focus', function (evt) {
-                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                if (!rowCol) {
-                  rowCol = grid.renderContainers.body.cellNav.initializeSelection();
-                  uiGridCtrl.cellNav.broadcastCellNav(rowCol);
-                }
-              });
+              ////enable tabbing to renderContainer
+              //$elm.attr("tabindex", -1);
+              //
+              //$elm.on('focus', function (evt) {
+              //  var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+              //  if (!rowCol) {
+              //    rowCol = grid.renderContainers.body.cellNav.initializeSelection();
+              //    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+              //  }
+              //});
 
             }
           };
@@ -785,8 +785,8 @@
               var grid = uiGridCtrl.grid;
 
 
-              //// Let the render container be focus-able
-              //$elm.attr("tabindex", -1);
+              // Let the render container be focus-able
+              $elm.attr("tabindex", -1);
 
               // Bind to keydown events in the render container
               $elm.on('keydown', function (evt) {
