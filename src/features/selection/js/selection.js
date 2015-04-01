@@ -775,18 +775,38 @@
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
+          require: '?^uiGrid',
           scope: false,
-          link: function ($scope, $elm, $attrs) {
+          link: function ($scope, $elm, $attrs, uiGridCtrl) {
 
             var touchStartTime = 0;
             var touchTimeout = 300;
 
-            $elm.bind('keydown', function (evt) {
-              if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
-                $scope.$apply();
-              }
-            });
+            // Bind to keydown events in the render container
+            if (uiGridCtrl.grid.api.cellNav) {
+
+              uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
+                if (rowCol === null ||
+                  rowCol.row !== $scope.row ||
+                  rowCol.col !== $scope.col) {
+                  return;
+                }
+
+                if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                  $scope.$apply();
+                }
+
+              //  uiGridCellNavService.scrollToIfNecessary(uiGridCtrl.grid, rowCol.row, rowCol.col);
+              });
+            }
+
+            //$elm.bind('keydown', function (evt) {
+            //  if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+            //    uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+            //    $scope.$apply();
+            //  }
+            //});
 
             var selectCells = function(evt){
               // if we get a click, then stop listening for touchend

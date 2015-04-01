@@ -37,7 +37,7 @@
 
         grid.infiniteScroll = { dataLoading: false };
         service.setScrollDirections( grid, grid.options.infiniteScrollUp, grid.options.infiniteScrollDown );
-        grid.api.core.on.scrollEvent($scope, service.handleScroll);
+          grid.api.core.on.scrollEnd($scope, service.handleScroll);
         
         /**
          *  @ngdoc object

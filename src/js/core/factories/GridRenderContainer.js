@@ -88,6 +88,11 @@ angular.module('ui.grid')
 
   // TODO(c0bra): calculate size?? Should this be in a stackable directive?
 
+
+  GridRenderContainer.prototype.containsColumn = function (col) {
+     return this.visibleColumnCache.indexOf(col) !== -1;
+  };
+
   GridRenderContainer.prototype.minRowsToRender = function minRowsToRender() {
     var self = this;
     var minRows = 0;
@@ -297,6 +302,51 @@ angular.module('ui.grid')
     }
 
     this.columnOffset = hiddenColumnsWidth;
+  };
+
+  GridRenderContainer.prototype.scrollVertical = function (newScrollTop) {
+    var vertScrollPercentage = -1;
+
+    if (newScrollTop !== this.prevScrollTop) {
+      var yDiff = newScrollTop - this.prevScrollTop;
+
+      if (yDiff > 0 ) { this.grid.scrollDirection = uiGridConstants.scrollDirection.DOWN; }
+      if (yDiff < 0 ) { this.grid.scrollDirection = uiGridConstants.scrollDirection.UP; }
+
+      var vertScrollLength = this.getVerticalScrollLength();
+
+      vertScrollPercentage = newScrollTop / vertScrollLength;
+
+      if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
+      if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
+
+      this.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+      return vertScrollPercentage;
+    }
+  };
+
+  GridRenderContainer.prototype.scrollHorizontal = function(newScrollLeft){
+    var horizScrollPercentage = -1;
+
+    // Handle RTL here
+
+    if (newScrollLeft !== this.prevScrollLeft) {
+      var xDiff = newScrollLeft - this.prevScrollLeft;
+
+      if (xDiff > 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.RIGHT; }
+      if (xDiff < 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.LEFT; }
+
+      var horizScrollLength = (this.canvasWidth - this.getViewportWidth());
+      if (horizScrollLength !== 0) {
+        horizScrollPercentage = newScrollLeft / horizScrollLength;
+      }
+      else {
+        horizScrollPercentage = 0;
+      }
+
+      this.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
+      return horizScrollPercentage;
+    }
   };
 
   GridRenderContainer.prototype.adjustScrollVertical = function adjustScrollVertical(scrollTop, scrollPercentage, force) {
