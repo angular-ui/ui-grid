@@ -362,23 +362,26 @@
 
           var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
           var oldPercentage, oldTopRow;
+          var halfViewport = grid.getViewportHeight() / grid.options.rowHeight / 2;
           
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
-            console.log( 'prevTop was: ' + grid.infiniteScroll.prevScrolltopPercentage);
-            console.log( 'grid was: ' + grid);
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 0;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
-            newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow ) / newVisibleRows;
+            newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow + halfViewport ) / newVisibleRows;
             service.adjustInfiniteScrollPosition(grid, newPercentage);
-            promise.resolve();
+            $timeout( function() {
+              promise.resolve();
+            });
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 1;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
-            newPercentage = oldTopRow / newVisibleRows;            
+            newPercentage = ( oldTopRow - halfViewport ) / newVisibleRows;            
             service.adjustInfiniteScrollPosition(grid, newPercentage);
-            promise.resolve();
+            $timeout( function() {
+              promise.resolve();
+            });
           }
         }, 0);
         
@@ -405,7 +408,7 @@
         else {
           scrollEvent.y = {percentage: percentage};
         }
-        grid.scrollContainers('body', scrollEvent);
+        grid.scrollContainers('', scrollEvent);
       },
       
       
@@ -428,11 +431,11 @@
         service.setScrollDirections( grid, scrollUp, scrollDown );
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
-        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.prevVisibleRows;
+        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
         
         // since we removed from the top, our new scroll row will be the old scroll row less the number
         // of rows removed
-        var newScrollRow = oldScrollRow - ( grid.infiniteScroll.prevVisibleRows - newVisibleRows );
+        var newScrollRow = oldScrollRow - ( grid.infiniteScroll.previousVisibleRows - newVisibleRows );
         var newScrollPercent = newScrollRow / newVisibleRows;
         
         return service.adjustInfiniteScrollPosition( grid, newScrollPercent );
@@ -456,7 +459,7 @@
         service.setScrollDirections( grid, scrollUp, scrollDown );
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
-        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.prevVisibleRows;
+        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
         
         // since we removed from the bottom, our new scroll row will be same as the old scroll row
         var newScrollPercent = oldScrollRow / newVisibleRows;
