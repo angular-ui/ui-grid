@@ -185,8 +185,11 @@
       
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
+          if (angular.isUndefined(row.expandedRowHeight))
+              row.expandedRowHeight = grid.options.expandableRowHeight;
+              
         if (row.isExpanded) {
-          row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight;
+          row.height = row.grid.options.rowHeight + row.expandedRowHeight;
         }
         else {
           row.height = row.grid.options.rowHeight;
