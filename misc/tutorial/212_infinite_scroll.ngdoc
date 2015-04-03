@@ -26,7 +26,7 @@ by the time the data comes back, and scroll the user to the beginning of the new
 In some circumstances this can give "jumpy" scrolling, particularly if you have set your rowsFromEnd to quite a high
 value so that you're prefetching the data - if the user is scrolling slowly they might be 50 rows from the end, and 
 when we process the dataLoaded we suddenly move them to what used to be the end.  To avoid this, you can explicitly
-save the scroll position before you add data to your data array, through calling `saveScrollPosition`, and the
+save the scroll position before you add data to your data array, through calling `saveScrollPercentage`, and the
 `dataLoaded` call will then take that position into account, and attempt to adjust the scroll so that the same
 rows are showing once the grid has ingested the data you have added.   
 
