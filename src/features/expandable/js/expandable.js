@@ -186,11 +186,12 @@
       },
       
       toggleRowExpansion: function (grid, row) {
-          // trigger the "before change" event. Can change row height dynamically this way.
-           grid.api.expandable.raise.rowExpandedBeforeStateChanged(row);
+        // trigger the "before change" event. Can change row height dynamically this way.
+        grid.api.expandable.raise.rowExpandedBeforeStateChanged(row);
         row.isExpanded = !row.isExpanded;
-          if (angular.isUndefined(row.expandedRowHeight))
-              row.expandedRowHeight = grid.options.expandableRowHeight;
+        if (angular.isUndefined(row.expandedRowHeight)){
+          row.expandedRowHeight = grid.options.expandableRowHeight;
+        }
               
         if (row.isExpanded) {
           row.height = row.grid.options.rowHeight + row.expandedRowHeight;
