@@ -175,7 +175,9 @@ angular.module('ui.grid')
    * @param {boolean} fromRowsProcessor whether we were called from a rowsProcessor, passed through to evaluateRowVisibility
    */
   GridRow.prototype.clearThisRowInvisible = function ( reason, fromRowsProcessor ) {
-    delete this.invisibleReason.user;
+    if (typeof(this.invisibleReason) !== 'undefined' ) {
+      delete this.invisibleReason.user;
+    }
     this.evaluateRowVisibility( fromRowsProcessor );
   };
 
@@ -193,7 +195,7 @@ angular.module('ui.grid')
    */
   GridRow.prototype.evaluateRowVisibility = function ( fromRowProcessor ) {
     var newVisibility = true;
-    if ( this.invisibleReason ){
+    if ( typeof(this.invisibleReason) !== 'undefined' ){
       angular.forEach(this.invisibleReason, function( value, key ){
         if ( value ){
           newVisibility = false;
@@ -201,7 +203,7 @@ angular.module('ui.grid')
       });
     }
     
-    if ( this.visible !== newVisibility ){
+    if ( typeof(this.visible) === 'undefined' || this.visible !== newVisibility ){
       this.visible = newVisibility;
       if ( !fromRowProcessor ){
         this.grid.queueGridRefresh();
