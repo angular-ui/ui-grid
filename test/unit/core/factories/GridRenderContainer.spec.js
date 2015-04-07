@@ -36,7 +36,7 @@ describe('GridRenderContainer factory', function () {
 
   });
 
-  describe('getViewPortStyle', function () {
+  describe('getViewportStyle', function () {
     var r;
 
     beforeEach(function () {
@@ -45,54 +45,54 @@ describe('GridRenderContainer factory', function () {
 
     it('should have a vert and horiz scrollbar on body', function () {
       r.name = 'body';
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'scroll'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'scroll'});
     });
 
     it('should have a vert only', function () {
       r.name = 'body';
       grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.NEVER;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'hidden'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'hidden'});
     });
 
     it('should have a horiz only', function () {
       r.name = 'body';
       grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.NEVER;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
     });
 
     it('left should have a no scrollbar when not rtl', function () {
       r.name = 'left';
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
     });
 
     it('right should have a vert scrollbar when not rtl', function () {
       r.name = 'right';
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
     });
 
     it('right should have no scrollbar when configured', function () {
       r.name = 'right';
       grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.NEVER;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
     });
 
     it('left should have a vert scrollbar when rtl', function () {
       r.name = 'left';
       grid.rtl = true;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'scroll'});
     });
 
     it('left should have no vert scrollbar when rtl and configured Never', function () {
       r.name = 'left';
       grid.rtl = true;
       grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.NEVER;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
     });
 
     it('right should have no scrollbars when rtl', function () {
       r.name = 'right';
       grid.rtl = true;
-      expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
+      expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'hidden'});
     });
 
   });
