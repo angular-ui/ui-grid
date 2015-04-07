@@ -42,8 +42,8 @@
    *
    *  @description Services for editing features
    */
-  module.service('uiGridEditService', ['$q', '$templateCache', 'uiGridConstants', 'gridUtil',
-    function ($q, $templateCache, uiGridConstants, gridUtil) {
+  module.service('uiGridEditService', ['$q', 'uiGridConstants', 'gridUtil',
+    function ($q, uiGridConstants, gridUtil) {
 
       var service = {
 
