@@ -63,7 +63,7 @@
          * @methodOf ui.grid.selection.api:GridRow
          * @description Sets the isSelected property and updates the selectedCount
          * Changes to isSelected state should only be made via this function
-         * @param {bool} selelected value to set
+         * @param {bool} selected value to set
          */
         $delegate.prototype.setSelected = function(selected) {
           this.isSelected = selected;
