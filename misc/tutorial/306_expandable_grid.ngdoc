@@ -30,6 +30,9 @@ provided following events and methods fos subGrids:
 
 SubGrid nesting can be done upto multiple levels.
 
+In addition to above configuration 'scrollFillerClass' is also available and can be used to style the scroll filler, scroll filler
+appears when you quickly scroll through the grid.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -162,6 +165,6 @@ SubGrid nesting can be done upto multiple levels.
     }
   </file>
   <file name="expandableRowTemplate.html">
-    <div ui-grid="row.entity.subGridOptions" style="height:140px;"></div>
+    <div ui-grid="row.entity.subGridOptions" style="height:150px;"></div>
   </file>
 </example>
