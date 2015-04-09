@@ -640,12 +640,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         return found;
     },
 
-    // Shim requestAnimationFrame
-    requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
-                           $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
-                           function(fn) {
-                             return $timeout(fn, 10, false);
-                           },
+    //// Shim requestAnimationFrame
+    //requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
+    //                       $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
+    //                       function(fn) {
+    //                         return $timeout(fn, 10, false);
+    //                       },
 
     numericAndNullSort: function (a, b) {
       if (a === null) { return 1; }

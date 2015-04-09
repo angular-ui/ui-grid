@@ -63,7 +63,7 @@
          * @methodOf ui.grid.selection.api:GridRow
          * @description Sets the isSelected property and updates the selectedCount
          * Changes to isSelected state should only be made via this function
-         * @param {bool} selelected value to set
+         * @param {bool} selected value to set
          */
         $delegate.prototype.setSelected = function(selected) {
           this.isSelected = selected;
@@ -422,7 +422,7 @@
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Shows the total number of selected items in footer if true.
            *  <br/>Defaults to true.
-           *  <br/>GridOptions.showFooter must also be set to true.
+           *  <br/>GridOptions.showGridFooter must also be set to true.
            */
           gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
 
@@ -644,14 +644,17 @@
               }
               
               var processorSet = false;
+              
+              var processSelectableRows = function( rows ){
+                rows.forEach(function(row){
+                  row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
+                });
+                return rows;
+              };
+              
               var updateOptions = function(){
                 if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop && processorSet !== true) {
-                  uiGridCtrl.grid.registerRowsProcessor(function(rows) {
-                    rows.forEach(function(row){
-                      row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
-                    });
-                    return rows;
-                  });
+                  uiGridCtrl.grid.registerRowsProcessor(processSelectableRows, 500);
                   processorSet = true;
                 }
               };
@@ -770,25 +773,48 @@
    *  @description Stacks on top of ui.grid.uiGridCell to provide selection feature
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
+    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService', '$timeout',
+      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService, $timeout) {
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
+          require: '?^uiGrid',
           scope: false,
-          link: function ($scope, $elm, $attrs) {
+          link: function ($scope, $elm, $attrs, uiGridCtrl) {
 
             var touchStartTime = 0;
             var touchTimeout = 300;
 
-            $elm.bind('keydown', function (evt) {
-              if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
-                $scope.$apply();
-              }
-            });
+            // Bind to keydown events in the render container
+            if (uiGridCtrl.grid.api.cellNav) {
+
+              uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
+                if (rowCol === null ||
+                  rowCol.row !== $scope.row ||
+                  rowCol.col !== $scope.col) {
+                  return;
+                }
+
+                if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                  $scope.$apply();
+                }
+
+              //  uiGridCellNavService.scrollToIfNecessary(uiGridCtrl.grid, rowCol.row, rowCol.col);
+              });
+            }
+
+            //$elm.bind('keydown', function (evt) {
+            //  if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+            //    uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+            //    $scope.$apply();
+            //  }
+            //});
 
             var selectCells = function(evt){
+              // if we get a click, then stop listening for touchend
+              $elm.off('touchend', touchEnd);
+              
               if (evt.shiftKey) {
                 uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
               }
@@ -799,10 +825,19 @@
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
               }
               $scope.$apply();
+              
+              // don't re-enable the touchend handler for a little while - some devices generate both, and it will
+              // take a little while to move your hand from the mouse to the screen if you have both modes of input
+              $timeout(function() {
+                $elm.on('touchend', touchEnd);
+              }, touchTimeout);
             };
 
             var touchStart = function(evt){
               touchStartTime = (new Date()).getTime();
+
+              // if we get a touch event, then stop listening for click
+              $elm.off('click', selectCells);
             };
 
             var touchEnd = function(evt) {
@@ -813,6 +848,12 @@
                 // short touch
                 selectCells(evt);
               }
+              
+              // don't re-enable the click handler for a little while - some devices generate both, and it will
+              // take a little while to move your hand from the screen to the mouse if you have both modes of input
+              $timeout(function() {
+                $elm.on('click', selectCells);
+              }, touchTimeout);
             };
 
             function registerRowSelectionEvents() {
