@@ -379,7 +379,9 @@
                 scrollFocus.rowVal = service.getRowVal( grid, rowCol.row );  
               }
             }
-          } else if ( grid.options.saveScroll ) {
+          }
+          
+          if ( grid.options.saveScroll || grid.options.saveFocus && !scrollFocus.colName && !scrollFocus.rowVal ) {
             scrollFocus.focus = false;
             if ( grid.renderContainers.body.prevRowScrollIndex ){
               scrollFocus.rowVal = service.getRowVal( grid, grid.renderContainers.body.visibleRowCache[ grid.renderContainers.body.prevRowScrollIndex ]);
@@ -550,7 +552,7 @@
             if (scrollFocusState.focus ){
               grid.api.cellNav.scrollToFocus( entity, colDef );
             } else {
-              grid.api.cellNav.scrollTo( entity, colDef );
+              grid.scrollTo( entity, colDef );
             }
           }
         },

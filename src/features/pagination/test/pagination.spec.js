@@ -1,4 +1,4 @@
-describe('ui.grid.pagination uiGridPaginationService', function () {
+xdescribe('ui.grid.pagination uiGridPaginationService', function () {
   'use strict';
 
   var gridApi;
