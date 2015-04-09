@@ -68,14 +68,12 @@ angular.module('ui.grid')
     grid.registerStyleComputation({
       priority: 5,
       func: function () {
+        self.updateColumnWidths();
         return self.columnStyles;
       }
     });
   }
 
-  // GridRenderContainer.prototype.addRenderable = function addRenderable(renderable) {
-  //   this.renderables.push(renderable);
-  // };
 
   GridRenderContainer.prototype.reset = function reset() {
     // this.rowCache.length = 0;
@@ -89,6 +87,11 @@ angular.module('ui.grid')
   };
 
   // TODO(c0bra): calculate size?? Should this be in a stackable directive?
+
+
+  GridRenderContainer.prototype.containsColumn = function (col) {
+     return this.visibleColumnCache.indexOf(col) !== -1;
+  };
 
   GridRenderContainer.prototype.minRowsToRender = function minRowsToRender() {
     var self = this;
@@ -268,10 +271,6 @@ angular.module('ui.grid')
 
     var ret = self.canvasWidth;
 
-    //if (typeof(self.verticalScrollbarWidth) !== 'undefined' && self.verticalScrollbarWidth !== undefined && self.verticalScrollbarWidth > 0) {
-    //  ret = ret - self.verticalScrollbarWidth;
-    //}
-
     return ret;
   };
 
@@ -303,6 +302,51 @@ angular.module('ui.grid')
     }
 
     this.columnOffset = hiddenColumnsWidth;
+  };
+
+  GridRenderContainer.prototype.scrollVertical = function (newScrollTop) {
+    var vertScrollPercentage = -1;
+
+    if (newScrollTop !== this.prevScrollTop) {
+      var yDiff = newScrollTop - this.prevScrollTop;
+
+      if (yDiff > 0 ) { this.grid.scrollDirection = uiGridConstants.scrollDirection.DOWN; }
+      if (yDiff < 0 ) { this.grid.scrollDirection = uiGridConstants.scrollDirection.UP; }
+
+      var vertScrollLength = this.getVerticalScrollLength();
+
+      vertScrollPercentage = newScrollTop / vertScrollLength;
+
+      if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
+      if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
+
+      this.adjustScrollVertical(newScrollTop, vertScrollPercentage);
+      return vertScrollPercentage;
+    }
+  };
+
+  GridRenderContainer.prototype.scrollHorizontal = function(newScrollLeft){
+    var horizScrollPercentage = -1;
+
+    // Handle RTL here
+
+    if (newScrollLeft !== this.prevScrollLeft) {
+      var xDiff = newScrollLeft - this.prevScrollLeft;
+
+      if (xDiff > 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.RIGHT; }
+      if (xDiff < 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.LEFT; }
+
+      var horizScrollLength = (this.canvasWidth - this.getViewportWidth());
+      if (horizScrollLength !== 0) {
+        horizScrollPercentage = newScrollLeft / horizScrollLength;
+      }
+      else {
+        horizScrollPercentage = 0;
+      }
+
+      this.adjustScrollHorizontal(newScrollLeft, horizScrollPercentage);
+      return horizScrollPercentage;
+    }
   };
 
   GridRenderContainer.prototype.adjustScrollVertical = function adjustScrollVertical(scrollTop, scrollPercentage, force) {
@@ -481,210 +525,168 @@ angular.module('ui.grid')
     return null;
   };
 
+    /**
+     *  @ngdoc boolean
+     *  @name updateColumnWidths
+     *  @propertyOf  ui.grid.class:GridRenderContainer
+     *  @description Determine the appropriate column width of each column across all render containers.
+     *  
+     *  Column width is easy when each column has a specified width.  When columns are variable width (i.e. 
+     *  have an * or % of the viewport) then we try to calculate so that things fit in.  The problem is that
+     *  we have multiple render containers, and we don't want one render container to just take the whole viewport
+     *  when it doesn't need to - we want things to balance out across the render containers.
+     * 
+     *  To do this, we use this method to calculate all the renderContainers, recognising that in a given render
+     *  cycle it'll get called once per render container, so it needs to return the same values each time.
+     * 
+     *  The constraints on this method are therefore:
+     *  - must return the same value when called multiple times, to do this it needs to rely on properties of the
+     *    columns, but not properties that change when this is called (so it shouldn't rely on drawnWidth)
+     * 
+     *  The general logic of this method is:
+     *  - calculate our total available width
+     *  - look at all the columns across all render containers, and work out which have widths and which have
+     *    constraints such as % or * or something else
+     *  - for those with *, count the total number of * we see and add it onto a running total, add this column to an * array
+     *  - for those with a %, allocate the % as a percentage of the viewport, having consideration of min and max
+     *  - for those with manual width (in pixels) we set the drawnWidth to the specified width
+     *  - we end up with an asterisks array still to process
+     *  - we look at our remaining width.  If it's greater than zero, we divide it up among the asterisk columns, then process
+     *    them for min and max width constraints
+     *  - if it's zero or less, we set the asterisk columns to their minimum widths
+     *  - we use parseInt quite a bit, as we try to make all our column widths integers
+     */
   GridRenderContainer.prototype.updateColumnWidths = function () {
     var self = this;
 
     var asterisksArray = [],
-        percentArray = [],
-        manualArray = [],
-        asteriskNum = 0,
-        totalWidth = 0;
+        asteriskNum = 0, 
+        usedWidthSum = 0,
+        ret = '';
 
     // Get the width of the viewport
-    var availableWidth = self.getViewportWidth() - self.grid.scrollbarWidth;
+    var availableWidth = self.grid.getViewportWidth() - self.grid.scrollbarWidth;
 
-    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-    //  availableWidth = availableWidth + self.grid.verticalScrollbarWidth;
-    //}
+    // get all the columns across all render containers, we have to calculate them all or one render container
+    // could consume the whole viewport
+    var columnCache = [];
+    angular.forEach(self.grid.renderContainers, function( container, name){
+      columnCache = columnCache.concat(container.visibleColumnCache);
+    });
 
-    // The total number of columns
-    // var equalWidthColumnCount = columnCount = uiGridCtrl.grid.options.columnDefs.length;
-    // var equalWidth = availableWidth / equalWidthColumnCount;
-
-    // The last column we processed
-    var lastColumn;
-
-    var manualWidthSum = 0;
-
-    var canvasWidth = 0;
-
-    var ret = '';
-
-
-    // uiGridCtrl.grid.columns.forEach(function(column, i) {
-
-    var columnCache = self.visibleColumnCache;
-
+    // look at each column, process any manual values or %, put the * into an array to look at later
     columnCache.forEach(function(column, i) {
-      // ret = ret + ' .grid' + uiGridCtrl.grid.id + ' .col' + i + ' { width: ' + equalWidth + 'px; left: ' + left + 'px; }';
-      //var colWidth = (typeof(c.width) !== 'undefined' && c.width !== undefined) ? c.width : equalWidth;
-
+      var width = 0;
       // Skip hidden columns
       if (!column.visible) { return; }
 
-      var colWidth,
-          isPercent = false;
-
-      if (!angular.isNumber(column.width)) {
-        isPercent = isNaN(column.width) && gridUtil.endsWith(column.width, "%");
-      }
-
-      if (angular.isString(column.width) && column.width.indexOf('*') !== -1) { //  we need to save it until the end to do the calulations on the remaining width.
-        asteriskNum = parseInt(asteriskNum + column.width.length, 10);
+      if (angular.isNumber(column.width)) {
+        // pixel width, set to this value
+        width = parseInt(column.width, 10);
+        usedWidthSum = usedWidthSum + width;
+        column.drawnWidth = width;
         
+      } else if (gridUtil.endsWith(column.width, "%")) {
+        // percentage width, set to percentage of the viewport
+        width = parseInt(parseInt(column.width.replace(/%/g, ''), 10) / 100 * availableWidth);
+        
+        if ( width > column.maxWidth ){
+          width = column.maxWidth;
+        }
+        
+        if ( width < column.minWidth ){
+          width = column.minWidth;
+        }
+        
+        usedWidthSum = usedWidthSum + width;
+        column.drawnWidth = width;
+      } else if (angular.isString(column.width) && column.width.indexOf('*') !== -1) { 
+        // is an asterisk column, the gridColumn already checked the string consists only of '****'
+        asteriskNum = asteriskNum + column.width.length;
         asterisksArray.push(column);
-      }
-      else if (isPercent) { // If the width is a percentage, save it until the very last.
-        percentArray.push(column);
-      }
-      else if (angular.isNumber(column.width)) {
-        manualWidthSum = parseInt(manualWidthSum + column.width, 10);
-        
-        canvasWidth = parseInt(canvasWidth, 10) + parseInt(column.width, 10);
-
-        column.drawnWidth = column.width;
       }
     });
 
-    // Get the remaining width (available width subtracted by the manual widths sum)
-    var remainingWidth = availableWidth - manualWidthSum;
+    // Get the remaining width (available width subtracted by the used widths sum)
+    var remainingWidth = availableWidth - usedWidthSum;
 
     var i, column, colWidth;
 
-    if (percentArray.length > 0) {
-      // Pre-process to make sure they're all within any min/max values
-      for (i = 0; i < percentArray.length; i++) {
-        column = percentArray[i];
-
-        var percent = parseInt(column.width.replace(/%/g, ''), 10) / 100;
-
-        colWidth = parseInt(percent * remainingWidth, 10);
-
-        if (column.colDef.minWidth && colWidth < column.colDef.minWidth) {
-          colWidth = column.colDef.minWidth;
-
-          remainingWidth = remainingWidth - colWidth;
-
-          canvasWidth += colWidth;
-          column.drawnWidth = colWidth;
-
-          // Remove this element from the percent array so it's not processed below
-          percentArray.splice(i, 1);
-        }
-        else if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
-          colWidth = column.colDef.maxWidth;
-
-          remainingWidth = remainingWidth - colWidth;
-
-          canvasWidth += colWidth;
-          column.drawnWidth = colWidth;
-
-          // Remove this element from the percent array so it's not processed below
-          percentArray.splice(i, 1);
-        }
-      }
-
-      percentArray.forEach(function(column) {
-        var percent = parseInt(column.width.replace(/%/g, ''), 10) / 100;
-        var colWidth = parseInt(percent * remainingWidth, 10);
-
-        canvasWidth += colWidth;
-
-        column.drawnWidth = colWidth;
-      });
-    }
-
     if (asterisksArray.length > 0) {
-      var asteriskVal = parseInt(remainingWidth / asteriskNum, 10);
+      // the width that each asterisk value would be assigned (this can be negative)
+      var asteriskVal = remainingWidth / asteriskNum;
 
-       // Pre-process to make sure they're all within any min/max values
-      for (i = 0; i < asterisksArray.length; i++) {
-        column = asterisksArray[i];
+      asterisksArray.forEach(function( column ){
+        var width = parseInt(column.width.length * asteriskVal, 10);
 
-        colWidth = parseInt(asteriskVal * column.width.length, 10);
-
-        if (column.colDef.minWidth && colWidth < column.colDef.minWidth) {
-          colWidth = column.colDef.minWidth;
-
-          remainingWidth = remainingWidth - colWidth;
-          asteriskNum--;
-
-          canvasWidth += colWidth;
-          column.drawnWidth = colWidth;
-
-          lastColumn = column;
-
-          // Remove this element from the percent array so it's not processed below
-          asterisksArray.splice(i, 1);
+        if ( width > column.maxWidth ){
+          width = column.maxWidth;
         }
-        else if (column.colDef.maxWidth && colWidth > column.colDef.maxWidth) {
-          colWidth = column.colDef.maxWidth;
-
-          remainingWidth = remainingWidth - colWidth;
-          asteriskNum--;
-
-          canvasWidth += colWidth;
-          column.drawnWidth = colWidth;
-
-          // Remove this element from the percent array so it's not processed below
-          asterisksArray.splice(i, 1);
+        
+        if ( width < column.minWidth ){
+          width = column.minWidth;
         }
-      }
-
-      // Redo the asterisk value, as we may have removed columns due to width constraints
-      asteriskVal = parseInt(remainingWidth / asteriskNum, 10);
-
-      asterisksArray.forEach(function(column) {
-        var colWidth = parseInt(asteriskVal * column.width.length, 10);
-
-        canvasWidth += colWidth;
-
-        column.drawnWidth = colWidth;
+        
+        usedWidthSum = usedWidthSum + width;
+        column.drawnWidth = width;
       });
     }
 
-    // If the grid width didn't divide evenly into the column widths and we have pixels left over, dole them out to the columns one by one to make everything fit
-    var leftoverWidth = availableWidth - parseInt(canvasWidth, 10);
-
-    if (leftoverWidth > 0 && canvasWidth > 0 && canvasWidth < availableWidth) {
-      var variableColumn = false;
-      // uiGridCtrl.grid.columns.forEach(function(col) {
-      columnCache.forEach(function(col) {
-        if (col.width && !angular.isNumber(col.width)) {
-          variableColumn = true;
-        }
-      });
-
-      if (variableColumn) {
-        var remFn = function (column) {
-          if (leftoverWidth > 0) {
-            column.drawnWidth = column.drawnWidth + 1;
-            canvasWidth = canvasWidth + 1;
-            leftoverWidth--;
-          }
-        };
-        while (leftoverWidth > 0) {
-          columnCache.forEach(remFn);
-        }
+    // If the grid width didn't divide evenly into the column widths and we have pixels left over, or our  
+    // calculated widths would have the grid narrower than the available space, 
+    // dole the remainder out one by one to make everything fit
+    var processColumnUpwards = function(column){
+      if ( column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
+        column.drawnWidth++;
+        usedWidthSum++;
+        leftoverWidth--;
+        columnsToChange = true;
       }
+    };
+    
+    var leftoverWidth = availableWidth - usedWidthSum;
+    var columnsToChange = true; 
+
+    while (leftoverWidth > 0 && columnsToChange) {
+      columnsToChange = false;
+      asterisksArray.forEach(processColumnUpwards);
     }
 
-    if (canvasWidth < availableWidth) {
-      canvasWidth = availableWidth;
+    // We can end up with too much width even though some columns aren't at their max width, in this situation
+    // we can trim the columns a little
+    var processColumnDownwards = function(column){
+      if ( column.drawnWidth > column.minWidth && excessWidth > 0) {
+        column.drawnWidth--;
+        usedWidthSum--;
+        excessWidth--;
+        columnsToChange = true;
+      }
+    };
+    
+    var excessWidth =  usedWidthSum - availableWidth;
+    columnsToChange = true; 
+
+    while (excessWidth > 0 && columnsToChange) {
+      columnsToChange = false;
+      asterisksArray.forEach(processColumnDownwards);
     }
+
+
+    // all that was across all the renderContainers, now we need to work out what that calculation decided for
+    // our renderContainer
+    var canvasWidth = 0;
+    self.visibleColumnCache.forEach(function(column){
+      if ( column.visible ){
+        canvasWidth = canvasWidth + column.drawnWidth;
+      }
+    });
 
     // Build the CSS
     columnCache.forEach(function (column) {
       ret = ret + column.getColClassDefinition();
     });
 
-    // Add the vertical scrollbar width back in to the canvas width, it's taken out in getCanvasWidth
-    //if (self.grid.verticalScrollbarWidth) {
-    //  canvasWidth = canvasWidth + self.grid.verticalScrollbarWidth;
-    //}
-    // canvasWidth = canvasWidth + 1;
-
-    self.canvasWidth = parseInt(canvasWidth, 10);
+    self.canvasWidth = canvasWidth;
 
     // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
     // return ret;
@@ -693,7 +695,7 @@ angular.module('ui.grid')
     this.columnStyles = ret;
   };
 
-  GridRenderContainer.prototype.getViewPortStyle = function () {
+  GridRenderContainer.prototype.getViewportStyle = function () {
     var self = this;
     var styles = {};
 

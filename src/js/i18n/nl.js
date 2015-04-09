@@ -58,6 +58,16 @@
           invalidCsv: 'Het bestand kan niet verwerkt worden. Is het een valide csv bestand?',
           invalidJson: 'Het bestand kan niet verwerkt worden. Is het valide json?',
           jsonNotArray: 'Het json bestand moet een array bevatten. De actie wordt geannuleerd.'
+        },
+        grouping: {
+            group: 'Groepeer',
+            ungroup: 'Groepering opheffen',
+            aggregate_count: 'Agg: Aantal',
+            aggregate_sum: 'Agg: Som',
+            aggregate_max: 'Agg: Max',
+            aggregate_min: 'Agg: Min',
+            aggregate_avg: 'Agg: Gem',
+            aggregate_remove: 'Agg: Verwijder'
         }
       });
       return $delegate;

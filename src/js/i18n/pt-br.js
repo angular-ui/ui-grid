@@ -1,3 +1,6 @@
+/**
+ * Altered by raul on 24/03/2015 (leaving theses lines makes it easier to compare with en.js)
+ */
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
@@ -44,6 +47,7 @@
         },
         gridMenu: {
           columns: 'Colunas:',
+          importerTitle: 'Importar arquivo',
           exporterAllAsCsv: 'Exportar todos os dados como csv',
           exporterVisibleAsCsv: 'Exportar dados visíveis como csv',
           exporterSelectedAsCsv: 'Exportar dados selecionados como csv',
@@ -57,6 +61,20 @@
           invalidCsv: 'Arquivo não pode ser processado. É um CSV válido?',
           invalidJson: 'Arquivo não pode ser processado. É um Json válido?',
           jsonNotArray: 'Arquivo json importado tem que conter um array. Abortando.'
+        },
+        pagination: {
+          sizes: 'itens por página',
+          totalItems: 'itens'
+        },
+        grouping: {
+          group: 'Agrupar',
+          ungroup: 'Desagrupar',
+          aggregate_count: 'Agr: Contar',
+          aggregate_sum: 'Agr: Soma',
+          aggregate_max: 'Agr: Max',
+          aggregate_min: 'Agr: Min',
+          aggregate_avg: 'Agr: Med',
+          aggregate_remove: 'Agr: Remover'
         }
       });
       return $delegate;
