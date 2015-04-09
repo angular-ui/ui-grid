@@ -409,15 +409,15 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     // Re-usable variables
     var col, direction;
 
-    // IE9-11 HACK.... the 'rows' variable would be empty where we call rowSorter.getSortFn(...) below. We have to use a separate reference
-    // var d = data.slice(0);
-    var r = rows.slice(0);
-    
     // put a custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
     var setIndex = function( row, idx ){
       row.entity.$$uiGridIndex = idx;
     };
     rows.forEach(setIndex);
+
+    // IE9-11 HACK.... the 'rows' variable would be empty where we call rowSorter.getSortFn(...) below. We have to use a separate reference
+    // var d = data.slice(0);
+    var r = rows.slice(0);
 
     // Now actually sort the data
     var rowSortFn = function (rowA, rowB) {

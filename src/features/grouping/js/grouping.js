@@ -1161,7 +1161,7 @@
           service.writeOutAggregations( grid, groupingProcessingState, 0);
 
           
-          return renderableRows;
+          return renderableRows.filter(function (row) { return row.visible; });
         },
         
         
@@ -1403,17 +1403,11 @@
             return;
           }
           
-          var visible = true;
           var groupLevel = typeof(row.groupLevel) !== 'undefined' ? row.groupLevel : groupingProcessingState.length;
           for (var i = 0; i < groupLevel; i++){
             if ( groupingProcessingState[i].currentGroupHeader.expandedState.state === uiGridGroupingConstants.COLLAPSED ){
-              visible = false;
+             row.visible = false;
             }
-          }
-          
-          // we're running in a rowProcessor, so default is always visible, we don't need to set it unless we want invisible
-          if ( !visible ){
-            row.setThisRowInvisible( 'grouping', true );
           }
         },
         

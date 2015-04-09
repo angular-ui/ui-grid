@@ -79,8 +79,14 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       grid.columns[0].grouping = { groupPriority: 1 };
       grid.columns[1].grouping = { groupPriority: 2 };
       
-      var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows );
-
+      var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
+      expect( groupedRows.length ).toEqual( 3, 'only the level 1 rows are visible' );
+      
+      grid.api.grouping.expandAllRows();
+      grid.rows.forEach(function( row ){
+        row.visible = true;
+      });
+      groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
       expect( groupedRows.length ).toEqual( 18, 'we\'ve added 3 col0 headers, and 5 col2 headers' );
     });
   });
@@ -822,7 +828,6 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       uiGridGroupingService.setVisibility( grid, grid.rows[1], processingStates );
       expect( grid.rows[1].visible ).toEqual(false);
-      expect( grid.rows[1].invisibleReason.grouping).toEqual(true);
     });
 
     it( 'visible', function() {
