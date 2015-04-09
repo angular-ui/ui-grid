@@ -153,8 +153,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -165,8 +164,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -179,7 +177,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(false);
+      expect(ret.length).toEqual(0);
     });
   });
 
@@ -189,8 +187,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -200,8 +197,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -211,8 +207,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -222,8 +217,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(false);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -234,8 +228,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(true);
-      expect(ret[1].visible).toBe(true);
+      expect(ret.length).toEqual(2);
     });
   });
   
@@ -276,8 +269,7 @@ describe('rowSearcher', function() {
       expect(custom.filterFn.calls[1].args).toEqual(['>27', 45, rows[1], columns[2]]);
     });
     it('should honor the result of the function call when filtering', function() {
-      expect(ret[0].visible).toBe(false);
-      expect(ret[1].visible).toBe(true);
+      expect(ret.length).toEqual(1);
     });
   });
 

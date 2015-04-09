@@ -335,8 +335,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
-        if ( !rowSearcher.searchColumn(grid, row, col, filters) ) {
-          row.setThisRowInvisible('filtered', true);
+        if ( row.visible && !rowSearcher.searchColumn(grid, row, col, filters) ) {
+          row.visible = false;
         }
       };
       
@@ -356,6 +356,10 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (grid.api.core.raise.rowsVisibleChanged) {
         grid.api.core.raise.rowsVisibleChanged();
       }
+      
+      // drop any invisible rows
+      rows = rows.filter(function(row){ return row.visible; });
+    
     }
 
     return rows;
