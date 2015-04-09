@@ -61,7 +61,7 @@
             });
 
             return columns;
-          });
+          }, 50);
 
           grid.registerColumnsProcessor(function(renderableColumns) {
               renderableColumns.forEach(function (column) {
@@ -71,7 +71,7 @@
               });
 
               return renderableColumns;
-          });
+          }, 50);
 
 
           grid.registerRowsProcessor(grid.searchRows, 100);

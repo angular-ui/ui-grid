@@ -229,9 +229,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(false);
-      expect(ret[1].visible).toBe(true);
-      expect(ret[2].visible).toBe(true);
+      expect(ret.length).toBe(2);
     });
 
     it('should filter by 0', function() {
@@ -239,9 +237,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(false);
-      expect(ret[1].visible).toBe(false);
-      expect(ret[2].visible).toBe(true);
+      expect(ret.length).toBe(1);
     });
   });
 
@@ -252,7 +248,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret.length).toEqual(2);
+      expect(ret.length).toEqual(3);
     });
   });
   

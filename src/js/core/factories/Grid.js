@@ -317,6 +317,26 @@ angular.module('ui.grid')
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
 
+    /**
+     * @ngdoc function
+     * @name registerColumnsProcessor
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description
+     * Register a "columns processor" function. When the columns are updated,
+     * the grid calls each registered "columns processor", which has a chance
+     * to alter the set of columns as long as the count is not
+     * modified.
+     *
+     * @param {function(renderedColumnsToProcess, rows )} processorFunction columns processor function, which
+     * is run in the context of the grid (i.e. this for the function will be the grid), and must
+     * return the updated columns list, which is passed to the next processor in the chain
+     * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
+     * for other people to inject columns processors at intermediate priorities.  Lower priority columnsProcessors run earlier.
+     *
+     * At present allRowsVisible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
+     */
+    self.api.registerMethod( 'core', 'registerColumnsProcessor', this.registerColumnsProcessor  );
+
 
 
     /**
@@ -1316,18 +1336,25 @@ angular.module('ui.grid')
    * is run in the context of the grid (i.e. this for the function will be the grid), and
    * which must return an updated renderedColumnsToProcess which can be passed to the next processor 
    * in the chain
+   * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
+   * for other people to inject columns processors at intermediate priorities.  Lower priority columnsProcessors run earlier.
+   *
+   * At present all rows visible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
    * @description
 
      Register a "columns processor" function. When the columns are updated,
      the grid calls each registered "columns processor", which has a chance
      to alter the set of columns, as long as the count is not modified.
    */
-  Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor) {
+  Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor, priority) {
     if (!angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
     }
 
-    this.columnsProcessors.push(processor);
+    this.columnsProcessors.push({processor: processor, priority: priority});
+    this.columnsProcessors.sort(function sortByPriority( a, b ){
+      return a.priority - b.priority;
+    });
   };
 
   Grid.prototype.removeColumnsProcessor = function removeColumnsProcessor(processor) {
@@ -1363,7 +1390,7 @@ angular.module('ui.grid')
     //   the result.
     function startProcessor(i, renderedColumnsToProcess) {
       // Get the processor at 'i'
-      var processor = self.columnsProcessors[i];
+      var processor = self.columnsProcessors[i].processor;
 
       // Call the processor, passing in the rows to process and the current columns
       //   (note: it's wrapped in $q.when() in case the processor does not return a promise)
