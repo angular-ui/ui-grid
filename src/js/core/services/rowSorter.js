@@ -43,6 +43,8 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     switch (itemType) {
       case "number":
         return rowSorter.sortNumber;
+      case "numberStr":
+        return rowSorter.sortNumberStr;
       case "boolean":
         return rowSorter.sortBool;
       case "string":
