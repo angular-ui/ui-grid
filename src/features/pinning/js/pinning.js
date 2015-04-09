@@ -16,7 +16,15 @@
 
   var module = angular.module('ui.grid.pinning', ['ui.grid']);
 
-  module.service('uiGridPinningService', ['gridUtil', 'GridRenderContainer', 'i18nService', function (gridUtil, GridRenderContainer, i18nService) {
+  module.constant('uiGridPinningConstants', {
+    container: {
+      LEFT: 'left',
+      RIGHT: 'right',
+      NONE: ''
+    }
+  });
+
+  module.service('uiGridPinningService', ['gridUtil', 'GridRenderContainer', 'i18nService', 'uiGridPinningConstants', function (gridUtil, GridRenderContainer, i18nService, uiGridPinningConstants) {
     var service = {
 
       initializeGrid: function (grid) {
@@ -24,6 +32,54 @@
 
         // Register a column builder to add new menu items for pinning left and right
         grid.registerColumnBuilder(service.pinningColumnBuilder);
+
+        /**
+         *  @ngdoc object
+         *  @name ui.grid.pinning.api:PublicApi
+         *
+         *  @description Public Api for pinning feature
+         */
+        var publicApi = {
+          events: {
+            pinning: {
+              /**
+               * @ngdoc event
+               * @name columnPin
+               * @eventOf ui.grid.pinning.api:PublicApi
+               * @description raised when column pin state has changed
+               * <pre>
+               *   gridApi.pinning.on.columnPinned(scope, function(colDef){})
+               * </pre>
+               * @param {object} colDef the column that was changed
+               * @param {string} container the render container the column is in ('left', 'right', '')
+               */
+              columnPinned: function(colDef, container) {
+              }
+            }
+          },
+          methods: {
+            pinning: {
+              /**
+               * @ngdoc function
+               * @name pinColumn
+               * @methodOf ui.grid.pinning.api:PublicApi
+               * @description pin column left, right, or none
+               * <pre>
+               *   gridApi.pinning.pinColumn(col, uiGridPinningConstants.container.LEFT)
+               * </pre>
+               * @param {gridColumn} col the column being pinned
+               * @param {string} container one of the recognised types
+               * from uiGridPinningConstants
+               */
+              pinColumn: function(col, container) {
+                service.pinColumn(grid, col, container);
+              }
+            }
+          }
+        };
+
+        grid.api.registerEventsFromObject(publicApi.events);
+        grid.api.registerMethodsFromObject(publicApi.methods);
       },
 
       defaultGridOptions: function (gridOptions) {
@@ -124,11 +180,7 @@
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'left';
           },
           action: function () {
-            this.context.col.renderContainer = 'left';
-            this.context.col.width = this.context.col.drawnWidth;
-            this.context.col.grid.createLeftContainer();
-
-            col.grid.refresh();
+            service.pinColumn(this.context.col.grid, this.context.col, uiGridPinningConstants.container.LEFT);
           }
         };
 
@@ -140,11 +192,7 @@
             return typeof(this.context.col.renderContainer) === 'undefined' || !this.context.col.renderContainer || this.context.col.renderContainer !== 'right';
           },
           action: function () {
-            this.context.col.renderContainer = 'right';
-            this.context.col.width = this.context.col.drawnWidth;
-            this.context.col.grid.createRightContainer();
-
-            col.grid.refresh();
+            service.pinColumn(this.context.col.grid, this.context.col, uiGridPinningConstants.container.RIGHT);
           }
         };
 
@@ -156,9 +204,7 @@
             return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
           },
           action: function () {
-            this.context.col.renderContainer = null;
-
-            col.grid.refresh();
+            service.pinColumn(this.context.col.grid, this.context.col, uiGridPinningConstants.container.UNPIN);
           }
         };
 
@@ -171,6 +217,32 @@
         if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.pinning.unpin')) {
           col.menuItems.push(removePinAction);
         }
+      },
+
+      pinColumn: function(grid, col, container) {
+        if (container === uiGridPinningConstants.container.NONE) {
+          col.renderContainer = null;
+        }
+        else {
+          col.renderContainer = container;
+          col.width = col.drawnWidth;
+          if (container === uiGridPinningConstants.container.LEFT) {
+            grid.createLeftContainer();
+          }
+          else if (container === uiGridPinningConstants.container.RIGHT) {
+            grid.createRightContainer();
+          }
+        }
+
+        // Need to call refresh twice; once to move our column over to the new render container and then
+        //   a second time to update the grid viewport dimensions with our adjustments
+        grid.refresh()
+          .then(function () {
+            grid.refresh()
+              .then(function() {
+                grid.api.pinning.raise.columnPinned( col.colDef, container );
+              });
+          });
       }
     };
 
