@@ -52,10 +52,6 @@
    * row cache without calling the processors, and once we've built the logic into the rowProcessors we may as
    * well use it all the time.
    *  
-   * Note that we don't really manipulate row visibility directly - we set the reasonInvisible.grouping
-   * flag, and then ask the row to calculate it's own visibility.  This means we should work fine with 
-   * filtering - filtered rows wouldn't get included in our grouping logic.
-   * 
    * <br/>
    * <br/>
    *
@@ -248,11 +244,23 @@
                  * @name collapseRow
                  * @methodOf  ui.grid.grouping.api:PublicApi
                  * @description collapse all children of the specified row.  When
-                 * you expand the row again, all grandchildren will be collapsed
-                 * @param {gridRow} row the row you wish to expand
+                 * you expand the row again, all grandchildren will retain their state
+                 * @param {gridRow} row the row you wish to collapse
                  */
                 collapseRow: function ( row ) {
                   service.collapseRow(grid, row);
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name collapseRowChildren
+                 * @methodOf  ui.grid.grouping.api:PublicApi
+                 * @description collapse all children of the specified row.  When
+                 * you expand the row again, all grandchildren will be collapsed
+                 * @param {gridRow} row the row you wish to collapse
+                 */
+                collapseRowChildren: function ( row ) {
+                  service.collapseRowChildren(grid, row);
                 },
 
                 /**
@@ -405,7 +413,7 @@
 
           /**
            *  @ngdoc object
-           *  @name groupingRowHeaderWidth
+           *  @name groupingRowHeaderBaseWidth
            *  @propertyOf  ui.grid.grouping.api:GridOptions
            *  @description Base width of the grouping header, provides for a single level of grouping.  This
            *  is incremented by `groupingIndent` for each extra level
@@ -1030,7 +1038,7 @@
             return;
           }
           
-          service.setAllNodes(row.expandedState, uiGridGroupingConstants.COLLAPSED);
+          service.setAllNodes(row.expandedState, uiGridGroupingConstants.EXPANDED);
           grid.queueGridRefresh();
         },
         
@@ -1513,7 +1521,7 @@
                 var groupingRowHeaderDef = {
                   name: uiGridGroupingConstants.groupingRowHeaderColName,
                   displayName: '',
-                  width:  uiGridCtrl.grid.options.groupingRowHeaderWidth,
+                  width:  uiGridCtrl.grid.options.groupingRowHeaderBaseWidth,
                   minWidth: 10,
                   cellTemplate: 'ui-grid/groupingRowHeader',
                   headerCellTemplate: 'ui-grid/groupingHeaderCell',
