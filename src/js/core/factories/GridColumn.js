@@ -627,14 +627,14 @@ angular.module('ui.grid')
       defaultFilters.push({});
     }
 
-    /** 
+/**
      * @ngdoc property
      * @name filter
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description Specify a single filter field on this column.
-     * 
+     *
      * A filter consists of a condition, a term, and a placeholder:
-     * 
+     *
      * - condition defines how rows are chosen as matching the filter term. This can be set to
      * one of the constants in uiGridConstants.filter, or you can supply a custom filter function
      * that gets passed the following arguments: [searchTerm, cellValue, row, column].
@@ -649,8 +649,10 @@ angular.module('ui.grid')
      * then a select box will be shown with options selectOptions
      * - selectOptions: options in the format `[ { value: 1, label: 'male' }]`.  No i18n filter is provided, you need
      * to perform the i18n on the values before you provide them
+     * - disableCancelFilterButton: defaults to false. If set to true then the 'x' button that cancels/clears the filter
+     * will not be shown.
      * @example
-     * <pre>$scope.gridOptions.columnDefs = [ 
+     * <pre>$scope.gridOptions.columnDefs = [
      *   {
      *     field: 'field1',
      *     filter: {
@@ -659,12 +661,16 @@ angular.module('ui.grid')
      *       placeholder: 'starts with...',
      *       flags: { caseSensitive: false },
      *       type: uiGridConstants.filter.SELECT,
-     *       selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ]
+     *       selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ],
+     *       disableCancelFilterButton: true
      *     }
      *   }
      * ]; </pre>
      *
      */
+
+    /*
+
   
     /*
 
