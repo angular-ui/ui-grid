@@ -17,7 +17,7 @@
       <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
 
       <div class="ui-grid-filter-button" ng-click="colFilter.term = null" ng-if="!colFilter.disableCancelFilterButton">
-        <i class="ui-grid-icon-cancel" ng-show="!!colFilter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
+        <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term != null">&nbsp;</i>
       </div>
     </div>
     
@@ -27,7 +27,7 @@
       </select>
 
       <div class="ui-grid-filter-button-select" ng-click="colFilter.term = null" ng-if="!colFilter.disableCancelFilterButton">
-        <i class="ui-grid-icon-cancel" ng-show="!!colFilter.term">&nbsp;</i> <!-- use !! because angular interprets 'f' as false -->
+        <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term != null">&nbsp;</i>
       </div>
     </div>
 

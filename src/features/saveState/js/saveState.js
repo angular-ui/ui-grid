@@ -20,7 +20,7 @@
    * <div doc-module-components="ui.grid.save-state"></div>
    */
 
-  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping']);
+  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping', 'ui.grid.pinning']);
 
   /**
    *  @ngdoc object
@@ -243,7 +243,16 @@
            * 
            * <br/>Defaults to false
            */
-          gridOptions.saveGroupingExpandedStates = gridOptions.saveGroupingExpandedStates === true; 
+          gridOptions.saveGroupingExpandedStates = gridOptions.saveGroupingExpandedStates === true;
+          /**
+           * @ngdoc object
+           * @name savePinning
+           * @propertyOf ui.grid.saveState.api:GridOptions
+           * @description Save pinning state for columns.
+           *
+           * <br/>Defaults to true
+           */
+          gridOptions.savePinning = gridOptions.savePinning !== false;
         },
 
 
@@ -295,8 +304,10 @@
           if ( state.grouping ){
             service.restoreGrouping( grid, state.grouping );
           }
-          
-          grid.queueGridRefresh();
+
+          // refresh twice due to rendering issue.
+          //   specific case: save with column pinned left, hide that column, then restore
+          grid.refresh().then(function(){ grid.refresh(); });
         },
         
         
@@ -304,8 +315,8 @@
          * @ngdoc function
          * @name saveColumns
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
-         * @description Saves the column setup, including sort, filters, ordering
-         * and column widths.
+         * @description Saves the column setup, including sort, filters, ordering,
+         * pinning and column widths.
          * 
          * Works through the current columns, storing them in order.  Stores the
          * column name, then the visible flag, width, sort and filters for each column.
@@ -334,6 +345,10 @@
             
             if ( grid.options.saveFilter ){
               savedColumn.filters = angular.copy ( column.filters );
+            }
+
+            if ( !!grid.api.pinning && grid.options.savePinning ){
+              savedColumn.pinned = column.renderContainer ? column.renderContainer : '';
             }
             
             columns.push( savedColumn );
@@ -379,7 +394,9 @@
                 scrollFocus.rowVal = service.getRowVal( grid, rowCol.row );  
               }
             }
-          } else if ( grid.options.saveScroll ) {
+          }
+          
+          if ( grid.options.saveScroll || grid.options.saveFocus && !scrollFocus.colName && !scrollFocus.rowVal ) {
             scrollFocus.focus = false;
             if ( grid.renderContainers.body.prevRowScrollIndex ){
               scrollFocus.rowVal = service.getRowVal( grid, grid.renderContainers.body.visibleRowCache[ grid.renderContainers.body.prevRowScrollIndex ]);
@@ -464,8 +481,8 @@
          * @ngdoc function
          * @name restoreColumns
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
-         * @description Restores the columns, including order, visible, width
-         * sort and filters.
+         * @description Restores the columns, including order, visible, width,
+         * pinning, sort and filters.
          * 
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} columnsState the list of columns we had before, with their state
@@ -500,6 +517,10 @@
                    !angular.equals(grid.columns[currentIndex].filters, columnState.filters ) ){
                 grid.columns[currentIndex].filters = angular.copy( columnState.filters );
                 grid.api.core.raise.filterChanged();
+              }
+
+              if ( !!grid.api.pinning && grid.options.savePinning && grid.columns[currentIndex].renderContainer !== columnState.pinned ){
+                grid.api.pinning.pinColumn(grid.columns[currentIndex], columnState.pinned);
               }
               
               if ( grid.options.saveOrder && currentIndex !== index ){
@@ -550,7 +571,7 @@
             if (scrollFocusState.focus ){
               grid.api.cellNav.scrollToFocus( entity, colDef );
             } else {
-              grid.api.cellNav.scrollTo( entity, colDef );
+              grid.scrollTo( entity, colDef );
             }
           }
         },

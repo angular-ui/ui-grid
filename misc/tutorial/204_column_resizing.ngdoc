@@ -4,7 +4,17 @@
 
 The Resize Columns feature allows each column to be resized.
 
-To enable, you must include the 'ui.grid.resizeColumns' module and you must include the ui-grid-resize-columns directive on your grid element.
+To enable, you must include the 'ui.grid.resizeColumns' module and you must include the ui-grid-resize-columns directive 
+on your grid element.
+
+You can set individual columns to not be resizeable, if you do this it is recommended that those columns have a fixed
+pixel width - otherwise they may get automatically resized to fill the remaining space if other columns are reduced in size,
+and there will be no way to reduce their width again.
+
+When you resize a column any other columns with fixed widths, or that have already been resized, retain their width.  All other
+columns resize to take up the remaining space.  As long as there is at least one variable column left your columns won't reduce 
+below the full grid width - but once you've resized all the columns then you can end up with the total column width less than the 
+grid width.
 
 <pre>
 angular.module('yourApp', ['ui.grid', 'ui.grid.resizeColumns']);
@@ -45,7 +55,7 @@ $scope.gridOptions = {
       $scope.gridOptions = {
         enableSorting: true,
         columnDefs: [
-          { field: 'name', minWidth: 200, width: '50%', enableColumnResizing: false },
+          { field: 'name', minWidth: 200, width: 250, enableColumnResizing: false },
           { field: 'gender', width: '30%', maxWidth: 200, minWidth: 70 },
           { field: 'company', width: '20%' }
         ]

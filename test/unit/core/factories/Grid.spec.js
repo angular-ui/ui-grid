@@ -97,8 +97,8 @@ describe('Grid factory', function () {
       testObj.proc2 = jasmine.createSpy('proc2').andCallFake(proc2);
 
       // Register the two spies as rows processors
-      grid.registerRowsProcessor(testObj.proc1);
-      grid.registerRowsProcessor(testObj.proc2);
+      grid.registerRowsProcessor(testObj.proc1, 70);
+      grid.registerRowsProcessor(testObj.proc2, 80);
     });
 
     it('should call both processors', function() {
@@ -142,7 +142,7 @@ describe('Grid factory', function () {
 
         grid.registerRowsProcessor(function (blargh) {
           return "goobers!";
-        });
+        }, 70);
       });
 
       it('should throw an exception', function () {
@@ -170,7 +170,7 @@ describe('Grid factory', function () {
   describe('registering a non-function as a rows processor', function () {
     it('should error', function () {
       expect(function () {
-        grid.registerRowsProcessor('blah');
+        grid.registerRowsProcessor('blah', 70);
       }).toThrow();
     });
   });

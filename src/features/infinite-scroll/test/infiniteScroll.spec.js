@@ -24,7 +24,7 @@
       grid.options.columnDefs = [
         {field: 'col1'}
       ];
-      grid.options.infiniteScrollPercentage = 20;
+      grid.options.infiniteScrollRowsFromEnd = 20;
 
       uiGridInfiniteScrollService.initializeGrid(grid, $scope);
       spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreData');
@@ -33,12 +33,17 @@
       grid.options.data = [{col1:'a'},{col1:'b'}];
 
       grid.buildColumns();
-
+      
     }));
 
     describe('event handling', function () {
       beforeEach(function() {
         spyOn(uiGridInfiniteScrollService, 'loadData').andCallFake(function() {});
+        var arrayOf100 = [];
+        for ( var i = 0; i < 100; i++ ){
+          arrayOf100.push(i);
+        }
+        grid.renderContainers = { body: { visibleRowCache: arrayOf100}};
       });
       
       it('should not request more data if scroll up to 21%', function() {
@@ -108,5 +113,18 @@
       });
     });
 
+
+    describe( 'dataRemovedTop', function() {
+      it( 'adjusts scroll as expected', function() {
+        
+      });
+    });
+
+
+    describe( 'dataRemovedBottom', function() {
+      it( 'adjusts scroll as expected', function() {
+        
+      });
+    });
   });
 })();
