@@ -16,21 +16,6 @@ describe('rowSearcher', function() {
     rowSearcher = _rowSearcher_;
     uiGridConstants = _uiGridConstants_;
 
-    // $compile = _$compile_;
-
-    // $scope.gridOpts = {
-    //   data: data
-    // };
-
-    // recompile = function () {
-    //   grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
-    //   // document.body.appendChild(grid[0]);
-    //   $compile(grid)($scope);
-    //   $scope.$digest();
-    // };
-
-    // recompile();
-
     grid = new Grid({
         id: 1,
         enableFiltering: true
@@ -229,9 +214,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(false);
-      expect(ret[1].visible).toBe(true);
-      expect(ret[2].visible).toBe(true);
+      expect(ret.length).toEqual(2);
     });
 
     it('should filter by 0', function() {
@@ -239,9 +222,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret[0].visible).toBe(false);
-      expect(ret[1].visible).toBe(false);
-      expect(ret[2].visible).toBe(true);
+      expect(ret.length).toEqual(1);
     });
   });
 
@@ -252,7 +233,7 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret.length).toEqual(2);
+      expect(ret.length).toEqual(3);
     });
   });
   
