@@ -171,7 +171,7 @@
           
           grid.registerRowsProcessor(service.groupRows, 400);
           
-          grid.registerColumnsProcessor(service.groupingColumnProcessor);
+          grid.registerColumnsProcessor(service.groupingColumnProcessor, 400);
           
           /**
            *  @ngdoc object
