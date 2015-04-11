@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 304 Grid Menu
+@name Tutorial: 121 Grid Menu
 @description The grid menu can be enabled through setting the gridOption `enableGridMenu`.  This 
 adds a settings icon in the top right of the grid, which floats above the column header.  The
 menu by default gives access to show/hide columns, but can be customised to show additional

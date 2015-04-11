@@ -55,13 +55,12 @@ to allow people to start using it.  Notable outstandings are:
 Options to watch out for include:
 
 - `groupingIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
-  level gets deeper.  Larger values look nicer, but mean that you probably need to make your groupHeader
-  wider if you're allowing deep grouping
-- `groupingRowHeaderWidth`: the width of the grouping row header, important as above
+  level gets deeper.  Larger values look nicer, but take up more space
+- `groupingRowHeaderWidth`: the base width of the grouping row header
 - `groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
-  usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
-  visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
-  an average 
+   usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
+   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
+   an average 
 - `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders 
   
  
@@ -82,7 +81,7 @@ we can't easily see that it's an average.
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'ui.grid.pinning' ]);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping' ]);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants ) {
       $scope.gridOptions = {
@@ -132,7 +131,7 @@ we can't easily see that it's an average.
       <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
       <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="changeGrouping()">Change Grouping</button>
-      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-pinning class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping class="grid"></div>
     </div>
   </file>
   
