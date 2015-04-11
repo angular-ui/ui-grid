@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 310 Column Moving
+@name Tutorial: 217 Column Moving
 @description
 
 Feature ui.grid.moveColumns allows moving column to a different position. To enable, you must include the `ui.grid.moveColumns` module

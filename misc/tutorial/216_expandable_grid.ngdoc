@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 306 Expandable grid
+@name Tutorial: 216 Expandable grid
 @description
 
 Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
