@@ -58,6 +58,10 @@ and
   
 If you need to internationalize the labels you'll need to complete that before providing the selectOptions array.
 
+### Cancel icon
+By default the filter shows a cancel X beside the dropdown. You can set `disableCancelFilterButton: true` to suppress
+this button.
+
 @example
 <example module="app">
   <file name="app.js">

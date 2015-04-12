@@ -208,11 +208,17 @@
               }
       
               // Figure out whether this column is filterable or not
+              var oldFilterable = $scope.filterable;
               if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
                 $scope.filterable = true;
               }
               else {
                 $scope.filterable = false;
+              }
+
+              if ( oldFilterable !== $scope.filterable && typeof($scope.col.updateFilters) !== 'undefined'){
+                
+                $scope.col.updateFilters($scope.filterable);
               }
               
               // figure out whether we support column menus
