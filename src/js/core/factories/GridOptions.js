@@ -303,9 +303,9 @@ angular.module('ui.grid')
        * @ngdoc property
        * @name aggregationCalcThrottle
        * @propertyOf ui.grid.class:GridOptions
-       * @description Default time in milliseconds to throttle aggregation calcuations, defaults to 1000ms
+       * @description Default time in milliseconds to throttle aggregation calcuations, defaults to 500ms
        */
-      baseOptions.aggregationCalcThrottle = typeof(baseOptions.aggregationCalcThrottle) !== "undefined" ? baseOptions.aggregationCalcThrottle : 1000;
+      baseOptions.aggregationCalcThrottle = typeof(baseOptions.aggregationCalcThrottle) !== "undefined" ? baseOptions.aggregationCalcThrottle : 500;
   
       /**
        * @ngdoc property

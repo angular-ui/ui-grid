@@ -169,8 +169,8 @@ var uidPrefix = 'uiGrid-';
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', '$interpolate', 'uiGridConstants',
-  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, $interpolate, uiGridConstants) {
+module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
+  function ($log, $window, $document, $http, $templateCache, $timeout, $interval, $injector, $q, $interpolate, uiGridConstants) {
   var s = {
 
     getStyles: getStyles,
@@ -1078,6 +1078,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    * Adapted from debounce function (above)
    * Potential keys for Params Object are:
    *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
+   * Updated to use $interval rather than $timeout, as protractor (e2e tests) is able to work with $interval,
+   * but not with $timeout
    * @example
    * <pre>
    * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
@@ -1093,7 +1095,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $timeout(function(){ queued = null; }, 0);
+      $interval(function(){ queued = null; }, 0, 1);
     }
 
     return function(){
@@ -1106,7 +1108,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $timeout(runFunc, wait - sinceLast);
+          queued = $interval(runFunc, wait - sinceLast, 1);
         }
       }
     };
