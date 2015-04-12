@@ -331,7 +331,8 @@
               templateUrl: 'ui-grid/importerMenuItemContainer',
               action: function ($event) {
                 this.grid.api.importer.importAFile( grid );
-              }
+              },
+              order: 150
             }
           ]);
         },
