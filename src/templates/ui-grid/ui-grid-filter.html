@@ -1,0 +1,19 @@
+<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters" ng-class="{'ui-grid-filter-cancel-button-hidden' : colFilter.disableCancelFilterButton === true }">
+  <div ng-if="colFilter.type !== 'select'">
+    <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
+
+    <div class="ui-grid-filter-button" ng-click="colFilter.term = null" ng-if="!colFilter.disableCancelFilterButton">
+      <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term != null">&nbsp;</i>
+    </div>
+  </div>
+  
+  <div ng-if="colFilter.type === 'select'">
+    <select class="ui-grid-filter-select" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" ng-options="option.value as option.label for option in colFilter.selectOptions">
+      <option value=""></option>
+    </select>
+
+    <div class="ui-grid-filter-button-select" ng-click="colFilter.term = null" ng-if="!colFilter.disableCancelFilterButton">
+      <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term != null">&nbsp;</i>
+    </div>
+  </div>
+</div>
