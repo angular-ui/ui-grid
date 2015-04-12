@@ -684,7 +684,7 @@ module.exports = {
   *
   * @example
   * <pre>
-  *   gridTestUtils.clickVisibleGridMenuItem('myGrid', 9);
+  *   gridTestUtils.clickGridMenuItem('myGrid', 9);
   * </pre>
   *
   */
@@ -693,5 +693,25 @@ module.exports = {
     gridMenuButton.click();
 
     gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
-  }
+  },
+  
+  /**
+  * @ngdoc method
+  * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+  * @name unclickGridMenu
+  * @description Closes the grid menu if it's open (opens it if it's closed).
+  * The grid menu stays open when you change column visibility, it sometimes needs
+  * to be closed again.
+  * @param {string} gridId the id of the grid that you want to inspect
+  *
+  * @example
+  * <pre>
+  *   gridTestUtils.unclickGridMenu('myGrid');
+  * </pre>
+  *
+  */
+  unclickGridMenu: function( gridId ) {
+    var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
+    gridMenuButton.click();
+  }  
 };

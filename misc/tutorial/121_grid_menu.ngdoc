@@ -139,6 +139,7 @@ you can suppress the ability to hide individual columns by setting `enableHiding
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
 
+        gridTestUtils.unclickGridMenu( 'grid1');  // menu stays open if change columns
         gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is company_show
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
