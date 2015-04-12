@@ -672,8 +672,14 @@ angular.module('ui.grid')
    * @propertyOf ui.grid.class:GridOptions.columnDef
    * @description the type of the column, used in sorting.  If not provided then the 
    * grid will guess the type.  Add this only if the grid guessing is not to your
-   * satisfaction.  Refer to {@link ui.grid.service:GridUtil.guessType gridUtil.guessType} for
-   * a list of values the grid knows about.
+   * satisfaction.  One of:
+   * - 'string'
+   * - 'boolean'
+   * - 'number'
+   * - 'date'
+   * - 'object'
+   * - 'numberStr'
+   * Note that if you choose date, your dates should be in a javascript date type
    *
    */
   Grid.prototype.assignTypes = function(){

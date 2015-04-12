@@ -20,7 +20,7 @@
    * <div doc-module-components="ui.grid.save-state"></div>
    */
 
-  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping', 'ui.grid.pinning']);
+  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping', 'ui.grid.pinning', 'ui.grid.treeView']);
 
   /**
    *  @ngdoc object
@@ -253,6 +253,16 @@
            * <br/>Defaults to true
            */
           gridOptions.savePinning = gridOptions.savePinning !== false;
+          /**
+           * @ngdoc object
+           * @name saveTreeView
+           * @propertyOf  ui.grid.saveState.api:GridOptions
+           * @description Save the treeView configuration.  If set to true and the 
+           * treeView feature is not enabled then does nothing.
+           * 
+           * <br/>Defaults to true
+           */
+          gridOptions.saveTreeView = gridOptions.saveTreeView !== false; 
         },
 
 
@@ -273,6 +283,7 @@
           savedState.scrollFocus = service.saveScrollFocus( grid );
           savedState.selection = service.saveSelection( grid );
           savedState.grouping = service.saveGrouping( grid );
+          savedState.treeView = service.saveTreeView( grid );
           
           return savedState;
         },
@@ -305,9 +316,11 @@
             service.restoreGrouping( grid, state.grouping );
           }
 
-          // refresh twice due to rendering issue.
-          //   specific case: save with column pinned left, hide that column, then restore
-          grid.refresh().then(function(){ grid.refresh(); });
+          if ( state.treeView ){
+            service.restoreTreeView( grid, state.treeView );
+          }
+
+          grid.refresh();
         },
         
         
@@ -417,11 +430,11 @@
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
          * @description Saves the currently selected rows, if the selection feature is enabled
          * @param {Grid} grid the grid whose state we'd like to save
-         * @returns {object} the selection state ready to be saved
+         * @returns {array} the selection state ready to be saved
          */
         saveSelection: function( grid ){
           if ( !grid.api.selection || !grid.options.saveSelection ){
-            return {};
+            return [];
           }
 
           var selection = grid.api.selection.getSelectedGridRows().map( function( gridRow ) {
@@ -446,6 +459,23 @@
           }
 
           return grid.api.grouping.getGrouping( grid.options.saveGroupingExpandedStates );
+        },
+        
+        
+        /**
+         * @ngdoc function
+         * @name saveTreeView
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Saves the tree view state, if the tree feature is enabled
+         * @param {Grid} grid the grid whose state we'd like to save
+         * @returns {object} the tree view state ready to be saved
+         */
+        saveTreeView: function( grid ){
+          if ( !grid.api.treeView || !grid.options.saveTreeView ){
+            return {};
+          }
+
+          return grid.api.treeView.getTreeView();
         },
         
         
@@ -624,6 +654,23 @@
           }
           
           grid.api.grouping.setGrouping( groupingState );
+        },        
+        
+        /**
+         * @ngdoc function
+         * @name restoreTreeView
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Restores the tree view configuration, if the tree view feature
+         * is enabled.
+         * @param {Grid} grid the grid whose state we'd like to restore
+         * @param {object} treeViewState the tree view state ready to be restored
+         */
+        restoreTreeView: function( grid, treeViewState ){
+          if ( !grid.api.treeView || typeof(treeViewState) === 'undefined' || treeViewState === null || angular.equals(treeViewState, {}) ){
+            return;
+          }
+          
+          grid.api.treeView.setTreeView( treeViewState );
         },        
         
         /**

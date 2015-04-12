@@ -173,7 +173,7 @@ angular.module('ui.grid')
       }
     };
 
-    var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle);
+    var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle, { trailing: true });
 
 
 

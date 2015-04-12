@@ -36,7 +36,7 @@ describe('GridOptions factory', function () {
         scrollThreshold: 4,
         excessColumns: 4,
         horizontalScrollThreshold: 2,
-        aggregationCalcThrottle: 1000,
+        aggregationCalcThrottle: 500,
         wheelScrollThrottle: 70,
         scrollDebounce: 300,
         enableSorting: true,

@@ -179,6 +179,5 @@ a bootstrap dropdown.
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    });
   </file>  
 </example>

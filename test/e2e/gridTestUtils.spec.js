@@ -537,6 +537,29 @@ module.exports = {
   /**
   * @ngdoc method
   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+  * @name expectFilterSelectInColumn
+  * @description Checks that a filter select dropdown exists in the specified column
+  * @param {string} gridId the id of the grid that you want to inspect
+  * @param {integer} colNumber the number of the column (within the visible columns)
+  * that you want to verify the filter select is in
+  * @param {integer} count the number filter selects you expect - 0 meaning none, 1 meaning
+  * a standard filter, 2 meaning a numerical filter with greater than / less than.
+  *
+  * @example
+  * <pre>
+  *   gridTestUtils.expectFilterSelectInColumn('myGrid', 0, 0);
+  * </pre>
+  *
+  */
+  expectFilterSelectInColumn: function( gridId, colNumber, count ) {
+    var headerCell = this.headerCell( gridId, colNumber);
+
+    expect( headerCell.all( by.css( '.ui-grid-filter-select' ) ).count() ).toEqual(count);
+  },
+
+  /**
+  * @ngdoc method
+  * @methodOf ui.grid.e2eTestLibrary.api:gridTest
   * @name cancelFilterInColumn
   * @description Cancels the filter in a column
   * @param {string} gridId the id of the grid that you want to inspect
@@ -661,7 +684,7 @@ module.exports = {
   *
   * @example
   * <pre>
-  *   gridTestUtils.clickVisibleGridMenuItem('myGrid', 9);
+  *   gridTestUtils.clickGridMenuItem('myGrid', 9);
   * </pre>
   *
   */
@@ -670,5 +693,25 @@ module.exports = {
     gridMenuButton.click();
 
     gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
-  }
+  },
+  
+  /**
+  * @ngdoc method
+  * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+  * @name unclickGridMenu
+  * @description Closes the grid menu if it's open (opens it if it's closed).
+  * The grid menu stays open when you change column visibility, it sometimes needs
+  * to be closed again.
+  * @param {string} gridId the id of the grid that you want to inspect
+  *
+  * @example
+  * <pre>
+  *   gridTestUtils.unclickGridMenu('myGrid');
+  * </pre>
+  *
+  */
+  unclickGridMenu: function( gridId ) {
+    var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
+    gridMenuButton.click();
+  }  
 };
