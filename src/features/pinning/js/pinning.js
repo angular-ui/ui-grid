@@ -140,32 +140,12 @@
          *  <br/>Defaults to false
          */
         if (colDef.pinnedLeft) {
-          if (col.width === '*') {
-            // Need to refresh so the width can be calculated.
-            col.grid.refresh()
-                .then(function () {
-                    col.renderContainer = 'left';
-                    col.grid.createLeftContainer();
-            });
-          }
-          else {
-            col.renderContainer = 'left';
-            col.grid.createLeftContainer();
-          }
+          col.renderContainer = 'left';
+          col.grid.createLeftContainer();
         }
         else if (colDef.pinnedRight) {
-            if (col.width === '*') {
-                // Need to refresh so the width can be calculated.
-                col.grid.refresh()
-                    .then(function () {
-                        col.renderContainer = 'right';
-                        col.grid.createRightContainer();
-                    });
-            }
-            else {
-                col.renderContainer = 'right';
-                col.grid.createRightContainer();
-            }
+          col.renderContainer = 'right';
+          col.grid.createRightContainer();
         }
 
         if (!colDef.enablePinning) {
@@ -234,15 +214,10 @@
           }
         }
 
-        // Need to call refresh twice; once to move our column over to the new render container and then
-        //   a second time to update the grid viewport dimensions with our adjustments
         grid.refresh()
-          .then(function () {
-            grid.refresh()
-              .then(function() {
-                grid.api.pinning.raise.columnPinned( col.colDef, container );
-              });
-          });
+        .then(function() {
+          grid.api.pinning.raise.columnPinned( col.colDef, container );
+        });
       }
     };
 
