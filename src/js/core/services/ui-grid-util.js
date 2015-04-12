@@ -403,11 +403,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      *
      * @param {string/number/bool/object} item variable to examine
      * @returns {string} one of the following
-     * 'string'
-     * 'boolean'
-     * 'number'
-     * 'date'
-     * 'object'
+     * - 'string'
+     * - 'boolean'
+     * - 'number'
+     * - 'date'
+     * - 'object'
      */
     guessType : function (item) {
       var itemType = typeof(item);
