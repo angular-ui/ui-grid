@@ -4,6 +4,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
   var uiGridSelectionService;
   var uiGridCellNavService;
   var uiGridGroupingService;
+  var uiGridTreeViewService;
   var uiGridPinningService;
   var gridClassFactory;
   var grid;
@@ -16,12 +17,14 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
   beforeEach(inject(function (_uiGridSaveStateService_, _gridClassFactory_, _uiGridSaveStateConstants_,
                               _$compile_, _$rootScope_, _$document_, _uiGridSelectionService_,
-                              _uiGridCellNavService_, _uiGridGroupingService_, _uiGridPinningService_ ) {
+                              _uiGridCellNavService_, _uiGridGroupingService_, _uiGridTreeViewService_, 
+                              _uiGridPinningService_ ) {
     uiGridSaveStateService = _uiGridSaveStateService_;
     uiGridSaveStateConstants = _uiGridSaveStateConstants_;
     uiGridSelectionService = _uiGridSelectionService_;
     uiGridCellNavService = _uiGridCellNavService_;
     uiGridGroupingService = _uiGridGroupingService_;
+    uiGridTreeViewService = _uiGridTreeViewService_;
     uiGridPinningService = _uiGridPinningService_;
     gridClassFactory = _gridClassFactory_;
     $compile = _$compile_;
@@ -78,6 +81,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveSelection: true,
         saveGrouping: true,
         saveGroupingExpandedStates: false,
+        saveTreeView: true,
         savePinning: true
       });
     });
@@ -95,6 +99,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveSelection: false,
         saveGrouping: false,
         saveGroupingExpandedStates: true,
+        saveTreeView: false,
         savePinning: false
       };
       uiGridSaveStateService.defaultGridOptions(options);
@@ -109,6 +114,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         saveSelection: false,
         saveGrouping: false,
         saveGroupingExpandedStates: true,
+        saveTreeView: false,
         savePinning: false
       });
     });    
@@ -649,6 +655,25 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       uiGridSaveStateService.restoreGrouping( grid, undefined);
       
       expect(grid.api.grouping.setGrouping).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('restoreTreeView', function() {
+    beforeEach( function() {
+      grid.api.treeView = { setTreeView: function() {}};
+      spyOn( grid.api.treeView, 'setTreeView' ).andCallFake(function() {});
+    });
+    
+    it( 'calls setTreeView with config', function() {
+      uiGridSaveStateService.restoreTreeView( grid, { test: 'test' });
+      
+      expect(grid.api.treeView.setTreeView).toHaveBeenCalledWith( { test: 'test' });
+    });
+
+    it( 'doesn\'t call setTreeView when config missing', function() {
+      uiGridSaveStateService.restoreTreeView( grid, undefined);
+      
+      expect(grid.api.treeView.setTreeView).not.toHaveBeenCalled();
     });
   });
 
