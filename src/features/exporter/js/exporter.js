@@ -71,8 +71,8 @@
    *
    *  @description Services for exporter feature
    */
-  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'uiGridSelectionConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
-    function ($q, uiGridExporterConstants, uiGridSelectionConstants, gridUtil, $compile, $interval, i18nService) {
+  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
+    function ($q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
 
       var service = {
 
