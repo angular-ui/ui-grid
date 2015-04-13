@@ -33,7 +33,7 @@
                 }
 
                 return width;
-              }              
+              }
             }
             
             function updateContainerDimensions() {

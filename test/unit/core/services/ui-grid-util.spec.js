@@ -199,7 +199,8 @@ describe('ui.grid.utilService', function() {
         expect(w).toEqual(300);
       });
 
-      it('should work with hidden element', function() {
+      // Width is no longer calculated for hidden elements
+      xit('should work with hidden element', function() {
         angular.element(elm).remove();
 
         elm = document.createElement('div');

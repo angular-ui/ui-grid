@@ -106,7 +106,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 function getWidthOrHeight( elem, name, extra ) {
   // Start with offset property, which is equivalent to the border-box value
   var valueIsBorderBox = true,
-          val,
+          val, // = name === 'width' ? elem.offsetWidth : elem.offsetHeight,
           styles = getStyles(elem),
           isBorderBox = styles['boxSizing'] === 'border-box';
 
@@ -172,6 +172,8 @@ var uidPrefix = 'uiGrid-';
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
   function ($log, $window, $document, $http, $templateCache, $timeout, $interval, $injector, $q, $interpolate, uiGridConstants) {
   var s = {
+
+    augmentWidthOrHeight: augmentWidthOrHeight,
 
     getStyles: getStyles,
 
@@ -786,8 +788,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (e) {
         var styles = getStyles(e);
         return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
-                  s.fakeElement(e, cssShow, function(newElm) {
-                    return getWidthOrHeight( newElm, name, extra );
+                  s.swap(e, cssShow, function() {
+                    return getWidthOrHeight(e, name, extra );
                   }) :
                   getWidthOrHeight( e, name, extra );
       }
