@@ -62,7 +62,7 @@
           invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
           jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
         },
-		    grouping: {
+        grouping: {
           group: 'Raggruppa',
           ungroup: 'Separa',
           aggregate_count: 'Agg: N. Elem.',
