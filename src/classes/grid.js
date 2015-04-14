@@ -391,6 +391,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 cols.push(column);
             });
             $scope.columns = cols;
+            $scope.hasUserChangedGridColumnWidths = false;
             if (self.config.groups.length > 0) {
                 self.rowFactory.getGrouping(self.config.groups);
             }
@@ -440,10 +441,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 t = isPercent ? colDef.width : parseInt(colDef.width, 10);
             }
 
-             // has bug for resize event causing NaN for all column width after another http.get
-             // if (isNaN(t) && !$scope.hasUserChangedGridColumnWidths) {
              // check if it is a number
-            if (isNaN(t)) {
+            if (isNaN(t) && !$scope.hasUserChangedGridColumnWidths) {
                 t = colDef.width;
                 // figure out if the width is defined or if we need to calculate it
                 if (t === 'auto') { // set it for now until we have data and subscribe when it changes so we can set the width.
