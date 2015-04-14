@@ -126,12 +126,8 @@
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
             if (col.visible !== false) {
-                var rightPad = 0;
-                if ((i === cols.length - 1) && (sumWidth + col.width < grid.elementDims.rootMaxW)) {
-                    rightPad = grid.elementDims.rootMaxW - sumWidth - col.width;
-                }
-                css += "." + gridId + " .col" + i + " { width: " + (col.width + rightPad) + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + (col.width + rightPad) + "px; }";
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + sumWidth + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
         }
