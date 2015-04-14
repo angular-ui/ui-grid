@@ -799,8 +799,8 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                     domUtilityService.setColLeft(col, newLeft, self);
                     totalLeft += col.width;
                 } else {
-                	if (disableColumnVirt) {
-                		addCol(col);
+        	    if (disableColumnVirt) {
+                	addCol(col);
                     } else if (w >= scrollLeft) {
                         if (colwidths <= scrollLeft + self.rootDim.outerWidth) {
                             addCol(col);
