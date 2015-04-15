@@ -187,8 +187,9 @@
 
         function getPreviousAggregateRef(group) {
             for (var i = 0; prevCache && i < prevCache.length; i++) {
-                if (prevCache[i].label == group)
+                if (prevCache[i].label === group) {
                     return prevCache[i];
+                }
             }
 
             return null;
