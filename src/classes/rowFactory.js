@@ -36,7 +36,8 @@
         var agg = self.aggCache[aggEntity.aggIndex]; // first check to see if we've already built it 
         if (!agg) {
             // build the row
-            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
+            var collapsed = !$utils.isNullOrUndefined(aggEntity.collapsed) ? aggEntity.collapsed : grid.config.groupsCollapsedByDefault;
+            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, collapsed);
             self.aggCache[aggEntity.aggIndex] = agg;
         }
         agg.rowIndex = rowIndex;
@@ -141,6 +142,7 @@
                         gLabel: prop,
                         gDepth: g[NG_DEPTH],
                         isAggRow: true,
+                        collapsed: g[prop].collapsed,
                         '_ng_hidden_': false,
                         children: [],
                         aggChildren: [],
@@ -166,19 +168,30 @@
         }
     };
     //Shuffle the data into their respective groupings.
-    self.getGrouping = function(groups) {
-        self.aggCache = [];
-        self.numberOfAggregates = 0;
-        self.groupedData = {};
+    self.getGrouping = function (groups) {
         // Here we set the onmousedown event handler to the header container.
         var rows = grid.filteredRows,
             maxDepth = groups.length,
+            prevCache = self.aggCache,
             cols = $scope.columns;
+
+        self.aggCache = [];
+        self.numberOfAggregates = 0;
+        self.groupedData = {};
 
         function filterCols(cols, group) {
             return cols.filter(function(c) {
                 return c.field === group;
             });
+        }
+
+        function getPreviousAggregateRef(group) {
+            for (var i = 0; prevCache && i < prevCache.length; i++) {
+                if (prevCache[i].label == group)
+                    return prevCache[i];
+            }
+
+            return null;
         }
 
         for (var x = 0; x < rows.length; x++) {
@@ -196,9 +209,11 @@
 
                 var val = $utils.evalProperty(model, group);
                 val = (val === '' || val === null) ? 'null' : val.toString();
+                var aggRef = getPreviousAggregateRef(val);
                 if (!ptr[val]) {
                     ptr[val] = {};
                 }
+                ptr[val].collapsed = !$utils.isNullOrUndefined(aggRef) ? aggRef.collapsed : grid.config.groupsCollapsedByDefault;
                 if (!ptr[NG_FIELD]) {
                     ptr[NG_FIELD] = group;
                 }
@@ -213,6 +228,7 @@
             if (!ptr.values) {
                 ptr.values = [];
             }
+            rows[x][NG_HIDDEN] = ptr.collapsed;
             ptr.values.push(rows[x]);
         }
 
