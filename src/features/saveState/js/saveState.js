@@ -20,7 +20,7 @@
    * <div doc-module-components="ui.grid.save-state"></div>
    */
 
-  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping']);
+  var module = angular.module('ui.grid.saveState', ['ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.grouping', 'ui.grid.pinning', 'ui.grid.treeView']);
 
   /**
    *  @ngdoc object
@@ -243,7 +243,26 @@
            * 
            * <br/>Defaults to false
            */
-          gridOptions.saveGroupingExpandedStates = gridOptions.saveGroupingExpandedStates === true; 
+          gridOptions.saveGroupingExpandedStates = gridOptions.saveGroupingExpandedStates === true;
+          /**
+           * @ngdoc object
+           * @name savePinning
+           * @propertyOf ui.grid.saveState.api:GridOptions
+           * @description Save pinning state for columns.
+           *
+           * <br/>Defaults to true
+           */
+          gridOptions.savePinning = gridOptions.savePinning !== false;
+          /**
+           * @ngdoc object
+           * @name saveTreeView
+           * @propertyOf  ui.grid.saveState.api:GridOptions
+           * @description Save the treeView configuration.  If set to true and the 
+           * treeView feature is not enabled then does nothing.
+           * 
+           * <br/>Defaults to true
+           */
+          gridOptions.saveTreeView = gridOptions.saveTreeView !== false; 
         },
 
 
@@ -264,6 +283,7 @@
           savedState.scrollFocus = service.saveScrollFocus( grid );
           savedState.selection = service.saveSelection( grid );
           savedState.grouping = service.saveGrouping( grid );
+          savedState.treeView = service.saveTreeView( grid );
           
           return savedState;
         },
@@ -295,8 +315,12 @@
           if ( state.grouping ){
             service.restoreGrouping( grid, state.grouping );
           }
-          
-          grid.queueGridRefresh();
+
+          if ( state.treeView ){
+            service.restoreTreeView( grid, state.treeView );
+          }
+
+          grid.refresh();
         },
         
         
@@ -304,8 +328,8 @@
          * @ngdoc function
          * @name saveColumns
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
-         * @description Saves the column setup, including sort, filters, ordering
-         * and column widths.
+         * @description Saves the column setup, including sort, filters, ordering,
+         * pinning and column widths.
          * 
          * Works through the current columns, storing them in order.  Stores the
          * column name, then the visible flag, width, sort and filters for each column.
@@ -334,6 +358,10 @@
             
             if ( grid.options.saveFilter ){
               savedColumn.filters = angular.copy ( column.filters );
+            }
+
+            if ( !!grid.api.pinning && grid.options.savePinning ){
+              savedColumn.pinned = column.renderContainer ? column.renderContainer : '';
             }
             
             columns.push( savedColumn );
@@ -402,11 +430,11 @@
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
          * @description Saves the currently selected rows, if the selection feature is enabled
          * @param {Grid} grid the grid whose state we'd like to save
-         * @returns {object} the selection state ready to be saved
+         * @returns {array} the selection state ready to be saved
          */
         saveSelection: function( grid ){
           if ( !grid.api.selection || !grid.options.saveSelection ){
-            return {};
+            return [];
           }
 
           var selection = grid.api.selection.getSelectedGridRows().map( function( gridRow ) {
@@ -431,6 +459,23 @@
           }
 
           return grid.api.grouping.getGrouping( grid.options.saveGroupingExpandedStates );
+        },
+        
+        
+        /**
+         * @ngdoc function
+         * @name saveTreeView
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Saves the tree view state, if the tree feature is enabled
+         * @param {Grid} grid the grid whose state we'd like to save
+         * @returns {object} the tree view state ready to be saved
+         */
+        saveTreeView: function( grid ){
+          if ( !grid.api.treeView || !grid.options.saveTreeView ){
+            return {};
+          }
+
+          return grid.api.treeView.getTreeView();
         },
         
         
@@ -466,8 +511,8 @@
          * @ngdoc function
          * @name restoreColumns
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
-         * @description Restores the columns, including order, visible, width
-         * sort and filters.
+         * @description Restores the columns, including order, visible, width,
+         * pinning, sort and filters.
          * 
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} columnsState the list of columns we had before, with their state
@@ -502,6 +547,10 @@
                    !angular.equals(grid.columns[currentIndex].filters, columnState.filters ) ){
                 grid.columns[currentIndex].filters = angular.copy( columnState.filters );
                 grid.api.core.raise.filterChanged();
+              }
+
+              if ( !!grid.api.pinning && grid.options.savePinning && grid.columns[currentIndex].renderContainer !== columnState.pinned ){
+                grid.api.pinning.pinColumn(grid.columns[currentIndex], columnState.pinned);
               }
               
               if ( grid.options.saveOrder && currentIndex !== index ){
@@ -552,7 +601,7 @@
             if (scrollFocusState.focus ){
               grid.api.cellNav.scrollToFocus( entity, colDef );
             } else {
-              grid.api.cellNav.scrollTo( entity, colDef );
+              grid.scrollTo( entity, colDef );
             }
           }
         },
@@ -605,6 +654,23 @@
           }
           
           grid.api.grouping.setGrouping( groupingState );
+        },        
+        
+        /**
+         * @ngdoc function
+         * @name restoreTreeView
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Restores the tree view configuration, if the tree view feature
+         * is enabled.
+         * @param {Grid} grid the grid whose state we'd like to restore
+         * @param {object} treeViewState the tree view state ready to be restored
+         */
+        restoreTreeView: function( grid, treeViewState ){
+          if ( !grid.api.treeView || typeof(treeViewState) === 'undefined' || treeViewState === null || angular.equals(treeViewState, {}) ){
+            return;
+          }
+          
+          grid.api.treeView.setTreeView( treeViewState );
         },        
         
         /**

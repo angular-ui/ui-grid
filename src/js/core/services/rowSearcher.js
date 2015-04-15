@@ -114,7 +114,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var filtersLength = filters.length;
     for ( var i = 0; i < filtersLength; i++ ){
       var filter = filters[i];
-      if ( filter.noTerm || filter.term ){
+      
+      if ( filter.noTerm || !gridUtil.isNullOrUndefined(filter.term) ){
         var newFilter = {};
         
         var regexpFlags = '';
@@ -122,7 +123,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
           regexpFlags += 'i';
         }
     
-        if ( filter.term ){
+        if ( !gridUtil.isNullOrUndefined(filter.term) ){
           // it is possible to have noTerm.  We don't need to copy that across, it was just a flag to avoid
           // getting the filter ignored if the filter was a function that didn't use a term
           newFilter.term = rowSearcher.stripTerm(filter);
@@ -323,11 +324,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var colsLength = columns.length;
     for (var i = 0; i < colsLength; i++) {
       var col = columns[i];
-      
-      if (typeof(col.filters) !== 'undefined' && ( col.filters.length > 1 || col.filters.length === 1 && ( typeof(col.filters[0].term) !== 'undefined' && col.filters[0].term || col.filters[0].noTerm ) ) ) {
+
+      if (typeof(col.filters) !== 'undefined' && ( col.filters.length > 1 || col.filters.length === 1 && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filters[0].noTerm ) ) ) {
         filterData.push( { col: col, filters: rowSearcher.setupFilters(col.filters) } );
       }
-      else if (typeof(col.filter) !== 'undefined' && col.filter && ( typeof(col.filter.term) !== 'undefined' && col.filter.term || col.filter.noTerm ) ) {
+      else if (typeof(col.filter) !== 'undefined' && col.filter && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filter.noTerm ) ) {
         filterData.push( { col: col, filters: rowSearcher.setupFilters([col.filter]) } );
       }
     }
@@ -335,8 +336,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
-        if ( !rowSearcher.searchColumn(grid, row, col, filters) ) {
-          row.setThisRowInvisible('filtered', true);
+        if ( row.visible && !rowSearcher.searchColumn(grid, row, col, filters) ) {
+          row.visible = false;
         }
       };
       
@@ -356,6 +357,10 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (grid.api.core.raise.rowsVisibleChanged) {
         grid.api.core.raise.rowsVisibleChanged();
       }
+      
+      // drop any invisible rows
+      rows = rows.filter(function(row){ return row.visible; });
+    
     }
 
     return rows;

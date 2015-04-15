@@ -156,9 +156,9 @@ angular.module('ui.grid')
       };
 
       /**
-       * @ngdoc function
+       * @ngdoc property
        * @name flatEntityAccess
-       * @methodOf ui.grid.class:GridOptions
+       * @propertyOf ui.grid.class:GridOptions
        * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e. 
        * each of your columns associate directly with a propery one each of the entities in your data array.
        * 
@@ -297,14 +297,32 @@ angular.module('ui.grid')
        * @description Defaults to 4
        */
       baseOptions.horizontalScrollThreshold = typeof(baseOptions.horizontalScrollThreshold) !== "undefined" ? baseOptions.horizontalScrollThreshold : 2;
+
+
+      /**
+       * @ngdoc property
+       * @name aggregationCalcThrottle
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Default time in milliseconds to throttle aggregation calcuations, defaults to 500ms
+       */
+      baseOptions.aggregationCalcThrottle = typeof(baseOptions.aggregationCalcThrottle) !== "undefined" ? baseOptions.aggregationCalcThrottle : 500;
   
       /**
        * @ngdoc property
-       * @name scrollThrottle
+       * @name wheelScrollThrottle
        * @propertyOf ui.grid.class:GridOptions
-       * @description Default time to throttle scroll events to, defaults to 70ms
+       * @description Default time in milliseconds to throttle scroll events to, defaults to 70ms
        */
-      baseOptions.scrollThrottle = typeof(baseOptions.scrollThrottle) !== "undefined" ? baseOptions.scrollThrottle : 70;
+      baseOptions.wheelScrollThrottle = typeof(baseOptions.wheelScrollThrottle) !== "undefined" ? baseOptions.wheelScrollThrottle : 70;
+
+
+      /**
+       * @ngdoc property
+       * @name scrollDebounce
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Default time in milliseconds to debounce scroll events, defaults to 300ms
+       */
+      baseOptions.scrollDebounce = typeof(baseOptions.scrollDebounce) !== "undefined" ? baseOptions.scrollDebounce : 300;
   
       /**
        * @ngdoc boolean

@@ -148,7 +148,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       });
 
       if (uiGridCtrl) {
-       $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollEvent($scope, applyHideMenu ));
+       $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollBegin($scope, applyHideMenu ));
       }
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));

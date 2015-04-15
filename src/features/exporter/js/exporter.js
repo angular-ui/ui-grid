@@ -71,8 +71,8 @@
    *
    *  @description Services for exporter feature
    */
-  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'uiGridSelectionConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
-    function ($q, uiGridExporterConstants, uiGridSelectionConstants, gridUtil, $compile, $interval, i18nService) {
+  module.service('uiGridExporterService', ['$q', 'uiGridExporterConstants', 'gridUtil', '$compile', '$interval', 'i18nService',
+    function ($q, uiGridExporterConstants, gridUtil, $compile, $interval, i18nService) {
 
       var service = {
 
@@ -479,7 +479,8 @@
               },
               shown: function() {
                 return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData; 
-              }
+              },
+              order: 200
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
@@ -488,7 +489,8 @@
               },
               shown: function() {
                 return this.grid.options.exporterMenuCsv; 
-              }
+              },
+              order: 201
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
@@ -498,7 +500,8 @@
               shown: function() {
                 return this.grid.options.exporterMenuCsv &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
-              }
+              },
+              order: 202
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
@@ -507,7 +510,8 @@
               },
               shown: function() {
                 return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData; 
-              }
+              },
+              order: 203
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
@@ -516,7 +520,8 @@
               },
               shown: function() {
                 return this.grid.options.exporterMenuPdf; 
-              }
+              },
+              order: 204
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
@@ -526,7 +531,8 @@
               shown: function() {
                 return this.grid.options.exporterMenuPdf &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
-              }
+              },
+              order: 205
             }
           ]);
         },

@@ -106,7 +106,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 function getWidthOrHeight( elem, name, extra ) {
   // Start with offset property, which is equivalent to the border-box value
   var valueIsBorderBox = true,
-          val,
+          val, // = name === 'width' ? elem.offsetWidth : elem.offsetHeight,
           styles = getStyles(elem),
           isBorderBox = styles['boxSizing'] === 'border-box';
 
@@ -169,9 +169,11 @@ var uidPrefix = 'uiGrid-';
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', '$interpolate', 'uiGridConstants',
-  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, $interpolate, uiGridConstants) {
+module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
+  function ($log, $window, $document, $http, $templateCache, $timeout, $interval, $injector, $q, $interpolate, uiGridConstants) {
   var s = {
+
+    augmentWidthOrHeight: augmentWidthOrHeight,
 
     getStyles: getStyles,
 
@@ -403,11 +405,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      *
      * @param {string/number/bool/object} item variable to examine
      * @returns {string} one of the following
-     * 'string'
-     * 'boolean'
-     * 'number'
-     * 'date'
-     * 'object'
+     * - 'string'
+     * - 'boolean'
+     * - 'number'
+     * - 'date'
+     * - 'object'
      */
     guessType : function (item) {
       var itemType = typeof(item);
@@ -640,12 +642,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         return found;
     },
 
-    // Shim requestAnimationFrame
-    requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
-                           $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
-                           function(fn) {
-                             return $timeout(fn, 10, false);
-                           },
+    //// Shim requestAnimationFrame
+    //requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
+    //                       $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
+    //                       function(fn) {
+    //                         return $timeout(fn, 10, false);
+    //                       },
 
     numericAndNullSort: function (a, b) {
       if (a === null) { return 1; }
@@ -786,8 +788,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (e) {
         var styles = getStyles(e);
         return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
-                  s.fakeElement(e, cssShow, function(newElm) {
-                    return getWidthOrHeight( newElm, name, extra );
+                  s.swap(e, cssShow, function() {
+                    return getWidthOrHeight(e, name, extra );
                   }) :
                   getWidthOrHeight( e, name, extra );
       }
@@ -1078,6 +1080,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    * Adapted from debounce function (above)
    * Potential keys for Params Object are:
    *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
+   * Updated to use $interval rather than $timeout, as protractor (e2e tests) is able to work with $interval,
+   * but not with $timeout
    * @example
    * <pre>
    * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
@@ -1093,7 +1097,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $timeout(function(){ queued = null; }, 0);
+      $interval(function(){ queued = null; }, 0, 1);
     }
 
     return function(){
@@ -1106,7 +1110,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $timeout(runFunc, wait - sinceLast);
+          queued = $interval(runFunc, wait - sinceLast, 1);
         }
       }
     };

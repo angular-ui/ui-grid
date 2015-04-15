@@ -1,7 +1,7 @@
 <div ng-if="expandableRow.shouldRenderFiller()"
-     style="float:left; margin-top: 2px; margin-bottom: 2px"
+     ng-class="{scrollFiller:true, scrollFillerClass:(colContainer.name === 'body')}"
      ng-style="{ width: (grid.getViewportWidth()) + 'px',
-              height: grid.options.expandableRowHeight + 'px', 'margin-left': grid.options.rowHeader.rowHeaderWidth + 'px' }"
+              height: grid.options.expandableRowHeight + 2 + 'px', 'margin-left': grid.options.rowHeader.rowHeaderWidth + 'px' }"
      >
     <i class="ui-grid-icon-spin5 ui-grid-animate-spin" ng-style=
             "{ 'margin-top': ( grid.options.expandableRowHeight/2 - 5) + 'px',

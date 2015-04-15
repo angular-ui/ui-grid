@@ -61,6 +61,16 @@
           invalidCsv: 'Impossibile elaborare il file, sicuro che sia un CSV?',
           invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
           jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
+        },
+        grouping: {
+          group: 'Raggruppa',
+          ungroup: 'Separa',
+          aggregate_count: 'Agg: N. Elem.',
+          aggregate_sum: 'Agg: Somma',
+          aggregate_max: 'Agg: Massimo',
+          aggregate_min: 'Agg: Minimo',
+          aggregate_avg: 'Agg: Media',
+          aggregate_remove: 'Agg: Rimuovi'
         }
       });
       return $delegate;

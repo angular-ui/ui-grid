@@ -37,7 +37,7 @@
 
         grid.infiniteScroll = { dataLoading: false };
         service.setScrollDirections( grid, grid.options.infiniteScrollUp, grid.options.infiniteScrollDown );
-        grid.api.core.on.scrollEvent($scope, service.handleScroll);
+          grid.api.core.on.scrollEnd($scope, service.handleScroll);
         
         /**
          *  @ngdoc object
@@ -362,25 +362,26 @@
 
           var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
           var oldPercentage, oldTopRow;
+          var halfViewport = grid.getViewportHeight() / grid.options.rowHeight / 2;
           
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
-            console.log( 'prevTop was: ' + grid.infiniteScroll.prevScrolltopPercentage);
-            console.log( 'grid was: ' + grid);
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 0;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
-            newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow ) / newVisibleRows;
-            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
+            newPercentage = ( newVisibleRows - grid.infiniteScroll.previousVisibleRows + oldTopRow + halfViewport ) / newVisibleRows;
+            service.adjustInfiniteScrollPosition(grid, newPercentage);
+            $timeout( function() {
               promise.resolve();
-            });  
+            });
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 1;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
-            newPercentage = oldTopRow / newVisibleRows;            
-            service.adjustInfiniteScrollPosition(grid, newPercentage).then(function() {
+            newPercentage = ( oldTopRow - halfViewport ) / newVisibleRows;            
+            service.adjustInfiniteScrollPosition(grid, newPercentage);
+            $timeout( function() {
               promise.resolve();
-            });  
+            });
           }
         }, 0);
         
@@ -407,13 +408,7 @@
         else {
           scrollEvent.y = {percentage: percentage};
         }
-        scrollEvent.fireScrollingEvent();
-        // change this once @swalters has merged his scrolling changes, which will return a promise from the fireScrollingEvent
-        var promise = $q.defer();
-        $timeout(function(){
-          promise.resolve();
-        });
-        return promise.promise;
+        grid.scrollContainers('', scrollEvent);
       },
       
       
@@ -436,11 +431,11 @@
         service.setScrollDirections( grid, scrollUp, scrollDown );
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
-        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.prevVisibleRows;
+        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
         
         // since we removed from the top, our new scroll row will be the old scroll row less the number
         // of rows removed
-        var newScrollRow = oldScrollRow - ( grid.infiniteScroll.prevVisibleRows - newVisibleRows );
+        var newScrollRow = oldScrollRow - ( grid.infiniteScroll.previousVisibleRows - newVisibleRows );
         var newScrollPercent = newScrollRow / newVisibleRows;
         
         return service.adjustInfiniteScrollPosition( grid, newScrollPercent );
@@ -464,7 +459,7 @@
         service.setScrollDirections( grid, scrollUp, scrollDown );
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
-        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.prevVisibleRows;
+        var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
         
         // since we removed from the bottom, our new scroll row will be same as the old scroll row
         var newScrollPercent = oldScrollRow / newVisibleRows;
