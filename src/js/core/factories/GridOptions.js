@@ -427,12 +427,22 @@ angular.module('ui.grid')
        * @ngdoc string
        * @name footerTemplate
        * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom footer
-       * template. Can be set to either the name of a template file 'footer_template.html', inline html
+       * @description (optional) ui-grid/ui-grid-footer by default.  This footer shows the per-column
+       * aggregation totals. 
+       * When provided, this setting uses a custom footer template. Can be set to either the name of a template file 'footer_template.html', inline html
        * <pre>'<div class="ui-grid-bottom-panel" style="text-align: center">I am a Custom Grid Footer</div>'</pre>, or the id
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
-      baseOptions.footerTemplate = baseOptions.footerTemplate || null;
+      baseOptions.footerTemplate = baseOptions.footerTemplate || 'ui-grid/ui-grid-footer';
+  
+      /**
+       * @ngdoc string
+       * @name gridFooterTemplate
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) ui-grid/ui-grid-grid-footer by default. This template by default shows the
+       * total items at the bottom of the grid, and the selected items if selection is enabled.
+       */
+      baseOptions.gridFooterTemplate = baseOptions.gridFooterTemplate || 'ui-grid/ui-grid-grid-footer';
   
       /**
        * @ngdoc string
