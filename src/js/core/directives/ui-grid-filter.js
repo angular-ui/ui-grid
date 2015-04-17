@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridFilter', function ($compile, $templateCache) {
+  angular.module('ui.grid').directive('uiGridFilter', ['$compile', '$templateCache', function ($compile, $templateCache) {
 
     return {
       compile: function() {
@@ -23,5 +23,5 @@
         };
       }
     };
-  });
+  }]);
 })();
