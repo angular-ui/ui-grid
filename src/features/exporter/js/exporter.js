@@ -607,7 +607,7 @@
           } else {
             var deferred = $q.defer();
             deferred.resolve();
-            return $q.promise;
+            return deferred.promise;
           }
         },
 
