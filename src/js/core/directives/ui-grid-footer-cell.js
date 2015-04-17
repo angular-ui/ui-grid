@@ -22,7 +22,8 @@
             //$elm.addClass($scope.col.getColClass(false));
             $scope.grid = uiGridCtrl.grid;
 
-            $elm.addClass($scope.col.getColClass(false));
+            var initColClass = $scope.col.getColClass(false);
+            $elm.addClass(initColClass);
 
             // apply any footerCellClass
             var classAdded;
@@ -45,6 +46,19 @@
             if ($scope.col.footerCellClass) {
               updateClass();
             }
+
+            // Watch for column changes so we can alter the col cell class properly
+            $scope.$watch('col', function (n, o) {
+              if (n !== o) {
+                // See if the column's internal class has changed
+                var newColClass = $scope.col.getColClass(false);
+                if (newColClass !== initColClass) {
+                  $elm.removeClass(initColClass);
+                  $elm.addClass(newColClass);
+                  initColClass = newColClass;
+                }
+              }
+            });
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);

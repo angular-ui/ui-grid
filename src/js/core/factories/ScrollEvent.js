@@ -79,7 +79,7 @@
         if (!self.newScrollLeft){
           var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
-          var oldScrollLeft = gridUtil.normalizeScrollLeft(viewport);
+          var oldScrollLeft = gridUtil.normalizeScrollLeft(viewport, self.grid);
 
           var scrollXPercentage;
           if (typeof(self.x.percentage) !== 'undefined' && self.x.percentage !== undefined) {

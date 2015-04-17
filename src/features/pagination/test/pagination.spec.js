@@ -1,15 +1,17 @@
-xdescribe('ui.grid.pagination uiGridPaginationService', function () {
+describe('ui.grid.pagination uiGridPaginationService', function () {
   'use strict';
 
   var gridApi;
   var gridElement;
   var $rootScope;
+  var $timeout;
 
   beforeEach(module('ui.grid'));
   beforeEach(module('ui.grid.pagination'));
 
-  beforeEach(inject(function (_$rootScope_, $compile) {
+  beforeEach(inject(function (_$rootScope_, _$timeout_, $compile) {
     $rootScope = _$rootScope_;
+    $timeout = _$timeout_;
 
     $rootScope.gridOptions = {
       columnDefs: [
@@ -90,6 +92,7 @@ xdescribe('ui.grid.pagination uiGridPaginationService', function () {
     it('displays page 2 if I call nextPage()', function () {
       gridApi.pagination.nextPage();
       $rootScope.$digest();
+      $timeout.flush();
 
       var gridRows = gridElement.find('div.ui-grid-row');
 
@@ -106,6 +109,7 @@ xdescribe('ui.grid.pagination uiGridPaginationService', function () {
     it('displays only 6 rows on page 3', function () {
       gridApi.pagination.seek(3);
       $rootScope.$digest();
+      $timeout.flush();
 
       var gridRows = gridElement.find('div.ui-grid-row');
 
@@ -145,29 +149,29 @@ xdescribe('ui.grid.pagination uiGridPaginationService', function () {
 
     it('paginates correctly on a sorted grid', function() {
       gridApi.grid.sortColumn(gridApi.grid.columns[1]).then(function () {
-        gridApi.grid.refresh();
+        $rootScope.$digest();
+        $timeout.flush();
+
+        var gridRows = gridElement.find('div.ui-grid-row');
+        expect(gridApi.pagination.getPage()).toBe(1);
+        expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('A');
+        expect(gridRows.eq(1).find('div.ui-grid-cell').eq(1).text()).toBe('B');
+        expect(gridRows.eq(2).find('div.ui-grid-cell').eq(1).text()).toBe('C');
+        expect(gridRows.eq(3).find('div.ui-grid-cell').eq(1).text()).toBe('D');
+        expect(gridRows.eq(4).find('div.ui-grid-cell').eq(1).text()).toBe('E');
+        expect(gridRows.eq(5).find('div.ui-grid-cell').eq(1).text()).toBe('F');
+        expect(gridRows.eq(6).find('div.ui-grid-cell').eq(1).text()).toBe('G');
+        expect(gridRows.eq(7).find('div.ui-grid-cell').eq(1).text()).toBe('H');
+        expect(gridRows.eq(8).find('div.ui-grid-cell').eq(1).text()).toBe('I');
+        expect(gridRows.eq(9).find('div.ui-grid-cell').eq(1).text()).toBe('J');
+
+        gridApi.pagination.nextPage();
+        $rootScope.$digest();
+
+        gridRows = gridElement.find('div.ui-grid-row');
+        expect(gridApi.pagination.getPage()).toBe(2);
+        expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('K');
       });
-      $rootScope.$digest();
-
-      var gridRows = gridElement.find('div.ui-grid-row');
-      expect(gridApi.pagination.getPage()).toBe(1);
-      expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('A');
-      expect(gridRows.eq(1).find('div.ui-grid-cell').eq(1).text()).toBe('B');
-      expect(gridRows.eq(2).find('div.ui-grid-cell').eq(1).text()).toBe('C');
-      expect(gridRows.eq(3).find('div.ui-grid-cell').eq(1).text()).toBe('D');
-      expect(gridRows.eq(4).find('div.ui-grid-cell').eq(1).text()).toBe('E');
-      expect(gridRows.eq(5).find('div.ui-grid-cell').eq(1).text()).toBe('F');
-      expect(gridRows.eq(6).find('div.ui-grid-cell').eq(1).text()).toBe('G');
-      expect(gridRows.eq(7).find('div.ui-grid-cell').eq(1).text()).toBe('H');
-      expect(gridRows.eq(8).find('div.ui-grid-cell').eq(1).text()).toBe('I');
-      expect(gridRows.eq(9).find('div.ui-grid-cell').eq(1).text()).toBe('J');
-
-      gridApi.pagination.nextPage();
-      $rootScope.$digest();
-
-      gridRows = gridElement.find('div.ui-grid-row');
-      expect(gridApi.pagination.getPage()).toBe(2);
-      expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('K');
     });
   });
 });

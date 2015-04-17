@@ -62,6 +62,10 @@ If you need to internationalize the labels you'll need to complete that before p
 By default the filter shows a cancel X beside the dropdown. You can set `disableCancelFilterButton: true` to suppress
 this button.
 
+In this example we've provided a "toggle filters" button to allow you to turn the filter row on and off.  To 
+still visually indicate which columns are filtered even when the filters aren't present, we've used the headerCellClass
+to make any columns with a filter condition have blue text.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -72,6 +76,14 @@ this button.
       var nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
     
+      $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
+        if( col.filters[0].term ){
+          return 'header-filtered';
+        } else {
+          return '';
+        }
+      };
+ 
       $scope.gridOptions = {
         enableFiltering: true,
         onRegisterApi: function(gridApi){
@@ -79,14 +91,14 @@ this button.
         },
         columnDefs: [
           // default
-          { field: 'name' },
+          { field: 'name', headerCellClass: $scope.highlightFilteredHeader },
           // pre-populated search field
           { field: 'gender', filter: { 
               term: '1', 
               type: uiGridConstants.filter.SELECT, 
               selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
             }, 
-            cellFilter: 'mapGender' },                               
+            cellFilter: 'mapGender', headerCellClass: $scope.highlightFilteredHeader },                               
           // no filter input
           { field: 'company', enableFiltering: false, filter: {
             noTerm: true,
@@ -101,7 +113,7 @@ this button.
             filter: {
               condition: uiGridConstants.filter.ENDS_WITH,
               placeholder: 'ends with'
-            }
+            }, headerCellClass: $scope.highlightFilteredHeader
           },
           // custom condition function
           {
@@ -111,7 +123,7 @@ this button.
                 var strippedValue = (cellValue + '').replace(/[^\d]/g, '');
                 return strippedValue.indexOf(searchTerm) >= 0;
               }
-            }
+            }, headerCellClass: $scope.highlightFilteredHeader
           },
           // multiple filters
           { field: 'age', filters: [
@@ -123,13 +135,14 @@ this button.
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than'
             }
-          ]},
+          ], headerCellClass: $scope.highlightFilteredHeader},
           // date filter
           { field: 'mixedDate', cellFilter: 'date', width: '15%', filter: {
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than',
               term: nextWeek
-          }}
+            }, headerCellClass: $scope.highlightFilteredHeader
+          }
         ]
       };
 
@@ -181,6 +194,10 @@ this button.
     .grid {
       width: 650px;
       height: 400px;
+    }
+    
+    .header-filtered {
+      color: blue;
     }
   </file>
   <file name="scenario.js">
