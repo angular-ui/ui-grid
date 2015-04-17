@@ -78,7 +78,7 @@
               if (uiGridCtrl.grid.isScrollingHorizontally) {
                 return;
               }
-              var newScrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.headerViewport);
+              var newScrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.headerViewport, uiGridCtrl.grid);
               var horizScrollPercentage = containerCtrl.colContainer.scrollHorizontal(newScrollLeft);
 
               var scrollEvent = new ScrollEvent(uiGridCtrl.grid, null, containerCtrl.colContainer, ScrollEvent.Sources.ViewPortScroll);
