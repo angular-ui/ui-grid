@@ -59,6 +59,10 @@
           invalidJson: 'Het bestand kan niet verwerkt worden. Is het valide json?',
           jsonNotArray: 'Het json bestand moet een array bevatten. De actie wordt geannuleerd.'
         },
+        pagination: {
+            sizes: 'items per pagina',
+            totalItems: 'items'
+        },
         grouping: {
             group: 'Groepeer',
             ungroup: 'Groepering opheffen',
