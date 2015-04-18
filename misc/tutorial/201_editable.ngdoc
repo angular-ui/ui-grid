@@ -19,6 +19,11 @@ When using a dropdown editor you need to provide an options array through the `e
 This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through
 using the `editDropdownIdLabel` and `editDropdownValueLabel` options.
 
+A file chooser is available, through seting the 'editableCellTemplate` on the `columnDef` to `'ui-grid/fileChooserEditor'`.  This
+file chooser will open the file chosen by the user and assign the value of that file to the model element.  In the example below
+we use the file chooser to load a file, and we display the filename in the cell.  The file is stored against the row in a hidden
+column, which we can save to our server or otherwise process.
+
 Custom edit templates should be used for any editor other than the default editors, but be aware that you will likely also
 need to provide a custom directive similar to the uiGridEditor directive so as to provide `BEGIN_CELL_EDIT, CANCEL_CELL_EDIT
 and END_CELL_EDIT` events.
@@ -82,6 +87,23 @@ $scope.gridOptions.columnDefs = [
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {  };
 
+      $scope.storeFile = function( gridRow, gridCol, files ) {
+        // ignore all but the first file, it can only select one anyway
+        // set the filename into this column
+        gridRow.entity.filename = files[0].name;
+         
+        // read the file and set it into a hidden column, which we may do stuff with later
+        var setFile = function(fileContent){
+          gridRow.entity.file = fileContent.currentTarget.result;
+          // put it on scope so we can display it - you'd probably do something else with it
+          $scope.lastFile = fileContent.currentTarget.result;
+          $scope.$apply();
+        };
+        var reader = new FileReader();
+        reader.onload = setFile;
+        reader.readAsText( files[0] );
+      }; 
+
       $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
@@ -101,11 +123,11 @@ $scope.gridOptions.columnDefs = [
         { name: 'isActive', displayName: 'Active', type: 'boolean', width: '10%' },
         { name: 'pet', displayName: 'Pet', width: '20%', editableCellTemplate: 'ui-grid/dropdownEditor',
           editDropdownRowEntityOptionsArrayPath: 'foo.bar[0].options', editDropdownIdLabel: 'value'
-        }
+        },
+        { name: 'filename', displayName: 'File', width: '20%', editableCellTemplate: 'ui-grid/fileChooserEditor',
+          editFileChooserCallback: $scope.storeFile }
       ];
-
-
-
+      
      $scope.msg = {};
 
      $scope.gridOptions.onRegisterApi = function(gridApi){
@@ -158,6 +180,9 @@ $scope.gridOptions.columnDefs = [
       <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
       <br>
       <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+      <br>
+      <div><strong>Last file uploaded:</strong></div>
+      <div>{{lastFile}}</div>
     </div>
   </file>
   <file name="main.css">
