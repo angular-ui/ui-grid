@@ -1082,6 +1082,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
    * Updated to use $interval rather than $timeout, as protractor (e2e tests) is able to work with $interval,
    * but not with $timeout
+   * 
+   * Note that when using throttle, you need to use throttle to create a new function upfront, then use the function
+   * return from that call each time you need to call throttle.  If you call throttle itself repeatedly, the lastCall
+   * variable will get overwritten and the throttling won't work
+   * 
    * @example
    * <pre>
    * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
@@ -1092,12 +1097,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    */
   s.throttle = function(func, wait, options){
     options = options || {};
-    var lastCall = 0, queued = null, context, args;
+    var lastCall = 0, queued = null, context, args, rndFunctionTag = Math.floor(Math.random() * (10000));
 
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){ queued = null; }, 0, 1);
+      $timeout(function(){ queued = null; }, 0);
     }
 
     return function(){

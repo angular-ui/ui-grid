@@ -1302,9 +1302,6 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    // this is also setting processedRows, providing a cache of the rows as they
-    // came out of the rowProcessors - in particular they are sorted so we
-    // can process them for grouping
     var self = this;
 
     // Reset all the render container row caches
