@@ -1100,6 +1100,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
+//      queued = null;
       $interval(function(){ queued = null; }, 0, 1);
     }
 
@@ -1107,12 +1108,16 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       /* jshint validthis:true */
       context = this;
       args = arguments;
+      console.log('throttle called');
       if (queued === null){
         var sinceLast = +new Date() - lastCall;
         if (sinceLast > wait){
+          console.log('running function');
           runFunc();
         }
         else if (options.trailing){
+//          runFunc();
+          console.log('running function');
           queued = $interval(runFunc, wait - sinceLast, 1);
         }
       }
