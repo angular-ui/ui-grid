@@ -23,6 +23,7 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.enableGridMenu = true;
       $scope.gridOptions.showGridFooter = true;
       $scope.gridOptions.showColumnFooter = true;
+      $scope.gridOptions.aggregationCalcThrottle = 10000;
 
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;

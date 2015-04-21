@@ -119,10 +119,24 @@ angular.module('ui.grid')
 
     self.aggregationValue = undefined;
 
-    var updateAggregationValue = function() {
+    // The footer cell registers to listen for the rowsRendered event, and calls this.  Needed to be
+    // in something with a scope so that the dereg would get called
+    self.updateAggregationValue = function() {
 
      // gridUtil.logDebug('getAggregationValue for Column ' + self.colDef.name);
 
+      /** 
+       * @ngdoc property
+       * @name aggregationType
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description The aggregation that you'd like to show in the columnFooter for this
+       * column.  Valid values are in uiGridConstants, and currently include `uiGridConstants.aggregationTypes.count`, 
+       * `uiGridConstants.aggregationTypes.sum`, `uiGridConstants.aggregationTypes.avg`, `uiGridConstants.aggregationTypes.min`, 
+       * `uiGridConstants.aggregationTypes.max`.
+       * 
+       * You can also provide a function as the aggregation type, in this case your function needs to accept the full
+       * set of visible rows, and return a value that should be shown 
+       */
       if (!self.aggregationType) {
         self.aggregationValue = undefined;
         return;
@@ -173,10 +187,7 @@ angular.module('ui.grid')
       }
     };
 
-    var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle, { trailing: true });
-
-
-
+//     var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle, { trailing: true, context: self.name });
 
     /**
      * @ngdoc function
@@ -186,15 +197,12 @@ angular.module('ui.grid')
      * Debounced using scrollDebounce option setting
      */
     this.getAggregationValue =  function() {
-      if (!self.grid.isScrollingVertically && !self.grid.isScrollingHorizontally) {
-        throttledUpdateAggregationValue();
-      }
+//      if (!self.grid.isScrollingVertically && !self.grid.isScrollingHorizontally) {
+//        throttledUpdateAggregationValue();
+//      }
 
       return self.aggregationValue;
-    } ;
-
-
-
+    };
   }
 
 
@@ -627,7 +635,7 @@ angular.module('ui.grid')
       defaultFilters.push({});
     }
 
-/**
+    /**
      * @ngdoc property
      * @name filter
      * @propertyOf ui.grid.class:GridOptions.columnDef
