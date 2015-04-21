@@ -515,7 +515,9 @@
             var rowCol = { row: gridRow, col: gridCol };
 
             // Broadcast the navigation
-            grid.cellNav.broadcastCellNav(rowCol);
+            if (gridRow !== null && gridCol !== null) {
+              grid.cellNav.broadcastCellNav(rowCol);
+            }
           });
 
 

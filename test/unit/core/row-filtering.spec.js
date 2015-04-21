@@ -51,7 +51,7 @@ describe('rowSearcher', function() {
   });
 
   describe('guessCondition', function () {
-    iit('should create a RegExp when term ends with a *', function() {
+    it('should create a RegExp when term ends with a *', function() {
       var filter = { term: 'blah*' };
 
       var re = new RegExp(/^blah[\s\S]*?$/i);
@@ -236,7 +236,7 @@ describe('rowSearcher', function() {
       expect(ret.length).toEqual(3);
     });
   });
-  
+
   describe('with a custom filter function', function() {
     var custom, ret;
     beforeEach(function() {
@@ -250,7 +250,7 @@ describe('rowSearcher', function() {
         var orEqualTo = secondChar === '=';
         var trimBy = orEqualTo ? 2 : 1 ;
         var compareTo;
-        
+
         if (firstChar === '>') {
           compareTo = searchTerm.substr(trimBy) * 1;
           return orEqualTo ? rowValue >= compareTo : rowValue > compareTo;
