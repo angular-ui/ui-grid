@@ -287,6 +287,7 @@
               } 
             };
 
+/*
             $scope.$watch('col', function (n, o) {
               if (n !== o) {
                 // See if the column's internal class has changed
@@ -298,7 +299,7 @@
                 }
               }
             });
-  
+*/
             updateHeaderOptions();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs

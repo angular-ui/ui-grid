@@ -48,6 +48,7 @@
             }
 
             // Watch for column changes so we can alter the col cell class properly
+/* shouldn't be needed any more, given track by col.name
             $scope.$watch('col', function (n, o) {
               if (n !== o) {
                 // See if the column's internal class has changed
@@ -59,6 +60,7 @@
                 }
               }
             });
+*/
 
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
