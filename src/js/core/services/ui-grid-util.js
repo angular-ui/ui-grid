@@ -1095,12 +1095,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    */
   s.throttle = function(func, wait, options){
     options = options || {};
-    var lastCall = 0, queued = null, context, args, rndFunctionTag = Math.floor(Math.random() * (10000));
+    var lastCall = 0, queued = null, context, args;
 
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $timeout(function(){ queued = null; }, 0);
+      $interval(function(){ queued = null; }, 0, 1);
     }
 
     return function(){

@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       version: util.getVersion(),
       stable_version: util.getStableVersion(),
       dist: 'dist',
-      site: process.env.TRAVIS ? 'ui-grid.info' : '192.168.1.3:<%= connect.docs.options.port %>',
+      site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
       banner: '/*!\n' +
         ' * <%= pkg.title || pkg.name %> - v<%= version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
