@@ -132,7 +132,7 @@
       };
 
       ScrollEvent.prototype.atTop = function(scrollTop) {
-        return (this.y && this.y.percentage < 1 && scrollTop === 0);
+        return (this.y && this.y.percentage === 0 && scrollTop === 0);
       };
 
       ScrollEvent.prototype.atBottom = function(scrollTop) {
@@ -140,7 +140,7 @@
       };
 
       ScrollEvent.prototype.atLeft = function(scrollLeft) {
-        return (this.x && this.x.percentage < 1 && scrollLeft === 0);
+        return (this.x && this.x.percentage === 0 && scrollLeft === 0);
       };
 
       ScrollEvent.prototype.atRight = function(scrollLeft) {
