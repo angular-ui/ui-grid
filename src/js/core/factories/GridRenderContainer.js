@@ -492,7 +492,6 @@ angular.module('ui.grid')
     // Define the top-most rendered row
     this.currentTopRow = renderedRange[0];
 
-    // TODO(c0bra): make this method!
     this.setRenderedRows(rowArr);
   };
 

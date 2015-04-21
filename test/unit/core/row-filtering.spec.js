@@ -51,7 +51,7 @@ describe('rowSearcher', function() {
   });
 
   describe('guessCondition', function () {
-    it('should create a RegExp when term ends with a *', function() {
+    iit('should create a RegExp when term ends with a *', function() {
       var filter = { term: 'blah*' };
 
       var re = new RegExp(/^blah[\s\S]*?$/i);
