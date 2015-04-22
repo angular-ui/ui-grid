@@ -864,7 +864,11 @@ angular.module('ui.grid')
         html = html.replace(uiGridConstants.TOOLTIP, '');
       } else {
         // gridColumn will have made sure that the col either has false or a function for this value
-        html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col)}}"');
+        if (col.cellFilter){
+          html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col) | ' + col.cellFilter + '}}"');
+        } else {
+          html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col)}}"');
+        }
       }
 
       var compiledElementFn = $compile(html);

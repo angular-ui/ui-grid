@@ -17,6 +17,8 @@ Note that turning on tooltips will create an extra watcher per cell, so it has a
 performance, it is not recommended to turn them on for every column, rather only for the columns likely to have
 data that won't be displayable within the grid row (e.g. long description fields).
 
+Tooltips respect the cellFilter, so if you define a cellFilter it will also be used in the tooltip.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
@@ -30,7 +32,8 @@ data that won't be displayable within the grid row (e.g. long description fields
             function( row, col ) {
               return 'Name: ' + row.entity.name + ' Company: ' + row.entity.company;
             } 
-          }
+          },
+          { field: 'gender', cellTooltip: true, cellFilter: 'mapGender' },
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
@@ -42,9 +45,27 @@ data that won't be displayable within the grid row (e.g. long description fields
 
       $http.get('/data/100.json')
         .success(function(data) {
+          data.forEach( function setGender( row, index ){
+            row.gender = row.gender==='male' ? '1' : '2';
+          });
+
           $scope.gridOptions.data = data;
         });
-    }]);
+    }])
+    .filter('mapGender', function() {
+      var genderHash = {
+        1: 'male',
+        2: 'female'
+      };
+
+      return function(input) {
+        if (!input){
+          return '';
+        } else {
+          return genderHash[input];
+        }
+      };
+    });
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
