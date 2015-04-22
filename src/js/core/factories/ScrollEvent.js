@@ -60,9 +60,14 @@
          *  @methodOf  ui.grid.class:ScrollEvent
          *  @description fires a throttled event using grid.api.core.raise.scrollEvent
          */
-        self.fireThrottledScrollingEvent = gridUtil.throttle(function(sourceContainerId) {
+        self.fireThrottledScrollingEvent = function(sourceContainerId) {
+          self.grid.scrollContainers(sourceContainerId, self);
+        };
+/*
+        gridUtil.throttle(function(sourceContainerId) {
           self.grid.scrollContainers(sourceContainerId, self);
         }, self.grid.options.wheelScrollThrottle, {trailing: true});
+*/
 
       }
 

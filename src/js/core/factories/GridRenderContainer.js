@@ -363,7 +363,7 @@ angular.module('ui.grid')
     this.prevScrollTop = scrollTop;
     this.prevScrolltopPercentage = scrollPercentage;
 
-    this.grid.queueRefresh();
+//    this.grid.queueRefresh();
   };
 
   GridRenderContainer.prototype.adjustScrollHorizontal = function adjustScrollHorizontal(scrollLeft, scrollPercentage, force) {
@@ -380,7 +380,7 @@ angular.module('ui.grid')
     this.prevScrollLeft = scrollLeft;
     this.prevScrollleftPercentage = scrollPercentage;
 
-    this.grid.queueRefresh();
+//    this.grid.queueRefresh();
   };
 
   GridRenderContainer.prototype.adjustRows = function adjustRows(scrollTop, scrollPercentage, postDataLoaded) {
@@ -390,6 +390,7 @@ angular.module('ui.grid')
 
     var rowCache = self.visibleRowCache;
 
+    // Define a max row index that we can't scroll past
     var maxRowIndex = rowCache.length - minRows;
 
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
@@ -399,7 +400,6 @@ angular.module('ui.grid')
     
     var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
 
-    // Define a max row index that we can't scroll past
     if (rowIndex > maxRowIndex) {
       rowIndex = maxRowIndex;
     }
@@ -491,6 +491,10 @@ angular.module('ui.grid')
 
     // Define the top-most rendered row
     this.currentTopRow = renderedRange[0];
+    if ( this.previousTopRow !== this.currentTopRow ){
+      this.previousTopRow = this.currentTopRow;
+      this.grid.queueRefresh();
+    }
 
     this.setRenderedRows(rowArr);
   };
@@ -503,6 +507,10 @@ angular.module('ui.grid')
 
     // Define the left-most rendered columns
     this.currentFirstColumn = renderedRange[0];
+    if ( this.previousFirstColumn !== this.currentFirstColumn ){
+      this.previousFirstColumn = this.currentFirstColumn;
+      this.grid.queueRefresh();
+    }
 
     this.setRenderedColumns(columnArr);
   };
