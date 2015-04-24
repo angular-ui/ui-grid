@@ -8,7 +8,10 @@ UI-Grid allows you to filter rows. Just set the `enableFiltering` flag in your g
 
 Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the "company" column below for an example.
 
-The filter field can be pre-populated by setting `filter: { term: 'xxx' }` in the column def.  See the "gender" column below.
+The filter field can be pre-populated by setting `filter: { term: 'xxx' }` in the column def.  See the "gender" column below.  Once
+the grid has rendered changes to the columnDef don't reflect in the grid - if they did then users would have their changes to filters
+overwritten every time the grid refreshed.  If you want to programatically modify filters after initial render then modify 
+grid.column[i].filters[0] directly.
 
 ### Conditon
 
@@ -61,6 +64,9 @@ If you need to internationalize the labels you'll need to complete that before p
 ### Cancel icon
 By default the filter shows a cancel X beside the dropdown. You can set `disableCancelFilterButton: true` to suppress
 this button.
+
+### Programmatic setting of filters
+You can set filters 
 
 In this example we've provided a "toggle filters" button to allow you to turn the filter row on and off.  To 
 still visually indicate which columns are filtered even when the filters aren't present, we've used the headerCellClass
