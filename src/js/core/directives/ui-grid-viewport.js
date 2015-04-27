@@ -28,7 +28,7 @@
           $scope.rowContainer = containerCtrl.rowContainer;
           $scope.colContainer = containerCtrl.colContainer;
 
-          // Register this viewport with its container 
+          // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
 
@@ -64,6 +64,7 @@
             if ( vertScrollPercentage > -1 ){
               scrollEvent.y = { percentage: vertScrollPercentage };
             }
+
 
             grid.scrollContainers($scope.$parent.containerId, scrollEvent);
           }
@@ -114,13 +115,14 @@
 
             var styles = {};
 
-            if (index === 0 && rowContainer.currentTopRow !== 0) {
-              // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-              var hiddenRowWidth = (rowContainer.currentTopRow) * rowContainer.grid.options.rowHeight;
 
-              // return { 'margin-top': hiddenRowWidth + 'px' };
-              styles['margin-top'] = hiddenRowWidth + 'px';
+            if (rowContainer.currentTopRow !== 0){
+                var translateY = "translateY("+ (rowContainer.currentTopRow) * rowContainer.grid.options.rowHeight  +"px)";
+                styles['transform'] = translateY;
+                styles['-webkit-transform'] = translateY;
+                styles['-ms-transform'] = translateY;
             }
+
 
             if (colContainer.currentFirstColumn !== 0) {
               if (colContainer.grid.isRTL()) {
