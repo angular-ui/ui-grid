@@ -10,7 +10,7 @@ angular.module('ui.grid')
    * @description Public Api for the core grid features
    *
    */
-  
+
   /**
    * @ngdoc function
    * @name ui.grid.class:Grid
@@ -29,10 +29,10 @@ angular.module('ui.grid')
     else {
       throw new Error('No ID provided. An ID must be given when creating a grid.');
     }
-  
+
     self.id = options.id;
     delete options.id;
-  
+
     // Get default options
     self.options = GridOptions.initialize( options );
 
@@ -45,7 +45,7 @@ angular.module('ui.grid')
      * use gridOptions.appScopeProvider to override the default assignment of $scope.$parent with any reference
      */
     self.appScope = self.options.appScopeProvider;
-  
+
     self.headerHeight = self.options.headerRowHeight;
 
 
@@ -81,26 +81,26 @@ angular.module('ui.grid')
     self.horizontalScrollSyncCallBackFns = {};
 
     // self.visibleRowCache = [];
-  
+
     // Set of 'render' containers for self grid, which can render sets of rows
     self.renderContainers = {};
-  
+
     // Create a
     self.renderContainers.body = new GridRenderContainer('body', self);
-  
+
     self.cellValueGetterCache = {};
-  
+
     // Cached function to use with custom row templates
     self.getRowTemplateFn = null;
-  
-  
+
+
     //representation of the rows on the grid.
     //these are wrapped references to the actual data rows (options.data)
     self.rows = [];
-  
+
     //represents the columns on the grid
     self.columns = [];
-  
+
     /**
      * @ngdoc boolean
      * @name isScrollingVertically
@@ -108,7 +108,7 @@ angular.module('ui.grid')
      * @description set to true when Grid is scrolling vertically. Set to false via debounced method
      */
     self.isScrollingVertically = false;
-  
+
     /**
      * @ngdoc boolean
      * @name isScrollingHorizontally
@@ -144,7 +144,7 @@ angular.module('ui.grid')
     var debouncedHorizontal = gridUtil.debounce(horizontal, self.options.scrollDebounce);
     var debouncedHorizontalMinDelay = gridUtil.debounce(horizontal, 0);
 
-  
+
     /**
      * @ngdoc function
      * @name flagScrollingVertically
@@ -163,7 +163,7 @@ angular.module('ui.grid')
         debouncedVertical(scrollEvent);
       }
     };
-  
+
     /**
      * @ngdoc function
      * @name flagScrollingHorizontally
@@ -192,11 +192,11 @@ angular.module('ui.grid')
     if (self.options.enableVerticalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
       self.scrollbarWidth = gridUtil.getScrollbarWidth();
     }
-  
-  
-  
+
+
+
     self.api = new GridApi(self);
-  
+
     /**
      * @ngdoc function
      * @name refresh
@@ -206,13 +206,13 @@ angular.module('ui.grid')
      * rowProcessors, as well as calling refreshCanvas to update all
      * the grid sizing.  In general you should prefer to use queueGridRefresh
      * instead, which is basically a debounced version of refresh.
-     * 
+     *
      * If you only want to resize the grid, not regenerate all the rows
      * and columns, you should consider directly calling refreshCanvas instead.
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'refresh', this.refresh );
-  
+
     /**
      * @ngdoc function
      * @name queueGridRefresh
@@ -223,10 +223,10 @@ angular.module('ui.grid')
      * rowProcessors, as well as calling refreshCanvas to update all
      * the grid sizing.  In general you should prefer to use queueGridRefresh
      * instead, which is basically a debounced version of refresh.
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'queueGridRefresh', this.queueGridRefresh );
-  
+
     /**
      * @ngdoc function
      * @name refreshRows
@@ -234,10 +234,10 @@ angular.module('ui.grid')
      * @description Runs only the rowProcessors, columns remain as they were.
      * It then calls redrawInPlace and refreshCanvas, which adjust the grid sizing.
      * @returns {promise} promise that is resolved when render completes?
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'refreshRows', this.refreshRows );
-  
+
     /**
      * @ngdoc function
      * @name queueRefresh
@@ -245,10 +245,10 @@ angular.module('ui.grid')
      * @description Requests execution of refreshCanvas, if multiple requests are made
      * during a digest cycle only one will run.  RefreshCanvas updates the grid sizing.
      * @returns {promise} promise that is resolved when render completes?
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'refreshRows', this.queueRefresh );
-  
+
     /**
      * @ngdoc function
      * @name handleWindowResize
@@ -257,18 +257,18 @@ angular.module('ui.grid')
      * up by a watch on window size, but in some circumstances it is necessary
      * to call this manually
      * @returns {promise} promise that is resolved when render completes?
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'handleWindowResize', this.handleWindowResize );
-  
-  
+
+
     /**
      * @ngdoc function
      * @name addRowHeaderColumn
      * @methodOf ui.grid.core.api:PublicApi
      * @description adds a row header column to the grid
      * @param {object} column def
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
 
@@ -306,13 +306,13 @@ angular.module('ui.grid')
      * the grid calls each registered "rows processor", which has a chance
      * to alter the set of rows (sorting, etc) as long as the count is not
      * modified.
-     * 
-     * @param {function(renderedRowsToProcess, columns )} processorFunction rows processor function, which 
+     *
+     * @param {function(renderedRowsToProcess, columns )} processorFunction rows processor function, which
      * is run in the context of the grid (i.e. this for the function will be the grid), and must
      * return the updated rows list, which is passed to the next processor in the chain
      * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
      * for other people to inject rows processors at intermediate priorities.  Lower priority rowsProcessors run earlier.
-     * 
+     *
      * At present allRowsVisible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
@@ -359,11 +359,11 @@ angular.module('ui.grid')
      * @param {object} b sort value b
      * @returns {number} null if there were no nulls/undefineds, otherwise returns
      * a sort value that should be passed back from the sort function
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'sortHandleNulls', rowSorter.handleNulls );
-  
-  
+
+
     /**
      * @ngdoc function
      * @name sortChanged
@@ -371,28 +371,28 @@ angular.module('ui.grid')
      * @description The sort criteria on one or more columns has
      * changed.  Provides as parameters the grid and the output of
      * getColumnSorting, which is an array of gridColumns
-     * that have sorting on them, sorted in priority order. 
-     * 
+     * that have sorting on them, sorted in priority order.
+     *
      * @param {Grid} grid the grid
-     * @param {array} sortColumns an array of columns with 
+     * @param {array} sortColumns an array of columns with
      * sorts on them, in priority order
-     * 
+     *
      * @example
      * <pre>
      *      gridApi.core.on.sortChanged( grid, sortColumns );
      * </pre>
      */
     self.api.registerEvent( 'core', 'sortChanged' );
-  
+
       /**
      * @ngdoc function
      * @name columnVisibilityChanged
      * @methodOf  ui.grid.core.api:PublicApi
      * @description The visibility of a column has changed,
-     * the column itself is passed out as a parameter of the event. 
-     * 
+     * the column itself is passed out as a parameter of the event.
+     *
      * @param {GridCol} column the column that changed
-     * 
+     *
      * @example
      * <pre>
      *      gridApi.core.on.columnVisibilityChanged( $scope, function (column) {
@@ -401,20 +401,20 @@ angular.module('ui.grid')
      * </pre>
      */
     self.api.registerEvent( 'core', 'columnVisibilityChanged' );
-  
+
     /**
      * @ngdoc method
      * @name notifyDataChange
      * @methodOf ui.grid.core.api:PublicApi
      * @description Notify the grid that a data or config change has occurred,
-     * where that change isn't something the grid was otherwise noticing.  This 
+     * where that change isn't something the grid was otherwise noticing.  This
      * might be particularly relevant where you've changed values within the data
-     * and you'd like cell classes to be re-evaluated, or changed config within 
+     * and you'd like cell classes to be re-evaluated, or changed config within
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
-     * @param {string} type one of the 
+     * @param {string} type one of the
      * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
      * us which refreshes to fire.
-     * 
+     *
      */
     self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
 
@@ -527,25 +527,25 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description When a data change occurs, the data change callbacks of the specified type
    * will be called.  The rules are:
-   * 
+   *
    * - when the data watch fires, that is considered a ROW change (the data watch only notices
    *   added or removed rows)
    * - when the api is called to inform us of a change, the declared type of that change is used
    * - when a cell edit completes, the EDIT callbacks are triggered
    * - when the columnDef watch fires, the COLUMN callbacks are triggered
    * - when the options watch fires, the OPTIONS callbacks are triggered
-   * 
+   *
    * For a given event:
    * - ALL calls ROW, EDIT, COLUMN, OPTIONS and ALL callbacks
    * - ROW calls ROW and ALL callbacks
    * - EDIT calls EDIT and ALL callbacks
    * - COLUMN calls COLUMN and ALL callbacks
    * - OPTIONS calls OPTIONS and ALL callbacks
-   * 
+   *
    * @param {function(grid)} callback function to be called
-   * @param {array} types the types of data change you want to be informed of.  Values from 
+   * @param {array} types the types of data change you want to be informed of.  Values from
    * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
-   * ALL 
+   * ALL
    * @returns {function} deregister function - a function that can be called to deregister this callback
    */
   Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
@@ -557,7 +557,7 @@ angular.module('ui.grid')
       gridUtil.logError("Expected types to be an array or null in registerDataChangeCallback, value passed was: " + types );
     }
     this.dataChangeCallbacks[uid] = { callback: callback, types: types, _this:_this };
-    
+
     var self = this;
     var deregisterFunction = function() {
       delete self.dataChangeCallbacks[uid];
@@ -570,9 +570,9 @@ angular.module('ui.grid')
    * @name callDataChangeCallbacks
    * @methodOf ui.grid.class:Grid
    * @description Calls the callbacks based on the type of data change that
-   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, COLUMN and OPTIONS callbacks if the 
+   * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, COLUMN and OPTIONS callbacks if the
    * event type is matching, or if the type is ALL.
-   * @param {number} type the type of event that occurred - one of the 
+   * @param {number} type the type of event that occurred - one of the
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN, OPTIONS)
    */
   Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type, options) {
@@ -589,20 +589,20 @@ angular.module('ui.grid')
       }
     }, this);
   };
-  
+
   /**
    * @ngdoc function
    * @name notifyDataChange
    * @methodOf ui.grid.class:Grid
    * @description Notifies us that a data change has occurred, used in the public
-   * api for users to tell us when they've changed data or some other event that 
+   * api for users to tell us when they've changed data or some other event that
    * our watches cannot pick up
-   * @param {string} type the type of event that occurred - one of the 
+   * @param {string} type the type of event that occurred - one of the
    * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
    */
   Grid.prototype.notifyDataChange = function notifyDataChange(type) {
     var constants = uiGridConstants.dataChange;
-    if ( type === constants.ALL || 
+    if ( type === constants.ALL ||
          type === constants.COLUMN ||
          type === constants.EDIT ||
          type === constants.ROW ||
@@ -612,15 +612,15 @@ angular.module('ui.grid')
       gridUtil.logError("Notified of a data change, but the type was not recognised, so no action taken, type was: " + type);
     }
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name columnRefreshCallback
    * @methodOf ui.grid.class:Grid
    * @description refreshes the grid when a column refresh
-   * is notified, which triggers handling of the visible flag. 
-   * This is called on uiGridConstants.dataChange.COLUMN, and is 
+   * is notified, which triggers handling of the visible flag.
+   * This is called on uiGridConstants.dataChange.COLUMN, and is
    * registered as a dataChangeCallback in grid.js
    * @param {string} name column name
    */
@@ -642,7 +642,7 @@ angular.module('ui.grid')
   Grid.prototype.processRowsCallback = function processRowsCallback( grid ){
     grid.queueGridRefresh();
   };
-    
+
 
   /**
    * @ngdoc function
@@ -682,7 +682,7 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name type
    * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description the type of the column, used in sorting.  If not provided then the 
+   * @description the type of the column, used in sorting.  If not provided then the
    * grid will guess the type.  Add this only if the grid guessing is not to your
    * satisfaction.  One of:
    * - 'string'
@@ -819,7 +819,7 @@ angular.module('ui.grid')
       // We need to allow for the "row headers" when mapping from the column defs array to the columns array
       //   If we have a row header in columns[0] and don't account for it   we'll overwrite it with the column in columnDefs[0]
 
-      // Go through all the column defs, use the shorter of columns length and colDefs.length because if a user has given two columns the same name then 
+      // Go through all the column defs, use the shorter of columns length and colDefs.length because if a user has given two columns the same name then
       // columns will be shorter than columnDefs.  In this situation we'll avoid an error, but the user will still get an unexpected result
       var len = Math.min(self.options.columnDefs.length, self.columns.length);
       for (i = 0; i < len; i++) {
@@ -859,7 +859,7 @@ angular.module('ui.grid')
     this.columns.forEach(function (col) {
       var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
       html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
-      
+
       if (col.cellTooltip === false){
         html = html.replace(uiGridConstants.TOOLTIP, '');
       } else {
@@ -989,7 +989,7 @@ angular.module('ui.grid')
           // Make sure to parse to an int
           lastNum = parseInt(lastNum, 10);
 
-          // Add 1 to the number from the last column and tack it on to the field to be the name for this new column 
+          // Add 1 to the number from the last column and tack it on to the field to be the name for this new column
           colDef.name = colDef.field + (lastNum + 1);
         }
       }
@@ -1008,7 +1008,7 @@ angular.module('ui.grid')
     var t = [];
     for (var i = 0; i < n.length; i++) {
       var nV = nAccessor ? n[i][nAccessor] : n[i];
-      
+
       var found = false;
       for (var j = 0; j < o.length; j++) {
         var oV = oAccessor ? o[j][oAccessor] : o[j];
@@ -1021,7 +1021,7 @@ angular.module('ui.grid')
         t.push(nV);
       }
     }
-    
+
     return t;
   };
 
@@ -1036,9 +1036,9 @@ angular.module('ui.grid')
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
-    
+
     lookInRows = typeof(lookInRows) === 'undefined' ? self.rows : lookInRows;
-    
+
     var rows = lookInRows.filter(function (row) {
       return self.options.rowEquality(row.entity, rowEntity);
     });
@@ -1058,10 +1058,10 @@ angular.module('ui.grid')
    * rowsProcessors immediately after to sort the data anyway
    * 2. if we have row hashing available, we try to use the rowHash to find the row
    * 3. no memory leaks - rows that are no longer in newRawData need to be garbage collected
-   * 
+   *
    * The basic logic flow makes use of the newRawData, oldRows and oldHash, and creates
    * the newRows and newHash
-   * 
+   *
    * ```
    * newRawData.forEach newEntity
    *   if (hashing enabled)
@@ -1072,7 +1072,7 @@ angular.module('ui.grid')
    *     create newRow
    *   append to the newRows and add to newHash
    *   run the processors
-   * 
+   *
    * Rows are identified using the hashKey if configured.  If not configured, then rows
    * are identified using the gridOptions.rowEquality function
    */
@@ -1082,7 +1082,7 @@ angular.module('ui.grid')
     var oldRowHash = self.rowHashMap || self.createRowHashMap();
     self.rowHashMap = self.createRowHashMap();
     self.rows.length = 0;
-    
+
     newRawData.forEach( function( newEntity, i ) {
       var newRow;
       if ( self.options.enableRowHashing ){
@@ -1101,7 +1101,7 @@ angular.module('ui.grid')
       self.rows.push( newRow );
       self.rowHashMap.put( newEntity, newRow );
     });
-    
+
     self.assignTypes();
 
     var p1 = $q.when(self.processRowsProcessors(self.rows))
@@ -1166,7 +1166,7 @@ angular.module('ui.grid')
    * @name registerStyleComputation
    * @methodOf ui.grid.class:Grid
    * @description registered a styleComputation function
-   * 
+   *
    * If the function returns a value it will be appended into the grid's `<style>` block
    * @param {function($scope)} styleComputation function
    */
@@ -1189,7 +1189,7 @@ angular.module('ui.grid')
   //     this.rowFilters.slice(idx, 1);
   //   }
   // };
-  
+
   // Grid.prototype.processRowFilters = function(rows) {
   //   var self = this;
   //   self.rowFilters.forEach(function (filter) {
@@ -1208,15 +1208,15 @@ angular.module('ui.grid')
    * the grid calls each registered "rows processor", which has a chance
    * to alter the set of rows (sorting, etc) as long as the count is not
    * modified.
-   * 
-   * @param {function(renderedRowsToProcess, columns )} processorFunction rows processor function, which 
+   *
+   * @param {function(renderedRowsToProcess, columns )} processorFunction rows processor function, which
    * is run in the context of the grid (i.e. this for the function will be the grid), and must
    * return the updated rows list, which is passed to the next processor in the chain
    * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
    * for other people to inject rows processors at intermediate priorities.  Lower priority rowsProcessors run earlier.
-   * 
+   *
    * At present all rows visible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
-   * 
+   *
    */
   Grid.prototype.registerRowsProcessor = function registerRowsProcessor(processor, priority) {
     if (!angular.isFunction(processor)) {
@@ -1248,7 +1248,7 @@ angular.module('ui.grid')
       this.rowsProcessors.splice(idx, 1);
     }
   };
-  
+
   /**
    * Private Undocumented Method
    * @name processRowsProcessors
@@ -1262,22 +1262,22 @@ angular.module('ui.grid')
 
     // Create a shallow copy of the rows so that we can safely sort them without altering the original grid.rows sort order
     var myRenderableRows = renderableRows.slice(0);
-    
-    // Return myRenderableRows with no processing if we have no rows processors 
+
+    // Return myRenderableRows with no processing if we have no rows processors
     if (self.rowsProcessors.length === 0) {
       return $q.when(myRenderableRows);
     }
-  
+
     // Counter for iterating through rows processors
     var i = 0;
-    
+
     // Promise for when we're done with all the processors
     var finished = $q.defer();
 
     // This function will call the processor in self.rowsProcessors at index 'i', and then
     //   when done will call the next processor in the list, using the output from the processor
     //   at i as the argument for 'renderedRowsToProcess' on the next iteration.
-    //  
+    //
     //   If we're at the end of the list of processors, we resolve our 'finished' callback with
     //   the result.
     function startProcessor(i, renderedRowsToProcess) {
@@ -1313,7 +1313,7 @@ angular.module('ui.grid')
 
     // Start on the first processor
     startProcessor(0, myRenderableRows);
-    
+
     return finished.promise;
   };
 
@@ -1325,14 +1325,14 @@ angular.module('ui.grid')
       var container = self.renderContainers[i];
 
       container.canvasHeightShouldUpdate = true;
-      
+
       if ( typeof(container.visibleRowCache) === 'undefined' ){
-        container.visibleRowCache = [];  
+        container.visibleRowCache = [];
       } else {
-        container.visibleRowCache.length = 0;  
+        container.visibleRowCache.length = 0;
       }
     }
-    
+
     // rows.forEach(function (row) {
     for (var ri = 0; ri < rows.length; ri++) {
       var row = rows[ri];
@@ -1353,7 +1353,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @param {function(renderedColumnsToProcess, rows)} columnProcessor column processor function, which
    * is run in the context of the grid (i.e. this for the function will be the grid), and
-   * which must return an updated renderedColumnsToProcess which can be passed to the next processor 
+   * which must return an updated renderedColumnsToProcess which can be passed to the next processor
    * in the chain
    * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
    * for other people to inject columns processors at intermediate priorities.  Lower priority columnsProcessors run earlier.
@@ -1390,21 +1390,21 @@ angular.module('ui.grid')
     // Create a shallow copy of the rows so that we can safely sort them without altering the original grid.rows sort order
     var myRenderableColumns = renderableColumns.slice(0);
 
-    // Return myRenderableRows with no processing if we have no rows processors 
+    // Return myRenderableRows with no processing if we have no rows processors
     if (self.columnsProcessors.length === 0) {
       return $q.when(myRenderableColumns);
     }
-  
+
     // Counter for iterating through rows processors
     var i = 0;
-    
+
     // Promise for when we're done with all the processors
     var finished = $q.defer();
 
     // This function will call the processor in self.rowsProcessors at index 'i', and then
     //   when done will call the next processor in the list, using the output from the processor
     //   at i as the argument for 'renderedRowsToProcess' on the next iteration.
-    //  
+    //
     //   If we're at the end of the list of processors, we resolve our 'finished' callback with
     //   the result.
     function startProcessor(i, renderedColumnsToProcess) {
@@ -1440,7 +1440,7 @@ angular.module('ui.grid')
 
     // Start on the first processor
     startProcessor(0, myRenderableColumns);
-    
+
     return finished.promise;
   };
 
@@ -1566,7 +1566,7 @@ angular.module('ui.grid')
     // gridUtil.logDebug('buildStyles');
 
     var self = this;
-    
+
     self.customStyles = '';
 
     self.styleComputations
@@ -1577,7 +1577,7 @@ angular.module('ui.grid')
         return a.priority - b.priority;
       })
       .forEach(function (compInfo) {
-        // this used to provide $scope as a second parameter, but I couldn't find any 
+        // this used to provide $scope as a second parameter, but I couldn't find any
         // style builders that used it, so removed it as part of moving to grid from controller
         var ret = compInfo.func.call(self);
 
@@ -1638,7 +1638,7 @@ angular.module('ui.grid')
     //}
 
     var adjustment = self.getViewportAdjustment();
-    
+
     viewPortHeight = viewPortHeight + adjustment.height;
 
     //gridUtil.logDebug('viewPortHeight', viewPortHeight);
@@ -1656,7 +1656,7 @@ angular.module('ui.grid')
     //}
 
     var adjustment = self.getViewportAdjustment();
-    
+
     viewPortWidth = viewPortWidth + adjustment.width;
 
     //gridUtil.logDebug('getviewPortWidth', viewPortWidth);
@@ -1808,17 +1808,17 @@ angular.module('ui.grid')
    */
   Grid.prototype.getCellValue = function getCellValue(row, col){
     if (this.options.flatEntityAccess && col.field){
-      return row.entity[col.field];      
+      return row.entity[col.field];
     } else {
       if (!col.cellValueGetterCache) {
         col.cellValueGetterCache = $parse(row.getEntityQualifiedColField(col));
       }
-  
+
       return col.cellValueGetterCache(row);
     }
   };
 
-  
+
   Grid.prototype.getNextColumnSortPriority = function getNextColumnSortPriority() {
     var self = this,
         p = 0;
@@ -1887,7 +1887,7 @@ angular.module('ui.grid')
    *   by this column only
    * @returns {Promise} A resolved promise that supplies the column.
    */
-  
+
   Grid.prototype.sortColumn = function sortColumn(column, directionOrAdd, add) {
     var self = this,
         direction = null;
@@ -1904,7 +1904,7 @@ angular.module('ui.grid')
     else {
       direction = directionOrAdd;
     }
-    
+
     if (!add) {
       self.resetColumnSorting(column);
       column.sort.priority = 0;
@@ -1934,12 +1934,12 @@ angular.module('ui.grid')
     else {
       column.sort.direction = direction;
     }
-    
+
     self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
   };
-  
+
   /**
    * communicate to outside world that we are done with initial rendering
    */
@@ -1958,8 +1958,8 @@ angular.module('ui.grid')
 
     return hashMap;
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name refresh
@@ -1969,7 +1969,7 @@ angular.module('ui.grid')
    */
   Grid.prototype.refresh = function refresh(rowsAltered) {
     var self = this;
-    
+
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
       self.setVisibleRows(renderableRows);
     });
@@ -1984,18 +1984,18 @@ angular.module('ui.grid')
       self.refreshCanvas(true);
     });
   };
-  
+
   /**
    * @ngdoc function
    * @name refreshRows
    * @methodOf ui.grid.class:Grid
-   * @description Refresh the rendered rows on screen?  Note: not functional at present 
+   * @description Refresh the rendered rows on screen?  Note: not functional at present
    * @returns {promise} promise that is resolved when render completes?
-   * 
+   *
    */
   Grid.prototype.refreshRows = function refreshRows() {
     var self = this;
-    
+
     return self.processRowsProcessors(self.rows)
       .then(function (renderableRows) {
         self.setVisibleRows(renderableRows);
@@ -2014,7 +2014,7 @@ angular.module('ui.grid')
    * @params {object} buildStyles optional parameter.  Use TBD
    * @returns {promise} promise that is resolved when the canvas
    * has been refreshed
-   * 
+   *
    */
   Grid.prototype.refreshCanvas = function(buildStyles) {
     var self = this;
@@ -2037,6 +2037,9 @@ angular.module('ui.grid')
         }
 
         if (container.header || container.headerCanvas) {
+          container.explicitHeaderHeight = null;
+          container.explicitHeaderCanvasHeight = null;
+
           containerHeadersToRecalc.push(container);
         }
       }
@@ -2055,6 +2058,11 @@ angular.module('ui.grid')
      *
      */
     if (containerHeadersToRecalc.length > 0) {
+      // Build the styles without the explicit header heights
+      if (buildStyles) {
+        self.buildStyles();
+      }
+
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
       $timeout(function() {
         // var oldHeaderHeight = self.grid.headerHeight;
@@ -2169,18 +2177,18 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description Redraw the rows and columns based on our current scroll position
    * @param {boolean} [rowsAdded] Optional to indicate rows are added and the scroll percentage must be recalculated
-   * 
+   *
    */
   Grid.prototype.redrawInPlace = function redrawInPlace(rowsAdded) {
     // gridUtil.logDebug('redrawInPlace');
-    
+
     var self = this;
 
     for (var i in self.renderContainers) {
       var container = self.renderContainers[i];
 
       // gridUtil.logDebug('redrawing container', i);
-      
+
       if (rowsAdded) {
         container.adjustRows(container.prevScrollTop, null);
         container.adjustColumns(container.prevScrollLeft, null);

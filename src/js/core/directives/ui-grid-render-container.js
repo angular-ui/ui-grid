@@ -133,8 +133,9 @@
 
               var viewportHeight = rowContainer.getViewportHeight();
 
-              var headerViewportWidth = colContainer.getHeaderViewportWidth();
-              var footerViewportWidth = colContainer.getHeaderViewportWidth();
+              var headerViewportWidth,
+                  footerViewportWidth;
+              headerViewportWidth = footerViewportWidth = colContainer.getHeaderViewportWidth();
 
               // Set canvas dimensions
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
@@ -143,6 +144,9 @@
 
               if (renderContainer.explicitHeaderCanvasHeight) {
                 ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
+              }
+              else {
+                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { height: inherit; }';
               }
 
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
