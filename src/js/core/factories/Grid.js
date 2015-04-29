@@ -713,6 +713,18 @@ angular.module('ui.grid')
     });
   };
 
+
+  /**
+   * @ngdoc function
+   * @name isRowHeaderColumn
+   * @methodOf ui.grid.class:Grid
+   * @description returns true if the column is a row Header
+   * @param {object} column column
+   */
+  Grid.prototype.isRowHeaderColumn = function isRowHeaderColumn(column) {
+    return this.rowHeaderColumns.indexOf(column) !== -1;
+  };
+
   /**
   * @ngdoc function
   * @name addRowHeaderColumn
@@ -722,7 +734,6 @@ angular.module('ui.grid')
   */
   Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
     var self = this;
-    //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, gridUtil.nextUid(), self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
@@ -748,6 +759,23 @@ angular.module('ui.grid')
             self.queueGridRefresh();
           });
       });
+  };
+
+  /**
+   * @ngdoc function
+   * @name getOnlyDataColumns
+   * @methodOf ui.grid.class:Grid
+   * @description returns all columns except for rowHeader columns
+   */
+  Grid.prototype.getOnlyDataColumns = function getOnlyDataColumns() {
+    var self = this;
+    var cols = [];
+    self.columns.forEach(function (col) {
+      if (self.rowHeaderColumns.indexOf(col) === -1) {
+        cols.push(col);
+      }
+    });
+    return cols;
   };
 
   /**
