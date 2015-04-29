@@ -65,6 +65,16 @@
         pagination: {
             sizes: 'Einträge pro Seite',
             totalItems: 'Einträge'
+        },
+        grouping: {
+            group: 'Gruppieren',
+            ungroup: 'Gruppierung aufheben',
+            aggregate_count: 'Agg: Anzahl',
+            aggregate_sum: 'Agg: Summe',
+            aggregate_max: 'Agg: Maximum',
+            aggregate_min: 'Agg: Minimum',
+            aggregate_avg: 'Agg: Mittelwert',
+            aggregate_remove: 'Aggregation entfernen'
         }
       });
       return $delegate;
