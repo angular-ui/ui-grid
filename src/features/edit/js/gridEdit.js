@@ -355,11 +355,18 @@
               // Skip attaching if edit and cellNav is not enabled
               if (!uiGridCtrl.grid.api.edit || !uiGridCtrl.grid.api.cellNav) { return; }
 
+              var containerId =  controllers[1].containerId;
+              //no need to process for other containers
+              if (containerId !== 'body') {
+                return;
+              }
+
+              //refocus on the grid
               $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
-                $elm[0].focus();
+                uiGridCtrl.focus();
               });
               $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
-                $elm[0].focus();
+                uiGridCtrl.focus();
               });
 
             }
@@ -1042,7 +1049,7 @@
 
                 var handleFileSelect = function( event ){
                   var target = event.srcElement || event.target;
-                  
+
                   if (target && target.files && target.files.length > 0) {
                     /**
                      *  @ngdoc property
@@ -1051,25 +1058,25 @@
                      *  @description A function that should be called when any files have been chosen
                      *  by the user.  You should use this to process the files appropriately for your
                      *  application.
-                     * 
-                     *  It passes the gridCol, the gridRow (from which you can get gridRow.entity), 
+                     *
+                     *  It passes the gridCol, the gridRow (from which you can get gridRow.entity),
                      *  and the files.  The files are in the format as returned from the file chooser,
                      *  an array of files, with each having useful information such as:
                      *  - `files[0].lastModifiedDate`
                      *  - `files[0].name`
                      *  - `files[0].size`  (appears to be in bytes)
                      *  - `files[0].type`  (MIME type by the looks)
-                     * 
-                     *  Typically you would do something with these files - most commonly you would 
+                     *
+                     *  Typically you would do something with these files - most commonly you would
                      *  use the filename or read the file itself in.  The example function does both.
-                     *  
+                     *
                      *  @example
                      *  <pre>
                      *  editFileChooserCallBack: function(gridRow, gridCol, files ){
                      *    // ignore all but the first file, it can only choose one anyway
                      *    // set the filename into this column
                      *    gridRow.entity.filename = file[0].name;
-                     *    
+                     *
                      *    // read the file and set it into a hidden column, which we may do stuff with later
                      *    var setFile = function(fileContent){
                      *      gridRow.entity.file = fileContent.currentTarget.result;
@@ -1085,16 +1092,16 @@
                     } else {
                       gridUtil.logError('You need to set colDef.editFileChooserCallback to use the file chooser');
                     }
-                    
+
                     target.form.reset();
                     $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                   } else {
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
                 };
-      
+
                 $elm[0].addEventListener('change', handleFileSelect, false);  // TODO: why the false on the end?  Google
-                
+
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
                   $elm[0].focus();
                   $elm[0].select();
