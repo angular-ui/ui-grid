@@ -25,6 +25,9 @@
 
             // Function for attaching the template to this scope
             var clonedElement, cloneScope;
+            Object.getPrototypeOf($scope.row).rowIndex = null;
+            $scope.row.rowIndex = $scope.rowRenderIndex;
+            
             function compileTemplate() {
               $scope.row.getRowTemplateFn.then(function (compiledElementFn) {
                 // var compiledElementFn = $scope.row.compiledElementFn;
