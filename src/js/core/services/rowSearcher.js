@@ -77,6 +77,13 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     }
 
     var term = rowSearcher.getTerm(filter);
+
+    // A searchOption value could be an object so it is better to user angular.equals instead of a regex.
+    if (angular.isObject(term) && term.value && !angular.isDefined(filter.condition)) {
+      return function(searchTerm, cellValue) {
+        return angular.equals(searchTerm, cellValue);
+      }
+    }
     
     if (/\*/.test(term)) {
       var regexpFlags = '';
@@ -178,7 +185,8 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var conditionType = typeof(filter.condition);
 
     // Term to search for.
-    var term = filter.term;
+    // Exctract the term.value for selectOptions since ng-options track by returns the entire object.
+    var term = angular.isObject(filter.term) && filter.term.value ? filter.term.value : filter.term;
 
     // Get the column value for this row
     var value = grid.getCellValue(row, column);
