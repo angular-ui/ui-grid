@@ -244,6 +244,20 @@
             //enableCellEditOnFocus can only be used if cellnav module is used
           colDef.enableCellEditOnFocus = colDef.enableCellEditOnFocus === undefined ? gridOptions.enableCellEditOnFocus : colDef.enableCellEditOnFocus;
 
+
+          /**
+           *  @ngdoc string
+           *  @name editModelField
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
+           *  @description a bindable string value that is used when binding to edit controls instead of colDef.field
+           *  <br/> example: You have a complex property on and object like state:{abbrev:'MS',name:'Mississippi'}.  The
+           *  grid should display state.name in the cell and sort/filter based on the state.name property but the editor
+           *  requires the full state object.
+           *  <br/>colDef.field = 'state.name'
+           *  <br/>colDef.editModelField = 'state'
+           */
+          //colDef.editModelField
+
           return $q.all(promises);
         },
 
@@ -647,7 +661,12 @@
               origCellValue = cellModel($scope);
 
               html = $scope.col.editableCellTemplate;
-              html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              if ($scope.col.colDef.editModelField) {
+                html = html.replace(uiGridConstants.MODEL_COL_FIELD, gridUtil.preEval('row.entity.' + $scope.col.colDef.editModelField));
+              }
+              else {
+                html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              }
 
               var optionFilter = $scope.col.colDef.editDropdownFilter ? '|' + $scope.col.colDef.editDropdownFilter : '';
               html = html.replace(uiGridConstants.CUSTOM_FILTERS, optionFilter);

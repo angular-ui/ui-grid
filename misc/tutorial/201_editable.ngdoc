@@ -30,6 +30,7 @@ and END_CELL_EDIT` events.
 
 __ColumnDef Options__:
 
+- `editModelField` (default: undefined) - a bindable expression to use instead of colDef.field when binding the edit control.
 - `editableCellTemplate` (default: `'ui-grid/cellEditor'`) - Valid html, templateCache Id,  or url that returns html
   content to be compiled when edit mode is invoked.
 - `enableCellEdit` (default: `false` for columns of type `'object'`, `true` for all other columns) - `true` will enable
@@ -55,9 +56,9 @@ The following option is available only if using cellNav feature
 
 _Note that the edit functionality uses native html5 edit widgets - the date picker, the dropdown and the input box
 itself.  If your browser does not implement these widgets, then you won't get them.  If your browser implements these
-widgets in a way that isn't ideal (for example, some browsers don't allow number fields to start with '.', so you can't 
+widgets in a way that isn't ideal (for example, some browsers don't allow number fields to start with '.', so you can't
 type in '.5'), then you need to provide a custom editor instead.  On the medium term roadmap there is intent
-to provide a bootstrap feature, which would provide directives that were compatible with angular-bootstrap directives, 
+to provide a bootstrap feature, which would provide directives that were compatible with angular-bootstrap directives,
 allowing use of the bootstrap datepicker and input fields_
 
 
@@ -91,7 +92,7 @@ $scope.gridOptions.columnDefs = [
         // ignore all but the first file, it can only select one anyway
         // set the filename into this column
         gridRow.entity.filename = files[0].name;
-         
+
         // read the file and set it into a hidden column, which we may do stuff with later
         var setFile = function(fileContent){
           gridRow.entity.file = fileContent.currentTarget.result;
@@ -102,7 +103,7 @@ $scope.gridOptions.columnDefs = [
         var reader = new FileReader();
         reader.onload = setFile;
         reader.readAsText( files[0] );
-      }; 
+      };
 
       $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
@@ -127,7 +128,7 @@ $scope.gridOptions.columnDefs = [
         { name: 'filename', displayName: 'File', width: '20%', editableCellTemplate: 'ui-grid/fileChooserEditor',
           editFileChooserCallback: $scope.storeFile }
       ];
-      
+
      $scope.msg = {};
 
      $scope.gridOptions.onRegisterApi = function(gridApi){
