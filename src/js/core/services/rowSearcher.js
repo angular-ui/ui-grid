@@ -82,7 +82,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (angular.isObject(term) && term.value && !angular.isDefined(filter.condition)) {
       return function(searchTerm, cellValue) {
         return angular.equals(searchTerm, cellValue);
-      }
+      };
     }
     
     if (/\*/.test(term)) {
