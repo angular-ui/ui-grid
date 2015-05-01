@@ -8,7 +8,7 @@
   </div>
   
   <div ng-if="colFilter.type === 'select'">
-    <select class="ui-grid-filter-select" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" ng-options="option.value as option.label for option in colFilter.selectOptions">
+    <select class="ui-grid-filter-select" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" ng-options="option.label for option in colFilter.selectOptions track by option.label">
       <option value=""></option>
     </select>
 
