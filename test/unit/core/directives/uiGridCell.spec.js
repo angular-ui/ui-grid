@@ -90,7 +90,7 @@ describe('uiGridCell', function () {
 
   // Don't run this on IE9. The behavior looks correct when testing interactively but these tests fail
   if (!navigator.userAgent.match(/MSIE\s+9\.0/)) {
-    iit("should change a column's class when its uid changes", inject(function (gridUtil, $compile, uiGridConstants) {
+    it("should change a column's class when its uid changes", inject(function (gridUtil, $compile, uiGridConstants) {
       // Reset the UIDs (used by columns) so they're fresh and clean
       gridUtil.resetUids();
 
