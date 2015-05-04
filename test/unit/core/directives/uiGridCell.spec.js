@@ -60,7 +60,7 @@ describe('uiGridCell', function () {
       recompile();
       var displayHtml = gridCell.html();
       expect(gridCell.hasClass('funcCellClass')).toBe(true);
-      
+
       $scope.col.noClass = true;
       $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
@@ -80,18 +80,17 @@ describe('uiGridCell', function () {
       recompile();
       var displayHtml = gridCell.html();
       expect(gridCell.hasClass('funcCellClass')).toBe(true);
-      
+
       $scope.col = new GridColumn({name: 'col2'}, 0, $scope.grid);
       $scope.$digest();
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
 */
   });
-  
+
   // Don't run this on IE9. The behavior looks correct when testing interactively but these tests fail
-/* not a valid test.....we think
   if (!navigator.userAgent.match(/MSIE\s+9\.0/)) {
-    it("should change a column's class when its uid changes", inject(function (gridUtil, $compile, uiGridConstants) {
+    iit("should change a column's class when its uid changes", inject(function (gridUtil, $compile, uiGridConstants) {
       // Reset the UIDs (used by columns) so they're fresh and clean
       gridUtil.resetUids();
 
@@ -146,5 +145,5 @@ describe('uiGridCell', function () {
       angular.element(gridElm).remove();
     }));
   }
-*/
+
 });
