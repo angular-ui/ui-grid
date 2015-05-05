@@ -49,7 +49,7 @@
             $timeout(self.setDraggables);
         }));
     };
-    self.dragStart = function(evt){		
+    self.dragStart = function(evt){
       //FireFox requires there to be dataTransfer if you want to drag and drop.
       evt.dataTransfer.setData('text', ''); //cannot be empty string
     };
@@ -94,7 +94,9 @@
                 grid.$root.find('.ngHeaderSortColumn').draggable({
                     helper: 'clone',
                     appendTo: 'body',
-                    stack: 'div',
+                    //change the stack target to just the header element instead of setting z-index on every div.
+                    //this will effect other element that relies on z-index.
+                    stack: '.ngHeaderSortColumn',
                     addClasses: false,
                     start: function(event) {
                         self.onHeaderMouseDown(event);
