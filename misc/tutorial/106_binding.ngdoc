@@ -6,7 +6,11 @@ UI-Grid supports complex object binding in the colDef.field.
 
 This tutorial shows two-way binding to properties with special characters, array element, nested property, and function.
 
-Note that a function can not be edited.
+Note that a function can not be edited. Functions will receive a `context` object, with access to both the current row and column, as the only argument.
+    <pre>
+      {row: GridRow,
+      column: GridColumn}
+    </pre>
 
 In your custom cellTemplates, you can use:
 <br/>
@@ -23,19 +27,23 @@ MODEL\_COL\_FIELD which will be replaced with row.entity.field.  Use MODEL\_COL\
 
     app.controller('MainCtrl', ['$scope', function ($scope) {
 
+    var country = 'USA'
     $scope.gridOptions = {
             enableSorting: true,
             columnDefs: [
               { name:'firstName', field: 'first-name' },
               { name:'1stFriend', field: 'friends[0]' },
-              { name:'city', field: 'address.city'},
+              { name:'getCity', displayName: 'Town', field: 'getTown(context)', enableCellEdit:false},
               { name:'getZip', field: 'getZip()', enableCellEdit:false}
             ],
             data : [      {
                                "first-name": "Cox",
                                "friends": ["friend0"],
                                "address": {street:"301 Dove Ave", city:"Laurel", zip:"39565"},
-                               "getZip" : function() {return this.address.zip;}
+                               "getZip" : function() {return this.address.zip;},
+                               "getTown" : function(context) {
+                                 return context.col.displayName + ': '+ this.address.city + ', ' + country;
+                               }
                            }
                        ]
           };
@@ -49,7 +57,7 @@ MODEL\_COL\_FIELD which will be replaced with row.entity.field.  Use MODEL\_COL\
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 800px;
       height: 250px;
     }
   </file>
