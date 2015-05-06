@@ -176,7 +176,7 @@ angular.module('ui.grid')
    */
   GridRow.prototype.clearThisRowInvisible = function ( reason, fromRowsProcessor ) {
     if (typeof(this.invisibleReason) !== 'undefined' ) {
-      delete this.invisibleReason.user;
+      delete this.invisibleReason[reason];
     }
     this.evaluateRowVisibility( fromRowsProcessor );
   };
