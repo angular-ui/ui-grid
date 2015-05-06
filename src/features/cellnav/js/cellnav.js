@@ -726,8 +726,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -746,8 +746,31 @@
 
               var grid = uiGridCtrl.grid;
 
+              // focusser only created for body
+              if (containerId !== 'body') {
+                return;
+              }
+
               // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
+
+              //add an element with no dimensions that can be used to set focus and capture keystrokes
+              var focuser = $compile('<div class="ui-grid-focuser" tabindex="-1"></div>')($scope);
+              $elm.append(focuser);
+
+              uiGridCtrl.focus = function () {
+                focuser[0].focus();
+              };
+
+              // Bind to keydown events in the render container
+              focuser.on('keydown', function (evt) {
+                evt.uiGridTargetRenderContainerId = containerId;
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
+                if (result === null) {
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                }
+              });
 
             }
           };
@@ -781,25 +804,11 @@
 
               var grid = uiGridCtrl.grid;
 
-              //add an element with no dimensions that can be used to set focus and capture keystrokes
-              var focuser = $compile('<div class="ui-grid-focuser" tabindex="-1"></div>')($scope);
-              $elm.append(focuser);
 
-              uiGridCtrl.focus = function () {
-                focuser[0].focus();
-              };
 
               uiGridCtrl.focus();
 
-              // Bind to keydown events in the render container
-              focuser.on('keydown', function (evt) {
-                evt.uiGridTargetRenderContainerId = containerId;
-                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
-                if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
-                }
-              });
+
 
               grid.api.core.on.scrollBegin($scope, function (args) {
 
