@@ -409,12 +409,19 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   describe('insertGroupHeader', function() {
     it('inserts a header in the middle', function() {
       spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
-      var headerRow1 = new GridRow( {}, null, grid );
-      var headerRow2 = new GridRow( {}, null, grid );
-      var headerRow3 = new GridRow( {}, null, grid );
+      var headerRow1 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
 
+      var headerRow2 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+
+      var headerRow3 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+
+      headerRow1.aggregations = {};
       headerRow1.expandedState = { state: uiGridGroupingConstants.EXPANDED };
+
+      headerRow2.aggregations = {};
       headerRow2.expandedState = { state: uiGridGroupingConstants.COLLAPSED };
+
+      headerRow3.aggregations = {};
        
       var processingStates = [
         { 
@@ -455,18 +462,18 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       uiGridGroupingService.insertGroupHeader(grid, grid.rows, 3, processingStates, 1);
       
       expect( grid.rows.length ).toEqual(11, 'extra row created');
-      expect( grid.rows[3].entity).toEqual({col2: 'c_3'}, 'no aggregations yet, only the group title');
-      expect( grid.rows[3].entity).toEqual({col2: 'c_3'}, 'no aggregations yet, only the group title');
-      expect(headerRow2.entity).toEqual({ agg1: 'max: x', agg2: 'min: 22' });
-      expect(headerRow3.entity).toEqual({ agg1: 'max: y', agg2: 'min: 13' });
+      expect( grid.rows[3].entity).toEqual({col2: 'c_3', $$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, 'no aggregations yet, only the group title');
+      expect( grid.rows[3].entity).toEqual({col2: 'c_3', $$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, 'no aggregations yet, only the group title');
+      expect(headerRow2.aggregations).toEqual({ agg1: {max: 'x'}, agg2: {min: 22}});
+      expect(headerRow3.aggregations).toEqual({ agg1: {max: 'y'}, agg2: {min: 13}});
       
       expect( processingStates[0].currentGroupHeader ).toBe(headerRow1);
       processingStates[0].currentGroupHeader = 'x';
       expect( processingStates[1].currentGroupHeader ).toBe(grid.rows[3]);
       processingStates[1].currentGroupHeader = 'y';
       expect(processingStates).toEqual([
-        { 
-          fieldName: 'col1', 
+        {
+          fieldName: 'col1',
           col: grid.columns[1],
           initialised: true,
           currentValue: 'test',
@@ -476,9 +483,9 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
             { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
           ]
         },
-        { 
+        {
           fieldName: 'col2',
-          col: grid.columns[2], 
+          col: grid.columns[2],
           initialised: true,
           currentValue: 'c_3',
           currentGroupHeader: 'y',
@@ -487,8 +494,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
             { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
           ]
         },
-        { 
-          fieldName: 'col3', 
+        {
+          fieldName: 'col3',
           col: grid.columns[3],
           initialised: false,
           currentValue: null,
@@ -505,7 +512,8 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
   describe('writeOutAggregations', function() {
     it('one state', function() {
-      var headerRow1 = new GridRow( {}, null, grid );
+      var headerRow1 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+      headerRow1.aggregations = {};
        
       var processingStates = [
         { 
@@ -514,7 +522,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           currentValue: 'test',
           currentGroupHeader: headerRow1,
           runningAggregations: [
-            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+            { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: 1234},
             { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
           ]
         }
@@ -522,7 +530,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       uiGridGroupingService.writeOutAggregations( grid, processingStates, 0 );
       
-      expect(headerRow1.entity).toEqual({ agg1: 'max: 1234', agg2: 'min: 98' });
+      expect(headerRow1.aggregations).toEqual({ agg1: {max: 1234}, agg2: {min: 98} });
       expect(processingStates).toEqual([
         {
           fieldName: 'col1', 
@@ -538,9 +546,13 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     });
     
     it('many states, start in the middle', function() {
-      var headerRow1 = new GridRow( {}, null, grid );
-      var headerRow2 = new GridRow( {}, null, grid );
-      var headerRow3 = new GridRow( {}, null, grid );
+      var headerRow1 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+      var headerRow2 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+      var headerRow3 = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+
+      headerRow1.aggregations = {};
+      headerRow2.aggregations = {};
+      headerRow3.aggregations = {};
        
       var processingStates = [
         { 
@@ -577,9 +589,9 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       
       uiGridGroupingService.writeOutAggregations( grid, processingStates, 1 );
       
-      expect(headerRow1.entity).toEqual({});
-      expect(headerRow2.entity).toEqual({ agg1: 'max: x', agg2: 'min: 22' });
-      expect(headerRow3.entity).toEqual({ agg1: 'max: y', agg2: 'min: 13' });
+      expect(headerRow1.aggregations).toEqual({});
+      expect(headerRow2.aggregations).toEqual({ agg1: {max: 'x'}, agg2: {min: 22} });
+      expect(headerRow3.aggregations).toEqual({ agg1: {max: 'y'}, agg2: {min: 13} });
       
       expect(processingStates).toEqual([
         { 
@@ -666,61 +678,89 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     });
 
     it('some aggregations', function() {
-      var headerRow = new GridRow( {}, null, grid );
+      var headerRow = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+      headerRow.aggregations = {};
+      headerRow.groupHeader = true;
        
-      var processingState = { 
-        fieldName: 'col1', 
+      var colAgg1 = {
+        grouping: {aggregation: 'max'},
+        groupingOriginalField: 'agg1'
+      };
+      var colAgg2 = {
+        grouping: {aggregation: 'min'},
+        groupingOriginalField: 'agg2'
+      };
+
+      var processingState = {
+        fieldName: 'col1',
         initialised: true,
         currentValue: 'test',
         currentGroupHeader: headerRow,
         runningAggregations: [
-          { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-          { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          { fieldName: 'agg1', col: colAgg1, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+          { fieldName: 'agg2', col: colAgg2, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
         ]
       };
       
       uiGridGroupingService.writeOutAggregation( grid, processingState );
       
-      expect(headerRow.entity).toEqual({ agg1: 'max: 1234', agg2: 'min: 98' });
+      expect(headerRow.aggregations).toEqual({ agg1: {max: '1234'}, agg2: {min: 98} });
+      expect(uiGridGroupingService.getGroupingAggregatedValue({row: headerRow, col: colAgg1})).toEqual('max: 1234');
+      expect(uiGridGroupingService.getGroupingAggregatedValue({row: headerRow, col: colAgg2})).toEqual('min: 98');
       expect(processingState).toEqual({
         fieldName: 'col1', 
         initialised: false,
         currentValue: null,
         currentGroupHeader: null,
         runningAggregations: [
-          { fieldName: 'agg1', col: {}, type: uiGridGroupingConstants.aggregation.MAX, value: null},
-          { fieldName: 'agg2', col: {}, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          { fieldName: 'agg1', col: colAgg1, type: uiGridGroupingConstants.aggregation.MAX, value: null},
+          { fieldName: 'agg2', col: colAgg2, type: uiGridGroupingConstants.aggregation.MIN, value: null}
         ]
-      });
+      }, 'processing state after writeOutAggregations');
     });
 
     it('groupingSuppressAggregationText', function() {
-      var headerRow = new GridRow( {}, null, grid );
+      var headerRow = new GridRow( {$$getAggregatedValue: uiGridGroupingService.getGroupingAggregatedValue}, null, grid );
+      headerRow.aggregations = {};
+      headerRow.groupHeader = true;
        
-      var processingState = { 
+      var colAgg1 = {
+        grouping: {aggregation: 'max'},
+        groupingOriginalField: 'agg1',
+        groupingSuppressAggregationText: true
+      };
+      var colAgg2 = {
+        grouping: {aggregation: 'min'},
+        groupingOriginalField: 'agg2',
+        groupingSuppressAggregationText: true
+      };
+
+      var processingState = {
         fieldName: 'col1', 
         initialised: true,
         currentValue: 'test',
         currentGroupHeader: headerRow,
         runningAggregations: [
-          { fieldName: 'agg1', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
-          { fieldName: 'agg2', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
+          { fieldName: 'agg1', col: colAgg1, type: uiGridGroupingConstants.aggregation.MAX, value: '1234'},
+          { fieldName: 'agg2', col: colAgg2, type: uiGridGroupingConstants.aggregation.MIN, value: 98 }
         ]
       };
-      
+
       uiGridGroupingService.writeOutAggregation( grid, processingState );
-      
-      expect(headerRow.entity).toEqual({ agg1: '1234', agg2: 98 });
+
+      expect(headerRow.aggregations).toEqual({ agg1: {max: '1234'}, agg2: {min: 98}});
+      expect(uiGridGroupingService.getGroupingAggregatedValue({row: headerRow, col: colAgg1})).toEqual('1234');
+      expect(uiGridGroupingService.getGroupingAggregatedValue({row: headerRow, col: colAgg2})).toEqual(98);
       expect(processingState).toEqual({
         fieldName: 'col1', 
         initialised: false,
         currentValue: null,
         currentGroupHeader: null,
         runningAggregations: [
-          { fieldName: 'agg1', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MAX, value: null},
-          { fieldName: 'agg2', col: { groupingSuppressAggregationText: true }, type: uiGridGroupingConstants.aggregation.MIN, value: null }
+          { fieldName: 'agg1', col: colAgg1, type: uiGridGroupingConstants.aggregation.MAX, value: null},
+          { fieldName: 'agg2', col: colAgg2, type: uiGridGroupingConstants.aggregation.MIN, value: null }
         ]
-      });
+      }, 'processing state after writeOutAggregations.');
     });
   });
   
@@ -810,8 +850,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   describe( 'setVisibility', function() {
     it( 'invisible', function() {
       var headerRow1 = new GridRow( {}, null, grid );
+      headerRow1.aggregations = {};
       var headerRow2 = new GridRow( {}, null, grid );
-      
+      headerRow2.aggregations = {};
+
       headerRow1.expandedState = { state: uiGridGroupingConstants.EXPANDED };
       headerRow2.expandedState = { state: uiGridGroupingConstants.COLLAPSED };
       
@@ -832,8 +874,10 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
     it( 'visible', function() {
       var headerRow1 = new GridRow( {}, null, grid );
+      headerRow1.aggregations = {};
       var headerRow2 = new GridRow( {}, null, grid );
-      
+      headerRow2.aggregations = {};
+
       headerRow1.expandedState = { state: uiGridGroupingConstants.EXPANDED };
       headerRow2.expandedState = { state: uiGridGroupingConstants.EXPANDED };
       
@@ -867,7 +911,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       };
       
       var row = new GridRow( { col0: 'x', col1: 10, col2: '7', col3: '22' }, null, grid );
-      
+
       uiGridGroupingService.aggregate( grid, row, groupFieldState);
       
       expect( groupFieldState ).toEqual({
