@@ -11,7 +11,7 @@ All features are enabled to get an idea of performance
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping']);
 
     app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants',
      function ($scope, $http, $timeout, $interval, uiGridConstants) {
@@ -23,6 +23,7 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.enableGridMenu = true;
       $scope.gridOptions.showGridFooter = true;
       $scope.gridOptions.showColumnFooter = true;
+      $scope.gridOptions.fastWatch = true;
 
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;
@@ -93,7 +94,7 @@ All features are enabled to get an idea of performance
       <br>
       <strong>{{ myData.length }} rows</strong>
       <br>
-      <div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-importer ui-grid-exporter ui-grid-grouping class="grid"></div>
     </div>
   </file>
   <file name="main.css">

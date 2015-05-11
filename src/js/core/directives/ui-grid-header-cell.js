@@ -50,6 +50,10 @@
             // apply any headerCellClass
             var classAdded;
             
+            // filter watchers
+            var filterDeregisters = [];
+            
+            
             /* 
              * Our basic approach here for event handlers is that we listen for a down event (mousedown or touchstart).
              * Once we have a down event, we need to work out whether we have a click, a drag, or a 
@@ -216,9 +220,33 @@
                 $scope.filterable = false;
               }
 
-              if ( oldFilterable !== $scope.filterable && typeof($scope.col.updateFilters) !== 'undefined'){
+              if ( oldFilterable !== $scope.filterable){
+                if ( typeof($scope.col.updateFilters) !== 'undefined' ){
+                  $scope.col.updateFilters($scope.filterable);
+                }
+
+                // if column is filterable add a filter watcher
+                if ($scope.filterable) {
+                  $scope.col.filters.forEach( function(filter, i) {
+                    filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                      if (n !== o) {
+                        uiGridCtrl.grid.api.core.raise.filterChanged();
+                        uiGridCtrl.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+                        uiGridCtrl.grid.queueGridRefresh();
+                      }
+                    }));  
+                  });
+                  $scope.$on('$destroy', function() {
+                    filterDeregisters.forEach( function(filterDeregister) {
+                      filterDeregister();
+                    });
+                  });
+                } else {
+                  filterDeregisters.forEach( function(filterDeregister) {
+                    filterDeregister();
+                  });
+                }                          
                 
-                $scope.col.updateFilters($scope.filterable);
               }
               
               // figure out whether we support column menus
@@ -257,30 +285,9 @@
                   $scope.offAllEvents();
                 });
               } 
-
-              // if column is filterable add a filter watcher
-              var filterDeregisters = [];
-              if ($scope.filterable) {
-                $scope.col.filters.forEach( function(filter, i) {
-                  filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
-                    if (n !== o) {
-                      uiGridCtrl.grid.api.core.raise.filterChanged();
-                      uiGridCtrl.grid.refresh(true);
-                    }
-                  }));  
-                });
-                $scope.$on('$destroy', function() {
-                  filterDeregisters.forEach( function(filterDeregister) {
-                    filterDeregister();
-                  });
-                });
-              } else {
-                filterDeregisters.forEach( function(filterDeregister) {
-                  filterDeregister();
-                });
-              }                          
             };
 
+/*
             $scope.$watch('col', function (n, o) {
               if (n !== o) {
                 // See if the column's internal class has changed
@@ -292,7 +299,7 @@
                 }
               }
             });
-  
+*/
             updateHeaderOptions();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs

@@ -236,7 +236,7 @@ describe('rowSearcher', function() {
       expect(ret.length).toEqual(3);
     });
   });
-  
+
   describe('with a custom filter function', function() {
     var custom, ret;
     beforeEach(function() {
@@ -250,7 +250,7 @@ describe('rowSearcher', function() {
         var orEqualTo = secondChar === '=';
         var trimBy = orEqualTo ? 2 : 1 ;
         var compareTo;
-        
+
         if (firstChar === '>') {
           compareTo = searchTerm.substr(trimBy) * 1;
           return orEqualTo ? rowValue >= compareTo : rowValue > compareTo;

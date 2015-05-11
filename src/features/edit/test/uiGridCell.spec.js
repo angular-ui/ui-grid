@@ -23,7 +23,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       {name: 'col1', enableCellEdit: true}
     ];
     grid.options.data = [
-      {col1: 'val'}
+      {col1: 'val', col2:'col2val'}
     ];
     uiGridEditService.initializeGrid(grid);
     grid.buildColumns();
@@ -149,4 +149,21 @@ describe('ui.grid.edit GridCellDirective', function () {
 
   });
 
+
+  describe('ui.grid.edit should override bound value when using editModelField', function () {
+    var displayHtml;
+    beforeEach(function () {
+      element = angular.element('<div ui-grid-cell/>');
+      //bind the edit to another column. This could be any property on the entity
+      scope.grid.options.columnDefs[0].editModelField = 'col2';
+      recompile();
+
+      displayHtml = element.html();
+      expect(element.text()).toBe('val');
+      //invoke edit
+      element.dblclick();
+      expect(element.find('input')).toBeDefined();
+      expect(element.find('input').val()).toBe('col2val');
+    });
+  });
 });

@@ -244,6 +244,20 @@
             //enableCellEditOnFocus can only be used if cellnav module is used
           colDef.enableCellEditOnFocus = colDef.enableCellEditOnFocus === undefined ? gridOptions.enableCellEditOnFocus : colDef.enableCellEditOnFocus;
 
+
+          /**
+           *  @ngdoc string
+           *  @name editModelField
+           *  @propertyOf  ui.grid.edit.api:ColumnDef
+           *  @description a bindable string value that is used when binding to edit controls instead of colDef.field
+           *  <br/> example: You have a complex property on and object like state:{abbrev:'MS',name:'Mississippi'}.  The
+           *  grid should display state.name in the cell and sort/filter based on the state.name property but the editor
+           *  requires the full state object.
+           *  <br/>colDef.field = 'state.name'
+           *  <br/>colDef.editModelField = 'state'
+           */
+          //colDef.editModelField
+
           return $q.all(promises);
         },
 
@@ -355,11 +369,18 @@
               // Skip attaching if edit and cellNav is not enabled
               if (!uiGridCtrl.grid.api.edit || !uiGridCtrl.grid.api.cellNav) { return; }
 
+              var containerId =  controllers[1].containerId;
+              //no need to process for other containers
+              if (containerId !== 'body') {
+                return;
+              }
+
+              //refocus on the grid
               $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
-                $elm[0].focus();
+                uiGridCtrl.focus();
               });
               $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
-                $elm[0].focus();
+                uiGridCtrl.focus();
               });
 
             }
@@ -640,7 +661,12 @@
               origCellValue = cellModel($scope);
 
               html = $scope.col.editableCellTemplate;
-              html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              if ($scope.col.colDef.editModelField) {
+                html = html.replace(uiGridConstants.MODEL_COL_FIELD, gridUtil.preEval('row.entity.' + $scope.col.colDef.editModelField));
+              }
+              else {
+                html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
+              }
 
               var optionFilter = $scope.col.colDef.editDropdownFilter ? '|' + $scope.col.colDef.editDropdownFilter : '';
               html = html.replace(uiGridConstants.CUSTOM_FILTERS, optionFilter);
@@ -806,9 +832,9 @@
                 });
 
 
-               $scope.deepEdit = false;
+                $scope.deepEdit = false;
 
-               $scope.stopEdit = function (evt) {
+                $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
@@ -1006,5 +1032,108 @@
           }
         };
       }]);
+
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:uiGridEditor
+   *  @element div
+   *  @restrict A
+   *
+   *  @description input editor directive for editable fields.
+   *  Provides EndEdit and CancelEdit events
+   *
+   *  Events that end editing:
+   *     blur and enter keydown
+   *
+   *  Events that cancel editing:
+   *    - Esc keydown
+   *
+   */
+  module.directive('uiGridEditFileChooser',
+    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants','$timeout',
+      function (gridUtil, uiGridConstants, uiGridEditConstants, $timeout) {
+        return {
+          scope: true,
+          require: ['?^uiGrid', '?^uiGridRenderContainer'],
+          compile: function () {
+            return {
+              pre: function ($scope, $elm, $attrs) {
+
+              },
+              post: function ($scope, $elm, $attrs, controllers) {
+                var uiGridCtrl, renderContainerCtrl;
+                if (controllers[0]) { uiGridCtrl = controllers[0]; }
+                if (controllers[1]) { renderContainerCtrl = controllers[1]; }
+                var grid = uiGridCtrl.grid;
+
+                var handleFileSelect = function( event ){
+                  var target = event.srcElement || event.target;
+
+                  if (target && target.files && target.files.length > 0) {
+                    /**
+                     *  @ngdoc property
+                     *  @name editFileChooserCallback
+                     *  @propertyOf  ui.grid.edit.api:ColumnDef
+                     *  @description A function that should be called when any files have been chosen
+                     *  by the user.  You should use this to process the files appropriately for your
+                     *  application.
+                     *
+                     *  It passes the gridCol, the gridRow (from which you can get gridRow.entity),
+                     *  and the files.  The files are in the format as returned from the file chooser,
+                     *  an array of files, with each having useful information such as:
+                     *  - `files[0].lastModifiedDate`
+                     *  - `files[0].name`
+                     *  - `files[0].size`  (appears to be in bytes)
+                     *  - `files[0].type`  (MIME type by the looks)
+                     *
+                     *  Typically you would do something with these files - most commonly you would
+                     *  use the filename or read the file itself in.  The example function does both.
+                     *
+                     *  @example
+                     *  <pre>
+                     *  editFileChooserCallBack: function(gridRow, gridCol, files ){
+                     *    // ignore all but the first file, it can only choose one anyway
+                     *    // set the filename into this column
+                     *    gridRow.entity.filename = file[0].name;
+                     *
+                     *    // read the file and set it into a hidden column, which we may do stuff with later
+                     *    var setFile = function(fileContent){
+                     *      gridRow.entity.file = fileContent.currentTarget.result;
+                     *    };
+                     *    var reader = new FileReader();
+                     *    reader.onload = setFile;
+                     *    reader.readAsText( files[0] );
+                     *  }
+                     *  </pre>
+                     */
+                    if ( typeof($scope.col.colDef.editFileChooserCallback) === 'function' ) {
+                      $scope.col.colDef.editFileChooserCallback($scope.row, $scope.col, target.files);
+                    } else {
+                      gridUtil.logError('You need to set colDef.editFileChooserCallback to use the file chooser');
+                    }
+
+                    target.form.reset();
+                    $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                  } else {
+                    $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
+                  }
+                };
+
+                $elm[0].addEventListener('change', handleFileSelect, false);  // TODO: why the false on the end?  Google
+
+                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
+                  $elm[0].focus();
+                  $elm[0].select();
+
+                  $elm.on('blur', function (evt) {
+                    $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                  });
+                });
+              }
+            };
+          }
+        };
+      }]);
+
 
 })();

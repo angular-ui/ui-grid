@@ -515,7 +515,9 @@
             var rowCol = { row: gridRow, col: gridCol };
 
             // Broadcast the navigation
-            grid.cellNav.broadcastCellNav(rowCol);
+            if (gridRow !== null && gridCol !== null) {
+              grid.cellNav.broadcastCellNav(rowCol);
+            }
           });
 
 
@@ -724,8 +726,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -744,19 +746,31 @@
 
               var grid = uiGridCtrl.grid;
 
+              // focusser only created for body
+              if (containerId !== 'body') {
+                return;
+              }
+
               // Needs to run last after all renderContainers are built
               uiGridCellNavService.decorateRenderContainers(grid);
 
-              ////enable tabbing to renderContainer
-              //$elm.attr("tabindex", -1);
-              //
-              //$elm.on('focus', function (evt) {
-              //  var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-              //  if (!rowCol) {
-              //    rowCol = grid.renderContainers.body.cellNav.initializeSelection();
-              //    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
-              //  }
-              //});
+              //add an element with no dimensions that can be used to set focus and capture keystrokes
+              var focuser = $compile('<div class="ui-grid-focuser" tabindex="-1"></div>')($scope);
+              $elm.append(focuser);
+
+              uiGridCtrl.focus = function () {
+                focuser[0].focus();
+              };
+
+              // Bind to keydown events in the render container
+              focuser.on('keydown', function (evt) {
+                evt.uiGridTargetRenderContainerId = containerId;
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
+                if (result === null) {
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                }
+              });
 
             }
           };
@@ -764,8 +778,8 @@
       };
     }]);
 
-  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log','$compile',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log, $compile) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -773,6 +787,8 @@
         scope: false,
         compile: function () {
           return {
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+            },
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
                 renderContainerCtrl = controllers[1];
@@ -781,22 +797,18 @@
               if (!uiGridCtrl.grid.api.cellNav) { return; }
 
               var containerId = renderContainerCtrl.containerId;
+              //no need to process for other containers
+              if (containerId !== 'body') {
+                return;
+              }
 
               var grid = uiGridCtrl.grid;
 
 
-              // Let the render container be focus-able
-              $elm.attr("tabindex", -1);
 
-              // Bind to keydown events in the render container
-              $elm.on('keydown', function (evt) {
-                evt.uiGridTargetRenderContainerId = containerId;
-                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
-                if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
-                }
-              });
+              uiGridCtrl.focus();
+
+
 
               grid.api.core.on.scrollBegin($scope, function (args) {
 
@@ -837,8 +849,8 @@
               });
 
               grid.api.cellNav.on.navigate($scope, function () {
-                //focus the viewport because this can sometimes be lost
-                $elm[0].focus();
+                //focus again because it can be lost
+                 uiGridCtrl.focus();
               });
 
             }
