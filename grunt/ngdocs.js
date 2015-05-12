@@ -21,13 +21,13 @@ module.exports = {
       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js',
       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-touch.js',
       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
-      'bower_components/csv-js/csv.js',
-      'bower_components/pdfmake/build/pdfmake.js',
-      'bower_components/pdfmake/build/vfs_fonts.js'
+      'src/bower_components/csv-js/csv.js',
+      'src/bower_components/pdfmake/build/pdfmake.js',
+      'src/bower_components/pdfmake/build/vfs_fonts.js'
     ],
     hiddenScripts: [
       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
-      'bower_components/google-code-prettify/src/prettify.js',
+      'src/bower_components/google-code-prettify/src/prettify.js',
       'node_modules/marked/lib/marked.js'
     ],
     httpScripts: [
