@@ -97,18 +97,18 @@ describe('GridRenderContainer factory', function () {
     it('vertical should be optional', function () {
         r.name = 'body';
         grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
-        expect(r.getViewPortStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'auto'});
+        expect(r.getViewportStyle()).toEqual({'overflow-x':'scroll', 'overflow-y':'auto'});
     });
     it('horizontal should be optional', function () {
         r.name = 'body';
         grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
-        expect(r.getViewPortStyle()).toEqual({'overflow-x':'auto', 'overflow-y':'scroll'});
+        expect(r.getViewportStyle()).toEqual({'overflow-x':'auto', 'overflow-y':'scroll'});
     });
     it('vertical should be optional horizontal should be never', function () {
         r.name = 'body';
         grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
         grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.NEVER;
-        expect(r.getViewPortStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'auto'});
+        expect(r.getViewportStyle()).toEqual({'overflow-x':'hidden', 'overflow-y':'auto'});
     });
 
   });
