@@ -30,6 +30,7 @@ default:
 - saveVisible
 - saveSort
 - saveFilter
+- savePinning
 
 @example
 In this example we provide a button to save the grid state.  You can then modify the grid layout
@@ -38,17 +39,17 @@ to something different, and use the restore button to set the grid back the way 
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.saveState', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.resizeColumns', 'ui.grid.moveColumns' ]);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.saveState', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.resizeColumns', 'ui.grid.moveColumns', 'ui.grid.pinning' ]);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
       $scope.gridOptions = {
         saveFocus: false,
         saveScroll: true,
-        enableFiltering: true,
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
         }
       };
+      $scope.gridOptions.enableFiltering = true;
       $scope.state = {};
       
       $scope.saveState = function() {
@@ -68,7 +69,7 @@ to something different, and use the restore button to set the grid back the way 
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="grid1" ui-grid="gridOptions" ui-grid-save-state ui-grid-selection ui-grid-cellNav ui-grid-resize-columns ui-grid-move-columns class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-save-state ui-grid-selection ui-grid-cellNav ui-grid-resize-columns ui-grid-move-columns ui-grid-pinning class="grid"></div>
       <button id="save" type="button" class="btn btn-success" ng-click="saveState()">Save</button>
       <button id="restore" type="button" class="btn btn-success" ng-click="restoreState()">Restore</button>
     </div>
@@ -80,6 +81,7 @@ to something different, and use the restore button to set the grid back the way 
       height: 400px;
     }
   </file>
+
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '208 save state', function() {

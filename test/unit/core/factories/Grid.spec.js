@@ -97,8 +97,8 @@ describe('Grid factory', function () {
       testObj.proc2 = jasmine.createSpy('proc2').andCallFake(proc2);
 
       // Register the two spies as rows processors
-      grid.registerRowsProcessor(testObj.proc1);
-      grid.registerRowsProcessor(testObj.proc2);
+      grid.registerRowsProcessor(testObj.proc1, 70);
+      grid.registerRowsProcessor(testObj.proc2, 80);
     });
 
     it('should call both processors', function() {
@@ -142,7 +142,7 @@ describe('Grid factory', function () {
 
         grid.registerRowsProcessor(function (blargh) {
           return "goobers!";
-        });
+        }, 70);
       });
 
       it('should throw an exception', function () {
@@ -170,7 +170,7 @@ describe('Grid factory', function () {
   describe('registering a non-function as a rows processor', function () {
     it('should error', function () {
       expect(function () {
-        grid.registerRowsProcessor('blah');
+        grid.registerRowsProcessor('blah', 70);
       }).toThrow();
     });
   });
@@ -829,6 +829,78 @@ describe('Grid factory', function () {
         grid.api.core.notifyDataChange( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
       });
+    });
+  });
+
+  describe('clearAllFilters', function() {
+    it('should clear all filter terms from all columns', function() {
+      grid.columns = [
+        {filters: [{term: 'A'}, {term: 'B'}]},
+        {filters: [{term: 'C'}]},
+        {filters: []}
+      ];
+
+      grid.clearAllFilters();
+
+      expect(grid.columns[0].filters).toEqual([{}, {}]);
+      expect(grid.columns[1].filters).toEqual([{}]);
+      expect(grid.columns[2].filters).toEqual([]);
+    });
+
+    it('should call grid.refreshRows() if the refreshRows parameter is true', function() {
+      spyOn(grid, 'refreshRows');
+
+      grid.clearAllFilters(true);
+
+      expect(grid.refreshRows).toHaveBeenCalled();
+    });
+
+    it('should not call grid.refreshRows() if the refreshRows parameter is false', function() {
+      spyOn(grid, 'refreshRows');
+
+      grid.clearAllFilters(false);
+
+      expect(grid.refreshRows).not.toHaveBeenCalled();
+    });
+
+    it('should clear filter conditions from all columns if the clearConditions parameter is true', function() {
+      grid.columns = [
+        {filters: [{condition: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, true, undefined);
+
+      expect(grid.columns[0].filters[0].condition).toBeUndefined();
+    });
+
+    it('should not clear filter conditions from any column if the clearConditions parameter is false', function() {
+      grid.columns = [
+        {filters: [{condition: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, false, undefined);
+
+      expect(grid.columns[0].filters[0].condition).toBe('a value');
+    });
+
+    it('should clear filter flags from all columns if the clearFlags parameter is true', function() {
+      grid.columns = [
+        {filters: [{flags: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, undefined, true);
+
+      expect(grid.columns[0].filters[0].flags).toBeUndefined();
+    });
+
+    it('should not clear filter flags from any column if the clearFlags parameter is false', function() {
+      grid.columns = [
+        {filters: [{flags: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, undefined, false);
+
+      expect(grid.columns[0].filters[0].flags).toBe('a value');
     });
   });
 });

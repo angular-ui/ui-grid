@@ -5,6 +5,7 @@
   function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, ScrollEvent) {
     // Do stuff after mouse has been down this many ms on the header cell
     var mousedownTimeout = 500;
+    var changeModeTimeout = 500;    // length of time between a touch event and a mouse event being recognised again, and vice versa
 
     var uiGridHeaderCell = {
       priority: 0,
@@ -48,6 +49,142 @@
 
             // apply any headerCellClass
             var classAdded;
+            
+            // filter watchers
+            var filterDeregisters = [];
+            
+            
+            /* 
+             * Our basic approach here for event handlers is that we listen for a down event (mousedown or touchstart).
+             * Once we have a down event, we need to work out whether we have a click, a drag, or a 
+             * hold.  A click would sort the grid (if sortable).  A drag would be used by moveable, so 
+             * we ignore it.  A hold would open the menu.
+             * 
+             * So, on down event, we put in place handlers for move and up events, and a timer.  If the
+             * timer expires before we see a move or up, then we have a long press and hence a column menu open.  
+             * If the up happens before the timer, then we have a click, and we sort if the column is sortable.  
+             * If a move happens before the timer, then we are doing column move, so we do nothing, the moveable feature
+             * will handle it.
+             * 
+             * To deal with touch enabled devices that also have mice, we only create our handlers when
+             * we get the down event, and we create the corresponding handlers - if we're touchstart then 
+             * we get touchmove and touchend, if we're mousedown then we get mousemove and mouseup.
+             * 
+             * We also suppress the click action whilst this is happening - otherwise after the mouseup there
+             * will be a click event and that can cause the column menu to close
+             *
+             */
+            
+            $scope.downFn = function( event ){
+              event.stopPropagation();
+
+              if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
+                event = event.originalEvent;
+              }
+    
+              // Don't show the menu if it's not the left button
+              if (event.button && event.button !== 0) {
+                return;
+              }
+    
+              $scope.mousedownStartTime = (new Date()).getTime();
+              $scope.mousedownTimeout = $timeout(function() { }, mousedownTimeout);
+    
+              $scope.mousedownTimeout.then(function () {
+                if ( $scope.colMenu ) {
+                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
+                }
+              });
+
+              uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
+              
+              $scope.offAllEvents();
+              if ( event.type === 'touchstart'){
+                $document.on('touchend', $scope.upFn);
+                $document.on('touchmove', $scope.moveFn);
+              } else if ( event.type === 'mousedown' ){
+                $document.on('mouseup', $scope.upFn);
+                $document.on('mousemove', $scope.moveFn);
+              }
+            };
+            
+            $scope.upFn = function( event ){
+              event.stopPropagation();
+              $timeout.cancel($scope.mousedownTimeout);
+              $scope.offAllEvents();
+              $scope.onDownEvents(event.type);
+
+              var mousedownEndTime = (new Date()).getTime();
+              var mousedownTime = mousedownEndTime - $scope.mousedownStartTime;
+  
+              if (mousedownTime > mousedownTimeout) {
+                // long click, handled above with mousedown
+              }
+              else {
+                // short click
+                if ( $scope.sortable ){
+                  $scope.handleClick(event);
+                }
+              }
+            };
+            
+            $scope.moveFn = function( event ){
+              // we're a move, so do nothing and leave for column move (if enabled) to take over
+              $timeout.cancel($scope.mousedownTimeout);
+              $scope.offAllEvents();
+              $scope.onDownEvents(event.type);
+            };
+            
+            $scope.clickFn = function ( event ){
+              event.stopPropagation();
+              $contentsElm.off('click', $scope.clickFn);
+            };
+            
+
+            $scope.offAllEvents = function(){
+              $contentsElm.off('touchstart', $scope.downFn);
+              $contentsElm.off('mousedown', $scope.downFn);
+
+              $document.off('touchend', $scope.upFn);
+              $document.off('mouseup', $scope.upFn);
+
+              $document.off('touchmove', $scope.moveFn);
+              $document.off('mousemove', $scope.moveFn);
+              
+              $contentsElm.off('click', $scope.clickFn);
+            };
+            
+            $scope.onDownEvents = function( type ){
+              // If there is a previous event, then wait a while before
+              // activating the other mode - i.e. if the last event was a touch event then
+              // don't enable mouse events for a wee while (500ms or so)
+              // Avoids problems with devices that emulate mouse events when you have touch events
+
+              switch (type){
+                case 'touchmove':
+                case 'touchend':
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('touchstart', $scope.downFn);
+                  $timeout(function(){
+                    $contentsElm.on('mousedown', $scope.downFn);              
+                  }, changeModeTimeout);
+                  break;
+                case 'mousemove':
+                case 'mouseup':
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('mousedown', $scope.downFn);
+                  $timeout(function(){
+                    $contentsElm.on('touchstart', $scope.downFn);              
+                  }, changeModeTimeout);
+                  break;
+                default:
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('touchstart', $scope.downFn);
+                  $contentsElm.on('mousedown', $scope.downFn);
+              }              
+            };
+            
+
             var updateHeaderOptions = function( grid ){
               var contents = $elm;
               if ( classAdded ){
@@ -75,11 +212,41 @@
               }
       
               // Figure out whether this column is filterable or not
+              var oldFilterable = $scope.filterable;
               if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
                 $scope.filterable = true;
               }
               else {
                 $scope.filterable = false;
+              }
+
+              if ( oldFilterable !== $scope.filterable){
+                if ( typeof($scope.col.updateFilters) !== 'undefined' ){
+                  $scope.col.updateFilters($scope.filterable);
+                }
+
+                // if column is filterable add a filter watcher
+                if ($scope.filterable) {
+                  $scope.col.filters.forEach( function(filter, i) {
+                    filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                      if (n !== o) {
+                        uiGridCtrl.grid.api.core.raise.filterChanged();
+                        uiGridCtrl.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+                        uiGridCtrl.grid.queueGridRefresh();
+                      }
+                    }));  
+                  });
+                  $scope.$on('$destroy', function() {
+                    filterDeregisters.forEach( function(filterDeregister) {
+                      filterDeregister();
+                    });
+                  });
+                } else {
+                  filterDeregisters.forEach( function(filterDeregister) {
+                    filterDeregister();
+                  });
+                }                          
+                
               }
               
               // figure out whether we support column menus
@@ -109,100 +276,18 @@
               *
               */
   
-              var downEvent = gridUtil.isTouchEnabled() ? 'touchstart' : 'mousedown';
+              $scope.offAllEvents();
+              
               if ($scope.sortable || $scope.colMenu) {
-                // Long-click (for mobile)
-                var cancelMousedownTimeout;
-                var mousedownStartTime = 0;
-  
-                $contentsElm.on(downEvent, function(event) {
-                  event.stopPropagation();
-  
-                  if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
-                    event = event.originalEvent;
-                  }
-        
-                  // Don't show the menu if it's not the left button
-                  if (event.button && event.button !== 0) {
-                    return;
-                  }
-        
-                  mousedownStartTime = (new Date()).getTime();
-        
-                  cancelMousedownTimeout = $timeout(function() { }, mousedownTimeout);
-        
-                  cancelMousedownTimeout.then(function () {
-                    if ( $scope.colMenu ) {
-                      uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
-                    }
-                  });
-  
-                  uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
-                });
+                $scope.onDownEvents();
           
-                var upEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'mouseup';
-                $contentsElm.on(upEvent, function () {
-                  $timeout.cancel(cancelMousedownTimeout);
-                });
-    
                 $scope.$on('$destroy', function () {
-                  $contentsElm.off('mousedown touchstart');
+                  $scope.offAllEvents();
                 });
-              } else {
-                $contentsElm.off(downEvent);
               } 
-
-              // If this column is sortable, add a click event handler
-              var clickEvent = gridUtil.isTouchEnabled() ? 'touchend' : 'click';
-              if ($scope.sortable) {
-                $contentsElm.on(clickEvent, function(event) {
-                  event.stopPropagation();
-      
-                  $timeout.cancel(cancelMousedownTimeout);
-      
-                  var mousedownEndTime = (new Date()).getTime();
-                  var mousedownTime = mousedownEndTime - mousedownStartTime;
-      
-                  if (mousedownTime > mousedownTimeout) {
-                    // long click, handled above with mousedown
-                  }
-                  else {
-                    // short click
-                    handleClick(event);
-                  }
-                });
-      
-                $scope.$on('$destroy', function () {
-                  // Cancel any pending long-click timeout
-                  $timeout.cancel(cancelMousedownTimeout);
-                });
-              } else {
-                $contentsElm.off(clickEvent);
-              }
-      
-              // if column is filterable add a filter watcher
-              var filterDeregisters = [];
-              if ($scope.filterable) {
-                $scope.col.filters.forEach( function(filter, i) {
-                  filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
-                    if (n !== o) {
-                      uiGridCtrl.grid.api.core.raise.filterChanged();
-                      uiGridCtrl.grid.refresh(true);
-                    }
-                  }));  
-                });
-                $scope.$on('$destroy', function() {
-                  filterDeregisters.forEach( function(filterDeregister) {
-                    filterDeregister();
-                  });
-                });
-              } else {
-                filterDeregisters.forEach( function(filterDeregister) {
-                  filterDeregister();
-                });
-              }                          
             };
 
+/*
             $scope.$watch('col', function (n, o) {
               if (n !== o) {
                 // See if the column's internal class has changed
@@ -214,7 +299,7 @@
                 }
               }
             });
-  
+*/
             updateHeaderOptions();
             
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
@@ -222,7 +307,7 @@
 
             $scope.$on( '$destroy', dataChangeDereg );            
 
-            function handleClick(event) {
+            $scope.handleClick = function(event) {
               // If the shift key is being held down, add this column to the sort
               var add = false;
               if (event.shiftKey) {
@@ -235,7 +320,7 @@
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
                 });
-            }
+            };
     
 
             $scope.toggleMenu = function(event) {

@@ -1,3 +1,64 @@
+<a name="v3.0.0-rc.21"></a>
+### v3.0.0-rc.21 (2015-04-28)
+
+
+#### Bug Fixes
+
+* **Expandable:** Run with lower priority than ngIf ([949013c3](http://github.com/angular-ui/ng-grid/commit/949013c332c5af1b3e37b1d3fa515dfd96c8acb2), closes [#2804](http://github.com/angular-ui/ng-grid/issues/2804))
+* **RTL:**
+  * Use Math.abs for normalizing negatives ([4acbdc1a](http://github.com/angular-ui/ng-grid/commit/4acbdc1a58d8043d60e3a62d1126b0f69bc6ee86))
+  * Use feature detection to determine RTL ([fbb36319](http://github.com/angular-ui/ng-grid/commit/fbb363197ab3975411589dfa0904495f861795c0), closes [#1689](http://github.com/angular-ui/ng-grid/issues/1689))
+* **cellNav:** fix null ref issue in  navigate event for oldRowColumn  scrollTo should not setF ([02b05cae](http://github.com/angular-ui/ng-grid/commit/02b05cae6d5385e01d00f812662f16009130c647))
+* **pinning:** restore correct width state ([4ffaaf26](http://github.com/angular-ui/ng-grid/commit/4ffaaf26774bae7f52bf4956f45243f6c7dd53a3))
+* **scrolling:** Fix for #3260  atTop/Bottom/Left/Right needed tweaking ([89461bcb](http://github.com/angular-ui/ng-grid/commit/89461bcbcfdfc527655c398df19555738fa9bd63))
+* **selection:**
+  * allow rowSelection to be navigable if using cellNav; allow rowSelection via the  ([95ce7b1b](http://github.com/angular-ui/ng-grid/commit/95ce7b1b694b23f1a7506cf4f6a32d0ae384697c))
+  * allow rowSelection to be navigable if using cellNav; allow rowSelection via the  ([3d5d6031](http://github.com/angular-ui/ng-grid/commit/3d5d603178f0fcb4cc2abab6ce637c1dd6face8d))
+* **uiGrid:**
+  * Use margins rather than floats for pinning ([1373b99e](http://github.com/angular-ui/ng-grid/commit/1373b99e1e1680184270d61bca88124efd7a4c14), closes [#2997](http://github.com/angular-ui/ng-grid/issues/2997), [#NaN](http://github.com/angular-ui/ng-grid/issues/NaN))
+  * Wait for grid to get dimensions ([e7dfb8c2](http://github.com/angular-ui/ng-grid/commit/e7dfb8c2dfac69bb3a38f7253062367671fec56d))
+* **uiGridColumnMenu:** Position relatively ([9d918052](http://github.com/angular-ui/ng-grid/commit/9d9180520d8d6fd16b897ba4b9fbfc4bb4860ea9), closes [#2319](http://github.com/angular-ui/ng-grid/issues/2319))
+* **uiGridFooter:** Watch for col change ([1f9100de](http://github.com/angular-ui/ng-grid/commit/1f9100defb1489bed46515fb859aed9c9a090e73), closes [#2686](http://github.com/angular-ui/ng-grid/issues/2686))
+* **uiGridHeader:**
+  * Use parseInt on header heights ([98ed0104](http://github.com/angular-ui/ng-grid/commit/98ed01049015b22caddb651b1884f6e383fc58aa))
+  * Allow header to shrink in size ([7c5cdca1](http://github.com/angular-ui/ng-grid/commit/7c5cdca1f471a0a3c1ef340fe65af268df68cae3), closes [#3138](http://github.com/angular-ui/ng-grid/issues/3138))
+
+
+#### Features
+
+* **saveState:** add pinning to save state ([b0d943a8](http://github.com/angular-ui/ng-grid/commit/b0d943a82a1d5c64808b759c8b96833e66380b02))
+
+
+#### Breaking Changes
+
+* gridUtil will no longer calculate dimensions of hidden
+elements
+ ([e7dfb8c2](http://github.com/angular-ui/ng-grid/commit/e7dfb8c2dfac69bb3a38f7253062367671fec56d))
+*  Two events are now emitted on scroll:
+
+ grid.api.core.ScrollBegin
+ grid.api.core.ScrollEnd
+
+ Before:
+ grid.api.core.ScrollEvent
+ After:
+grid.api.core.ScrollBegin
+
+ScrollToIfNecessary and ScrollTo moved from cellNav to core and grid removed from arguments
+Before:
+grid.api.cellNav.ScrollToIfNecessary(grid, gridRow, gridCol)
+grid.api.cellNav.ScrollTo(grid, rowEntity, colDef)
+
+After:
+grid.api.core.ScrollToIfNecessary(gridRow, gridCol)
+grid.api.core.ScrollTo(rowEntity, colDef)
+
+GridEdit/cellNav
+When using cellNav, a cell no longer receives focus.  Instead the viewport always receives focus.  This eliminated many bugs associated with scrolling and focus.
+
+If you have a custom editor, you will no longer receive keyDown/Up events from the readonly cell.  Use the cellNav api viewPortKeyDown to capture any needed keydown events.  see GridEdit.js for an example
+ ([052c2321](http://github.com/angular-ui/ng-grid/commit/052c2321f97b37f860c769dcbd2e8d9094cf2bbf))
+
 <a name="v3.0.0-rc.20"></a>
 ### v3.0.0-rc.20 (2015-02-24)
 

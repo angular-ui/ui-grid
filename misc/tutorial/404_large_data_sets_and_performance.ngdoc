@@ -32,6 +32,12 @@ and the grid will run faster.
 The option for this is `flatEntityAccess`.  The below grid provides a toggle on this value so you can see the difference it makes
 with a data set of 640,000 rows. 
 
+Further, the grid watches the data and the column defs to determine if anything has changed.  Watches get called very frequently in
+angularJS (on every digest cycle, which can be many times per second), and watching each row of a large data collection can be expensive.
+The `fastWatch` gridOption watches only the data reference and it's length - in theory this means we might not notice if you replaced
+a row in the data, or replaced a column in the columnDefs.  If using fastWatch you should always do deletes and adds separately, never
+a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid creation.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -41,7 +47,8 @@ with a data set of 640,000 rows.
       $scope.gridOptions = {  
         enableFiltering: true,
         flatEntityAccess: true,
-        showGridFooter: true
+        showGridFooter: true,
+        fastWatch: true
       };
 
        $scope.gridOptions.columnDefs = [
@@ -51,7 +58,7 @@ with a data set of 640,000 rows.
         {field:'age'}
       ];
     
-      $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+      $http.get('/data/10000_complex.json')
       .success(function(data) {
         for( var i=0; i<6; i++){
           data = data.concat(data);

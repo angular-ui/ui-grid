@@ -108,9 +108,9 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
     });
 
     it('grab bag of stuff', function () {
-      grid.options.gridMenuCustomItems = [ { title: 'z' }, { title: 'a' }];
+      grid.options.gridMenuCustomItems = [ { title: 'z', order: 11 }, { title: 'a', order: 12 }];
       grid.options.gridMenuTitleFilter = function( title ) {return 'fn_' + title;};
-      var registeredMenuItems = [ { id: 'customItem1', title: 'x' }, { id: 'customItem2', title: 'y' } ];
+      var registeredMenuItems = [ { id: 'customItem1', title: 'x', order: 1 }, { id: 'customItem2', title: 'y', order: 2 } ];
       grid.options.columnDefs[1].enableHiding = false;
 
       uiGridGridMenuService.addToGridMenu( grid, registeredMenuItems );
@@ -118,10 +118,10 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       var menuItems = uiGridGridMenuService.getMenuItems( $scope );
       
       expect( menuItems.length ).toEqual(11, 'Should be 11 items, 2 from customItems, 2 from registered, 1 columns header, and 2x3 columns that allow hiding');
-      expect( menuItems[0].title ).toEqual('z', 'Menu item 0 should be from customItem');
-      expect( menuItems[1].title ).toEqual('a', 'Menu item 1 should be from customItem');
-      expect( menuItems[2].title ).toEqual('x', 'Menu item 2 should be from register');
-      expect( menuItems[3].title ).toEqual('y', 'Menu item 3 should be from register');
+      expect( menuItems[0].title ).toEqual('x', 'Menu item 0 should be from register');
+      expect( menuItems[1].title ).toEqual('y', 'Menu item 1 should be from register');
+      expect( menuItems[2].title ).toEqual('z', 'Menu item 2 should be from customItem');
+      expect( menuItems[3].title ).toEqual('a', 'Menu item 3 should be from customItem');
 
       expect( menuItems[4].title ).toEqual('Columns:', 'Menu item 4 should be header');
       expect( menuItems[5].title ).toEqual('fn_col1', 'Menu item 5 should be col1');

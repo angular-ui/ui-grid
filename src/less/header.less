@@ -1,13 +1,13 @@
 
 .ui-grid-top-panel-background {
-  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
 }
 
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
 
 .ui-grid-header {
   border-bottom: 1px solid @borderColor;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .ui-grid-top-panel {
@@ -17,7 +17,7 @@
     overflow: hidden;  // Disable so menus show up
     font-weight: bold;
 
-    // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);  
+    // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
     .ui-grid-top-panel-background;
 
     .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
@@ -53,6 +53,7 @@
 
 .ui-grid-header-cell-row {
   display: table-row;
+  position: relative
 }
 
 .ui-grid-header-cell {
@@ -112,12 +113,12 @@
     .transition(all, 0.05s, linear);
     display: block !important;
   }
-  
+
   &.ng-hide-add.ng-hide-add-active,
   &.ng-hide-remove {
     .transform(translateY(-100%));
   }
-   
+
   &.ng-hide-add,
   &.ng-hide-remove.ng-hide-remove-active {
     .transform(translateY(0));
@@ -130,12 +131,12 @@
     .transition(all, 0.05s, linear);
     display: block !important;
   }
-  
+
   &.ng-hide-add.ng-hide-add-active,
   &.ng-hide-remove {
     .transform(translateY(-100%));
   }
-   
+
   &.ng-hide-add,
   &.ng-hide-remove.ng-hide-remove-active {
     .transform(translateY(0));
@@ -213,5 +214,9 @@ select.ui-grid-filter-select {
 
   &:hover {
     border: @gridBorderWidth solid  @borderColor;
+  }
+
+  .ui-grid-filter-cancel-button-hidden & {
+    width: 100%;
   }
 }

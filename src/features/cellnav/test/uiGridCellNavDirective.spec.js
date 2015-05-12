@@ -33,7 +33,7 @@ describe('ui.grid.cellNav directive', function () {
 
   it('should not throw exceptions when scrolling when a grid does NOT have the ui-grid-cellNav directive', function () {
     expect(function () {
-      $scope.gridApi.core.raise.scrollEvent({});
+      $scope.gridApi.core.raise.scrollBegin({});
     }).not.toThrow();
   });
 
