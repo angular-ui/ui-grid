@@ -195,6 +195,11 @@ angular.module('ui.grid')
       if ( $scope.grid.options.gridMenuShowHideColumns !== false ){
         menuItems = menuItems.concat( service.showHideColumns( $scope ) );
       }
+      
+      menuItems.sort(function(a, b){
+        return a.order - b.order;
+      });
+      
       return menuItems;
     },
     
@@ -235,7 +240,8 @@ angular.module('ui.grid')
       
       // add header for columns
       showHideColumns.push({
-        title: i18nService.getSafeText('gridMenu.columns')
+        title: i18nService.getSafeText('gridMenu.columns'),
+        order: 300
       });
       
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
@@ -252,7 +258,9 @@ angular.module('ui.grid')
             shown: function() {
               return this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined;
             },
-            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
+            leaveOpen: true,
+            order: 301 + index * 2
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
@@ -267,14 +275,13 @@ angular.module('ui.grid')
             shown: function() {
               return !(this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined);
             },
-            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) }
+            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
+            leaveOpen: true,
+            order: 301 + index * 2 + 1
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
         }
-      });
-      showHideColumns.forEach( function (menuItem) {
-          menuItem.templateUrl = $scope.grid.options.menuItemTemplate;
       });
       return showHideColumns;
     },
@@ -335,49 +342,38 @@ angular.module('ui.grid')
 
 
 
-.directive('uiGridMenuButton', ['$compile', 'gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 
-function ($compile, gridUtil, uiGridConstants, uiGridGridMenuService) {
-  var defaultTemplate = 'ui-grid/ui-grid-menu-button';
+.directive('uiGridMenuButton', ['gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 
+function (gridUtil, uiGridConstants, uiGridGridMenuService) {
+
   return {
     priority: 0,
     scope: true,
     require: ['?^uiGrid'],
+    templateUrl: 'ui-grid/ui-grid-menu-button',
     replace: true,
-    compile: function ($elm, $attrs) {
-        return {
-            pre: function($scope, $elm, $attrs, controllers) {
-              var uiGridCtrl = controllers[0];
-              var menuButtonTemplate = (uiGridCtrl.grid && uiGridCtrl.grid.options.menuButtonTemplate) ? uiGridCtrl.grid.options.menuButtonTemplate : defaultTemplate;
-              $scope.menuTemplate = uiGridCtrl.grid.options.menuTemplate;
-              gridUtil.getTemplate(menuButtonTemplate)
-                .then(function (contents) {
-                   var template = angular.element(contents);
-                   $elm.replaceWith(template);
-                   $compile(template)($scope);
-                });
-            },
-            post: function($scope, $elm, $attrs, controllers) {
-              var uiGridCtrl = controllers[0];
-              uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
-              $scope.shown = false;
 
-              $scope.toggleMenu = function () {
-                if ( $scope.shown ){
-                  $scope.$broadcast('hide-menu');
-                  $scope.shown = false;
-                } else {
-                  $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
-                  $scope.$broadcast('show-menu');
-                  $scope.shown = true;
-                }
-              };
 
-              $scope.$on('menu-hidden', function() {
-                $scope.shown = false;
-              });
-            }
+    link: function ($scope, $elm, $attrs, controllers) {
+      var uiGridCtrl = controllers[0];
 
-        };
+      uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
+      
+      $scope.shown = false;
+
+      $scope.toggleMenu = function () {
+        if ( $scope.shown ){
+          $scope.$broadcast('hide-menu');
+          $scope.shown = false;
+        } else {
+          $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
+          $scope.$broadcast('show-menu');
+          $scope.shown = true;
+        }
+      };
+      
+      $scope.$on('menu-hidden', function() {
+        $scope.shown = false;
+      });
     }
   };
 

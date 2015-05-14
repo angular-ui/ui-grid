@@ -48,7 +48,7 @@ You can override the default grid footer template with gridOptions.footerTemplat
 
     $http.get('/data/500_complex.json')
       .success(function(data) {
-        angular.forEach(data, function(row) {
+        data.forEach( function(row) {
           row.registered = Date.parse(row.registered);
         });
         $scope.gridOptions.data = data;

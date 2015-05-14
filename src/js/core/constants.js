@@ -7,6 +7,7 @@
     CUSTOM_FILTERS: /CUSTOM_FILTERS/g,
     COL_FIELD: /COL_FIELD/g,
     MODEL_COL_FIELD: /MODEL_COL_FIELD/g,
+    TOOLTIP: /title=\"TOOLTIP\"/g,
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
     FUNC_REGEXP: /(\([^)]*\))?$/,
@@ -71,7 +72,9 @@
       GREATER_THAN_OR_EQUAL: 64,
       LESS_THAN: 128,
       LESS_THAN_OR_EQUAL: 256,
-      NOT_EQUAL: 512
+      NOT_EQUAL: 512,
+      SELECT: 'select',
+      INPUT: 'input'
     },
 
     aggregationTypes: {

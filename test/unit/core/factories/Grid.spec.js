@@ -97,8 +97,8 @@ describe('Grid factory', function () {
       testObj.proc2 = jasmine.createSpy('proc2').andCallFake(proc2);
 
       // Register the two spies as rows processors
-      grid.registerRowsProcessor(testObj.proc1);
-      grid.registerRowsProcessor(testObj.proc2);
+      grid.registerRowsProcessor(testObj.proc1, 70);
+      grid.registerRowsProcessor(testObj.proc2, 80);
     });
 
     it('should call both processors', function() {
@@ -142,7 +142,7 @@ describe('Grid factory', function () {
 
         grid.registerRowsProcessor(function (blargh) {
           return "goobers!";
-        });
+        }, 70);
       });
 
       it('should throw an exception', function () {
@@ -170,7 +170,7 @@ describe('Grid factory', function () {
   describe('registering a non-function as a rows processor', function () {
     it('should error', function () {
       expect(function () {
-        grid.registerRowsProcessor('blah');
+        grid.registerRowsProcessor('blah', 70);
       }).toThrow();
     });
   });
@@ -449,61 +449,68 @@ describe('Grid factory', function () {
     });
     
     it('should swap', function() {
-        var dataRows = [{str:'abc'},{str:'cba'}];
-        var grid = new Grid({ id: 1 });
+      var dataRows = [{str:'abc'},{str:'cba'}];
+      var grid = new Grid({ id: 1 });
 
-        grid.modifyRows(dataRows);
+      grid.modifyRows(dataRows);
 
-        expect(grid.rows[0].entity.str).toBe('abc');
-        expect(grid.rows[1].entity.str).toBe('cba');
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('cba');
 
-        var tmpRow = dataRows[0];
-        dataRows[0] = dataRows[1];
-        dataRows[1] = tmpRow;
-        grid.modifyRows(dataRows);
-        
-        expect(grid.rows[0].entity.str).toBe('cba');
-        expect(grid.rows[1].entity.str).toBe('abc');
-      });
+      var tmpRow = dataRows[0];
+      dataRows[0] = dataRows[1];
+      dataRows[1] = tmpRow;
+      grid.modifyRows(dataRows);
+      
+      expect(grid.rows[0].entity.str).toBe('cba');
+      expect(grid.rows[1].entity.str).toBe('abc');
+    });
+    
     it('should delete and insert new in the middle', function() {
-        var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
-        var grid = new Grid({ id: 1 });
+      var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+      var grid = new Grid({ id: 1 });
 
-        grid.modifyRows(dataRows);
+      grid.modifyRows(dataRows);
 
-        expect(grid.rows.length).toBe(3);
-        expect(grid.rows[0].entity.str).toBe('abc');
-        expect(grid.rows[1].entity.str).toBe('cba');
-        expect(grid.rows[2].entity.str).toBe('bac');
+      expect(grid.rows.length).toBe(3);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('cba');
+      expect(grid.rows[2].entity.str).toBe('bac');
 
-        dataRows[1] = {str:'xyz'};
-        grid.modifyRows(dataRows);
-        
-        expect(grid.rows.length).toBe(3);
-        expect(grid.rows[0].entity.str).toBe('abc');
-        expect(grid.rows[1].entity.str).toBe('xyz');
-        expect(grid.rows[2].entity.str).toBe('bac');
-      });
+      dataRows[1] = {str:'xyz'};
+      grid.modifyRows(dataRows);
+      
+      expect(grid.rows.length).toBe(3);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('xyz');
+      expect(grid.rows[2].entity.str).toBe('bac');
+    });
+    
+    /*
+     * No longer trying to keep order of sort - we run rowsProcessors
+     * immediately after anyway, which will resort.
+     *
     it('should keep the order of the sort', function() {
-        var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
-        var grid = new Grid({ id: 1 });
-        grid.options.columnDefs = [{name:'1',type:'string'}];
-        grid.buildColumns();
-        grid.modifyRows(dataRows);
+      var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+      var grid = new Grid({ id: 1 });
+      grid.options.columnDefs = [{name:'1',type:'string'}];
+      grid.buildColumns();
+      grid.modifyRows(dataRows);
 
-        expect(grid.rows.length).toBe(3);
-        expect(grid.rows[0].entity.str).toBe('abc');
-        expect(grid.rows[1].entity.str).toBe('cba');
-        expect(grid.rows[2].entity.str).toBe('bac');
+      expect(grid.rows.length).toBe(3);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('cba');
+      expect(grid.rows[2].entity.str).toBe('bac');
 
-        grid.sortColumn(grid.columns[0]);
-        
-        dataRows.splice(0,0,{str:'xyz'});
-        grid.modifyRows(dataRows);
-        expect(grid.rows.length).toBe(4);
-        expect(grid.rows[0].entity.str).toBe('abc');
-        expect(grid.rows[3].entity.str).toBe('xyz');
-      });
+      grid.sortColumn(grid.columns[0]);
+      
+      dataRows.splice(0,0,{str:'xyz'});
+      grid.modifyRows(dataRows);
+      expect(grid.rows.length).toBe(4);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[3].entity.str).toBe('xyz');
+    });
+    */
   });
 
   describe('binding', function() {
@@ -675,46 +682,52 @@ describe('Grid factory', function () {
       }
     });
     
-    it( 'if sort is currently null, then should toggle to ASC', function() {
+    it( 'if sort is currently null, then should toggle to ASC, and reset priority', function() {
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
-    it( 'if sort is currently ASC, then should toggle to DESC', function() {
-      column.sort = {direction: uiGridConstants.ASC};
+    it( 'if sort is currently ASC, then should toggle to DESC, and reset priortiy', function() {
+      column.sort = {direction: uiGridConstants.ASC, priority: 2};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC};
+    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: null};
+    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: null};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null', function() {
-      column.sort = {direction: uiGridConstants.DESC, suppressRemoveSort: false};
+    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: false};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC', function() {
-      column.sort = {direction: uiGridConstants.DESC};
+    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 2};
       column.suppressRemoveSort = true;
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
     it( 'if another column has a sort, that sort should be removed', function() {
@@ -724,27 +737,30 @@ describe('Grid factory', function () {
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
       expect( priorColumn.sort ).toEqual({});
     });
 
     it( 'if another column has a sort, and add is set to true, then that sort should not be removed', function() {
-      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC } }, 0, grid);
+      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } }, 0, grid);
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, true );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC });
+      expect( column.sort.priority ).toEqual(2);
+      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
 
     it( 'if another column has a sort, and add is set to false, but that other column has suppressRemoveSort, then it shouldn\'t be removed', function() {
-      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC }, suppressRemoveSort: true }, 0, grid);
+      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 }, suppressRemoveSort: true }, 0, grid);
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC });
+      expect( column.sort.priority ).toEqual(2);
+      expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
   });
   
@@ -753,7 +769,7 @@ describe('Grid factory', function () {
     it( 'register then deregister data change callback', function() {
       var countCallbacks = function(){
         var i = 0;
-        angular.forEach(grid.dataChangeCallbacks, function(callback){
+        angular.forEach(grid.dataChangeCallbacks, function(callback, key){
           i++;
         });
         return i;
@@ -813,6 +829,78 @@ describe('Grid factory', function () {
         grid.api.core.notifyDataChange( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
       });
+    });
+  });
+
+  describe('clearAllFilters', function() {
+    it('should clear all filter terms from all columns', function() {
+      grid.columns = [
+        {filters: [{term: 'A'}, {term: 'B'}]},
+        {filters: [{term: 'C'}]},
+        {filters: []}
+      ];
+
+      grid.clearAllFilters();
+
+      expect(grid.columns[0].filters).toEqual([{}, {}]);
+      expect(grid.columns[1].filters).toEqual([{}]);
+      expect(grid.columns[2].filters).toEqual([]);
+    });
+
+    it('should call grid.refreshRows() if the refreshRows parameter is true', function() {
+      spyOn(grid, 'refreshRows');
+
+      grid.clearAllFilters(true);
+
+      expect(grid.refreshRows).toHaveBeenCalled();
+    });
+
+    it('should not call grid.refreshRows() if the refreshRows parameter is false', function() {
+      spyOn(grid, 'refreshRows');
+
+      grid.clearAllFilters(false);
+
+      expect(grid.refreshRows).not.toHaveBeenCalled();
+    });
+
+    it('should clear filter conditions from all columns if the clearConditions parameter is true', function() {
+      grid.columns = [
+        {filters: [{condition: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, true, undefined);
+
+      expect(grid.columns[0].filters[0].condition).toBeUndefined();
+    });
+
+    it('should not clear filter conditions from any column if the clearConditions parameter is false', function() {
+      grid.columns = [
+        {filters: [{condition: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, false, undefined);
+
+      expect(grid.columns[0].filters[0].condition).toBe('a value');
+    });
+
+    it('should clear filter flags from all columns if the clearFlags parameter is true', function() {
+      grid.columns = [
+        {filters: [{flags: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, undefined, true);
+
+      expect(grid.columns[0].filters[0].flags).toBeUndefined();
+    });
+
+    it('should not clear filter flags from any column if the clearFlags parameter is false', function() {
+      grid.columns = [
+        {filters: [{flags: 'a value'}]}
+      ];
+
+      grid.clearAllFilters(undefined, undefined, false);
+
+      expect(grid.columns[0].filters[0].flags).toBe('a value');
     });
   });
 });

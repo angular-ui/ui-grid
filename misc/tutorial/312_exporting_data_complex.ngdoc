@@ -70,7 +70,7 @@ We also right align the gender column.
       
       $http.get('/data/100.json')
         .success(function(data) {
-          angular.forEach( data, function( row, index ) {
+          data.forEach( function( row, index ) {
             if( row.gender === 'female' ){
               row.gender = 1;
             } else {

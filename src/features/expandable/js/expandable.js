@@ -196,7 +196,7 @@
       },
       
       expandAllRows: function(grid, $scope) {
-        angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+        grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (!row.isExpanded) {
             service.toggleRowExpansion(grid, row);
           }
@@ -206,7 +206,7 @@
       },
       
       collapseAllRows: function(grid) {
-        angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+        grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (row.isExpanded) {
             service.toggleRowExpansion(grid, row);
           }
@@ -281,7 +281,7 @@
     function (uiGridExpandableService, $templateCache) {
       return {
         replace: true,
-        priority: 1000,
+        priority: 599,
         require: '^uiGrid',
         scope: false,
         compile: function () {
@@ -392,10 +392,14 @@
                   return ret;
                 };
 
+ /*
+  * Commented out @PaulL1.  This has no purpose that I can see, and causes #2964.  If this code needs to be reinstated for some
+  * reason it needs to use drawnWidth, not width, and needs to check column visibility.  It should really use render container
+  * visible column cache also instead of checking column.renderContainer. 
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
                       var colWidth = 0;
-                      angular.forEach(grid.columns, function (column) {
+                      grid.columns.forEach( function (column) {
                           if (column.renderContainer === 'left') {
                             colWidth += column.width;
                           }
@@ -411,7 +415,7 @@
                           priority: 15,
                           func: updateRowContainerWidth
                       });
-                  }
+                  }*/
 
               },
               post: function ($scope, $elm, $attrs, controllers) {

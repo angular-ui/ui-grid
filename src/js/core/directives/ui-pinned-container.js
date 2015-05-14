@@ -23,6 +23,27 @@
 
             $elm.addClass('ui-grid-pinned-container-' + $scope.side);
 
+            // Monkey-patch the viewport width function
+            if ($scope.side === 'left' || $scope.side === 'right') {
+              grid.renderContainers[$scope.side].getViewportWidth = monkeyPatchedGetViewportWidth;
+            }
+
+            function monkeyPatchedGetViewportWidth() {
+              /*jshint validthis: true */
+              var self = this;
+
+              var viewportWidth = 0;
+              self.visibleColumnCache.forEach(function (column) {
+                viewportWidth += column.drawnWidth;
+              });
+
+              var adjustment = self.getViewportAdjustment();
+
+              viewportWidth = viewportWidth + adjustment.width;
+
+              return viewportWidth;
+            }
+
             function updateContainerWidth() {
               if ($scope.side === 'left' || $scope.side === 'right') {
                 var cols = grid.renderContainers[$scope.side].visibleColumnCache;
@@ -32,18 +53,16 @@
                   width += col.drawnWidth || col.width || 0;
                 }
 
-                myWidth = width;
-              }              
+                return width;
+              }
             }
-            
-            function updateContainerDimensions() {
-              // gridUtil.logDebug('update ' + $scope.side + ' dimensions');
 
+            function updateContainerDimensions() {
               var ret = '';
-              
+
               // Column containers
               if ($scope.side === 'left' || $scope.side === 'right') {
-                updateContainerWidth();
+                myWidth = updateContainerWidth();
 
                 // gridUtil.logDebug('myWidth', myWidth);
 
@@ -59,11 +78,11 @@
             }
 
             grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-              if ( myWidth === 0 || !myWidth ){
-                updateContainerWidth();
-              }
+              myWidth = updateContainerWidth();
+
               // Subtract our own width
               adjustment.width -= myWidth;
+              adjustment.side = $scope.side;
 
               return adjustment;
             });

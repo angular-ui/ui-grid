@@ -4,12 +4,11 @@
       <div class="ui-grid-header-canvas">
         <div class="ui-grid-header-cell-wrapper" ng-style="colContainer.headerCellWrapperStyle()">
           <div class="ui-grid-header-cell-row">
-            <div class="ui-grid-header-cell ui-grid-clearfix" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ui-grid-header-cell col="col" render-index="$index"></div>
+            <div class="ui-grid-header-cell ui-grid-clearfix" ng-repeat="col in colContainer.renderedColumns track by col.uid" ui-grid-header-cell col="col" render-index="$index"></div>
           </div>
         </div>
       </div>
 
     </div>
-    <div ui-grid-menu></div>
   </div>
 </div>

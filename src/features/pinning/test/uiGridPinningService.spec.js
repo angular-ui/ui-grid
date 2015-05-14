@@ -1,14 +1,16 @@
 /* global _ */
 describe('ui.grid.pinning uiGridPinningService', function () {
   var uiGridPinningService;
+  var uiGridPinningConstants;
   var gridClassFactory;
   var grid;
   var GridRenderContainer;
 
   beforeEach(module('ui.grid.pinning'));
 
-  beforeEach(inject(function (_uiGridPinningService_,_gridClassFactory_, $templateCache, _GridRenderContainer_) {
+  beforeEach(inject(function (_uiGridPinningService_,_gridClassFactory_, $templateCache, _GridRenderContainer_, _uiGridPinningConstants_) {
     uiGridPinningService = _uiGridPinningService_;
+    uiGridPinningConstants = _uiGridPinningConstants_;
     gridClassFactory = _gridClassFactory_;
     GridRenderContainer = _GridRenderContainer_;
 
@@ -128,6 +130,75 @@ describe('ui.grid.pinning uiGridPinningService', function () {
       });
     });
 
+
+  });
+
+  describe('pinColumn', function() {
+
+    var previousWidth;
+
+    beforeEach(function() {
+      spyOn(grid, 'createLeftContainer').andCallThrough();
+      spyOn(grid, 'createRightContainer').andCallThrough();
+      previousWidth = grid.columns[0].drawnWidth;
+    });
+
+    describe('left', function() {
+
+      beforeEach(function() {
+        grid.api.pinning.pinColumn(grid.columns[0], uiGridPinningConstants.container.LEFT);
+      });
+
+      it('should set renderContainer to be left', function(){
+        expect(grid.columns[0].renderContainer).toEqual('left');
+      });
+
+      it('should call createLeftContainer', function() {
+        expect(grid.createLeftContainer).toHaveBeenCalled();
+      });
+
+      it('should set width based on previous setting', function() {
+        expect(grid.width).toEqual(previousWidth);
+      });
+
+    });
+
+    describe('right', function() {
+
+      beforeEach(function() {
+        grid.api.pinning.pinColumn(grid.columns[0], uiGridPinningConstants.container.RIGHT);
+      });
+
+      it('should set renderContainer to be right', function(){
+        expect(grid.columns[0].renderContainer).toEqual('right');
+      });
+
+      it('should call createLeftContainer', function() {
+        expect(grid.createRightContainer).toHaveBeenCalled();
+      });
+
+      it('should set width based on previous setting', function() {
+        expect(grid.width).toEqual(previousWidth);
+      });
+
+    });
+
+    describe('none', function() {
+
+      beforeEach(function() {
+        grid.api.pinning.pinColumn(grid.columns[0], uiGridPinningConstants.container.NONE);
+      });
+
+      it('should set renderContainer to be null', function(){
+        expect(grid.columns[0].renderContainer).toBeNull();
+      });
+
+      it('should NOT call either container creation methods', function() {
+        expect(grid.createLeftContainer).not.toHaveBeenCalled();
+        expect(grid.createRightContainer).not.toHaveBeenCalled();
+      });
+
+    });
 
   });
 

@@ -115,7 +115,7 @@ for that column.  This will let the user change the direction of the sort, but t
 
       <br>
       <br>
-      <button id='toggleGender' ng-click='toggleGender()'>Toggle Gender</button>
+      <button id='toggleGender' ng-click='toggleGender()' class="btn btn-success" >Toggle Gender</button>
       <div id="grid1" ui-grid="gridOptions1" class="grid"></div>
 
       <br>

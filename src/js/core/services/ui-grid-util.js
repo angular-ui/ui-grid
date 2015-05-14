@@ -106,7 +106,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 function getWidthOrHeight( elem, name, extra ) {
   // Start with offset property, which is equivalent to the border-box value
   var valueIsBorderBox = true,
-          val,
+          val, // = name === 'width' ? elem.offsetWidth : elem.offsetHeight,
           styles = getStyles(elem),
           isBorderBox = styles['boxSizing'] === 'border-box';
 
@@ -169,9 +169,11 @@ var uidPrefix = 'uiGrid-';
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', '$interpolate', 'uiGridConstants',
-  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, $interpolate, uiGridConstants) {
+module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
+  function ($log, $window, $document, $http, $templateCache, $timeout, $interval, $injector, $q, $interpolate, uiGridConstants) {
   var s = {
+
+    augmentWidthOrHeight: augmentWidthOrHeight,
 
     getStyles: getStyles,
 
@@ -403,11 +405,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      *
      * @param {string/number/bool/object} item variable to examine
      * @returns {string} one of the following
-     * 'string'
-     * 'boolean'
-     * 'number'
-     * 'date'
-     * 'object'
+     * - 'string'
+     * - 'boolean'
+     * - 'number'
+     * - 'date'
+     * - 'object'
      */
     guessType : function (item) {
       var itemType = typeof(item);
@@ -640,12 +642,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         return found;
     },
 
-    // Shim requestAnimationFrame
-    requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
-                           $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
-                           function(fn) {
-                             return $timeout(fn, 10, false);
-                           },
+    //// Shim requestAnimationFrame
+    //requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
+    //                       $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
+    //                       function(fn) {
+    //                         return $timeout(fn, 10, false);
+    //                       },
 
     numericAndNullSort: function (a, b) {
       if (a === null) { return 1; }
@@ -786,8 +788,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (e) {
         var styles = getStyles(e);
         return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
-                  s.fakeElement(e, cssShow, function(newElm) {
-                    return getWidthOrHeight( newElm, name, extra );
+                  s.swap(e, cssShow, function() {
+                    return getWidthOrHeight(e, name, extra );
                   }) :
                   getWidthOrHeight( e, name, extra );
       }
@@ -879,54 +881,66 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     return 'unknown';
   };
 
-  /**
-    * @ngdoc method
-    * @name normalizeScrollLeft
-    * @methodOf ui.grid.service:GridUtil
-    *
-    * @param {element} element The element to get the `scrollLeft` from.
-    *
-    * @returns {int} A normalized scrollLeft value for the current browser.
-    *
-    * @description
-    * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method normalizes them
-    */
-  s.normalizeScrollLeft = function normalizeScrollLeft(element) {
+  // Borrowed from https://github.com/othree/jquery.rtl-scroll-type
+  // Determine the scroll "type" this browser is using for RTL
+  s.rtlScrollType = function rtlScrollType() {
+    if (rtlScrollType.type) {
+      return rtlScrollType.type;
+    }
+
+    var definer = angular.element('<div dir="rtl" style="font-size: 14px; width: 1px; height: 1px; position: absolute; top: -1000px; overflow: scroll">A</div>')[0],
+        type = 'reverse';
+
+    document.body.appendChild(definer);
+
+    if (definer.scrollLeft > 0) {
+      type = 'default';
+    }
+    else {
+      definer.scrollLeft = 1;
+      if (definer.scrollLeft === 0) {
+        type = 'negative';
+      }
+    }
+
+    definer.remove();
+    rtlScrollType.type = type;
+
+    return type;
+  };
+
+    /**
+     * @ngdoc method
+     * @name normalizeScrollLeft
+     * @methodOf ui.grid.service:GridUtil
+     *
+     * @param {element} element The element to get the `scrollLeft` from.
+     * @param {boolean} grid -  grid used to normalize (uses the rtl property)
+     *
+     * @returns {int} A normalized scrollLeft value for the current browser.
+     *
+     * @description
+     * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method normalizes them
+     */
+  s.normalizeScrollLeft = function normalizeScrollLeft(element, grid) {
     if (typeof(element.length) !== 'undefined' && element.length) {
       element = element[0];
     }
 
-    var browser = s.detectBrowser();
-
     var scrollLeft = element.scrollLeft;
-    
-    var dir = s.getStyles(element)['direction'];
 
-    // IE stays normal in RTL
-    if (browser === 'ie') {
-      return scrollLeft;
-    }
-    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
-    else if (browser === 'chrome') {
-      if (dir === 'rtl') {
-        // Get the max scroll for the element
-        var maxScrollLeft = element.scrollWidth - element.clientWidth;
-
-        // Subtract the current scroll amount from the max scroll
-        return maxScrollLeft - scrollLeft;
-      }
-      else {
-        return scrollLeft;
+    if (grid.isRTL()) {
+      switch (s.rtlScrollType()) {
+        case 'default':
+          return element.scrollWidth - scrollLeft - element.clientWidth;
+        case 'negative':
+          return Math.abs(scrollLeft);
+        case 'reverse':
+          return scrollLeft;
       }
     }
-    // Firefox goes negative!
-    else if (browser === 'firefox') {
-      return Math.abs(scrollLeft);
-    }
-    else {
-      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
-      return scrollLeft;
-    }
+
+    return scrollLeft;
   };
 
   /**
@@ -936,51 +950,34 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
   *
   * @param {element} element The element to normalize the `scrollLeft` value for
   * @param {int} scrollLeft The `scrollLeft` value to denormalize.
+  * @param {boolean} grid The grid that owns the scroll event.
   *
   * @returns {int} A normalized scrollLeft value for the current browser.
   *
   * @description
   * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method denormalizes a value for the current browser.
   */
-  s.denormalizeScrollLeft = function denormalizeScrollLeft(element, scrollLeft) {
+  s.denormalizeScrollLeft = function denormalizeScrollLeft(element, scrollLeft, grid) {
     if (typeof(element.length) !== 'undefined' && element.length) {
       element = element[0];
     }
 
-    var browser = s.detectBrowser();
+    if (grid.isRTL()) {
+      switch (s.rtlScrollType()) {
+        case 'default':
+          // Get the max scroll for the element
+          var maxScrollLeft = element.scrollWidth - element.clientWidth;
 
-    var dir = s.getStyles(element)['direction'];
+          // Subtract the current scroll amount from the max scroll
+          return maxScrollLeft - scrollLeft;
+        case 'negative':
+          return scrollLeft * -1;
+        case 'reverse':
+          return scrollLeft;
+      }
+    }
 
-    // IE stays normal in RTL
-    if (browser === 'ie') {
-      return scrollLeft;
-    }
-    // Chrome doesn't alter the scrollLeft value. So with RTL on a 400px-wide grid, the right-most position will still be 400 and the left-most will still be 0;
-    else if (browser === 'chrome') {
-      if (dir === 'rtl') {
-        // Get the max scroll for the element
-        var maxScrollLeft = element.scrollWidth - element.clientWidth;
-
-        // Subtract the current scroll amount from the max scroll
-        return maxScrollLeft - scrollLeft;
-      }
-      else {
-        return scrollLeft;
-      }
-    }
-    // Firefox goes negative!
-    else if (browser === 'firefox') {
-      if (dir === 'rtl') {
-        return scrollLeft * -1;
-      }
-      else {
-        return scrollLeft;
-      }
-    }
-    else {
-      // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
-      return scrollLeft;
-    }
+    return scrollLeft;
   };
 
     /**
@@ -1081,6 +1078,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    * Adapted from debounce function (above)
    * Potential keys for Params Object are:
    *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
+   * Updated to use $interval rather than $timeout, as protractor (e2e tests) is able to work with $interval,
+   * but not with $timeout
+   * 
+   * Note that when using throttle, you need to use throttle to create a new function upfront, then use the function
+   * return from that call each time you need to call throttle.  If you call throttle itself repeatedly, the lastCall
+   * variable will get overwritten and the throttling won't work
+   * 
    * @example
    * <pre>
    * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
@@ -1096,7 +1100,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $timeout(function(){ queued = null; }, 0);
+      $interval(function(){ queued = null; }, 0, 1);
     }
 
     return function(){
@@ -1109,7 +1113,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $timeout(runFunc, wait - sinceLast);
+          queued = $interval(runFunc, wait - sinceLast, 1);
         }
       }
     };

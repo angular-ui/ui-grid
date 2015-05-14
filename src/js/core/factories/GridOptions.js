@@ -157,6 +157,20 @@ angular.module('ui.grid')
 
       /**
        * @ngdoc property
+       * @name flatEntityAccess
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e. 
+       * each of your columns associate directly with a propery one each of the entities in your data array.
+       * 
+       * In that situation we can avoid all the logic associated with complex binding to functions or to properties of sub-objects,
+       * which can provide a significant speed improvement with large data sets, with filtering and with sorting.
+       * 
+       * By default false
+       */
+      baseOptions.flatEntityAccess = baseOptions.flatEntityAccess === true;
+
+      /**
+       * @ngdoc property
        * @name showHeader
        * @propertyOf ui.grid.class:GridOptions
        * @description True by default. When set to false, this setting will replace the
@@ -283,14 +297,32 @@ angular.module('ui.grid')
        * @description Defaults to 4
        */
       baseOptions.horizontalScrollThreshold = typeof(baseOptions.horizontalScrollThreshold) !== "undefined" ? baseOptions.horizontalScrollThreshold : 2;
+
+
+      /**
+       * @ngdoc property
+       * @name aggregationCalcThrottle
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Default time in milliseconds to throttle aggregation calcuations, defaults to 500ms
+       */
+      baseOptions.aggregationCalcThrottle = typeof(baseOptions.aggregationCalcThrottle) !== "undefined" ? baseOptions.aggregationCalcThrottle : 500;
   
       /**
        * @ngdoc property
-       * @name scrollThrottle
+       * @name wheelScrollThrottle
        * @propertyOf ui.grid.class:GridOptions
-       * @description Default time to throttle scroll events to, defaults to 70ms
+       * @description Default time in milliseconds to throttle scroll events to, defaults to 70ms
        */
-      baseOptions.scrollThrottle = typeof(baseOptions.scrollThrottle) !== "undefined" ? baseOptions.scrollThrottle : 70;
+      baseOptions.wheelScrollThrottle = typeof(baseOptions.wheelScrollThrottle) !== "undefined" ? baseOptions.wheelScrollThrottle : 70;
+
+
+      /**
+       * @ngdoc property
+       * @name scrollDebounce
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Default time in milliseconds to debounce scroll events, defaults to 300ms
+       */
+      baseOptions.scrollDebounce = typeof(baseOptions.scrollDebounce) !== "undefined" ? baseOptions.scrollDebounce : 300;
   
       /**
        * @ngdoc boolean
@@ -338,7 +370,17 @@ angular.module('ui.grid')
        * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;
-  
+
+      /**
+       * @ngdoc boolean
+       * @name enableMinHeightCheck
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When enabled, a newly initialized grid will check to see if it is tall enough to display
+       * at least one row of data.  If the grid is not tall enough, it will resize the DOM element to display minRowsToShow number
+       * of rows.
+       */
+       baseOptions.enableMinHeightCheck = baseOptions.enableMinHeightCheck !== false;
+
       /**
        * @ngdoc boolean
        * @name minimumColumnSize
@@ -385,46 +427,23 @@ angular.module('ui.grid')
        * @ngdoc string
        * @name footerTemplate
        * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom footer
-       * template. Can be set to either the name of a template file 'footer_template.html', inline html
+       * @description (optional) ui-grid/ui-grid-footer by default.  This footer shows the per-column
+       * aggregation totals. 
+       * When provided, this setting uses a custom footer template. Can be set to either the name of a template file 'footer_template.html', inline html
        * <pre>'<div class="ui-grid-bottom-panel" style="text-align: center">I am a Custom Grid Footer</div>'</pre>, or the id
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
-      baseOptions.footerTemplate = baseOptions.footerTemplate || null;
-   
-      /**
-       * @ngdoc string
-       * @name menuButtonTemplate
-       * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom grid menu
-       * template. Can be set to either the name of a template file 'menuButton_template.html', inline html
-       * <pre>'<div class="ui-grid-menu-button" ng-click="customToggleMenu()"><div class="ui-grid-icon-container"><i class="ui-grid-icon=menu">&nbsp;</i></div></div><div ui-grid-menu menu-items="menuItems"></div>'</pre>, or the id
-       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
-       */
-      baseOptions.menuButtonTemplate = baseOptions.menuButtonTemplate || null;
+      baseOptions.footerTemplate = baseOptions.footerTemplate || 'ui-grid/ui-grid-footer';
   
       /**
        * @ngdoc string
-       * @name menuTemplate
+       * @name gridFooterTemplate
        * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom grid menu
-       * template. Can be set to either the name of a template file 'menu_template.html', inline html
-       * <pre>'<div class="ui-grid-menu" style="text-align: left">Custom Menu Header <ul><li ng-repeat="item in menuItems" ui-grid-menu-item></li></ul></div>'</pre>, or the id
-       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
+       * @description (optional) ui-grid/ui-grid-grid-footer by default. This template by default shows the
+       * total items at the bottom of the grid, and the selected items if selection is enabled.
        */
-      baseOptions.menuTemplate = baseOptions.menuTemplate || null;
-    
-      /**
-       * @ngdoc string
-       * @name menuItemTemplate
-       * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom grid menu item
-       * template. Can be set to either the name of a template file 'menuItem_template.html', inline html
-       * <pre>'<li class="ui-grid-menu-item"><label>{{name}}</label></li>'</pre>, or the id
-       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
-       */
-      baseOptions.menuItemTemplate = baseOptions.menuItemTemplate || null;
-   
+      baseOptions.gridFooterTemplate = baseOptions.gridFooterTemplate || 'ui-grid/ui-grid-grid-footer';
+  
       /**
        * @ngdoc string
        * @name rowTemplate

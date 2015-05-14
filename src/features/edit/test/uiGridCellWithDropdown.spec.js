@@ -15,7 +15,7 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
     $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div class="ui-grid-cell-contents">{{COL_FIELD CUSTOM_FILTERS}}</div>');
-    $templateCache.put('ui-grid/cellEditor', '<div><select ng-model="MODEL_COL_FIELD" ui-grid-edit-dropdown ng-options="field[editDropdownIdLabel] as field[editDropdownValueLabel] for field in editDropdownOptionsArray"></select></div>');
+    $templateCache.put('ui-grid/dropdownEditor', '<div><form name="inputForm"><select ng-class="\'colt\' + col.uid" ui-grid-edit-dropdown ng-model="MODEL_COL_FIELD" ng-options="field[editDropdownIdLabel] as field[editDropdownValueLabel] for field in editDropdownOptionsArray CUSTOM_FILTERS"></select></form></div>');
 
     scope = $rootScope.$new();
     var grid = gridClassFactory.createGrid();
@@ -141,7 +141,7 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
 
     it('should stop when grid scrolls', function () {
       //stop edit
-      scope.grid.api.core.raise.scrollEvent(scope);
+      scope.grid.api.core.raise.scrollBegin(scope);
       scope.$digest();
       //back to beginning
       expect(element.html()).toBe(displayHtml);

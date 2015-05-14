@@ -19,12 +19,18 @@ When using a dropdown editor you need to provide an options array through the `e
 This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through
 using the `editDropdownIdLabel` and `editDropdownValueLabel` options.
 
+A file chooser is available, through seting the 'editableCellTemplate` on the `columnDef` to `'ui-grid/fileChooserEditor'`.  This
+file chooser will open the file chosen by the user and assign the value of that file to the model element.  In the example below
+we use the file chooser to load a file, and we display the filename in the cell.  The file is stored against the row in a hidden
+column, which we can save to our server or otherwise process.
+
 Custom edit templates should be used for any editor other than the default editors, but be aware that you will likely also
 need to provide a custom directive similar to the uiGridEditor directive so as to provide `BEGIN_CELL_EDIT, CANCEL_CELL_EDIT
 and END_CELL_EDIT` events.
 
 __ColumnDef Options__:
 
+- `editModelField` (default: undefined) - a bindable expression to use instead of colDef.field when binding the edit control.
 - `editableCellTemplate` (default: `'ui-grid/cellEditor'`) - Valid html, templateCache Id,  or url that returns html
   content to be compiled when edit mode is invoked.
 - `enableCellEdit` (default: `false` for columns of type `'object'`, `true` for all other columns) - `true` will enable
@@ -50,9 +56,9 @@ The following option is available only if using cellNav feature
 
 _Note that the edit functionality uses native html5 edit widgets - the date picker, the dropdown and the input box
 itself.  If your browser does not implement these widgets, then you won't get them.  If your browser implements these
-widgets in a way that isn't ideal (for example, some browsers don't allow number fields to start with '.', so you can't 
+widgets in a way that isn't ideal (for example, some browsers don't allow number fields to start with '.', so you can't
 type in '.5'), then you need to provide a custom editor instead.  On the medium term roadmap there is intent
-to provide a bootstrap feature, which would provide directives that were compatible with angular-bootstrap directives, 
+to provide a bootstrap feature, which would provide directives that were compatible with angular-bootstrap directives,
 allowing use of the bootstrap datepicker and input fields_
 
 
@@ -82,6 +88,23 @@ $scope.gridOptions.columnDefs = [
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {  };
 
+      $scope.storeFile = function( gridRow, gridCol, files ) {
+        // ignore all but the first file, it can only select one anyway
+        // set the filename into this column
+        gridRow.entity.filename = files[0].name;
+
+        // read the file and set it into a hidden column, which we may do stuff with later
+        var setFile = function(fileContent){
+          gridRow.entity.file = fileContent.currentTarget.result;
+          // put it on scope so we can display it - you'd probably do something else with it
+          $scope.lastFile = fileContent.currentTarget.result;
+          $scope.$apply();
+        };
+        var reader = new FileReader();
+        reader.onload = setFile;
+        reader.readAsText( files[0] );
+      };
+
       $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
@@ -101,10 +124,10 @@ $scope.gridOptions.columnDefs = [
         { name: 'isActive', displayName: 'Active', type: 'boolean', width: '10%' },
         { name: 'pet', displayName: 'Pet', width: '20%', editableCellTemplate: 'ui-grid/dropdownEditor',
           editDropdownRowEntityOptionsArrayPath: 'foo.bar[0].options', editDropdownIdLabel: 'value'
-        }
+        },
+        { name: 'filename', displayName: 'File', width: '20%', editableCellTemplate: 'ui-grid/fileChooserEditor',
+          editFileChooserCallback: $scope.storeFile }
       ];
-
-
 
      $scope.msg = {};
 
@@ -158,6 +181,9 @@ $scope.gridOptions.columnDefs = [
       <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
       <br>
       <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+      <br>
+      <div><strong>Last file uploaded:</strong></div>
+      <div>{{lastFile}}</div>
     </div>
   </file>
   <file name="main.css">

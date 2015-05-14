@@ -25,30 +25,54 @@ filtered rows.
 Group header rows cannot be edited, and if using the selection feature, cannot be selected.  They can,
 however, be exported.
 
+The group rowHeader by default is only visible when one or more columns are grouped - the aim being
+to have no visual impact when grouping is turned on but unused.  If you'd like the groupRowHeader permanently
+present then set the `groupingRowHeaderAlwaysVisible: true` gridOption.
+
+If you want to change the grouping programmatically after grid initialisation, you do this through calling the
+provided methods:
+
+  - `groupColumn`: groups an individual column.  Adds it to the end of the current grouping - so you need to remove
+    existing grouped columns first if you wanted this to be the only grouping.  Adds a sort ASC if there isn't one
+  - `ungroupColumn`: ungroups an individual column
+  - `aggregateColumn`: sets aggregation on a column, including setting the aggregation off.  Automatically removes
+    any sort first.
+  - `setGrouping`: sets all the grouping in one go, removing existing grouping
+  - `getGrouping`: gets the grouping config for the grid
+  - `clearGrouping`: clears all current grouping settings
+
 Grouping is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
 
 - does not correctly handle columns that are based on functions or complex objects.  The groupHeader rows create
   a fake row.entity, and then set the appropriate fields in that entity.  This doesn't work well with 
   complex column definitions at present
-- notify data change capability is needed for when people programmatically change the grouping  
 - some more unit testing
 - enhancement: allow a limit on number of columns grouped
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
 - special formatting for header rows in exporter?
-- add grouping options to saveState
 
 Options to watch out for include:
 
 - `groupingIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
-  level gets deeper.  Larger values look nicer, but mean that you probably need to make your groupHeader
-  wider if you're allowing deep grouping
-- `groupingRowHeaderWidth`: the width of the grouping row header, important as above
+  level gets deeper.  Larger values look nicer, but take up more space
+- `groupingRowHeaderWidth`: the base width of the grouping row header
 - `groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
-  usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
-  visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
-  an average  
+   usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
+   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
+   an average
+- `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders
+
+If you have data in your entity that is 1:1 with a group row (so, for example, you have 
+
+If you would like to suppress the data in a grouped column (so it only shows in the groupHeader rows) this can
+be done by overriding the cellTemplate for any of the columns you allow grouping on as follows:
+
+   `cellTemplate: '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
    
+In the example below this has been done on the state column only.  This isn't included in the base code as it
+could potentially interact with people's custom templates.
+
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for 
@@ -56,19 +80,22 @@ counting the number of rows), we find the max age for each grouping, and we calc
 suppress the aggregation text on the balance column because we want to format as currency...but that means that 
 we can't easily see that it's an average.
 
+We write a function that extracts the aggregated data for states and genders (if you change the grouping then this
+function will stop working), and writes them to the console.
+
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'ui.grid.pinning' ]);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping' ]);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants ) {
       $scope.gridOptions = {
         enableFiltering: true,
         columnDefs: [
-          { name: 'state', grouping: { groupPriority: 1 }, sort: { direction: 'desc' }, width: '25%' },
-          { name: 'gender', grouping: { groupPriority: 2 }, sort: { direction: 'asc' }, width: '20%' },
-          { name: 'name', grouping: { aggregation: uiGridGroupingConstants.aggregation.COUNT }, width: '30%' },
+          { name: 'name', width: '30%' },
+          { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%', cellFilter: 'mapGender' },
           { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
+          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
           { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
         ],
         onRegisterApi: function( gridApi ) {
@@ -80,8 +107,10 @@ we can't easily see that it's an average.
      .success(function(data) {
        for ( var i = 0; i < data.length; i++ ){
          data[i].state = data[i].address.state;
+         data[i].gender = data[i].gender === 'male' ? 1: 2;
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }
+       delete data[2].age;
        $scope.gridOptions.data = data;
      });
  
@@ -91,16 +120,65 @@ we can't easily see that it's an average.
       
       $scope.toggleRow = function( rowNum ){
         $scope.gridApi.grouping.toggleRowGroupingState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
-      }
-    }]);
+      };
+      
+      $scope.changeGrouping = function() {
+        $scope.gridApi.grouping.clearGrouping();
+        $scope.gridApi.grouping.groupColumn('age');
+        $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
+      };
+      
+      $scope.getAggregates = function() {
+        var aggregateInfo = {};
+        var lastState; 
+        $scope.gridApi.grid.renderContainers.body.visibleRowCache.forEach( function(row) {
+          if( row.groupHeader ) {
+            if( row.groupLevel === 0 ){
+              // in the format "xxxxx (10)", we want the xxxx and the 10
+              if( match = row.entity.state.match(/(.+) \((\d+)\)/) ){
+                aggregateInfo[ match[1] ] = { stateTotal: match[2] };
+                lastState = match[1];
+              }
+            } else if (row.groupLevel === 1){
+              if( match = row.entity.gender.match(/(.+) \((\d+)\)/) ){
+                aggregateInfo[ lastState ][ match[1] ] = match[2];
+              }
+            }
+          }
+        });
+        console.log(aggregateInfo);
+      };
+    }])
+    .filter('mapGender', function() {
+      var genderHash = {
+        1: 'male',
+        2: 'female'
+      };
+
+      return function(input) {
+        var result;
+        var match;
+        if (!input){
+          return '';
+        } else if (result = genderHash[input]) {
+          return result;
+        } else if ( ( match = input.match(/(.+)( \(\d+\))/) ) && ( result = genderHash[match[1]] ) ) {
+          return result + match[2];
+        } else {
+          return input;
+        }
+      };
+    });
   </file>
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-pinning class="grid"></div>
       <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
       <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
       <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
+      <button id="changeGrouping" type="button" class="btn btn-success" ng-click="changeGrouping()">Change Grouping</button>
+      <button id="getAggregates" type="button" class="btn btn-success" ng-click="getAggregates()">Get Aggregates</button>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping class="grid"></div>
     </div>
   </file>
   

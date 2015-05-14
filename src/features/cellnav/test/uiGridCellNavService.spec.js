@@ -5,19 +5,23 @@ describe('ui.grid.edit uiGridCellNavService', function () {
   var uiGridConstants;
   var uiGridCellNavConstants;
   var $rootScope;
+  var $timeout;
 
   beforeEach(module('ui.grid.cellNav'));
 
-  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_, _$rootScope_) {
+  beforeEach(inject(function (_uiGridCellNavService_, _gridClassFactory_, $templateCache, _uiGridConstants_, _uiGridCellNavConstants_, _$rootScope_, _$timeout_) {
     uiGridCellNavService = _uiGridCellNavService_;
     gridClassFactory = _gridClassFactory_;
     uiGridConstants = _uiGridConstants_;
     uiGridCellNavConstants = _uiGridCellNavConstants_;
     $rootScope = _$rootScope_;
+    $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
 
     grid = gridClassFactory.createGrid();
+    //throttled scrolling isn't working in tests for some reason
+    grid.options.scrollDebounce = 0;
     grid.options.columnDefs = [
       {name: 'col0', allowCellFocus: true},
       {name: 'col1', allowCellFocus: false},
@@ -192,7 +196,9 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       
       grid.setVisibleColumns(grid.columns);
       grid.setVisibleRows(grid.rows);
-      
+
+      grid.renderContainers.body.headerHeight = 0;
+
       for ( i = 0; i < 11; i++ ){
         grid.columns[i].drawnWidth = i < 6 ? 100 : 200;
       }
@@ -200,7 +206,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       $scope = $rootScope.$new();
 
       args = null;
-      grid.api.core.on.scrollEvent($scope, function( receivedArgs ){
+      grid.api.core.on.scrollEnd($scope, function( receivedArgs ){
         args = receivedArgs;
       });
       
@@ -211,51 +217,79 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     // but it means these unit tests are now mostly checking that it is the same it used to
     // be, not that it is giving some specified result (i.e. I just updated them to what they were)
     it('should request scroll to row and column', function () {
-      uiGridCellNavService.scrollTo( grid, grid.options.data[4], grid.columns[4].colDef);
-      
+      $timeout(function () {
+        grid.scrollTo(grid.options.data[4], grid.columns[4].colDef);
+      });
+      $timeout.flush();
+
       expect(args.grid).toEqual(grid);
-      expect(args.y).toEqual( { percentage : 5/11 });
+      expect(Math.round(args.y.percentage * 10)/10).toBe(0.4);
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to row only - first row', function () {
-      uiGridCellNavService.scrollTo( grid, grid.options.data[0], null);
+      $timeout(function () {
+        grid.scrollTo( grid.options.data[0], null);
+      });
+      $timeout.flush();
       
-      expect(args.y).toEqual( { percentage : 2/11 });
+      expect(Math.round(args.y.percentage * 10)/10).toBe(0.1);
     });
 
     it('should request scroll to row only - last row', function () {
-      uiGridCellNavService.scrollTo( grid, grid.options.data[10], null);
+      $timeout(function () {
+        grid.scrollTo( grid.options.data[10], null);
+      });
+      $timeout.flush();
       
-      expect(args.y).toEqual( { percentage : 1 });
+      expect(args.y.percentage).toBeGreaterThan(0.5);
+      expect(args.x).toBe(null);
     });
 
     it('should request scroll to row only - row 4', function () {
-      uiGridCellNavService.scrollTo( grid, grid.options.data[5], null);
+      $timeout(function () {
+        grid.scrollTo( grid.options.data[5], null);
+      });
+      $timeout.flush();
       
-      expect(args.y).toEqual( { percentage : 6/11 });
+      expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.5);
+      expect(args.x).toBe(null);
     });
 
     it('should request scroll to column only - first column', function () {
-      uiGridCellNavService.scrollTo( grid, null, grid.columns[0].colDef);
-      
+      $timeout(function () {
+        grid.scrollTo( null, grid.columns[0].colDef);
+      });
+      $timeout.flush();
+
+
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to column only - last column', function () {
-      uiGridCellNavService.scrollTo( grid, null, grid.columns[10].colDef);
-      
+      $timeout(function () {
+        grid.scrollTo( null, grid.columns[10].colDef);
+      });
+      $timeout.flush();
+
+
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request scroll to column only - column 7', function () {
-      uiGridCellNavService.scrollTo( grid,  null, grid.columns[8].colDef);
+      $timeout(function () {
+        grid.scrollTo(  null, grid.columns[8].colDef);
+      });
+      $timeout.flush();
       
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
     it('should request no scroll as no row or column', function () {
-      uiGridCellNavService.scrollTo( grid,  null, null );
+      $timeout(function () {
+        grid.scrollTo( null, null );
+      });
+      $timeout.flush();
       
       expect(args).toEqual( null );
     });

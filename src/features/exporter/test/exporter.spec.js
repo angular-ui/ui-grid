@@ -80,9 +80,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfMaxGridWidth : 720,
         exporterPdfCustomFormatter: jasmine.any(Function),
         exporterHeaderFilterUseName: false,
+        exporterMenuAllData: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
+        exporterAllDataPromise: null,
         exporterSuppressColumns: []        
       });
     });
@@ -105,9 +107,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
         exporterHeaderFilterUseName: true,
+        exporterMenuAllData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
+        exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ]
       };
       uiGridExporterService.defaultGridOptions(options);
@@ -127,9 +131,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
         exporterHeaderFilterUseName: true,
+        exporterMenuAllData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
+        exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ]
       });
     });    

@@ -131,7 +131,8 @@
 
           grid.api.registerEventsFromObject(publicApi.events);
           grid.api.registerMethodsFromObject(publicApi.methods);
-          grid.registerRowsProcessor(function (renderableRows) {
+          
+          var processPagination = function( renderableRows ){
             if (grid.options.useExternalPagination || !grid.options.enablePagination) {
               return renderableRows;
             }
@@ -148,7 +149,9 @@
               firstRow = (currentPage - 1) * pageSize;
             }
             return visibleRows.slice(firstRow, firstRow + pageSize);
-          });
+          };
+          
+          grid.registerRowsProcessor(processPagination, 900 );
 
         },
         defaultGridOptions: function (gridOptions) {

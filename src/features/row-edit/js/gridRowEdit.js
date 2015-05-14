@@ -218,6 +218,11 @@
           return function() {
             gridRow.isSaving = true;
 
+            if ( gridRow.rowEditSavePromise ){
+              // don't save the row again if it's already saving - that causes stale object exceptions
+              return gridRow.rowEditSavePromise;
+            }
+            
             var promise = grid.api.rowEdit.raise.saveRow( gridRow.entity );
             
             if ( gridRow.rowEditSavePromise ){
@@ -270,6 +275,7 @@
             delete gridRow.isDirty;
             delete gridRow.isError;
             delete gridRow.rowEditSaveTimer;
+            delete gridRow.rowEditSavePromise;
             self.removeRow( grid.rowEdit.errorRows, gridRow );
             self.removeRow( grid.rowEdit.dirtyRows, gridRow );
           };
@@ -290,6 +296,7 @@
           return function() {
             delete gridRow.isSaving;
             delete gridRow.rowEditSaveTimer;
+            delete gridRow.rowEditSavePromise;
 
             gridRow.isError = true;
             
@@ -314,7 +321,11 @@
          * @param {GridRow} gridRow the row that should be removed
          */
         removeRow: function( rowArray, removeGridRow ){
-          angular.forEach( rowArray, function( gridRow, index ){
+          if (typeof(rowArray) === 'undefined' || rowArray === null){
+            return;
+          }
+          
+          rowArray.forEach( function( gridRow, index ){
             if ( gridRow.uid === removeGridRow.uid ){
               rowArray.splice( index, 1);
             }
@@ -333,7 +344,7 @@
          */
         isRowPresent: function( rowArray, removeGridRow ){
           var present = false;
-          angular.forEach( rowArray, function( gridRow, index ){
+          rowArray.forEach( function( gridRow, index ){
             if ( gridRow.uid === removeGridRow.uid ){
               present = true;
             }
@@ -359,7 +370,7 @@
          */
         flushDirtyRows: function(grid){
           var promises = [];
-          angular.forEach(grid.rowEdit.dirtyRows, function( gridRow ){
+          grid.rowEdit.dirtyRows.forEach( function( gridRow ){
             service.saveRow( grid, gridRow )();
             promises.push( gridRow.rowEditSavePromise );
           });

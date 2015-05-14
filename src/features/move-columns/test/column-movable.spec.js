@@ -1,6 +1,6 @@
 describe('ui.grid.moveColumns', function () {
 
-  var scope, element, timeout, gridUtil;
+  var scope, element, timeout, gridUtil, document;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "age": 25, "company": "Enersol", phone: '111'},
@@ -11,12 +11,13 @@ describe('ui.grid.moveColumns', function () {
 
   beforeEach(module('ui.grid.moveColumns'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, $timeout, _gridUtil_) {
+  beforeEach(inject(function (_$compile_, $rootScope, $timeout, _gridUtil_, $document) {
 
     var $compile = _$compile_;
     scope = $rootScope;
     timeout = $timeout;
     gridUtil = _gridUtil_;
+    document = $document;
     
 
     scope.gridOptions = {};
@@ -103,18 +104,39 @@ describe('ui.grid.moveColumns', function () {
     expect(functionCalled).toBe(true);
   });
 
-  // this test doesn't currently pass: TODO: fix
-  xit('expect column to move right when dragged right', function () {
-    var event = jQuery.Event("mousedown");
-    event.toElement = {className: '.ui-grid-header-cell'};
-    var columnHeader = angular.element(element.find('.ui-grid-header-cell')[0]);
+  it('expect column to move right when dragged right', function () {
+    var event = jQuery.Event("mousedown", {
+      pageX: 0
+    });
+    var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[0]);
     columnHeader.trigger(event);
     event = jQuery.Event("mousemove", {
-      pageX: 250
+      pageX: 200
     });
-    columnHeader.trigger(event);
+    document.trigger(event);
+    document.trigger(event);
     event = jQuery.Event("mouseup");
+    document.trigger(event);
+    expect(scope.grid.columns[0].name).toBe('gender');
+    expect(scope.grid.columns[1].name).toBe('age');
+    expect(scope.grid.columns[2].name).toBe('name');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
+
+  it('expect column to move left when dragged left', function () {
+    var event = jQuery.Event("mousedown", {
+      pageX: 0
+    });
+    var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[1]);
     columnHeader.trigger(event);
+    event = jQuery.Event("mousemove", {
+      pageX: -200
+    });
+    document.trigger(event);
+    document.trigger(event);
+    event = jQuery.Event("mouseup");
+    document.trigger(event);
     expect(scope.grid.columns[0].name).toBe('gender');
     expect(scope.grid.columns[1].name).toBe('name');
     expect(scope.grid.columns[2].name).toBe('age');
@@ -122,38 +144,19 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
-  // this test doesn't currently pass: TODO: fix
-  xit('expect column to move left when dragged left', function () {
-    var event = jQuery.Event("mousedown");
-    event.toElement = {className: '.ui-grid-header-cell'};
-    var columnHeader = angular.element(element.find('.ui-grid-header-cell')[1]);
+  it('expect column movement to not happen if enableColumnMoving is false', function () {
+    var event = jQuery.Event("mousedown", {
+      pageX: 0
+    });
+    var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[3]);
     columnHeader.trigger(event);
     event = jQuery.Event("mousemove", {
-      pageX: -250
+      pageX: 200
     });
-    columnHeader.trigger(event);
+    document.trigger(event);
+    document.trigger(event);
     event = jQuery.Event("mouseup");
-    columnHeader.trigger(event);
-    expect(scope.grid.columns[0].name).toBe('gender');
-    expect(scope.grid.columns[1].name).toBe('name');
-    expect(scope.grid.columns[2].name).toBe('age');
-    expect(scope.grid.columns[3].name).toBe('company');
-    expect(scope.grid.columns[4].name).toBe('phone');
-  });
-
-  // this test doesn't currently pass: TODO: fix
-  xit('expect column movement to not happen if enableColumnMoving is false', function () {
-    var event = jQuery.Event("mousedown");
-    event.toElement = {className: '.ui-grid-header-cell'};
-    var columnHeader = angular.element(element.find('.ui-grid-header-cell')[3]);
-    columnHeader.trigger(event);
-    event = jQuery.Event("mousemove", {
-      pageX: 75
-    });
-    columnHeader.trigger(event);
-    event = jQuery.Event("mouseup");
-    columnHeader.trigger(event);
-    scope.grid.refresh();
+    document.trigger(event);
     expect(scope.grid.columns[0].name).toBe('name');
     expect(scope.grid.columns[1].name).toBe('gender');
     expect(scope.grid.columns[2].name).toBe('age');

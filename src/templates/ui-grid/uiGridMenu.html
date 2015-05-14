@@ -4,13 +4,15 @@
       <ul class="ui-grid-menu-items">
         <li
           ng-repeat="item in menuItems"
-          ui-grid-menu-item action="item.action"
+          ui-grid-menu-item 
+          action="item.action"
           name="item.title"
           active="item.active"
           icon="item.icon"
           shown="item.shown"
           context="item.context"
-          template-url="item.templateUrl"></li>
+          template-url="item.templateUrl"
+          leave-open="item.leaveOpen"></li>
       </ul>
     </div>
   </div>
