@@ -271,7 +271,15 @@
          * @returns {boolean} true if an edit should start
          */
         isStartEditKey: function (evt) {
-          if (evt.keyCode === uiGridConstants.keymap.LEFT ||
+          if (evt.metaKey ||
+              evt.keyCode === uiGridConstants.keymap.ESC ||
+              evt.keyCode === uiGridConstants.keymap.SHIFT ||
+              evt.keyCode === uiGridConstants.keymap.CTRL ||
+              evt.keyCode === uiGridConstants.keymap.ALT ||
+              evt.keyCode === uiGridConstants.keymap.WIN ||
+              evt.keyCode === uiGridConstants.keymap.CAPSLOCK ||
+
+             evt.keyCode === uiGridConstants.keymap.LEFT ||
             (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey) ||
 
             evt.keyCode === uiGridConstants.keymap.RIGHT ||
