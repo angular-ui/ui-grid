@@ -11,7 +11,7 @@
         search: {
           placeholder: 'Procurar...',
           showingItems: 'Mostrando os Itens:',
-          selectedItems: 'Items Selecionados:',
+          selectedItems: 'Itens Selecionados:',
           totalItems: 'Total de Itens:',
           size: 'Tamanho da Página:',
           first: 'Primeira Página',
