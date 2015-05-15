@@ -1413,7 +1413,7 @@
           
           var groupLevel = typeof(row.groupLevel) !== 'undefined' ? row.groupLevel : groupingProcessingState.length;
           for (var i = 0; i < groupLevel; i++){
-            if ( groupingProcessingState[i].currentGroupHeader.expandedState.state === uiGridGroupingConstants.COLLAPSED ){
+            if ( groupingProcessingState[i].currentGroupHeader && groupingProcessingState[i].currentGroupHeader.expandedState.state === uiGridGroupingConstants.COLLAPSED ){
              row.visible = false;
             }
           }
