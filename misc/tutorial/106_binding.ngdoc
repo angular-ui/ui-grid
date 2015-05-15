@@ -5,12 +5,9 @@
 UI-Grid supports complex object binding in the colDef.field.
 
 This tutorial shows two-way binding to properties with special characters, array element, nested property, and function.
+Angular expressions will have 'row' and 'col' objects available on scope within the grid cell.
 
-Note that a function can not be edited. Functions will receive a `context` object, with access to both the current row and column, as the only argument.
-    <pre>
-      {row: GridRow,
-      column: GridColumn}
-    </pre>
+Note that a function can not be edited.
 
 In your custom cellTemplates, you can use:
 <br/>
@@ -41,8 +38,8 @@ MODEL\_COL\_FIELD which will be replaced with row.entity.field.  Use MODEL\_COL\
                                "friends": ["friend0"],
                                "address": {street:"301 Dove Ave", city:"Laurel", zip:"39565"},
                                "getZip" : function() {return this.address.zip;},
-                               "getTown" : function(context) {
-                                 return context.col.displayName + ': '+ this.address.city + ', ' + country;
+                               "getTown" : function(col) {
+                                 return col.displayName + ': '+ this.address.city + ', ' + country;
                                }
                            }
                        ]

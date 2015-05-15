@@ -1842,7 +1842,7 @@ angular.module('ui.grid')
         col.cellValueGetterCache = $parse(row.getEntityQualifiedColField(col));
       }
 
-      return col.cellValueGetterCache(row, {context: {row: row, col:col}});
+      return col.cellValueGetterCache(row, {row: row, col:col});
     }
   };
 
