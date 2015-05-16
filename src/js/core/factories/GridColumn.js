@@ -724,7 +724,7 @@ angular.module('ui.grid')
     // as is
     GridColumn.prototype.unsort = function () {
       this.sort = {};
-      self.grid.api.core.raise.sortChanged( self, self.grid.getColumnSorting() );
+      self.grid.api.core.raise.sortChanged( self.grid, self.grid.getColumnSorting() );
     };
   
   };

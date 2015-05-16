@@ -887,8 +887,8 @@
          * @param {Grid} grid grid object
          */
         tidyPriorities: function( grid ){
-          // if we're called from sortChanged, grid is in this, not passed as param
-          if ( typeof(grid) === 'undefined' && typeof(this.grid) !== 'undefined' ) {
+          // if we're called from sortChanged, grid is in this, not passed as param, the param can be a column or undefined
+          if ( ( typeof(grid) === 'undefined' || typeof(grid.grid) !== 'undefined' ) && typeof(this.grid) !== 'undefined' ) {
             grid = this.grid;
           }
           

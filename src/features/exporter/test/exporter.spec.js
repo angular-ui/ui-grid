@@ -84,12 +84,12 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
-        exporterAllDataPromise: null,
+        exporterAllDataFn: null,
         exporterSuppressColumns: []        
       });
     });
 
-    it('set all options to non-default', function() {
+    it('set all options to non-default, including using deprecated exporterAllDataPromise', function() {
       var callback = function() {};
       options = {
         exporterSuppressMenu: true,
@@ -135,6 +135,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
+        exporterAllDataFn: callback,
         exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ]
       });
