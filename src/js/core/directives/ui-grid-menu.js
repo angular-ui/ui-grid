@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc directive
- * @name ui.grid.directive:uiGridColumnMenu
+ * @name ui.grid.directive:uiGridMenu
  * @element style
  * @restrict A
  *

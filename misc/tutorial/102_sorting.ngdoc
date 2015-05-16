@@ -25,6 +25,11 @@ data has changed by calling `gridApi.core.notifyDataChange( uiGridConstants.data
 If you set a default sort, you can prevent the user from removing that sort by setting `suppressRemoveSort: true`
 for that column.  This will let the user change the direction of the sort, but take away the option to remove the sort.
 
+The sort algorithm is chosen based on the column type.  ui-grid will guess the type based on the data, although if you load data
+asynchronously after the columns it will often decide all your columns are string.  You can explicitly set the column type in the 
+column def using `type='number'`.  Valid types are documented in {@link api/ui.grid.class:GridOptions.columnDef columnDef}, and 
+include `string`, `number`, `numberStr` and `date`.  If you use date be aware the code expects a javascript date object.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);

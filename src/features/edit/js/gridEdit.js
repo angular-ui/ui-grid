@@ -1043,7 +1043,7 @@
 
   /**
    *  @ngdoc directive
-   *  @name ui.grid.edit.directive:uiGridEditor
+   *  @name ui.grid.edit.directive:uiGridEditFileChooser
    *  @element div
    *  @restrict A
    *

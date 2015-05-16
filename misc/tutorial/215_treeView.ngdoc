@@ -17,19 +17,19 @@ the tree.
 
 TreeView is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
-- doesn't calculate or display counts of child nodes anywhere, it would be nice if it did
+- calculates but doesn't display counts of child nodes anywhere, it would be nice if it did
 - it would be nice to display an hourglass or icon whilst additional data was loading, the current
   arrangement means the grid doesn't know whether or not you're adding additional data
 - perhaps we could permit sorting of the nodes, and the children within each node, rather than sorting the
   whole data set.  This would be a whole new sort algorithm though
-- it might be nice if nodes with no children could have their + removed, we'd need some way to be sure
-  that these weren't nodes for which children are going to be dynamically loaded
 
 Options to watch out for include:
 
 - `treeViewIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
   level gets deeper.  Larger values look nicer
 - `treeViewRowHeaderWidth`: the width of the tree row header
+- `showTreeExpandNoChildren`: defaults to true.  Shows the + even if there are no children, allows
+  you to dynamically load children.  If set to false there'll be no + if there are no children
 
 @example
 In this example most of the data is loaded on initial page load.  The nodes under Guerrero Lopez, however,
