@@ -3,7 +3,7 @@
     <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
 
     <div class="ui-grid-filter-button" ng-click="colFilter.term = null" ng-if="!colFilter.disableCancelFilterButton">
-      <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term != null">&nbsp;</i>
+      <i class="ui-grid-icon-cancel" ng-show="colFilter.term !== undefined && colFilter.term !== null && colFilter.term !== ''">&nbsp;</i>
     </div>
   </div>
   
