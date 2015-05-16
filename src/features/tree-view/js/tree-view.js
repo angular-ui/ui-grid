@@ -515,6 +515,7 @@
 
           if ( row.treeExpandedState.state !== uiGridTreeViewConstants.COLLAPSED ){
             row.treeExpandedState.state = uiGridTreeViewConstants.COLLAPSED;
+            grid.treeView.expandAll = false;
             grid.api.treeView.raise.rowCollapsed(row);
             grid.queueGridRefresh();
           }
@@ -536,6 +537,7 @@
           }
 
           service.setAllNodes(grid, row.treeExpandedState, uiGridTreeViewConstants.COLLAPSED);
+          grid.treeView.expandAll = false;
           grid.queueGridRefresh();
         },
 
