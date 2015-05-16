@@ -89,7 +89,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       });
     });
 
-    iit('set all options to non-default, including using deprecated exporterAllDataPromise', function() {
+    it('set all options to non-default, including using deprecated exporterAllDataPromise', function() {
       var callback = function() {};
       options = {
         exporterSuppressMenu: true,
