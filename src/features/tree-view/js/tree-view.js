@@ -21,11 +21,11 @@
    * will run a rowsProcessor to set expand buttons alongside these nodes, and will maintain the
    * expand/collapse state of each node.
    * 
-   * In future a count of the direct children of each node could optionally be calculated and displayed
-   * alongside the node - the current issue is deciding where to display that.  For now we calculate it 
-   * but don't display it.
+   * A count of the direct children of each node is calculated in the expanded states, the current 
+   * issue is deciding where to display that.  For now we calculate it but don't display it.
    * 
-   * In future the count could be used to remove the + from a row that doesn't actually have any children.
+   * The count can be used to remove the + from a row that doesn't actually have any children, if you
+   * set the option treeHideNoChildren.
    * 
    * Optionally the treeView can be populated only when nodes are clicked on.  This will provide callbacks when
    * nodes are expanded, requesting the additional data.  The node will be set to expanded, and when the data
@@ -358,6 +358,17 @@
            *  <br/>Defaults to true
            */
           gridOptions.showTreeViewRowHeader = gridOptions.showTreeViewRowHeader !== false;
+
+          /**
+           *  @ngdoc object
+           *  @name showTreeExpandNoChildren
+           *  @propertyOf  ui.grid.treeView.api:GridOptions
+           *  @description If set to true, show the expand/collapse button even if there are no
+           *  children of a node.  You'd use this if you're planning to dynamically load the children
+           * 
+           *  <br/>Defaults to true
+           */
+          gridOptions.showTreeExpandNoChildren = gridOptions.showTreeExpandNoChildren !== false;
         },
 
         
@@ -586,6 +597,9 @@
               row.visible = true;
             }
 
+            // increment the child count on the parent
+            service.incrementChildCount(parents);
+            
             // if this row is a node, then add it to the parents array
             if ( typeof(row.treeLevel) !== 'undefined' && row.treeLevel > -1 ){
               service.addOrUseState(grid, row, parents);
@@ -630,12 +644,14 @@
               grid.treeView.rowExpandedStates[row.uid] = { state: uiGridTreeViewConstants.COLLAPSED, row: row };
             }
             row.treeExpandedState = grid.treeView.rowExpandedStates[row.uid];
+            row.treeExpandedState.childCount = 0;
           } else {
             var parentState = parents[parents.length - 1].treeExpandedState; 
             if ( typeof(parentState[row.uid]) === 'undefined') {
               parentState[row.uid] = { state: uiGridTreeViewConstants.COLLAPSED, row: row };
             }
             row.treeExpandedState = parentState[row.uid];
+            row.treeExpandedState.childCount = 0;
           }
           parents.push(row);
         },
@@ -661,8 +677,23 @@
           });
           
           return currentState;
-        }
+        },
         
+        
+       /**
+         * @ngdoc function
+         * @name incrementChildCount
+         * @methodOf  ui.grid.treeView.service:uiGridTreeViewService
+         * @description Increments the child count of the lowest node in the parents array.
+         * 
+         * @param {array} parents an array of the parents this row should have
+         * @returns {string} the state we should be setting to any nodes we see
+         */
+        incrementChildCount: function( parents ){
+          if ( parents.length > 0 ){
+            parents[parents.length - 1].treeExpandedState.childCount++;
+          }
+        }
       };
 
       return service;

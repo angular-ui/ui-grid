@@ -1,4 +1,4 @@
-describe('ui.grid.treeView uiGridTreeViewService', function () {
+ddescribe('ui.grid.treeView uiGridTreeViewService', function () {
   var uiGridTreeViewService;
   var uiGridTreeViewConstants;
   var gridClassFactory;
