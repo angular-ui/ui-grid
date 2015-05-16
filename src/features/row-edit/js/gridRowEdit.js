@@ -147,7 +147,7 @@
                 flushDirtyRows: function () {
                   return service.flushDirtyRows(grid);
                 },
-                
+
                 /**
                  * @ngdoc method
                  * @methodOf ui.grid.rowEdit.api:PublicApi
@@ -159,7 +159,7 @@
                  * call in a $interval or $timeout
                  * <pre>
                  *      $interval( function() {
-                 *        gridApi.rowEdit.setRowsDirty(grid, myDataRows);
+                 *        gridApi.rowEdit.setRowsDirty(myDataRows);
                  *      }, 0, 1);
                  * </pre>
                  * @param {array} dataRows the data entities for which the gridRows
@@ -168,6 +168,26 @@
                  */
                 setRowsDirty: function ( dataRows) {
                   service.setRowsDirty(grid, dataRows);
+                },
+
+                /**
+                 * @ngdoc method
+                 * @methodOf ui.grid.rowEdit.api:PublicApi
+                 * @name setRowsClean
+                 * @description Sets each of the rows passed in dataRows
+                 * to be clean, removing them from the dirty cache and the error cache,
+                 * and clearing the error flag and the dirty flag
+                 * <pre>
+                 *      var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+                 *      var dataRows = gridRows.map( function( gridRow ) { return gridRow.entity; });
+                 *      $scope.gridApi.rowEdit.setRowsClean( dataRows );
+                 * </pre>
+                 * @param {array} dataRows the data entities for which the gridRows
+                 * should be set clean.
+                 * 
+                 */
+                setRowsClean: function ( dataRows) {
+                  service.setRowsClean(grid, dataRows);
                 }
               }
             }
@@ -175,15 +195,15 @@
 
           grid.api.registerEventsFromObject(publicApi.events);
           grid.api.registerMethodsFromObject(publicApi.methods);
-          
+
           grid.api.core.on.renderingComplete( scope, function ( gridApi ) {
             grid.api.edit.on.afterCellEdit( scope, service.endEditCell );
             grid.api.edit.on.beginCellEdit( scope, service.beginEditCell );
             grid.api.edit.on.cancelCellEdit( scope, service.cancelEditCell );
-            
+
             if ( grid.api.cellNav ) {
               grid.api.cellNav.on.navigate( scope, service.navigate );
-            }              
+            }
           });
 
         },
@@ -222,9 +242,9 @@
               // don't save the row again if it's already saving - that causes stale object exceptions
               return gridRow.rowEditSavePromise;
             }
-            
+
             var promise = grid.api.rowEdit.raise.saveRow( gridRow.entity );
-            
+
             if ( gridRow.rowEditSavePromise ){
               gridRow.rowEditSavePromise.then( self.processSuccessPromise( grid, gridRow ), self.processErrorPromise( grid, gridRow ));
             } else {
@@ -233,7 +253,7 @@
             return promise;
           };
         },
-        
+
 
         /**
          * @ngdoc method
@@ -269,7 +289,7 @@
          */
         processSuccessPromise: function ( grid, gridRow ) {
           var self = this;
-          
+
           return function() {
             delete gridRow.isSaving;
             delete gridRow.isDirty;
@@ -280,7 +300,7 @@
             self.removeRow( grid.rowEdit.dirtyRows, gridRow );
           };
         },
-        
+
 
         /**
          * @ngdoc method
@@ -299,7 +319,7 @@
             delete gridRow.rowEditSavePromise;
 
             gridRow.isError = true;
-            
+
             if (!grid.rowEdit.errorRows){
               grid.rowEdit.errorRows = [];
             }
@@ -308,8 +328,8 @@
             }
           };
         },
-        
-        
+
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -324,15 +344,15 @@
           if (typeof(rowArray) === 'undefined' || rowArray === null){
             return;
           }
-          
+
           rowArray.forEach( function( gridRow, index ){
             if ( gridRow.uid === removeGridRow.uid ){
               rowArray.splice( index, 1);
             }
           });
         },
-        
-        
+
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -352,7 +372,7 @@
           return present;
         },
 
-        
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -374,11 +394,11 @@
             service.saveRow( grid, gridRow )();
             promises.push( gridRow.rowEditSavePromise );
           });
-          
+
           return $q.all( promises );
         },
-        
-        
+
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -389,7 +409,7 @@
          * is automatically provided by the gridApi. 
          * @param {object} rowEntity the data entity for which the cell
          * was edited
-         */        
+         */
         endEditCell: function( rowEntity, colDef, newValue, previousValue ){
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
@@ -399,19 +419,19 @@
             if ( !grid.rowEdit.dirtyRows ){
               grid.rowEdit.dirtyRows = [];
             }
-            
+
             if ( !gridRow.isDirty ){
               gridRow.isDirty = true;
               grid.rowEdit.dirtyRows.push( gridRow );
             }
-            
+
             delete gridRow.isError;
-            
+
             service.considerSetTimer( grid, gridRow );
           }
         },
-        
-        
+
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -428,7 +448,7 @@
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
           if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be cancelled' ); return; }
-          
+
           service.cancelTimer( grid, gridRow );
         },
 
@@ -440,23 +460,23 @@
          * @description Receives a cancelCellEdit event from the edit function,
          * and if the row was already dirty, restarts the save timer.  If the row
          * was not already dirty, then it's not dirty now either and does nothing.
-         * 
+         *
          * Only the rowEntity parameter
          * is processed, although other params are available.  Grid
          * is automatically provided by the gridApi.
-         *  
+         *
          * @param {object} rowEntity the data entity for which the cell
          * editing was cancelled
-         */        
+         */
         cancelEditCell: function( rowEntity, colDef ){
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
           if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be set' ); return; }
-          
+
           service.considerSetTimer( grid, gridRow );
         },
-        
-        
+
+
         /**
          * @ngdoc method
          * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
@@ -479,8 +499,8 @@
             service.considerSetTimer( grid, oldRowCol.row );
           }
         },
-        
-        
+
+
         /**
          * @ngdoc property
          * @propertyOf ui.grid.rowEdit.api:GridOptions
@@ -510,7 +530,7 @@
          */
         considerSetTimer: function( grid, gridRow ){
           service.cancelTimer( grid, gridRow );
-          
+
           if ( gridRow.isDirty && !gridRow.isSaving ){
             if ( grid.options.rowEditWaitInterval !== -1 ){
               var waitTime = grid.options.rowEditWaitInterval ? grid.options.rowEditWaitInterval : 2000;
@@ -518,7 +538,7 @@
             }
           }
         },
-        
+
 
         /**
          * @ngdoc method
@@ -565,22 +585,52 @@
               if ( !grid.rowEdit.dirtyRows ){
                 grid.rowEdit.dirtyRows = [];
               }
-              
+
               if ( !gridRow.isDirty ){
                 gridRow.isDirty = true;
                 grid.rowEdit.dirtyRows.push( gridRow );
               }
-              
+
               delete gridRow.isError;
-              
+
               service.considerSetTimer( grid, gridRow );
             } else {
               gridUtil.logError( "requested row not found in rowEdit.setRowsDirty, row was: " + value );
             }
           });
+        },
+
+
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.rowEdit.service:uiGridRowEditService
+         * @name setRowsClean
+         * @description Sets each of the rows passed in dataRows
+         * to be clean, clearing the dirty flag and the error flag, and removing
+         * the rows from the dirty and error caches. 
+         * @param {object} grid the grid for which rows should be set clean
+         * @param {array} dataRows the data entities for which the gridRows
+         * should be set clean.
+         * 
+         */
+        setRowsClean: function( grid, myDataRows ) {
+          var gridRow;
+
+          myDataRows.forEach( function( value, index ){
+            gridRow = grid.getRow( value );
+            if ( gridRow ){
+              delete gridRow.isDirty;
+              service.removeRow( grid.rowEdit.dirtyRows, gridRow );
+              service.cancelTimer( grid, gridRow );
+
+              delete gridRow.isError;
+              service.removeRow( grid.rowEdit.errorRows, gridRow );
+            } else {
+              gridUtil.logError( "requested row not found in rowEdit.setRowsClean, row was: " + value );
+            }
+          });
         }
-        
-        
+
       };
 
       return service;
