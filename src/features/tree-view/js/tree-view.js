@@ -633,7 +633,7 @@
           } else {
             var parentState = parents[parents.length - 1].treeExpandedState; 
             if ( typeof(parentState[row.uid]) === 'undefined') {
-              parentState[row.uid] = { state: parentState.state, row: row };
+              parentState[row.uid] = { state: uiGridTreeViewConstants.COLLAPSED, row: row };
             }
             row.treeExpandedState = parentState[row.uid];
           }
