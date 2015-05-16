@@ -464,7 +464,7 @@
 
           /**
            * @ngdoc function
-           * @name exporterAllDataPromise
+           * @name exporterAllDataFn
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description This promise is needed when exporting all rows,
            * and the data need to be provided by server side. Default is null.
@@ -472,12 +472,33 @@
            * 
            * @example
            * <pre>
-           *   gridOptions.exporterAllDataPromise = function () {
+           *   gridOptions.exporterAllDataFn = function () {
            *     return $http.get('/data/100.json')
            *   }
            * </pre>
            */
-          gridOptions.exporterAllDataPromise = gridOptions.exporterAllDataPromise ? gridOptions.exporterAllDataPromise : null;
+          gridOptions.exporterAllDataFn = gridOptions.exporterAllDataFn ? gridOptions.exporterAllDataFn : null;
+
+          /**
+           * @ngdoc function
+           * @name exporterAllDataPromise
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description DEPRECATED - exporterAllDataFn used to be 
+           * called this, but it wasn't a promise, it was a function that returned
+           * a promise.  Deprecated, but supported for backward compatibility, use
+           * exporterAllDataFn instead.
+           * @returns {Promise} a promise to load all data from server
+           * 
+           * @example
+           * <pre>
+           *   gridOptions.exporterAllDataFn = function () {
+           *     return $http.get('/data/100.json')
+           *   }
+           * </pre>
+           */
+          if ( gridOptions.exporterAllDataFn == null && gridOptions.exporterAllDataPromise ) {
+            gridOptions.exporterAllDataFn = gridOptions.exporterAllDataPromise;
+          }
         },
 
 
@@ -586,7 +607,7 @@
          * @ngdoc function
          * @name loadAllDataIfNeeded
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
-         * @description When using server side pagination, use exportAllDataPromise to
+         * @description When using server side pagination, use exporterAllDataFn to
          * load all data before continuing processing.
          * When using client side pagination, return a resolved promise so processing
          * continues immediately
@@ -599,8 +620,8 @@
          * uiGridExporterConstants.SELECTED
          */
         loadAllDataIfNeeded: function (grid, rowTypes, colTypes) {
-          if ( rowTypes === uiGridExporterConstants.ALL && grid.rows.length !== grid.options.totalItems && grid.options.exporterAllDataPromise) {
-            return grid.options.exporterAllDataPromise()
+          if ( rowTypes === uiGridExporterConstants.ALL && grid.rows.length !== grid.options.totalItems && grid.options.exporterAllDataFn) {
+            return grid.options.exporterAllDataFn()
               .then(function() {
                 grid.modifyRows(grid.options.data);
               });
