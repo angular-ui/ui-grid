@@ -1291,7 +1291,7 @@
           headerRow.groupLevel = stateIndex;
           headerRow.groupHeader = true;
           headerRow.internalRow = true;
-          headerRow.enableEditing = false;
+          headerRow.enableCellEdit = false;
           headerRow.enableSelection = false;
           groupingProcessingState[stateIndex].initialised = true;
           groupingProcessingState[stateIndex].currentValue = newValue;
