@@ -340,7 +340,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
           row.visible = false;
         }
       };
-      
+
       var foreachFilterCol = function(grid, filterData){
         var rowsLength = rows.length;
         for ( var i = 0; i < rowsLength; i++){
@@ -357,10 +357,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (grid.api.core.raise.rowsVisibleChanged) {
         grid.api.core.raise.rowsVisibleChanged();
       }
-      
+
       // drop any invisible rows
-      rows = rows.filter(function(row){ return row.visible; });
-    
+      // keeping these, as needed with filtering for trees - we have to come back and make parent nodes visible if child nodes are selected in the filter
+      // rows = rows.filter(function(row){ return row.visible; });
+
     }
 
     return rows;

@@ -376,9 +376,10 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * @name sort
    * @description sorts the grid 
    * @param {Object} grid the grid itself
-   * @param {Object} rows the rows to be sorted
-   * @param {Object} columns the columns in which to look
+   * @param {array} rows the rows to be sorted
+   * @param {array} columns the columns in which to look
    * for sort criteria
+   * @returns {array} sorted rows
    */
   rowSorter.sort = function rowSorterSort(grid, rows, columns) {
     // first make sure we are even supposed to do work
@@ -393,7 +394,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     // Build the list of columns to sort by
     var sortCols = [];
     columns.forEach(function (col) {
-      if (col.sort && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
+      if (col.sort && !col.sort.ignoreSort && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
         sortCols.push(col);
       }
     });
