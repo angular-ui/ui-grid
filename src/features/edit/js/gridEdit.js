@@ -668,7 +668,9 @@
               //get original value from the cell
               origCellValue = cellModel($scope);
 
-              html = $scope.col.editableCellTemplate;
+              html = $scope.col.editableCellTemplate
+                        .replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+
               if ($scope.col.colDef.editModelField) {
                 html = html.replace(uiGridConstants.MODEL_COL_FIELD, gridUtil.preEval('row.entity.' + $scope.col.colDef.editModelField));
               }
