@@ -313,7 +313,8 @@ angular.module('ui.grid')
      * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
      * for other people to inject rows processors at intermediate priorities.  Lower priority rowsProcessors run earlier.
      *
-     * At present allRowsVisible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
+     * At present allRowsVisible is running at 50, sort manipulations running at 60-65, filter is running at 100, 
+     * sort is at 200, grouping and treeview at 400-410, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
 
@@ -1835,7 +1836,9 @@ angular.module('ui.grid')
    * @param {GridColumn} col Column to access
    */
   Grid.prototype.getCellValue = function getCellValue(row, col){
-    if (this.options.flatEntityAccess && col.field){
+    if ( typeof(row.entity[ '$$' + col.uid ]) !== 'undefined' ) {
+      return row.entity[ '$$' + col.uid.rendered ];
+    } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined' ){
       return row.entity[col.field];
     } else {
       if (!col.cellValueGetterCache) {
