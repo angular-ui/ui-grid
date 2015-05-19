@@ -168,6 +168,9 @@
           grid.grouping.rowExpandedStates = {};
 
           service.defaultGridOptions(grid.options);
+          if (grid.options.flatEntityAccess){
+            throw  new Error('uiGrid grouping initialization failed. Grouping does not support the flatEntityAccess option.');
+          }
           
           grid.registerRowsProcessor(service.groupRows, 400);
           
@@ -614,7 +617,36 @@
             col.menuItems.push(aggregateRemove);
           }
         },
-        
+
+         /**
+         * @ngdoc function
+         * @name getGroupingAggregatedValue
+         * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+         * @description A function to be used in the expression for cellValue, which allows the grouping
+         * feature to determine whether to display an aggegated value or the a value from the data.
+         * This is needed to deal with the case where we have two instances of a column, which use
+         * different aggregation typs.
+         *
+         * @param {object} context the context passed by grid.getCellValue
+         * @returns {object} the cellValue to be displayed
+         */
+        getGroupingAggregatedValue: function ( context ){
+          if ( !context.row.groupHeader){
+            return context.row.entity[context.col.groupingOriginalField];
+          }
+
+          var aggregations = context.row.aggregations[context.col.groupingOriginalField];
+          if ( typeof context.col.grouping !== 'undefined' && context.col.grouping.groupPriority >= 0 ){
+            return context.row.entity[context.col.groupingOriginalField];
+          }
+          if ( typeof context.row.aggregations[context.col.groupingOriginalField] === 'undefined' ){
+            return null;
+          }
+          if (!context.col.groupingSuppressAggregationText){
+            return i18nService.get().aggregation[context.col.grouping.aggregation] + aggregations[context.col.grouping.aggregation];
+          }
+          return aggregations[context.col.grouping.aggregation];
+         },
         
         
         /**
@@ -630,6 +662,13 @@
          */
         groupingColumnProcessor: function( columns, rows ) {
           var grid = this;
+
+          rows.forEach( function( row, index){
+            if ( typeof row.entity.$$getAggregatedValue === 'undefined' ){
+              row.entity.$$getAggregatedValue = service.getGroupingAggregatedValue;
+            }
+          });
+
           columns.forEach( function(column, index){
             // position used to make stable sort in moveGroupColumns
             column.groupingPosition = index;
@@ -650,7 +689,11 @@
               indent = indent > 0 ? indent : 0;
               column.width = grid.options.groupingRowHeaderBaseWidth + indent; 
             }
-            
+
+            if ( typeof column.groupingOriginalField === 'undefined' || column.field === column.groupingOriginalField ){
+              column.groupingOriginalField = column.field;
+              column.field = '$$getAggregatedValue(context)';
+            }
           });
           
           columns = service.moveGroupColumns(this, columns, rows);
@@ -1169,7 +1212,7 @@
           for (var i = 0; i < renderableRows.length; i++ ){
             var row = renderableRows[i];
             
-            groupingProcessingState.forEach( updateProcessingState);
+            groupingProcessingState.forEach( updateProcessingState );
             
             service.setVisibility( grid, row, groupingProcessingState );
           }
@@ -1244,10 +1287,11 @@
           // get all the grouping
           grid.columns.forEach( function(column, columnIndex){
             if ( column.grouping ){
+              var groupingField = column.groupingOriginalField || column.field;
               if ( typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
-                groupArray.push({ field: column.field, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });  
+                groupArray.push({ field: groupingField, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });
               } else if ( column.grouping.aggregation ){
-                aggregateArray.push({ field: column.field, col: column, aggregation: column.grouping.aggregation });
+                aggregateArray.push({ field: groupingField, col: column, aggregation: column.grouping.aggregation });
               }
             }
           });
@@ -1294,12 +1338,13 @@
           var fieldName = groupingProcessingState[stateIndex].fieldName;
           var col = groupingProcessingState[stateIndex].col;
 
-          // TODO: can't just use entity like this, have to use get cell value, need col for that
           var newValue = grid.getCellValue(renderableRows[rowIndex], col);
           if ( typeof(newValue) === 'undefined' || newValue === null ) {
             newValue = grid.options.groupingNullLabel;
           }
           headerRow.entity[fieldName] = newValue;
+          headerRow.entity.$$getAggregatedValue = service.getGroupingAggregatedValue;
+          headerRow.aggregations = {};
           headerRow.groupLevel = stateIndex;
           headerRow.groupHeader = true;
           headerRow.internalRow = true;
@@ -1353,21 +1398,16 @@
               if (aggregation.fieldName === uiGridGroupingConstants.aggregation.FIELD){
                 // running total to include in the groupHeader
                 processingState.currentGroupHeader.entity[processingState.fieldName] = processingState.currentValue + ' (' + aggregation.value + ')';
-                aggregation.value = null; 
               } else {
-                if (aggregation.col.groupingSuppressAggregationText){
-                  processingState.currentGroupHeader.entity[aggregation.fieldName] = aggregation.value;
-                } else {
-                  processingState.currentGroupHeader.entity[aggregation.fieldName] = i18nService.get().aggregation[aggregation.type] + aggregation.value;
+                if ( typeof processingState.currentGroupHeader.aggregations[aggregation.fieldName] === 'undefined'){
+                  processingState.currentGroupHeader.aggregations[aggregation.fieldName] = {};
                 }
-                aggregation.value = null;
-                if ( aggregation.sum ){
-                  aggregation.sum = null;
-                }
-                if ( aggregation.count ){
-                  aggregation.count = null;
-                }
+                processingState.currentGroupHeader.aggregations[aggregation.fieldName][aggregation.type] = aggregation.value;
               }
+
+              delete aggregation.sum;
+              delete aggregation.count;
+              aggregation.value = null;
             });
           }
           processingState.currentGroupHeader = null;
@@ -1468,9 +1508,9 @@
                   }
                   break;
                 case uiGridGroupingConstants.aggregation.AVG:
-                  aggregation.count++;
+                  aggregation.count = aggregation.count ? aggregation.count + 1 : 1;
                   if (!isNaN(numValue)){
-                    aggregation.sum += numValue;
+                    aggregation.sum = aggregation.sum ? aggregation.sum + numValue : numValue;
                   }
                   aggregation.value = aggregation.sum / aggregation.count;
                   break;
