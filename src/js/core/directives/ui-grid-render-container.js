@@ -74,6 +74,7 @@
                 var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
                 scrollTop = containerCtrl.viewport[0].scrollTop;
+
                 // Get the scroll percentage
                 var scrollYPercentage = (scrollTop + scrollYAmount) / rowContainer.getVerticalScrollLength();
 
@@ -98,7 +99,8 @@
               }
 
               // Let the parent container scroll if the grid is already at the top/bottom
-              if ((event.deltaY !== 0 && (scrollEvent.atTop(scrollTop) || scrollEvent.atBottom(scrollTop))) ||
+              if (rowContainer.getVerticalScrollLength() < 0 ||
+                  (event.deltaY !== 0 && (scrollEvent.atTop(scrollTop) || scrollEvent.atBottom(scrollTop))) ||
                   (event.deltaX !== 0 && (scrollEvent.atLeft(scrollLeft) || scrollEvent.atRight(scrollLeft)))) {
                 //parent controller scrolls
               }
