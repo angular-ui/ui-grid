@@ -1837,7 +1837,7 @@ angular.module('ui.grid')
    */
   Grid.prototype.getCellValue = function getCellValue(row, col){
     if ( typeof(row.entity[ '$$' + col.uid ]) !== 'undefined' ) {
-      return row.entity[ '$$' + col.uid.rendered ];
+      return row.entity[ '$$' + col.uid].rendered;
     } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined' ){
       return row.entity[col.field];
     } else {

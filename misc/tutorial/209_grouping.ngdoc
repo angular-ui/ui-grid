@@ -6,7 +6,7 @@ Columns that aren't grouped by can be aggregated, providing for example a runnin
 of the number of rows in each group.
 
 Grouping can be set programmatically by using the columnDef option `grouping: { groupPriority: 0 }`,
-or for aggregations on a column by setting `grouping: {aggregation: uiGridGroupingConstants.aggregation.COUNT}`. 
+or for aggregations on a column by setting `treeAggregation: {type: uiGridGroupingConstants.aggregation.COUNT}`. 
 
 Optionally (and by default) grouped columns are moved to the front of the grid, which provides a more
 visually pleasing effect.  In order to avoid creating a dependency on pinning, this is done by 
@@ -25,9 +25,8 @@ filtered rows.
 Group header rows cannot be edited, and if using the selection feature, cannot be selected.  They can,
 however, be exported.
 
-The group rowHeader by default is only visible when one or more columns are grouped - the aim being
-to have no visual impact when grouping is turned on but unused.  If you'd like the groupRowHeader permanently
-present then set the `groupingRowHeaderAlwaysVisible: true` gridOption.
+The group rowHeader by default is always visible.  If you'd like the groupRowHeader only
+present when at least one column is grouped then set the `treeRowHeaderAlwaysVisible: false` gridOption.
 
 If you want to change the grouping programmatically after grid initialisation, you do this through calling the
 provided methods:
@@ -44,9 +43,6 @@ provided methods:
 Grouping is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
 
-- does not correctly handle columns that are based on functions or complex objects.  The groupHeader rows create
-  a fake row.entity, and then set the appropriate fields in that entity.  This doesn't work well with 
-  complex column definitions at present
 - some more unit testing
 - enhancement: allow a limit on number of columns grouped
 - consideration of RTL - not sure whether the indent/outdent should get reversed?
@@ -54,24 +50,26 @@ to allow people to start using it.  Notable outstandings are:
 
 Options to watch out for include:
 
-- `groupingIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
+- `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
   level gets deeper.  Larger values look nicer, but take up more space
-- `groupingRowHeaderWidth`: the base width of the grouping row header
-- `groupingSuppressAggregationText`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
-   usually breaks the cellFilter.  So you can suppress the aggregation text, but then you don't get a clear
-   visual indication of what sort of aggregation is going on.  Refer the example below, the balance column with
-   an average
-- `groupingShowCounts`: set to false if you don't like the counts against the groupHeaders
-
-If you have data in your entity that is 1:1 with a group row (so, for example, you have 
+- `treeRowHeaderWidth`: the base width of the grouping row header
+- `customTreeAggregationFinalizerFn`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
+   usually breaks the cellFilter.  You can define a custom aggregation finalizer that handles this text differently,
+   either applying the filter in code, or skipping the inclusion of the aggregation text.  This can also be used
+   to skip the showing of the counts at all
 
 If you would like to suppress the data in a grouped column (so it only shows in the groupHeader rows) this can
 be done by overriding the cellTemplate for any of the columns you allow grouping on as follows:
 
-   `cellTemplate: '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
-   
+   `cellTemplate: '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'`
+
 In the example below this has been done on the state column only.  This isn't included in the base code as it
 could potentially interact with people's custom templates.
+
+Tuning the way aggregations work can be done through defining a columnsProcessor that runs with higher (later)
+priority than the groupingColumnProcessor (so higher than 400), and that looks for grouped or aggregated columns
+and changes things like the treeAggregation.type, or the customTreeAggregationFinalizerFn.  A 'complex' tutorial
+may be forthcoming that provides examples of this.
 
 
 @example
@@ -93,10 +91,12 @@ function will stop working), and writes them to the console.
         columnDefs: [
           { name: 'name', width: '30%' },
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%', cellFilter: 'mapGender' },
-          { name: 'age', grouping: { aggregation: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
+          { name: 'age', treeAggregation: { type: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
           { name: 'company', width: '25%' },
-          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.groupLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
-          { name: 'balance', width: '25%', cellFilter: 'currency', groupingSuppressAggregationText: true, grouping: { aggregation: uiGridGroupingConstants.aggregation.AVG } }
+          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
+          { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregation: { type: uiGridGroupingConstants.aggregation.AVG }, customTreeAggregationFinalizerFn: function( aggregation ) { 
+            aggregation.rendered = aggregation.value; 
+          } }
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;

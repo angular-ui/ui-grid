@@ -28,11 +28,25 @@
    *  @ngdoc object
    *  @name ui.grid.treeView.constant:uiGridTreeViewConstants
    *
-   *  @description constants available in treeView module
+   *  @description constants available in treeView module, this includes
+   *  all the constants declared in the treeBase module (these are manually copied
+   *  as there isn't an easy way to include constants in another constants file, and
+   *  we don't want to make users include treeBase)
    * 
    */
   module.constant('uiGridTreeViewConstants', {
-    featureName: "treeView"
+    featureName: "treeView",
+    rowHeaderColName: 'treeBaseRowHeaderCol',
+    EXPANDED: 'expanded',
+    COLLAPSED: 'collapsed',
+    aggregation: {
+      COUNT: 'count',
+      SUM: 'sum',
+      MAX: 'max',
+      MIN: 'min',
+      AVG: 'avg',
+      CUSTOM: 'custom'
+    }
   });
 
   /**
