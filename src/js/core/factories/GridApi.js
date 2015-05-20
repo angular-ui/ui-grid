@@ -178,7 +178,7 @@
           //find all registered listeners
           var foundListeners = self.listeners.filter(function(listener) {
             return listeners.some(function(l) {
-              return listener.handler===l;
+              return listener.handler === l;
             });
           });
 
