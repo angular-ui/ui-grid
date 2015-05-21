@@ -658,9 +658,16 @@
          */
         getColumnHeaders: function (grid, colTypes) {
           var headers = [];
-          grid.columns.forEach( function( gridCol, index ) {
-            if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) && 
-                 gridCol.colDef.exporterSuppressExport !== true &&
+          var sourceColumns;
+
+          if ( colTypes === uiGridExporterConstants.ALL ){
+            sourceColumns = grid.columns;
+          } else {
+            sourceColumns = grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } );
+          }
+
+          sourceColumns.forEach( function( gridCol, index ) {
+            if ( gridCol.colDef.exporterSuppressExport !== true &&
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
               headers.push({
                 name: gridCol.field,
@@ -670,11 +677,11 @@
               });
             }
           });
-          
+
           return headers;
         },
-        
-        
+
+
         /** 
          * @ngdoc property
          * @propertyOf ui.grid.exporter.api:ColumnDef
