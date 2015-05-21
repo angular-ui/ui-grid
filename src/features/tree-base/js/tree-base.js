@@ -575,7 +575,7 @@
          *  a number (most aggregations work on numbers)
          *  @example
          *  <pre>
-         *    customTreeAggregationFn = function ( aggregation, fieldValue, numValue ){
+         *    customTreeAggregationFn = function ( aggregation, fieldValue, numValue, row ){
          *      // calculates the average of the squares of the values
          *      if ( typeof(aggregation.count) === 'undefined' ){
          *        aggregation.count = 0;
@@ -1247,7 +1247,7 @@
                   service.aggregateAvg( aggregation, fieldValue, numValue );
                   break;
                 case uiGridTreeBaseConstants.aggregation.CUSTOM:
-                  service.aggregateCustom( aggregation, fieldValue, numValue );
+                  service.aggregateCustom( aggregation, fieldValue, numValue, row );
                   break;
               }
             });
@@ -1314,13 +1314,13 @@
         }
       },
 
-      aggregateCustom: function( aggregation, fieldValue, numValue ){
+      aggregateCustom: function( aggregation, fieldValue, numValue, row ){
         if ( typeof(aggregation.col.customTreeAggregationFn) !== 'function' ) {
           gridUtil.logError( 'If you set aggregation type to custom, you need to provide a customTreeAggregationFn on the colDef' );
           return;
         }
 
-        aggregation.col.customTreeAggregationFn( aggregation, fieldValue, numValue );
+        aggregation.col.customTreeAggregationFn( aggregation, fieldValue, numValue, row );
       },
 
 
