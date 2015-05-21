@@ -5,6 +5,19 @@ values in specific columns, providing an effect similar in some ways to an Excel
 Columns that aren't grouped by can be aggregated, providing for example a running count
 of the number of rows in each group.
 
+_**BREAKING CHANGES IN RC22 for grouping.  Prior to RC22 grouping was a standalone feature, with RC22
+a number of things have changed as grouping and treeView move to a shared code base.  In particular:
+- methods such as expandAll are now on treeBase, not on grouping
+- aggregations move from being col.grouping.aggregation to col.treeAggregation
+- saveState format changes, if you persisted that across instantiations your
+  saved states may not reload cleanly
+- groupLevel is now treeLevel
+- groupingSuppressAggregationText is now handled via customTreeAggregationFinalizerText
+- groupingRowHeaderWidth is now treeRowHeaderWidth
+- groupingIndent is now treeIndent
+- groupingRowHeaderAlwaysVisible is now treeRowHeaderAlwaysVisible, and default has changed to true
+**_
+
 Grouping can be set programmatically by using the columnDef option `grouping: { groupPriority: 0 }`,
 or for aggregations on a column by setting `treeAggregation: {type: uiGridGroupingConstants.aggregation.COUNT}`. 
 
