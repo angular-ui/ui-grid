@@ -465,10 +465,6 @@
           scope: false,
           require: '?^uiGrid',
           link: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (!$scope.col.colDef.enableCellEdit || $scope.row.enableCellEdit === false) {
-              return;
-            }
-
             var html;
             var origCellValue;
             var inEdit = false;
@@ -495,8 +491,18 @@
               });
             }
 
+            var setEditable = function() {
+              if ($scope.col.colDef.enableCellEdit && $scope.row.enableCellEdit !== false) {
+                registerBeginEditEvents();
+              } else {
+                cancelBeginEditEvents();
+              }
+            };
 
-            registerBeginEditEvents();
+            setEditable();
+
+            var rowWatchDereg = $scope.$watch( 'row', setEditable );
+            $scope.$on( '$destroy', rowWatchDereg );
 
             function registerBeginEditEvents() {
               $elm.on('dblclick', beginEdit);

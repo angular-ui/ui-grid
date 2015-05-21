@@ -57,7 +57,7 @@
    * the `ignoreSort`on any sort that it wants to run on the tree.  TreeBase will clear the ignoreSort on all sorts - so it
    * will turn on any sorts that haven't run.  It will then call a recursive sort on the tree.
    * 
-   * Tree base provides aggregation.  It checks the aggregation configuration on each column, and aggregates based on
+   * Tree base provides treeAggregation.  It checks the treeAggregation configuration on each column, and aggregates based on
    * the logic provided as it builds the tree.  Aggregation information will be collected in the format:
    * 
    * ```
@@ -83,7 +83,11 @@
    *  @ngdoc object
    *  @name ui.grid.treeBase.constant:uiGridTreeBaseConstants
    *
-   *  @description constants available in treeBase module
+   *  @description constants available in treeBase module.
+   * 
+   *  These constants are manually copied into grouping and treeView,
+   *  as I haven't found a way to simply include them, and it's not worth
+   *  investing time in for something that changes very infrequently.
    * 
    */
   module.constant('uiGridTreeBaseConstants', {
@@ -482,7 +486,7 @@
 
         /**
          *  @ngdoc object
-         *  @name aggregation
+         *  @name treeAggregation
          *  @propertyOf  ui.grid.treeBase.api:ColumnDef
          *  @description Calculate aggregations on this column.  Aggregations
          *  are an object in the format:
@@ -497,19 +501,19 @@
          *  If you are using aggregations you should either:
          * 
          *   - also use grouping, in which case the aggregations are displayed in the group header, OR
-         *   - use treeView, in which case you can set `aggregationUpdateEntity: true` in the colDef, and
-         *     treeBase will store the aggregation information in the entity, or you can set `aggregationUpdateEntity: false` 
+         *   - use treeView, in which case you can set `treeAggregationUpdateEntity: true` in the colDef, and
+         *     treeBase will store the aggregation information in the entity, or you can set `treeAggregationUpdateEntity: false` 
          *     in the colDef, and you need to manual retrieve the calculated aggregations from the row.treeNode.aggregations
          * 
          *  <br/>Defaults to undefined.
          */
-        if ( typeof(colDef.aggregation) !== 'undefined' ){
-          col.aggregation = colDef.aggregation;
+        if ( typeof(colDef.treeAggregation) !== 'undefined' ){
+          col.treeAggregation = colDef.treeAggregation;
         }
 
         /**
          *  @ngdoc object
-         *  @name aggregationUpdateEntity
+         *  @name treeAggregationUpdateEntity
          *  @propertyOf  ui.grid.treeBase.api:ColumnDef
          *  @description Store calculated aggregations into the entity, allowing them
          *  to be displayed in the grid using a standard cellTemplate.  This defaults to true,
@@ -527,17 +531,17 @@
          *  <pre>
          *    gridOptions.columns = [{ 
          *      name: 'myCol', 
-         *      aggregation: { type: 'sum' }, 
-         *      aggregationUpdateEntity: true 
+         *      treeAggregation: { type: uiGridTreeBaseConstants.aggregation.SUM }, 
+         *      treeAggregationUpdateEntity: true 
          *      cellTemplate: '<div>{{row.entity.myCol + " " + row.treeNode.aggregations[0].rendered}}</div>'
          *    }];
          * </pre>
          */
-        col.aggregationUpdateEntity = colDef.aggregationUpdateEntity !== false;
+        col.treeAggregationUpdateEntity = colDef.treeAggregationUpdateEntity !== false;
 
         /**
          *  @ngdoc object
-         *  @name customAggregationFinalizerFn
+         *  @name customTreeAggregationFinalizerFn
          *  @propertyOf  ui.grid.treeBase.api:ColumnDef
          *  @description A custom function that populates aggregation.rendered, this is called when
          *  a particular aggregation has been fully calculated, and we want to render the value.
@@ -548,17 +552,19 @@
          *
          *  @example
          *  <pre>
-         *    customAggregationFinalizerFn = function ( aggregation ){
+         *    customTreeAggregationFinalizerFn = function ( aggregation ){
          *      aggregation.rendered = aggregation.label + aggregation.value / 100 + '%';
          *    }
          *  </pre>
          *  <br/>Defaults to undefined.
          */
-        col.customAggregationFinalizerFn = colDef.customAggregationFinalizerFn;
+        if ( typeof(col.customTreeAggregationFinalizerFn) === 'undefined' ){
+          col.customTreeAggregationFinalizerFn = colDef.customTreeAggregationFinalizerFn;
+        }
 
         /**
          *  @ngdoc object
-         *  @name customAggregationFn
+         *  @name customTreeAggregationFn
          *  @propertyOf  ui.grid.treeBase.api:ColumnDef
          *  @description A custom function that aggregates rows into some form of
          *  total.  Aggregations run row-by-row, the function needs to be capable of
@@ -569,15 +575,15 @@
          *  a number (most aggregations work on numbers)
          *  @example
          *  <pre>
-         *    customAggregationFn = function ( aggregation, fieldValue, numValue ){
+         *    customTreeAggregationFn = function ( aggregation, fieldValue, numValue, row ){
          *      // calculates the average of the squares of the values
-         *      if ( aggregation.count === undefined ){
+         *      if ( typeof(aggregation.count) === 'undefined' ){
          *        aggregation.count = 0;
          *      }
          *      aggregation.count++;
          * 
          *      if ( !isNaN(numValue) ){
-         *        if ( aggregation.total === undefined ){
+         *        if ( typeof(aggregation.total) === 'undefined' ){
          *          aggregation.total = 0;
          *        }
          *        aggregation.total = aggregation.total + numValue * numValue;
@@ -588,7 +594,9 @@
          *  </pre>
          *  <br/>Defaults to undefined.  Required if you set the aggregation type to CUSTOM
          */
-        col.customAggregationFn = colDef.customAggregationFn;
+        if ( typeof(col.customTreeAggregationFn) === 'undefined' ){
+          col.customTreeAggregationFn = colDef.customTreeAggregationFn;
+        }
       },
 
 
@@ -965,7 +973,9 @@
         var aggregations = service.getAggregations( grid );
 
         var createNode = function( row ){
-          row.treeLevel = row.entity.$$treeLevel;
+          if ( typeof(row.entity.$$treeLevel) !== 'undefined' && row.treeLevel !== row.entity.$$treeLevel ){
+            row.treeLevel = row.entity.$$treeLevel;
+          }
 
           if ( row.treeLevel <= currentLevel ){
             // pop any levels that aren't parents of this level, formatting the aggregation at the same time
@@ -984,14 +994,14 @@
           }
 
           // aggregate if this is a leaf node
-          if ( row.treeLevel === undefined || row.treeLevel === null || row.treeLevel < 0  ){
+          if ( typeof(row.treeLevel) === 'undefined' || row.treeLevel === null || row.treeLevel < 0  ){
             service.aggregate( grid, row, parents );
           }
 
           // add this node to the tree
           service.addOrUseNode(grid, row, parents, aggregations);
 
-          if (row.treeLevel !== undefined && row.treeLevel !== null && row.treeLevel >= 0 ){
+          if ( typeof(row.treeLevel) !== 'undefined' && row.treeLevel !== null && row.treeLevel >= 0 ){
             parents.push(row);
             currentLevel++;
             currentState = service.setCurrentState(parents);
@@ -1185,8 +1195,8 @@
         var aggregateArray = [];
 
         grid.columns.forEach( function(column){
-          if ( column.aggregation ){
-            var newAggregation = { col: column, type: column.aggregation.type, value: 0, label: column.aggregation.label };
+          if ( column.treeAggregation ){
+            var newAggregation = { col: column, type: column.treeAggregation.type, value: 0, label: column.treeAggregation.label };
             if ( !newAggregation.label ){
               newAggregation.label = i18nService.get().aggregation[newAggregation.type];
             }
@@ -1237,7 +1247,7 @@
                   service.aggregateAvg( aggregation, fieldValue, numValue );
                   break;
                 case uiGridTreeBaseConstants.aggregation.CUSTOM:
-                  service.aggregateCustom( aggregation, fieldValue, numValue );
+                  service.aggregateCustom( aggregation, fieldValue, numValue, row );
                   break;
               }
             });
@@ -1247,7 +1257,7 @@
 
       // Aggregation routines - no doco needed as self evident
       aggregateCount: function( aggregation, fieldValue, numValue ){
-        if ( aggregation.value === undefined ){
+        if ( typeof(aggregation.value) === 'undefined' ){
           aggregation.value = 1;
         } else {
           aggregation.value++;
@@ -1256,7 +1266,7 @@
 
       aggregateSum: function( aggregation, fieldValue, numValue ){
         if (!isNaN(numValue)){
-          if ( aggregation.value === undefined ){
+          if ( typeof(aggregation.value) === 'undefined' ){
             aggregation.value = numValue;
           } else {
             aggregation.value += numValue;
@@ -1265,27 +1275,27 @@
       },
 
       aggregateMin: function( aggregation, fieldValue, numValue ){
-        if ( aggregation.value === undefined ){
+        if ( typeof(aggregation.value) === 'undefined' ){
           aggregation.value = fieldValue;
         } else {
-          if (fieldValue !== undefined && fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
+          if ( typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)){
             aggregation.value = fieldValue;
           }
         }
       },
 
       aggregateMax: function( aggregation, fieldValue, numValue ){
-        if ( aggregation.value === undefined ){
+        if ( typeof(aggregation.value) === 'undefined' ){
           aggregation.value = fieldValue;
         } else {
-          if (fieldValue !== undefined && fieldValue !== null && (fieldValue > aggregation.value || aggregation.value === null)){
+          if ( typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue > aggregation.value || aggregation.value === null)){
             aggregation.value = fieldValue;
           }
         }
       },
 
       aggregateAvg: function( aggregation, fieldValue, numValue ){
-        if ( aggregation.count === undefined ){
+        if ( typeof(aggregation.count) === 'undefined' ){
           aggregation.count = 1;
         } else {
           aggregation.count++;
@@ -1295,7 +1305,7 @@
           return;
         }
 
-        if ( aggregation.value === undefined || aggregation.sum === undefined ){
+        if ( typeof(aggregation.value) === 'undefined' || typeof(aggregation.sum) === 'undefined' ){
           aggregation.value = numValue;
           aggregation.sum = numValue;
         } else {
@@ -1304,13 +1314,13 @@
         }
       },
 
-      aggregateCustom: function( aggregation, fieldValue, numValue ){
-        if ( typeof(aggregation.col.customAggregationFn) !== 'function' ) {
-          gridUtil.logError( 'If you set aggregation type to custom, you need to provide a customAggregationFn on the colDef' );
+      aggregateCustom: function( aggregation, fieldValue, numValue, row ){
+        if ( typeof(aggregation.col.customTreeAggregationFn) !== 'function' ) {
+          gridUtil.logError( 'If you set aggregation type to custom, you need to provide a customTreeAggregationFn on the colDef' );
           return;
         }
 
-        aggregation.col.customAggregationFn( aggregation, fieldValue, numValue );
+        aggregation.col.customTreeAggregationFn( aggregation, fieldValue, numValue, row );
       },
 
 
@@ -1323,6 +1333,13 @@
        *
        * As part of this we call any formatting callback routines we've been provided.
        * 
+       * We write our aggregation out to the row.entity if treeAggregationUpdateEntity is
+       * set on the column - we don't overwrite any information that's already there, we append
+       * to it so that grouping can have set the groupVal beforehand without us overwriting it.
+       * 
+       * We need to copy the data from the row.entity first before we finalise the aggregation,
+       * we need that information for the finaliserFn
+       * 
        * @param {gridRow} row the parent we're finalising
        */
       finaliseAggregations: function( row ){
@@ -1331,19 +1348,24 @@
         }
 
         row.treeNode.aggregations.forEach( function( aggregation ) {
-          if ( typeof(aggregation.col.customAggregationFinalizerFn) === 'function' ){
-            aggregation.col.customAggregationFinalizerFn( aggregation );
+          if ( aggregation.col.treeAggregationUpdateEntity && typeof(row.entity[ '$$' + aggregation.col.uid ]) !== 'undefined' ){
+            angular.extend( aggregation, row.entity[ '$$' + aggregation.col.uid ]);
+          }
+
+          if ( typeof(aggregation.col.customTreeAggregationFinalizerFn) === 'function' ){
+            aggregation.col.customTreeAggregationFinalizerFn( aggregation );
           } else {
             aggregation.rendered = aggregation.label + aggregation.value;
           }
 
-          if ( aggregation.col.aggregationUpdateEntity ){
+          if ( aggregation.col.treeAggregationUpdateEntity ){
             var aggregationCopy = {};
             angular.forEach( aggregation, function( value, key ){
               if ( aggregation.hasOwnProperty(key) && key !== 'col' ){
                 aggregationCopy[key] = value;
               }
             });
+
             row.entity[ '$$' + aggregation.col.uid ] = aggregationCopy;
           }
         });
@@ -1407,4 +1429,41 @@
       }
     };
   }]);
+  
+
+ /**
+   *  @ngdoc directive
+   *  @name ui.grid.treeBase.directive:uiGridViewport
+   *  @element div
+   *
+   *  @description Stacks on top of ui.grid.uiGridViewport to set formatting on a tree header row
+   */
+  module.directive('uiGridViewport',
+  ['$compile', 'uiGridConstants', 'gridUtil', '$parse', 'uiGridGroupingService',
+    function ($compile, uiGridConstants, gridUtil, $parse, uiGridGroupingService) {
+      return {
+        priority: -200, // run after default  directive
+        scope: false,
+        compile: function ($elm, $attrs) {
+          var rowRepeatDiv = angular.element($elm.children().children()[0]);
+
+          var existingNgClass = rowRepeatDiv.attr("ng-class");
+          var newNgClass = '';
+          if ( existingNgClass ) {
+            newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-tree-header-row': row.treeLevel > -1}";
+          } else {
+            newNgClass = "{'ui-grid-tree-header-row': row.treeLevel > -1}";
+          }
+          rowRepeatDiv.attr("ng-class", newNgClass);
+
+          return {
+            pre: function ($scope, $elm, $attrs, controllers) {
+
+            },
+            post: function ($scope, $elm, $attrs, controllers) {
+            }
+          };
+        }
+      };
+    }]);
 })();

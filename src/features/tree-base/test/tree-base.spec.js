@@ -1,4 +1,4 @@
-describe('ui.grid.treeBase uiGridTreeBaseService', function () {
+ddescribe('ui.grid.treeBase uiGridTreeBaseService', function () {
   var uiGridTreeBaseService;
   var uiGridTreeBaseConstants;
   var gridClassFactory;
@@ -343,7 +343,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
 
       spyOn( grid, 'getCellValue').andCallFake( function( row, col ) { return row.entity.col3; } );
 
-      grid.columns[3].aggregation = { type: 'sum' };
+      grid.columns[3].treeAggregation = { type: 'sum' };
       grid.columns[3].uid = 'col3';
 
       var tree = uiGridTreeBaseService.createTree( grid, rows );
@@ -681,11 +681,11 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
 
     it( 'two aggregations, one looks up label', function() {
       // treeBase has added a rowHeader column, so columns shifted right by one
-      grid.columns[2].aggregation = {
+      grid.columns[2].treeAggregation = {
         type: 'sum'
       };
 
-      grid.columns[3].aggregation = {
+      grid.columns[3].treeAggregation = {
         type: 'custom',
         label: 'custom- '
       };
@@ -742,7 +742,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
         aggregation.custom = numValue / 2;
       };
 
-      grid.columns[4].customAggregationFn = customAggregation;
+      grid.columns[4].customTreeAggregationFn = customAggregation;
 
       var parents = [
         { treeNode: { aggregations: [ 
@@ -807,13 +807,13 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
     });
 
     it( 'some aggregations', function() {
-      var fakeColumn = { uid: '123', aggregationUpdateEntity: true, customAggregationFinalizerFn: function( aggregation ){
+      var fakeColumn = { uid: '123', treeAggregationUpdateEntity: true, customTreeAggregationFinalizerFn: function( aggregation ){
         aggregation.rendered = 'custom';
       }};
 
       var fakeRow = { entity: {}, treeNode: { aggregations: [
         { value: 10, label: 'test: ', col: fakeColumn },
-        { value: 10, label: 'test: ', col: { uid: '345', aggregationUpdateEntity: true } }
+        { value: 10, label: 'test: ', col: { uid: '345', treeAggregationUpdateEntity: true } }
       ]}};
 
       uiGridTreeBaseService.finaliseAggregations( fakeRow );
