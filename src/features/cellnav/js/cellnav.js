@@ -398,15 +398,6 @@
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
 
-          /**
-           *  @ngdoc object
-           *  @name highlightEntireRowOnCellFocus
-           *  @propertyOf  ui.grid.cellNav.api:GridOptions
-           *  @description Enable higlighting of entire row when a cell has focus.
-           *  <br/>Defaults to false
-           */
-          gridOptions.highlightEntireRowOnCellFocus = gridOptions.highlightEntireRowOnCellFocus === true;
-
         },
 
         /**
@@ -924,26 +915,18 @@
              // }
             }
             else if (!(uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown)) {
-              if (((uiGridCtrl.grid.options.highlightEntireRowOnCellFocus) && (rowCol.row !== $scope.row)) || (!uiGridCtrl.grid.options.highlightEntireRowOnCellFocus)) {
-                clearFocus();
-              }
+              clearFocus();
             }
           });
 
           function setFocused() {
             var div = $elm.find('div');
-            var row = $elm.parent().parent();
             div.addClass('ui-grid-cell-focus');
-            if (uiGridCtrl.grid.options.highlightEntireRowOnCellFocus) {
-              row.addClass('ui-grid-row-highlighted');
-            }
           }
 
           function clearFocus() {
             var div = $elm.find('div');
-            var row = $elm.parent().parent();
             div.removeClass('ui-grid-cell-focus');
-            row.removeClass('ui-grid-row-highlighted');
           }
 
           $scope.$on('$destroy', function () {
