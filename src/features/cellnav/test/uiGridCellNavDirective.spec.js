@@ -11,8 +11,7 @@ describe('ui.grid.cellNav directive', function () {
 
     $scope.gridOpts = {
       data: [{ name: 'Bob' }, {name: 'Mathias'}, {name: 'Fred'}],
-      modifierKeysToMultiSelectCells: true,
-      highlightEntireRowOnCellFocus: false
+      modifierKeysToMultiSelectCells: true
     };
 
     $scope.gridOpts.onRegisterApi = function (gridApi) {
