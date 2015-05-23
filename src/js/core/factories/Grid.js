@@ -983,51 +983,14 @@ angular.module('ui.grid')
     //field was required in 2.x.  now name is required
     if (colDef.name === undefined && colDef.field !== undefined) {
       // See if the column name already exists:
-      var foundName = self.getColumn(colDef.field);
-
-      // If a column with this name already  exists, we will add an incrementing number to the end of the new column name
-      if (foundName) {
-        // Search through the columns for names in the format: <name><1, 2 ... N>, i.e. 'Age1, Age2, Age3',
-        var nameRE = new RegExp('^' + colDef.field + '(\\d+)$', 'i');
-
-        var foundColumns = self.columns.filter(function (column) {
-          // Test against the displayName, as that's what'll have the incremented number
-          return nameRE.test(column.displayName);
-        })
-        // Sort the found columns by the end-number
-        .sort(function (a, b) {
-          if (a === b) {
-            return 0;
-          }
-          else {
-            var numA = a.displayName.match(nameRE)[1];
-            var numB = b.displayName.match(nameRE)[1];
-
-            return parseInt(numA, 10) > parseInt(numB, 10) ? 1 : -1;
-          }
-        });
-
-        // Not columns found, so start with number "2"
-        if (foundColumns.length === 0) {
-          colDef.name = colDef.field + '2';
-        }
-        else {
-          // Get the number from the final column
-          var lastNum = foundColumns[foundColumns.length-1].displayName.match(nameRE)[1];
-
-          // Make sure to parse to an int
-          lastNum = parseInt(lastNum, 10);
-
-          // Add 1 to the number from the last column and tack it on to the field to be the name for this new column
-          colDef.name = colDef.field + (lastNum + 1);
-        }
+      var newName = colDef.field,
+        counter = 2;
+      while (self.getColumn(newName)) {
+        newName = colDef.field + counter.toString();
+        counter++;
       }
-      // ... otherwise just use the field as the column name
-      else {
-        colDef.name = colDef.field;
-      }
+      colDef.name = newName;
     }
-
   };
 
   // Return a list of items that exist in the `n` array but not the `o` array. Uses optional property accessors passed as third & fourth parameters
