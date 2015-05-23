@@ -333,6 +333,15 @@
          *  <br/>Defaults to "Null"
          */
         gridOptions.groupingNullLabel = gridOptions.groupingNullLabel || 'Null';
+
+        /**
+         *  @ngdoc object
+         *  @name enableGroupHeaderSelection
+         *  @propertyOf  ui.grid.grouping.api:GridOptions
+         *  @description Allows group header rows to be selected.  
+         *  <br/>Defaults to false
+         */
+        gridOptions.enableGroupHeaderSelection = gridOptions.enableGroupHeaderSelection === true;
       },
 
 
@@ -1001,7 +1010,7 @@
         headerRow.groupHeader = true;
         headerRow.internalRow = true;
         headerRow.enableCellEdit = false;
-        headerRow.enableSelection = false;
+        headerRow.enableSelection = grid.options.enableGroupHeaderSelection;
         processingState[stateIndex].initialised = true;
         processingState[stateIndex].currentValue = newValue;
         processingState[stateIndex].currentRow = headerRow;

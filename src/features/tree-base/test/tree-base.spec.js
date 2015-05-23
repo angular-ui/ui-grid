@@ -158,6 +158,13 @@ ddescribe('ui.grid.treeBase uiGridTreeBaseService', function () {
       expect( treeRows.length ).toEqual( 2, 'only level 0 is visible' );
       expect( collapseCount ).toEqual( 10 );
     });
+
+    it( 'getRowChildren', function() {
+      expect( treeRows.length ).toEqual( 2, 'only the level 0 rows are visible' );
+
+      treeRows = uiGridTreeBaseService.treeRows.call( grid, grid.rows.slice(0) );
+      expect( grid.api.treeBase.getRowChildren( grid.rows[7] ).length ).toEqual(2);
+    });
   });
 
 
