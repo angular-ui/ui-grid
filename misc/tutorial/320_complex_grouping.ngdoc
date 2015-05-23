@@ -43,6 +43,7 @@ children of the selected rowHeader.
       $scope.gridOptions = {
         enableFiltering: true,
         enableGroupHeaderSelection: true,
+        treeRowHeaderAlwaysVisible: false,
         columnDefs: [
           { name: 'name', width: '30%' },
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%',
