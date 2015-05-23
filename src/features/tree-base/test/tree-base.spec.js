@@ -1,4 +1,4 @@
-ddescribe('ui.grid.treeBase uiGridTreeBaseService', function () {
+describe('ui.grid.treeBase uiGridTreeBaseService', function () {
   var uiGridTreeBaseService;
   var uiGridTreeBaseConstants;
   var gridClassFactory;
