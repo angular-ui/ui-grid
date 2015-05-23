@@ -114,18 +114,18 @@ describe('GridColumn factory', function () {
 
         buildCols();
 
-        expect(grid.columns[0].displayName).toEqual('Age');
-        expect(grid.columns[1].displayName).toEqual('Name');
-        expect(grid.columns[2].displayName).toEqual('Name2');
-        expect(grid.columns[3].displayName).toEqual('Name3');
+        expect(grid.columns[0].name).toEqual('age');
+        expect(grid.columns[1].name).toEqual('name');
+        expect(grid.columns[2].name).toEqual('name2');
+        expect(grid.columns[3].name).toEqual('name3');
       });
 
-      it('should account for existing incremented names', function () {
+      it('should not change the displayNames if they are provided', function () {
         var cols = [
           { field: 'age' },
-          { field: 'name' },
-          { field: 'name', name: 'Name3' },
-          { field: 'name' }
+          { field: 'name', displayName:'First Name' },
+          { field: 'name', displayName:'First Name' },
+          { field: 'name', displayName:'First Name' }
         ];
 
         grid.options.columnDefs = cols;
@@ -133,9 +133,28 @@ describe('GridColumn factory', function () {
         buildCols();
 
         expect(grid.columns[0].displayName).toEqual('Age');
-        expect(grid.columns[1].displayName).toEqual('Name');
-        expect(grid.columns[2].displayName).toEqual('Name3');
-        expect(grid.columns[3].displayName).toEqual('Name4');
+        expect(grid.columns[1].displayName).toEqual('First Name');
+        expect(grid.columns[2].displayName).toEqual('First Name');
+        expect(grid.columns[3].displayName).toEqual('First Name');
+
+      });
+
+      it('should account for existing incremented names', function () {
+        var cols = [
+          { field: 'age' },
+          { field: 'name' },
+          { field: 'name', name: 'name3' },
+          { field: 'name' }
+        ];
+
+        grid.options.columnDefs = cols;
+
+        buildCols();
+
+        expect(grid.columns[0].name).toEqual('age');
+        expect(grid.columns[1].name).toEqual('name');
+        expect(grid.columns[2].name).toEqual('name3');
+        expect(grid.columns[3].name).toEqual('name2');
       });
     });
   });
