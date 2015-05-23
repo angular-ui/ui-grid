@@ -172,7 +172,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
     it( 'tree the rows', function() {
       var treeRows = uiGridTreeBaseService.treeRows.call( grid, grid.rows.slice(0) );
       expect( treeRows.length ).toEqual( 2, 'only the level 0 rows are visible' );
-      expect( grid.treeBase.numberLevels).toEqual(2, 'two levels in the tree');
+      expect( grid.treeBase.numberLevels).toEqual(3, 'three levels in the tree');
     });
   });
 
@@ -244,7 +244,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       expect( rows[0].treeNode ).toEqual( grid.treeBase.tree[0], 'treeNode is the first node in the tree' );
       delete rows[0].treeNode;
       expect( rows[0] ).toEqual( { uid: 1, treeLevel: 0, entity: { $$treeLevel: 0 }, visible: true }, 'treeLevel copied down' );
-      expect( grid.treeBase.numberLevels).toEqual(0, 'one level in the tree (is zero based like an array)');
+      expect( grid.treeBase.numberLevels).toEqual(1, 'one level in the tree');
       expect( grid.treeBase.tree.length).toEqual( 1, 'one node at root level of tree');
       expect( grid.treeBase.tree[0].row).toEqual( rows[0], 'node is for row 0');
       delete grid.treeBase.tree[0].row;
@@ -263,7 +263,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       var tree = uiGridTreeBaseService.createTree( grid, rows );
 
       // overall settings
-      expect( grid.treeBase.numberLevels).toEqual(1, 'two levels in the tree (is zero based like an array)');
+      expect( grid.treeBase.numberLevels).toEqual(2, 'two levels in the tree');
 
       // rows
       expect( rows.length ).toEqual( 5, 'still only 5 rows' );
@@ -356,7 +356,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       var tree = uiGridTreeBaseService.createTree( grid, rows );
 
       // overall settings
-      expect( grid.treeBase.numberLevels).toEqual(1, 'two levels in the tree (is zero based like an array)');
+      expect( grid.treeBase.numberLevels).toEqual(2, 'two levels in the tree');
 
       // rows
       expect( rows.length ).toEqual( 10, 'still only 10 rows' );
