@@ -71,7 +71,7 @@
                  * </pre>
                  * and somewhere within the event handler:
                  * <pre>
-                 *      gridApi.rowEdit.setSavePromise( grid, rowEntity, savePromise)
+                 *      gridApi.rowEdit.setSavePromise( rowEntity, savePromise)
                  * </pre>
                  * @param {object} rowEntity the options.data element that was edited
                  * @returns {promise} Your saveRow method should return a promise, the
@@ -91,7 +91,7 @@
                  * @description Sets the promise associated with the row save, mandatory that
                  * the saveRow event handler calls this method somewhere before returning.
                  * <pre>
-                 *      gridApi.rowEdit.setSavePromise(grid, rowEntity)
+                 *      gridApi.rowEdit.setSavePromise(rowEntity, savePromise)
                  * </pre>
                  * @param {object} rowEntity a data row from the grid for which a save has
                  * been initiated
