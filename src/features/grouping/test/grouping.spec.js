@@ -1,4 +1,4 @@
-ddescribe('ui.grid.grouping uiGridGroupingService', function () {
+describe('ui.grid.grouping uiGridGroupingService', function () {
   var uiGridGroupingService;
   var uiGridGroupingConstants;
   var gridClassFactory;
@@ -295,7 +295,7 @@ ddescribe('ui.grid.grouping uiGridGroupingService', function () {
   });
 
 
-  ddescribe('getGrouping via api (returns colName)', function() {
+  describe('getGrouping via api (returns colName)', function() {
     it('should find no grouping', function() {
       expect(grid.api.grouping.getGrouping( true )).toEqual({
         grouping: [],

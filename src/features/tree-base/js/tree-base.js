@@ -397,6 +397,21 @@
                */
               setTreeState: function ( config ) {
                 service.setTreeState( grid, config );
+              },
+
+              /**
+               * @ngdoc function
+               * @name getRowChildren
+               * @methodOf  ui.grid.treeBase.api:PublicApi
+               * @description Get the children of the specified row
+               * @param {GridRow} row the row you want the children of
+               * @returns {Array} array of children of this row, the children
+               * are all gridRows
+               */
+              getRowChildren: function ( row ){
+                return row.treeNode.children.map( function( childNode ){ 
+                  return childNode.row; 
+                });
               }
             }
           }

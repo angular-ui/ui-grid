@@ -214,7 +214,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return !regex.exec(value);
     }
 
-    if (typeof(value) === 'number'){
+    if (typeof(value) === 'number' && typeof(term) === 'string' ){
       // if the term has a decimal in it, it comes through as '9\.4', we need to take out the \
       // the same for negative numbers
       // TODO: I suspect the right answer is to look at escapeRegExp at the top of this code file, maybe it's not needed?

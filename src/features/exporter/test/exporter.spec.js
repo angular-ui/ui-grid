@@ -44,6 +44,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     grid.rows[1].visible = false;
     grid.columns[2].visible = false;
     grid.setVisibleRows(grid.rows);
+    grid.setVisibleColumns(grid.columns);
 
     grid.api.selection.clearSelectedRows();
     grid.api.selection.selectRow(grid.rows[0].entity);

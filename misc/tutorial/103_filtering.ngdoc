@@ -139,7 +139,8 @@ Refer the {@link 499_FAQ FAQ}, it is possible to implement this using a rowsProc
           { field: 'age', filters: [
             {
               condition: uiGridConstants.filter.GREATER_THAN,
-              placeholder: 'greater than'
+              placeholder: 'greater than',
+              term: 30
             },
             {
               condition: uiGridConstants.filter.LESS_THAN,
