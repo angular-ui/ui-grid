@@ -939,6 +939,7 @@
         }
         if ( rowHeader.visible !== newVisibility ) {
           rowHeader.visible = newVisibility;
+          rowHeader.colDef.visible = newVisibility;
           grid.queueRefresh();
         }
       },

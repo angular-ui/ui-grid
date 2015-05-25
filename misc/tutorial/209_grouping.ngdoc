@@ -101,6 +101,7 @@ function will stop working), and writes them to the console.
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants ) {
       $scope.gridOptions = {
         enableFiltering: true,
+        treeRowHeaderAlwaysVisible: false,
         columnDefs: [
           { name: 'name', width: '30%' },
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%', cellFilter: 'mapGender' },
