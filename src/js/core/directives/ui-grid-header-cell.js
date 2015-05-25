@@ -132,7 +132,7 @@
 
             $scope.moveFn = function( event ){
               var changeX = previousMouseX - event.pageX;
-              if (changeX === 0 ) return;
+              if (changeX === 0 ) { return; }
 
               // we're a move, so do nothing and leave for column move (if enabled) to take over
               $timeout.cancel($scope.mousedownTimeout);
