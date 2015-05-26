@@ -863,7 +863,9 @@
                 };
 
                 $elm.on('click', function (evt) {
-                  $scope.deepEdit = true;
+                  if ($elm[0].type !== 'checkbox') {
+                    $scope.deepEdit = true;
+                  }
                 });
 
                 $elm.on('keydown', function (evt) {
