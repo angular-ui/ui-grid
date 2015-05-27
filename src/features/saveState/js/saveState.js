@@ -357,7 +357,16 @@
             }
 
             if ( grid.options.saveFilter ){
-              savedColumn.filters = angular.copy ( column.filters );
+              savedColumn.filters = [];
+              column.filters.forEach( function( filter ){
+                var copiedFilter = {};
+                angular.forEach( filter, function( value, key) {
+                  if ( key !== 'condition' && key !== '$$hashKey' && key !== 'placeholder'){
+                    copiedFilter[key] = value;
+                  }
+                });
+                savedColumn.filters.push(copiedFilter);
+              });
             }
 
             if ( !!grid.api.pinning && grid.options.savePinning ){
@@ -545,7 +554,12 @@
 
               if ( grid.options.saveFilter &&
                    !angular.equals(currentCol.filters, columnState.filters ) ){
-                currentCol.filters = angular.copy( columnState.filters );
+                columnState.filters.forEach( function( filter, index ){
+                  angular.extend( currentCol.filters[index], filter );
+                  if ( typeof(filter.term) === 'undefined' || filter.term === null ){
+                    delete currentCol.filters[index].term;
+                  }
+                });
                 grid.api.core.raise.filterChanged();
               }
 

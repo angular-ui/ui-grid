@@ -49,13 +49,18 @@ to something different, and use the restore button to set the grid back the way 
         saveFocus: false,
         saveScroll: true,
         saveGroupingExpandedStates: true,
+        enableFiltering: true,
+        columnDefs: [
+          { name: 'name' },
+          { name: 'gender' },
+          { name: 'company' }
+        ],
         onRegisterApi: function(gridApi){ 
           $scope.gridApi = gridApi;
         }
       };
-      $scope.gridOptions.enableFiltering = true;
       $scope.state = {};
-      
+
       $scope.saveState = function() {
         $scope.state = $scope.gridApi.saveState.save();
       };
