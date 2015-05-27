@@ -29,8 +29,8 @@ module.exports = {
   *   var row = this.getGrid( gridId );
   * </pre>
   */
-  getGrid: function( gridId ) {
-    return element( by.id( gridId ) );
+  getGrid: function( gridId , browserInst) {
+    return browserInst.element( by.id( gridId ) );
   },
 
   /**
@@ -47,8 +47,8 @@ module.exports = {
   *   var row = this.getRow( gridId, rowNum );
   * </pre>
   */
-  getRow: function( gridId, rowNum ) {
-    return this.getGrid( gridId ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( rowNum )  );
+  getRow: function( gridId, rowNum, browserInst ) {
+    return this.getGrid( gridId, browserInst ).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( rowNum )  );
   },
 
   /**
@@ -63,8 +63,8 @@ module.exports = {
   *   var row = gridTestUtils.selectRow( 'myGrid', 0 );
   * </pre>
   */
-  selectRow: function( gridId, rowNum ) {
-    this.getRow( gridId, rowNum ).click();
+  selectRow: function( gridId, rowNum, browserInst ) {
+    this.getRow( gridId, rowNum, browserInst ).click();
   },
 
   /**
@@ -88,9 +88,9 @@ module.exports = {
   * </pre>
   *
   */
-  expectRowCount: function( gridId, expectedNumRows ) {
+  expectRowCount: function( gridId, expectedNumRows, browserInst ) {
 
-    var rows = this.getGrid( gridId ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
+    var rows = this.getGrid( gridId, browserInst ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
     expect(rows.count()).toEqual(expectedNumRows);
   },
 
@@ -111,8 +111,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectHeaderColumnCount: function( gridId, expectedNumCols ) {
-    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+  expectHeaderColumnCount: function( gridId, expectedNumCols, browserInst ) {
+    var headerCols = this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
     expect(headerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -131,8 +131,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectHeaderLeftColumnCount: function( gridId, expectedNumCols ) {
-    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+  expectHeaderLeftColumnCount: function( gridId, expectedNumCols, browserInst ) {
+    var headerCols = this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
     expect(headerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -151,8 +151,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectFooterColumnCount: function( gridId, expectedNumCols ) {
-    var footerCols = this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+  expectFooterColumnCount: function( gridId, expectedNumCols, browserInst ) {
+    var footerCols = this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-footer') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
     expect(footerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -172,8 +172,8 @@ module.exports = {
   * </pre>
   *
   */
-  headerCell: function( gridId, expectedCol, expectedValue ) {
-    return this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+  headerCell: function( gridId, expectedCol, expectedValue, browserInst ) {
+    return this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
   },
 
   /**
@@ -192,8 +192,8 @@ module.exports = {
   * </pre>
   *
   */
-  footerCell: function( gridId, expectedCol, expectedValue ) {
-    return this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+  footerCell: function( gridId, expectedCol, expectedValue, browserInst ) {
+    return this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-footer') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
   },
 
   /**
@@ -215,8 +215,8 @@ module.exports = {
   * </pre>
   *
   */
-  dataCell: function( gridId, fetchRow, fetchCol ) {
-    var row = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
+  dataCell: function( gridId, fetchRow, fetchCol, browserInst ) {
+    var row = this.getGrid( gridId, browserInst ).element( by.css('.ui-grid-render-container-body')).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
     return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row( fetchCol ));
   },
 
@@ -237,8 +237,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectHeaderCellValueMatch: function( gridId, expectedCol, expectedValue ) {
-    var headerCell = this.headerCell( gridId, expectedCol);
+  expectHeaderCellValueMatch: function( gridId, expectedCol, expectedValue, browserInst ) {
+    var headerCell = this.headerCell( gridId, expectedCol, 0, browserInst);
     expect(headerCell.getText()).toMatch(expectedValue);
   },
 
@@ -259,8 +259,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectFooterCellValueMatch: function( gridId, expectedCol, expectedValue ) {
-    var footerCell = this.footerCell( gridId, expectedCol);
+  expectFooterCellValueMatch: function( gridId, expectedCol, expectedValue, browserInst ) {
+    var footerCell = this.footerCell( gridId, expectedCol, browserInst);
     expect(footerCell.getText()).toMatch(expectedValue);
   },
 
@@ -283,8 +283,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectCellValueMatch: function( gridId, expectedRow, expectedCol, expectedValue ) {
-    var dataCell = this.dataCell( gridId, expectedRow, expectedCol );
+  expectCellValueMatch: function( gridId, expectedRow, expectedCol, expectedValue, browserInst ) {
+    var dataCell = this.dataCell( gridId, expectedRow, expectedCol, browserInst );
     expect(dataCell.getText()).toMatch(expectedValue);
   },
 
@@ -305,8 +305,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectRowValuesMatch: function( gridId, expectedRow, expectedValueArray ) {
-    var row = this.getRow( gridId, expectedRow );
+  expectRowValuesMatch: function( gridId, expectedRow, expectedValueArray, browserInst ) {
+    var row = this.getRow( gridId, expectedRow, browserInst );
 
     for ( var i = 0; i < expectedValueArray.length; i++){
       expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);
@@ -329,8 +329,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickHeaderCell: function( gridId, colNumber ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  clickHeaderCell: function( gridId, colNumber, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, 0, browserInst);
 
     headerCell.click();
   },
@@ -351,13 +351,13 @@ module.exports = {
   * </pre>
   *
   */
-  resizeHeaderCell: function( gridId, colNumber ) {
-    var headerCell = this.headerCell(gridId, colNumber);
+  resizeHeaderCell: function( gridId, colNumber, browserInst ) {
+    var headerCell = this.headerCell(gridId, colNumber, browserInst);
 
     var resizer = headerCell.all( by.css( '.ui-grid-column-resizer' )).first();
     var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ));
 
-    browser.actions()
+    browserInst.actions()
       .mouseDown(resizer)
       .mouseMove(menuButton)
       .mouseUp()
@@ -381,10 +381,10 @@ module.exports = {
   * </pre>
   *
   */
-  shiftClickHeaderCell: function( gridId, colNumber ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  shiftClickHeaderCell: function( gridId, colNumber, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
-    browser.actions()
+    browserInst.actions()
       .keyDown(protractor.Key.SHIFT)
       .click(headerCell)
       .keyUp(protractor.Key.SHIFT)
@@ -414,8 +414,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickColumnMenu: function( gridId, colNumber, menuItemNumber ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  clickColumnMenu: function( gridId, colNumber, menuItemNumber, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
     headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
 
@@ -441,8 +441,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickColumnMenuSortAsc: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 0);
+  clickColumnMenuSortAsc: function( gridId, colNumber, browserInst ) {
+    this.clickColumnMenu( gridId, colNumber, 0, browserInst);
   },
 
   /**
@@ -463,8 +463,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickColumnMenuSortDesc: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 1);
+  clickColumnMenuSortDesc: function( gridId, colNumber, browserInst ) {
+    this.clickColumnMenu( gridId, colNumber, 1, browserInst);
   },
 
   /**
@@ -485,8 +485,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickColumnMenuRemoveSort: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 2);
+  clickColumnMenuRemoveSort: function( gridId, colNumber, browserInst ) {
+    this.clickColumnMenu( gridId, colNumber, 2, browserInst);
   },
 
   /**
@@ -507,8 +507,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickColumnMenuHide: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 3);
+  clickColumnMenuHide: function( gridId, colNumber, browserInst ) {
+    this.clickColumnMenu( gridId, colNumber, 3, browserInst);
   },
 
   /**
@@ -528,8 +528,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectFilterBoxInColumn: function( gridId, colNumber, count ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  expectFilterBoxInColumn: function( gridId, colNumber, count, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
     expect( headerCell.all( by.css( '.ui-grid-filter-input' ) ).count() ).toEqual(count);
   },
@@ -551,8 +551,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectFilterSelectInColumn: function( gridId, colNumber, count ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  expectFilterSelectInColumn: function( gridId, colNumber, count, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
     expect( headerCell.all( by.css( '.ui-grid-filter-select' ) ).count() ).toEqual(count);
   },
@@ -572,8 +572,8 @@ module.exports = {
   * </pre>
   *
   */
-  cancelFilterInColumn: function( gridId, colNumber ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  cancelFilterInColumn: function( gridId, colNumber, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
     headerCell.element( by.css( '.ui-grid-icon-cancel' ) ).click();
   },
@@ -594,8 +594,8 @@ module.exports = {
   * </pre>
   *
   */
-  enterFilterInColumn: function( gridId, colNumber, filterValue ) {
-    var headerCell = this.headerCell( gridId, colNumber);
+  enterFilterInColumn: function( gridId, colNumber, filterValue, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst);
 
     headerCell.element( by.css( '.ui-grid-filter-input' ) ).sendKeys(filterValue);
   },
@@ -616,12 +616,12 @@ module.exports = {
   * </pre>
   *
   */
-  expectVisibleColumnMenuItems: function( gridId, colNumber, expectItems ) {
-    var headerCell = this.headerCell( gridId, colNumber );
+  expectVisibleColumnMenuItems: function( gridId, colNumber, expectItems, browserInst ) {
+    var headerCell = this.headerCell( gridId, colNumber, browserInst );
     headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
 
     var displayedCount = 0;
-    var columnMenu = this.getGrid( gridId ).element( by.css( '.ui-grid-column-menu' ));
+    var columnMenu = this.getGrid( gridId, browserInst ).element( by.css( '.ui-grid-column-menu' ));
 
     var menuItems = columnMenu.all( by.css( '.ui-grid-menu-item' ) );
 
@@ -651,8 +651,8 @@ module.exports = {
   * </pre>
   *
   */
-  expectVisibleGridMenuItems: function( gridId, expectItems ) {
-    var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
+  expectVisibleGridMenuItems: function( gridId, expectItems, browserInst ) {
+    var gridMenuButton = this.getGrid( gridId, browserInst ).element( by.css ( '.ui-grid-menu-button' ) );
     gridMenuButton.click();
 
     var displayedCount = 0;
@@ -688,8 +688,8 @@ module.exports = {
   * </pre>
   *
   */
-  clickGridMenuItem: function( gridId, itemNumber ) {
-    var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
+  clickGridMenuItem: function( gridId, itemNumber, browserInst ) {
+    var gridMenuButton = this.getGrid( gridId, browserInst ).element( by.css ( '.ui-grid-menu-button' ) );
     gridMenuButton.click();
 
     gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
@@ -710,8 +710,8 @@ module.exports = {
   * </pre>
   *
   */
-  unclickGridMenu: function( gridId ) {
-    var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
+  unclickGridMenu: function( gridId, browserInst ) {
+    var gridMenuButton = this.getGrid( gridId, browserInst ).element( by.css ( '.ui-grid-menu-button' ) );
     gridMenuButton.click();
   }  
 };
