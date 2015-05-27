@@ -72,7 +72,7 @@ In this example we've provided a "toggle filters" button to allow you to turn th
 still visually indicate which columns are filtered even when the filters aren't present, we've used the headerCellClass
 to make any columns with a filter condition have blue text.
 
-## Single filter box (similar to 2.x)
+### Single filter box (similar to 2.x)
 
 Refer the {@link 499_FAQ FAQ}, it is possible to implement this using a rowsProcessor.
 
