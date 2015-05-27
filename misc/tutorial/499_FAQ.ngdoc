@@ -84,5 +84,5 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
   if each row should be visible, and appropriately set the visible flag.
   
   This is a little tricky to build as a generic feature, but for specific use cases would be reasonably
-  simple.
+  simple.  Refer the {@link 321_singleFilter single filter tutorial}.
    

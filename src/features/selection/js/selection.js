@@ -390,6 +390,16 @@
           gridOptions.enableRowHeaderSelection = gridOptions.enableRowHeaderSelection !== false;
           /**
            *  @ngdoc object
+           *  @name enableFullRowSelection
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable selection by clicking anywhere on the row.  Defaults to 
+           *  false if `enableRowHeaderSelection` is true, otherwise defaults to false.
+           */
+          if ( typeof(gridOptions.enableFullRowSelection) === 'undefined' ){
+            gridOptions.enableFullRowSelection = !gridOptions.enableRowHeaderSelection;
+          }
+          /**
+           *  @ngdoc object
            *  @name enableSelectAll
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable the select all checkbox at the top of the selectionRowHeader
@@ -874,7 +884,7 @@
             };
 
             function registerRowSelectionEvents() {
-              if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection) {
+              if ($scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection) {
                 $elm.addClass('ui-grid-disable-selection');
                 $elm.on('touchstart', touchStart);
                 $elm.on('touchend', touchEnd);
@@ -900,10 +910,10 @@
             // register a dataChange callback so that we can change the selection configuration dynamically
             // if the user changes the options
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( function() {
-              if ( $scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection &&
+              if ( $scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection &&
                 !$scope.registered ){
                 registerRowSelectionEvents();
-              } else if ( ( !$scope.grid.options.enableRowSelection || $scope.grid.options.enableRowHeaderSelection ) &&
+              } else if ( ( !$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection ) &&
                 $scope.registered ){
                 deregisterRowSelectionEvents();
               }

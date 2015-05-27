@@ -487,12 +487,13 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc property
-     * @name tooltip
+     * @name cellTooltip
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description Whether or not to show a tooltip when a user hovers over the cell.
      * If set to false, no tooltip.  If true, the cell value is shown in the tooltip (useful
      * if you have long values in your cells), if a function then that function is called
-     * passing in the row and the col `cellTooltip( row, col )`, and the return value is shown in the tooltip.
+     * passing in the row and the col `cellTooltip( row, col )`, and the return value is shown in the tooltip,
+     * if it is a static string then displays that static string.
      * 
      * Defaults to false
      *
@@ -503,9 +504,41 @@ angular.module('ui.grid')
       self.cellTooltip = function(row, col) {
         return self.grid.getCellValue( row, col );
       };
-    } else {
+    } else if (typeof(colDef.cellTooltip) === 'function' ){
       self.cellTooltip = colDef.cellTooltip;
+    } else {
+      self.cellTooltip = function ( row, col ){
+        return col.colDef.cellTooltip;
+      };
     }
+
+    /**
+     * @ngdoc property
+     * @name headerTooltip
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description Whether or not to show a tooltip when a user hovers over the header cell.
+     * If set to false, no tooltip.  If true, the displayName is shown in the tooltip (useful
+     * if you have long values in your headers), if a function then that function is called
+     * passing in the row and the col `headerTooltip( col )`, and the return value is shown in the tooltip,
+     * if a static string then shows that static string.
+     * 
+     * Defaults to false
+     *
+     */
+    if ( typeof(colDef.headerTooltip) === 'undefined' || colDef.headerTooltip === false ) {
+      self.headerTooltip = false;
+    } else if ( colDef.headerTooltip === true ){
+      self.headerTooltip = function(col) {
+        return col.displayName;
+      };
+    } else if (typeof(colDef.headerTooltip) === 'function' ){
+      self.headerTooltip = colDef.headerTooltip;
+    } else {
+      self.headerTooltip = function ( col ) {
+        return col.colDef.headerTooltip;
+      };
+    }
+
 
     /**
      * @ngdoc property

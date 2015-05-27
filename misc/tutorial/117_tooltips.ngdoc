@@ -5,13 +5,25 @@
 You can set a tooltip (actually, a title) to pop up when a user hovers over a cell.
 
 This tooltip can be simply the cell contents, in which case set the columnDef to have
-`cellTooltip: true`.  Or it can be a function that returns a value derived from the 
+`cellTooltip: true`.
+
+Or it can be a function that returns a value derived from the 
 current column and row - for example:
+
 ```
   cellTooltip: function(row, col) {
     return 'Name: ' + row.entity.name + ' Company: ' + row.entity.company;
   }
 ```
+
+Or it can be a string, in which case that string will be displayed:
+
+```
+  cellTooltip: 'Custom tooltip - maybe some help text'
+```
+
+
+You can also set a headerTooltip in a similar manner, it defaults to showing the displayName.
 
 Note that turning on tooltips will create an extra watcher per cell, so it has an impact on overall grid
 performance, it is not recommended to turn them on for every column, rather only for the columns likely to have
@@ -27,13 +39,16 @@ Tooltips respect the cellFilter, so if you define a cellFilter it will also be u
       $scope.gridOptions = {
         enableSorting: true,
         columnDefs: [
-          { field: 'name', cellTooltip: true },
+          { field: 'name', cellTooltip: 'Custom string', headerTooltip: 'Custom header string' },
           { field: 'company', cellTooltip: 
             function( row, col ) {
               return 'Name: ' + row.entity.name + ' Company: ' + row.entity.company;
-            } 
+            }, headerTooltip: 
+            function( col ) {
+              return 'Header: ' + col.displayName;
+            }
           },
-          { field: 'gender', cellTooltip: true, cellFilter: 'mapGender' },
+          { field: 'gender', cellTooltip: true, headerTooltip: true, cellFilter: 'mapGender' },
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
