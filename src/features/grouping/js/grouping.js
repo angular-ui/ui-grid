@@ -885,7 +885,9 @@
         for (var i = 0; i < renderableRows.length; i++ ){
           var row = renderableRows[i];
 
-          processingState.forEach( updateProcessingState );
+          if ( row.visible ){
+            processingState.forEach( updateProcessingState );
+          }
         }
 
         delete grid.grouping.oldGroupingHeaderCache;

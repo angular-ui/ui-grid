@@ -1011,7 +1011,7 @@
           }
 
           // aggregate if this is a leaf node
-          if ( typeof(row.treeLevel) === 'undefined' || row.treeLevel === null || row.treeLevel < 0  ){
+          if ( ( typeof(row.treeLevel) === 'undefined' || row.treeLevel === null || row.treeLevel < 0 ) && row.visible  ){
             service.aggregate( grid, row, parents );
           }
 

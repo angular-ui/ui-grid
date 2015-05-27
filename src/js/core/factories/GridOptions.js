@@ -69,9 +69,37 @@ angular.module('ui.grid')
        * @name data
        * @propertyOf ui.grid.class:GridOptions
        * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for 
-       * the grid.  The most common case is an array of objects, where each object has a number of attributes.
+       * the grid.
+       * 
+       * Most commonly the data is an array of objects, where each object has a number of attributes.
        * Each attribute automatically becomes a column in your grid.  This array could, for example, be sourced from
-       * an angularJS $resource query request.  The array can also contain complex objects.
+       * an angularJS $resource query request.  The array can also contain complex objects, refer the binding tutorial 
+       * for examples of that.
+       * 
+       * The most flexible usage is to set your data on $scope:
+       * 
+       * `$scope.data = data;`
+       * 
+       * And then direct the grid to resolve whatever is in $scope.data:
+       * 
+       * `$scope.gridOptions.data = 'data';`
+       * 
+       * This is the most flexible approach as it allows you to replace $scope.data whenever you feel like it without
+       * getting pointer issues.
+       * 
+       * Alternatively you can directly set the data array:
+       * 
+       * `$scope.gridOptions.data = [ ];`
+       * or
+       * 
+       * `$http.get('/data/100.json')
+       * .success(function(data) {
+       *   $scope.myData = data;
+       *   $scope.gridOptions.data = $scope.myData;
+       *  });`
+       * 
+       * Where you do this, you need to take care in updating the data - you can't just update `$scope.myData` to some other 
+       * array, you need to update $scope.gridOptions.data to point to that new array as well.
        * 
        */
       baseOptions.data = baseOptions.data || [];
