@@ -885,7 +885,8 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
     var self = this;
-    this.columns.forEach(function (col) {
+
+    var preCompileTemplate = function( col ) {
       var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
       html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
@@ -905,6 +906,16 @@ angular.module('ui.grid')
 
       if (col.compiledElementFnDefer) {
         col.compiledElementFnDefer.resolve(col.compiledElementFn);
+      }
+    };
+
+    this.columns.forEach(function (col) {
+      if ( col.cellTemplate ){
+        preCompileTemplate( col );
+      } else if ( col.cellTemplatePromise ){
+        col.cellTemplatePromise.then( function() {
+          preCompileTemplate( col );
+        });
       }
     });
   };
