@@ -357,7 +357,11 @@
             }
 
             if ( grid.options.saveFilter ){
-              savedColumn.filters = angular.copy ( column.filters );
+              // Make a copy of the filters and then only save certain filter properties for each, e.g. term.
+              var copiedFilters = column.filters.map(function( currentFilter) {
+                return {term: currentFilter.term};
+              });
+              savedColumn.filters = copiedFilters;
             }
 
             if ( !!grid.api.pinning && grid.options.savePinning ){
@@ -545,7 +549,14 @@
 
               if ( grid.options.saveFilter &&
                    !angular.equals(currentCol.filters, columnState.filters ) ){
-                currentCol.filters = angular.copy( columnState.filters );
+                currentCol.filters.every( function( currentFilter, index ) {
+                  // Break if there are no saved filters or if there is no saved filter for the current filter.
+                  if (!columnState.filters || index + 1 > columnState.filters.length) {
+                    return false;
+                  }
+                  // Extend only the saved properties, e.g. "term".
+                  angular.extend(currentFilter, columnState.filters[index]);
+                });
                 grid.api.core.raise.filterChanged();
               }
 
