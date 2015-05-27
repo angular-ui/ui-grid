@@ -47,6 +47,8 @@
               updateClass();
             }
 
+            $scope.col.updateAggregationValue();
+
             // Watch for column changes so we can alter the col cell class properly
 /* shouldn't be needed any more, given track by col.name
             $scope.$watch('col', function (n, o) {
