@@ -143,24 +143,31 @@ function will stop working), and writes them to the console.
       };
       
       $scope.getAggregates = function() {
-        var aggregateInfo = {};
-        var lastState; 
-        $scope.gridApi.grid.renderContainers.body.visibleRowCache.forEach( function(row) {
-          if( row.groupHeader ) {
-            if( row.groupLevel === 0 ){
-              // in the format "xxxxx (10)", we want the xxxx and the 10
-              if( match = row.entity.state.match(/(.+) \((\d+)\)/) ){
-                aggregateInfo[ match[1] ] = { stateTotal: match[2] };
-                lastState = match[1];
+        var aggregatesTree = [];
+        var gender
+
+        var recursiveExtract = function( treeChildren ) {
+          return treeChildren.map( function( node ) {
+            var newNode = {};
+            angular.forEach(node.row.entity, function( attributeCol ) {
+              if( typeof(attributeCol.groupVal) !== 'undefined' ) {
+                newNode.groupVal = attributeCol.groupVal;
+                newNode.aggVal = attributeCol.value;
               }
-            } else if (row.groupLevel === 1){
-              if( match = row.entity.gender.match(/(.+) \((\d+)\)/) ){
-                aggregateInfo[ lastState ][ match[1] ] = match[2];
-              }
+            });
+            newNode.otherAggregations = node.aggregations.map( function( aggregation ) {
+              return { colName: aggregation.col.name, value: aggregation.value, type: aggregation.type };
+            });
+            if( node.children ) { 
+              newNode.children = recursiveExtract( node.children );
             }
-          }
-        });
-        console.log(aggregateInfo);
+            return newNode;
+          });
+        }
+
+        aggregatesTree = recursiveExtract( $scope.gridApi.grid.treeBase.tree );
+
+        console.log(aggregatesTree);
       };
     }])
     .filter('mapGender', function() {
