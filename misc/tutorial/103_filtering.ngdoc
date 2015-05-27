@@ -74,7 +74,7 @@ to make any columns with a filter condition have blue text.
 
 ### Single filter box (similar to 2.x)
 
-Refer the {@link 499_FAQ FAQ}, it is possible to implement this using a rowsProcessor.
+Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implement this using a rowsProcessor.
 
 @example
 <example module="app">
