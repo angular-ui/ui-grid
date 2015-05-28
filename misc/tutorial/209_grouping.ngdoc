@@ -81,8 +81,7 @@ could potentially interact with people's custom templates.
 
 Tuning the way aggregations work can be done through defining a columnsProcessor that runs with higher (later)
 priority than the groupingColumnProcessor (so higher than 400), and that looks for grouped or aggregated columns
-and changes things like the treeAggregation.type, or the customTreeAggregationFinalizerFn.  A 'complex' tutorial
-may be forthcoming that provides examples of this.
+and changes things like the treeAggregationFn, or the customTreeAggregationFinalizerFn.  See tutorial 320 for an example.
 
 
 @example
@@ -105,10 +104,10 @@ function will stop working), and writes them to the console.
         columnDefs: [
           { name: 'name', width: '30%' },
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%', cellFilter: 'mapGender' },
-          { name: 'age', treeAggregation: { type: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
+          { name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%' },
           { name: 'company', width: '25%' },
           { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
-          { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregation: { type: uiGridGroupingConstants.aggregation.AVG }, customTreeAggregationFinalizerFn: function( aggregation ) { 
+          { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregationType: uiGridGroupingConstants.aggregation.AVG, customTreeAggregationFinalizerFn: function( aggregation ) {
             aggregation.rendered = aggregation.value; 
           } }
         ],

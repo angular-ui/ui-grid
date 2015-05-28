@@ -1,6 +1,7 @@
 describe('ui.grid.grouping uiGridGroupingService', function () {
   var uiGridGroupingService;
   var uiGridGroupingConstants;
+  var uiGridTreeBaseService;
   var gridClassFactory;
   var grid;
   var $rootScope;
@@ -10,13 +11,14 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   beforeEach(module('ui.grid.grouping'));
 
   beforeEach(inject(function (_uiGridGroupingService_,_gridClassFactory_, $templateCache, _uiGridGroupingConstants_,
-                              _$rootScope_, _GridRow_) {
+                              _$rootScope_, _GridRow_, _uiGridTreeBaseService_) {
     uiGridGroupingService = _uiGridGroupingService_;
     uiGridGroupingConstants = _uiGridGroupingConstants_;
     gridClassFactory = _gridClassFactory_;
     $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
     GridRow = _GridRow_;
+    uiGridTreeBaseService = _uiGridTreeBaseService_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
@@ -170,16 +172,16 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     });
 
     it('finds one aggregation, has no priority', function() {
-      grid.columns[1].treeAggregation = {type: uiGridGroupingConstants.aggregation.COUNT};
+      grid.columns[1].treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT };
 
       var grouping = uiGridGroupingService.getGrouping(grid);
 
-      expect( grouping.aggregations[0].col.name).toEqual('col1');
+      expect( grouping.aggregations[0].col.name ).toEqual('col1');
       delete grouping.aggregations[0].col;
 
       expect( grouping ).toEqual({
         grouping: [],
-        aggregations: [ { field: 'col1', aggregation: {type: uiGridGroupingConstants.aggregation.COUNT } } ]
+        aggregations: [ { field: 'col1', aggregation: { type: 'count' } } ]
       });
     });
 
@@ -373,7 +375,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         ]
       });
     });
-  });  
+  });
 
 
   describe('setGrouping', function() {
@@ -412,7 +414,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         aggregations: [
           { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT } }
         ],
-        rowExpandedStates: { 
+        rowExpandedStates: {
           male: { state: 'expanded', children: {
             22: { state: 'collapsed' },
             38: { state: 'expanded' }
@@ -429,7 +431,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           { field: 'col2', colName: 'col2', groupPriority: 1 }
         ],
         aggregations: [
-          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT} }
+          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT, label: uiGridTreeBaseService.nativeAggregations.count.label } }
         ],
         rowExpandedStates: {
           male: { state: 'expanded', children: {

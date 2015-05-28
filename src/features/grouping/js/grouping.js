@@ -77,8 +77,7 @@
       SUM: 'sum',
       MAX: 'max',
       MIN: 'min',
-      AVG: 'avg',
-      CUSTOM: 'custom'
+      AVG: 'avg'
     }
   });
 
@@ -274,17 +273,19 @@
                * @methodOf  ui.grid.grouping.api:PublicApi
                * @description Sets the aggregation type on a column, if the 
                * column is currently grouped then it removes the grouping first.
-               * If the aggregationType is null then will result in the aggregation
+               * If the aggregationDef is null then will result in the aggregation
                * being removed
                * 
                * @param {string} columnName the column we want to aggregate
-               * @param {string} aggregationType one of the recognised types
-               * from uiGridGroupingConstants
+               * @param {string} or {function} aggregationDef one of the recognised types
+               * from uiGridGroupingConstants or a custom aggregation function.
+               * @param {string} aggregationLabel (optional) The label to use for this aggregation.
                */
-              aggregateColumn: function( columnName, aggregationType){
+              aggregateColumn: function( columnName, aggregationDef, aggregationLabel){
                 var column = grid.getColumn(columnName);
-                service.aggregateColumn( grid, column, aggregationType );
+                service.aggregateColumn( grid, column, aggregationDef, aggregationLabel);
               }
+
             }
           }
         };
@@ -406,10 +407,13 @@
         if ( typeof(col.grouping) === 'undefined' && typeof(colDef.grouping) !== 'undefined') {
           col.grouping = angular.copy(colDef.grouping);
           if ( typeof(col.grouping.groupPriority) !== 'undefined' && col.grouping.groupPriority > -1 ){
-            col.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT };
+            col.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
             col.customTreeAggregationFinalizerFn = function( aggregation ){
               if ( typeof(aggregation.groupVal) !== 'undefined') {
-                aggregation.rendered = aggregation.groupVal + ' (' + aggregation.value + ')';
+                aggregation.rendered = aggregation.groupVal;
+                if ( gridOptions.groupingShowCounts ){
+                  aggregation.rendered += (' (' + aggregation.value + ')');
+                }
               } else {
                 aggregation.rendered = null;
               }
@@ -455,9 +459,7 @@
           name: 'ui.grid.grouping.aggregateRemove',
           title: i18nService.get().grouping.aggregate_remove,
           shown: function () {
-            return typeof(this.context.col.treeAggregation) !== 'undefined' && 
-                   typeof(this.context.col.treeAggregation.type) !== 'undefined' &&
-                   this.context.col.treeAggregation.type !== null;
+            return typeof(this.context.col.treeAggregationFn) !== 'undefined';
           },
           action: function () {
             service.aggregateColumn( this.context.col.grid, this.context.col, null);
@@ -465,12 +467,13 @@
         };
 
         // generic adder for the aggregation menus, which follow a pattern
-        var addAggregationMenu = function(type){
+        var addAggregationMenu = function(type, title){
+          title = title || i18nService.get().grouping['aggregate_' + type] || type;
           var menuItem = {
             name: 'ui.grid.grouping.aggregate' + type,
-            title: i18nService.get().grouping['aggregate_' + type],
+            title: title,
             shown: function () {
-              return typeof(this.context.col.treeAggregation) === 'undefined' || 
+              return typeof(this.context.col.treeAggregation) === 'undefined' ||
                      typeof(this.context.col.treeAggregation.type) === 'undefined' ||
                      this.context.col.treeAggregation.type !== type;
             },
@@ -510,11 +513,12 @@
          *  <br/>Defaults to true.
          */
         if ( col.colDef.groupingShowAggregationMenu !== false ){
-          addAggregationMenu(uiGridGroupingConstants.aggregation.COUNT);
-          addAggregationMenu(uiGridGroupingConstants.aggregation.SUM);
-          addAggregationMenu(uiGridGroupingConstants.aggregation.MAX);
-          addAggregationMenu(uiGridGroupingConstants.aggregation.MIN);
-          addAggregationMenu(uiGridGroupingConstants.aggregation.AVG);
+          angular.forEach(uiGridTreeBaseService.nativeAggregations, function(aggregationDef, name){
+            addAggregationMenu(name);
+          });
+          angular.forEach(gridOptions.treeCustomAggregations, function(aggregationDef, name){
+            addAggregationMenu(name, aggregationDef.menuTitle);
+          });
 
           if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.aggregateRemove')) {
             col.menuItems.push(aggregateRemove);
@@ -629,6 +633,7 @@
         service.tidyPriorities( grid );
 
         column.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT, source: 'grouping' };
+        column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
         column.customTreeAggregationFinalizerFn = function( aggregation ){
           if ( typeof(aggregation.groupVal) !== 'undefined') {
             aggregation.rendered = aggregation.groupVal + ' (' + aggregation.value + ')';
@@ -669,7 +674,6 @@
         grid.queueGridRefresh();
       },
 
-
       /**
        * @ngdoc function
        * @name aggregateColumn
@@ -679,25 +683,30 @@
        * 
        * @param {Grid} grid grid object
        * @param {GridCol} column the column we want to aggregate
-       * @param {string} aggregationType one of the recognised types
-       * from uiGridGroupingConstants
+       * @param {string} one of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
        */
       aggregateColumn: function( grid, column, aggregationType){
-        if (typeof(column.treeAggregation) === 'undefined') {
-          column.treeAggregation = {};
-        }
 
         if (typeof(column.grouping) !== 'undefined' && typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
           service.ungroupColumn( grid, column );
         }
 
-        column.treeAggregation = { type: aggregationType };
+        var aggregationDef = {};
+        if ( typeof(grid.options.treeCustomAggregations[aggregationType]) !== 'undefined' ){
+          aggregationDef = grid.options.treeCustomAggregations[aggregationType];
+        } else if ( typeof(uiGridTreeBaseService.nativeAggregations[aggregationType]) !== 'undefined' ){
+          aggregationDef = uiGridTreeBaseService.nativeAggregations[aggregationType];
+        }
+
+        column.treeAggregation = { type: aggregationType, label:  i18nService.get().aggregation[aggregationDef.label] || aggregationDef.label };
+        column.treeAggregationFn = aggregationDef.aggregationFn;
+        column.treeAggregationFinalizerFn = aggregationDef.finalizerFn;
 
         grid.queueGridRefresh();
       },
 
 
-     /**
+      /**
        * @ngdoc function
        * @name setGrouping
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
@@ -725,7 +734,7 @@
           });
         }
 
-        if ( config.aggregations && config.aggregations.length && config.aggregations.length > 0 ){
+        if ( config.aggregations && config.aggregations.length ){
           config.aggregations.forEach( function( aggregation ) {
             var col = grid.getColumn(aggregation.colName);
 
@@ -741,7 +750,7 @@
       },
 
 
-     /**
+      /**
        * @ngdoc function
        * @name clearGrouping
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
@@ -823,7 +832,7 @@
       },
 
 
-     /**
+      /**
        * @ngdoc function
        * @name groupRows
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
@@ -895,7 +904,7 @@
       },
 
 
-     /**
+      /**
        * @ngdoc function
        * @name initialiseProcessingState
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
@@ -924,7 +933,7 @@
       },
 
 
-     /**
+      /**
        * @ngdoc function
        * @name getGrouping
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService

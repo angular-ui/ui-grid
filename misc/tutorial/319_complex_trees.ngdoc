@@ -39,11 +39,11 @@ you need to be careful how you use it.
 
 Aggregations are set on the columnDef or column in the format:
 ```
-  colDef.treeAggregation: { type: uiGridTreeViewConstants.SUM }
+  colDef.treeAggregationType = uiGridTreeViewConstants.SUM;
 ```
 
 You can provide a custom aggregation function, but note that the aggregation is performed as a running total, so
-your function needs to work within that framework.  Refer the documentation for `customTreeAggregationFn` under
+your function needs to work within that framework.  Refer the documentation for `treeAggregationFn` under
 {@link api/ui.grid.treeBase.api:ColumnDef columnDef}.
 
 You can provide a custom finalizer function, which can be used to format or otherwise complete your aggregation
@@ -68,7 +68,7 @@ that shows both the value for that row as well as the aggregated value.
           { name: 'age', width: '20%' },
           { name: 'company', width: '25%' },
           { name: 'state', width: '35%', field: 'address.state' },
-          { name: 'balance', width: '25%', treeAggregation: { type: uiGridTreeViewConstants.aggregation.SUM }, cellFilter: 'currency', cellTemplate: '<div class="ui-grid-cell-contents" title="TOOLTIP"><span>{{row.entity.balance CUSTOM_FILTERS}}</span><span ng-if="row.entity[\'$$\' + col.uid]"> ({{row.entity["$$" + col.uid].value CUSTOM_FILTERS}})</span></div>' }
+          { name: 'balance', width: '25%', treeAggregationType: uiGridTreeViewConstants.aggregation.SUM, cellFilter: 'currency', cellTemplate: '<div class="ui-grid-cell-contents" title="TOOLTIP"><span>{{row.entity.balance CUSTOM_FILTERS}}</span><span ng-if="row.entity[\'$$\' + col.uid]"> ({{row.entity["$$" + col.uid].value CUSTOM_FILTERS}})</span></div>' }
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
