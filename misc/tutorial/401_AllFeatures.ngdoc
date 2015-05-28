@@ -13,8 +13,8 @@ All features are enabled to get an idea of performance
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping']);
 
-    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants',
-     function ($scope, $http, $timeout, $interval, uiGridConstants) {
+    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants',
+     function ($scope, $http, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
 
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
@@ -35,7 +35,7 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.columnDefs = [
         { name:'id', width:50 },
         { name:'name', width:100 },
-        { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg },
+        { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg, treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
         { name:'address.street', width:150, enableCellEdit: true },
         { name:'address.city', width:150, enableCellEdit: true },
         { name:'address.state', width:50, enableCellEdit: true },

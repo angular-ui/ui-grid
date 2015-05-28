@@ -44,8 +44,7 @@
       SUM: 'sum',
       MAX: 'max',
       MIN: 'min',
-      AVG: 'avg',
-      CUSTOM: 'custom'
+      AVG: 'avg'
     }
   });
 

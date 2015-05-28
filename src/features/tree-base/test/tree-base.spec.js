@@ -44,6 +44,19 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
     data[7].$$treeLevel = 0;
     data[9].$$treeLevel = 1;
 
+//    data = [
+//      { col0: 'a_0', col1: 0, col2: 'c_0', col3: 0, '$$treeLevel': 0 } ,
+//      { col0: 'a_0', col1: 0, col2: 'c_1', col3: 1, '$$treeLevel': 1 },
+//      { col0: 'a_0', col1: 1, col2: 'c_2', col3: 2 },
+//      { col0: 'a_0', col1: 1, col2: 'c_3', col3: 3, '$$treeLevel': 1 },
+//      { col0: 'a_1', col1: 2, col2: 'c_4', col3: 4, '$$treeLevel': 2 },
+//      { col0: 'a_1', col1: 2, col2: 'c_5', col3: 5 },
+//      { col0: 'a_1', col1: 3, col2: 'c_6', col3: 6 },
+//      { col0: 'a_1', col1: 3, col2: 'c_7', col3: 7, '$$treeLevel': 0 },
+//      { col0: 'a_2', col1: 4, col2: 'c_8', col3: 8 },
+//      { col0: 'a_2', col1: 4, col2: 'c_9', col3: 9, '$$treeLevel': 1 }
+//    ];
+
     grid.options.data = data;
 
     grid.buildColumns();
@@ -72,7 +85,8 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
         treeIndent: 10,
         showTreeRowHeader: true,
         showTreeExpandNoChildren: true,
-        treeRowHeaderAlwaysVisible: true
+        treeRowHeaderAlwaysVisible: true,
+        treeCustomAggregations: {}
       });
     });
   });
@@ -350,7 +364,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
 
       spyOn( grid, 'getCellValue').andCallFake( function( row, col ) { return row.entity.col3; } );
 
-      grid.columns[3].treeAggregation = { type: 'sum' };
+      grid.columns[3].treeAggregationType = 'sum';
       grid.columns[3].uid = 'col3';
 
       var tree = uiGridTreeBaseService.createTree( grid, rows );
@@ -688,14 +702,11 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
 
     it( 'two aggregations, one looks up label', function() {
       // treeBase has added a rowHeader column, so columns shifted right by one
-      grid.columns[2].treeAggregation = {
-        type: 'sum'
-      };
+      grid.columns[2].treeAggregation = { type: 'sum', label: uiGridTreeBaseService.nativeAggregations.sum.label };
+      grid.columns[2].treeAggregationFn = uiGridTreeBaseService.nativeAggregations.sum.aggregationFn;
 
-      grid.columns[3].treeAggregation = {
-        type: 'custom',
-        label: 'custom- '
-      };
+      grid.columns[3].treeAggregationFn = angular.noop;
+      grid.columns[3].treeAggregation = {label: 'custom- '};
 
       var result = uiGridTreeBaseService.getAggregations(grid);
       expect( result.length ).toEqual(2, '2 aggregated columns');
@@ -706,12 +717,9 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       expect( result ).toEqual([
         { 
           type: 'sum',
-          value: 0,
           label: 'total: '
         },
         { 
-          type: 'custom',
-          value: 0,
           label: 'custom- '
         }
       ]);
@@ -749,55 +757,30 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
         aggregation.custom = numValue / 2;
       };
 
-      grid.columns[4].customTreeAggregationFn = customAggregation;
+      grid.columns[4].treeAggregationFn = customAggregation;
 
       var parents = [
-        { treeNode: { aggregations: [ 
-          { type: 'count', col: grid.columns[4], value: 5 },
-          { type: 'sum', col: grid.columns[4], value: 5 },
-          { type: 'max', col: grid.columns[4], value: 5 },
-          { type: 'min', col: grid.columns[4], value: 5 },
-          { type: 'avg', col: grid.columns[4], value: 5, sum: 5, count: 1 },
-          { type: 'custom', col: grid.columns[4], custom: 20 }
+        { treeNode: { aggregations: [
+          { col: grid.columns[4], custom: 20 }
         ]}},
-        { treeNode: { aggregations: [ 
-          { type: 'count', col: grid.columns[4], value: 6 },
-          { type: 'sum', col: grid.columns[4], value: 6 },
-          { type: 'max', col: grid.columns[4], value: 1 },
-          { type: 'min', col: grid.columns[4], value: 1 },
-          { type: 'avg', col: grid.columns[4], value: 6, sum: 6, count: 1 },
-          { type: 'custom', col: grid.columns[4], custom: 19 }
+        { treeNode: { aggregations: [
+          { col: grid.columns[4], custom: 19 }
         ]}}
       ];
 
       uiGridTreeBaseService.aggregate(grid, grid.rows[2], parents );
 
-      // remove columns, when you get errors they make it impossible to see what's going on
+      // remove column references, they make it impossible to see what's going on in failure messages
       parents.forEach(function(parent){
         parent.treeNode.aggregations.forEach( function(aggregation){
           delete aggregation.col;
-          delete aggregation.customAggregation;
         });
       });
 
-      expect( parents ).toEqual([
-        { treeNode: { aggregations: [ 
-          { type: 'count', value: 6 },
-          { type: 'sum', value: 7 },
-          { type: 'max', value: 5 },
-          { type: 'min', value: 2 },
-          { type: 'avg', value: 3.5, sum: 7, count: 2 },
-          { type: 'custom', custom: 1 }
-        ]}},
-        { treeNode: { aggregations: [ 
-          { type: 'count', value: 7 },
-          { type: 'sum', value: 8 },
-          { type: 'max', value: 2 },
-          { type: 'min', value: 1 },
-          { type: 'avg', value: 4, sum: 8, count: 2 },
-          { type: 'custom', custom: 1 }
-        ]}}
-      ]);
+      expect(parents[0].treeNode.aggregations[0]).toEqual({ custom: 1 });
+
+      expect(parents[1].treeNode.aggregations[0]).toEqual({ custom: 1 });
+
     });
   });
 

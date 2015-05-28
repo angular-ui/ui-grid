@@ -13,14 +13,14 @@ children of the selected rowHeader.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'ui.grid.edit', 'ui.grid.selection' ]);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'ui.grid.edit', 'ui.grid.selection']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', '$filter', function ($scope, $http, $interval, uiGridGroupingConstants, $filter ) {
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', '$filter', 'stats', function ($scope, $http, $interval, uiGridGroupingConstants, $filter, stats ) {
       var setGroupValues = function( columns, rows ) {
         columns.forEach( function( column ) {
           if ( column.grouping && column.grouping.groupPriority > -1 ){
-            column.treeAggregation.type = uiGridGroupingConstants.aggregation.CUSTOM;
-            column.customTreeAggregationFn = function( aggregation, fieldValue, numValue, row ) {
+            // Put the balance next to all group labels.
+            column.treeAggregationFn = function( aggregation, fieldValue, numValue, row ) {
               if ( typeof(aggregation.value) === 'undefined') {
                 aggregation.value = 0;
               }
@@ -33,8 +33,6 @@ children of the selected rowHeader.
                 aggregation.rendered = null;
               }
             };
-          } else {
-            delete column.customTreeAggregationFn;
           }
         });
         return columns;
@@ -44,20 +42,42 @@ children of the selected rowHeader.
         enableFiltering: true,
         enableGroupHeaderSelection: true,
         treeRowHeaderAlwaysVisible: false,
+        treeCustomAggregations: {
+          variance: {label: 'var: ', menuTitle: 'Agg: Var', aggregationFn: stats.aggregator.sumSquareErr, finalizerFn: stats.finalizer.variance },
+          stdev: {label: 'stDev: ', aggregationFn: stats.aggregator.sumSquareErr, finalizerFn: stats.finalizer.stDev},
+          mode: {label: 'mode: ', aggregationFn: stats.aggregator.mode, finalizerFn: stats.finalizer.mode },
+          median: {label: 'median: ', aggregationFn: stats.aggregator.accumulate.numValue, finalizerFn: stats.finalizer.median }
+        },
         columnDefs: [
-          { name: 'name', width: '30%' },
-          { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%',
+          { name: 'name', width: '15%' },
+          { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, editableCellTemplate: 'ui-grid/dropdownEditor', width: '10%',
             cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
               { id: 1, gender: 'male' },
               { id: 2, gender: 'female' }
             ] 
           },
-          { name: 'age', treeAggregation: { type: uiGridGroupingConstants.aggregation.MAX }, width: '20%' },
-          { name: 'company', width: '25%' },
-          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
-          { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregation: { type: uiGridGroupingConstants.aggregation.AVG }, customTreeAggregationFinalizerFn: function( aggregation ) { 
-            aggregation.rendered = aggregation.value; 
-          } }
+          { field: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '10%' },
+          { field: 'age', displayName: 'Age (common)', customTreeAggregationFn: stats.aggregator.mode, width: '10%' },
+          { name: 'company', width: '15%' },
+          { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '25%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
+          { field: 'balance', displayName: 'balance (avg)', width: '15%', cellFilter: 'currency',
+            treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
+            customTreeAggregationFinalizerFn: function( aggregation ) {
+              aggregation.rendered = aggregation.value;
+            }
+          },
+          { field: 'balance', displayName: 'balance (total)', width: '15%', cellFilter: 'currency',
+            treeAggregationType: uiGridGroupingConstants.aggregation.SUM,
+            customTreeAggregationFinalizerFn: function( aggregation ) {
+              aggregation.rendered = aggregation.value;
+            }
+          },
+          { field: 'balance', displayName: 'balance (median)', width: '15%', cellFilter: 'currency',
+            treeAggregationType: 'median',
+          },
+          { field: 'balance', displayName: 'balance (std dev)', width: '15%', cellFilter: 'currency',
+            treeAggregationType: 'stdev',
+          }
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
@@ -109,12 +129,132 @@ children of the selected rowHeader.
           return input;
         }
       };
+    })
+    .service('stats', function(){
+
+      var coreAccumulate = function(aggregation, value){
+        initAggregation(aggregation);
+        if ( angular.isUndefined(aggregation.stats.accumulator) ){
+          aggregation.stats.accumulator = [];
+        }
+        if ( !isNaN(value) ){
+          aggregation.stats.accumulator.push(value);
+        }
+      };
+
+      var initAggregation = function(aggregation){
+        /* To be used in conjunction with the cleanup finalizer */
+        if (angular.isUndefined(aggregation.stats) ){
+          aggregation.stats = {sum: 0};
+        }
+      };
+
+      var increment = function(obj, prop){
+        /* if the property on obj is undefined, sets to 1, otherwise increments by one */
+        if ( angular.isUndefined(obj[prop])){
+          obj[prop] = 1;
+        }
+        else {
+          obj[prop]++;
+        }
+      };
+
+      var service = {
+        aggregator: {
+          accumulate: {
+            /* This is to be used with the uiGrid customTreeAggregationFn definition,
+             * to accumulate all of the data into an array for sorting or other operations by customTreeAggregationFinalizerFn
+             * In general this strategy is not the most efficient way to generate grouped statistics, but
+             * sometime is the only way.
+             */
+            numValue: function (aggregation, fieldValue, numValue) {
+              return coreAccumulate(aggregation, numValue);
+            },
+            fieldValue: function (aggregation, fieldValue) {
+              return coreAccumulate(aggregation, fieldValue);
+            }
+          },
+          mode: function(aggregation, fieldValue){
+            initAggregation(aggregation);
+            var thisValue = fieldValue;
+            if (angular.isUndefined(thisValue) || thisValue === null){
+              thisValue = aggregation.col.grid.options.groupingNullLabel;
+            }
+            increment(aggregation.stats, thisValue);
+            if ( aggregation.stats[thisValue] > aggregation.maxCount || angular.isUndefined(aggregation.maxCount) ){
+              aggregation.maxCount = aggregation.stats[thisValue];
+              aggregation.value = thisValue;
+            }
+          },
+          sumSquareErr: function(aggregation, fieldValue, numValue){
+            initAggregation(aggregation);
+            if ( !isNaN(numValue) ){
+              increment(aggregation.stats, 'count');
+            }
+            aggregation.stats.sum += numValue || 0;
+            service.aggregator.accumulate.numValue(aggregation, fieldValue, numValue);
+          }
+        },
+        finalizer: {
+          cleanup: function (aggregation) {
+            delete aggregation.stats;
+            if ( angular.isUndefined(aggregation.rendered) ){
+              aggregation.rendered = aggregation.value;
+            }
+          },
+          median: function(aggregation){
+            aggregation.stats.accumulator.sort();
+            var arrLength = aggregation.stats.accumulator.length;
+            aggregation.value = arrLength % 2 === 0 ?
+              (aggregation.stats.accumulator[(arrLength / 2) - 1] + aggregation.stats.accumulator[(arrLength / 2)]) / 2
+              : aggregation.stats.accumulator[(arrLength / 2) | 0];
+            service.finalizer.cleanup(aggregation);
+          },
+          sumSquareErr: function(aggregation){
+            aggregation.value = 0;
+            if ( aggregation.count !== 0 ){
+              var mean = aggregation.stats.sum/aggregation.stats.count,
+                error;
+
+              angular.forEach(aggregation.stats.accumulator, function(value){
+                error = value - mean;
+                aggregation.value += error * error;
+              });
+            }
+          },
+          variance: function(aggregation){
+            service.finalizer.sumSquareErr(aggregation);
+            aggregation.value = aggregation.value / aggregation.stats.count;
+            service.finalizer.cleanup(aggregation);
+            aggregation.rendered = Math.round(aggregation.value * 100)/100;
+          },
+          varianceP: function(aggregation){
+            service.finalizer.sumSquareErr(aggregation);
+            if ( aggregation.count !== 0 ) {
+              aggregation.value = aggregation.value / (aggregation.stats.count - 1);
+            }
+            service.finalizer.cleanup(aggregation);
+          },
+          stDev: function(aggregation){
+            service.finalizer.variance(aggregation);
+            aggregation.value = Math.sqrt(aggregation.value);
+            aggregation.rendered = Math.round(aggregation.value * 100)/100;
+          },
+          stDevP: function(aggregation){
+            service.finalizer.varianceP(aggregation);
+            aggregation.value = Math.sqrt(aggregation.value);
+            aggregation.rendered = Math.round(aggregation.value * 100)/100;
+          }
+        },
+      };
+
+      return service;
     });
   </file>
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-edit ui-grid-selection class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-edit ui-grid-selection class="grid" style="width:100%;"></div>
     </div>
   </file>
   
