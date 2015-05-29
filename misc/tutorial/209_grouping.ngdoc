@@ -128,11 +128,11 @@ function will stop working), and writes them to the console.
      });
  
       $scope.expandAll = function(){
-        $scope.gridApi.grouping.expandAllRows();
+        $scope.gridApi.treeBase.expandAllRows();
       };
       
       $scope.toggleRow = function( rowNum ){
-        $scope.gridApi.grouping.toggleRowGroupingState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
       };
       
       $scope.changeGrouping = function() {
