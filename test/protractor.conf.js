@@ -1,9 +1,9 @@
-// An example configuration file.
+// Protractor config file for local test running
 exports.config = {
   // The address of a running selenium server.
 
   //seleniumAddress: 'http://localhost:4444/wd/hub',
-  seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.44.0.jar',
+  seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
   seleniumPort: 4444,
 
   specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],
@@ -16,7 +16,7 @@ exports.config = {
   // A base URL for your application under test. Calls to protractor.get()
   // with relative paths will be prepended with this.
   // baseUrl: 'http://localhost:9999',
-  
+
   // Spec patterns are relative to the location of the spec file. They may
   // include glob patterns.
   // specs: ['./e2e/**/*.spec.js'],
