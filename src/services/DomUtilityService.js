@@ -140,7 +140,7 @@
         if (grid.styleText) {
             var regex = regexCache[col.index];
             if (!regex) {
-                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [0-9]+px; left: [0-9]+px");
+                regex = regexCache[col.index] = new RegExp(".col" + col.index + " { width: [+-]?\\d+(\\.\\d+)?px; left: [+-]?\\d+(\\.\\d+)?px");
             }
             var css = grid.styleText.replace(regex, ".col" + col.index + " { width: " + col.width + "px; left: " + colLeft + "px");
             domUtilityService.setStyleText(grid, css);
