@@ -112,7 +112,7 @@ module.exports = {
   *
   */
   expectHeaderColumnCount: function( gridId, expectedNumCols ) {
-    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.uid') );
     expect(headerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -132,7 +132,7 @@ module.exports = {
   *
   */
   expectHeaderLeftColumnCount: function( gridId, expectedNumCols ) {
-    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+    var headerCols = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-left')).element( by.css('.ui-grid-header') ).all( by.repeater('col in colContainer.renderedColumns track by col.uid') );
     expect(headerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -152,7 +152,7 @@ module.exports = {
   *
   */
   expectFooterColumnCount: function( gridId, expectedNumCols ) {
-    var footerCols = this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).all( by.repeater('col in colContainer.renderedColumns track by col.colDef.name') );
+    var footerCols = this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).all( by.repeater('col in colContainer.renderedColumns track by col.uid') );
     expect(footerCols.count()).toEqual(expectedNumCols);
   },
 
@@ -173,7 +173,7 @@ module.exports = {
   *
   */
   headerCell: function( gridId, expectedCol, expectedValue ) {
-    return this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+    return this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.css('.ui-grid-header') ).element( by.repeater('col in colContainer.renderedColumns track by col.uid').row( expectedCol)  );
   },
 
   /**
@@ -193,7 +193,7 @@ module.exports = {
   *
   */
   footerCell: function( gridId, expectedCol, expectedValue ) {
-    return this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).element( by.repeater('col in colContainer.renderedColumns track by col.colDef.name').row( expectedCol)  );
+    return this.getGrid( gridId ).element( by.css('.ui-grid-footer') ).element( by.repeater('col in colContainer.renderedColumns track by col.uid').row( expectedCol)  );
   },
 
   /**
@@ -217,7 +217,7 @@ module.exports = {
   */
   dataCell: function( gridId, fetchRow, fetchCol ) {
     var row = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).element( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index').row( fetchRow )  );
-    return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row( fetchCol ));
+    return row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.uid').row( fetchCol ));
   },
 
   /**
@@ -309,7 +309,7 @@ module.exports = {
     var row = this.getRow( gridId, expectedRow );
 
     for ( var i = 0; i < expectedValueArray.length; i++){
-      expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);
+      expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.uid').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);
     }
   },
 

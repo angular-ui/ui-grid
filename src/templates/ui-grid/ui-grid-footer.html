@@ -3,7 +3,7 @@
     <div class="ui-grid-footer-canvas">
       <div class="ui-grid-footer-cell-wrapper" ng-style="colContainer.headerCellWrapperStyle()">
         <div class="ui-grid-footer-cell-row">
-          <div ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" ui-grid-footer-cell col="col" render-index="$index" class="ui-grid-footer-cell ui-grid-clearfix"></div>
+          <div ng-repeat="col in colContainer.renderedColumns track by col.uid" ui-grid-footer-cell col="col" render-index="$index" class="ui-grid-footer-cell ui-grid-clearfix"></div>
         </div>
       </div>
     </div>
