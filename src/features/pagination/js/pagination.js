@@ -343,7 +343,7 @@
           $scope.paginationApi = uiGridCtrl.grid.api.pagination;
           $scope.sizesLabel = i18nService.getSafeText('pagination.sizes');
           $scope.totalItemsLabel = i18nService.getSafeText('pagination.totalItems');
-          $scope.paginationOf = i18nService.getSaveText('pagination.totalItems');
+          $scope.paginationOf = i18nService.getSafeText('pagination.of');
 
           var options = uiGridCtrl.grid.options;
 
