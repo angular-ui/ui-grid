@@ -74,10 +74,13 @@
                 var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
                 scrollTop = containerCtrl.viewport[0].scrollTop;
+
+                var scrollCount = scrollTop + scrollYAmount;
                 // Get the scroll percentage
-                var scrollYPercentage = (scrollTop + scrollYAmount) / rowContainer.getVerticalScrollLength();
+                var scrollYPercentage = scrollCount / rowContainer.getVerticalScrollLength();
 
                 // Keep scrollPercentage within the range 0-1.
+                if (scrollCount < 0 && rowContainer.getVerticalScrollLength() < 0) { scrollYPercentage = 0; }
                 if (scrollYPercentage < 0) { scrollYPercentage = 0; }
                 else if (scrollYPercentage > 1) { scrollYPercentage = 1; }
 
