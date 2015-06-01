@@ -106,6 +106,7 @@ function will stop working), and writes them to the console.
           { name: 'gender', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%', cellFilter: 'mapGender' },
           { name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%' },
           { name: 'company', width: '25%' },
+          { name: 'registered', width: '40%', cellFilter: 'date', type: 'date' },
           { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
           { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregationType: uiGridGroupingConstants.aggregation.AVG, customTreeAggregationFinalizerFn: function( aggregation ) {
             aggregation.rendered = aggregation.value; 
@@ -116,16 +117,18 @@ function will stop working), and writes them to the console.
         }
       };
 
-     $http.get('/data/500_complex.json')
-     .success(function(data) {
-       for ( var i = 0; i < data.length; i++ ){
-         data[i].state = data[i].address.state;
-         data[i].gender = data[i].gender === 'male' ? 1: 2;
-         data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
-       }
-       delete data[2].age;
-       $scope.gridOptions.data = data;
-     });
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          for ( var i = 0; i < data.length; i++ ){
+            var registeredDate = new Date( data[i].registered );
+            data[i].state = data[i].address.state;
+            data[i].gender = data[i].gender === 'male' ? 1: 2;
+            data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
+            data[i].registered = new Date( registeredDate.getFullYear(), registeredDate.getMonth(), 1 )
+          }
+          delete data[2].age;
+          $scope.gridOptions.data = data;
+        });
  
       $scope.expandAll = function(){
         $scope.gridApi.treeBase.expandAllRows();

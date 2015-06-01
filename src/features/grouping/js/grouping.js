@@ -87,8 +87,8 @@
    *
    *  @description Services for grouping features
    */
-  module.service('uiGridGroupingService', ['$q', 'uiGridGroupingConstants', 'gridUtil', 'GridRow', 'gridClassFactory', 'i18nService', 'uiGridConstants', 'uiGridTreeBaseService',
-  function ($q, uiGridGroupingConstants, gridUtil, GridRow, gridClassFactory, i18nService, uiGridConstants, uiGridTreeBaseService) {
+  module.service('uiGridGroupingService', ['$q', 'uiGridGroupingConstants', 'gridUtil', 'rowSorter', 'GridRow', 'gridClassFactory', 'i18nService', 'uiGridConstants', 'uiGridTreeBaseService',
+  function ($q, uiGridGroupingConstants, gridUtil, rowSorter, GridRow, gridClassFactory, i18nService, uiGridConstants, uiGridTreeBaseService) {
 
     var service = {
 
@@ -321,8 +321,10 @@
          *  @ngdoc object
          *  @name groupingShowCounts
          *  @propertyOf  ui.grid.grouping.api:GridOptions
-         *  @description shows counts on the groupHeader rows
-         *  <br/>Defaults to true
+         *  @description shows counts on the groupHeader rows. Not that if you are using a cellFilter or a
+         *  sortingAlgorithm which relies on a specific format or data type, showing counts may cause that
+         *  to break, since the group header rows will always be a string with groupingShowCounts enabled.
+         *  <br/>Defaults to true except on columns of type 'date'
          */
         gridOptions.groupingShowCounts = gridOptions.groupingShowCounts !== false;
 
@@ -408,16 +410,7 @@
           col.grouping = angular.copy(colDef.grouping);
           if ( typeof(col.grouping.groupPriority) !== 'undefined' && col.grouping.groupPriority > -1 ){
             col.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
-            col.customTreeAggregationFinalizerFn = function( aggregation ){
-              if ( typeof(aggregation.groupVal) !== 'undefined') {
-                aggregation.rendered = aggregation.groupVal;
-                if ( gridOptions.groupingShowCounts ){
-                  aggregation.rendered += (' (' + aggregation.value + ')');
-                }
-              } else {
-                aggregation.rendered = null;
-              }
-            };
+            col.treeAggregationFinalizerFn = service.groupedFinalizerFn;
           }
         } else if (typeof(col.grouping) === 'undefined'){
           col.grouping = {};
@@ -527,6 +520,8 @@
       },
 
 
+
+
       /**
        * @ngdoc function
        * @name groupingColumnProcessor
@@ -544,6 +539,27 @@
         return columns;
       },
 
+      /**
+       * @ngdoc function
+       * @name groupedFinalizerFn
+       * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+       * @description Used on group columns to display the rendered value and optionally
+       * display the count of rows.
+       *
+       * @param {aggregation} the aggregation entity for a grouped column
+       */
+      groupedFinalizerFn: function( aggregation ){
+        var col = this;
+
+        if ( typeof(aggregation.groupVal) !== 'undefined') {
+          aggregation.rendered = aggregation.groupVal;
+          if ( col.grid.options.groupingShowCounts && col.colDef.type !== 'date' ){
+            aggregation.rendered += (' (' + aggregation.value + ')');
+          }
+        } else {
+          aggregation.rendered = null;
+        }
+      },
 
       /**
        * @ngdoc function
@@ -634,13 +650,7 @@
 
         column.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT, source: 'grouping' };
         column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
-        column.customTreeAggregationFinalizerFn = function( aggregation ){
-          if ( typeof(aggregation.groupVal) !== 'undefined') {
-            aggregation.rendered = aggregation.groupVal + ' (' + aggregation.value + ')';
-          } else {
-            aggregation.rendered = null;
-          }
-        };
+        column.treeAggregationFinalizerFn = service.groupedFinalizerFn;
 
         grid.queueGridRefresh();
       },
@@ -839,11 +849,12 @@
        * @description The rowProcessor that creates the groupHeaders (i.e. does
        * the actual grouping).
        * 
-       * Assumes it is always called after the sorting processor, guaranteed by teh priority setting
+       * Assumes it is always called after the sorting processor, guaranteed by the priority setting
        * 
        * Processes all the rows in order, inserting a groupHeader row whenever there is a change
-       * in value of a grouped row.  The group header row is looked up in the groupHeaderCache, and used
-       * from there if there is one.  The entity is reset to {} if one is found.
+       * in value of a grouped row, based on the sortAlgorithm used for the column.  The group header row
+       * is looked up in the groupHeaderCache, and used from there if there is one. The entity is reset
+       * to {} if one is found.
        *
        * As it processes it maintains a `processingState` array. This records, for each level of grouping we're
        * working with, the following information:
@@ -883,7 +894,7 @@
           }
 
           // look for change of value - and insert a header
-          if ( !groupFieldState.initialised || fieldValue !== groupFieldState.currentValue ){
+          if ( !groupFieldState.initialised || rowSorter.getSortFn(grid, groupFieldState.col, renderableRows)(fieldValue, groupFieldState.currentValue) !== 0 ){
             service.insertGroupHeader( grid, renderableRows, i, processingState, stateIndex );
             i++;
           }
