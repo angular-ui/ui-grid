@@ -105,7 +105,7 @@ describe('ui.grid.utilService', function() {
       translationExpects.forEach( function (set) {
         var strIn = set[0];
         var strOut = set[1];
-        
+
         expect(gridUtil.readableColumnName(strIn)).toEqual(strOut);
       });
     });
@@ -139,7 +139,7 @@ describe('ui.grid.utilService', function() {
       ]);
     });
   });
-  
+
   describe('getColumnsFromData', function() {
     it('should create column defs from a data array omitting $$hashKey', function() {
       var data = [
@@ -149,7 +149,7 @@ describe('ui.grid.utilService', function() {
           $$hashKey: '00A'
         }
       ];
-      
+
       var excludeProperties = ['$$hashKey'];
 
       var columns = gridUtil.getColumnsFromData(data, excludeProperties);
@@ -368,7 +368,7 @@ describe('ui.grid.utilService', function() {
   describe('resetUids()', function () {
     it('should reset the UID index back to 000', function () {
       gridUtil.resetUids();
-      
+
       for (var i = 0; i < 50; i++) {
         gridUtil.nextUid();
       }
@@ -511,6 +511,15 @@ describe('ui.grid.utilService', function() {
         expect(result).toMatch(/\[\[/, 'template has custom start interpolation symbols');
         expect(result).toMatch(/\]\]/, 'template has custom end interpolation symbols');
       }));
+    });
+  });
+
+  describe('rtlScrollType', function () {
+    it('should not throw an exception', function () {
+      // This was throwing an exception in IE because IE doesn't have a native <element>.remove() method.
+      expect(function () {
+        gridUtil.rtlScrollType();
+      }).not.toThrow();
     });
   });
 });
