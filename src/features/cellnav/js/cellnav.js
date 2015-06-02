@@ -515,7 +515,9 @@
             var rowCol = { row: gridRow, col: gridCol };
 
             // Broadcast the navigation
-            grid.cellNav.broadcastCellNav(rowCol);
+            if (gridRow !== null && gridCol !== null) {
+              grid.cellNav.broadcastCellNav(rowCol);
+            }
           });
 
 
@@ -874,6 +876,7 @@
             uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
 
             evt.stopPropagation();
+            $scope.$apply();
           });
 
           $elm.find('div').on('focus', function (evt) {

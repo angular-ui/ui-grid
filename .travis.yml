@@ -4,7 +4,6 @@ node_js:
   - '0.10'
 
 notifications:
-  irc: "chat.freenode.net#ui-grid"
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/c9dc628573cc153706fa

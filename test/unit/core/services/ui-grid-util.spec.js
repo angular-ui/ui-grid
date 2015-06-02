@@ -53,7 +53,7 @@ describe('ui.grid.utilService', function() {
       x++;
     };
 
-    it('prevents multiple function calls', inject(function ($timeout) {
+    it('prevents multiple function calls', inject(function ($interval) {
       x = 0;
 
       var throttledFunc = gridUtil.throttle(func, 10);
@@ -61,11 +61,11 @@ describe('ui.grid.utilService', function() {
       throttledFunc();
       throttledFunc();
       expect(x).toEqual(1);
-      $timeout.flush();
+      $interval.flush(15);
       expect(x).toEqual(1);
     }));
 
-    it('queues a final event if trailing param is truthy', inject(function ($timeout) {
+    it('queues a final event if trailing param is truthy', inject(function ($interval) {
       x = 0;
 
       var throttledFunc = gridUtil.throttle(func, 10, {trailing: true});
@@ -73,7 +73,7 @@ describe('ui.grid.utilService', function() {
       throttledFunc();
       throttledFunc();
       expect(x).toEqual(1);
-      $timeout.flush();
+      $interval.flush(15);
       expect(x).toEqual(2);
     }));
 
@@ -199,7 +199,8 @@ describe('ui.grid.utilService', function() {
         expect(w).toEqual(300);
       });
 
-      it('should work with hidden element', function() {
+      // Width is no longer calculated for hidden elements
+      xit('should work with hidden element', function() {
         angular.element(elm).remove();
 
         elm = document.createElement('div');

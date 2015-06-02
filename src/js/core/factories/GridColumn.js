@@ -119,10 +119,24 @@ angular.module('ui.grid')
 
     self.aggregationValue = undefined;
 
-    var updateAggregationValue = function() {
+    // The footer cell registers to listen for the rowsRendered event, and calls this.  Needed to be
+    // in something with a scope so that the dereg would get called
+    self.updateAggregationValue = function() {
 
      // gridUtil.logDebug('getAggregationValue for Column ' + self.colDef.name);
 
+      /** 
+       * @ngdoc property
+       * @name aggregationType
+       * @propertyOf ui.grid.class:GridOptions.columnDef
+       * @description The aggregation that you'd like to show in the columnFooter for this
+       * column.  Valid values are in uiGridConstants, and currently include `uiGridConstants.aggregationTypes.count`, 
+       * `uiGridConstants.aggregationTypes.sum`, `uiGridConstants.aggregationTypes.avg`, `uiGridConstants.aggregationTypes.min`, 
+       * `uiGridConstants.aggregationTypes.max`.
+       * 
+       * You can also provide a function as the aggregation type, in this case your function needs to accept the full
+       * set of visible rows, and return a value that should be shown 
+       */
       if (!self.aggregationType) {
         self.aggregationValue = undefined;
         return;
@@ -173,10 +187,7 @@ angular.module('ui.grid')
       }
     };
 
-    var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle);
-
-
-
+//     var throttledUpdateAggregationValue = gridUtil.throttle(updateAggregationValue, self.grid.options.aggregationCalcThrottle, { trailing: true, context: self.name });
 
     /**
      * @ngdoc function
@@ -186,15 +197,12 @@ angular.module('ui.grid')
      * Debounced using scrollDebounce option setting
      */
     this.getAggregationValue =  function() {
-      if (!self.grid.isScrollingVertically && !self.grid.isScrollingHorizontally) {
-        throttledUpdateAggregationValue();
-      }
+//      if (!self.grid.isScrollingVertically && !self.grid.isScrollingHorizontally) {
+//        throttledUpdateAggregationValue();
+//      }
 
       return self.aggregationValue;
-    } ;
-
-
-
+    };
   }
 
 
@@ -627,14 +635,14 @@ angular.module('ui.grid')
       defaultFilters.push({});
     }
 
-    /** 
+    /**
      * @ngdoc property
      * @name filter
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description Specify a single filter field on this column.
-     * 
+     *
      * A filter consists of a condition, a term, and a placeholder:
-     * 
+     *
      * - condition defines how rows are chosen as matching the filter term. This can be set to
      * one of the constants in uiGridConstants.filter, or you can supply a custom filter function
      * that gets passed the following arguments: [searchTerm, cellValue, row, column].
@@ -649,8 +657,10 @@ angular.module('ui.grid')
      * then a select box will be shown with options selectOptions
      * - selectOptions: options in the format `[ { value: 1, label: 'male' }]`.  No i18n filter is provided, you need
      * to perform the i18n on the values before you provide them
+     * - disableCancelFilterButton: defaults to false. If set to true then the 'x' button that cancels/clears the filter
+     * will not be shown.
      * @example
-     * <pre>$scope.gridOptions.columnDefs = [ 
+     * <pre>$scope.gridOptions.columnDefs = [
      *   {
      *     field: 'field1',
      *     filter: {
@@ -659,12 +669,16 @@ angular.module('ui.grid')
      *       placeholder: 'starts with...',
      *       flags: { caseSensitive: false },
      *       type: uiGridConstants.filter.SELECT,
-     *       selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ]
+     *       selectOptions: [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ],
+     *       disableCancelFilterButton: true
      *     }
      *   }
      * ]; </pre>
      *
      */
+
+    /*
+
   
     /*
 

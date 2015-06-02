@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 304 Grid Menu
+@name Tutorial: 121 Grid Menu
 @description The grid menu can be enabled through setting the gridOption `enableGridMenu`.  This 
 adds a settings icon in the top right of the grid, which floats above the column header.  The
 menu by default gives access to show/hide columns, but can be customised to show additional
@@ -17,6 +17,8 @@ use i18n on this through the `gridMenuTitleFilter` setting)
 property `grid` (accessible through `this.grid`.  You can pass in your own context by supplying 
 the `context` property to your menu item. It will be accessible through `this.context`.
 - `leaveOpen`: by default false, if set to true the menu will be left open after the action
+- `order`: the order in the menu that you wish your item to be.  Columns are 300 -> 300 + numColumns * 2,
+  importer and exporter are 150 and 200 respectively 
 
 The exporter feature also adds menu items to this menu.  The `exporterMenuCsv` option is set
 to false, which suppresses csv export.  The 'export selected rows' option is only available
@@ -30,6 +32,14 @@ internationalization function that waits 1 second then prefixes each column with
 
 You can suppress the ability to show and hide columns by setting the gridOption `gridMenuShowHideColumns: false`,
 you can suppress the ability to hide individual columns by setting `enableHiding` on that columnDef to false.
+
+The gridMenu button is still a bit ugly.  If you have the skills to do so we'd welcome a PR that makes it pretty.
+In the meantime, you can override the height to fit with your application in your css:
+<pre>
+  .ui-grid-menu-button {
+    height: 31px;
+  }
+</pre>
 
 @example
 <example module="app">
@@ -59,7 +69,8 @@ you can suppress the ability to hide individual columns by setting `enableHiding
             title: 'Rotate Grid',
             action: function ($event) {
               this.grid.element.toggleClass('rotated');
-            }
+            },
+            order: 210
           }
         ],
         onRegisterApi: function( gridApi ){
@@ -67,7 +78,7 @@ you can suppress the ability to hide individual columns by setting `enableHiding
           
           // interval of zero just to allow the directive to have initialized
           $interval( function() {
-            gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'Dynamic item'}]);
+            gridApi.core.addToGridMenu( gridApi.grid, [{ title: 'Dynamic item', order: 100}]);
           }, 0, 1);
           
           gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
@@ -139,6 +150,7 @@ you can suppress the ability to hide individual columns by setting `enableHiding
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
 
+        gridTestUtils.unclickGridMenu( 'grid1');  // menu stays open if change columns
         gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is company_show
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );

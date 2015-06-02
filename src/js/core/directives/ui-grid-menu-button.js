@@ -195,6 +195,11 @@ angular.module('ui.grid')
       if ( $scope.grid.options.gridMenuShowHideColumns !== false ){
         menuItems = menuItems.concat( service.showHideColumns( $scope ) );
       }
+
+      menuItems.sort(function(a, b){
+        return a.order - b.order;
+      });
+      
       return menuItems;
     },
     
@@ -235,7 +240,8 @@ angular.module('ui.grid')
       
       // add header for columns
       showHideColumns.push({
-        title: i18nService.getSafeText('gridMenu.columns')
+        title: i18nService.getSafeText('gridMenu.columns'),
+        order: 300
       });
       
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
@@ -253,7 +259,8 @@ angular.module('ui.grid')
               return this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined;
             },
             context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
-            leaveOpen: true
+            leaveOpen: true,
+            order: 301 + index * 2
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
@@ -269,7 +276,8 @@ angular.module('ui.grid')
               return !(this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined);
             },
             context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
-            leaveOpen: true
+            leaveOpen: true,
+            order: 301 + index * 2 + 1
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );

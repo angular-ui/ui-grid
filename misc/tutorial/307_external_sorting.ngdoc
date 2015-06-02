@@ -110,15 +110,15 @@ column however, so sorting by it has no effect.
 
       it('sort by name by clicking header', function () {
         gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Beryl Rice' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Bruce Strong' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
       });
 
       it('reverse sort by name by clicking header', function () {
         gridTestUtils.clickHeaderCell( 'grid1', 0 );
         gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Wilder Gonzales' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Valarie Atkinson' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
       });
       
       it('return to original sort by name by clicking header', function () {

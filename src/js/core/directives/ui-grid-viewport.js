@@ -49,7 +49,7 @@
             //ignoreScroll = true;
 
             var newScrollTop = $elm[0].scrollTop;
-            var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
+            var newScrollLeft = gridUtil.normalizeScrollLeft($elm, grid);
 
             var vertScrollPercentage = rowContainer.scrollVertical(newScrollTop);
             var horizScrollPercentage = colContainer.scrollHorizontal(newScrollLeft);
@@ -88,20 +88,20 @@
           function syncHorizontalScroll(scrollEvent){
             containerCtrl.prevScrollArgs = scrollEvent;
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
-            $elm[0].scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft);
+            $elm[0].scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
           }
 
           function syncHorizontalHeader(scrollEvent){
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
             if (containerCtrl.headerViewport) {
-              containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft);
+              containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
             }
           }
 
           function syncHorizontalFooter(scrollEvent){
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
             if (containerCtrl.footerViewport) {
-              containerCtrl.footerViewport.scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft);
+              containerCtrl.footerViewport.scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
             }
           }
 

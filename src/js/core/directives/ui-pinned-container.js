@@ -23,6 +23,27 @@
 
             $elm.addClass('ui-grid-pinned-container-' + $scope.side);
 
+            // Monkey-patch the viewport width function
+            if ($scope.side === 'left' || $scope.side === 'right') {
+              grid.renderContainers[$scope.side].getViewportWidth = monkeyPatchedGetViewportWidth;
+            }
+
+            function monkeyPatchedGetViewportWidth() {
+              /*jshint validthis: true */
+              var self = this;
+
+              var viewportWidth = 0;
+              self.visibleColumnCache.forEach(function (column) {
+                viewportWidth += column.drawnWidth;
+              });
+
+              var adjustment = self.getViewportAdjustment();
+
+              viewportWidth = viewportWidth + adjustment.width;
+
+              return viewportWidth;
+            }
+
             function updateContainerWidth() {
               if ($scope.side === 'left' || $scope.side === 'right') {
                 var cols = grid.renderContainers[$scope.side].visibleColumnCache;
@@ -33,12 +54,12 @@
                 }
 
                 return width;
-              }              
+              }
             }
-            
+
             function updateContainerDimensions() {
               var ret = '';
-              
+
               // Column containers
               if ($scope.side === 'left' || $scope.side === 'right') {
                 myWidth = updateContainerWidth();
@@ -49,7 +70,7 @@
                 $elm.attr('style', null);
 
                 var myHeight = grid.renderContainers.body.getViewportHeight(); // + grid.horizontalScrollbarHeight;
-                
+
                 ret += '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.side + ', .grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.side + ' .ui-grid-render-container-' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + myHeight + 'px; } ';
               }
 
@@ -61,6 +82,7 @@
 
               // Subtract our own width
               adjustment.width -= myWidth;
+              adjustment.side = $scope.side;
 
               return adjustment;
             });
