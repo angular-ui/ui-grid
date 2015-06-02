@@ -93,7 +93,11 @@
         
         fireColumnSizeChanged: function (grid, colDef, deltaChange) {
           $timeout(function () {
-            grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
+            if ( grid.api.colResizable ){
+              grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
+            } else {
+              gridUtil.logError("The resizeable api is not registered, this may indicate that you've included the module but not added the 'ui-grid-column-resize' directive to your grid definition.  Cannot raise any events.");
+            }
           });
         },
         

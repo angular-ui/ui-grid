@@ -325,13 +325,15 @@
         addToMenu: function ( grid ) {
           grid.api.core.addToGridMenu( grid, [
             {
-              title: i18nService.getSafeText('gridMenu.importerTitle')
+              title: i18nService.getSafeText('gridMenu.importerTitle'),
+              order: 150
             },
             {
               templateUrl: 'ui-grid/importerMenuItemContainer',
               action: function ($event) {
                 this.grid.api.importer.importAFile( grid );
-              }
+              },
+              order: 151
             }
           ]);
         },

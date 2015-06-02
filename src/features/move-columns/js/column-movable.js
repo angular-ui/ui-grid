@@ -252,7 +252,7 @@
                  * - if we are a touchstart then we listen for a touchmove, if we are a mousedown we listen for
                  * a mousemove (i.e. a drag) before we decide that there's a move underway.  If there's never a move,
                  * and we instead get a mouseup or a touchend, then we just drop out again and do nothing.
-                 * 
+                 *
                  */
                 var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
 
@@ -281,11 +281,11 @@
                     $document.on('touchend', upFn);
                   }
                 };
-                
+
                 var moveFn = function( event ) {
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
-                  
+
                   moveOccurred = true;
 
                   var changeValue = event.pageX - previousMouseX;
@@ -297,7 +297,7 @@
                     previousMouseX = event.pageX;
                   }
                 };
-                
+
                 var upFn = function( event ){
                   //Re-enable text selection after column move
                   document.onselectstart = null;
@@ -329,12 +329,12 @@
                     }
                   }
                 };
-                
+
                 var onDownEvents = function(){
                   $contentsElm.on('touchstart', downFn);
                   $contentsElm.on('mousedown', downFn);
                 };
-                
+
                 var offAllEvents = function() {
                   $contentsElm.off('touchstart', downFn);
                   $contentsElm.off('mousedown', downFn);
@@ -345,7 +345,7 @@
                   $document.off('mouseup', upFn);
                   $document.off('touchend', upFn);
                 };
-                
+
                 onDownEvents();
 
 
@@ -390,13 +390,13 @@
                     }
                   }
 
-                 //Calculate new position of left of column
-                 var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
-                 var currentElmRight = movingElm[0].getBoundingClientRect().right;
-                 //keeps the cloned element's center on the cursor's x position unless past boundaries
-                 var currentElmRadius = (currentElmRight-currentElmLeft)/2;
-                 var newElementLeft = cursorLocation - currentElmRadius;
-                 newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
+                  //Calculate new position of left of column
+                  var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
+                  var currentElmRight = movingElm[0].getBoundingClientRect().right;
+                  var newElementLeft;
+
+                  newElementLeft = currentElmLeft - gridLeft + changeValue;
+                  newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
 
                   //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
                   if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {

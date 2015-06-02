@@ -2,7 +2,7 @@
   'use strict';
 
   var module = angular.module('ui.grid');
-  
+
   module.directive('uiGridRenderContainer', ['$timeout', '$document', 'uiGridConstants', 'gridUtil', 'ScrollEvent',
     function($timeout, $document, uiGridConstants, gridUtil, ScrollEvent) {
     return {
@@ -45,7 +45,7 @@
 
             var rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];
             var colContainer = $scope.colContainer = grid.renderContainers[$scope.colContainerName];
-            
+
             containerCtrl.containerId = $scope.containerId;
             containerCtrl.rowContainer = rowContainer;
             containerCtrl.colContainer = colContainer;
@@ -87,7 +87,7 @@
                 var scrollXAmount = event.deltaX * event.deltaFactor;
 
                 // Get the scroll percentage
-                scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport);
+                scrollLeft = gridUtil.normalizeScrollLeft(containerCtrl.viewport, grid);
                 var scrollXPercentage = (scrollLeft + scrollXAmount) / (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
                 // Keep scrollPercentage within the range 0-1.
@@ -98,10 +98,8 @@
               }
 
               // Let the parent container scroll if the grid is already at the top/bottom
-              if (scrollEvent.atTop(scrollTop) ||
-                scrollEvent.atBottom(scrollTop) ||
-                scrollEvent.atLeft(scrollLeft) ||
-                scrollEvent.atRight(scrollLeft)) {
+              if ((event.deltaY !== 0 && (scrollEvent.atTop(scrollTop) || scrollEvent.atBottom(scrollTop))) ||
+                  (event.deltaX !== 0 && (scrollEvent.atLeft(scrollLeft) || scrollEvent.atRight(scrollLeft)))) {
                 //parent controller scrolls
               }
               else {
@@ -118,7 +116,7 @@
                 $elm.unbind(eventName);
               });
             });
-            
+
             // TODO(c0bra): Handle resizing the inner canvas based on the number of elements
             function update() {
               var ret = '';
@@ -137,7 +135,7 @@
 
               var headerViewportWidth = colContainer.getHeaderViewportWidth();
               var footerViewportWidth = colContainer.getHeaderViewportWidth();
-              
+
               // Set canvas dimensions
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
 
@@ -146,16 +144,16 @@
               if (renderContainer.explicitHeaderCanvasHeight) {
                 ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
               }
-              
+
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
 
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-canvas { width: ' + canvasWidth + grid.scrollbarWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-canvas { width: ' + (canvasWidth + grid.scrollbarWidth) + 'px; }';
               ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-footer-viewport { width: ' + footerViewportWidth + 'px; }';
 
               return ret;
             }
-            
+
             uiGridCtrl.grid.registerStyleComputation({
               priority: 6,
               func: update
@@ -168,7 +166,7 @@
   }]);
 
   module.controller('uiGridRenderContainer', ['$scope', 'gridUtil', function ($scope, gridUtil) {
-    
+
   }]);
 
 })();

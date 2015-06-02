@@ -3,10 +3,10 @@ describe('rowSearcher', function() {
       rows, columns, rowSearcher, uiGridConstants, filter;
 
   var data = [
-    { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
-    { "name": "Claudine Neal", "gender": "female", "company": "Sealoud" },
-    { "name": "Beryl Rice", "gender": "female", "company": "Velity" },
-    { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
+    { "name": "Ethel Price", "gender": "female", "company": "Enersol", "isActive" : true },
+    { "name": "Claudine Neal", "gender": "female", "company": "Sealoud", "isActive" : false },
+    { "name": "Beryl Rice", "gender": "female", "company": "Velity", "isActive" : true },
+    { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko", "isActive" : false }
   ];
 
   beforeEach(module('ui.grid'));
@@ -16,35 +16,22 @@ describe('rowSearcher', function() {
     rowSearcher = _rowSearcher_;
     uiGridConstants = _uiGridConstants_;
 
-    // $compile = _$compile_;
-
-    // $scope.gridOpts = {
-    //   data: data
-    // };
-
-    // recompile = function () {
-    //   grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
-    //   // document.body.appendChild(grid[0]);
-    //   $compile(grid)($scope);
-    //   $scope.$digest();
-    // };
-
-    // recompile();
-
     grid = new Grid({
         id: 1,
         enableFiltering: true
     });
 
     rows = grid.rows = [
-      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25 }, 0, grid),
-      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45 }, 1, grid)
+      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25, isActive: true }, 0, grid),
+      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45, isActive: false }, 1, grid),
+      new GridRow({ name: 'Joe', company: 'Movers, Inc.', age: 0, isActive: false }, 2, grid)
     ];
 
     columns = grid.columns = [
       new GridColumn({ name: 'name' }, 0, grid),
       new GridColumn({ name: 'company' }, 1, grid),
-      new GridColumn({ name: 'age' }, 2, grid)
+      new GridColumn({ name: 'age' }, 2, grid),
+      new GridColumn({ name: 'isActive' }, 3, grid)
     ];
 
     filter = null;
@@ -221,6 +208,24 @@ describe('rowSearcher', function() {
     });
   });
 
+  describe('with logically falsy terms (0 and false)', function() {
+    it('should filter by false', function() {
+      setFilter(columns[3], false);
+
+      var ret = rowSearcher.search(grid, rows, columns);
+
+      expect(ret.length).toEqual(2);
+    });
+
+    it('should filter by 0', function() {
+      setFilter(columns[2], 0);
+
+      var ret = rowSearcher.search(grid, rows, columns);
+
+      expect(ret.length).toEqual(1);
+    });
+  });
+
   describe('with external filtering', function () {
     it('should not filter at all', function () {
       grid.options.useExternalFiltering = true;
@@ -228,10 +233,10 @@ describe('rowSearcher', function() {
 
       var ret = rowSearcher.search(grid, rows, columns);
 
-      expect(ret.length).toEqual(2);
+      expect(ret.length).toEqual(3);
     });
   });
-  
+
   describe('with a custom filter function', function() {
     var custom, ret;
     beforeEach(function() {
@@ -245,7 +250,7 @@ describe('rowSearcher', function() {
         var orEqualTo = secondChar === '=';
         var trimBy = orEqualTo ? 2 : 1 ;
         var compareTo;
-        
+
         if (firstChar === '>') {
           compareTo = searchTerm.substr(trimBy) * 1;
           return orEqualTo ? rowValue >= compareTo : rowValue > compareTo;
@@ -264,7 +269,7 @@ describe('rowSearcher', function() {
       ret = rowSearcher.search(grid, rows, columns);
     });
     it('should run the function for each row', function() {
-      expect(custom.filterFn.calls.length).toEqual(2);
+      expect(custom.filterFn.calls.length).toEqual(3);
       expect(custom.filterFn.calls[0].args).toEqual(['>27', 25, rows[0], columns[2]]);
       expect(custom.filterFn.calls[1].args).toEqual(['>27', 45, rows[1], columns[2]]);
     });

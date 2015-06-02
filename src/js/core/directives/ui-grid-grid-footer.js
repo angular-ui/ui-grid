@@ -2,7 +2,6 @@
   'use strict';
 
   angular.module('ui.grid').directive('uiGridGridFooter', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function ($templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
-    var defaultTemplate = 'ui-grid/ui-grid-grid-footer';
 
     return {
       restrict: 'EA',
@@ -16,7 +15,9 @@
 
             $scope.grid = uiGridCtrl.grid;
 
-            var footerTemplate = ($scope.grid.options.gridFooterTemplate) ? $scope.grid.options.gridFooterTemplate : defaultTemplate;
+
+
+            var footerTemplate = $scope.grid.options.gridFooterTemplate;
             gridUtil.getTemplate(footerTemplate)
               .then(function (contents) {
                 var template = angular.element(contents);

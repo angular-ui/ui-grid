@@ -317,6 +317,26 @@ angular.module('ui.grid')
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
 
+    /**
+     * @ngdoc function
+     * @name registerColumnsProcessor
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description
+     * Register a "columns processor" function. When the columns are updated,
+     * the grid calls each registered "columns processor", which has a chance
+     * to alter the set of columns as long as the count is not
+     * modified.
+     *
+     * @param {function(renderedColumnsToProcess, rows )} processorFunction columns processor function, which
+     * is run in the context of the grid (i.e. this for the function will be the grid), and must
+     * return the updated columns list, which is passed to the next processor in the chain
+     * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
+     * for other people to inject columns processors at intermediate priorities.  Lower priority columnsProcessors run earlier.
+     *
+     * At present allRowsVisible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
+     */
+    self.api.registerMethod( 'core', 'registerColumnsProcessor', this.registerColumnsProcessor  );
+
 
 
     /**
@@ -397,7 +417,19 @@ angular.module('ui.grid')
      * 
      */
     self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
-    
+
+    /**
+     * @ngdoc method
+     * @name clearAllFilters
+     * @methodOf ui.grid.core.api:PublicApi
+     * @description Clears all filters and optionally refreshes the visible rows.
+     * @params {object} refreshRows Defaults to true.
+     * @params {object} clearConditions Defaults to false.
+     * @params {object} clearFlags Defaults to false.
+     * @returns {promise} If `refreshRows` is true, returns a promise of the rows refreshing.
+     */
+    self.api.registerMethod('core', 'clearAllFilters', this.clearAllFilters);
+
     self.registerDataChangeCallback( self.columnRefreshCallback, [uiGridConstants.dataChange.COLUMN]);
     self.registerDataChangeCallback( self.processRowsCallback, [uiGridConstants.dataChange.EDIT]);
 
@@ -652,8 +684,14 @@ angular.module('ui.grid')
    * @propertyOf ui.grid.class:GridOptions.columnDef
    * @description the type of the column, used in sorting.  If not provided then the 
    * grid will guess the type.  Add this only if the grid guessing is not to your
-   * satisfaction.  Refer to {@link ui.grid.service:GridUtil.guessType gridUtil.guessType} for
-   * a list of values the grid knows about.
+   * satisfaction.  One of:
+   * - 'string'
+   * - 'boolean'
+   * - 'number'
+   * - 'date'
+   * - 'object'
+   * - 'numberStr'
+   * Note that if you choose date, your dates should be in a javascript date type
    *
    */
   Grid.prototype.assignTypes = function(){
@@ -826,7 +864,11 @@ angular.module('ui.grid')
         html = html.replace(uiGridConstants.TOOLTIP, '');
       } else {
         // gridColumn will have made sure that the col either has false or a function for this value
-        html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col)}}"');
+        if (col.cellFilter){
+          html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col) | ' + col.cellFilter + '}}"');
+        } else {
+          html = html.replace(uiGridConstants.TOOLTIP, 'title="{{col.cellTooltip(row, col)}}"');
+        }
       }
 
       var compiledElementFn = $compile(html);
@@ -1276,9 +1318,6 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.setVisibleRows = function setVisibleRows(rows) {
-    // this is also setting processedRows, providing a cache of the rows as they
-    // came out of the rowProcessors - in particular they are sorted so we
-    // can process them for grouping
     var self = this;
 
     // Reset all the render container row caches
@@ -1316,18 +1355,25 @@ angular.module('ui.grid')
    * is run in the context of the grid (i.e. this for the function will be the grid), and
    * which must return an updated renderedColumnsToProcess which can be passed to the next processor 
    * in the chain
+   * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
+   * for other people to inject columns processors at intermediate priorities.  Lower priority columnsProcessors run earlier.
+   *
+   * At present all rows visible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
    * @description
 
      Register a "columns processor" function. When the columns are updated,
      the grid calls each registered "columns processor", which has a chance
      to alter the set of columns, as long as the count is not modified.
    */
-  Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor) {
+  Grid.prototype.registerColumnsProcessor = function registerColumnsProcessor(processor, priority) {
     if (!angular.isFunction(processor)) {
       throw 'Attempt to register non-function rows processor: ' + processor;
     }
 
-    this.columnsProcessors.push(processor);
+    this.columnsProcessors.push({processor: processor, priority: priority});
+    this.columnsProcessors.sort(function sortByPriority( a, b ){
+      return a.priority - b.priority;
+    });
   };
 
   Grid.prototype.removeColumnsProcessor = function removeColumnsProcessor(processor) {
@@ -1363,7 +1409,7 @@ angular.module('ui.grid')
     //   the result.
     function startProcessor(i, renderedColumnsToProcess) {
       // Get the processor at 'i'
-      var processor = self.columnsProcessors[i];
+      var processor = self.columnsProcessors[i].processor;
 
       // Call the processor, passing in the rows to process and the current columns
       //   (note: it's wrapped in $q.when() in case the processor does not return a promise)
@@ -2348,6 +2394,47 @@ angular.module('ui.grid')
       }
       return this.scrollToIfNecessary(gridRow, gridCol);
     };
+
+  /**
+   * @ngdoc function
+   * @name clearAllFilters
+   * @methodOf ui.grid.class:Grid
+   * @description Clears all filters and optionally refreshes the visible rows.
+   * @params {object} refreshRows Defaults to true.
+   * @params {object} clearConditions Defaults to false.
+   * @params {object} clearFlags Defaults to false.
+   * @returns {promise} If `refreshRows` is true, returns a promise of the rows refreshing.
+   */
+  Grid.prototype.clearAllFilters = function clearAllFilters(refreshRows, clearConditions, clearFlags) {
+    // Default `refreshRows` to true because it will be the most commonly desired behaviour.
+    if (refreshRows === undefined) {
+      refreshRows = true;
+    }
+    if (clearConditions === undefined) {
+      clearConditions = false;
+    }
+    if (clearFlags === undefined) {
+      clearFlags = false;
+    }
+
+    this.columns.forEach(function(column) {
+      column.filters.forEach(function(filter) {
+        filter.term = undefined;
+
+        if (clearConditions) {
+          filter.condition = undefined;
+        }
+
+        if (clearFlags) {
+          filter.flags = undefined;
+        }
+      });
+    });
+
+    if (refreshRows) {
+      return this.refreshRows();
+    }
+  };
 
 
       // Blatantly stolen from Angular as it isn't exposed (yet? 2.0?)

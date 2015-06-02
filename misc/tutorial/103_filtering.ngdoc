@@ -8,7 +8,10 @@ UI-Grid allows you to filter rows. Just set the `enableFiltering` flag in your g
 
 Filtering can be disabled at the column level by setting `enableFiltering: false` in the column def. See the "company" column below for an example.
 
-The filter field can be pre-populated by setting `filter: { term: 'xxx' }` in the column def.  See the "gender" column below.
+The filter field can be pre-populated by setting `filter: { term: 'xxx' }` in the column def.  See the "gender" column below.  Once
+the grid has rendered changes to the columnDef don't reflect in the grid - if they did then users would have their changes to filters
+overwritten every time the grid refreshed.  If you want to programatically modify filters after initial render then modify 
+grid.column[i].filters[0] directly.
 
 ### Conditon
 
@@ -58,6 +61,17 @@ and
   
 If you need to internationalize the labels you'll need to complete that before providing the selectOptions array.
 
+### Cancel icon
+By default the filter shows a cancel X beside the dropdown. You can set `disableCancelFilterButton: true` to suppress
+this button.
+
+### Programmatic setting of filters
+You can set filters 
+
+In this example we've provided a "toggle filters" button to allow you to turn the filter row on and off.  To 
+still visually indicate which columns are filtered even when the filters aren't present, we've used the headerCellClass
+to make any columns with a filter condition have blue text.
+
 @example
 <example module="app">
   <file name="app.js">
@@ -68,6 +82,14 @@ If you need to internationalize the labels you'll need to complete that before p
       var nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
     
+      $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
+        if( col.filters[0].term ){
+          return 'header-filtered';
+        } else {
+          return '';
+        }
+      };
+ 
       $scope.gridOptions = {
         enableFiltering: true,
         onRegisterApi: function(gridApi){
@@ -75,14 +97,14 @@ If you need to internationalize the labels you'll need to complete that before p
         },
         columnDefs: [
           // default
-          { field: 'name' },
+          { field: 'name', headerCellClass: $scope.highlightFilteredHeader },
           // pre-populated search field
           { field: 'gender', filter: { 
               term: '1', 
               type: uiGridConstants.filter.SELECT, 
               selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
             }, 
-            cellFilter: 'mapGender' },                               
+            cellFilter: 'mapGender', headerCellClass: $scope.highlightFilteredHeader },                               
           // no filter input
           { field: 'company', enableFiltering: false, filter: {
             noTerm: true,
@@ -97,7 +119,7 @@ If you need to internationalize the labels you'll need to complete that before p
             filter: {
               condition: uiGridConstants.filter.ENDS_WITH,
               placeholder: 'ends with'
-            }
+            }, headerCellClass: $scope.highlightFilteredHeader
           },
           // custom condition function
           {
@@ -107,7 +129,7 @@ If you need to internationalize the labels you'll need to complete that before p
                 var strippedValue = (cellValue + '').replace(/[^\d]/g, '');
                 return strippedValue.indexOf(searchTerm) >= 0;
               }
-            }
+            }, headerCellClass: $scope.highlightFilteredHeader
           },
           // multiple filters
           { field: 'age', filters: [
@@ -119,13 +141,14 @@ If you need to internationalize the labels you'll need to complete that before p
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than'
             }
-          ]},
+          ], headerCellClass: $scope.highlightFilteredHeader},
           // date filter
           { field: 'mixedDate', cellFilter: 'date', width: '15%', filter: {
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than',
               term: nextWeek
-          }}
+            }, headerCellClass: $scope.highlightFilteredHeader
+          }
         ]
       };
 
@@ -178,18 +201,22 @@ If you need to internationalize the labels you'll need to complete that before p
       width: 650px;
       height: 400px;
     }
+    
+    .header-filtered {
+      color: blue;
+    }
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     
     describe('first grid on the page, filtered by male by default', function() {
-      it('grid should have six visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 6 );
+      it('grid should have seven visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 7 );
       });
 
       it('filter on 4 columns, filter with greater than/less than on one, one with no filter, then one with one filter', function () {
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 0, 1 );
-        gridTestUtils.expectFilterBoxInColumn( 'grid1', 1, 1 );
+        gridTestUtils.expectFilterSelectInColumn( 'grid1', 1, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 2, 0 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 3, 1 );
         gridTestUtils.expectFilterBoxInColumn( 'grid1', 4, 1 );

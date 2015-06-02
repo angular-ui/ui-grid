@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 306 Expandable grid
+@name Tutorial: 216 Expandable grid
 @description
 
 Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
@@ -29,6 +29,9 @@ provided following events and methods fos subGrids:
 </pre>
 
 SubGrid nesting can be done upto multiple levels.
+
+In addition to above configuration 'scrollFillerClass' is also available and can be used to style the scroll filler, scroll filler
+appears when you quickly scroll through the grid.
 
 @example
 <example module="app">
@@ -162,6 +165,6 @@ SubGrid nesting can be done upto multiple levels.
     }
   </file>
   <file name="expandableRowTemplate.html">
-    <div ui-grid="row.entity.subGridOptions" style="height:140px;"></div>
+    <div ui-grid="row.entity.subGridOptions" style="height:150px;"></div>
   </file>
 </example>

@@ -1,0 +1,116 @@
+@ngdoc overview
+@name Tutorial: 215 Tree View
+@description The tree view feature allows you to create a tree from your grid, specifying which
+of your data rows are nodes and which are leaves.
+
+In your data you tell us the nodes by setting the property $$treeLevel on a given row.  Levels
+start at 0 and increase as you move down the tree.
+
+If you wish to load your tree incrementally, you can listen to the rowExpanded event, which will
+tell you whenever a row is expanded.  You can then retrieve additional data from the server and
+splice it into the data array at the right point, the grid will automatically render the data 
+when it arrives.  
+
+In general it doesn't make sense to allow sorting when you're using the grid as a tree - the 
+structure of the data is very positional, and if the user were to sort the data it would break
+the tree. 
+
+TreeView is still alpha, and under development, however it is included in the distribution files
+to allow people to start using it.  Notable outstandings are:
+- doesn't calculate or display counts of child nodes anywhere, it would be nice if it did
+- it would be nice to display an hourglass or icon whilst additional data was loading, the current
+  arrangement means the grid doesn't know whether or not you're adding additional data
+- perhaps we could permit sorting of the nodes, and the children within each node, rather than sorting the
+  whole data set.  This would be a whole new sort algorithm though
+- it might be nice if nodes with no children could have their + removed, we'd need some way to be sure
+  that these weren't nodes for which children are going to be dynamically loaded
+
+Options to watch out for include:
+
+- `treeViewIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
+  level gets deeper.  Larger values look nicer
+- `treeViewRowHeaderWidth`: the width of the tree row header
+
+@example
+In this example most of the data is loaded on initial page load.  The nodes under Guerrero Lopez, however,
+are loaded only when that row is expanded.  They have a 2 second delay to simulate loading from a server.
+
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.treeView' ]);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants ) {
+      $scope.gridOptions = {
+        enableSorting: false,
+        enableFiltering: false,
+        columnDefs: [
+          { name: 'name', width: '30%' },
+          { name: 'gender', width: '20%' },
+          { name: 'age', width: '20%' },
+          { name: 'company', width: '25%' },
+          { name: 'state', width: '35%' },
+          { name: 'balance', width: '25%', cellFilter: 'currency' }
+        ],
+        onRegisterApi: function( gridApi ) {
+          $scope.gridApi = gridApi;
+          $scope.gridApi.treeView.on.rowExpanded($scope, function(row) {
+            if( row.entity.$$hashKey === $scope.gridOptions.data[50].$$hashKey && !$scope.nodeLoaded ) {
+              $interval(function() {
+                $scope.gridOptions.data.splice(51,0,
+                  {name: 'Dynamic 1', gender: 'female', age: 53, company: 'Griddable grids', balance: 38000, $$treeLevel: 1},
+                  {name: 'Dynamic 2', gender: 'male', age: 18, company: 'Griddable grids', balance: 29000, $$treeLevel: 1}
+                );
+                $scope.nodeLoaded = true;
+              }, 2000, 1);
+            }
+          });
+        }
+      };
+
+     $http.get('/data/500_complex.json')
+     .success(function(data) {
+       for ( var i = 0; i < data.length; i++ ){
+         data[i].state = data[i].address.state;
+         data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
+       }
+       data[0].$$treeLevel = 0;
+       data[1].$$treeLevel = 1;
+       data[10].$$treeLevel = 1;
+       data[20].$$treeLevel = 0;
+       data[25].$$treeLevel = 1;
+       data[50].$$treeLevel = 0;
+       data[51].$$treeLevel = 0;
+       $scope.gridOptions.data = data;
+     });
+ 
+      $scope.expandAll = function(){
+        $scope.gridApi.treeView.expandAllRows();
+      };
+      
+      $scope.toggleRow = function( rowNum ){
+        $scope.gridApi.treeView.toggleRowTreeViewState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+      };
+    }]);
+  </file>
+  
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
+      <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
+      <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
+      <div id="grid1" ui-grid="gridOptions" ui-grid-tree-view class="grid"></div>
+    </div>
+  </file>
+  
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '215 tree view', function() {
+    });
+  </file>  
+</example>
