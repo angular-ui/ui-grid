@@ -1083,6 +1083,8 @@ angular.module('ui.grid')
       } else {
         // otherwise, manually search the oldRows to see if we can find this row
         newRow = self.getRow(newEntity, oldRows);
+      } else {
+          newRow.entity = newEntity;
       }
 
       // if we didn't find the row, it must be new, so create it
@@ -1132,6 +1134,7 @@ angular.module('ui.grid')
       }
 
       self.rows.push(newRow);
+      self.rowHashMap.put(newRow.entity, newRow);
     }
   };
 
