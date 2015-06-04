@@ -1,4 +1,5 @@
-<div class="ui-grid-render-container" ng-style="{ 'margin-left': colContainer.getMargin('left') + 'px', 'margin-right': colContainer.getMargin('right') + 'px' }">
+<div role="grid" class="ui-grid-render-container" ng-style="{ 'margin-left': colContainer.getMargin('left') + 'px', 'margin-right': colContainer.getMargin('right') + 'px' }">
+  <!-- All of these dom elements are replaced in place -->
   <div ui-grid-header></div>
   <div ui-grid-viewport></div>
   <div ng-if="colContainer.needsHScrollbarPlaceholder()" class="ui-grid-scrollbar-placeholder" style="height:{{colContainer.grid.scrollbarHeight}}px"></div>
