@@ -215,7 +215,8 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * @ngdoc method
    * @methodOf ui.grid.class:RowSorter
    * @name sortDate
-   * @description Sorts date values. Handles nulls and undefined through calling handleNulls 
+   * @description Sorts date values. Handles nulls and undefined through calling handleNulls.
+   * Handles date strings by converting to Date object if not already an instance of Date
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -225,6 +226,12 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     if ( nulls !== null ){
       return nulls;
     } else {
+      if (!(a instanceof Date)) {
+        a = new Date(a);
+      }
+      if (!(b instanceof Date)){
+        b = new Date(b);
+      }
       var timeA = a.getTime(),
           timeB = b.getTime();
   
