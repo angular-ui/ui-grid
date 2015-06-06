@@ -431,7 +431,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           { field: 'col2', colName: 'col2', groupPriority: 1 }
         ],
         aggregations: [
-          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT, label: uiGridTreeBaseService.nativeAggregations.count.label } }
+          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT, label: uiGridTreeBaseService.nativeAggregations().count.label } }
         ],
         rowExpandedStates: {
           male: { state: 'expanded', children: {
