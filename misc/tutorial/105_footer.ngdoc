@@ -16,6 +16,14 @@ You can also pass in a function in order to create your own aggregation logic.
 If you set the `aggregationHideLabel` option on the columnDef to true, then the column will
 show the aggregation but without a label.  Refer the third column in the example below.
 
+Note that aggregation works across the visible rows - e.g. it would show the sum of the visible
+ages.  For this reason it doesn't combine well with features that alter the visible rows - in particular pagination
+and grouping.  In the case of pagination, you'll find that it gives you the total for the currently displayed page,
+which isn't intuitively what users would expect.  With grouping it will give the total of the currently expanded
+data rows, which again may not be what users intuitively expect.
+
+In the case of grouping the solution is to use the aggregation provided with grouping.  
+
 <br/>
 You can override the default grid footer template with gridOptions.footerTemplate.  Copy the default ui-grid-footer.html from the source as your starting point.  <i>This is not demonstrated in this tutorial.</i>
 

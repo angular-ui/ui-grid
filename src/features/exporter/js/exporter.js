@@ -216,6 +216,14 @@
           gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
           /**
            * @ngdoc object
+           * @name exporterPdfFilename
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description The default filename to use when saving the downloaded pdf, only used in IE (other browsers open pdfs in a new window)
+           * <br/>Defaults to 'download.pdf'
+           */
+          gridOptions.exporterPdfFilename = gridOptions.exporterPdfFilename ? gridOptions.exporterPdfFilename : 'download.pdf';
+          /**
+           * @ngdoc object
            * @name exporterOlderExcelCompatibility
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description Some versions of excel don't like the utf-16 BOM on the front, and it comes
@@ -872,29 +880,22 @@
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
           var ieVersion;
-      
-          if (!fileName) {
-            var currentDate = new Date();
-            fileName = "CWS Export - " + currentDate.getFullYear() + (currentDate.getMonth() + 1) +
-                       currentDate.getDate() + currentDate.getHours() +
-                       currentDate.getMinutes() + currentDate.getSeconds() + ".csv";
-          }
 
           ieVersion = this.isIE();
           if (ieVersion && ieVersion < 10) {
             var frame = D.createElement('iframe');
             document.body.appendChild(frame);
-        
+
             frame.contentWindow.document.open("text/html", "replace");
             frame.contentWindow.document.write('sep=,\r\n' + csvContent);
             frame.contentWindow.document.close();
             frame.contentWindow.focus();
             frame.contentWindow.document.execCommand('SaveAs', true, fileName);
-        
+
             document.body.removeChild(frame);
             return true;
           }
-        
+
           // IE10+
           if (navigator.msSaveBlob) {
             return navigator.msSaveBlob(
@@ -904,7 +905,7 @@
               fileName
             );
           }
-      
+
           //html5 A[download]
           if ('download' in a) {
             var blob = new Blob(
@@ -917,7 +918,7 @@
             rawFile = 'data:' + strMimeType + ',' + encodeURIComponent(csvContent);
             a.setAttribute('target', '_blank');
           }
-      
+
           a.href = rawFile;
           a.setAttribute('style', 'display:none;');
           D.body.appendChild(a);
@@ -931,7 +932,7 @@
               a.dispatchEvent(eventObj);
             }
             D.body.removeChild(a);
-    
+
           }, this.delay);
         },
 
@@ -960,14 +961,63 @@
             var docDefinition = self.prepareAsPdf(grid, exportColumnHeaders, exportData);
 
             if (self.isIE()) {
-              var pdf = pdfMake.createPdf(docDefinition).download();
+              self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
             } else {
               pdfMake.createPdf(docDefinition).open();
             }
           });
         },
-        
-        
+
+
+        /**
+         * @ngdoc function
+         * @name downloadPdf
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Generates and retrieves the pdf as a blob, then downloads
+         * it as a file.  Only used in IE, in all other browsers we use the native
+         * pdfMake.open function to just open the PDF
+         * @param {string} fileName the filename to give to the pdf, can be set
+         * through exporterPdfFilename
+         * @param {object} docDefinition a pdf docDefinition that we can generate
+         * and get a blob from
+         */
+        downloadPDF: function (fileName, docDefinition) {
+          var D = document;
+          var a = D.createElement('a');
+          var strMimeType = 'application/octet-stream;charset=utf-8';
+          var rawFile;
+          var ieVersion;
+
+          ieVersion = this.isIE();
+          var doc = pdfMake.createPdf(docDefinition);
+          var blob;
+          doc.getBuffer( function (buffer) {
+            blob = new Blob([buffer]);
+          });
+
+          if (ieVersion && ieVersion < 10) {
+            var frame = D.createElement('iframe');
+            document.body.appendChild(frame);
+
+            frame.contentWindow.document.open("text/html", "replace");
+            frame.contentWindow.document.write(blob);
+            frame.contentWindow.document.close();
+            frame.contentWindow.focus();
+            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
+
+            document.body.removeChild(frame);
+            return true;
+          }
+
+          // IE10+
+          if (navigator.msSaveBlob) {
+            return navigator.msSaveBlob(
+              blob, fileName
+            );
+          }
+        },
+
+
         /**
          * @ngdoc function
          * @name renderAsPdf

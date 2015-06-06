@@ -335,7 +335,7 @@
          *  @description The string to use for the grouping header row label on rows which contain a null or undefined value in the grouped column.
          *  <br/>Defaults to "Null"
          */
-        gridOptions.groupingNullLabel = gridOptions.groupingNullLabel || 'Null';
+        gridOptions.groupingNullLabel = typeof(gridOptions.groupingNullLabel) === 'undefined' ? 'Null' : gridOptions.groupingNullLabel;
 
         /**
          *  @ngdoc object
