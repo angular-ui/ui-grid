@@ -12,7 +12,7 @@ the grid native sorting.
 
 @example
 In this example we suppress the internal sorting, and emulate an external sort by picking one of three 
-json files to show - one sorted ASC, one sorted DESC, and one not sorted.  To further illustrate that this
+json files to show - one sorted by name ASC, one sorted by name DESC, and one not sorted.  To further illustrate that this
 is using external sorting, the external sort routine (consisting of me manually editing json files) got bored
 of sorting after the first 10 or so rows.
 
@@ -26,56 +26,50 @@ column however, so sorting by it has no effect.
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridConstants', function ($scope, $http, $interval, uiGridConstants) {
 
-      $scope.gridOptions = {
-        useExternalSorting: true,
-        columnDefs: [
-          { name: 'name' },
-          { name: 'gender', sort: {
-              direction: uiGridConstants.DESC,
-              priority: 1
-            }
-          },
-          { name: 'company', enableSorting: false}
-        ],
-        onRegisterApi: function( gridApi ) {
-          $scope.gridApi = gridApi;
-          $scope.gridApi.core.on.sortChanged( $scope, function( grid, sortColumns ) {
-            if( sortColumns.length === 0 || sortColumns[0].name !== $scope.gridOptions.columnDefs[0].name ){
+      $scope.sortChanged = function ( grid, sortColumns ) {
+        if( sortColumns.length === 0 || sortColumns[0].name !== $scope.gridOptions.columnDefs[0].name ){
+          $http.get('/data/100.json')
+          .success(function(data) {
+            $scope.gridOptions.data = data;
+          });
+        } else {
+          switch( sortColumns[0].sort.direction ) {
+            case uiGridConstants.ASC:
+              $http.get('/data/100_ASC.json')
+              .success(function(data) {
+                $scope.gridOptions.data = data;
+              });
+              break;
+            case uiGridConstants.DESC:
+              $http.get('/data/100_DESC.json')
+              .success(function(data) {
+                $scope.gridOptions.data = data;
+              });
+              break;
+            case undefined:
               $http.get('/data/100.json')
               .success(function(data) {
                 $scope.gridOptions.data = data;
               });
-            } else {
-              switch( sortColumns[0].sort.direction ) {
-                case uiGridConstants.ASC:
-                  $http.get('/data/100_ASC.json')
-                  .success(function(data) {
-                    $scope.gridOptions.data = data;
-                  });
-                  break;
-                case uiGridConstants.DESC:
-                  $http.get('/data/100_DESC.json')
-                  .success(function(data) {
-                    $scope.gridOptions.data = data;
-                  });
-                  break;
-                case undefined:
-                  $http.get('/data/100.json')
-                  .success(function(data) {
-                    $scope.gridOptions.data = data;
-                  });
-                  break;
-              }
-            }
-          });
+              break;
+          }
         }
       };
-      
-      $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions.data = data;
-      });
-      
+
+      $scope.gridOptions = {
+        useExternalSorting: true,
+        columnDefs: [
+          { name: 'name' },
+          { name: 'gender' },
+          { name: 'company', enableSorting: false}
+        ],
+        onRegisterApi: function( gridApi ) {
+          $scope.gridApi = gridApi;
+          $scope.gridApi.core.on.sortChanged( $scope, $scope.sortChanged );
+          $scope.sortChanged($scope.gridApi.grid, [ $scope.gridOptions.columnDefs[1] ] );
+        }
+      };
+
     }]);
   </file>
   <file name="index.html">
