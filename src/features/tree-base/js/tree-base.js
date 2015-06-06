@@ -602,9 +602,9 @@
             col.treeAggregationFn = gridOptions.treeCustomAggregations[colDef.treeAggregationType].aggregationFn;
             col.treeAggregationFinalizerFn = gridOptions.treeCustomAggregations[colDef.treeAggregationType].finalizerFn;
             col.treeAggregation.label = gridOptions.treeCustomAggregations[colDef.treeAggregationType].label;
-          } else if ( typeof(service.nativeAggregations[colDef.treeAggregationType]) !== 'undefined' ){
-            col.treeAggregationFn = service.nativeAggregations[colDef.treeAggregationType].aggregationFn;
-            col.treeAggregation.label = service.nativeAggregations[colDef.treeAggregationType].label;
+          } else if ( typeof(service.nativeAggregations()[colDef.treeAggregationType]) !== 'undefined' ){
+            col.treeAggregationFn = service.nativeAggregations()[colDef.treeAggregationType].aggregationFn;
+            col.treeAggregation.label = service.nativeAggregations()[colDef.treeAggregationType].label;
           }
         }
 
@@ -1336,84 +1336,87 @@
 
 
       // Aggregation routines - no doco needed as self evident
-      nativeAggregations: {
-        count: {
-          label: i18nService.get().aggregation.count,
-          menuTitle: i18nService.get().grouping.aggregate_count,
-          aggregationFn: function (aggregation, fieldValue, numValue) {
-            if (typeof(aggregation.value) === 'undefined') {
-              aggregation.value = 1;
-            } else {
-              aggregation.value++;
-            }
-          }
-        },
-
-        sum: {
-          label: i18nService.get().aggregation.sum,
-          menuTitle: i18nService.get().grouping.aggregate_sum,
-          aggregationFn: function( aggregation, fieldValue, numValue ) {
-            if (!isNaN(numValue)) {
+      nativeAggregations: function() {
+        var nativeAggregations = {
+          count: {
+            label: i18nService.get().aggregation.count,
+            menuTitle: i18nService.get().grouping.aggregate_count,
+            aggregationFn: function (aggregation, fieldValue, numValue) {
               if (typeof(aggregation.value) === 'undefined') {
-                aggregation.value = numValue;
+                aggregation.value = 1;
               } else {
-                aggregation.value += numValue;
+                aggregation.value++;
               }
             }
-          }
-        },
-
-        min: {
-          label: i18nService.get().aggregation.min,
-          menuTitle: i18nService.get().grouping.aggregate_min,
-          aggregationFn: function( aggregation, fieldValue, numValue ) {
-            if (typeof(aggregation.value) === 'undefined') {
-              aggregation.value = fieldValue;
-            } else {
-              if (typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)) {
+          },
+  
+          sum: {
+            label: i18nService.get().aggregation.sum,
+            menuTitle: i18nService.get().grouping.aggregate_sum,
+            aggregationFn: function( aggregation, fieldValue, numValue ) {
+              if (!isNaN(numValue)) {
+                if (typeof(aggregation.value) === 'undefined') {
+                  aggregation.value = numValue;
+                } else {
+                  aggregation.value += numValue;
+                }
+              }
+            }
+          },
+  
+          min: {
+            label: i18nService.get().aggregation.min,
+            menuTitle: i18nService.get().grouping.aggregate_min,
+            aggregationFn: function( aggregation, fieldValue, numValue ) {
+              if (typeof(aggregation.value) === 'undefined') {
                 aggregation.value = fieldValue;
+              } else {
+                if (typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue < aggregation.value || aggregation.value === null)) {
+                  aggregation.value = fieldValue;
+                }
               }
             }
-          }
-        },
-
-        max: {
-          label: i18nService.get().aggregation.max,
-          menuTitle: i18nService.get().grouping.aggregate_max,
-          aggregationFn: function( aggregation, fieldValue, numValue ){
-            if ( typeof(aggregation.value) === 'undefined' ){
-              aggregation.value = fieldValue;
-            } else {
-              if ( typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue > aggregation.value || aggregation.value === null)){
+          },
+  
+          max: {
+            label: i18nService.get().aggregation.max,
+            menuTitle: i18nService.get().grouping.aggregate_max,
+            aggregationFn: function( aggregation, fieldValue, numValue ){
+              if ( typeof(aggregation.value) === 'undefined' ){
                 aggregation.value = fieldValue;
+              } else {
+                if ( typeof(fieldValue) !== 'undefined' && fieldValue !== null && (fieldValue > aggregation.value || aggregation.value === null)){
+                  aggregation.value = fieldValue;
+                }
+              }
+            }
+          },
+  
+          avg: {
+            label: i18nService.get().aggregation.avg,
+            menuTitle: i18nService.get().grouping.aggregate_avg,
+            aggregationFn: function( aggregation, fieldValue, numValue ){
+              if ( typeof(aggregation.count) === 'undefined' ){
+                aggregation.count = 1;
+              } else {
+                aggregation.count++;
+              }
+  
+              if ( isNaN(numValue) ){
+                return;
+              }
+  
+              if ( typeof(aggregation.value) === 'undefined' || typeof(aggregation.sum) === 'undefined' ){
+                aggregation.value = numValue;
+                aggregation.sum = numValue;
+              } else {
+                aggregation.sum += numValue;
+                aggregation.value = aggregation.sum / aggregation.count;
               }
             }
           }
-        },
-
-        avg: {
-          label: i18nService.get().aggregation.avg,
-          menuTitle: i18nService.get().grouping.aggregate_avg,
-          aggregationFn: function( aggregation, fieldValue, numValue ){
-            if ( typeof(aggregation.count) === 'undefined' ){
-              aggregation.count = 1;
-            } else {
-              aggregation.count++;
-            }
-
-            if ( isNaN(numValue) ){
-              return;
-            }
-
-            if ( typeof(aggregation.value) === 'undefined' || typeof(aggregation.sum) === 'undefined' ){
-              aggregation.value = numValue;
-              aggregation.sum = numValue;
-            } else {
-              aggregation.sum += numValue;
-              aggregation.value = aggregation.sum / aggregation.count;
-            }
-          }
-        }
+        };
+        return nativeAggregations;
       },
 
       /**

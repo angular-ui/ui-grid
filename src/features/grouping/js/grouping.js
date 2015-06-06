@@ -409,7 +409,7 @@
         if ( typeof(col.grouping) === 'undefined' && typeof(colDef.grouping) !== 'undefined') {
           col.grouping = angular.copy(colDef.grouping);
           if ( typeof(col.grouping.groupPriority) !== 'undefined' && col.grouping.groupPriority > -1 ){
-            col.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
+            col.treeAggregationFn = uiGridTreeBaseService.nativeAggregations()[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
             col.treeAggregationFinalizerFn = service.groupedFinalizerFn;
           }
         } else if (typeof(col.grouping) === 'undefined'){
@@ -506,7 +506,7 @@
          *  <br/>Defaults to true.
          */
         if ( col.colDef.groupingShowAggregationMenu !== false ){
-          angular.forEach(uiGridTreeBaseService.nativeAggregations, function(aggregationDef, name){
+          angular.forEach(uiGridTreeBaseService.nativeAggregations(), function(aggregationDef, name){
             addAggregationMenu(name);
           });
           angular.forEach(gridOptions.treeCustomAggregations, function(aggregationDef, name){
@@ -649,7 +649,7 @@
         service.tidyPriorities( grid );
 
         column.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT, source: 'grouping' };
-        column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
+        column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations()[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
         column.treeAggregationFinalizerFn = service.groupedFinalizerFn;
 
         grid.queueGridRefresh();
@@ -704,8 +704,8 @@
         var aggregationDef = {};
         if ( typeof(grid.options.treeCustomAggregations[aggregationType]) !== 'undefined' ){
           aggregationDef = grid.options.treeCustomAggregations[aggregationType];
-        } else if ( typeof(uiGridTreeBaseService.nativeAggregations[aggregationType]) !== 'undefined' ){
-          aggregationDef = uiGridTreeBaseService.nativeAggregations[aggregationType];
+        } else if ( typeof(uiGridTreeBaseService.nativeAggregations()[aggregationType]) !== 'undefined' ){
+          aggregationDef = uiGridTreeBaseService.nativeAggregations()[aggregationType];
         }
 
         column.treeAggregation = { type: aggregationType, label:  i18nService.get().aggregation[aggregationDef.label] || aggregationDef.label };
