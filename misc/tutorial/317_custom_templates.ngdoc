@@ -23,6 +23,9 @@ the [scopes](/docs/#/tutorial/305_appScope) tutorial.
 
 In the cellTemplate you have access to `grid`, `row` and `column`, which allows you to write any of a range of functions.
 
+Note that the footerTemplate is rendered once for each renderContainer.  If using a custom footer template you
+may want to test for `ng-if="colContainer.name === \'body\'"`
+
 @example
 <example module="app">
   <file name="app.js">
