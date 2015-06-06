@@ -162,7 +162,7 @@
                  */
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && row.enableSelection !== false) {
+                  if (row !== null) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -176,7 +176,7 @@
                  */
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && !row.isSelected && row.enableSelection !== false) {
+                  if (row !== null && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -193,7 +193,7 @@
                  */
                 selectRowByVisibleIndex: function ( rowNum, evt ) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof(row) !== 'undefined' && !row.isSelected && row.enableSelection !== false) {
+                  if (row !== null && typeof(row) !== 'undefined' && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -460,6 +460,10 @@
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
           var selected = row.isSelected;
 
+          if ( row.enableSelection === false && !selected ){
+            return;
+          }
+
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid, evt);
           } else if (!multiSelect && selected) {
@@ -472,7 +476,7 @@
 
           if (selected && noUnselect){
             // don't deselect the row
-          } else if (row.enableSelection !== false) {
+          } else {
             row.setSelected(!selected);
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;

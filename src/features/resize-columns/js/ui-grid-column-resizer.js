@@ -283,7 +283,6 @@
      </doc:source>
      <doc:scenario>
       // TODO: e2e specs?
-        // TODO: Obey minWidth and maxWIdth;
 
       // TODO: post-resize a horizontal scroll event should be fired
      </doc:scenario>
@@ -338,11 +337,11 @@
           var newWidth = width;
 
           // If the new width would be less than the column's allowably minimum width, don't allow it
-          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
-            newWidth = col.colDef.minWidth;
+          if (col.minWidth && newWidth < col.minWidth) {
+            newWidth = col.minWidth;
           }
-          else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
-            newWidth = col.colDef.maxWidth;
+          else if (col.maxWidth && newWidth > col.maxWidth) {
+            newWidth = col.maxWidth;
           }
           
           return newWidth;

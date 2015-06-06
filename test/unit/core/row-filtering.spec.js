@@ -83,10 +83,10 @@ describe('rowSearcher', function() {
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
 
-    it('should guess STARTS_WITH when term has no *s', function() {
+    it('should guess CONTAINS when term has no *s', function() {
       var filter = { term: 'blah' };
 
-      expect(rowSearcher.guessCondition(filter)).toEqual(uiGridConstants.filter.STARTS_WITH, 'STARTS_WITH');
+      expect(rowSearcher.guessCondition(filter)).toEqual(uiGridConstants.filter.CONTAINS, 'CONTAINS');
     });
 
 

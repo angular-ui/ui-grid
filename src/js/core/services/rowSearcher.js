@@ -14,7 +14,7 @@ function escapeRegExp(str) {
  *  @description Service for searching/filtering rows based on column value conditions.
  */
 module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil, uiGridConstants) {
-  var defaultCondition = uiGridConstants.filter.STARTS_WITH;
+  var defaultCondition = uiGridConstants.filter.CONTAINS;
 
   var rowSearcher = {};
 
