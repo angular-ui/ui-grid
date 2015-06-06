@@ -182,7 +182,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
 
     // Get the column value for this row
     var value = grid.getCellValue(row, column);
-    
+
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {
       return filter.condition.test(value);
@@ -192,19 +192,19 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (conditionType === 'function') {
       return filter.condition(term, value, row, column);
     }
-    
+
     if (filter.startswithRE) {
       return filter.startswithRE.test(value);
     }
-    
+
     if (filter.endswithRE) {
       return filter.endswithRE.test(value);
     }
-    
+
     if (filter.containsRE) {
       return filter.containsRE.test(value);
     }
-    
+
     if (filter.exactRE) {
       return filter.exactRE.test(value);
     }
@@ -241,11 +241,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filter.condition === uiGridConstants.filter.LESS_THAN) {
       return (value < term);
     }
-    
+
     if (filter.condition === uiGridConstants.filter.LESS_THAN_OR_EQUAL) {
       return (value <= term);
     }
-    
+
     return true;
   };
 
@@ -276,11 +276,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (grid.options.useExternalFiltering) {
       return true;
     }
-    
+
     var filtersLength = filters.length;
     for (var i = 0; i < filtersLength; i++) {
       var filter = filters[i];
-      
+
       var ret = rowSearcher.runColumnFilter(grid, row, column, filter);
       if (!ret) {
         return false;
@@ -307,12 +307,12 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
      * loops and is therefore very performance sensitive.  In particular, avoiding forEach as
      * this impacts some browser optimisers (particularly Chrome), using iterators instead
      */
-    
+
     // Don't do anything if we weren't passed any rows
     if (!rows) {
       return;
     }
-    
+
     // don't filter if filtering currently disabled
     if (!grid.options.enableFiltering){
       return rows;
@@ -322,17 +322,27 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var filterData = [];
 
     var colsLength = columns.length;
+
+    var hasTerm = function( filters ) {
+      var hasTerm = false;
+
+      filters.forEach( function (filter) {
+        if ( !gridUtil.isNullOrUndefined(filter.term) && filter.term !== '' || filter.noTerm ){
+          hasTerm = true;
+        }
+      });
+
+      return hasTerm;
+    };
+
     for (var i = 0; i < colsLength; i++) {
       var col = columns[i];
 
-      if (typeof(col.filters) !== 'undefined' && ( col.filters.length > 1 || col.filters.length === 1 && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filters[0].noTerm ) ) ) {
+      if (typeof(col.filters) !== 'undefined' && hasTerm(col.filters) ) {
         filterData.push( { col: col, filters: rowSearcher.setupFilters(col.filters) } );
       }
-      else if (typeof(col.filter) !== 'undefined' && col.filter && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filter.noTerm ) ) {
-        filterData.push( { col: col, filters: rowSearcher.setupFilters([col.filter]) } );
-      }
     }
-    
+
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
