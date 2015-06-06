@@ -52,7 +52,17 @@ You can override the default grid footer template with gridOptions.footerTemplat
         onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;
         }
-    }
+    };
+
+    $scope.toggleFooter = function() {
+      $scope.gridOptions.showGridFooter = !$scope.gridOptions.showGridFooter;
+      $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
+    };
+
+    $scope.toggleColumnFooter = function() {
+      $scope.gridOptions.showColumnFooter = !$scope.gridOptions.showColumnFooter;
+      $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
+    };
 
     $http.get('/data/500_complex.json')
       .success(function(data) {
@@ -65,8 +75,8 @@ You can override the default grid footer template with gridOptions.footerTemplat
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <button id="footerButton" class="btn btn-success" ng-click="gridOptions.showGridFooter = !gridOptions.showGridFooter; $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);">Toggle Grid Footer</button>
-      <button class="btn btn-success" ng-click="gridOptions.showColumnFooter = !gridOptions.showColumnFooter; $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);">Toggle Column Footer</button>
+      <button id="footerButton" class="btn btn-success" ng-click="toggleFooter()">Toggle Grid Footer</button>
+      <button class="btn btn-success" ng-click="toggleColumnFooter()">Toggle Column Footer</button>
       <div id="grid1" ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
