@@ -400,7 +400,7 @@
            *  @ngdoc object
            *  @name enableFullRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @description Enable selection by clicking anywhere on the row.  Defaults to 
+           *  @description Enable selection by clicking anywhere on the row.  Defaults to
            *  false if `enableRowHeaderSelection` is true, otherwise defaults to false.
            */
           if ( typeof(gridOptions.enableFullRowSelection) === 'undefined' ){
@@ -492,15 +492,9 @@
             }
           }
 
-<<<<<<< HEAD
           if (selected && noUnselect){
             // don't deselect the row
           } else {
-=======
-          if (selected && noUnselect) {
-            // don't deselect the row
-          } else if (row.enableSelection !== false) {
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
             row.setSelected(!selected);
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
@@ -683,23 +677,14 @@
 
               var processorSet = false;
 
-<<<<<<< HEAD
               var processSelectableRows = function( rows ){
                 rows.forEach(function(row){
-=======
-              var processSelectableRows = function (rows) {
-                rows.forEach(function (row) {
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
                   row.enableSelection = uiGridCtrl.grid.options.isRowSelectable(row);
                 });
                 return rows;
               };
 
-<<<<<<< HEAD
               var updateOptions = function(){
-=======
-              var updateOptions = function () {
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
                 if (uiGridCtrl.grid.options.isRowSelectable !== angular.noop && processorSet !== true) {
                   uiGridCtrl.grid.registerRowsProcessor(processSelectableRows, 500);
                   processorSet = true;
@@ -708,15 +693,9 @@
 
               updateOptions();
 
-<<<<<<< HEAD
               var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback( updateOptions, [uiGridConstants.dataChange.OPTIONS] );
 
               $scope.$on( '$destroy', dataChangeDereg);
-=======
-              var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback(updateOptions, [uiGridConstants.dataChange.OPTIONS]);
-
-              $scope.$on('$destroy', dataChangeDereg);
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
 
@@ -736,7 +715,6 @@
         require: '^uiGrid',
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var self = uiGridCtrl.grid;
-<<<<<<< HEAD
           $scope.selectButtonClick = selectButtonClick;
 
           // On IE, prevent mousedowns on the select button from starting a selection.
@@ -747,9 +725,6 @@
 
 
           function selectButtonClick(row, evt) {
-=======
-          $scope.selectButtonClick = function (row, evt) {
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
             evt.stopPropagation();
 
             if (evt.shiftKey) {
@@ -957,20 +932,12 @@
             registerRowSelectionEvents();
             // register a dataChange callback so that we can change the selection configuration dynamically
             // if the user changes the options
-<<<<<<< HEAD
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( function() {
               if ( $scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection &&
                 !$scope.registered ){
                 registerRowSelectionEvents();
               } else if ( ( !$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection ) &&
                 $scope.registered ){
-=======
-            var dataChangeDereg = $scope.grid.registerDataChangeCallback(function () {
-              if ($scope.grid.options.enableRowSelection && !$scope.grid.options.enableRowHeaderSelection && !$scope.registered) {
-                registerRowSelectionEvents();
-              } else if (( !$scope.grid.options.enableRowSelection || $scope.grid.options.enableRowHeaderSelection ) &&
-                $scope.registered) {
->>>>>>> 060bee8dca07dfe65d34c0c713e9797b002ae274
                 deregisterRowSelectionEvents();
               }
             }, [uiGridConstants.dataChange.OPTIONS]);
