@@ -323,6 +323,16 @@
                  */
                 getSelectAllState: function () {
                   return grid.selection.selectAll;
+                },
+                /**
+                 * @ngdoc function
+                 * @name setHighlightRowOnSelection
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Sets the current gridOption.highlightRowOnSelection to true or false
+                 * @param {bool} highlightRowOnSelection true to allow allow selected rows to be highlighted
+                 */
+                setHighlightRowOnSelection: function (highlightRowOnSelection) {
+                  grid.options.highlightRowOnSelection = highlightRowOnSelection;
                 }
 
               }
@@ -444,6 +454,14 @@
            */
 
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
+          /**
+           *  @ngdoc object
+           *  @name highlightRowOnSelection
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Option to highlight the entire row when row is selected.
+           *  <br/>Defaults to true.
+           */
+          gridOptions.highlightRowOnSelection = gridOptions.highlightRowOnSelection !== false;
         },
 
         /**
@@ -778,9 +796,9 @@
             var existingNgClass = rowRepeatDiv.attr("ng-class");
             var newNgClass = '';
             if ( existingNgClass ) {
-              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-selected': row.isSelected}";
+              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-selected': ((row.isSelected) && (grid.options.highlightRowOnSelection))}";
             } else {
-              newNgClass = "{'ui-grid-row-selected': row.isSelected}";
+              newNgClass = "{'ui-grid-row-selected': ((row.isSelected) && (grid.options.highlightRowOnSelection))}";
             }
             rowRepeatDiv.attr("ng-class", newNgClass);
 

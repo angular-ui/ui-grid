@@ -86,6 +86,9 @@ auto-selects the first row once the data is loaded.
           $scope.gridApi.selection.setMultiSelect(!$scope.gridApi.grid.options.multiSelect);
         };
 
+        $scope.toggleHighlightRowOnSelection = function() {
+          $scope.gridApi.selection.setHighlightRowOnSelection(!$scope.gridApi.grid.options.highlightRowOnSelection);
+        };
         $scope.toggleModifierKeysToMultiSelect = function() {
           $scope.gridApi.selection.setModifierKeysToMultiSelect(!$scope.gridApi.grid.options.modifierKeysToMultiSelect);
         };
@@ -183,6 +186,7 @@ auto-selects the first row once the data is loaded.
       <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
       <button type="button" class="btn btn-success" ng-click="setSelectable()">Set Selectable</button>
       <button type="button" class="btn btn-success" ng-click="toggleFullRowSelection()">Toggle full row selection</button>
+      <button type="button" class="btn btn-success" ng-click="toggleHighlightRowOnSelection()">Toggle Selection Highlight</button>  <strong>HighlightRowOnSelection:</strong> <span ng-bind="gridApi.grid.options.highlightRowOnSelection"> </span>
       <br/>
 
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>

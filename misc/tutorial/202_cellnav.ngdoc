@@ -28,7 +28,8 @@ extract values of selected cells.
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {
         modifierKeysToMultiSelectCells: true,
-        showGridFooter: true
+        showGridFooter: true,
+        highlightEntireRowOnCellFocus: false
       };
       $scope.gridOptions.columnDefs = [
         { name: 'id', width:'150' },
@@ -67,6 +68,10 @@ extract values of selected cells.
           $scope.printSelection = values.toString();
         };
         
+        $scope.toggleRowHighlight = function() {
+          $scope.gridOptions.highlightEntireRowOnCellFocus = !$scope.gridOptions.highlightEntireRowOnCellFocus;
+          $scope.scrollToFocus(0, 0);
+        };
         $scope.scrollTo = function( rowIndex, colIndex ) {
           $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
         };
@@ -97,6 +102,8 @@ extract values of selected cells.
       <button type="button" class="btn btn-success" ng-click="scrollToFocus(50,7)">Focus Row 50, Balance</button>
       <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
       <button type="button" class="btn btn-success" ng-click="getCurrentSelection()">Get Current focused cell values</button>
+      <br/>
+      <button type="button" class="btn btn-success" ng-click="toggleRowHighlight()">Toggle Row Highlight</button>  <strong>HighlightEntireRowOnCellFocus:</strong> <span ng-bind="gridOptions.highlightEntireRowOnCellFocus"> </span>
       <input type="text" ng-model="printSelection" placeholder="Click the 'Get current focused cell values' button to print cell values of selection here" class="printSelection">
       <br>
       <br>
