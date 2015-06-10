@@ -8,6 +8,8 @@ if [ $TRAVIS_PULL_REQUEST != "false" ]
 then
   # Run default task
   grunt
+  # Run e2e tests
+  grunt test:ci-e2e
 else
   echo "travis_fold:start:Tests"
   grunt test:ci

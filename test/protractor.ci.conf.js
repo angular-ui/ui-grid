@@ -10,10 +10,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    browserName: 'chrome',
-    chromeOptions: {
-      args: ['no-sandbox=true']
-    }
+    browserName: 'Firefox'
   },
 
   // Wait 30 seconds for page synchronization
