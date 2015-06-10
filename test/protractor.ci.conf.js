@@ -10,7 +10,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    browserName: 'Firefox'
+    browserName: 'firefox'
   },
 
   // Wait 30 seconds for page synchronization
@@ -30,5 +30,7 @@ exports.config = {
 
     // Default time to wait in ms before a test fails.
     defaultTimeoutInterval: 60000
-  }
+  },
+
+  stackTrace: false
 };
