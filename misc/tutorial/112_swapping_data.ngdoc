@@ -52,7 +52,7 @@ You can swap out data in the grid by simply providing a different reference.
         { name: 'company' },
         { name: 'gender' }
       ];
-      
+
       var data1 = [
         {
           "firstName": "Cox",
@@ -88,7 +88,7 @@ You can swap out data in the grid by simply providing a different reference.
         { name: 'company' },
         { name: 'employed' }
       ];
- 
+
       var data2 = [
         {
           "firstName": "Waters",
@@ -156,45 +156,74 @@ You can swap out data in the grid by simply providing a different reference.
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '112 swapping data', function() {
+      // Reload the page before each test if on Firefox. Chrome does it automatically.
+      gridTestUtils.firefoxReload();
+
       it('grid should have four visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 4 );
       });
-  
+
       it('swap data and data changes', function () {
         gridTestUtils.expectRowCount( 'grid1', 4 );
         gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Cox', 'Carney', 'Enormo', 'male' ] );
         gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Lorraine', 'Wise', 'Comveyer', 'female' ] );
-        
-        element( by.id( "swapData" ) ).click();
-        gridTestUtils.expectRowCount( 'grid1', 6 );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Waters', 'Shepherd', 'Kongene', 'true' ] );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Hopper', 'Zamora', 'Acium', 'true' ] );
 
-        element( by.id( "swapData" ) ).click();
-        gridTestUtils.expectRowCount( 'grid1', 4 );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Cox', 'Carney', 'Enormo', 'male' ] );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Lorraine', 'Wise', 'Comveyer', 'female' ] );
+        element( by.id( "swapData" ) ).click()
+          .then(function () {
+            return browser.waitForAngular();
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 6 );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Waters', 'Shepherd', 'Kongene', 'true' ] );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Hopper', 'Zamora', 'Acium', 'true' ] );
+          })
+          .then(function () {
+            return element( by.id( "swapData" ) ).click();
+          })
+          .then(function () {
+            return browser.waitForAngular();
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 4 );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Cox', 'Carney', 'Enormo', 'male' ] );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Lorraine', 'Wise', 'Comveyer', 'female' ] );
+          });
       });
-      
+
       it('add data and data changes', function () {
         gridTestUtils.expectRowCount( 'grid1', 4 );
-        
-        element( by.id( "addData" ) ).click();
-        gridTestUtils.expectRowCount( 'grid1', 5 );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 4, [ 'New 5', 'Person 5', 'abc', 'male' ] );
 
-        element( by.id( "addData" ) ).click();
-        gridTestUtils.expectRowCount( 'grid1', 6 );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 5, [ 'New 6', 'Person 6', 'abc', 'male' ] );
+        element( by.id( "addData" ) ).click()
+          .then(function () {
+            return browser.waitForAngular();
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 5 );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 4, [ 'New 5', 'Person 5', 'abc', 'male' ] );
+          });
+
+        element( by.id( "addData" ) ).click()
+          .then(function () {
+            return browser.waitForAngular();
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 6 );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 5, [ 'New 6', 'Person 6', 'abc', 'male' ] );
+          });
       });
 
       it('remove data and data changes', function () {
         gridTestUtils.expectRowCount( 'grid1', 4 );
-        
-        element( by.id( "removeFirstRow" ) ).click();
-        gridTestUtils.expectRowCount( 'grid1', 3 );
-        gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Lorraine', 'Wise', 'Comveyer', 'female' ] );
-      });      
-    });    
+
+        element( by.id( "removeFirstRow" ) ).click()
+          .then(function () {
+            return browser.waitForAngular();
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 3 );
+            gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Lorraine', 'Wise', 'Comveyer', 'female' ] );
+          });
+      });
+    });
   </file>
 </example>

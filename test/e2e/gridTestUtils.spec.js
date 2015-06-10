@@ -18,6 +18,63 @@
  */
 module.exports = {
   /**
+  * Helper function that reloads the page between each test if the current browser is Firefox
+  *
+  * @example
+  * <pre>
+  *   gridTestUtils.firefoxReload();
+  * </pre>
+  */
+  firefoxReload: function () {
+    beforeEach(function () {
+      return browser.getCapabilities().then(function (cap) {
+        if (cap.caps_.browserName === 'firefox') {
+          return browser.refresh()
+            .then(function () {
+              // Remove the fixed navbar, it overlays elements and intercepts events in Firefox
+              return browser.driver.executeScript(function () {
+                angular.element(document.getElementsByClassName('navbar')).remove();
+              });
+            });
+        }
+        else {
+          return protractor.promise.when(true);
+        }
+      });
+    });
+  },
+
+  isFirefox: function () {
+    return browser.getCapabilities()
+      .then(function (cap) {
+        if (cap.caps_.browserName === 'firefox') {
+          return true;
+        }
+        else {
+         return false;
+        }
+      });
+  },
+
+  /**
+  * Helper function that uses mouseMove/mouseDown/mouseUp for clicking.
+  *
+  * This is unfortunately needed because `.click()` doesn't work right in Firefox.
+  *
+  * @param element {WebElement}
+  *
+  * @returns {Promise} A promise that is resolved when the click has been performed.
+  *
+  * @example
+  * <pre>
+  *   gridTestUtils.click(element);
+  * </pre>
+  */
+  click: function (element) {
+    return browser.actions().mouseMove(element).mouseDown(element).mouseUp().perform();
+  },
+
+  /**
   * Helper function for returning a grid element.
   * @param gridId Id of grid to return.
   *
@@ -64,7 +121,9 @@ module.exports = {
   * </pre>
   */
   selectRow: function( gridId, rowNum ) {
-    this.getRow( gridId, rowNum ).click();
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    var row = this.getRow( gridId, rowNum );
+    return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
   },
 
   /**
@@ -332,7 +391,9 @@ module.exports = {
   clickHeaderCell: function( gridId, colNumber ) {
     var headerCell = this.headerCell( gridId, colNumber);
 
-    headerCell.click();
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    return browser.actions().mouseMove(headerCell).mouseDown(headerCell).mouseUp().perform();
+    // return headerCell.click();
   },
 
   /**
@@ -357,7 +418,7 @@ module.exports = {
     var resizer = headerCell.all( by.css( '.ui-grid-column-resizer' )).first();
     var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ));
 
-    browser.actions()
+    return browser.actions()
       .mouseDown(resizer)
       .mouseMove(menuButton)
       .mouseUp()
@@ -384,9 +445,12 @@ module.exports = {
   shiftClickHeaderCell: function( gridId, colNumber ) {
     var headerCell = this.headerCell( gridId, colNumber);
 
-    browser.actions()
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    return browser.actions()
       .keyDown(protractor.Key.SHIFT)
-      .click(headerCell)
+      .mouseMove(headerCell)
+      .mouseDown(headerCell)
+      .mouseUp()
       .keyUp(protractor.Key.SHIFT)
       .perform();
   },
@@ -415,12 +479,20 @@ module.exports = {
   *
   */
   clickColumnMenu: function( gridId, colNumber, menuItemNumber ) {
+    var self = this;
+
     var headerCell = this.headerCell( gridId, colNumber);
 
-    headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    var menuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ) );
 
-    var columnMenu = this.getGrid( gridId ).element( by.css( '.ui-grid-column-menu' ));
-    columnMenu.element( by.repeater('item in menuItems').row(menuItemNumber) ).click();
+    return browser.actions().mouseMove(menuButton).mouseDown(menuButton).mouseUp().perform()
+      .then(function () {
+        var columnMenu = self.getGrid( gridId ).element( by.css( '.ui-grid-column-menu' ));
+        var row = columnMenu.element( by.repeater('item in menuItems').row(menuItemNumber) );
+
+        return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
+      });
   },
 
   /**
@@ -442,7 +514,7 @@ module.exports = {
   *
   */
   clickColumnMenuSortAsc: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 0);
+    return this.clickColumnMenu( gridId, colNumber, 0);
   },
 
   /**
@@ -464,7 +536,7 @@ module.exports = {
   *
   */
   clickColumnMenuSortDesc: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 1);
+    return this.clickColumnMenu( gridId, colNumber, 1);
   },
 
   /**
@@ -486,7 +558,7 @@ module.exports = {
   *
   */
   clickColumnMenuRemoveSort: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 2);
+    return this.clickColumnMenu( gridId, colNumber, 2);
   },
 
   /**
@@ -508,7 +580,7 @@ module.exports = {
   *
   */
   clickColumnMenuHide: function( gridId, colNumber ) {
-    this.clickColumnMenu( gridId, colNumber, 3);
+    return this.clickColumnMenu( gridId, colNumber, 3);
   },
 
   /**
@@ -575,7 +647,19 @@ module.exports = {
   cancelFilterInColumn: function( gridId, colNumber ) {
     var headerCell = this.headerCell( gridId, colNumber);
 
-    headerCell.element( by.css( '.ui-grid-icon-cancel' ) ).click();
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    var cancelButton = headerCell.element( by.css( '.ui-grid-icon-cancel' ) ).element(by.xpath('..'));
+
+    return browser.actions().mouseMove(cancelButton).mouseDown(cancelButton).mouseUp().perform();
+  },
+
+  cancelFilterInColumnFor103: function( gridId, colNumber ) {
+    var headerCell = this.headerCell( gridId, colNumber);
+
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    var cancelButton = headerCell.element( by.css( '.ui-grid-icon-cancel' ) );
+
+    return browser.actions().mouseMove(cancelButton).mouseDown(cancelButton).mouseUp().perform();
   },
 
   /**
@@ -617,24 +701,31 @@ module.exports = {
   *
   */
   expectVisibleColumnMenuItems: function( gridId, colNumber, expectItems ) {
-    var headerCell = this.headerCell( gridId, colNumber );
-    headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
+    var self = this;
 
-    var displayedCount = 0;
-    var columnMenu = this.getGrid( gridId ).element( by.css( '.ui-grid-column-menu' ));
+    var headerCell = self.headerCell( gridId, colNumber );
 
-    var menuItems = columnMenu.all( by.css( '.ui-grid-menu-item' ) );
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    var colMenuButton = headerCell.element( by.css( '.ui-grid-column-menu-button' ) );
 
-    menuItems.map(function(elm) {
-      return elm.isDisplayed();
-    }).then( function( displayedArray ){
-      for ( var i = 0; i < displayedArray.length; i++ ){
-        if ( displayedArray[i] ){
-          displayedCount++;
-        }
-      }
-      expect(displayedCount).toEqual( expectItems );
-    });
+    return browser.actions().mouseMove(colMenuButton).mouseDown(colMenuButton).mouseUp().perform()
+      .then(function () {
+        var displayedCount = 0;
+        var columnMenu = self.getGrid( gridId ).element( by.css( '.ui-grid-column-menu' ));
+
+        var menuItems = columnMenu.all( by.css( '.ui-grid-menu-item' ) );
+
+        return menuItems.map(function(elm) {
+          return elm.isDisplayed();
+        }).then( function( displayedArray ){
+          for ( var i = 0; i < displayedArray.length; i++ ){
+            if ( displayedArray[i] ){
+              displayedCount++;
+            }
+          }
+          return expect(displayedCount).toEqual( expectItems );
+        });
+      });
   },
 
   /**
@@ -653,7 +744,9 @@ module.exports = {
   */
   expectVisibleGridMenuItems: function( gridId, expectItems ) {
     var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
-    gridMenuButton.click();
+
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    browser.actions().mouseMove(gridMenuButton).mouseDown(gridMenuButton).mouseUp().perform();
 
     var displayedCount = 0;
 
@@ -690,9 +783,14 @@ module.exports = {
   */
   clickGridMenuItem: function( gridId, itemNumber ) {
     var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
-    gridMenuButton.click();
 
-    gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    return browser.actions().mouseMove(gridMenuButton).mouseDown(gridMenuButton).mouseUp().perform()
+      .then(function () {
+        var row = gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) );
+
+        return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
+      });
   },
 
   /**
@@ -712,6 +810,8 @@ module.exports = {
   */
   unclickGridMenu: function( gridId ) {
     var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
-    gridMenuButton.click();
+
+    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
+    return browser.actions().mouseMove(gridMenuButton).mouseDown(gridMenuButton).mouseUp().perform();
   }
 };

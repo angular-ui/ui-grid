@@ -11,14 +11,14 @@ changed their requested sort using the grid ui, and secondly a useExternalSortin
 the grid native sorting.
 
 @example
-In this example we suppress the internal sorting, and emulate an external sort by picking one of three 
+In this example we suppress the internal sorting, and emulate an external sort by picking one of three
 json files to show - one sorted by name ASC, one sorted by name DESC, and one not sorted.  To further illustrate that this
 is using external sorting, the external sort routine (consisting of me manually editing json files) got bored
 of sorting after the first 10 or so rows.
 
 We allow sorting by the first and second columns, so that we can show a default sort and that default sort
 indicator being removed even when using external sorting.  Our external sort routine ignores that second
-column however, so sorting by it has no effect. 
+column however, so sorting by it has no effect.
 
 <example module="app">
   <file name="app.js">
@@ -85,55 +85,74 @@ column however, so sorting by it has no effect.
   </file>
     <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    
+
     describe('307 tutorial', function() {
+      // Reload the page before each test if on Firefox. Chrome does it automatically.
+      gridTestUtils.firefoxReload();
+
       it('grid should have three visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });
-  
+
       it('header values should be as expected', function () {
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
       });
-  
+
       it('grid should be unsorted by default', function () {
         gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
         gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
       });
 
       it('sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+          });
       });
 
       it('reverse sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+          .then(function () {
+            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+          })
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+          });
       });
-      
+
       it('return to original sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.clickHeaderCell( 'grid1', 0 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+          .then(function () {
+            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+          })
+          .then(function () {
+            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+          })
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+          });
       });
-      
+
       it('sort ignored on second column', function() {
-        gridTestUtils.clickHeaderCell( 'grid1', 1 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+          });
       });
 
       it('sort disabled on last column', function() {
-        gridTestUtils.clickHeaderCell( 'grid1', 2 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+        gridTestUtils.clickHeaderCell( 'grid1', 2 )
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+          });
       });
     });
-  </file> 
+  </file>
 </example>

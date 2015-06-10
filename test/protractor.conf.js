@@ -26,6 +26,9 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 60000
+    defaultTimeoutInterval: 60000,
+
+    // Don't show the stack trace, it's mostly useless
+    includeStackTrace: false
   }
 };

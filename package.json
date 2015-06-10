@@ -59,7 +59,7 @@
     "protractor": "~2.1.0",
     "grunt-protractor-runner": "~2.0.0",
     "grunt-shell-spawn": "~0.3.0",
-    "selenium-webdriver": "~2.44.0",
+    "selenium-webdriver": "~2.46.0",
     "grunt-jscs": "^0.7.1",
     "jshint-stylish": "^0.2.0",
     "karma-coverage": "^0.2.5",

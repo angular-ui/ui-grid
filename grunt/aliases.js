@@ -24,11 +24,16 @@ module.exports = function (grunt, options) {
     'test:ci-e2e': ['clean', 'build', 'connect:testserver', 'protractor:ci']
   };
 
-  if (grunt.option('e2e') === false || grunt.option('fast') ){
+  baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
+
+  if (grunt.option('e2e') === false || grunt.option('fast')) {
     grunt.log.writeln("Skipping e2e testing...");
-    baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'watch'];
-  } else {
-    baseTasks['dev'] = ['before-test', 'after-test', 'connect', 'autotest:unit', 'autotest:e2e', 'watch'];
+    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:e2e', 1));
+  }
+
+  if (grunt.option('unit') === false) {
+    grunt.log.writeln("Skipping unit testing...");
+    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit', 1));
   }
 
   if (process.env.TRAVIS){

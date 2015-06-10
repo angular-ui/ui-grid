@@ -19,7 +19,7 @@ When using a dropdown editor you need to provide an options array through the `e
 This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through
 using the `editDropdownIdLabel` and `editDropdownValueLabel` options.
 
-A file chooser is available, through seting the 'editableCellTemplate` on the `columnDef` to `'ui-grid/fileChooserEditor'`.  This
+A file chooser is available, through setting the 'editableCellTemplate` on the `columnDef` to `'ui-grid/fileChooserEditor'`.  This
 file chooser will open the file chosen by the user and assign the value of that file to the model element.  In the example below
 we use the file chooser to load a file, and we display the filename in the cell.  The file is stored against the row in a hidden
 column, which we can save to our server or otherwise process.
