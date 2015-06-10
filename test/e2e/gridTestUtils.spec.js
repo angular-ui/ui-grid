@@ -597,7 +597,7 @@ module.exports = {
   enterFilterInColumn: function( gridId, colNumber, filterValue ) {
     var headerCell = this.headerCell( gridId, colNumber);
 
-    headerCell.element( by.css( '.ui-grid-filter-input' ) ).sendKeys(filterValue);
+    return headerCell.element( by.css( '.ui-grid-filter-input' ) ).sendKeys(filterValue);
   },
 
   /**
@@ -694,7 +694,7 @@ module.exports = {
 
     gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) ).click();
   },
-  
+
   /**
   * @ngdoc method
   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
@@ -713,5 +713,5 @@ module.exports = {
   unclickGridMenu: function( gridId ) {
     var gridMenuButton = this.getGrid( gridId ).element( by.css ( '.ui-grid-menu-button' ) );
     gridMenuButton.click();
-  }  
+  }
 };
