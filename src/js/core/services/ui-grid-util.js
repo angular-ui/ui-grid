@@ -151,7 +151,7 @@ function getWidthOrHeight( elem, name, extra ) {
 
 function getLineHeight(elm) {
   elm = angular.element(elm)[0];
-  var parent = elm.offsetParent;
+  var parent = elm.parentElement;
 
   if (!parent) {
     parent = document.getElementsByTagName('body')[0];
