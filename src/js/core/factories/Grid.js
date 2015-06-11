@@ -2223,12 +2223,19 @@ angular.module('ui.grid')
      */
     Grid.prototype.scrollToIfNecessary = function (gridRow, gridCol) {
       var self = this;
-
+//--
       var scrollEvent = new ScrollEvent(self, 'uiGrid.scrollToIfNecessary');
 
       // Alias the visible row and column caches
       var visRowCache = self.renderContainers.body.visibleRowCache;
-      var visColCache = self.renderContainers.body.visibleColumnCache;
+      // columns unpinned
+      var bodyColCache = self.renderContainers.hasOwnProperty('body') ? self.renderContainers.body.visibleColumnCache : [];
+      // columns pinned left
+      var leftColCache = self.renderContainers.hasOwnProperty('left') ? self.renderContainers.left.visibleColumnCache : [];
+      // columns pinned right
+      var rightColCache = self.renderContainers.hasOwnProperty('right') ? self.renderContainers.right.visibleColumnCache : [];
+      // all columns
+      var visColCache = leftColCache.concat(bodyColCache, rightColCache);
 
       /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
 
@@ -2315,16 +2322,34 @@ angular.module('ui.grid')
         // }
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this column
+        var i;
         var columnLeftEdge = 0;
-        for (var i = 0; i < seekColumnIndex; i++) {
-          var col = visColCache[i];
-          columnLeftEdge += col.drawnWidth;
+        var columnRightEdge = gridCol.drawnWidth;
+        
+        for (i = 0; i < seekColumnIndex; i++) {
+          columnLeftEdge += visColCache[i].drawnWidth;
         }
-        columnLeftEdge = (columnLeftEdge < 0) ? 0 : columnLeftEdge;
 
-        var columnRightEdge = columnLeftEdge + gridCol.drawnWidth;
+        columnRightEdge += columnLeftEdge;
+        
+        // check for columns pinned left
+        if (leftColCache.length) {
+            var seekLeftIndex = visColCache.indexOf(leftColCache[leftColCache.length - 1]);
+            // if the next left gridCol is pinned left then we are at the left edge
+            if ((seekLeftIndex + 1) == seekColumnIndex) {
+                columnLeftEdge = 0;
+            }
+        }
+        // check for columns pinned right
+        if (rightColCache.length) {
+            // remove the pinned columns widths from the rightBound
+            for (i = 0; i < rightColCache.length; i++) {
+                rightBound -= rightColCache[i].drawnWidth;
+            }
+        }
 
         // Don't let the pixels required to see the column be less than zero
+        columnLeftEdge = (columnLeftEdge < 0) ? 0 : columnLeftEdge;
         columnRightEdge = (columnRightEdge < 0) ? 0 : columnRightEdge;
 
         var horizScrollPixels, horizPercentage;
@@ -2359,7 +2384,7 @@ angular.module('ui.grid')
       if (scrollEvent.y || scrollEvent.x) {
         scrollEvent.withDelay = false;
         self.scrollContainers('',scrollEvent);
-        var dereg = self.api.core.on.scrollEnd(null,function() {
+        var dereg = self.api.core.on.scrollEnd(self.api.grid.appScope,function() {
           deferred.resolve(scrollEvent);
           dereg();
         });
