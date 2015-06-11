@@ -472,6 +472,11 @@
             var cancelTouchstartTimeout;
 
             var editCellScope;
+
+            if (!$scope.col.colDef.enableCellEdit) {
+              return;
+            }
+
             var cellNavNavigateDereg = function() {};
 
             // Bind to keydown events in the render container
