@@ -2336,7 +2336,7 @@ angular.module('ui.grid')
         if (leftColCache.length) {
             var seekLeftIndex = visColCache.indexOf(leftColCache[leftColCache.length - 1]);
             // if the next left gridCol is pinned left then we are at the left edge
-            if ((seekLeftIndex + 1) == seekColumnIndex) {
+            if ((seekLeftIndex + 1) === seekColumnIndex) {
                 columnLeftEdge = 0;
             }
         }
