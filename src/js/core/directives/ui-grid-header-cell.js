@@ -49,7 +49,8 @@
 
             // apply any headerCellClass
             var classAdded;
-            
+            var previousMouseX;
+
             // filter watchers
             var filterDeregisters = [];
             
@@ -86,7 +87,8 @@
               if (event.button && event.button !== 0) {
                 return;
               }
-    
+              previousMouseX = event.pageX;
+
               $scope.mousedownStartTime = (new Date()).getTime();
               $scope.mousedownTimeout = $timeout(function() { }, mousedownTimeout);
     
@@ -129,6 +131,10 @@
             };
             
             $scope.moveFn = function( event ){
+              // Chrome is known to fire some bogus move events.
+              var changeValue = event.pageX - previousMouseX;
+              if ( changeValue === 0 ){ return; }
+
               // we're a move, so do nothing and leave for column move (if enabled) to take over
               $timeout.cancel($scope.mousedownTimeout);
               $scope.offAllEvents();
