@@ -882,10 +882,10 @@
                   }
 
                   if ($scope.deepEdit &&
-                    evt.keyCode === uiGridConstants.keymap.LEFT ||
-                    evt.keyCode === uiGridConstants.keymap.RIGHT ||
-                    evt.keyCode === uiGridConstants.keymap.UP ||
-                    evt.keyCode === uiGridConstants.keymap.DOWN) {
+                    (evt.keyCode === uiGridConstants.keymap.LEFT ||
+                     evt.keyCode === uiGridConstants.keymap.RIGHT ||
+                     evt.keyCode === uiGridConstants.keymap.UP ||
+                     evt.keyCode === uiGridConstants.keymap.DOWN)) {
                     evt.stopPropagation();
                   }
                   // Pass the keydown event off to the cellNav service, if it exists
