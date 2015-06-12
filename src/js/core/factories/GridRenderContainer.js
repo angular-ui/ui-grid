@@ -719,6 +719,12 @@ angular.module('ui.grid')
     var self = this;
     var styles = {};
 
+    if (self.grid.disableScrolling) {
+      styles['overflow-x'] = 'hidden';
+      styles['overflow-y'] = 'hidden';
+      return styles;
+    }
+
     if (self.name === 'body') {
       styles['overflow-x'] = self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.NEVER ? 'hidden' : 'scroll';
       if (!self.grid.isRTL()) {

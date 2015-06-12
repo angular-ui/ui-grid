@@ -765,6 +765,7 @@
             }
 
             function endEdit(retainFocus) {
+              $scope.grid.disableScrolling = false;
               if (!inEdit) {
                 return;
               }
@@ -779,6 +780,7 @@
             }
 
             function cancelEdit() {
+              $scope.grid.disableScrolling = false;
               if (!inEdit) {
                 return;
               }
@@ -867,9 +869,13 @@
                   $scope.deepEdit = false;
                 };
 
+
                 $elm.on('click', function (evt) {
                   if ($elm[0].type !== 'checkbox') {
                     $scope.deepEdit = true;
+                    $timeout(function () {
+                      $scope.grid.disableScrolling = true;
+                    });
                   }
                 });
 

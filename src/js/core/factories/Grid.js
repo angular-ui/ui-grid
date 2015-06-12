@@ -126,6 +126,10 @@ angular.module('ui.grid')
      */
     self.scrollDirection = uiGridConstants.scrollDirection.NONE;
 
+    //if true, grid will not respond to any scroll events
+    self.disableScrolling = false;
+
+
     function vertical (scrollEvent) {
       self.isScrollingVertically = false;
       self.api.core.raise.scrollEnd(scrollEvent);
@@ -313,7 +317,7 @@ angular.module('ui.grid')
      * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
      * for other people to inject rows processors at intermediate priorities.  Lower priority rowsProcessors run earlier.
      *
-     * At present allRowsVisible is running at 50, sort manipulations running at 60-65, filter is running at 100, 
+     * At present allRowsVisible is running at 50, sort manipulations running at 60-65, filter is running at 100,
      * sort is at 200, grouping and treeview at 400-410, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
