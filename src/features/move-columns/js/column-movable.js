@@ -287,12 +287,13 @@
                 };
 
                 var moveFn = function( event ) {
+                  var changeValue = event.pageX - previousMouseX;
+                  if ( changeValue === 0 ){ return; }
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
 
                   moveOccurred = true;
 
-                  var changeValue = event.pageX - previousMouseX;
                   if (!elmCloned) {
                     cloneElement();
                   }
