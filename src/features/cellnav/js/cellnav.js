@@ -726,8 +726,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile','uiGridCellNavConstants',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -755,12 +755,25 @@
               uiGridCellNavService.decorateRenderContainers(grid);
 
               //add an element with no dimensions that can be used to set focus and capture keystrokes
-              var focuser = $compile('<div class="ui-grid-focuser" tabindex="-1"></div>')($scope);
+              var focuser = $compile('<div class="ui-grid-focuser" tabindex="0"></div>')($scope);
               $elm.append(focuser);
 
               uiGridCtrl.focus = function () {
                 focuser[0].focus();
+                //allow for first time grid focus
+                focuser.on('focus', function (evt) {
+                  evt.uiGridTargetRenderContainerId = containerId;
+                  var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                  if (rowCol === null) {
+                    rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(uiGridCellNavConstants.direction.DOWN, null, null);
+                    if (rowCol.row && rowCol.col) {
+                      uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                    }
+                  }
+                });
               };
+
+
 
               // Bind to keydown events in the render container
               focuser.on('keydown', function (evt) {
