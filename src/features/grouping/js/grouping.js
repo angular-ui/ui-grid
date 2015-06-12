@@ -889,9 +889,6 @@
         // Broken out as shouldn't create functions in a loop.
         var updateProcessingState = function( groupFieldState, stateIndex ) {
           var fieldValue = grid.getCellValue(row, groupFieldState.col); 
-          if ( typeof(fieldValue) === 'undefined' || fieldValue === null ){
-            fieldValue = grid.options.groupingNullLabel;
-          }
 
           // look for change of value - and insert a header
           if ( !groupFieldState.initialised || rowSorter.getSortFn(grid, groupFieldState.col, renderableRows)(fieldValue, groupFieldState.currentValue) !== 0 ){
@@ -1007,8 +1004,9 @@
         var col = processingState[stateIndex].col;
 
         var newValue = grid.getCellValue(renderableRows[rowIndex], col);
+        var newDisplayValue = newValue;
         if ( typeof(newValue) === 'undefined' || newValue === null ) {
-          newValue = grid.options.groupingNullLabel;
+          newDisplayValue = grid.options.groupingNullLabel;
         }
 
         var cacheItem = grid.grouping.oldGroupingHeaderCache;
@@ -1027,7 +1025,7 @@
           gridClassFactory.rowTemplateAssigner.call(grid, headerRow);
         }
 
-        headerRow.entity['$$' + processingState[stateIndex].col.uid] = { groupVal: newValue };
+        headerRow.entity['$$' + processingState[stateIndex].col.uid] = { groupVal: newDisplayValue };
         headerRow.treeLevel = stateIndex;
         headerRow.groupHeader = true;
         headerRow.internalRow = true;

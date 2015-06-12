@@ -28,13 +28,21 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       {field: 'col0', enableGrouping: true},
       {field: 'col1', enableGrouping: true},
       {field: 'col2', enableGrouping: true},
-      {field: 'col3', enableGrouping: true}
+      {field: 'col3', enableGrouping: true},
+      {field: 'col4', enableGrouping: true, type: 'date'}
     ];
 
     uiGridGroupingService.initializeGrid(grid, $scope);
     var data = [];
     for (var i = 0; i < 10; i++) {
-      data.push({col0: 'a_' + Math.floor(i/4), col1: 'b_' + Math.floor(i/2), col2: 'c_' + i, col3: 'd_' + i});
+
+      data.push({
+        col0: 'a_' + Math.floor(i/4),
+        col1: 'b_' + Math.floor(i/2),
+        col2: 'c_' + i,
+        col3: 'd_' + i,
+        col4: i > 5 ? new Date(2015, 6, 1) : null
+      });
     }
     grid.options.data = data;
 
@@ -82,6 +90,15 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
       var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
       expect( groupedRows.length ).toEqual( 18, 'all rows are present, including the added group headers' );
+    });
+
+    it( 'group by col4 (type date with nulls)', function() {
+      spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
+      grid.columns[4].grouping = { groupPriority: 1 };
+
+      uiGridGroupingService.tidyPriorities(grid);
+      var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
+      expect( groupedRows.length ).toEqual( 12, 'all rows are present, including two group header rows' );
     });
   });
 
