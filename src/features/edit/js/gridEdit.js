@@ -881,15 +881,12 @@
                       break;
                   }
 
-                  if ($scope.deepEdit) {
-                    switch (evt.keyCode) {
-                      case uiGridConstants.keymap.LEFT:
-                      case uiGridConstants.keymap.RIGHT:
-                      case uiGridConstants.keymap.UP:
-                      case uiGridConstants.keymap.DOWN:
-                        evt.stopPropagation();
-                        break;
-                    }
+                  if ($scope.deepEdit &&
+                    evt.keyCode === uiGridConstants.keymap.LEFT ||
+                    evt.keyCode === uiGridConstants.keymap.RIGHT ||
+                    evt.keyCode === uiGridConstants.keymap.UP ||
+                    evt.keyCode === uiGridConstants.keymap.DOWN) {
+                    evt.stopPropagation();
                   }
                   // Pass the keydown event off to the cellNav service, if it exists
                   else if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
