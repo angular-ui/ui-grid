@@ -134,6 +134,8 @@
                * @param {object} rowEntity the data entity for the row you want to expand
                */              
               toggleRowExpansion: function (rowEntity) {
+                event.stopPropagation();
+                event.preventDefault();
                 var row = grid.getRow(rowEntity);
                 if (row !== null) {
                   service.toggleRowExpansion(grid, row);
