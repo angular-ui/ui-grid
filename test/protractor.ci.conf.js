@@ -32,6 +32,8 @@ exports.config = {
     defaultTimeoutInterval: 60000,
 
     // Don't show the stack trace, it's mostly useless
-    includeStackTrace: false
+    includeStackTrace: false,
+
+    realtimeFailure: true
   }
 };

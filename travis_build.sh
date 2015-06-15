@@ -6,16 +6,23 @@ set -e
 #   In this case just do normal local tests
 if [ $TRAVIS_PULL_REQUEST != "false" ]
 then
-  # Run default task
-  grunt
-  # Run e2e tests
-  # echo "travis_fold:start:Tests"
-  grunt test:ci-e2e
-  # echo "travis_fold:end:Tests"
+  if [ $JOB = "unit" ]; then
+    # Run default task
+    grunt
+  elif [ $JOB = "e2e" ]; then
+    # Run e2e tests
+    echo "travis_fold:start:Tests"
+    grunt test:ci-e2e
+    echo "travis_fold:end:Tests"
+  fi
+# Not a pull request, run the full unit test CI suite
 else
   echo "travis_fold:start:Tests"
-  grunt test:ci
-  grunt test:ci-e2e
+  if [ $JOB -eq "unit" ]; then
+    grunt test:ci
+  elif [ $JOB -eq "e2e" ]; then
+    grunt test:ci-e2e
+  fi
   echo "travis_fold:end:Tests"
 
   # Send coverage data to coveralls.io
