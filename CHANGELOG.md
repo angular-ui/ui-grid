@@ -1,3 +1,43 @@
+<a name="v3.0.0-rc.22"></a>
+### v3.0.0-rc.22 (2015-06-15)
+
+
+#### Bug Fixes
+
+* **Edit:** Allow COL_FIELD in editable templates ([fa9066b2](http://github.com/angular-ui/ng-grid/commit/fa9066b263f3ae27c085c85db07561e90fad10bd))
+* **Selection:** Prevent IE from selecting text ([a1bbc0c5](http://github.com/angular-ui/ng-grid/commit/a1bbc0c57148076ddf5b988acc9abb748cbca1e6), closes [#3392](http://github.com/angular-ui/ng-grid/issues/3392))
+* **cellNav:**
+  * #3528  handle focus into grid from other controls ([92477c7a](http://github.com/angular-ui/ng-grid/commit/92477c7ad97f439582039b574baa2286f724d0ef))
+  * IE was scrolling the viewPort to the end when the focuser div received focus.  S ([aa563554](http://github.com/angular-ui/ng-grid/commit/aa56355469e0c2fe825f6c063bb2e2f7937817c7))
+  * focuser element should not have width or height or else the window will scroll t ([6997d2b7](http://github.com/angular-ui/ng-grid/commit/6997d2b7365e5fad79f0568d5f6a41d3600d69c0))
+  * was processing left and right renderContainers where there is no need fix(edit): ([6f5d503d](http://github.com/angular-ui/ng-grid/commit/6f5d503d48c5871a4fd04918a6a6269758ef9bf7))
+  *  add an empty element to focus on instead of focusing on the viewport ([6937d4d5](http://github.com/angular-ui/ng-grid/commit/6937d4d56d722e8e23c6c0b19e917f8bdc3d8be6))
+* **edit:**
+  * #3128 remove grid scrollbars when in deepedit to prevent any scrolling of parent ([91077e82](http://github.com/angular-ui/ng-grid/commit/91077e828f450bbb7cb0c76404686110f700e396))
+  * deep edit keydown logic wasn't right ([9e995e9e](http://github.com/angular-ui/ng-grid/commit/9e995e9e58582a6c190657c62ddf47632dc38045))
+  * tweak the deep edit keydown logic so that Enter and Tab stops editing ([fbc38cb1](http://github.com/angular-ui/ng-grid/commit/fbc38cb17e314ceb48c887b03a9256199f101fe6))
+  * #3742 dropdown was not calling out to cellNav for cellNav keys. also refactored  ([2edc4d66](http://github.com/angular-ui/ng-grid/commit/2edc4d66193b37734733b2a8a1999921426424b2))
+  * Edit events were being attached in gridCell directive even if edit was not enabl ([13ab0945](http://github.com/angular-ui/ng-grid/commit/13ab0945a17597c9a7048fdb95936662a0cfdd82))
+* **gridEdit:**
+  * #3373 spacebar on checkbox was incorrectly invoking deep edit mode ([4d9ec8b5](http://github.com/angular-ui/ng-grid/commit/4d9ec8b5774b6beeaab05909a7a493aa6f16e72c))
+  * issue 2885 non-character fields were invoking edit.  Not sure if I got all the k ([025c8939](http://github.com/angular-ui/ng-grid/commit/025c89397184ba44d65b7ad457546538e0cb3f22))
+* **gridUtil:** rtlScrollType using wrong method ([15ee480e](http://github.com/angular-ui/ng-grid/commit/15ee480ef1ad34f1bd99de1f3ddfaa9730998c07), closes [#3637](http://github.com/angular-ui/ng-grid/issues/3637))
+* **moveColumn:** account for width of left container when positioning moving column header. ([06f223bb](http://github.com/angular-ui/ng-grid/commit/06f223bbeb8cf8a82dd70142ab8d46f051df12be), closes [#3417](http://github.com/angular-ui/ng-grid/issues/3417), [#3395](http://github.com/angular-ui/ng-grid/issues/3395))
+* **saveState:** Saving state was storing rowHeader columns, causing issues on restore. ([c9ce96af](http://github.com/angular-ui/ng-grid/commit/c9ce96af75ffde134dba3b8c319b301f41781c33))
+* **treeBase:** Change calculation of number of levels in tree ([26ca6215](http://github.com/angular-ui/ng-grid/commit/26ca621594252f2e8b87687b2667b3e8d2e36226))
+* **uiGrid:**
+  * Add relatively-positioned wrapper ([9b2c6d51](http://github.com/angular-ui/ng-grid/commit/9b2c6d515968d0502a5a7fa1b6b6f15693669715), closes [#3412](http://github.com/angular-ui/ng-grid/issues/3412))
+  * Use track by uid on columns ([e9ea9d47](http://github.com/angular-ui/ng-grid/commit/e9ea9d470823506b76458b9071cd16c3d08fb9e6))
+* **uiGridColumns:** Fix auto-incrementing of column names ([a10f1414](http://github.com/angular-ui/ng-grid/commit/a10f141444043589ecc87a79f74938d1640cdc40))
+* **uiGridHeader:**
+  * ensure that styles are rebuilt on explicit height ([65ad61f4](http://github.com/angular-ui/ng-grid/commit/65ad61f4439983179be4d44bac3a6cc9151ac094))
+  * Recalc all explicit heights ([43f63ac9](http://github.com/angular-ui/ng-grid/commit/43f63ac9f62a133b51d7af2f4a966318eae8e9ac), closes [#3136](http://github.com/angular-ui/ng-grid/issues/3136))
+
+
+#### Features
+
+* **grouping:** Add option groupingNullLabel, to group null and undefined values together. ([9fbb1b87](http://github.com/angular-ui/ng-grid/commit/9fbb1b874ecd773649bb27f9eea145b017614e51), closes [#3271](http://github.com/angular-ui/ng-grid/issues/3271))
+
 <a name="v3.0.0-rc.21"></a>
 ### v3.0.0-rc.21 (2015-04-28)
 
