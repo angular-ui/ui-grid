@@ -6,7 +6,7 @@ set -e
 #   In this case just do normal local tests
 if [ $TRAVIS_PULL_REQUEST != "false" ]
 then
-  if [ $JOB = "unit" ]; then
+  if [ $JOB == "unit" ]; then
     # Run default task
     grunt
   elif [ $JOB = "e2e" ]; then
@@ -18,9 +18,9 @@ then
 # Not a pull request, run the full unit test CI suite
 else
   echo "travis_fold:start:Tests"
-  if [ $JOB -eq "unit" ]; then
+  if [ $JOB = "unit" ]; then
     grunt test:ci
-  elif [ $JOB -eq "e2e" ]; then
+  elif [ $JOB = "e2e" ]; then
     grunt test:ci-e2e
   fi
   echo "travis_fold:end:Tests"
