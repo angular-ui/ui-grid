@@ -10,12 +10,12 @@ then
   grunt
   # Run e2e tests
   # echo "travis_fold:start:Tests"
-  # grunt test:ci-e2e
+  grunt test:ci-e2e
   # echo "travis_fold:end:Tests"
 else
   echo "travis_fold:start:Tests"
   grunt test:ci
-  # grunt test:ci-e2e
+  grunt test:ci-e2e
   echo "travis_fold:end:Tests"
 
   # Send coverage data to coveralls.io
