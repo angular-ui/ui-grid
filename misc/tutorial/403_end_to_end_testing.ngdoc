@@ -23,3 +23,18 @@ Within your tests you can then use the helper methods that are provided:
 </pre>
 
 For documentation of the available methods, refer to {@link api/ui.grid.e2eTestLibrary.api:gridTest gridTest}
+
+Note that many of the tutorials (particularly those in the 100 series) have e2e tests on them,
+these can be found by looking at end to end test tab in the example on each of those tutorials.
+
+Note also there is a newer syntax for providing the gridId, which is shown in the first few
+of those tutorials:
+
+<pre>
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1 = new GridObjectTest('grid1');
+    describe('101 tutorial', function() {
+      it('grid should have three visible rows', function () {
+        grid1.expectRowCount( 3 );
+      });
+</pre>
