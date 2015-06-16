@@ -20,7 +20,7 @@ exports.config = {
   },
 
   // Wait 30 seconds for page synchronization
-  allScriptsTimeout: 30000,
+  allScriptsTimeout: 120000,
   includeStackTrace: true,
 
   // A base URL for your application under test. Calls to protractor.get()
