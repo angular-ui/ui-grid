@@ -16,7 +16,7 @@ exports.config = {
     browserName: 'chrome',
     build: process.env.TRAVIS_BUILD_NUMBER,
     // 'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
-    'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
+    'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
   },
 
   // Wait 30 seconds for page synchronization
