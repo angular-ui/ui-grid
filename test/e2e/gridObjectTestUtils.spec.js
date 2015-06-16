@@ -5,7 +5,7 @@ var gridTestUtils = require('./gridTestUtils.spec.js');
 function getProxyToRealMethod(gridId, method) {
     return function() {
         var callArgs = [gridId].concat(Array.prototype.slice.call(arguments));
-        gridTestUtils[method].apply(gridTestUtils, callArgs);
+        return gridTestUtils[method].apply(gridTestUtils, callArgs);
     };
 }
 

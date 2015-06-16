@@ -141,130 +141,127 @@ include `string`, `number`, `numberStr` and `date`.  If you use date be aware th
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1 = new GridObjectTest('grid1');
+    var grid2 = new GridObjectTest('grid2');
 
     describe('first grid on the page, no default sort', function() {
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      it('grid should have three visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
-      });
-
       it('header values should be as expected', function () {
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+        grid1.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
       });
 
       it('grid should be unsorted by default', function () {
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+        grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
+        grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
       });
 
       it('sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+        grid1.clickHeaderCell( 0 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+            grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
+            grid1.expectCellValueMatch( 1, 0, 'Alisha Myers' );
           });
       });
 
       it('reverse sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+        grid1.clickHeaderCell( 0 )
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+            return grid1.clickHeaderCell( 0 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+            grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
+            grid1.expectCellValueMatch( 1, 0, 'Woods Key' );
           });
       });
 
       it('return to original sort by name by clicking header', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 0 )
+        grid1.clickHeaderCell( 0 )
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+            return grid1.clickHeaderCell( 0 );
           })
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid1', 0 );
+            return grid1.clickHeaderCell( 0 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+            grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
+            grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
       });
 
       it('sort asc by clicking menu', function() {
-        gridTestUtils.clickColumnMenuSortAsc( 'grid1', 0 )
+        grid1.clickColumnMenuSortAsc( 0 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+            grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
+            grid1.expectCellValueMatch( 1, 0, 'Alisha Myers' );
           });
       });
 
       it('sort desc by clicking menu, then remove sort', function() {
-        gridTestUtils.clickColumnMenuSortDesc( 'grid1', 0 )
+        grid1.clickColumnMenuSortDesc( 0 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+            grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
+            grid1.expectCellValueMatch( 1, 0, 'Woods Key' );
             return true;
           })
           .then(function () {
-            return gridTestUtils.clickColumnMenuRemoveSort( 'grid1', 0 );
+            return grid1.clickColumnMenuRemoveSort( 0 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+            grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
+            grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
       });
 
       it('sort two columns, gender then name, by shift clicking', function() {
-        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+        grid1.clickHeaderCell( 1 )
           .then(function () {
-            return gridTestUtils.shiftClickHeaderCell( 'grid1', 0 );
+            return grid1.shiftClickHeaderCell( 0 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alisha Myers' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Beryl Rice' );
+            grid1.expectCellValueMatch( 0, 0, 'Alisha Myers' );
+            grid1.expectCellValueMatch( 1, 0, 'Beryl Rice' );
           });
       });
 
       it('sort disabled on last column', function() {
-        gridTestUtils.clickHeaderCell( 'grid1', 2 )
+        grid1.clickHeaderCell( 2 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
-            gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+            grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
+            grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
       });
 
       it('click one menu, then click another menu, expect undisplay and redisplay on second click', function() {
-        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 0, 3 );
-        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 3 );
+        grid1.expectVisibleColumnMenuItems( 0, 3 );
+        grid1.expectVisibleColumnMenuItems( 1, 3 );
       });
 
       it('toggle gender, expect Alexander Foley to move around', function() {
         // sort gender asc, then name
-        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+        grid1.clickHeaderCell( 1 )
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid1', 1 );
+            return grid1.clickHeaderCell( 1 );
           })
           .then(function () {
-            return gridTestUtils.shiftClickHeaderCell( 'grid1', 0 );
+            return grid1.shiftClickHeaderCell( 0 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
-          })
-          .then(function () {
-            return gridTestUtils.click(element(by.id('toggleGender')));
-          })
-          .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Anthony Joyner' );
+            grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
           })
           .then(function () {
             return gridTestUtils.click(element(by.id('toggleGender')));
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+            grid1.expectCellValueMatch( 0, 0, 'Anthony Joyner' );
+          })
+          .then(function () {
+            return gridTestUtils.click(element(by.id('toggleGender')));
+          })
+          .then(function () {
+            grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
           });
       });
 
@@ -272,37 +269,31 @@ include `string`, `number`, `numberStr` and `date`.  If you use date be aware th
 
 
     describe('second grid on the page, has default sort', function() {
-      it('grid should have three visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid2', 3 );
-      });
-
       it('header values should be as expected', function () {
-        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 0, 'Name' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 1, 'Gender' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 2, 'Company' );
+        grid2.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
       });
 
       it('grid should be sorted by default', function () {
-        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Yvonne Parsons' );
-        gridTestUtils.expectCellValueMatch( 'grid2', 1, 0, 'Velma Fry' );
+        grid2.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
+        grid2.expectCellValueMatch( 1, 0, 'Velma Fry' );
       });
 
       it('sort on second column can\'t be removed when cycle through header clicks', function () {
-        gridTestUtils.clickHeaderCell( 'grid2', 0 )
+        grid2.clickHeaderCell( 0 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Ethel Price' );
+            grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
           })
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid2', 1 );
+            return grid2.clickHeaderCell( 1 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Wilder Gonzales' );
+            grid2.expectCellValueMatch( 0, 0, 'Wilder Gonzales' );
           })
           .then(function () {
-            return gridTestUtils.clickHeaderCell( 'grid2', 1 );
+            return grid2.clickHeaderCell( 1 );
           })
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Ethel Price' );
+            grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
           });
       });
     });
