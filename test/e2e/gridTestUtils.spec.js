@@ -176,6 +176,35 @@ module.exports = {
   },
 
   /**
+   * @ngdoc method
+   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
+   * @name expectHeaderColumns
+   * @description Checks that a grid has the given column headers.
+   * @param {string} gridId The ID of the grid that you want to inspect.
+   * @param {array} expectedColumns The column headers you expect.
+   *
+   * @example
+   * <pre>
+   *   gridTestUtils.expectHeaderColumns('myGrid', ['ID', 'Name', 'Email']);
+   * </pre>
+   */
+  expectHeaderColumns: function(gridId, expectedColumns) {
+    var headerColumns = this.getGrid(gridId)
+      .element(by.css('.ui-grid-render-container-body'))
+      .element( by.css('.ui-grid-header'))
+      .all(by.repeater('col in colContainer.renderedColumns track by col.uid'));
+
+    expect(headerColumns.count()).toBe(expectedColumns.length);
+
+    headerColumns.getText().then(function(columnTexts) {
+      columnTexts = columnTexts.map(function trimText(text) {
+        return text.replace(/^\s+/, '').replace(/\s+$/, '');
+      });
+      expect(columnTexts).toEqual(expectedColumns);
+    });
+  },
+
+  /**
   * @ngdoc method
   * @methodOf ui.grid.e2eTestLibrary.api:gridTest
   * @name expectHeaderLeftColumnCount
