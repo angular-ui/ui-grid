@@ -19,8 +19,8 @@ exports.config = {
     'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
   },
 
-  // Wait 30 seconds for page synchronization
-  allScriptsTimeout: 120000,
+  // Wait 5m (30 seconds) for page synchronization
+  allScriptsTimeout: 300000, / 30000
   includeStackTrace: true,
 
   // A base URL for your application under test. Calls to protractor.get()
@@ -32,7 +32,7 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 60000,
+    defaultTimeoutInterval: 12000, // 60000
 
     // Don't show the stack trace, it's mostly useless
     includeStackTrace: false,
