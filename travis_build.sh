@@ -9,18 +9,18 @@ then
   if [ $JOB == "unit" ]; then
     # Run default task
     grunt
-  elif [ $JOB = "e2e" ]; then
+  #elif [ $JOB = "e2e" ]; then
     # Run e2e tests
-    echo "travis_fold:start:Tests"
+    # echo "travis_fold:start:Tests"
     # grunt test:ci-e2e
-    echo "travis_fold:end:Tests"
+    # echo "travis_fold:end:Tests"
   fi
 # Not a pull request, run the full unit test CI suite
 else
   echo "travis_fold:start:Tests"
   if [ $JOB = "unit" ]; then
     grunt test:ci
-  elif [ $JOB = "e2e" ]; then
+  #elif [ $JOB = "e2e" ]; then
     # grunt test:ci-e2e
   fi
   echo "travis_fold:end:Tests"
