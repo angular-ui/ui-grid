@@ -4,17 +4,24 @@ exports.config = {
 
   //seleniumAddress: 'http://localhost:4444/wd/hub',
   seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
-  seleniumPort: 4444,
+  // seleniumPort: 4444,
 
   specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],
 
+  sauceUser: process.env.SAUCE_USERNAME,
+  sauceKey: process.env.SAUCE_ACCESS_KEY,
+
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    browserName: 'firefox'
+    browserName: 'chrome',
+    build: process.env.TRAVIS_BUILD_NUMBER,
+    // 'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
+    'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
   },
 
   // Wait 30 seconds for page synchronization
   allScriptsTimeout: 30000,
+  includeStackTrace: true,
 
   // A base URL for your application under test. Calls to protractor.get()
   // with relative paths will be prepended with this.
