@@ -134,3 +134,77 @@ angular.forEach([
     });
   });
 });
+
+describe('ui-grid-one-bind-class', function() {
+  var $scope, $compile, directiveElt, recompile;
+
+  beforeEach(module('ui.grid'));
+
+  //Try out two different starting values
+  angular.forEach([null, undefined], function(startingValue){
+    describe("basic 'class' one bind using object with starting value '" + startingValue + "'", function(){
+      beforeEach(inject(function (_$compile_, $rootScope) {
+        $scope = $rootScope;
+        $compile = _$compile_;
+
+        //Initialize the value
+        $scope.valNull = startingValue;
+
+        recompile = function () {
+          directiveElt = angular.element("<div ui-grid-one-bind-class='{customClass: val}'></div>");
+          $compile(directiveElt)($scope);
+          $scope.$digest();
+        };
+        recompile();
+      }));
+
+      it("should bind the value to the 'class' dom tag", function(){
+        $scope.val = true;
+        $scope.$digest();
+        expect(directiveElt.hasClass('customClass')).toBe($scope.val);
+
+      });
+
+      it("should not change the 'class' after the watcher should have been removed", function(){
+        $scope.val = true;
+        $scope.$digest();
+        $scope.val = false;
+        $scope.$digest();
+        expect(directiveElt.hasClass('customClass')).not.toBe($scope.val);
+      });
+    });
+  });
+
+  describe("basic 'class' one bind using a variable", function(){
+    beforeEach(inject(function (_$compile_, $rootScope) {
+      $scope = $rootScope;
+      $compile = _$compile_;
+
+      $scope.classElement = null;
+
+      recompile = function () {
+        directiveElt = angular.element("<div ui-grid-one-bind-class='classElement'></div>");
+        $compile(directiveElt)($scope);
+        $scope.$digest();
+      };
+      recompile();
+
+    }));
+    it("should have the classses listed", function(){
+      $scope.classElement = ['customClass', 'anotherCustomClass'];
+
+      $scope.$digest();
+
+      expect(directiveElt.hasClass('customClass')).toBe(true);
+      expect(directiveElt.hasClass('anotherCustomClass')).toBe(true);
+    });
+    it("should have the class listed", function(){
+      $scope.classElement = 'customClass';
+
+      $scope.$digest();
+
+      expect(directiveElt.hasClass('customClass')).toBe(true);
+    });
+  });
+
+});
