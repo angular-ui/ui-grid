@@ -33,7 +33,8 @@ branches:
     - /^release-.*$/
 
 before_install:
-  - "export CHROME_BIN=chromium-browser"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 
 install:
   - npm config set spin false
@@ -41,8 +42,6 @@ install:
 before_script:
   - git fetch --tags
   - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
   - mkdir -p $LOGS_DIR
   - ./lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma-cli

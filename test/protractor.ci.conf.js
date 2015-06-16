@@ -20,10 +20,6 @@ exports.config = {
   // with relative paths will be prepended with this.
   // baseUrl: 'http://localhost:9999',
 
-  // Spec patterns are relative to the location of the spec file. They may
-  // include glob patterns.
-  // specs: ['./e2e/**/*.spec.js'],
-
   // Options to be passed to Jasmine-node.
   jasmineNodeOpts: {
     showColors: true, // Use colors in the command line report.
