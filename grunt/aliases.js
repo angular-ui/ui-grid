@@ -28,12 +28,12 @@ module.exports = function (grunt, options) {
 
   if (grunt.option('e2e') === false || grunt.option('fast')) {
     grunt.log.writeln("Skipping e2e testing...");
-    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:e2e', 1));
+    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:e2e'), 1);
   }
 
   if (grunt.option('unit') === false) {
     grunt.log.writeln("Skipping unit testing...");
-    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit', 1));
+    baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit'), 1);
   }
 
   if (process.env.TRAVIS){
