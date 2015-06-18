@@ -15,7 +15,7 @@ notifications:
 env:
   matrix:
     - JOB=unit
-    - JOB=e2e
+   # - JOB=e2e
   global:
     - SAUCE_USERNAME=nggrid
     - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
