@@ -18,15 +18,16 @@ module.exports = {
     },
     scripts: [
        // no jquery automatically loaded for tutorial!!!
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-touch.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-touch.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-animate.js',
       'bower_components/csv-js/csv.js',
       'bower_components/pdfmake/build/pdfmake.js',
       'bower_components/pdfmake/build/vfs_fonts.js'
     ],
     hiddenScripts: [
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-aria.js',
       'bower_components/google-code-prettify/src/prettify.js',
       'node_modules/marked/lib/marked.js'
     ],
