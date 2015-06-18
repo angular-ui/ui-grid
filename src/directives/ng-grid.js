@@ -47,6 +47,10 @@
                                 $scope.columns = [];
                                 grid.config.columnDefs = a;
                                 grid.buildColumns();
+                                if (grid.config.sortInfo.fields.length > 0) {
+                                    grid.sortColumnsInit();
+                                    $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
+                                }
                                 grid.eventProvider.assignEvents();
                                 domUtilityService.RebuildGrid($scope, grid);
                             }, true));
