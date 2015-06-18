@@ -182,16 +182,20 @@
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
-      
+
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
-        if (row.isExpanded) {
-          row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight;
-        }
-        else {
-          row.height = row.grid.options.rowHeight;
-          grid.expandable.expandedAll = false;
-        }
+        gridUtil.getTemplate(grid.options.expandableRowTemplate).then(function(template) {
+          row.subGridOptions = eval(angular.element(template)[0].getAttribute('ui-grid'));
+          row.subGridHeight = (row.subGridOptions.data.length * row.grid.options.rowHeight) + row.grid.options.rowHeight + 2.5;
+          if (row.isExpanded) {
+            row.height = row.subGridHeight ? row.subGridHeight : (row.grid.options.rowHeight + grid.options.expandableRowHeight);
+          }
+          else {
+            row.height = row.grid.options.rowHeight;
+            grid.expandable.expandedAll = false;
+          }
+        });
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
       
@@ -390,6 +394,10 @@
                 $scope.expandableRow.shouldRenderFiller = function () {
                   var ret = $scope.row.isExpanded && ( $scope.colContainer.name !== 'body' || ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered));
                   return ret;
+                };
+
+                $scope.expandableRow.getHeight = function() {
+                  return $scope.row.height;
                 };
 
  /*
