@@ -7,18 +7,18 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
-   * over this object.  Setting gridOptions within your controller is the most common method for an application 
+   * over this object.  Setting gridOptions within your controller is the most common method for an application
    * developer to configure the behaviour of their ui-grid
-   * 
+   *
    * @example To define your gridOptions within your controller:
    * <pre>$scope.gridOptions = {
    *   data: $scope.myData,
-   *   columnDefs: [ 
+   *   columnDefs: [
    *     { name: 'field1', displayName: 'pretty display name' },
    *     { name: 'field2', visible: false }
    *  ]
    * };</pre>
-   * 
+   *
    * You can then use this within your html template, when you define your grid:
    * <pre>&lt;div ui-grid="gridOptions"&gt;&lt;/div&gt;</pre>
    *
@@ -46,13 +46,13 @@ angular.module('ui.grid')
        * @ngdoc function
        * @name onRegisterApi
        * @propertyOf ui.grid.class:GridOptions
-       * @description A callback that returns the gridApi once the grid is instantiated, which is 
+       * @description A callback that returns the gridApi once the grid is instantiated, which is
        * then used to interact with the grid programatically.
-       * 
-       * Note that the gridApi.core.renderingComplete event is identical to this 
+       *
+       * Note that the gridApi.core.renderingComplete event is identical to this
        * callback, but has the advantage that it can be called from multiple places
        * if needed
-       * 
+       *
        * @example
        * <pre>
        *   $scope.gridOptions.onRegisterApi = function ( gridApi ) {
@@ -60,50 +60,50 @@ angular.module('ui.grid')
        *     $scope.gridApi.selection.selectAllRows( $scope.gridApi.grid );
        *   };
        * </pre>
-       * 
+       *
        */
       baseOptions.onRegisterApi = baseOptions.onRegisterApi || angular.noop();
-  
+
       /**
        * @ngdoc object
        * @name data
        * @propertyOf ui.grid.class:GridOptions
-       * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for 
+       * @description (mandatory) Array of data to be rendered into the grid, providing the data source or data binding for
        * the grid.
-       * 
+       *
        * Most commonly the data is an array of objects, where each object has a number of attributes.
        * Each attribute automatically becomes a column in your grid.  This array could, for example, be sourced from
-       * an angularJS $resource query request.  The array can also contain complex objects, refer the binding tutorial 
+       * an angularJS $resource query request.  The array can also contain complex objects, refer the binding tutorial
        * for examples of that.
-       * 
+       *
        * The most flexible usage is to set your data on $scope:
-       * 
+       *
        * `$scope.data = data;`
-       * 
+       *
        * And then direct the grid to resolve whatever is in $scope.data:
-       * 
+       *
        * `$scope.gridOptions.data = 'data';`
-       * 
+       *
        * This is the most flexible approach as it allows you to replace $scope.data whenever you feel like it without
        * getting pointer issues.
-       * 
+       *
        * Alternatively you can directly set the data array:
-       * 
+       *
        * `$scope.gridOptions.data = [ ];`
        * or
-       * 
+       *
        * `$http.get('/data/100.json')
        * .success(function(data) {
        *   $scope.myData = data;
        *   $scope.gridOptions.data = $scope.myData;
        *  });`
-       * 
-       * Where you do this, you need to take care in updating the data - you can't just update `$scope.myData` to some other 
+       *
+       * Where you do this, you need to take care in updating the data - you can't just update `$scope.myData` to some other
        * array, you need to update $scope.gridOptions.data to point to that new array as well.
-       * 
+       *
        */
       baseOptions.data = baseOptions.data || [];
-  
+
       /**
        * @ngdoc array
        * @name columnDefs
@@ -118,7 +118,7 @@ angular.module('ui.grid')
        *
        */
       baseOptions.columnDefs = baseOptions.columnDefs || [];
-  
+
       /**
        * @ngdoc object
        * @name ui.grid.class:GridOptions.columnDef
@@ -128,23 +128,23 @@ angular.module('ui.grid')
        * <pre>{name:'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
        *
        */
-  
-          
+
+
       /**
        * @ngdoc array
        * @name excludeProperties
        * @propertyOf  ui.grid.class:GridOptions
        * @description Array of property names in data to ignore when auto-generating column names.  Provides the
        * inverse of columnDefs - columnDefs is a list of columns to include, excludeProperties is a list of columns
-       * to exclude. 
-       * 
+       * to exclude.
+       *
        * If columnDefs is defined, this will be ignored.
-       * 
+       *
        * Defaults to ['$$hashKey']
        */
-      
+
       baseOptions.excludeProperties = baseOptions.excludeProperties || ['$$hashKey'];
-  
+
       /**
        * @ngdoc boolean
        * @name enableRowHashing
@@ -152,31 +152,31 @@ angular.module('ui.grid')
        * @description True by default. When enabled, this setting allows uiGrid to add
        * `$$hashKey`-type properties (similar to Angular) to elements in the `data` array. This allows
        * the grid to maintain state while vastly speeding up the process of altering `data` by adding/moving/removing rows.
-       * 
+       *
        * Note that this DOES add properties to your data that you may not want, but they are stripped out when using `angular.toJson()`. IF
        * you do not want this at all you can disable this setting but you will take a performance hit if you are using large numbers of rows
        * and are altering the data set often.
        */
       baseOptions.enableRowHashing = baseOptions.enableRowHashing !== false;
-  
+
       /**
        * @ngdoc function
        * @name rowIdentity
        * @methodOf ui.grid.class:GridOptions
        * @description This function is used to get and, if necessary, set the value uniquely identifying this row (i.e. if an identity is not present it will set one).
-       * 
+       *
        * By default it returns the `$$hashKey` property if it exists. If it doesn't it uses gridUtil.nextUid() to generate one
        */
       baseOptions.rowIdentity = baseOptions.rowIdentity || function rowIdentity(row) {
         return gridUtil.hashKey(row);
       };
-  
+
       /**
        * @ngdoc function
        * @name getRowIdentity
        * @methodOf ui.grid.class:GridOptions
        * @description This function returns the identity value uniquely identifying this row, if one is not present it does not set it.
-       * 
+       *
        * By default it returns the `$$hashKey` property but can be overridden to use any property or set of properties you want.
        */
       baseOptions.getRowIdentity = baseOptions.getRowIdentity || function getRowIdentity(row) {
@@ -187,12 +187,12 @@ angular.module('ui.grid')
        * @ngdoc property
        * @name flatEntityAccess
        * @propertyOf ui.grid.class:GridOptions
-       * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e. 
+       * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e.
        * each of your columns associate directly with a propery one each of the entities in your data array.
-       * 
+       *
        * In that situation we can avoid all the logic associated with complex binding to functions or to properties of sub-objects,
        * which can provide a significant speed improvement with large data sets, with filtering and with sorting.
-       * 
+       *
        * By default false
        */
       baseOptions.flatEntityAccess = baseOptions.flatEntityAccess === true;
@@ -203,12 +203,10 @@ angular.module('ui.grid')
        * @propertyOf ui.grid.class:GridOptions
        * @description True by default. When set to false, this setting will replace the
        * standard header template with '<div></div>', resulting in no header being shown.
-       *
-       * It will also set the `headerRowHeight` option to 0.
        */
       baseOptions.showHeader = typeof(baseOptions.showHeader) !== "undefined" ? baseOptions.showHeader : true;
 
-      /**
+      /* (NOTE): Don't show this in the docs. We only use it internally
        * @ngdoc property
        * @name headerRowHeight
        * @propertyOf ui.grid.class:GridOptions
@@ -230,7 +228,7 @@ angular.module('ui.grid')
        *
        */
       baseOptions.rowHeight = baseOptions.rowHeight || 30;
-  
+
       /**
        * @ngdoc integer
        * @name minRowsToShow
@@ -238,7 +236,7 @@ angular.module('ui.grid')
        * @description Minimum number of rows to show when the grid doesn't have a defined height. Defaults to "10".
        */
       baseOptions.minRowsToShow = typeof(baseOptions.minRowsToShow) !== "undefined" ? baseOptions.minRowsToShow : 10;
-  
+
       /**
        * @ngdoc property
        * @name showGridFooter
@@ -277,7 +275,7 @@ angular.module('ui.grid')
        *
        */
       baseOptions.maxVisibleColumnCount = typeof(baseOptions.maxVisibleColumnCount) !== "undefined" ? baseOptions.maxVisibleColumnCount : 200;
-  
+
       /**
        * @ngdoc property
        * @name virtualizationThreshold
@@ -285,7 +283,7 @@ angular.module('ui.grid')
        * @description Turn virtualization on when number of data elements goes over this number, defaults to 20
        */
       baseOptions.virtualizationThreshold = typeof(baseOptions.virtualizationThreshold) !== "undefined" ? baseOptions.virtualizationThreshold : 20;
-  
+
       /**
        * @ngdoc property
        * @name columnVirtualizationThreshold
@@ -293,7 +291,7 @@ angular.module('ui.grid')
        * @description Turn virtualization on when number of columns goes over this number, defaults to 10
        */
       baseOptions.columnVirtualizationThreshold = typeof(baseOptions.columnVirtualizationThreshold) !== "undefined" ? baseOptions.columnVirtualizationThreshold : 10;
-  
+
       /**
        * @ngdoc property
        * @name excessRows
@@ -309,7 +307,7 @@ angular.module('ui.grid')
        * @description Defaults to 4
        */
       baseOptions.scrollThreshold = typeof(baseOptions.scrollThreshold) !== "undefined" ? baseOptions.scrollThreshold : 4;
-  
+
       /**
        * @ngdoc property
        * @name excessColumns
@@ -334,7 +332,7 @@ angular.module('ui.grid')
        * @description Default time in milliseconds to throttle aggregation calcuations, defaults to 500ms
        */
       baseOptions.aggregationCalcThrottle = typeof(baseOptions.aggregationCalcThrottle) !== "undefined" ? baseOptions.aggregationCalcThrottle : 500;
-  
+
       /**
        * @ngdoc property
        * @name wheelScrollThrottle
@@ -351,7 +349,7 @@ angular.module('ui.grid')
        * @description Default time in milliseconds to debounce scroll events, defaults to 300ms
        */
       baseOptions.scrollDebounce = typeof(baseOptions.scrollDebounce) !== "undefined" ? baseOptions.scrollDebounce : 300;
-  
+
       /**
        * @ngdoc boolean
        * @name enableSorting
@@ -361,17 +359,17 @@ angular.module('ui.grid')
        * Sorting can then be disabled on individual columns using the columnDefs.
        */
       baseOptions.enableSorting = baseOptions.enableSorting !== false;
-  
+
       /**
        * @ngdoc boolean
        * @name enableFiltering
        * @propertyOf ui.grid.class:GridOptions
-       * @description False by default. When enabled, this setting adds filter 
+       * @description False by default. When enabled, this setting adds filter
        * boxes to each column header, allowing filtering within the column for the entire grid.
-       * Filtering can then be disabled on individual columns using the columnDefs. 
+       * Filtering can then be disabled on individual columns using the columnDefs.
        */
       baseOptions.enableFiltering = baseOptions.enableFiltering === true;
-  
+
       /**
        * @ngdoc boolean
        * @name enableColumnMenus
@@ -380,7 +378,7 @@ angular.module('ui.grid')
        * menu within each column.
        */
       baseOptions.enableColumnMenus = baseOptions.enableColumnMenus !== false;
-  
+
       /**
        * @ngdoc boolean
        * @name enableVerticalScrollbar
@@ -389,7 +387,7 @@ angular.module('ui.grid')
        * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableVerticalScrollbar = typeof(baseOptions.enableVerticalScrollbar) !== "undefined" ? baseOptions.enableVerticalScrollbar : uiGridConstants.scrollbars.ALWAYS;
-      
+
       /**
        * @ngdoc boolean
        * @name enableHorizontalScrollbar
@@ -416,7 +414,7 @@ angular.module('ui.grid')
        * @description Columns can't be smaller than this, defaults to 10 pixels
        */
       baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 10;
-  
+
       /**
        * @ngdoc function
        * @name rowEquality
@@ -429,7 +427,7 @@ angular.module('ui.grid')
       baseOptions.rowEquality = baseOptions.rowEquality || function(entityA, entityB) {
         return entityA === entityB;
       };
-  
+
       /**
        * @ngdoc string
        * @name headerTemplate
@@ -437,32 +435,32 @@ angular.module('ui.grid')
        * @description Null by default. When provided, this setting uses a custom header
        * template, rather than the default template. Can be set to either the name of a template file:
        * <pre>  $scope.gridOptions.headerTemplate = 'header_template.html';</pre>
-       * inline html 
+       * inline html
        * <pre>  $scope.gridOptions.headerTemplate = '<div class="ui-grid-top-panel" style="text-align: center">I am a Custom Grid Header</div>'</pre>
-       * or the id of a precompiled template (TBD how to use this).  
+       * or the id of a precompiled template (TBD how to use this).
        * </br>Refer to the custom header tutorial for more information.
        * If you want no header at all, you can set to an empty div:
        * <pre>  $scope.gridOptions.headerTemplate = '<div></div>';</pre>
-       * 
+       *
        * If you want to only have a static header, then you can set to static content.  If
        * you want to tailor the existing column headers, then you should look at the
        * current 'ui-grid-header.html' template in github as your starting point.
-       * 
+       *
        */
       baseOptions.headerTemplate = baseOptions.headerTemplate || null;
-  
+
       /**
        * @ngdoc string
        * @name footerTemplate
        * @propertyOf ui.grid.class:GridOptions
        * @description (optional) ui-grid/ui-grid-footer by default.  This footer shows the per-column
-       * aggregation totals. 
+       * aggregation totals.
        * When provided, this setting uses a custom footer template. Can be set to either the name of a template file 'footer_template.html', inline html
        * <pre>'<div class="ui-grid-bottom-panel" style="text-align: center">I am a Custom Grid Footer</div>'</pre>, or the id
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
       baseOptions.footerTemplate = baseOptions.footerTemplate || 'ui-grid/ui-grid-footer';
-  
+
       /**
        * @ngdoc string
        * @name gridFooterTemplate
@@ -471,17 +469,17 @@ angular.module('ui.grid')
        * total items at the bottom of the grid, and the selected items if selection is enabled.
        */
       baseOptions.gridFooterTemplate = baseOptions.gridFooterTemplate || 'ui-grid/ui-grid-grid-footer';
-  
+
       /**
        * @ngdoc string
        * @name rowTemplate
        * @propertyOf ui.grid.class:GridOptions
-       * @description 'ui-grid/ui-grid-row' by default. When provided, this setting uses a 
+       * @description 'ui-grid/ui-grid-row' by default. When provided, this setting uses a
        * custom row template.  Can be set to either the name of a template file:
        * <pre> $scope.gridOptions.rowTemplate = 'row_template.html';</pre>
-       * inline html 
+       * inline html
        * <pre>  $scope.gridOptions.rowTemplate = '<div style="background-color: aquamarine" ng-click="grid.appScope.fnOne(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>';</pre>
-       * or the id of a precompiled template (TBD how to use this) can be provided.  
+       * or the id of a precompiled template (TBD how to use this) can be provided.
        * </br>Refer to the custom row template tutorial for more information.
        */
       baseOptions.rowTemplate = baseOptions.rowTemplate || 'ui-grid/ui-grid-row';
@@ -494,9 +492,9 @@ angular.module('ui.grid')
        * this property allows you to assign any reference you want to grid.appScope
        */
       baseOptions.appScopeProvider = baseOptions.appScopeProvider || null;
-      
+
       return baseOptions;
-    }     
+    }
   };
 
 
