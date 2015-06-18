@@ -49,9 +49,12 @@
             $timeout(self.setDraggables);
         }));
     };
-    self.dragStart = function(evt){		
-      //FireFox requires there to be dataTransfer if you want to drag and drop.
-      evt.dataTransfer.setData('text', ''); //cannot be empty string
+    self.dragStart = function(evt){
+        if ($scope.isColumnResizing) {
+            return false;
+        }
+        //FireFox requires there to be dataTransfer if you want to drag and drop.
+        evt.dataTransfer.setData('text', ''); //cannot be empty string
     };
     self.dragOver = function(evt) {
         evt.preventDefault();
@@ -81,7 +84,9 @@
                     //call native IE dragDrop() to start dragging
                     var sortColumn = grid.$root.find('.ngHeaderSortColumn');
                     sortColumn.bind('selectstart', function () { 
-                        this.dragDrop(); 
+                        if (!$scope.isColumnResizing) {
+                            this.dragDrop(); 
+                        }
                         return false; 
                     });
                     angular.element(sortColumn).on('$destroy', function() {
@@ -126,7 +131,9 @@
                     if (navigator.userAgent.indexOf("MSIE") !== -1){
                         //call native IE dragDrop() to start dragging
                         groupItem.bind('selectstart', function () { 
-                            this.dragDrop(); 
+                            if (!$scope.isColumnResizing) {
+                                this.dragDrop(); 
+                            }
                             return false; 
                         });
 
