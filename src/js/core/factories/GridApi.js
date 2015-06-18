@@ -176,10 +176,9 @@
           var listeners = angular.isArray(listenerFuncs) ? listenerFuncs : [listenerFuncs];
 
           //find all registered listeners
-          var foundListeners = [];
-          listeners.forEach(function (l) {
-            foundListeners = self.listeners.filter(function (lstnr) {
-              return l === lstnr.handler;
+          var foundListeners = self.listeners.filter(function(listener) {
+            return listeners.some(function(l) {
+              return listener.handler === l;
             });
           });
 
