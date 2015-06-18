@@ -161,10 +161,12 @@ angular.module('ui.grid')
       }
       self.isScrollingVertically = true;
       if (self.options.scrollDebounce === 0 || !scrollEvent.withDelay) {
-        debouncedVerticalMinDelay(scrollEvent);
+        vertical(scrollEvent);
+//        debouncedVerticalMinDelay(scrollEvent);
       }
       else {
-        debouncedVertical(scrollEvent);
+        vertical(scrollEvent);
+//        debouncedVertical(scrollEvent);
       }
     };
 
@@ -180,10 +182,12 @@ angular.module('ui.grid')
       }
       self.isScrollingHorizontally = true;
       if (self.options.scrollDebounce === 0 || !scrollEvent.withDelay) {
-        debouncedHorizontalMinDelay(scrollEvent);
+//        debouncedHorizontalMinDelay(scrollEvent);
+        horizontal(scrollEvent);
       }
       else {
-        debouncedHorizontal(scrollEvent);
+        horizontal(scrollEvent);
+//        debouncedHorizontal(scrollEvent);
       }
     };
 

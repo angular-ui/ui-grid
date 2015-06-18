@@ -48,7 +48,8 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
         enableFiltering: true,
         flatEntityAccess: true,
         showGridFooter: true,
-        fastWatch: true
+        fastWatch: true,
+        wheelScrollThrottle: 1000
       };
 
        $scope.gridOptions.columnDefs = [
@@ -69,6 +70,10 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
       $scope.toggleFlat = function() {
         $scope.gridOptions.flatEntityAccess = !$scope.gridOptions.flatEntityAccess;
       }
+      
+      $scope.$watch(function() {
+        console.log('digest running');
+      }, function() {});
     }]);
   </file>
   <file name="index.html">
