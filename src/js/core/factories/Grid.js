@@ -251,7 +251,7 @@ angular.module('ui.grid')
      * @returns {promise} promise that is resolved when render completes?
      *
      */
-    self.api.registerMethod( 'core', 'refreshRows', this.queueRefresh );
+    self.api.registerMethod( 'core', 'queueRefresh', this.queueRefresh );
 
     /**
      * @ngdoc function
