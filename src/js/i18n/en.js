@@ -64,7 +64,8 @@
         },
         pagination: {
           sizes: 'items per page',
-          totalItems: 'items'
+          totalItems: 'items',
+          of: 'of'
         },
         grouping: {
           group: 'Group',
