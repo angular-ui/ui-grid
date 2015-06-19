@@ -128,7 +128,7 @@
        * @name ui.grid.directive:uiGridOneBindIdGrid
        * @element div
        * @restrict A
-       * @param {String} uiGridOneBindId The angular string you want to bind. Does not support interpolation. Don't use <code>{{scopeElt}}</code> instead use <code>scopeElt</code>.
+       * @param {String} uiGridOneBindIdGrid The angular string you want to bind. Does not support interpolation. Don't use <code>{{scopeElt}}</code> instead use <code>scopeElt</code>.
        * @description One time binding for the id dom tag.
        * <h1>Important Note!</h1>
        * If the id tag passed as a parameter does <b>not</b> contain the grid id as a substring
