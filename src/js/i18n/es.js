@@ -58,6 +58,20 @@
           invalidCsv: 'No fue posible procesar el archivo, ¿es un CSV válido?',
           invalidJson: 'No fue posible procesar el archivo, ¿es un Json válido?',
           jsonNotArray: 'El archivo json importado debe contener un array, abortando.'
+        },
+        pagination: {
+          sizes: 'Registros por página',
+          totalItems: 'Registros'
+        },
+        grouping: {
+          group: 'Agrupar',
+          ungroup: 'Desagrupar',
+          aggregate_count: 'Calcular: Cuenta',
+          aggregate_sum: 'Calcular: Suma',
+          aggregate_max: 'Calcular: Máximo',
+          aggregate_min: 'Calcular: Mínimo',
+          aggregate_avg: 'Calcular: Promedio',
+          aggregate_remove: 'Quitar cálculo'
         }
       });
       return $delegate;
