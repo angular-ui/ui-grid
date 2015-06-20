@@ -120,7 +120,9 @@
                   }
 
                   if ( filterType ){
-                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, col[filterType] ? "|" + col[filterType] : "");
+                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
+                      return col[filterType] ? "|" + col[filterType] : "";
+                    });
                   } else {
                     col[templateType] = template;
                   }
