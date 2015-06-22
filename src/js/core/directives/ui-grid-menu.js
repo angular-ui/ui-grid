@@ -30,8 +30,8 @@
  */
 angular.module('ui.grid')
 
-.directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants',
-function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
+.directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'i18nService',
+function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18nService) {
   var uiGridMenu = {
     priority: 0,
     scope: {
@@ -46,6 +46,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       var self = this;
       var menuMid;
       var $animate;
+
+      $scope.i18n = {
+        close: i18nService.getSafeText('columnMenu.close')
+      };
 
     // *** Show/Hide functions ******
       self.showMenu = $scope.showMenu = function(event, args) {
@@ -87,6 +91,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
         $timeout(function() {
           angular.element(document).on(docEventType, applyHideMenu);
         });
+        //automatically set the focus to the first button element in the now open menu.
+        gridUtil.focus.bySelector($elm, 'button[type=button]', true);
       };
 
 
@@ -174,11 +180,12 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       shown: '=',
       context: '=',
       templateUrl: '=',
-      leaveOpen: '='
+      leaveOpen: '=',
+      screenReaderOnly: '='
     },
     require: ['?^uiGrid', '^uiGridMenu'],
     templateUrl: 'ui-grid/uiGridMenuItem',
-    replace: true,
+    replace: false,
     compile: function($elm, $attrs) {
       return {
         pre: function ($scope, $elm, $attrs, controllers) {
@@ -221,7 +228,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
           };
 
           $scope.itemAction = function($event,title) {
-            // gridUtil.logDebug('itemAction');
+            gridUtil.logDebug('itemAction');
             $event.stopPropagation();
 
             if (typeof($scope.action) === 'function') {
@@ -240,6 +247,13 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
 
               if ( !$scope.leaveOpen ){
                 $scope.$emit('hide-menu');
+              } else {
+                /*
+                 * XXX: Fix after column refactor
+                 * Ideally the focus would remain on the item.
+                 * However, since there are two menu items that have their 'show' property toggled instead. This is a quick fix.
+                 */
+                gridUtil.focus.bySelector(angular.element(gridUtil.closestElm($elm, ".ui-grid-menu-items")), 'button[type=button]', true);
               }
             }
           };
