@@ -1,3 +1,6 @@
+@import "../../../less/variables";
+@import "../../../less/elements";
+
 .ui-grid-pager-panel {
     position: absolute;
     left: 0;
@@ -20,6 +23,18 @@
   button {
     height: 25px;
     min-width: 26px;
+    .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+    border: 1px groove @headerGradientStop;
+    border-radius: 4px;
+
+    &:focus {
+      color: #333;
+      background-color: #e6e6e6;
+      border-color: #8c8c8c;
+      outline: thin dotted;
+      outline: 5px auto -webkit-focus-ring-color;
+      outline-offset: -2px;
+    }
   }
 
   input {
@@ -77,6 +92,26 @@
   select {
     height: 26px;
     width: 60px;
+    /* Taken from the bootstrap3 form-control */
+    display: inline;
+    padding: 6px 12px;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+
+    &:focus {
+      border-color: #66afe9;
+      outline: 0;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+    }
   }
 
   .ui-grid-pager-row-count-label {
