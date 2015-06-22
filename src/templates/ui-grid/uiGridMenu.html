@@ -1,10 +1,12 @@
 <div class="ui-grid-menu" ng-if="shown">
   <div class="ui-grid-menu-mid" ng-show="shownMid">
     <div class="ui-grid-menu-inner">
-      <ul class="ui-grid-menu-items">
+      <ul role="menu" class="ui-grid-menu-items">
         <li
           ng-repeat="item in menuItems"
-          ui-grid-menu-item 
+          role="menuitem"
+          ui-grid-menu-item
+          ui-grid-one-bind-id="'menuitem-'+$index"
           action="item.action"
           name="item.title"
           active="item.active"
@@ -12,7 +14,9 @@
           shown="item.shown"
           context="item.context"
           template-url="item.templateUrl"
-          leave-open="item.leaveOpen"></li>
+          leave-open="item.leaveOpen"
+          screen-reader-only="item.screenReaderOnly">
+        </li>
       </ul>
     </div>
   </div>

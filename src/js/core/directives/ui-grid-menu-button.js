@@ -16,7 +16,7 @@ angular.module('ui.grid')
      * @name initialize
      * @description Sets up the gridMenu. Most importantly, sets our
      * scope onto the grid object as grid.gridMenuScope, allowing us
-     * to operate when passed only the grid.  Second most importantly, 
+     * to operate when passed only the grid.  Second most importantly,
      * we register the 'addToGridMenu' and 'removeFromGridMenu' methods
      * on the core api.
      * @param {$scope} $scope the scope of this gridMenu
@@ -26,7 +26,7 @@ angular.module('ui.grid')
       grid.gridMenuScope = $scope;
       $scope.grid = grid;
       $scope.registeredMenuItems = [];
-      
+
       // not certain this is needed, but would be bad to create a memory leak
       $scope.$on('$destroy', function() {
         if ( $scope.grid && $scope.grid.gridMenuScope ){
@@ -39,7 +39,7 @@ angular.module('ui.grid')
           $scope.registeredMenuItems = null;
         }
       });
-      
+
       $scope.registeredMenuItems = [];
 
       /**
@@ -53,13 +53,13 @@ angular.module('ui.grid')
        * in the menu when.  (Noting that in most cases the shown and active functions
        * provide a better way to handle visibility of menu items)
        * @param {Grid} grid the grid on which we are acting
-       * @param {array} items menu items in the format as described in the tutorial, with 
+       * @param {array} items menu items in the format as described in the tutorial, with
        * the added note that if you want to use remove you must also specify an `id` field,
        * which is provided when you want to remove an item.  The id should be unique.
-       * 
+       *
        */
       grid.api.registerMethod( 'core', 'addToGridMenu', service.addToGridMenu );
-  
+
       /**
        * @ngdoc function
        * @name removeFromGridMenu
@@ -69,12 +69,12 @@ angular.module('ui.grid')
        * the specified id is not found
        * @param {Grid} grid the grid on which we are acting
        * @param {string} id the id we'd like to remove from the menu
-       * 
+       *
        */
       grid.api.registerMethod( 'core', 'removeFromGridMenu', service.removeFromGridMenu );
     },
- 
-    
+
+
     /**
      * @ngdoc function
      * @name addToGridMenu
@@ -86,10 +86,10 @@ angular.module('ui.grid')
      * in the menu when.  (Noting that in most cases the shown and active functions
      * provide a better way to handle visibility of menu items)
      * @param {Grid} grid the grid on which we are acting
-     * @param {array} items menu items in the format as described in the tutorial, with 
+     * @param {array} items menu items in the format as described in the tutorial, with
      * the added note that if you want to use remove you must also specify an `id` field,
      * which is provided when you want to remove an item.  The id should be unique.
-     * 
+     *
      */
     addToGridMenu: function( grid, menuItems ) {
       if ( !angular.isArray( menuItems ) ) {
@@ -101,9 +101,9 @@ angular.module('ui.grid')
         } else {
           gridUtil.logError( 'Asked to addToGridMenu, but gridMenuScope not present.  Timing issue?  Please log issue with ui-grid');
         }
-      }  
+      }
     },
-    
+
 
     /**
      * @ngdoc function
@@ -116,18 +116,18 @@ angular.module('ui.grid')
      * aren't.
      * @param {Grid} grid the grid on which we are acting
      * @param {string} id the id we'd like to remove from the menu
-     * 
-     */    
+     *
+     */
     removeFromGridMenu: function( grid, id ){
       var foundIndex = -1;
-      
+
       if ( grid && grid.gridMenuScope ){
         grid.gridMenuScope.registeredMenuItems.forEach( function( value, index ) {
           if ( value.id === id ){
             if (foundIndex > -1) {
               gridUtil.logError( 'removeFromGridMenu: found multiple items with the same id, removing only the last' );
             } else {
-              
+
               foundIndex = index;
             }
           }
@@ -138,19 +138,19 @@ angular.module('ui.grid')
         grid.gridMenuScope.registeredMenuItems.splice( foundIndex, 1 );
       }
     },
-    
-        
+
+
     /**
      * @ngdoc array
      * @name gridMenuCustomItems
      * @propertyOf ui.grid.class:GridOptions
      * @description (optional) An array of menu items that should be added to
      * the gridMenu.  Follow the format documented in the tutorial for column
-     * menu customisation.  The context provided to the action function will 
-     * include context.grid.  An alternative if working with dynamic menus is to use the 
+     * menu customisation.  The context provided to the action function will
+     * include context.grid.  An alternative if working with dynamic menus is to use the
      * provided api - core.addToGridMenu and core.removeFromGridMenu, which handles
      * some of the management of items for you.
-     * 
+     *
      */
     /**
      * @ngdoc boolean
@@ -158,7 +158,7 @@ angular.module('ui.grid')
      * @propertyOf ui.grid.class:GridOptions
      * @description true by default, whether the grid menu should allow hide/show
      * of columns
-     * 
+     *
      */
     /**
      * @ngdoc method
@@ -166,54 +166,54 @@ angular.module('ui.grid')
      * @name getMenuItems
      * @description Decides the menu items to show in the menu.  This is a
      * combination of:
-     * 
-     * - the default menu items that are always included, 
+     *
+     * - the default menu items that are always included,
      * - any menu items that have been provided through the addMenuItem api. These
      *   are typically added by features within the grid
      * - any menu items included in grid.options.gridMenuCustomItems.  These can be
      *   changed dynamically, as they're always recalculated whenever we show the
      *   menu
-     * @param {$scope} $scope the scope of this gridMenu, from which we can find all 
+     * @param {$scope} $scope the scope of this gridMenu, from which we can find all
      * the information that we need
-     * @returns {array} an array of menu items that can be shown 
+     * @returns {array} an array of menu items that can be shown
      */
     getMenuItems: function( $scope ) {
       var menuItems = [
         // this is where we add any menu items we want to always include
       ];
-      
+
       if ( $scope.grid.options.gridMenuCustomItems ){
-        if ( !angular.isArray( $scope.grid.options.gridMenuCustomItems ) ){ 
-          gridUtil.logError( 'gridOptions.gridMenuCustomItems must be an array, and is not'); 
+        if ( !angular.isArray( $scope.grid.options.gridMenuCustomItems ) ){
+          gridUtil.logError( 'gridOptions.gridMenuCustomItems must be an array, and is not');
         } else {
           menuItems = menuItems.concat( $scope.grid.options.gridMenuCustomItems );
         }
       }
-  
+
       menuItems = menuItems.concat( $scope.registeredMenuItems );
-      
+
       if ( $scope.grid.options.gridMenuShowHideColumns !== false ){
         menuItems = menuItems.concat( service.showHideColumns( $scope ) );
       }
-      
+
       menuItems.sort(function(a, b){
         return a.order - b.order;
       });
-      
+
       return menuItems;
     },
-    
-    
+
+
     /**
      * @ngdoc array
      * @name gridMenuTitleFilter
      * @propertyOf ui.grid.class:GridOptions
-     * @description (optional) A function that takes a title string 
+     * @description (optional) A function that takes a title string
      * (usually the col.displayName), and converts it into a display value.  The function
      * must return either a string or a promise.
-     * 
+     *
      * Used for internationalization of the grid menu column names - for angular-translate
-     * you can pass $translate as the function, for i18nService you can pass getSafeText as the 
+     * you can pass $translate as the function, for i18nService you can pass getSafeText as the
      * function
      * @example
      * <pre>
@@ -237,15 +237,15 @@ angular.module('ui.grid')
       if ( !$scope.grid.options.columnDefs || $scope.grid.options.columnDefs.length === 0 || $scope.grid.columns.length === 0 ) {
         return showHideColumns;
       }
-      
+
       // add header for columns
       showHideColumns.push({
         title: i18nService.getSafeText('gridMenu.columns'),
         order: 300
       });
-      
-      $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
-      
+
+      $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };
+
       $scope.grid.options.columnDefs.forEach( function( colDef, index ){
         if ( colDef.enableHiding !== false ){
           // add hide menu item - shows an OK icon as we only show when column is already visible
@@ -285,23 +285,23 @@ angular.module('ui.grid')
       });
       return showHideColumns;
     },
-    
-    
+
+
     /**
      * @ngdoc method
      * @methodOf ui.grid.gridMenuService
      * @name setMenuItemTitle
      * @description Handles the response from gridMenuTitleFilter, adding it directly to the menu
      * item if it returns a string, otherwise waiting for the promise to resolve or reject then
-     * putting the result into the title 
+     * putting the result into the title
      * @param {object} menuItem the menuItem we want to put the title on
      * @param {object} colDef the colDef from which we can get displayName, name or field
      * @param {Grid} grid the grid, from which we can get the options.gridMenuTitleFilter
-     * 
+     *
      */
     setMenuItemTitle: function( menuItem, colDef, grid ){
       var title = grid.options.gridMenuTitleFilter( colDef.displayName || colDef.name || colDef.field );
-      
+
       if ( typeof(title) === 'string' ){
         menuItem.title = title;
       } else if ( title.then ){
@@ -326,38 +326,42 @@ angular.module('ui.grid')
      * provided a context that has on it a gridColumn, which is the column that
      * we'll operate upon.  We change the visibility, and refresh the grid as appropriate
      * @param {GridCol} gridCol the column that we want to toggle
-     * 
+     *
      */
     toggleColumnVisibility: function( gridCol ) {
-      gridCol.colDef.visible = !( gridCol.colDef.visible === true || gridCol.colDef.visible === undefined ); 
-      
+      gridCol.colDef.visible = !( gridCol.colDef.visible === true || gridCol.colDef.visible === undefined );
+
       gridCol.grid.refresh();
       gridCol.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       gridCol.grid.api.core.raise.columnVisibilityChanged( gridCol );
     }
   };
-  
+
   return service;
 }])
 
 
 
-.directive('uiGridMenuButton', ['gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 
-function (gridUtil, uiGridConstants, uiGridGridMenuService) {
+.directive('uiGridMenuButton', ['gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 'i18nService',
+function (gridUtil, uiGridConstants, uiGridGridMenuService, i18nService) {
 
   return {
     priority: 0,
     scope: true,
-    require: ['?^uiGrid'],
+    require: ['^uiGrid'],
     templateUrl: 'ui-grid/ui-grid-menu-button',
     replace: true,
-
 
     link: function ($scope, $elm, $attrs, controllers) {
       var uiGridCtrl = controllers[0];
 
+      // For the aria label
+      $scope.i18n = {
+        aria: i18nService.getSafeText('gridMenu.aria')
+      };
+
       uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
-      
+
       $scope.shown = false;
 
       $scope.toggleMenu = function () {
@@ -370,7 +374,7 @@ function (gridUtil, uiGridConstants, uiGridGridMenuService) {
           $scope.shown = true;
         }
       };
-      
+
       $scope.$on('menu-hidden', function() {
         $scope.shown = false;
       });
