@@ -5,6 +5,15 @@
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('en', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Filter for column',
+            removeFilter: 'Remove Filter',
+            columnMenuButtonLabel: 'Column Menu'
+          },
+          priority: 'Priority:',
+          filterLabel: "Filter for column: "
+        },
         aggregate: {
           label: 'items'
         },
@@ -28,6 +37,7 @@
         sort: {
           ascending: 'Sort Ascending',
           descending: 'Sort Descending',
+          none: 'Sort None',
           remove: 'Remove Sort'
         },
         column: {
@@ -41,11 +51,17 @@
           max: 'max: '
         },
         pinning: {
-         pinLeft: 'Pin Left',
+          pinLeft: 'Pin Left',
           pinRight: 'Pin Right',
           unpin: 'Unpin'
         },
+        columnMenu: {
+          close: 'Close'
+        },
         gridMenu: {
+          aria: {
+            buttonLabel: 'Grid Menu'
+          },
           columns: 'Columns:',
           importerTitle: 'Import file',
           exporterAllAsCsv: 'Export all data as csv',
@@ -63,8 +79,16 @@
           jsonNotArray: 'Imported json file must contain an array, aborting.'
         },
         pagination: {
+          aria: {
+            pageToFirst: 'Page to first',
+            pageBack: 'Page back',
+            pageSelected: 'Selected page',
+            pageForward: 'Page forward',
+            pageToLast: 'Page to last'
+          },
           sizes: 'items per page',
           totalItems: 'items',
+          through: 'through',
           of: 'of'
         },
         grouping: {
