@@ -16,7 +16,7 @@
  var app = angular.module('app', ['ui.grid']);
 
  app.controller('MainCtrl', ['$scope', function ($scope) {
-   
+
  }]);
  </script>
 
@@ -30,7 +30,7 @@
  */
 angular.module('ui.grid')
 
-.directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 
+.directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants',
 function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
   var uiGridMenu = {
     priority: 0,
@@ -46,7 +46,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       var self = this;
       var menuMid;
       var $animate;
-     
+
     // *** Show/Hide functions ******
       self.showMenu = $scope.showMenu = function(event, args) {
         if ( !$scope.shown ){
@@ -57,11 +57,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
            * animate removal of the ng-if, as the menu items aren't there yet.  And we don't want
            * to rely on ng-show only, as that leaves elements in the DOM that are needlessly evaluated
            * on scroll events.
-           * 
+           *
            * Note when testing animation that animations don't run on the tutorials.  When debugging it looks
            * like they do, but angular has a default $animate provider that is just a stub, and that's what's
-           * being called.  ALso don't be fooled by the fact that your browser has actually loaded the 
-           * angular-translate.js, it's not using it.  You need to test animations in an external application. 
+           * being called.  ALso don't be fooled by the fact that your browser has actually loaded the
+           * angular-translate.js, it's not using it.  You need to test animations in an external application.
            */
           $scope.shown = true;
 
@@ -96,7 +96,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
            * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
            * callback on the addClass method, but it is very unreliable with unit tests for no discernable reason.
-           *   
+           *
            * The user may have clicked on the menu again whilst
            * we're waiting, so we check that the mid isn't shown before applying the ng-if.
            */
@@ -120,7 +120,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
         $scope.showMenu(event, args);
       });
 
-      
+
     // *** Auto hide when click elsewhere ******
       var applyHideMenu = function(){
         if ($scope.shown) {
@@ -129,7 +129,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
           });
         }
       };
-    
+
       if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
         $scope.autoHide = true;
       }
@@ -141,7 +141,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
       $scope.$on('$destroy', function () {
         angular.element(document).off('click touchstart', applyHideMenu);
       });
-      
+
 
       $scope.$on('$destroy', function() {
         angular.element($window).off('resize', applyHideMenu);
@@ -153,8 +153,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
     },
-    
-    
+
+
     controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
       var self = this;
     }]
@@ -184,12 +184,12 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
         pre: function ($scope, $elm, $attrs, controllers) {
           var uiGridCtrl = controllers[0],
               uiGridMenuCtrl = controllers[1];
-          
+
           if ($scope.templateUrl) {
             gridUtil.getTemplate($scope.templateUrl)
                 .then(function (contents) {
                   var template = angular.element(contents);
-                    
+
                   var newElm = $compile(template)($scope);
                   $elm.replaceWith(newElm);
                 });
