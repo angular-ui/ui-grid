@@ -122,7 +122,6 @@ to something different, and use the restore button to set the grid back the way 
           .then(function () {
             return gridTestUtils.cancelFilterInColumn( 'grid1', 1 );
           })
-          /*
           .then(function () {
             gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
           })
@@ -147,8 +146,6 @@ to something different, and use the restore button to set the grid back the way 
             gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
             gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Freda Mason' );
           });
-          */
-          ;
       });
 
     });

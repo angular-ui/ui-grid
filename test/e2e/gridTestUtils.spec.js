@@ -677,15 +677,6 @@ module.exports = {
     var headerCell = this.headerCell( gridId, colNumber);
 
     // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
-    var cancelButton = headerCell.element( by.css( '.ui-grid-icon-cancel' ) ).element(by.xpath('..'));
-
-    return browser.actions().mouseMove(cancelButton).mouseDown(cancelButton).mouseUp().perform();
-  },
-
-  cancelFilterInColumnFor103: function( gridId, colNumber ) {
-    var headerCell = this.headerCell( gridId, colNumber);
-
-    // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
     var cancelButton = headerCell.element( by.css( '.ui-grid-icon-cancel' ) );
 
     return browser.actions().mouseMove(cancelButton).mouseDown(cancelButton).mouseUp().perform();
