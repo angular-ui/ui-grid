@@ -401,6 +401,15 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
 
 # Tests
 
+## Jasmine and Protractor
+All tests are writtten using Jasmine for assertions and Protractor for the e2e test driver.
+
+### Running Single or Groups of tests
+You can select specific tests to run using Jasmine's 'focused testing'. In the version of Jasmine that this build system is running you can change `describe('...` to `ddescribe('...` or `it('...` to `iit('...` and only thoes tests will be run.
+In the most recent version of Jasmine this has changed to `fdescribe('...` and `fit('...` however at the moment this is not the version we are running.
+
+## Safari
+
 * **Note:** Safari 5 does not allow creating dates from strings where the delimiter is a dash, i.e. `new Date('2015-5-23')` will fail. This will cause your tests to work on all browsers but bomb on Safari 5 and you will have a hard time discovering why. Instead, use slashes like so: `new Date('2015/5/23')`.
 
 # Performing a release
