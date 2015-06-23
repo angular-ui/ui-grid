@@ -302,7 +302,8 @@
                 //Removes the watcher on itself after the bind
                 rmWatcher();
               }
-            }); //End rm watchers
+            // True ensures that equality is determined using angular.equals instead of ===
+            }, true); //End rm watchers
           } //End compile function
         }; //End directive return
       } // End directive function
