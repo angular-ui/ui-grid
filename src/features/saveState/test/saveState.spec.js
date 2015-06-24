@@ -365,10 +365,6 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         colFilterChangeCount++;
       });
 
-      grid.api.core.on.sortChanged( $scope, function() {
-        colSortChangeCount++;
-      });
-
       grid.api.core.on.sortChanged( $scope, onSortChangedHook );
 
       uiGridSaveStateService.restoreColumns( grid, [
@@ -410,7 +406,8 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( colVisChangeCount ).toEqual( 4, '4 columns changed visibility');
       expect( colFilterChangeCount ).toEqual( 1, '1 columns changed filter');
-      expect( colSortChangeCount ).toEqual( 1, '1 columns changed sort');
+
+      expect( onSortChangedHook.calls.length ).toEqual( 1 );
 
       expect( onSortChangedHook ).toHaveBeenCalledWith( 
         grid, 
