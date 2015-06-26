@@ -991,30 +991,31 @@
           ieVersion = this.isIE();
           var doc = pdfMake.createPdf(docDefinition);
           var blob;
+
           doc.getBuffer( function (buffer) {
             blob = new Blob([buffer]);
+
+            if (ieVersion && ieVersion < 10) {
+              var frame = D.createElement('iframe');
+              document.body.appendChild(frame);
+
+              frame.contentWindow.document.open("text/html", "replace");
+              frame.contentWindow.document.write(blob);
+              frame.contentWindow.document.close();
+              frame.contentWindow.focus();
+              frame.contentWindow.document.execCommand('SaveAs', true, fileName);
+
+              document.body.removeChild(frame);
+              return true;
+            }
+
+            // IE10+
+            if (navigator.msSaveBlob) {
+              return navigator.msSaveBlob(
+                blob, fileName
+              );
+            }
           });
-
-          if (ieVersion && ieVersion < 10) {
-            var frame = D.createElement('iframe');
-            document.body.appendChild(frame);
-
-            frame.contentWindow.document.open("text/html", "replace");
-            frame.contentWindow.document.write(blob);
-            frame.contentWindow.document.close();
-            frame.contentWindow.focus();
-            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
-
-            document.body.removeChild(frame);
-            return true;
-          }
-
-          // IE10+
-          if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(
-              blob, fileName
-            );
-          }
         },
 
 
