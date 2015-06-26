@@ -492,7 +492,7 @@
                 if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
                   //important to do this before scrollToIfNecessary
                   beginEditKeyDown(evt);
-                  uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
+                 // uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
                 }
 
               });
@@ -582,6 +582,14 @@
             }
 
 
+            function beginEdit(triggerEvent) {
+              //we need to scroll the cell into focus before invoking the editor
+              $scope.grid.api.core.scrollToIfNecessary($scope.row, $scope.col)
+                .then(function () {
+                  beginEditAfterScroll(triggerEvent);
+                });
+            }
+
             /**
              *  @ngdoc property
              *  @name editDropdownOptionsArray
@@ -666,7 +674,7 @@
              *  </pre>
              *
              */
-            function beginEdit(triggerEvent) {
+            function beginEditAfterScroll(triggerEvent) {
               // If we are already editing, then just skip this so we don't try editing twice...
               if (inEdit) {
                 return;
@@ -738,7 +746,7 @@
 
               //stop editing when grid is scrolled
               var deregOnGridScroll = $scope.col.grid.api.core.on.scrollBegin($scope, function () {
-                endEdit(true);
+                endEdit();
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnGridScroll();
                 deregOnEndCellEdit();
@@ -746,8 +754,8 @@
               });
 
               //end editing
-              var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function (evt, retainFocus) {
-                endEdit(retainFocus);
+              var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
+                endEdit();
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnEndCellEdit();
                 deregOnGridScroll();
@@ -766,7 +774,7 @@
               $scope.grid.api.edit.raise.beginCellEdit($scope.row.entity, $scope.col.colDef, triggerEvent);
             }
 
-            function endEdit(retainFocus) {
+            function endEdit() {
               $scope.grid.disableScrolling = false;
               if (!inEdit) {
                 return;
@@ -779,6 +787,11 @@
               inEdit = false;
               registerBeginEditEvents();
               $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
+              //sometimes the events can't keep up with the keyboard and grid focus is lost, so always focus
+              //back to grid here
+              if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
+                uiGridCtrl.focus();
+              }
             }
 
             function cancelEdit() {
@@ -790,7 +803,7 @@
               $scope.$apply();
 
               $scope.grid.api.edit.raise.cancelCellEdit($scope.row.entity, $scope.col.colDef);
-              endEdit(true);
+              endEdit();
             }
 
             // resolves a string path against the given object
@@ -832,25 +845,42 @@
    *
    */
   module.directive('uiGridEditor',
-    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants','$timeout',
-      function (gridUtil, uiGridConstants, uiGridEditConstants, $timeout) {
+    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants','$timeout', 'uiGridEditService',
+      function (gridUtil, uiGridConstants, uiGridEditConstants, $timeout, uiGridEditService) {
         return {
           scope: true,
-          require: ['?^uiGrid', '?^uiGridRenderContainer'],
+          require: ['?^uiGrid', '?^uiGridRenderContainer', 'ngModel'],
           compile: function () {
             return {
               pre: function ($scope, $elm, $attrs) {
 
               },
               post: function ($scope, $elm, $attrs, controllers) {
-                var uiGridCtrl, renderContainerCtrl;
+                var uiGridCtrl, renderContainerCtrl, ngModel;
                 if (controllers[0]) { uiGridCtrl = controllers[0]; }
                 if (controllers[1]) { renderContainerCtrl = controllers[1]; }
+                if (controllers[2]) { ngModel = controllers[2]; }
 
                 //set focus at start of edit
-                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  $elm[0].focus();
-                  $elm[0].select();
+                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function (evt,triggerEvent) {
+                  $timeout(function () {
+                    $elm[0].focus();
+                    $elm[0].select();
+                  });
+
+                  //set the keystroke that started the edit event
+                  //we must do this because the BeginEdit is done in a different event loop than the intitial
+                  //keydown event
+                  //fire this event for the keypress that is received
+                  if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
+                    var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
+                      if (uiGridEditService.isStartEditKey(evt)) {
+                        ngModel.$setViewValue(String.fromCharCode(evt.keyCode), evt);
+                        ngModel.$render();
+                      }
+                      viewPortKeyDownUnregister();
+                    });
+                  }
 
                   $elm.on('blur', function (evt) {
                     $scope.stopEdit(evt);

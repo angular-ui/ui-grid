@@ -85,8 +85,11 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
       element.dblclick();
       expect(element.find('select')).toBeDefined();
 
-      // val is the selected option, which is option 0
-      expect(element.find('select').val()).toBe('0');
+      $timeout(function () {
+        // val is the selected option, which is option 0
+        expect(element.find('select').val()).toBe('0');
+      });
+      $timeout.flush();
     });
 
     it('should stop editing on enter', function () {
@@ -96,7 +99,11 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
       element.find('select').trigger(event);
 
       //back to beginning
-      expect(element.html()).toBe(displayHtml);
+      $timeout(function () {
+        expect(element.html()).toBe(displayHtml);
+      });
+      $timeout.flush();
+
     });
 
     it('should stop editing on esc', function () {

@@ -309,7 +309,20 @@
                  * @param {object} event keydown event
                  * @param {object} rowCol current rowCol position
                  */
-                viewPortKeyDown: function (event, rowCol) {}
+                viewPortKeyDown: function (event, rowCol) {},
+
+                /**
+                 * @ngdoc event
+                 * @name viewPortKeyPress
+                 * @eventOf  ui.grid.cellNav.api:PublicApi
+                 * @description  is raised when the viewPort receives a keyPress event. Cells never get focus in uiGrid
+                 * due to the difficulties of setting focus on a cell that is not visible in the viewport.  Use this
+                 * event whenever you need a keypress event on a cell
+                 * <br/>
+                 * @param {object} event keypress event
+                 * @param {object} rowCol current rowCol position
+                 */
+                viewPortKeyPress: function (event, rowCol) {}
               }
             },
             methods: {
@@ -775,8 +788,7 @@
                 });
               };
 
-
-
+              var viewPortKeyDownWasRaisedForRowCol = null;
               // Bind to keydown events in the render container
               focuser.on('keydown', function (evt) {
                 evt.uiGridTargetRenderContainerId = containerId;
@@ -784,6 +796,21 @@
                 var result = uiGridCtrl.cellNav.handleKeyDown(evt);
                 if (result === null) {
                   uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                  viewPortKeyDownWasRaisedForRowCol = rowCol;
+                }
+              });
+              //Bind to keypress events in the render container
+              //keypress events are needed by edit function so the key press
+              //that initiated an edit is not lost
+              //must fire the event in a timeout so the editor can
+              //initialize and subscribe to the event on another event loop
+              focuser.on('keypress', function (evt) {
+                if (viewPortKeyDownWasRaisedForRowCol) {
+                  $timeout(function () {
+                    uiGridCtrl.grid.api.cellNav.raise.viewPortKeyPress(evt, viewPortKeyDownWasRaisedForRowCol);
+                  },4);
+
+                  viewPortKeyDownWasRaisedForRowCol = null;
                 }
               });
 
