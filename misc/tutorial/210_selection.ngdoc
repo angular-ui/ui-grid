@@ -5,6 +5,11 @@
 This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection' 
 module and you must include the ui-grid-selection directive on your grid element.
 
+Documentation for the selection feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.selection.api:GridOptions gridOptions}
+- {@link api/ui.grid.selection.api:PublicApi publicApi}
+
 Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
 By default the selection feature will divide selection changes into batch events and single events, there are
 two different events provided in the api.  By setting `enableSelectionBatchEvent: false` you can cause it to 

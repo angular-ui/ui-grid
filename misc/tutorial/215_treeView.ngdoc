@@ -8,6 +8,15 @@ of the logic into a treeBase module.  This means that you may need to include th
 in your code, and that some of the events and methods have moved to grid.api.treeBase instead
 of grid.api.treeView_**
 
+Documentation for the treeView feature is provided in the api documentation, both under
+treeView itself, and shared functions in the treeBase documentation.  In particular:
+
+- {@link api/ui.grid.treeBase.api:ColumnDef treeBase columnDef}
+- {@link api/ui.grid.treeView.api:GridOptions treeView gridOptions} and {@link api/ui.grid.treeBase.api:GridOptions treeBase gridOptions}
+- {@link api/ui.grid.treeView.api:PublicApi treeView publicApi} and {@link api/ui.grid.treeBase.api:PublicApi treeBase publicApi}
+
+The tree structure itself is documented at {@link api/ui.grid.treeBase.grid:treeBase treeBase}.
+
 In your data you tell us the nodes by setting the property $$treeLevel on a given row.  Levels
 start at 0 and increase as you move down the tree.
 

@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 208 Saving and restoring the state of the grid
+@name Tutorial: 208 Save and restore state
 @description The save state feature allows you to save the current look of the grid
 and restore it upon returning to the grid.
 
@@ -8,6 +8,11 @@ adjust column widths, apply sorts and filters, and select a specific cell.  The 
 might adjust their grid to look as they wish, and then navigate to another page.  When
 the user returns to the page with the grid, they might expect it to look like it
 did when they left.  The save state feature permits this.
+
+Documentation for the saveState feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.saveState.api:GridOptions gridOptions}
+- {@link api/ui.grid.saveState.api:PublicApi publicApi}
 
 There are two core methods:
 

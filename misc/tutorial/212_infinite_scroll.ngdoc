@@ -2,7 +2,12 @@
 @name Tutorial: 212 Infinite scroll
 @description
 
-The infinite scroll feature allows the user to lazy load their data to gridOptions.data.  
+The infinite scroll feature allows the user to lazy load their data to gridOptions.data.
+
+Documentation for the infiniteScroll feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.infiniteScroll.api:GridOptions gridOptions}
+- {@link api/ui.grid.infiniteScroll.api:PublicAPI publicApi}
 
 Once you reach the top (or bottom) of your real data set, you can notify that no more pages exist
 up (or down), and infinite scroll will stop triggering events in that direction.  You can also

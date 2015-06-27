@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 211 Two grids on a page
+@name Tutorial: 304 Two grids on a page
 @description
 
 This grid example puts two grids on the same page, and demonstrates that they are isolated from
@@ -16,7 +16,7 @@ each other.
           $scope.gridApi = gridApi;
         }
       };
-      
+
       $scope.scrollTo = function( rowIndex, colIndex ) {
         $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
       };
@@ -63,10 +63,10 @@ each other.
       it('check second grid has rendered', function () {
         gridTestUtils.expectHeaderColumnCount( 'secondGrid', 3 );
       });
-  
+
 //      it('check that menus display over the correct grid', function () {
         // still working out how to get protractor to scroll an element
 //      });
-    });    
-  </file>  
+    });
+  </file>
 </example>

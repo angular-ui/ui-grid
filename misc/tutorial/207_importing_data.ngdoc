@@ -1,11 +1,16 @@
 @ngdoc overview
-@name Tutorial: 207 Importing Data With Native UI
+@name Tutorial: 207 Importing Data
 @description The importer feature allows data to be imported into the grid in 
 csv or json format.  The importer can use the native grid menu, or can accept a 
 file from a custom file picker implemented by the user.
 
 The importer imports files in json or csv format, with the ability to be extended
 to other file formats if demand exists.
+
+Documentation for the importer feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.importer.api:GridOptions gridOptions}
+- {@link api/ui.grid.importer.api:PublicApi publicApi}
 
 For json format files the received elements are assumed to match the column.field 
 attributes in your columnDefs, and are loaded into the provided entity.  

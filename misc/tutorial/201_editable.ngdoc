@@ -5,6 +5,12 @@
 The ui.grid.edit feature allows inline editing of grid data.  To enable, you must include the `'ui.grid.edit'` module
 and you must include the `ui-grid-edit` directive on your grid element.
 
+Documentation for the edit feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.edit.api:ColumnDef columnDef}
+- {@link api/ui.grid.edit.api:GridOptions gridOptions}
+- {@link api/ui.grid.edit.api:PublicApi publicApi}
+
 You can use the `enableCellEdit` options in your column definitions to allow a column to be editable.
 
 Editing is invoked via double-click, f2, or start typing any non-navigable key. Cell editing ends on tab, enter or esc (cancel)
