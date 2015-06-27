@@ -7,7 +7,12 @@ with that data saved "row at a time."  This feature attempts to give a user an e
 to a spreadsheet - in that they can edit whichever fields they wish, and the feature will seek to
 save the data "row at a time".  To the extent that the data doesn't generate errors, from a user
 perspective the saving is almost invisible - rows occassionally go grey (saving) and can't be edited whilst
-grey, but otherwise the user edits as if the data were local.  
+grey, but otherwise the user edits as if the data were local.
+
+Documentation for the rowEdit feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.rowEdit.api:GridOptions gridOptions}
+- {@link api/ui.grid.rowEdit.api:PublicApi publicApi}
 
 Each row is in one of four states at any point in time:
 

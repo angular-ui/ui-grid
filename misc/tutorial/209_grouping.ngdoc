@@ -5,7 +5,7 @@ values in specific columns, providing an effect similar in some ways to an Excel
 Columns that aren't grouped by can be aggregated, providing for example a running count
 of the number of rows in each group.
 
-_**BREAKING CHANGES IN RC22 for grouping.  Prior to RC22 grouping was a standalone feature, with RC22
+_** BREAKING CHANGES IN RC22 for grouping.  Prior to RC22 grouping was a standalone feature, with RC22
 a number of things have changed as grouping and treeView move to a shared code base.  In particular:
 - methods such as expandAll are now on treeBase, not on grouping
 - aggregations move from being col.grouping.aggregation to col.treeAggregation
@@ -17,6 +17,15 @@ a number of things have changed as grouping and treeView move to a shared code b
 - groupingIndent is now treeIndent
 - groupingRowHeaderAlwaysVisible is now treeRowHeaderAlwaysVisible, and default has changed to true
 **_
+
+Documentation for the grouping feature is provided in the api documentation, both under
+grouping itself, and shared functions in the treeBase documentation.  In particular:
+
+- {@link api/ui.grid.grouping.api:ColumnDef grouping columnDef} and {@link api/ui.grid.treeBase.api:ColumnDef treeBase columnDef}
+- {@link api/ui.grid.grouping.api:GridOptions grouping gridOptions} and {@link api/ui.grid.treeBase.api:GridOptions treeBase gridOptions}
+- {@link api/ui.grid.grouping.api:PublicApi grouping publicApi} and {@link api/ui.grid.treeBase.api:PublicApi treeBase publicApi}
+
+The tree structure itself is documented at {@link api/ui.grid.treeBase.grid:treeBase treeBase}.
 
 Grouping can be set programmatically by using the columnDef option `grouping: { groupPriority: 0 }`,
 or for aggregations on a column by setting `treeAggregation: {type: uiGridGroupingConstants.aggregation.COUNT}`. 

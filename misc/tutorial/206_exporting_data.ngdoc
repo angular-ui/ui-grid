@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 206 Exporting Data With Native UI
+@name Tutorial: 206 Exporting Data
 @description The exporter feature allows data to be exported from the grid in 
 csv or pdf format.  The exporter can export all data, visible data or selected data.
 
@@ -9,7 +9,11 @@ directive on your grid.  If you want to export as PDF you need to have installed
 available through:
 <pre>  bower install pdfmake  </pre>
 
-The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}.
+The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}, and
+
+- {@link api/ui.grid.exporter.api:ColumnDef columnDef}
+- {@link api/ui.grid.exporter.api:GridOptions gridOptions}
+- {@link api/ui.grid.exporter.api:PublicApi publicApi}
 
 The exporter adds menu items to the grid menu, to use the native UI you need to enable
 the grid menu using the gridOption `enableGridMenu`

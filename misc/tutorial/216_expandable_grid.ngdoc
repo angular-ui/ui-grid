@@ -4,6 +4,11 @@
 
 Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
 
+Documentation for the expandable feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.expandable.api:GridOptions gridOptions}
+- {@link api/ui.grid.expandable.api:PublicApi publicApi}
+
 <pre>
   $scope.gridOptions = {
     //This is the template that will be used to render subgrid.

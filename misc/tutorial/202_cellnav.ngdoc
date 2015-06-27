@@ -5,6 +5,12 @@
 This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav' 
 module and you must include the ui-grid-cellNav directive on your grid element.
 
+Documentation for the cellNav feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.cellNav.api:ColumnDef columnDef}
+- {@link api/ui.grid.cellNav.api:GridOptions gridOptions}
+- {@link api/ui.grid.cellNav.api:PublicApi publicApi}
+
 CellNav allows you to navigate around the grid using the arrow keys, pg-down and pg-up, enter (moves down),
 shift-enter (moves up), tab (moves right) and shift-tab (moves left).  When combined with the editable feature, the 
 left-right arrow keys will be subsumed when in "deep edit" mode, allowing you to move around within the text you're editing.  
