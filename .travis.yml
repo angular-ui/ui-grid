@@ -25,6 +25,7 @@ env:
     - secure: W2QpRQppqS1wMhbiOTOzJmaUXZtjUQdoWj+IKuyX6m7/A2A4YDXfNj+vzXfffbVqnBFDzrYRtcZ6IMmHn9QDs4gJaAaQDc1104UEd/sbVEujDn+9YOE3tTdRLE13FgdwwrLNcpypiPZ+rpWvEizRAlwoMXIiVhL8pUc1hysX9qM=
     - secure: IaTLpsLUet/9al3Lg9n1k+M+5zIEnCwx7fwOjNoUmHYrYRImDUVmtymb9HSdzozn8cV1z+k6V62wghjK0b8c5tZ0mE9PRtEN8Nv1CjVmrbURpQaypC2A1HT3xg3/MDRwvAoiHILPxTo4k5jw1wgNrYKxCLbb7vmvoPwVv7seTT8=
     - secure: PWz5cYdlrucjbJxUj9WUGo55V8+z/fDST7ihx9uLuhllqaQ+fkdTX5ccn8sv+dp9OPs0ov3Gunv/GIWKB3E6HCsHQJsyZ1Tde3IvyWwz72YeQ5/IZVolX0T1dmX9sLYJxqKjO1/D/Zfj4NkCEjFQmyIB+47tgBTV1OA9h/4TiMk=
+    - secure: BUUB8bjAXcUgq4GNYd0q1seAR26o8UJeIqAY1TcuV1p42d1w1mgBKz6oOEonX3NJTMI7bBNaSVYtpgxroesmVk25FMrsy5ynsY3fTAfiHbyd62IstJjtw0AcVWp+l7Z1WBe6XNhpaW8FS7wOi9jEyV/Ez/ffqgAMmMpG6BHzalk=
 
 branches:
   only:

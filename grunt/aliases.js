@@ -38,7 +38,8 @@ module.exports = function (grunt, options) {
 
   if (process.env.TRAVIS){
     baseTasks['test:single'] = ['karma:travis'];
-  } else {
+  }
+  else {
     baseTasks['test:single'] = ['karmangular'];
   }
 
@@ -46,9 +47,10 @@ module.exports = function (grunt, options) {
   var semver = require('semver');
   var currentTag = semver.clean( util.getCurrentTag() );
 
-  if (currentTag){
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower'];
-  } else {
+  if (currentTag) {
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
+  }
+  else {
     baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'cut-release', 'gh-pages:ui-grid-site'];
   }
 
