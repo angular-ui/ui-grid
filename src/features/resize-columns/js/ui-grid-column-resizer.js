@@ -318,17 +318,13 @@
           $elm.addClass('right');
         }
 
-        // Build the columns then refresh the grid canvas
+        // Refresh the grid canvas
         //   takes an argument representing the diff along the X-axis that the resize had
-        function buildColumnsAndRefresh(xDiff) {
-          // Build the columns
-          uiGridCtrl.grid.buildColumns()
-            .then(function() {
-              // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
-              uiGridCtrl.grid.refreshCanvas(true).then( function() {
-                uiGridCtrl.grid.queueGridRefresh();
-              });
-            });
+        function refreshCanvas(xDiff) {
+          // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
+          uiGridCtrl.grid.refreshCanvas(true).then( function() {
+            uiGridCtrl.grid.queueGridRefresh();
+          });
         }
 
         // Check that the requested width isn't wider than the maxWidth, or narrower than the minWidth
@@ -424,7 +420,7 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, newWidth);
 
-          buildColumnsAndRefresh(xDiff);
+          refreshCanvas(xDiff);
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
 
@@ -536,7 +532,7 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, maxWidth);
           
-          buildColumnsAndRefresh(xDiff);
+          refreshCanvas(xDiff);
           
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);        };
         $elm.on('dblclick', dblClickFn);
