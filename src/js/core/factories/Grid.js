@@ -428,9 +428,9 @@ angular.module('ui.grid')
      * @name clearAllFilters
      * @methodOf ui.grid.core.api:PublicApi
      * @description Clears all filters and optionally refreshes the visible rows.
-     * @params {object} refreshRows Defaults to true.
-     * @params {object} clearConditions Defaults to false.
-     * @params {object} clearFlags Defaults to false.
+     * @param {object} refreshRows Defaults to true.
+     * @param {object} clearConditions Defaults to false.
+     * @param {object} clearFlags Defaults to false.
      * @returns {promise} If `refreshRows` is true, returns a promise of the rows refreshing.
      */
     self.api.registerMethod('core', 'clearAllFilters', this.clearAllFilters);
@@ -1977,7 +1977,7 @@ angular.module('ui.grid')
    * @name refresh
    * @methodOf ui.grid.class:Grid
    * @description Refresh the rendered grid on screen.
-   * @params {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed.
+   * @param {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed.
    */
   Grid.prototype.refresh = function refresh(rowsAltered) {
     var self = this;
@@ -2023,7 +2023,7 @@ angular.module('ui.grid')
    * @name refreshCanvas
    * @methodOf ui.grid.class:Grid
    * @description Builds all styles and recalculates much of the grid sizing
-   * @params {object} buildStyles optional parameter.  Use TBD
+   * @param {object} buildStyles optional parameter.  Use TBD
    * @returns {promise} promise that is resolved when the canvas
    * has been refreshed
    *
@@ -2417,9 +2417,9 @@ angular.module('ui.grid')
    * @name clearAllFilters
    * @methodOf ui.grid.class:Grid
    * @description Clears all filters and optionally refreshes the visible rows.
-   * @params {object} refreshRows Defaults to true.
-   * @params {object} clearConditions Defaults to false.
-   * @params {object} clearFlags Defaults to false.
+   * @param {object} refreshRows Defaults to true.
+   * @param {object} clearConditions Defaults to false.
+   * @param {object} clearFlags Defaults to false.
    * @returns {promise} If `refreshRows` is true, returns a promise of the rows refreshing.
    */
   Grid.prototype.clearAllFilters = function clearAllFilters(refreshRows, clearConditions, clearFlags) {
