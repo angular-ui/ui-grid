@@ -1,4 +1,5 @@
-﻿/**
+﻿/* jshint -W100 */
+/**
  * Translated by: R. Salarmehr
  *                M. Hosseynzade
  *                Using Vajje.com online dictionary.
@@ -16,16 +17,16 @@
         search: {
           placeholder: 'جستجو...',
           showingItems: 'نمایش اقلام:',
-          selectedItems: 'قلم‌های انتخاب شده:',
+          selectedItems: 'قلم\u200cهای انتخاب شده:',
           totalItems: 'مجموع اقلام:',
-          size: 'اندازه‌ی صفحه:',
+          size: 'اندازه\u200cی صفحه:',
           first: 'اولین صفحه',
-          next: 'صفحه‌ی‌بعدی',
-          previous: 'صفحه‌ی‌ قبلی',
+          next: 'صفحه\u200cی\u200cبعدی',
+          previous: 'صفحه\u200cی\u200c قبلی',
           last: 'آخرین صفحه'
         },
         menu: {
-          text: 'ستون‌های انتخابی:'
+          text: 'ستون\u200cهای انتخابی:'
         },
         sort: {
           ascending: 'ترتیب صعودی',
@@ -33,7 +34,7 @@
           remove: 'حذف مرتب کردن'
         },
         column: {
-          hide: 'پنهان‌کردن ستون'
+          hide: 'پنهان\u200cکردن ستون'
         },
         aggregation: {
           count: 'تعداد: ',
@@ -48,18 +49,18 @@
           unpin: 'حذف پین'
         },
         gridMenu: {
-          columns: 'ستون‌ها:',
+          columns: 'ستون\u200cها:',
           importerTitle: 'وارد کردن فایل',
-          exporterAllAsCsv: 'خروجی تمام داده‌ها در فایل csv',
-          exporterVisibleAsCsv: 'خروجی داده‌های قابل مشاهده در فایل csv',
-          exporterSelectedAsCsv: 'خروجی داده‌های انتخاب‌شده در فایل csv',
-          exporterAllAsPdf: 'خروجی تمام داده‌ها در فایل pdf',
-          exporterVisibleAsPdf: 'خروجی داده‌های قابل مشاهده در فایل pdf',
-          exporterSelectedAsPdf: 'خروجی داده‌های انتخاب‌شده در فایل pdf'
+          exporterAllAsCsv: 'خروجی تمام داده\u200cها در فایل csv',
+          exporterVisibleAsCsv: 'خروجی داده\u200cهای قابل مشاهده در فایل csv',
+          exporterSelectedAsCsv: 'خروجی داده\u200cهای انتخاب\u200cشده در فایل csv',
+          exporterAllAsPdf: 'خروجی تمام داده\u200cها در فایل pdf',
+          exporterVisibleAsPdf: 'خروجی داده\u200cهای قابل مشاهده در فایل pdf',
+          exporterSelectedAsPdf: 'خروجی داده\u200cهای انتخاب\u200cشده در فایل pdf'
         },
         importer: {
           noHeaders: 'نام ستون قابل استخراج نیست. آیا فایل عنوان دارد؟',
-          noObjects: 'اشیا قابل استخراج نیستند. آیا به جز عنوان‌ها در فایل داده وجود دارد؟',
+          noObjects: 'اشیا قابل استخراج نیستند. آیا به جز عنوان\u200cها در فایل داده وجود دارد؟',
           invalidCsv: 'فایل قابل پردازش نیست. آیا فرمت  csv  معتبر است؟',
           invalidJson: 'فایل قابل پردازش نیست. آیا فرمت json   معتبر است؟',
           jsonNotArray: 'فایل json وارد شده باید حاوی آرایه باشد. عملیات ساقط شد.'
@@ -70,8 +71,8 @@
           of: 'از'
         },
         grouping: {
-          group: 'گروه‌بندی',
-          ungroup: 'حذف گروه‌بندی',
+          group: 'گروه\u200cبندی',
+          ungroup: 'حذف گروه\u200cبندی',
           aggregate_count: 'Agg: تعداد',
           aggregate_sum: 'Agg: جمع',
           aggregate_max: 'Agg: بیشینه',
