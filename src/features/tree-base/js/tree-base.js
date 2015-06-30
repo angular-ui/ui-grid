@@ -58,7 +58,9 @@
    * will turn on any sorts that haven't run.  It will then call a recursive sort on the tree.
    * 
    * Tree base provides treeAggregation.  It checks the treeAggregation configuration on each column, and aggregates based on
-   * the logic provided as it builds the tree.  Aggregation information will be collected in the format:
+   * the logic provided as it builds the tree. Footer aggregation from the uiGrid core should not be used with treeBase aggregation,
+   * since it operates on all visible rows, as opposed to to leaf nodes only. Setting `showColumnFooter: true` will show the
+   * treeAggregations in the column footer.  Aggregation information will be collected in the format:
    * 
    * ```
    *   {
@@ -70,7 +72,7 @@
    * ```
    * 
    * A callback is provided to format the value once it is finalised (aka a valueFilter).
-   *  
+   *
    * <br/>
    * <br/>
    *
@@ -1299,6 +1301,12 @@
         grid.columns.forEach( function(column){
           if ( typeof(column.treeAggregationFn) !== 'undefined' ){
             aggregateArray.push( service.buildAggregationObject(column) );
+
+            if ( grid.options.showColumnFooter && typeof(column.colDef.aggregationType) === 'undefined' && column.treeAggregation ){
+              // Add aggregation object for footer
+              column.treeFooterAggregation = service.buildAggregationObject(column);
+              column.aggregationType = service.treeFooterAggregationType;
+            }
           }
         });
         return aggregateArray;
@@ -1308,7 +1316,7 @@
       /**
        * @ngdoc function
        * @name aggregate
-       * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+       * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Accumulate the data from this row onto the aggregations for each parent
        * 
        * Iterate over the parents, then iterate over the aggregations for each of those parents,
@@ -1323,12 +1331,16 @@
           return;
         }
 
-        parents.forEach( function( parent ){
+        parents.forEach( function( parent, index ){
           if ( parent.treeNode.aggregations ){
             parent.treeNode.aggregations.forEach( function( aggregation ){
               var fieldValue = grid.getCellValue(row, aggregation.col);
               var numValue = Number(fieldValue);
               aggregation.col.treeAggregationFn(aggregation, fieldValue, numValue, row);
+
+              if ( index === 0 && typeof aggregation.col.treeFooterAggregation !== 'undefined' ){
+                aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
+              }
             });
           }
         });
@@ -1421,8 +1433,33 @@
 
       /**
        * @ngdoc function
+       * @name finaliseAggregation
+       * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
+       * @description Helper function used to finalize aggregation nodes and footer cells
+       *
+       * @param {gridRow} row the parent we're finalising
+       * @param {aggregation} the aggregation object manipulated by the aggregationFn
+       */
+      finaliseAggregation: function(row, aggregation){
+        if ( aggregation.col.treeAggregationUpdateEntity && typeof(row) !== 'undefined' && typeof(row.entity[ '$$' + aggregation.col.uid ]) !== 'undefined' ){
+          angular.extend( aggregation, row.entity[ '$$' + aggregation.col.uid ]);
+        }
+
+        if ( typeof(aggregation.col.treeAggregationFinalizerFn) === 'function' ){
+          aggregation.col.treeAggregationFinalizerFn( aggregation );
+        }
+        if ( typeof(aggregation.col.customTreeAggregationFinalizerFn) === 'function' ){
+          aggregation.col.customTreeAggregationFinalizerFn( aggregation );
+        }
+        if ( typeof(aggregation.rendered) === 'undefined' ){
+          aggregation.rendered = aggregation.label ? aggregation.label + aggregation.value : aggregation.value;
+        }
+      },
+
+      /**
+       * @ngdoc function
        * @name finaliseAggregations
-       * @methodOf  ui.grid.grouping.service:uiGridGroupingService
+       * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Format the data from the aggregation into the rendered text
        * e.g. if we had label: 'sum: ' and value: 25, we'd create 'sum: 25'.
        *
@@ -1443,19 +1480,7 @@
         }
 
         row.treeNode.aggregations.forEach( function( aggregation ) {
-          if ( aggregation.col.treeAggregationUpdateEntity && typeof(row.entity[ '$$' + aggregation.col.uid ]) !== 'undefined' ){
-            angular.extend( aggregation, row.entity[ '$$' + aggregation.col.uid ]);
-          }
-
-          if ( typeof(aggregation.col.treeAggregationFinalizerFn) === 'function' ){
-            aggregation.col.treeAggregationFinalizerFn( aggregation );
-          }
-          if ( typeof(aggregation.col.customTreeAggregationFinalizerFn) === 'function' ){
-            aggregation.col.customTreeAggregationFinalizerFn( aggregation );
-          }
-          if ( typeof(aggregation.rendered) === 'undefined' ){
-            aggregation.rendered = aggregation.label ? aggregation.label + aggregation.value : aggregation.value;
-          }
+          service.finaliseAggregation(row, aggregation);
 
           if ( aggregation.col.treeAggregationUpdateEntity ){
             var aggregationCopy = {};
@@ -1468,6 +1493,21 @@
             row.entity[ '$$' + aggregation.col.uid ] = aggregationCopy;
           }
         });
+      },
+
+      /**
+       * @ngdoc function
+       * @name treeFooterAggregationType
+       * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
+       * @description Uses the tree aggregation functions and finalizers to set the
+       * column footer aggregations.
+       *
+       * @param {rows} visible rows. not used, but accepted to match signature of GridColumn.aggregationType
+       * @param {gridColumn} the column we are finalizing
+       */
+      treeFooterAggregationType: function( rows, column ) {
+        service.finaliseAggregation(undefined, column.treeFooterAggregation);
+        return column.treeFooterAggregation.rendered;
       }
     };
 

@@ -42,6 +42,7 @@ children of the selected rowHeader.
         enableFiltering: true,
         enableGroupHeaderSelection: true,
         treeRowHeaderAlwaysVisible: false,
+        showColumnFooter: true,
         treeCustomAggregations: {
           variance: {label: 'var: ', menuTitle: 'Agg: Var', aggregationFn: stats.aggregator.sumSquareErr, finalizerFn: stats.finalizer.variance },
           stdev: {label: 'stDev: ', aggregationFn: stats.aggregator.sumSquareErr, finalizerFn: stats.finalizer.stDev},
@@ -60,22 +61,22 @@ children of the selected rowHeader.
           { field: 'age', displayName: 'Age (common)', customTreeAggregationFn: stats.aggregator.mode, width: '10%' },
           { name: 'company', width: '15%' },
           { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '25%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
-          { field: 'balance', displayName: 'balance (avg)', width: '15%', cellFilter: 'currency',
+          { field: 'balance', displayName: 'balance (avg)', width: '15%', cellFilter: 'currency', footerCellFilter: 'currency',
             treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
             customTreeAggregationFinalizerFn: function( aggregation ) {
               aggregation.rendered = aggregation.value;
             }
           },
-          { field: 'balance', displayName: 'balance (total)', width: '15%', cellFilter: 'currency',
+          { field: 'balance', displayName: 'balance (total)', width: '15%', cellFilter: 'currency', footerCellFilter: 'currency',
             treeAggregationType: uiGridGroupingConstants.aggregation.SUM,
             customTreeAggregationFinalizerFn: function( aggregation ) {
               aggregation.rendered = aggregation.value;
             }
           },
-          { field: 'balance', displayName: 'balance (median)', width: '15%', cellFilter: 'currency',
+          { field: 'balance', displayName: 'balance (median)', width: '15%', cellFilter: 'currency', footerCellFilter: 'currency',
             treeAggregationType: 'median',
           },
-          { field: 'balance', displayName: 'balance (std dev)', width: '15%', cellFilter: 'currency',
+          { field: 'balance', displayName: 'balance (std dev)', width: '15%', cellFilter: 'currency', footerCellFilter: 'currency',
             treeAggregationType: 'stdev',
           }
         ],
