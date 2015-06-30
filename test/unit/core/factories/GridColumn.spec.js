@@ -539,18 +539,9 @@ describe('GridColumn factory', function () {
       col.width = 141;
     });
 
-    it ('should set the value of width to * when colDef.width is undefined', function () {
-      colDef.width = undefined;
-      col.updateColumnDef(colDef);
-      expect(col.width).toBe('*');
-    });
-
-    it ('should set the value of width to * when colDef.width is null', function () {
-      colDef.width = null;
-      col.updateColumnDef(colDef);
-      expect(col.width).toBe('*');
-    });
-
+    it ('should set the value of width to * when colDef.width is undefined', invalidColDef(undefined));
+    it ('should set the value of width to * when colDef.width is null', invalidColDef(null));
+    it ('should set the value of width to * when colDef.width is an object', invalidColDef({}));
     it ('should set the value of width to colDef.width when it is a percentage', widthEqualsColDefWidth('10.1%'));
 
     it ('should set the value of width to the persed integer colDef.width when it is a string', function () {
@@ -560,28 +551,35 @@ describe('GridColumn factory', function () {
     });
 
     it ('should set the value of width to colDef.width when it is a series of *', widthEqualsColDefWidth('***'));
-
     it ('should set the value of width to colDef.width when it is a number', widthEqualsColDefWidth(42));
 
-    it ('should throw when width is invalid', function () {
-      colDef.width = 'e1%'
-      expect(updateCol(colDef.width)).toThrow()
-      colDef.width = {}
-      expect(updateCol(colDef.width)).toThrow()
-    })
+    it ('should throw when colDef.width is an invalid string', function () {
+      colDef.width = 'e1%';
+      expect(updateCol(colDef.width)).toThrow();
+      colDef.width = '#FFF';
+      expect(updateCol(colDef.width)).toThrow();
+    });
 
     function widthEqualsColDefWidth(expected) {
       return function () {
         colDef.width = expected;
         col.updateColumnDef(colDef);
         expect(col.width).toBe(expected);
-      }
+      };
+    }
+
+    function invalidColDef(width) {
+      return function () {
+        colDef.width = width;
+        col.updateColumnDef(colDef);
+        expect(col.width).toBe('*');
+      };
     }
 
     function updateCol(col, colDef) {
       return function () {
-        col.updateColumnDef(colDef)
-      }
+        col.updateColumnDef(colDef);
+      };
     }
   });
 });
