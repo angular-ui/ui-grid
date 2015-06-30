@@ -529,4 +529,59 @@ describe('GridColumn factory', function () {
       });
     });
   });
+
+  describe('updateColumnDef(colDef, isNew)', function () {
+    var col, colDef;
+
+    beforeEach(function () {
+      col = grid.columns[0];
+      colDef = angular.copy(col.colDef);
+      col.width = 141;
+    });
+
+    it ('should set the value of width to * when colDef.width is undefined', function () {
+      colDef.width = undefined;
+      col.updateColumnDef(colDef);
+      expect(col.width).toBe('*');
+    });
+
+    it ('should set the value of width to * when colDef.width is null', function () {
+      colDef.width = null;
+      col.updateColumnDef(colDef);
+      expect(col.width).toBe('*');
+    });
+
+    it ('should set the value of width to colDef.width when it is a percentage', widthEqualsColDefWidth('10.1%'));
+
+    it ('should set the value of width to the persed integer colDef.width when it is a string', function () {
+      colDef.width = '42';
+      col.updateColumnDef(colDef);
+      expect(col.width).toBe(42);
+    });
+
+    it ('should set the value of width to colDef.width when it is a series of *', widthEqualsColDefWidth('***'));
+
+    it ('should set the value of width to colDef.width when it is a number', widthEqualsColDefWidth(42));
+
+    it ('should throw when width is invalid', function () {
+      colDef.width = 'e1%'
+      expect(updateCol(colDef.width)).toThrow()
+      colDef.width = {}
+      expect(updateCol(colDef.width)).toThrow()
+    })
+
+    function widthEqualsColDefWidth(expected) {
+      return function () {
+        colDef.width = expected;
+        col.updateColumnDef(colDef);
+        expect(col.width).toBe(expected);
+      }
+    }
+
+    function updateCol(col, colDef) {
+      return function () {
+        col.updateColumnDef(colDef)
+      }
+    }
+  });
 });
