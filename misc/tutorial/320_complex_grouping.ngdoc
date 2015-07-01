@@ -96,6 +96,23 @@ children of the selected rowHeader.
               });
             }
           });
+
+          $scope.gridApi.grouping.on.aggregationChanged($scope, function(col){
+            if ( col.treeAggregation.type ){
+              $scope.lastChange = col.displayName + ' aggregated using ' + col.treeAggregation.type;
+            } else {
+              $scope.lastChange = 'Aggregation removed from ' + col.displayName;
+            }
+          });
+
+          $scope.gridApi.grouping.on.groupingChanged($scope, function(col){
+            if ( col.grouping.groupPriority ){
+              $scope.lastChange = col.displayName + ' grouped with priority ' + col.grouping.groupPriority;
+            } else {
+              $scope.lastChange = col.displayName + ' removed from grouped columns';
+            }
+          });
+
         }
       };
 
@@ -255,6 +272,7 @@ children of the selected rowHeader.
   
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <p ng-show="lastChange">Last grouping change: {{ lastChange }}</p>
       <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-edit ui-grid-selection class="grid" style="width:100%;"></div>
     </div>
   </file>
