@@ -157,6 +157,32 @@
         var publicApi = {
           events: {
             grouping: {
+              /**
+               * @ngdoc event
+               * @eventOf ui.grid.grouping.api:PublicApi
+               * @name aggregationChanged
+               * @description raised whenever aggregation is changed, added or removed from a column
+               *
+               * <pre>
+               *      gridApi.grouping.on.aggregationChanged(scope,function(col){})
+               * </pre>
+               * @param {gridCol} col the column which on which aggregation changed. The aggregation
+               * type is available as `col.treeAggregation.type`
+               */
+              aggregationChanged: {},
+              /**
+               * @ngdoc event
+               * @eventOf ui.grid.grouping.api:PublicApi
+               * @name groupingChanged
+               * @description raised whenever the grouped columns changes
+               *
+               * <pre>
+               *      gridApi.grouping.on.groupingChanged(scope,function(col){})
+               * </pre>
+               * @param {gridCol} col the column which on which grouping changed. The new grouping is
+               * available as `col.grouping`
+               */
+              groupingChanged: {}
             }
           },
           methods: {
@@ -652,6 +678,8 @@
         column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations()[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
         column.treeAggregationFinalizerFn = service.groupedFinalizerFn;
 
+        grid.api.grouping.raise.groupingChanged(column);
+
         grid.queueGridRefresh();
       },
 
@@ -680,6 +708,8 @@
         delete column.customTreeAggregationFinalizer;
 
         service.tidyPriorities( grid );
+
+        grid.api.grouping.raise.groupingChanged(column);
 
         grid.queueGridRefresh();
       },
@@ -711,6 +741,8 @@
         column.treeAggregation = { type: aggregationType, label:  i18nService.get().aggregation[aggregationDef.label] || aggregationDef.label };
         column.treeAggregationFn = aggregationDef.aggregationFn;
         column.treeAggregationFinalizerFn = aggregationDef.finalizerFn;
+
+        grid.api.grouping.raise.aggregationChanged(column);
 
         grid.queueGridRefresh();
       },
