@@ -30,6 +30,9 @@ asynchronously after the columns it will often decide all your columns are strin
 column def using `type='number'`.  Valid types are documented in {@link api/ui.grid.class:GridOptions.columnDef columnDef}, and
 include `string`, `number`, `numberStr` and `date`.  If you use date be aware the code expects a javascript date object.
 
+By default the sorting algorithm will be applied to the row value before any `cellFilters` are applied. The {@link api/ui.grid.class:GridOptions.columnDef#sortCellFiltered sortCellFiltered}
+columnDef option will cause sorting to be applied after the `cellFilters` are applied. For an example of this see the "Month Joined" column in the {@link 401_AllFeatures AllFeatures tutorial}.
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);

@@ -59,6 +59,7 @@ Filtering supports dropdowns, in order to set a particular column to use a dropd
 and
   `selectOptions: [ { value: 'x', label: 'decode of x' } , .... ]`
 
+
 If you need to internationalize the labels you'll need to complete that before providing the selectOptions array.
 
 ### Cancel icon
@@ -72,7 +73,13 @@ In this example we've provided a "toggle filters" button to allow you to turn th
 still visually indicate which columns are filtered even when the filters aren't present, we've used the headerCellClass
 to make any columns with a filter condition have blue text.
 
+### cellFilters
+
+By default the filtering will not use the formatted value after applying `cellFilters`, it uses the raw value from the row. The {@link api/ui.grid.class:GridOptions.columnDef#filterCellFiltered filterCellFiltered}
+columnDef option will cause filtering to be applied after the `cellFilters` are evaluated, as seen on the "Long Date" field.
+
 ### Single filter box (similar to 2.x)
+
 
 Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implement this using a rowsProcessor.
 
@@ -152,6 +159,8 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
               placeholder: 'less than',
               term: nextWeek
             }, headerCellClass: $scope.highlightFilteredHeader
+          },
+          { field: 'mixedDate', displayName: "Long Date", cellFilter: 'date:"longDate"', filterCellFiltered:true, width: '15%',
           }
         ]
       };
