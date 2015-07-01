@@ -1,5 +1,6 @@
 <div class="ui-grid-render-container" ng-style="{ 'margin-left': colContainer.getMargin('left') + 'px', 'margin-right': colContainer.getMargin('right') + 'px' }">
   <div ui-grid-header></div>
   <div ui-grid-viewport></div>
+  <div ng-if="colContainer.needsHScrollbarPlaceholder()" class="ui-grid-scrollbar-placeholder" style="height:{{colContainer.grid.scrollbarHeight}}px"></div>
   <div ui-grid-footer ng-if="grid.options.showColumnFooter"></div>
 </div>

@@ -129,11 +129,15 @@
               var canvasHeight = rowContainer.getCanvasHeight();
 
               //add additional height for scrollbar on left and right container
-              if ($scope.containerId !== 'body') {
-                canvasHeight += grid.scrollbarHeight;
-              }
+              //if ($scope.containerId !== 'body') {
+              //  canvasHeight -= grid.scrollbarHeight;
+              //}
 
               var viewportHeight = rowContainer.getViewportHeight();
+              //shorten the height to make room for a scrollbar placeholder
+              if (colContainer.needsHScrollbarPlaceholder()) {
+                viewportHeight -= grid.scrollbarHeight;
+              }
 
               var headerViewportWidth,
                   footerViewportWidth;
