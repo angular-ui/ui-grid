@@ -1830,6 +1830,30 @@ angular.module('ui.grid')
     }
   };
 
+  /**
+   * @ngdoc function
+   * @name getCellDisplayValue
+   * @methodOf ui.grid.class:Grid
+   * @description Gets the displayed value of a cell after applying any the `cellFilter`
+   * @param {GridRow} row Row to access
+   * @param {GridColumn} col Column to access
+   */
+  Grid.prototype.getCellDisplayValue = function getCellDisplayValue(row, col) {
+    if ( !col.cellDisplayGetterCache ) {
+      var custom_filter = col.cellFilter ? " | " + col.cellFilter : "";
+
+      if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
+        col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
+      } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
+        col.cellDisplayGetterCache = $parse(row.entity[col.field] + custom_filter);
+      } else {
+        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
+      }
+    }
+
+    return col.cellDisplayGetterCache(row);
+  };
+
 
   Grid.prototype.getNextColumnSortPriority = function getNextColumnSortPriority() {
     var self = this,

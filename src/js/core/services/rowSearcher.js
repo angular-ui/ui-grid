@@ -181,7 +181,13 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var term = filter.term;
 
     // Get the column value for this row
-    var value = grid.getCellValue(row, column);
+    var value;
+    if ( column.filterCellFiltered ){
+      value = grid.getCellDisplayValue(row, column);
+    } else {
+      value = grid.getCellValue(row, column);
+    }
+
 
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {

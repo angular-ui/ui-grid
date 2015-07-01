@@ -583,6 +583,28 @@ angular.module('ui.grid')
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
 
     /**
+     * @ngdoc boolean
+     * @name sortCellFiltered
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description (optional) False by default. When `true` uiGrid will apply the cellFilter before
+     * sorting the data. Note that when using this option uiGrid will assume that the displayed value is
+     * a string, and use the {@link ui.grid.class:RowSorter#sortAlpha sortAlpha} `sortFn`. It is possible
+     * to return a non-string value from an angularjs filter, in which case you should define a {@link ui.grid.class:GridOptions.columnDef#sortingAlgorithm sortingAlgorithm}
+     * for the column which hanldes the returned type. You may specify one of the `sortingAlgorithms`
+     * found in the {@link ui.grid.RowSorter rowSorter} service.
+     */
+    self.sortCellFiltered = colDef.sortCellFiltered ? true : false;
+
+    /**
+     * @ngdoc boolean
+     * @name filterCellFiltered
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description (optional) False by default. When `true` uiGrid will apply the cellFilter before
+     * applying "search" `filters`.
+     */
+    self.filterCellFiltered = colDef.filterCellFiltered ? true : false;
+
+    /**
      * @ngdoc property
      * @name headerCellFilter
      * @propertyOf ui.grid.class:GridOptions.columnDef
