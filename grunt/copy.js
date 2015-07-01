@@ -14,6 +14,16 @@ module.exports = function ( grunt ) {
           dest: '<%= dist %>'
         }
       ]
+    },
+    less_dist: {
+      files: [
+        {
+          expand: true,
+          cwd: 'src/less',
+          src: '**/*.less',
+          dest: '<%= dist %>/release/src/less'
+        }
+      ]
     }
   };
 };

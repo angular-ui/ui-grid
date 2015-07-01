@@ -4,7 +4,8 @@ module.exports = {
     keepUnstable: false
   },
   dist: {
-    src: '<%= dist %>/release/*.{js,css,svg,woff,ttf,eot}',
-    dest: '<%= dist %>/release/'
+    files: [
+      { src: '<%= dist %>/release/*.{js,css,svg,woff,ttf,eot}', dest: '<%= dist %>/release/' }
+    ]
   }
 };
