@@ -1,4 +1,4 @@
-<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters" ng-class="{'ui-grid-filter-cancel-button-hidden' : colFilter.disableCancelFilterButton === true }">
+<div class="ui-grid-filter-container" ng-style="col.extraStyle" ng-repeat="colFilter in col.filters" ng-class="{'ui-grid-filter-cancel-button-hidden' : colFilter.disableCancelFilterButton === true }">
   <div ng-if="colFilter.type !== 'select'">
     <input type="text" class="ui-grid-filter-input" ng-model="colFilter.term" ng-attr-placeholder="{{colFilter.placeholder || ''}}" />
 

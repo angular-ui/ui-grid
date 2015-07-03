@@ -89,6 +89,16 @@ angular.module('ui.grid')
    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', flags: { caseSensitive: false }, type: uiGridConstants.filter.SELECT, [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ] }</pre>
    *
    */
+   
+  /** 
+   * @ngdoc property
+   * @name extraStyle
+   * @propertyOf ui.grid.class:GridColumn
+   * @description additional on this column.  
+   * @example
+   * <pre>{extraStyle: {display:'table-cell'}}</pre>
+   *
+   */   
     
   /**
    * @ngdoc method
@@ -752,6 +762,7 @@ angular.module('ui.grid')
     // However, we do want to keep the settings if they change, just not the term
     if ( isNew ) {
       self.setPropertyOrDefault(colDef, 'filter');
+      self.setPropertyOrDefault(colDef, 'extraStyle');
       self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
     } else if ( self.filters.length === defaultFilters.length ) {
       self.filters.forEach( function( filter, index ){
