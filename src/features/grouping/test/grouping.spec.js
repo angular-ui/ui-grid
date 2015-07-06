@@ -7,11 +7,12 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   var $rootScope;
   var $scope;
   var GridRow;
+  var $timeout;
 
   beforeEach(module('ui.grid.grouping'));
 
   beforeEach(inject(function (_uiGridGroupingService_,_gridClassFactory_, $templateCache, _uiGridGroupingConstants_,
-                              _$rootScope_, _GridRow_, _uiGridTreeBaseService_) {
+                              _$rootScope_, _GridRow_, _uiGridTreeBaseService_,_$timeout_) {
     uiGridGroupingService = _uiGridGroupingService_;
     uiGridGroupingConstants = _uiGridGroupingConstants_;
     gridClassFactory = _gridClassFactory_;
@@ -19,6 +20,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     $scope = $rootScope.$new();
     GridRow = _GridRow_;
     uiGridTreeBaseService = _uiGridTreeBaseService_;
+    $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
@@ -78,6 +80,23 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   describe( 'moveGroupColumns', function() {
     it( 'move some columns left, and some columns right', function() {
       // TODO
+    });
+
+    iit( 'will not move header columns', function() {
+
+      $timeout(function () {
+        grid.addRowHeaderColumn({name:'aRowHeader'});
+      });
+      $timeout.flush();
+
+
+      grid.columns[2].renderContainer = 'left';
+      grid.columns[2].sort = { priority: 1};
+      grid.columns[2].grouping = { groupPriority: 1};
+      uiGridGroupingService.moveGroupColumns(grid,grid.columns,grid.rows);
+      expect(grid.columns[0].colDef.name).toBe('aRowHeader');
+
+
     });
   });
 

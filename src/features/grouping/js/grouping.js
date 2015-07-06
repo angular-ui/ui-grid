@@ -615,13 +615,19 @@
 
         columns.sort(function(a, b){
           var a_group, b_group;
-          if ( typeof(a.grouping) === 'undefined' || typeof(a.grouping.groupPriority) === 'undefined' || a.grouping.groupPriority < 0){
+          if (a.isRowHeader){
+            a_group = -1000;
+          }
+          else if ( typeof(a.grouping) === 'undefined' || typeof(a.grouping.groupPriority) === 'undefined' || a.grouping.groupPriority < 0){
             a_group = null;
           } else {
             a_group = a.grouping.groupPriority;
           }
 
-          if ( typeof(b.grouping) === 'undefined' || typeof(b.grouping.groupPriority) === 'undefined' || b.grouping.groupPriority < 0){
+          if (b.isRowHeader){
+            b_group = -1000;
+          }
+          else if ( typeof(b.grouping) === 'undefined' || typeof(b.grouping.groupPriority) === 'undefined' || b.grouping.groupPriority < 0){
             b_group = null;
           } else {
             b_group = b.grouping.groupPriority;
