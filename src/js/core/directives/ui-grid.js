@@ -92,7 +92,7 @@
         }
 
 
-      var queuedData = [];
+        var queuedData = [];
         if (newData) {
           queuedData.push(newData);
           if (
