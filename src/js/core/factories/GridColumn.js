@@ -4,16 +4,6 @@ angular.module('ui.grid')
 .factory('GridColumn', ['gridUtil', 'uiGridConstants', 'i18nService', function(gridUtil, uiGridConstants, i18nService) {
 
   /**
-   * @ngdoc function
-   * @name ui.grid.class:GridColumn
-   * @description Represents the viewModel for each column.  Any state or methods needed for a Grid Column
-   * are defined on this prototype
-   * @param {ColDef} colDef Column definition.
-   * @param {number} index the current position of the column in the array
-   * @param {Grid} grid reference to the grid
-   */
-   
-  /**
    * ******************************************************************************************
    * PaulL1: Ugly hack here in documentation.  These properties are clearly properties of GridColumn, 
    * and need to be noted as such for those extending and building ui-grid itself.
@@ -91,10 +81,10 @@ angular.module('ui.grid')
    */
     
   /**
-   * @ngdoc method
-   * @methodOf ui.grid.class:GridColumn
-   * @name GridColumn
-   * @description Initializes a gridColumn
+   * @ngdoc object
+   * @name ui.grid.class:GridColumn
+   * @description Represents the viewModel for each column.  Any state or methods needed for a Grid Column
+   * are defined on this prototype
    * @param {ColumnDef} colDef the column def to associate with this column
    * @param {number} uid the unique and immutable uid we'd like to allocate to this column
    * @param {Grid} grid the grid we'd like to create this column in
