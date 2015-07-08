@@ -44,10 +44,10 @@
           deregFunctions.push( $scope.$parent.$watch($scope.uiGrid.data, dataWatchFunction) );
           deregFunctions.push( $scope.$parent.$watch(function() {
             if ( self.grid.appScope[$scope.uiGrid.data] ){
-              return self.grid.appScope[$scope.uiGrid.data].length; 
+              return self.grid.appScope[$scope.uiGrid.data].length;
             } else {
               return undefined;
-            } 
+            }
           }, dataWatchFunction) );
         } else {
           deregFunctions.push( $scope.$parent.$watch(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
@@ -63,7 +63,7 @@
         }
         deregFunctions.push( $scope.$parent.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
       }
-      
+
 
       function columnDefsWatchFunction(n, o) {
         if (n && n !== o) {
@@ -78,10 +78,11 @@
         }
       }
 
+      var queuedData = [];
       function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
-        
+
         if ( self.grid.options.fastWatch ){
           if (angular.isString($scope.uiGrid.data)) {
             newData = self.grid.appScope[$scope.uiGrid.data];
@@ -89,8 +90,11 @@
             newData = $scope.uiGrid.data;
           }
         }
-        
+
+
+        var queuedData = [];
         if (newData) {
+          queuedData.push(newData);
           if (
             // If we have no columns (i.e. columns length is either 0 or equal to the number of row header columns, which don't count because they're created automatically)
             self.grid.columns.length === (self.grid.rowHeaderColumns ? self.grid.rowHeaderColumns.length : 0) &&
@@ -115,6 +119,13 @@
           }
 
           $q.all(promises).then(function() {
+            if (queuedData.length === 0) {
+                console.log('dodged a bug');
+                return;
+            }
+            var newData = angular.copy(queuedData[queuedData.length-1]); // take last available data
+            queuedData = []; // discard deprecated data
+
             self.grid.modifyRows(newData)
               .then(function () {
                 // if (self.viewport) {
@@ -288,7 +299,7 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
             var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
             var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
             var footerHeight = grid.calcFooterHeight();
-            
+
             var scrollbarHeight = 0;
             if (grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
               scrollbarHeight = gridUtil.getScrollbarWidth();
