@@ -293,7 +293,7 @@
         columnDefs: [
           {name: 'name'},
           {name: 'car'}
-        ];
+        ]
        }
     }]);
    </file>
