@@ -60,14 +60,14 @@
             <i class="fa fa-github fa-fw"></i>
               Code on Github
           </a>
-      
+
           <a class="btn btn-danger btn-large" href="https://github.com/angular-ui/ui-grid.info/tree/gh-pages/release" title="Download <%= version %>">
             <i class="fa fa-download fa-fw"></i>
             <!-- Download <small>( <%= stable_version %> / <%= version %> )</small> --> <!-- TODO(c0bra): note: not showing stable version till 3.0.0 is released -->
 
             Download <small>( <%= version %> )</small>
           </a>
-      
+
           <a class="btn btn-success btn-large" href="http://<%= site %>/docs/#/tutorial" title="Tutorial">
             <i class="fa fa-book fa-fw"></i>
             Tutorial
@@ -76,8 +76,8 @@
       </div>
     </div>
   </div>
-  
-  <div class="container-fluid">   
+
+  <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-lg-3">
         <div class="feature">
@@ -122,14 +122,26 @@
           </div>
           <h4 class="feature-heading">Basic Example</h4>
           <div class="grid" ui-grid="gridOptionsSimple"></div>
-          
+
           <h4 class="feature-heading">Complex Example</h4>
           <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
         </div>
       </div>
     </div>
   </div>
- 
+
+  <br>
+  <br>
+  <br>
+
+  <div class="container-fluid">
+    <div class="row text-center">
+      <small class="muted">Special thanks to <a href="http://saucelabs.com">Sauce Labs</a> and <a href="http://browserstack.com">BrowserStack</a> for providing their testing platforms to open source projects for free.</small>
+    </div>
+  </div>
+
+  <br>
+  <br>
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -243,21 +255,21 @@
           }
         ]
       };
-      
+
       $rootScope.gridOptionsComplex = {
         enableFiltering: true,
         showGridFooter: true,
         showColumnFooter: true,
         columnDefs: [
           { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
-          { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false, 
+          { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false,
             cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
               if (grid.getCellValue(row,col) === 'male') {
                 return 'blue';
               } else if (grid.getCellValue(row,col) === 'female') {
                 return 'pink';
               }
-            } 
+            }
           },
           { name: 'age', aggregationType: uiGridConstants.aggregationTypes.avg, width: 100 },
           { name: 'company', enableFiltering: false, width: 200 }
@@ -408,7 +420,7 @@
               "age": 31
           }
         ]
-      };      
+      };
     });
   </script>
 </body>
