@@ -2,7 +2,7 @@
 * ng-grid JavaScript Library
 * Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 06/13/2015 17:26
+* Compiled At: 07/09/2015 23:34
 ***********************************************/
 (function(window, $) {
 'use strict';
@@ -2027,6 +2027,18 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         return newDim;
     };
+    $scope.toggleVisibleAll = function() {
+        var result = !$scope.isVisibleAll();
+        for (var i in $scope.columns) {
+            if (!$scope.columns[i].pinned) $scope.columns[i].visible = result;
+        }
+    };
+    $scope.isVisibleAll = function() {
+        for (var i in $scope.columns) {
+            if (!$scope.columns[i].visible) return false;
+        }
+        return true;
+    };
 };
 
 var ngRange = function (top, bottom) {
@@ -3409,15 +3421,16 @@ window.ngGrid.i18n['ja'] = {
     ngAggregateLabel: '項目',
     ngGroupPanelDescription: '列のヘッダーをグルーピングしたい場所までドラッグアンドドロップしてください。',
     ngSearchPlaceHolder: '検索',
-    ngMenuText: '列を選択：',
+    ngMenuText: '項目の表示切替：',
     ngShowingItemsLabel: '項目を表示：',
-    ngTotalItemsLabel: '全項目：',
-    ngSelectedItemsLabel: '選択された項目：',
-    ngPageSizeLabel: '表示件数：',
+    ngTotalItemsLabel: '該当加入者数：',
+    ngSelectedItemsLabel: '選択された加入者数：',
+    ngPageSizeLabel: '表示加入者数：',
     ngPagerFirstTitle: '最初に戻る',
     ngPagerNextTitle: '次に進む',
     ngPagerPrevTitle: '前に戻る',
-    ngPagerLastTitle: '最後に進む'
+    ngPagerLastTitle: '最後に進む',
+    ngToggleVisibleAllCheckboxText:'全選択／全解除'
 };
 window.ngGrid.i18n['nl'] = {
     ngAggregateLabel: 'items',
@@ -3625,7 +3638,10 @@ angular.module('ngGrid').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "    <div ng-show=\"showColumnMenu\">\n" +
     "        <span class=\"ngMenuText\">{{i18n.ngMenuText}}</span>\n" +
-    "        <ul class=\"ngColList\">\n" +
+    "        <ul>\n" +
+    "            <li class=\"ngColListItem\">\n" +
+    "                <label><input type=\"checkbox\" class=\"ngColListCheckbox\" ng-click=\"toggleVisibleAll()\" ng-checked=\"isVisibleAll()\"/>{{i18n.ngToggleVisibleAllCheckboxText}}</label>\n" +
+    "            </li>\n" +
     "            <li class=\"ngColListItem\" ng-repeat=\"col in columns | ngColumns\">\n" +
     "                <label><input ng-disabled=\"col.pinned\" type=\"checkbox\" class=\"ngColListCheckbox\" ng-model=\"col.visible\"/>{{col.displayName}}</label>\n" +
     "\t\t\t\t<a title=\"Group By\" ng-class=\"col.groupedByClass()\" ng-show=\"col.groupable && col.visible\" ng-click=\"groupBy(col)\"></a>\n" +

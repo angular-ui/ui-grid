@@ -941,4 +941,16 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         }
         return newDim;
     };
+    $scope.toggleVisibleAll = function() {
+        var result = !$scope.isVisibleAll();
+        for (var i in $scope.columns) {
+            if (!$scope.columns[i].pinned) $scope.columns[i].visible = result;
+        }
+    };
+    $scope.isVisibleAll = function() {
+        for (var i in $scope.columns) {
+            if (!$scope.columns[i].visible) return false;
+        }
+        return true;
+    };
 };
