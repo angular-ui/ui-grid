@@ -300,7 +300,7 @@ angular.module('ui.grid')
      * 
      */
     setMenuItemTitle: function( menuItem, colDef, grid ){
-      var title = grid.options.gridMenuTitleFilter( colDef.displayName || colDef.name || colDef.field );
+      var title = grid.options.gridMenuTitleFilter( colDef.displayName || gridUtil.readableColumnName(colDef.name) || colDef.field );
       
       if ( typeof(title) === 'string' ){
         menuItem.title = title;
