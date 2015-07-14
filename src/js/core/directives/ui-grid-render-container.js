@@ -74,9 +74,16 @@
                 var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
                 scrollTop = containerCtrl.viewport[0].scrollTop;
+
                 // Get the scroll percentage
                 scrollEvent.verticalScrollLength = rowContainer.getVerticalScrollLength();
                 var scrollYPercentage = (scrollTop + scrollYAmount) / scrollEvent.verticalScrollLength;
+
+                // If we should be scrolled 100%, make sure the scrollTop matches the maximum scroll length
+                //   Viewports that have "overflow: hidden" don't let the mousewheel scroll all the way to the bottom without this check
+                if (scrollYPercentage >= 1 && scrollTop < scrollEvent.verticalScrollLength) {
+                  containerCtrl.viewport[0].scrollTop = scrollEvent.verticalScrollLength;
+                }
 
                 // Keep scrollPercentage within the range 0-1.
                 if (scrollYPercentage < 0) { scrollYPercentage = 0; }

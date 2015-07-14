@@ -300,7 +300,7 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {
-    return this.getCanvasHeight() - this.getViewportHeight();
+    return this.getCanvasHeight() - this.getViewportHeight() + this.grid.scrollbarHeight;
   };
 
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
@@ -353,6 +353,8 @@ angular.module('ui.grid')
       var vertScrollLength = this.getVerticalScrollLength();
 
       vertScrollPercentage = newScrollTop / vertScrollLength;
+
+      // console.log('vert', vertScrollPercentage, newScrollTop, vertScrollLength);
 
       if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
       if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
@@ -429,12 +431,16 @@ angular.module('ui.grid')
 
     var maxRowIndex = rowCache.length - minRows;
 
+    // console.log('scroll%1', scrollPercentage);
+
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
       scrollPercentage = scrollTop / self.getVerticalScrollLength();
     }
 
     var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
+
+    // console.log('maxRowIndex / scroll%', maxRowIndex, scrollPercentage, rowIndex);
 
     // Define a max row index that we can't scroll past
     if (rowIndex > maxRowIndex) {
@@ -738,7 +744,7 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getViewportStyle = function () {
     var self = this;
     var styles = {};
-    
+
     self.hasHScrollbar = false;
     self.hasVScrollbar = false;
 
