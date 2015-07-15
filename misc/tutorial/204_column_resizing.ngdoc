@@ -2,9 +2,11 @@
 @name Tutorial: 204 Column Resizing
 @description
 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
 The Resize Columns feature allows each column to be resized.
 
-To enable, you must include the 'ui.grid.resizeColumns' module and you must include the ui-grid-resize-columns directive 
+To enable, you must include the 'ui.grid.resizeColumns' module and you must include the ui-grid-resize-columns directive
 on your grid element.
 
 Documentation for the resize column feature is provided in the api documentation, in particular:
@@ -18,8 +20,8 @@ pixel width - otherwise they may get automatically resized to fill the remaining
 and there will be no way to reduce their width again.
 
 When you resize a column any other columns with fixed widths, or that have already been resized, retain their width.  All other
-columns resize to take up the remaining space.  As long as there is at least one variable column left your columns won't reduce 
-below the full grid width - but once you've resized all the columns then you can end up with the total column width less than the 
+columns resize to take up the remaining space.  As long as there is at least one variable column left your columns won't reduce
+below the full grid width - but once you've resized all the columns then you can end up with the total column width less than the
 grid width.
 
 <pre>

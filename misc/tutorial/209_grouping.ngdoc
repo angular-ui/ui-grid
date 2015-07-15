@@ -1,6 +1,10 @@
 @ngdoc overview
 @name Tutorial: 209 Grouping
-@description The grouping feature allows you to group rows together based on similar
+@description
+
+<div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+
+The grouping feature allows you to group rows together based on similar
 values in specific columns, providing an effect similar in some ways to an Excel pivot table.
 Columns that aren't grouped by can be aggregated, providing for example a running count
 of the number of rows in each group.
@@ -28,20 +32,20 @@ grouping itself, and shared functions in the treeBase documentation.  In particu
 The tree structure itself is documented at {@link api/ui.grid.treeBase.grid:treeBase treeBase}.
 
 Grouping can be set programmatically by using the columnDef option `grouping: { groupPriority: 0 }`,
-or for aggregations on a column by setting `treeAggregation: {type: uiGridGroupingConstants.aggregation.COUNT}`. 
+or for aggregations on a column by setting `treeAggregation: {type: uiGridGroupingConstants.aggregation.COUNT}`.
 
 Optionally (and by default) grouped columns are moved to the front of the grid, which provides a more
-visually pleasing effect.  In order to avoid creating a dependency on pinning, this is done by 
-moving the columns themselves as part of the grouping feature, not through use of the pinning feature. 
+visually pleasing effect.  In order to avoid creating a dependency on pinning, this is done by
+moving the columns themselves as part of the grouping feature, not through use of the pinning feature.
 
 Grouping leverages the sort functionality, allowing a user to change the sort order or use external sort
-functionality and have the resulting list grouped.  A column(s) that is marked as being grouped is always 
+functionality and have the resulting list grouped.  A column(s) that is marked as being grouped is always
 moved to the high order of the sort priority, as the data must be sorted to permit grouping.
 
 Any grouped column has `suppressRemoveSort` set, when a column is ungrouped then `suppressRemoveSort`
 is returned to the value in the columnDef.
 
-Grouping and aggregation should work cleanly with filtering - it should group and aggregate only the 
+Grouping and aggregation should work cleanly with filtering - it should group and aggregate only the
 filtered rows.
 
 Group header rows cannot be edited, and if using the selection feature, cannot be selected.  They can,
@@ -75,7 +79,7 @@ Options to watch out for include:
 - `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
   level gets deeper.  Larger values look nicer, but take up more space
 - `treeRowHeaderWidth`: the base width of the grouping row header
-- `customTreeAggregationFinalizerFn`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx') 
+- `customTreeAggregationFinalizerFn`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx')
    usually breaks the cellFilter.  You can define a custom aggregation finalizer that handles this text differently,
    either applying the filter in code, or skipping the inclusion of the aggregation text.  This can also be used
    to skip the showing of the counts at all
@@ -94,9 +98,9 @@ and changes things like the treeAggregationFn, or the customTreeAggregationFinal
 
 
 @example
-In this example we group by the state column then the gender column, and we count the names (a proxy for 
+In this example we group by the state column then the gender column, and we count the names (a proxy for
 counting the number of rows), we find the max age for each grouping, and we calculate the average balance.  We
-suppress the aggregation text on the balance column because we want to format as currency...but that means that 
+suppress the aggregation text on the balance column because we want to format as currency...but that means that
 we can't easily see that it's an average.
 
 We write a function that extracts the aggregated data for states and genders (if you change the grouping then this
@@ -118,7 +122,7 @@ function will stop working), and writes them to the console.
           { name: 'registered', width: '40%', cellFilter: 'date', type: 'date' },
           { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
           { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregationType: uiGridGroupingConstants.aggregation.AVG, customTreeAggregationFinalizerFn: function( aggregation ) {
-            aggregation.rendered = aggregation.value; 
+            aggregation.rendered = aggregation.value;
           } }
         ],
         onRegisterApi: function( gridApi ) {
@@ -138,21 +142,21 @@ function will stop working), and writes them to the console.
           delete data[2].age;
           $scope.gridOptions.data = data;
         });
- 
+
       $scope.expandAll = function(){
         $scope.gridApi.treeBase.expandAllRows();
       };
-      
+
       $scope.toggleRow = function( rowNum ){
         $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
       };
-      
+
       $scope.changeGrouping = function() {
         $scope.gridApi.grouping.clearGrouping();
         $scope.gridApi.grouping.groupColumn('age');
         $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
       };
-      
+
       $scope.getAggregates = function() {
         var aggregatesTree = [];
         var gender
@@ -169,7 +173,7 @@ function will stop working), and writes them to the console.
             newNode.otherAggregations = node.aggregations.map( function( aggregation ) {
               return { colName: aggregation.col.name, value: aggregation.value, type: aggregation.type };
             });
-            if( node.children ) { 
+            if( node.children ) {
               newNode.children = recursiveExtract( node.children );
             }
             return newNode;
@@ -202,7 +206,7 @@ function will stop working), and writes them to the console.
       };
     });
   </file>
-  
+
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
@@ -213,7 +217,7 @@ function will stop working), and writes them to the console.
       <div id="grid1" ui-grid="gridOptions" ui-grid-grouping class="grid"></div>
     </div>
   </file>
-  
+
   <file name="main.css">
     .grid {
       width: 500px;
@@ -224,5 +228,5 @@ function will stop working), and writes them to the console.
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '209 grouping', function() {
     });
-  </file>  
+  </file>
 </example>

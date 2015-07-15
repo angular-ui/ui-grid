@@ -2,6 +2,8 @@
 @name Tutorial: 201 Edit Feature
 @description
 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
 The ui.grid.edit feature allows inline editing of grid data.  To enable, you must include the `'ui.grid.edit'` module
 and you must include the `ui-grid-edit` directive on your grid element.
 

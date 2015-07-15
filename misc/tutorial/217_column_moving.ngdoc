@@ -2,6 +2,8 @@
 @name Tutorial: 217 Column Moving
 @description
 
+<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+
 Feature ui.grid.moveColumns allows moving column to a different position. To enable, you must include the `ui.grid.moveColumns` module
 and you must include the `ui-grid-move-columns` directive on your grid element.
 
