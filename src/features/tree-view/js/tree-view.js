@@ -6,14 +6,17 @@
    * @name ui.grid.treeView
    * @description
    *
-   *  # ui.grid.treeView
+   * # ui.grid.treeView
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+   *
    * This module provides a tree view of the data that it is provided, with nodes in that
-   * tree and leaves.  Unlike grouping, the tree is an inherent property of the data and must 
-   * be provided with your data array.  
-   * 
+   * tree and leaves.  Unlike grouping, the tree is an inherent property of the data and must
+   * be provided with your data array.
+   *
    * Design information:
    * -------------------
-   * 
+   *
    * TreeView uses treeBase for the underlying functionality, and is a very thin wrapper around
    * that logic.  Most of the design information has now moved to treebase.
    * <br/>
@@ -32,7 +35,7 @@
    *  all the constants declared in the treeBase module (these are manually copied
    *  as there isn't an easy way to include constants in another constants file, and
    *  we don't want to make users include treeBase)
-   * 
+   *
    */
   module.constant('uiGridTreeViewConstants', {
     featureName: "treeView",
@@ -124,14 +127,14 @@
        * @ngdoc function
        * @name adjustSorting
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
-       * @description Trees cannot be sorted the same as flat lists of rows - 
+       * @description Trees cannot be sorted the same as flat lists of rows -
        * trees are sorted recursively within each level - so the children of each
        * node are sorted, but not the full set of rows.
-       * 
+       *
        * To achieve this, we suppress the normal sorting by setting ignoreSort on
        * each of the sort columns.  When the treeBase rowsProcessor runs it will then
        * unignore these, and will perform a recursive sort against the tree that it builds.
-       * 
+       *
        * @param {array} renderableRows the rows that we need to pass on through
        * @returns {array} renderableRows that we passed on through
        */
@@ -176,7 +179,7 @@
         {name: 'name', enableCellEdit: true},
         {name: 'title', enableCellEdit: true}
       ];
-      
+
       $scope.gridOptions = { columnDefs: $scope.columnDefs, data: $scope.data };
     }]);
    </file>

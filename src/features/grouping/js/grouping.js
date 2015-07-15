@@ -6,23 +6,26 @@
    * @name ui.grid.grouping
    * @description
    *
-   *  # ui.grid.grouping
+   * # ui.grid.grouping
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+   *
    * This module provides grouping of rows based on the data in them, similar
-   * in concept to excel grouping.  You can group multiple columns, resulting in 
+   * in concept to excel grouping.  You can group multiple columns, resulting in
    * nested grouping.
-   * 
+   *
    * In concept this feature is similar to sorting + grid footer/aggregation, it
    * sorts the data based on the grouped columns, then creates group rows that
    * reflect a break in the data.  Each of those group rows can have aggregations for
    * the data within that group.
-   * 
+   *
    * This feature leverages treeBase to provide the tree functionality itself,
-   * the key thing this feature does therefore is to set treeLevels on the rows 
+   * the key thing this feature does therefore is to set treeLevels on the rows
    * and insert the group headers.
-   * 
+   *
    * Design information:
    * -------------------
-   * 
+   *
    * Each column will get new menu items - group by, and aggregate by.  Group by
    * will cause this column to be sorted (if not already), and will move this column
    * to the front of the sorted columns (i.e. grouped columns take precedence over
@@ -30,25 +33,25 @@
    * and it will allow the sorting logic to change that sort order, it just forces
    * the column to the front of the sorting.  You can group by multiple columns, the
    * logic will add this column to the sorting after any already grouped columns.
-   * 
+   *
    * Once a grouping is defined, grouping logic is added to the rowsProcessors.  This
    * will process the rows, identifying a break in the data value, and inserting a grouping row.
    * Grouping rows have specific attributes on them:
-   * 
-   *  - internalRow = true: tells us that this isn't a real row, so we can ignore it 
+   *
+   *  - internalRow = true: tells us that this isn't a real row, so we can ignore it
    *    from any processing that it looking at core data rows.  This is used by the core
    *    logic (or will be one day), as it's not grouping specific
    *  - groupHeader = true: tells us this is a groupHeader.  This is used by the grouping logic
    *    to know if this is a groupHeader row or not
-   * 
+   *
    * Since the logic is baked into the rowsProcessors, it should get triggered whenever
    * row order or filtering or anything like that is changed.  In order to avoid the row instantiation
    * time, and to preserve state across invocations, we hold a cache of the rows that we created
    * last time, and we use them again this time if we can.
-   * 
+   *
    * By default rows are collapsed, which means all data rows have their visible property
    * set to false, and only level 0 group rows are set to visible.
-   * 
+   *
    * <br/>
    * <br/>
    *
@@ -65,7 +68,7 @@
    *  all the constants declared in the treeBase module (these are manually copied
    *  as there isn't an easy way to include constants in another constants file, and
    *  we don't want to make users include treeBase)
-   * 
+   *
    */
   module.constant('uiGridGroupingConstants', {
     featureName: "grouping",
@@ -111,11 +114,11 @@
          *
          *  @description Cache that holds the group header rows we created last time, we'll
          *  reuse these next time, not least because they hold our expanded states.
-         * 
+         *
          *  We need to take care with these that they don't become a memory leak, we
          *  create a new cache each time using the values from the old cache.  This works
          *  so long as we're creating group rows for invisible rows as well.
-         * 
+         *
          *  The cache is a nested hash, indexed on the value we grouped by.  So if we
          *  grouped by gender then age, we'd maybe have something like:
          *  ```
@@ -136,7 +139,7 @@
          *  ```
          *
          *  We create new rows for any missing rows, this means that they come in as collapsed.
-         * 
+         *
          */
         grid.grouping.groupHeaderCache = {};
 
@@ -195,16 +198,16 @@
                * used by the saveState feature.  Adds expandedState to the information
                * provided by the internal getGrouping, and removes any aggregations that have a source
                * of grouping (i.e. will be automatically reapplied when we regroup the column)
-               * Returned grouping is an object 
-               *   `{ grouping: groupArray, treeAggregations: aggregateArray, expandedState: hash }` 
-               * where grouping contains an array of objects: 
+               * Returned grouping is an object
+               *   `{ grouping: groupArray, treeAggregations: aggregateArray, expandedState: hash }`
+               * where grouping contains an array of objects:
                *   `{ field: column.field, colName: column.name, groupPriority: column.grouping.groupPriority }`
                * and aggregations contains an array of objects:
                *   `{ field: column.field, colName: column.name, aggregation: column.grouping.aggregation }`
                * and expandedState is a hash of the currently expanded nodes
-               * 
+               *
                * The groupArray will be sorted by groupPriority.
-               * 
+               *
                * @param {boolean} getExpanded whether or not to return the expanded state
                * @returns {object} grouping configuration
                */
@@ -236,7 +239,7 @@
                * @ngdoc function
                * @name setGrouping
                * @methodOf  ui.grid.grouping.api:PublicApi
-               * @description Set the grouping configuration for this grid, 
+               * @description Set the grouping configuration for this grid,
                * used by the saveState feature, but can also be used by any
                * user to specify a combined grouping and aggregation configuration
                * @param {object} config the config you want to apply, in the format
@@ -252,10 +255,10 @@
                * @methodOf  ui.grid.grouping.api:PublicApi
                * @description Adds this column to the existing grouping, at the end of the priority order.
                * If the column doesn't have a sort, adds one, by default ASC
-               * 
+               *
                * This column will move to the left of any non-group columns, the
                * move is handled in a columnProcessor, so gets called as part of refresh
-               * 
+               *
                * @param {string} columnName the name of the column we want to group
                */
               groupColumn: function( columnName ) {
@@ -268,12 +271,12 @@
                * @name ungroupColumn
                * @methodOf  ui.grid.grouping.api:PublicApi
                * @description Removes the groupPriority from this column.  If the
-               * column was previously aggregated the aggregation will come back. 
-               * The sort will remain.  
-               * 
+               * column was previously aggregated the aggregation will come back.
+               * The sort will remain.
+               *
                * This column will move to the right of any other group columns, the
                * move is handled in a columnProcessor, so gets called as part of refresh
-               * 
+               *
                * @param {string} columnName the name of the column we want to ungroup
                */
               ungroupColumn: function( columnName ) {
@@ -287,7 +290,7 @@
                * @methodOf  ui.grid.grouping.api:PublicApi
                * @description Clear any grouped columns and any aggregations.  Doesn't remove sorting,
                * as we don't know whether that sorting was added by grouping or was there beforehand
-               * 
+               *
                */
               clearGrouping: function() {
                 service.clearGrouping(grid);
@@ -297,11 +300,11 @@
                * @ngdoc function
                * @name aggregateColumn
                * @methodOf  ui.grid.grouping.api:PublicApi
-               * @description Sets the aggregation type on a column, if the 
+               * @description Sets the aggregation type on a column, if the
                * column is currently grouped then it removes the grouping first.
                * If the aggregationDef is null then will result in the aggregation
                * being removed
-               * 
+               *
                * @param {string} columnName the column we want to aggregate
                * @param {string} or {function} aggregationDef one of the recognised types
                * from uiGridGroupingConstants or a custom aggregation function.
@@ -367,7 +370,7 @@
          *  @ngdoc object
          *  @name enableGroupHeaderSelection
          *  @propertyOf  ui.grid.grouping.api:GridOptions
-         *  @description Allows group header rows to be selected.  
+         *  @description Allows group header rows to be selected.
          *  <br/>Defaults to false
          */
         gridOptions.enableGroupHeaderSelection = gridOptions.enableGroupHeaderSelection === true;
@@ -379,7 +382,7 @@
        * @name groupingColumnBuilder
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Sets the grouping defaults based on the columnDefs
-       * 
+       *
        * @param {object} colDef columnDef we're basing on
        * @param {GridCol} col the column we're to update
        * @param {object} gridOptions the options we should use
@@ -390,7 +393,7 @@
          *  @ngdoc object
          *  @name ui.grid.grouping.api:ColumnDef
          *
-         *  @description ColumnDef for grouping feature, these are available to be 
+         *  @description ColumnDef for grouping feature, these are available to be
          *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
          */
 
@@ -415,19 +418,19 @@
          *      groupPriority: <number, starts at 0, if less than 0 or undefined then we're aggregating in this column>
          *    }
          *  ```
-         * 
+         *
          *  **Note that aggregation used to be included in grouping, but is now separately set on the column via treeAggregation
          *  setting in treeBase**
-         * 
+         *
          *  We group in the priority order given, this will also put these columns to the high order of the sort irrespective
          *  of the sort priority given them.  If there is no sort defined then we sort ascending, if there is a sort defined then
          *  we use that sort.
-         * 
-         *  If the groupPriority is undefined or less than 0, then we expect to be aggregating, and we look at the 
-         *  aggregation types to determine what sort of aggregation we can do.  Values are in the constants file, but 
+         *
+         *  If the groupPriority is undefined or less than 0, then we expect to be aggregating, and we look at the
+         *  aggregation types to determine what sort of aggregation we can do.  Values are in the constants file, but
          *  include SUM, COUNT, MAX, MIN
-         * 
-         *  groupPriorities should generally be sequential, if they're not then the next time getGrouping is called 
+         *
+         *  groupPriorities should generally be sequential, if they're not then the next time getGrouping is called
          *  we'll renumber them to be sequential.
          *  <br/>Defaults to undefined.
          */
@@ -444,14 +447,14 @@
 
         if (typeof(col.grouping) !== 'undefined' && typeof(col.grouping.groupPriority) !== 'undefined' && col.grouping.groupPriority >= 0){
           col.suppressRemoveSort = true;
-        } 
+        }
 
         var groupColumn = {
           name: 'ui.grid.grouping.group',
           title: i18nService.get().grouping.group,
           icon: 'ui-grid-icon-indent-right',
           shown: function () {
-            return typeof(this.context.col.grouping) === 'undefined' || 
+            return typeof(this.context.col.grouping) === 'undefined' ||
                    typeof(this.context.col.grouping.groupPriority) === 'undefined' ||
                    this.context.col.grouping.groupPriority < 0;
           },
@@ -465,7 +468,7 @@
           title: i18nService.get().grouping.ungroup,
           icon: 'ui-grid-icon-indent-left',
           shown: function () {
-            return typeof(this.context.col.grouping) !== 'undefined' && 
+            return typeof(this.context.col.grouping) !== 'undefined' &&
                    typeof(this.context.col.grouping.groupPriority) !== 'undefined' &&
                    this.context.col.grouping.groupPriority >= 0;
           },
@@ -555,7 +558,7 @@
        * @description Moves the columns around based on which are grouped
        *
        * @param {array} columns the columns to consider rendering
-       * @param {array} rows the grid rows, which we don't use but are passed to us 
+       * @param {array} rows the grid rows, which we don't use but are passed to us
        * @returns {array} updated columns array
        */
       groupingColumnProcessor: function( columns, rows ) {
@@ -592,12 +595,12 @@
        * @name moveGroupColumns
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Moves the column order so that the grouped columns are lined up
-       * to the left (well, unless you're RTL, then it's the right).  By doing this in 
+       * to the left (well, unless you're RTL, then it's the right).  By doing this in
        * the columnsProcessor, we make it transient - when the column is ungrouped it'll
        * go back to where it was.
-       * 
+       *
        * Does nothing if the option `moveGroupColumns` is set to false.
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {array} columns the columns that we should process/move
        * @param {array} rows the grid rows
@@ -655,10 +658,10 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Adds this column to the existing grouping, at the end of the priority order.
        * If the column doesn't have a sort, adds one, by default ASC
-       * 
+       *
        * This column will move to the left of any non-group columns, the
        * move is handled in a columnProcessor, so gets called as part of refresh
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridCol} column the column we want to group
        */
@@ -695,12 +698,12 @@
        * @name ungroupColumn
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Removes the groupPriority from this column.  If the
-       * column was previously aggregated the aggregation will come back. 
-       * The sort will remain.  
-       * 
+       * column was previously aggregated the aggregation will come back.
+       * The sort will remain.
+       *
        * This column will move to the right of any other group columns, the
        * move is handled in a columnProcessor, so gets called as part of refresh
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridCol} column the column we want to ungroup
        */
@@ -724,9 +727,9 @@
        * @ngdoc function
        * @name aggregateColumn
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
-       * @description Sets the aggregation type on a column, if the 
+       * @description Sets the aggregation type on a column, if the
        * column is currently grouped then it removes the grouping first.
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridCol} column the column we want to aggregate
        * @param {string} one of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
@@ -758,9 +761,9 @@
        * @ngdoc function
        * @name setGrouping
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
-       * @description Set the grouping based on a config object, used by the save state feature 
+       * @description Set the grouping based on a config object, used by the save state feature
        * (more specifically, by the restore function in that feature )
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {object} config the config we want to set, same format as that returned by getGrouping
        */
@@ -804,7 +807,7 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Clear any grouped columns and any aggregations.  Doesn't remove sorting,
        * as we don't know whether that sorting was added by grouping or was there beforehand
-       * 
+       *
        * @param {Grid} grid grid object
        */
       clearGrouping: function( grid ) {
@@ -838,9 +841,9 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Renumbers groupPriority and sortPriority such that
        * groupPriority is contiguous, and sortPriority either matches
-       * groupPriority (for group columns), and otherwise is contiguous and 
-       * higher than groupPriority. 
-       * 
+       * groupPriority (for group columns), and otherwise is contiguous and
+       * higher than groupPriority.
+       *
        * @param {Grid} grid grid object
        */
       tidyPriorities: function( grid ){
@@ -886,9 +889,9 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description The rowProcessor that creates the groupHeaders (i.e. does
        * the actual grouping).
-       * 
+       *
        * Assumes it is always called after the sorting processor, guaranteed by the priority setting
-       * 
+       *
        * Processes all the rows in order, inserting a groupHeader row whenever there is a change
        * in value of a grouped row, based on the sortAlgorithm used for the column.  The group header row
        * is looked up in the groupHeaderCache, and used from there if there is one. The entity is reset
@@ -926,7 +929,7 @@
         // processes each of the fields we are grouping by, checks if the value has changed and inserts a groupHeader
         // Broken out as shouldn't create functions in a loop.
         var updateProcessingState = function( groupFieldState, stateIndex ) {
-          var fieldValue = grid.getCellValue(row, groupFieldState.col); 
+          var fieldValue = grid.getCellValue(row, groupFieldState.col);
 
           // look for change of value - and insert a header
           if ( !groupFieldState.initialised || rowSorter.getSortFn(grid, groupFieldState.col, renderableRows)(fieldValue, groupFieldState.currentValue) !== 0 ){
@@ -935,7 +938,7 @@
           }
         };
 
-        // use a for loop because it's tolerant of the array length changing whilst we go - we can 
+        // use a for loop because it's tolerant of the array length changing whilst we go - we can
         // manipulate the iterator when we insert groupHeader rows
         for (var i = 0; i < renderableRows.length; i++ ){
           var row = renderableRows[i];
@@ -956,9 +959,9 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Creates the processing state array that is used
        * for groupRows.
-       * 
+       *
        * @param {Grid} grid grid object
-       * @returns {array} an array in the format described in the groupRows method, 
+       * @returns {array} an array in the format described in the groupRows method,
        * initialised with blank values
        */
       initialiseProcessingState: function( grid ){
@@ -966,7 +969,7 @@
         var columnSettings = service.getGrouping( grid );
 
         columnSettings.grouping.forEach( function( groupItem, index){
-          processingState.push({ 
+          processingState.push({
             fieldName: groupItem.field,
             col: groupItem.col,
             initialised: false,
@@ -996,7 +999,7 @@
         grid.columns.forEach( function(column, columnIndex){
           if ( column.grouping ){
             if ( typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0){
-              groupArray.push({ field: column.field, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });  
+              groupArray.push({ field: column.field, col: column, groupPriority: column.grouping.groupPriority, grouping: column.grouping });
             }
           }
           if ( column.treeAggregation && column.treeAggregation.type ){
@@ -1014,7 +1017,7 @@
           group.grouping.groupPriority = index;
           group.groupPriority = index;
           delete group.grouping;
-        }); 
+        });
 
         return { grouping: groupArray, aggregations: aggregateArray };
       },
@@ -1033,7 +1036,7 @@
        * @param {array} renderableRows the rows that we are processing
        * @param {number} rowIndex the row we were up to processing
        * @param {array} processingState the current processing state
-       * @param {number} stateIndex the processing state item that we were on when we triggered a new group header - 
+       * @param {number} stateIndex the processing state item that we were on when we triggered a new group header -
        * i.e. the column that we want to create a header for
        */
       insertGroupHeader: function( grid, renderableRows, rowIndex, processingState, stateIndex ) {
@@ -1115,9 +1118,9 @@
        * @name getRowExpandedStates
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Extract the groupHeaderCache hash, pulling out only the states.
-       * 
+       *
        * The example below shows a grid that is grouped by gender then age
-       * 
+       *
        * <pre>
        *   {
        *     male: {
@@ -1166,7 +1169,7 @@
        * @methodOf  ui.grid.grouping.service:uiGridGroupingService
        * @description Take a hash in the format as created by getRowExpandedStates,
        * and apply it to the grid.grouping.groupHeaderCache.
-       * 
+       *
        * Takes a treeSubset, and applies to a treeSubset - so can be called
        * recursively.
        *
@@ -1211,18 +1214,18 @@
    <example module="app">
    <file name="app.js">
    var app = angular.module('app', ['ui.grid', 'ui.grid.grouping']);
-  
+
    app.controller('MainCtrl', ['$scope', function ($scope) {
       $scope.data = [
         { name: 'Bob', title: 'CEO' },
             { name: 'Frank', title: 'Lowly Developer' }
       ];
-  
+
       $scope.columnDefs = [
         {name: 'name', enableCellEdit: true},
         {name: 'title', enableCellEdit: true}
       ];
-      
+
       $scope.gridOptions = { columnDefs: $scope.columnDefs, data: $scope.data };
     }]);
    </file>
