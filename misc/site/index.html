@@ -15,41 +15,43 @@
   <link rel="stylesheet" href="//ui-grid.info/release/ui-grid-unstable.min.css" />
 </head>
 <body>
-  <div class="navbar navbar-default navbar-fixed-top">
-    <div class="nav navbar-header">
-      <a href="/" class="navbar-brand">UI Grid</a>
-      <ul class="nav navbar-nav">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            Learn
-            <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
-              <a href="/docs/#/api">Docs</a>
-            </li>
-            <li>
-              <a href="/docs/#/tutorial">Tutorial</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div class="navbar-header navbar-right">
-      <p class="navbar-text hidden-phone">
-        <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ng-grid&type=watch&count=true"
-              allowtransparency="true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
-        <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ng-grid&type=fork&count=true"
-              allowtransparency="true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
-      </p>
-    </div>
-  </div>
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">UI Grid</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="/docs/#/api"><i class="fa fa-book fa-fw"></i> API</a></li>
+          <li><a href="/docs/#/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
+        </ul>
+        <div class="navbar-header navbar-right">
+          <p class="navbar-text hidden-phone">
+            <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ng-grid&type=watch&count=true"
+                  allowtransparency="true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
+            <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ng-grid&type=fork&count=true"
+                  allowtransparency="true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
+          </p>
+        </div>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
 
   <div class="intro">
     <div class="jumbotron">
       <div class="description">
         <h1 class="text-center">Angular UI Grid</h1>
-        <p class="lead text-center">A data grid for <strong>AngularJS</strong>, part of the <strong><a href="http://angular-ui.github.io/">AngularUI</a></strong> suite</p>
+        <p class="lead text-center">A data grid for <strong>AngularJS</strong>; part of the <strong><a href="http://angular-ui.github.io/">AngularUI</a></strong> suite</p>
         <ul class="benefits text-left">
           <li>Native AngularJS implementation, no jQuery</li>
           <li>Performs well with large data sets; even <strong>10,000+</strong> rows</li>
@@ -73,6 +75,10 @@
             Tutorial
           </a>
         </p>
+
+        <div class="alert alert-info">
+          <h3>UI Grid <strong>v3.0.0</strong> has been released!  Check out the <a class="info-link" href="https://github.com/angular-ui/ng-grid">project on GitHub</a> for more information.</h3>
+        </div>
       </div>
     </div>
   </div>

@@ -1,3 +1,19 @@
+<a name="v3.0.0"></a>
+## v3.0.0 (2015-07-17)
+
+
+#### Bug Fixes
+
+* **Grid:** Force scroll to 100% when necessary ([3bcbe72d](http://github.com/angular-ui/ng-grid/commit/3bcbe72de0f296eedbeeca28f09600c0721824ba), closes [#3772](http://github.com/angular-ui/ng-grid/issues/3772))
+* **Tests:** All e2e tests working in Firefox ([b9cc39f1](http://github.com/angular-ui/ng-grid/commit/b9cc39f1e067a318a38d1390ed4d20695a6a282e))
+* **core:**
+  * change scrollbar-placeholder background-color to transparent ([18a487ea](http://github.com/angular-ui/ng-grid/commit/18a487ea3b009beb9b584f446d8f0dfabe64304d))
+  * add a horizontal scrollbar placeholder when needed ([365f21f0](http://github.com/angular-ui/ng-grid/commit/365f21f0bb8383c2103af0dea6e3a03986db0c04))
+  * fix #3666 #3531 #3340 thanks to @500tech-user and @Jacquelin for PR's that led t ([e582174a](http://github.com/angular-ui/ng-grid/commit/e582174a826bb232ddbb4fda8001b64c3273df0d))
+* **edit:** fix lost focus and cell scrolling into view on edit ([e9a6d4eb](http://github.com/angular-ui/ng-grid/commit/e9a6d4eba67dba23c42b54b23054c048cf9d8ebc))
+* **grouping:** grouping a pinned column was broken ([acb7e7b6](http://github.com/angular-ui/ng-grid/commit/acb7e7b636aa9215b2463a2d4282261e95ef87f0))
+* **i18n:** Replace ZWNJ with \u200c in Persian ([2f2936ae](http://github.com/angular-ui/ng-grid/commit/2f2936ae48df6fd9392f9f2ce9dc8369ac9c8261), closes [#3842](http://github.com/angular-ui/ng-grid/issues/3842))
+
 <a name="v3.0.0-rc.22"></a>
 ### v3.0.0-rc.22 (2015-06-15)
 

@@ -3,7 +3,7 @@ module.exports = {
     dest: '<%= dist %>/docs',
     testingUrlPrefix: '<%= protractor.options.args.baseUrl %>/docs/#/',
     versionedFiles: {
-      default: process.env.TRAVIS ? 'unstable' : 'stable',
+      default: 'stable',
       waitEval: "(function() { var ret = true; try { angular.module('ui.grid'); } catch (e) { ret = false; } return ret; })()",
       versions: {
         stable: [

@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "3.0.0-rc.22",
+  "version": "3.0.0",
   "description": "A data grid for Angular",
   "directories": {
     "test": "test"
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular-ui/ng-grid.git"
+    "url": "https://github.com/angular-ui/ui-grid.git"
   },
   "keywords": [
     "angular",
