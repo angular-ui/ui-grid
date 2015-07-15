@@ -6,7 +6,9 @@
 
 # Help!
 
-Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.  We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor](FIRST_TIMER.md), also look at [Developer](DEVELOPER.md) 
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development and ask for specific help.
+
+We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md) 
 
 # Installing
 
@@ -32,26 +34,6 @@ Head to http://ui-grid.info for documentation and tutorials. Join https://gitter
     <script src="node_modules/angular-ui-grid/ui.grid.min.js">
 ```
 
-## Manual
-
-If for some reason you want the latest release files here's some links:
-
-File Name            | Url
----------------------|----------------
-ui-grid.js           | [http://ui-grid.info/release/ui-grid.js](http://ui-grid.info/release/ui-grid.js)
-ui-grid.css          | [http://ui-grid.info/release/ui-grid.css](http://ui-grid.info/release/ui-grid.css)
-ui-grid.eot          | [http://ui-grid.info/release/ui-grid.eot](http://ui-grid.info/release/ui-grid.eot)
-ui-grid.svg          | [http://ui-grid.info/release/ui-grid.svg](http://ui-grid.info/release/ui-grid.svg)
-ui-grid.ttf          | [http://ui-grid.info/release/ui-grid.ttf](http://ui-grid.info/release/ui-grid.ttf)
-ui-grid.woff         | [http://ui-grid.info/release/ui-grid.woff](http://ui-grid.info/release/ui-grid.woff)
-
-There are minified files that can be used as well:
-
-File Name                | Url
--------------------------|----------------
-ui-grid.min.js      | [http://ui-grid.info/release/ui-grid.min.js](http://ui-grid.info/release/ui-grid.min.js)
-ui-grid.min.css | [http://ui-grid.info/release/ui-grid.min.css](http://ui-grid.info/release/ui-grid.min.css)
-
 ## CDN
 
 You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in the Bower repository. These files are hosted by [MaxCDN](https://www.maxcdn.com/). Just alter the version as you need.
@@ -61,7 +43,35 @@ You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in t
 
 # Angular Compatibility
 
-UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.3.x. 1.4.x+ support is coming soon.
+UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.3.x.
+
+1.4.x+ support is coming soon. If you would like to help please see issue #3658.
+
+# Feature Stability
+
+UI-Grid comes bundled with several features. Not all of them are currently stable.  See the list below for the stability of each:
+
+Feature           | Release state
+-------------------        | --------- |
+auto-resize-grid  | beta
+cellnav                     | stable
+edit        | stable
+expandable    | alpha
+exporter      | stable
+grouping      | beta
+importer      | stable
+infinite-scroll           | beta
+move-columns    | alpha
+pagination    | alpha
+pinning       | stable
+resize-columns  | stable
+row-edit      | stable
+saveState     | stable
+selection       | stable
+tree-base     | beta
+tree-view       | beta
+
+For more details on the features check the [Tutorials](http://ui-grid.info/docs/#/tutorial).
 
 # Building
 
@@ -139,6 +149,18 @@ ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY`
     > grunt dev --browsers=SL_IE10
 
 The full list of SauceLabs browsers can be seen by running `grunt saucebrowsers`. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
+
+# What Happened to 2.x?
+
+As of the 3.0 release, 2.x is officially deprecated. There will be no further releases. If for some reason you need to find the 2.x source please see the [2.x branch](https://github.com/angular-ui/ng-grid/tree/2.x).
+
+# Repository Rename
+
+With the 3.0 release, the repository has been renamed from "ng-grid" to "ui-grid".
+
+All network traffic to GitHub should redirect automatically but they say you should update your git remote url:
+
+  git remote set-url origin https://github.com/angular-ui/ui-grid.git
 
 # Thanks
 
