@@ -1,4 +1,4 @@
-# UI Grid : An Angular data grid
+# UI-Grid : An Angular data grid
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ng-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ng-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ng-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ng-grid?branch=master)
 
@@ -8,24 +8,38 @@
 
 Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ng-grid to discuss development of the 3.x codebase.  We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor](FIRST_TIMER.md), also look at [Developer](DEVELOPER.md) 
 
-# What Happened to Version 2.x?
+# Installing
 
-We are aggressively trying to move to 3.x, which has been in the works for over a year, and part of that is moving past the 2.x codebase and working to get 3.x update to snuff. The old 2.x versions are still available, which you can currently install as normal with bower/nuget.
+## Bower
 
-To submit fixes to 2.x please point your pull requests at the [2.x](https://github.com/angular-ui/ng-grid/tree/2.x) branch.
+```bash
+    bower install angular-ui-grid
+```
 
-**Note:** 3.0 is NOT ready for production. It is still in a pre-beta state.
+```html
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui.grid.min.css">
+    <script src="bower_components/angular-ui-grid/ui.grid.min.js">
+```
 
-# How Can I Test 3.0?
+## NPM
 
-With 3.0 we are no longer storing release files in the repository; only source files will be here. 3.0 release files are available on http://ui-grid.info, which is built from this repository: ui-grid.info/release/ui-grid-unstable.js, and the beta is available from bower as `bower install angular-ui-grid --save-dev`
+```bash
+    npm install angular-ui-grid
+```
 
-Here is a file list for the 3.0 unstable releases:
+```html
+    <link rel="stylesheet" type="text/css" href="node_modules/angular-ui-grid/ui.grid.min.css">
+    <script src="node_modules/angular-ui-grid/ui.grid.min.js">
+```
+
+## Manual
+
+If for some reason you want the latest release files here's some links:
 
 File Name            | Url
 ---------------------|----------------
-ui-grid-unstable.js  | [http://ui-grid.info/release/ui-grid-unstable.js](http://ui-grid.info/release/ui-grid-unstable.js)
-ui-grid-unstable.css | [http://ui-grid.info/release/ui-grid-unstable.css](http://ui-grid.info/release/ui-grid-unstable.css)
+ui-grid.js           | [http://ui-grid.info/release/ui-grid.js](http://ui-grid.info/release/ui-grid.js)
+ui-grid.css          | [http://ui-grid.info/release/ui-grid.css](http://ui-grid.info/release/ui-grid.css)
 ui-grid.eot          | [http://ui-grid.info/release/ui-grid.eot](http://ui-grid.info/release/ui-grid.eot)
 ui-grid.svg          | [http://ui-grid.info/release/ui-grid.svg](http://ui-grid.info/release/ui-grid.svg)
 ui-grid.ttf          | [http://ui-grid.info/release/ui-grid.ttf](http://ui-grid.info/release/ui-grid.ttf)
@@ -35,8 +49,19 @@ There are minified files that can be used as well:
 
 File Name                | Url
 -------------------------|----------------
-ui-grid-unstable.min.js      | [http://ui-grid.info/release/ui-grid-unstable.min.js](http://ui-grid.info/release/ui-grid-unstable.min.js)
-ui-grid-unstable.min.css | [http://ui-grid.info/release/ui-grid-unstable.min.css](http://ui-grid.info/release/ui-grid-unstable.min.css)
+ui-grid.min.js      | [http://ui-grid.info/release/ui-grid.min.js](http://ui-grid.info/release/ui-grid.min.js)
+ui-grid.min.css | [http://ui-grid.info/release/ui-grid.min.css](http://ui-grid.info/release/ui-grid.min.css)
+
+## CDN
+
+You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in the Bower repository. These files are hosted by [MaxCDN](https://www.maxcdn.com/). Just alter the version as you need.
+
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/v3.0.0/ui-grid.min.js
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/v3.0.0/ui-grid.min.css
+
+# Angular Compatibility
+
+UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.3.x. 1.4.x+ support is coming soon.
 
 # Building
 
