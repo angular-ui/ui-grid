@@ -18,7 +18,7 @@ describe('ui.grid.moveColumns', function () {
     timeout = $timeout;
     gridUtil = _gridUtil_;
     document = $document;
-    
+
 
     scope.gridOptions = {};
     scope.gridOptions.data = data;
@@ -164,4 +164,24 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
+  it('expect column movement to not happen if enableColumnMoving is changed to false', function() {
+    scope.grid.options.enableColumnMoving = false;
+    scope.gridApi.colMovable.moveColumn(0, 1);
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[1].name).toBe('gender');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
+
+  it('expect column movement to happen if enableColumnMoving is changed to true', function() {
+    scope.grid.options.enableColumnMoving = false;
+    scope.grid.options.enableColumnMoving = true;
+    scope.gridApi.colMovable.moveColumn(0, 1);
+    expect(scope.grid.columns[0].name).toBe('gender');
+    expect(scope.grid.columns[1].name).toBe('name');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
 });
