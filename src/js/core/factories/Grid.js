@@ -1957,9 +1957,9 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        if ( column.colDef && column.suppressRemoveSort ){
-          column.sort.direction = uiGridConstants.ASC;
-        } else {
+        column.sort.direction = uiGridConstants.ASC;
+
+        if (!(column.colDef && column.suppressRemoveSort)) {
           column.sort = {};
         }
       }
