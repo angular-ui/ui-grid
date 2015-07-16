@@ -16,25 +16,26 @@ module.exports = function( grunt ){
       reporters: ['progress'],
       reportSlowerThan: 200
     },
-  
+
     travis: {
       background: false,
       singleRun: true,
       reporters: ['dots'],
     }
   };
-  
+
   var core = grunt.option('core');
 
-  if (core){
+  if (core) {
     baseConfig.options.files = util.testDependencies.unit
     .concat(util.angularFiles(util.latestAngular()))
     .concat(util.testFiles.core_unit);
-  } else {
+  }
+  else {
     baseConfig.options.files = util.testDependencies.unit
     .concat(util.angularFiles(util.latestAngular()))
     .concat(util.testFiles.unit);
   }
-  
+
   return baseConfig;
 };

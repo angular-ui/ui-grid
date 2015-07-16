@@ -6,14 +6,17 @@
    * @name ui.grid.treeBase
    * @description
    *
-   *  # ui.grid.treeBase
-   * This module provides base tree handling functions that are shared by other features, notably grouping 
+   * # ui.grid.treeBase
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+   *
+   * This module provides base tree handling functions that are shared by other features, notably grouping
    * and treeView.  It provides a tree view of the data, with nodes in that
    * tree and leaves.
-   * 
+   *
    * Design information:
    * -------------------
-   * 
+   *
    * The raw data that is provided must come with a $$treeLevel on any non-leaf node.  Grouping will create
    * these on all the group header rows, treeView will expect these to be set in the raw data by the user.
    * TreeBase will run a rowsProcessor that:
@@ -22,46 +25,46 @@
    *  - maintains the expand/collapse state of each node
    *  - provides the expand/collapse all button and the expand/collapse buttons
    *  - maintains the count of children for each node
-   * 
+   *
    * Each row is updated with a link to the tree node that represents it.  Refer {@link ui.grid.treeBase.grid:treeBase.tree tree documentation}
    * for information.
-   * 
-   *  TreeBase adds information to the rows 
-   *  - treeLevel: if present and > -1 tells us the level (level 0 is the top level) 
+   *
+   *  TreeBase adds information to the rows
+   *  - treeLevel: if present and > -1 tells us the level (level 0 is the top level)
    *  - treeNode: pointer to the node in the grid.treeBase.tree that refers
    *    to this row, allowing us to manipulate the state
-   * 
+   *
    * Since the logic is baked into the rowsProcessors, it should get triggered whenever
    * row order or filtering or anything like that is changed.  We recall the expanded state
    * across invocations of the rowsProcessors by the reference to the treeNode on the individual
    * rows.  We rebuild the tree itself quite frequently, when we do this we use the saved treeNodes to
    * get the state, but we overwrite the other data in that treeNode.
-   * 
+   *
    * By default rows are collapsed, which means all data rows have their visible property
    * set to false, and only level 0 group rows are set to visible.
-   * 
+   *
    * We rely on the rowsProcessors to do the actual expanding and collapsing, so we set the flags we want into
    * grid.treeBase.tree, then call refresh.  This is because we can't easily change the visible
    * row cache without calling the processors, and once we've built the logic into the rowProcessors we may as
    * well use it all the time.
-   * 
+   *
    * Tree base provides sorting (on non-grouped columns).
-   * 
-   * Sorting works in two passes.  The standard sorting is performed for any columns that are important to building 
+   *
+   * Sorting works in two passes.  The standard sorting is performed for any columns that are important to building
    * the tree (for example, any grouped columns).  Then after the tree is built, a recursive tree sort is performed
-   * for the remaining sort columns (including the original sort) - these columns are sorted within each tree level 
+   * for the remaining sort columns (including the original sort) - these columns are sorted within each tree level
    * (so all the level 1 nodes are sorted, then all the level 2 nodes within each level 1 node etc).
-   * 
+   *
    * To achieve this we make use of the `ignoreSort` property on the sort configuration.  The parent feature (treeView or grouping)
    * must provide a rowsProcessor that runs with very low priority (typically in the 60-65 range), and that sets
    * the `ignoreSort`on any sort that it wants to run on the tree.  TreeBase will clear the ignoreSort on all sorts - so it
    * will turn on any sorts that haven't run.  It will then call a recursive sort on the tree.
-   * 
+   *
    * Tree base provides treeAggregation.  It checks the treeAggregation configuration on each column, and aggregates based on
    * the logic provided as it builds the tree. Footer aggregation from the uiGrid core should not be used with treeBase aggregation,
    * since it operates on all visible rows, as opposed to to leaf nodes only. Setting `showColumnFooter: true` will show the
    * treeAggregations in the column footer.  Aggregation information will be collected in the format:
-   * 
+   *
    * ```
    *   {
    *     type: 'count',
@@ -70,7 +73,7 @@
    *     rendered: 'count: 4'
    *   }
    * ```
-   * 
+   *
    * A callback is provided to format the value once it is finalised (aka a valueFilter).
    *
    * <br/>
@@ -86,11 +89,11 @@
    *  @name ui.grid.treeBase.constant:uiGridTreeBaseConstants
    *
    *  @description constants available in treeBase module.
-   * 
+   *
    *  These constants are manually copied into grouping and treeView,
    *  as I haven't found a way to simply include them, and it's not worth
    *  investing time in for something that changes very infrequently.
-   * 
+   *
    */
   module.constant('uiGridTreeBaseConstants', {
     featureName: "treeBase",
@@ -116,7 +119,7 @@
    *  @ngdoc object
    *  @name ui.grid.treeBase.api:ColumnDef
    *
-   *  @description ColumnDef for tree feature, these are available to be 
+   *  @description ColumnDef for tree feature, these are available to be
    *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
    */
 
@@ -141,8 +144,8 @@
          *  @propertyOf ui.grid.treeBase.grid:treeBase
          *  @name numberLevels
          *
-         *  @description Total number of tree levels currently used, calculated by the rowsProcessor by 
-         *  retaining the highest tree level it sees 
+         *  @description Total number of tree levels currently used, calculated by the rowsProcessor by
+         *  retaining the highest tree level it sees
          */
         grid.treeBase.numberLevels = 0;
 
@@ -154,7 +157,7 @@
          *  @description Whether or not the expandAll box is selected
          */
         grid.treeBase.expandAll = false;
-        
+
         /**
          *  @ngdoc property
          *  @propertyOf ui.grid.treeBase.grid:treeBase
@@ -163,9 +166,9 @@
          *  @description Tree represented as a nested array that holds the state of each node, along with a
          *  pointer to the row.  The array order is material - we will display the children in the order
          *  they are stored in the array
-         * 
+         *
          *  Each node stores:
-         * 
+         *
          *    - the state of this node
          *    - an array of children of this node
          *    - a pointer to the parent of this node (reverse pointer, allowing us to walk up the tree)
@@ -224,15 +227,15 @@
          *    }, {<another level 0 node maybe>} ]
          *  ```
          *  Missing state values are false - meaning they aren't expanded.
-         * 
+         *
          *  This is used because the rowProcessors run every time the grid is refreshed, so
          *  we'd lose the expanded state every time the grid was refreshed.  This instead gives
          *  us a reliable lookup that persists across rowProcessors.
-         * 
+         *
          *  This tree is rebuilt every time we run the rowsProcessors.  Since each row holds a pointer
-         *  to it's tree node we can persist expand/collapse state across calls to rowsProcessor, we discard 
+         *  to it's tree node we can persist expand/collapse state across calls to rowsProcessor, we discard
          *  all transient information on the tree (children, childCount) and recalculate it
-         * 
+         *
          */
         grid.treeBase.tree = {};
 
@@ -257,16 +260,16 @@
                * @ngdoc event
                * @eventOf ui.grid.treeBase.api:PublicApi
                * @name rowExpanded
-               * @description raised whenever a row is expanded.  If you are dynamically 
+               * @description raised whenever a row is expanded.  If you are dynamically
                * rendering your tree you can listen to this event, and then retrieve
                * the children of this row and load them into the grid data.
-               * 
+               *
                * When the data is loaded the grid will automatically refresh to show these new rows
-               * 
+               *
                * <pre>
                *      gridApi.treeBase.on.rowExpanded(scope,function(row){})
                * </pre>
-               * @param {gridRow} row the row that was expanded.  You can also 
+               * @param {gridRow} row the row that was expanded.  You can also
                * retrieve the grid from this row with row.grid
                */
               rowExpanded: {},
@@ -277,11 +280,11 @@
                * @name rowCollapsed
                * @description raised whenever a row is collapsed.  Doesn't really have
                * a purpose at the moment, included for symmetry
-               * 
+               *
                * <pre>
                *      gridApi.treeBase.on.rowCollapsed(scope,function(row){})
                * </pre>
-               * @param {gridRow} row the row that was collapsed.  You can also 
+               * @param {gridRow} row the row that was collapsed.  You can also
                * retrieve the grid from this row with row.grid
                */
               rowCollapsed: {}
@@ -373,15 +376,15 @@
                * @methodOf  ui.grid.treeBase.api:PublicApi
                * @description Get the tree state for this grid,
                * used by the saveState feature
-               * Returned treeState as an object 
-               *   `{ expandedState: { uid: 'expanded', uid: 'collapsed' } }` 
+               * Returned treeState as an object
+               *   `{ expandedState: { uid: 'expanded', uid: 'collapsed' } }`
                * where expandedState is a hash of row uid and the current expanded state
-               * 
+               *
                * @returns {object} tree state
-               * 
+               *
                * TODO - this needs work - we need an identifier that persists across instantiations,
                * not uid.  This really means we need a row identity defined, but that won't work for
-               * grouping.  Perhaps this needs to be moved up to treeView and grouping, rather than 
+               * grouping.  Perhaps this needs to be moved up to treeView and grouping, rather than
                * being in base.
                */
               getTreeExpandedState: function () {
@@ -410,8 +413,8 @@
                * are all gridRows
                */
               getRowChildren: function ( row ){
-                return row.treeNode.children.map( function( childNode ){ 
-                  return childNode.row; 
+                return row.treeNode.children.map( function( childNode ){
+                  return childNode.row;
                 });
               }
             }
@@ -470,7 +473,7 @@
          *  @propertyOf  ui.grid.treeBase.api:GridOptions
          *  @description If set to true, show the expand/collapse button even if there are no
          *  children of a node.  You'd use this if you're planning to dynamically load the children
-         * 
+         *
          *  <br/>Defaults to true, grouping overrides to false
          */
         gridOptions.showTreeExpandNoChildren = gridOptions.showTreeExpandNoChildren !== false;
@@ -480,7 +483,7 @@
          *  @name treeRowHeaderAlwaysVisible
          *  @propertyOf  ui.grid.treeBase.api:GridOptions
          *  @description If set to true, row header even if there are no tree nodes
-         * 
+         *
          *  <br/>Defaults to true
          */
         gridOptions.treeRowHeaderAlwaysVisible = gridOptions.treeRowHeaderAlwaysVisible !== false;
@@ -530,7 +533,7 @@
        * @name treeBaseColumnBuilder
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Sets the tree defaults based on the columnDefs
-       * 
+       *
        * @param {object} colDef columnDef we're basing on
        * @param {GridCol} col the column we're to update
        * @param {object} gridOptions the options we should use
@@ -589,10 +592,10 @@
          *  </pre>
          *
          *  If you are using aggregations you should either:
-         * 
+         *
          *   - also use grouping, in which case the aggregations are displayed in the group header, OR
          *   - use treeView, in which case you can set `treeAggregationUpdateEntity: true` in the colDef, and
-         *     treeBase will store the aggregation information in the entity, or you can set `treeAggregationUpdateEntity: false` 
+         *     treeBase will store the aggregation information in the entity, or you can set `treeAggregationUpdateEntity: false`
          *     in the colDef, and you need to manual retrieve the calculated aggregations from the row.treeNode.aggregations
          *
          *  <br/>Takes precendence over a treeAggregationFn, the two options should not be used together.
@@ -632,19 +635,19 @@
          *  if you are using grouping then you shouldn't set it to false, as then the aggregations won't
          *  display.
          *
-         *  If you are using treeView in most cases you'll want to set this to true.  This will result in 
+         *  If you are using treeView in most cases you'll want to set this to true.  This will result in
          *  getCellValue returning the aggregation rather than whatever was stored in the cell attribute on
          *  the entity.  If you want to render the underlying entity value (and do something else with the aggregation)
          *  then you could use a custom cellTemplate to display `row.entity.myAttribute`, rather than using getCellValue.
          *
          *  <br/>Defaults to true
-         * 
+         *
          *  @example
          *  <pre>
-         *    gridOptions.columns = [{ 
-         *      name: 'myCol', 
-         *      treeAggregation: { type: uiGridTreeBaseConstants.aggregation.SUM }, 
-         *      treeAggregationUpdateEntity: true 
+         *    gridOptions.columns = [{
+         *      name: 'myCol',
+         *      treeAggregation: { type: uiGridTreeBaseConstants.aggregation.SUM },
+         *      treeAggregationUpdateEntity: true
          *      cellTemplate: '<div>{{row.entity.myCol + " " + row.treeNode.aggregations[0].rendered}}</div>'
          *    }];
          * </pre>
@@ -657,7 +660,7 @@
          *  @propertyOf  ui.grid.treeBase.api:ColumnDef
          *  @description A custom function that populates aggregation.rendered, this is called when
          *  a particular aggregation has been fully calculated, and we want to render the value.
-         * 
+         *
          *  With the native aggregation options we just concatenate `aggregation.label` and
          *  `aggregation.value`, but if you wanted to apply a filter or otherwise manipulate the label
          *  or the value, you can do so with this function. This function will be called after the
@@ -684,7 +687,7 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Create the rowHeader.  If treeRowHeaderAlwaysVisible then
        * set it to visible, otherwise set it to invisible
-       * 
+       *
        * @param {Grid} grid grid object
        */
       createRowHeader: function( grid ){
@@ -711,7 +714,7 @@
        * @name expandAllRows
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Expands all nodes in the tree
-       * 
+       *
        * @param {Grid} grid grid object
        */
       expandAllRows: function (grid) {
@@ -728,7 +731,7 @@
        * @name collapseAllRows
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Collapses all nodes in the tree
-       * 
+       *
        * @param {Grid} grid grid object
        */
       collapseAllRows: function (grid) {
@@ -746,10 +749,10 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Works through a subset of grid.treeBase.rowExpandedStates, setting
        * all child nodes (and their descendents) of the provided node to the given state.
-       * 
+       *
        * Calls itself recursively on all nodes so as to achieve this.
        *
-       * @param {Grid} grid the grid we're operating on (so we can raise events) 
+       * @param {Grid} grid the grid we're operating on (so we can raise events)
        * @param {object} treeNode a node in the tree that we want to update
        * @param {string} targetState the state we want to set it to
        */
@@ -779,7 +782,7 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Toggles the expand or collapse state of this grouped row, if
        * it's a parent row
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridRow} row the row we want to toggle
        */
@@ -803,7 +806,7 @@
        * @name expandRow
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Expands this specific row, showing only immediate children.
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridRow} row the row we want to expand
        */
@@ -826,7 +829,7 @@
        * @name expandRowChildren
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Expands this specific row, showing all children.
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridRow} row the row we want to expand
        */
@@ -891,7 +894,7 @@
        * @description Returns true if all rows are expanded, false
        * if they're not.  Walks the tree to determine this.  Used
        * to set the expandAll state.
-       * 
+       *
        * If the node has no children, then return true (it's immaterial
        * whether it is expanded).  If the node has children, then return
        * false if this node is collapsed, or if any child node is not all expanded
@@ -933,18 +936,18 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description The rowProcessor that adds the nodes to the tree, and sets the visible
        * state of each row based on it's parent state
-       * 
+       *
        * Assumes it is always called after the sorting processor, and the grouping processor if there is one.
        * Performs any tree sorts itself after having built the tree
-       * 
+       *
        * Processes all the rows in order, setting the group level based on the $$treeLevel in the associated
        * entity, and setting the visible state based on the parent's state.
-       * 
-       * Calculates the deepest level of tree whilst it goes, and updates that so that the header column can be correctly 
+       *
+       * Calculates the deepest level of tree whilst it goes, and updates that so that the header column can be correctly
        * sized.
-       * 
+       *
        * Aggregates if necessary along the way.
-       * 
+       *
        * @param {array} renderableRows the rows we want to process, usually the output from the previous rowProcessor
        * @returns {array} the updated rows
        */
@@ -973,15 +976,15 @@
        * @name createOrUpdateRowHeaderWidth
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Calculates the rowHeader width.
-       * 
+       *
        * If rowHeader is always present, updates the width.
-       * 
-       * If rowHeader is only sometimes present (`treeRowHeaderAlwaysVisible: false`), determines whether there 
-       * should be one, then creates or removes it as appropriate, with the created rowHeader having the 
+       *
+       * If rowHeader is only sometimes present (`treeRowHeaderAlwaysVisible: false`), determines whether there
+       * should be one, then creates or removes it as appropriate, with the created rowHeader having the
        * right width.
-       * 
+       *
        * If there's never a rowHeader then never creates one: `showTreeRowHeader: false`
-       * 
+       *
        * @param {Grid} grid the grid we want to set the row header on
        */
       updateRowHeaderWidth: function( grid ){
@@ -1039,7 +1042,7 @@
        * @name createTree
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Creates a tree from the renderableRows
-       * 
+       *
        * @param {Grid} grid the grid
        * @param {array} renderableRows the rows we want to create a tree from
        * @returns {object} the tree we've build
@@ -1111,7 +1114,7 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Creates a tree node for this row.  If this row already has a treeNode
        * recorded against it, preserves the state, but otherwise overwrites the data.
-       * 
+       *
        * @param {grid} grid the grid we're operating on
        * @param {gridRow} row the row we want to set
        * @param {array} parents an array of the parents this row should have
@@ -1137,7 +1140,7 @@
         if ( parents.length === 0 ){
           grid.treeBase.tree.push( newNode );
         } else {
-          parents[parents.length - 1].treeNode.children.push( newNode ); 
+          parents[parents.length - 1].treeNode.children.push( newNode );
         }
       },
 
@@ -1149,7 +1152,7 @@
        * @description Looks at the parents array to determine our current state.
        * If any node in the hierarchy is collapsed, then return collapsed, otherwise return
        * expanded.
-       * 
+       *
        * @param {array} parents an array of the parents this row should have
        * @returns {string} the state we should be setting to any nodes we see
        */
@@ -1168,16 +1171,16 @@
        * @ngdoc function
        * @name sortTree
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
-       * @description Performs a recursive sort on the tree nodes, sorting the 
+       * @description Performs a recursive sort on the tree nodes, sorting the
        * children of each node and putting them back into the children array.
-       * 
+       *
        * Before doing this it turns back on all the sortIgnore - things that were previously
-       * ignored we process now.  Since we're sorting within the nodes, presumably anything 
+       * ignored we process now.  Since we're sorting within the nodes, presumably anything
        * that was already sorted is how we derived the nodes, we can keep those sorts too.
-       * 
+       *
        * We only sort tree nodes that are expanded - no point in wasting effort sorting collapsed
        * nodes
-       * 
+       *
        * @param {Grid} grid the grid to get the aggregation information from
        * @returns {array} the aggregation information
        */
@@ -1217,13 +1220,13 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description After filtering has run, we need to go back through the tree
        * and make sure the parent rows are always visible if any of the child rows
-       * are visible (filtering may make a child visible, but the parent may not 
+       * are visible (filtering may make a child visible, but the parent may not
        * match the filter criteria)
-       * 
+       *
        * This has a risk of being computationally expensive, we do it by walking
-       * the tree and remembering whether there are any invisible nodes on the 
+       * the tree and remembering whether there are any invisible nodes on the
        * way down.
-       * 
+       *
        * @param {Grid} grid the grid to fix filters on
        */
       fixFilter: function( grid ){
@@ -1291,7 +1294,7 @@
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Looks through the grid columns to find those with aggregations,
        * and collates the aggregation information into an array, returns that array
-       * 
+       *
        * @param {Grid} grid the grid to get the aggregation information from
        * @returns {array} the aggregation information
        */
@@ -1318,10 +1321,10 @@
        * @name aggregate
        * @methodOf  ui.grid.treeBase.service:uiGridTreeBaseService
        * @description Accumulate the data from this row onto the aggregations for each parent
-       * 
+       *
        * Iterate over the parents, then iterate over the aggregations for each of those parents,
        * and perform the aggregation for each individual aggregation
-       * 
+       *
        * @param {Grid} grid grid object
        * @param {GridRow} row the row we want to set grouping visibility on
        * @param {array} parents the parents that we would want to aggregate onto
@@ -1368,7 +1371,7 @@
               }
             }
           },
-  
+
           sum: {
             label: i18nService.get().aggregation.sum,
             menuTitle: i18nService.get().grouping.aggregate_sum,
@@ -1382,7 +1385,7 @@
               }
             }
           },
-  
+
           min: {
             label: i18nService.get().aggregation.min,
             menuTitle: i18nService.get().grouping.aggregate_min,
@@ -1396,7 +1399,7 @@
               }
             }
           },
-  
+
           max: {
             label: i18nService.get().aggregation.max,
             menuTitle: i18nService.get().grouping.aggregate_max,
@@ -1410,7 +1413,7 @@
               }
             }
           },
-  
+
           avg: {
             label: i18nService.get().aggregation.avg,
             menuTitle: i18nService.get().grouping.aggregate_avg,
@@ -1420,11 +1423,11 @@
               } else {
                 aggregation.count++;
               }
-  
+
               if ( isNaN(numValue) ){
                 return;
               }
-  
+
               if ( typeof(aggregation.value) === 'undefined' || typeof(aggregation.sum) === 'undefined' ){
                 aggregation.value = numValue;
                 aggregation.sum = numValue;
@@ -1471,14 +1474,14 @@
        * e.g. if we had label: 'sum: ' and value: 25, we'd create 'sum: 25'.
        *
        * As part of this we call any formatting callback routines we've been provided.
-       * 
+       *
        * We write our aggregation out to the row.entity if treeAggregationUpdateEntity is
        * set on the column - we don't overwrite any information that's already there, we append
        * to it so that grouping can have set the groupVal beforehand without us overwriting it.
-       * 
+       *
        * We need to copy the data from the row.entity first before we finalise the aggregation,
        * we need that information for the finaliserFn
-       * 
+       *
        * @param {gridRow} row the parent we're finalising
        */
       finaliseAggregations: function( row ){
@@ -1557,7 +1560,7 @@
    *  @name ui.grid.treeBase.directive:uiGridTreeBaseExpandAllButtons
    *  @element div
    *
-   *  @description Provides the expand/collapse all button 
+   *  @description Provides the expand/collapse all button
    */
   module.directive('uiGridTreeBaseExpandAllButtons', ['$templateCache', 'uiGridTreeBaseService',
   function ($templateCache, uiGridTreeBaseService) {
@@ -1579,7 +1582,7 @@
       }
     };
   }]);
-  
+
 
   /**
    *  @ngdoc directive

@@ -1,6 +1,10 @@
 @ngdoc overview
 @name Tutorial: 215 Tree View
-@description The tree view feature allows you to create a tree from your grid, specifying which
+@description
+
+<div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+
+The tree view feature allows you to create a tree from your grid, specifying which
 of your data rows are nodes and which are leaves.
 
 **_Note that recent breaking changes have been implemented on treeView and grouping, combining much
@@ -22,7 +26,7 @@ start at 0 and increase as you move down the tree.
 
 If you wish to load your tree incrementally, you can listen to the rowExpanded event, which will
 tell you whenever a row is expanded.  You can then retrieve additional data from the server and
-splice it into the data array at the right point, the grid will automatically render the data 
+splice it into the data array at the right point, the grid will automatically render the data
 when it arrives.
 
 Treeview allows sorting, and implements it as a recursive tree sort - it sorts the children of
@@ -103,7 +107,7 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
        data[51].$$treeLevel = 0;
        $scope.gridOptions.data = data;
      });
- 
+
       $scope.expandAll = function(){
         $scope.gridApi.treeBase.expandAllRows();
       };
@@ -139,5 +143,5 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '215 tree view', function() {
     });
-  </file>  
+  </file>
 </example>

@@ -6,10 +6,10 @@
    * @name ui.grid.selection
    * @description
    *
-   *  # ui.grid.selection
+   * # ui.grid.selection
    * This module provides row selection
-   * <br/>
-   * <br/>
+   *
+   * <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
    *
    * <div doc-module-components="ui.grid.selection"></div>
    */
@@ -392,7 +392,7 @@
            *  @ngdoc object
            *  @name enableFullRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @description Enable selection by clicking anywhere on the row.  Defaults to 
+           *  @description Enable selection by clicking anywhere on the row.  Defaults to
            *  false if `enableRowHeaderSelection` is true, otherwise defaults to false.
            */
           if ( typeof(gridOptions.enableFullRowSelection) === 'undefined' ){

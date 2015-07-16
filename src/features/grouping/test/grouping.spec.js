@@ -82,7 +82,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       // TODO
     });
 
-    iit( 'will not move header columns', function() {
+    it( 'will not move header columns', function() {
 
       $timeout(function () {
         grid.addRowHeaderColumn({name:'aRowHeader'});
@@ -176,7 +176,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect(result[0].col).toEqual(grid.columns[3]);
       delete result[0].col;
       expect(result[1].col).toEqual(grid.columns[1]);
-      delete result[1].col; 
+      delete result[1].col;
       expect(result).toEqual([
         { fieldName: 'col3', initialised: false, currentValue: null, currentRow: null },
         { fieldName: 'col1', initialised: false, currentValue: null, currentRow: null }
@@ -201,7 +201,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect( grouping.grouping[0].col.name).toEqual('col1');
       delete grouping.grouping[0].col;
 
-      expect(grouping).toEqual({ 
+      expect(grouping).toEqual({
         grouping: [{ field: 'col1', groupPriority: 0 }],
         aggregations: []
       });
@@ -355,7 +355,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect(grid.api.grouping.getGrouping( true )).toEqual({
         grouping: [],
         aggregations: [],
-        rowExpandedStates: { male: { state: 'expanded', children: {} } } 
+        rowExpandedStates: { male: { state: 'expanded', children: {} } }
       });
     });
 
@@ -512,7 +512,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         aggregations: [
           { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT }}
         ],
-        rowExpandedStates: { male: { state: 'expanded' } } 
+        rowExpandedStates: { male: { state: 'expanded' } }
       });
 
       grid.api.grouping.clearGrouping();
@@ -534,7 +534,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
       headerRow1.expandedState = { state: uiGridGroupingConstants.EXPANDED };
       headerRow2.expandedState = { state: uiGridGroupingConstants.COLLAPSED };
-      grid.grouping.groupingHeaderCache = { 
+      grid.grouping.groupingHeaderCache = {
         test: {
           row: {},
           children: {}
@@ -542,23 +542,23 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       };
 
       var processingStates = [
-        { 
+        {
           fieldName: 'col1',
-          col: grid.columns[1], 
+          col: grid.columns[1],
           initialised: true,
           currentValue: 'test',
           currentRow: headerRow1
         },
-        { 
+        {
           fieldName: 'col2',
-          col: grid.columns[2], 
+          col: grid.columns[2],
           initialised: true,
           currentValue: 'blah',
           currentRow: headerRow2
         },
-        { 
+        {
           fieldName: 'col3',
-          col: grid.columns[3], 
+          col: grid.columns[3],
           initialised: true,
           currentValue: 'fred',
           currentRow: headerRow3
@@ -583,18 +583,18 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       delete processingStates[2].col;
 
       expect(processingStates).toEqual([
-        { 
-          fieldName: 'col1', 
+        {
+          fieldName: 'col1',
           initialised: true,
           currentValue: 'test'
         },
-        { 
+        {
           fieldName: 'col2',
           initialised: true,
           currentValue: 'c_3'
         },
-        { 
-          fieldName: 'col3', 
+        {
+          fieldName: 'col3',
           initialised: false,
           currentValue: null,
           currentRow: null

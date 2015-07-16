@@ -1,6 +1,10 @@
 @ngdoc overview
 @name Tutorial: 208 Save and restore state
-@description The save state feature allows you to save the current look of the grid
+@description
+
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
+The save state feature allows you to save the current look of the grid
 and restore it upon returning to the grid.
 
 For example, you may have an application where your user can reorder the columns,

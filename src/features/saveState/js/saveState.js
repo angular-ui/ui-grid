@@ -6,7 +6,10 @@
    * @name ui.grid.saveState
    * @description
    *
-   *  # ui.grid.saveState
+   * # ui.grid.saveState
+   *
+   * <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+   *
    * This module provides the ability to save the grid state, and restore
    * it when the user returns to the page.
    *
@@ -577,7 +580,7 @@
             }
           });
 
-          if ( isSortChanged ) { 
+          if ( isSortChanged ) {
             grid.api.core.raise.sortChanged( grid, grid.getColumnSorting() );
           }
         },
