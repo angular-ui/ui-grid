@@ -1879,7 +1879,7 @@ angular.module('ui.grid')
     var self = this;
 
     self.columns.forEach(function (col) {
-      if (col !== excludeCol && !col.suppressRemoveSort) {
+      if (col !== excludeCol && col.enableRemoveSort) {
         col.sort = {};
       }
     });
@@ -1944,7 +1944,7 @@ angular.module('ui.grid')
     if (!add) {
       self.resetColumnSorting(column);
       column.sort.priority = 0;
-      // Get the actual priority since there may be columns which have suppressRemoveSort set
+      // Get the actual priority since there may be columns which have enableRemoveSort set to false
       column.sort.priority = self.getNextColumnSortPriority();
     }
     else if (!column.sort.priority){
@@ -1957,7 +1957,7 @@ angular.module('ui.grid')
         column.sort.direction = uiGridConstants.DESC;
       }
       else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
-        if ( (column.colDef && column.suppressRemoveSort) || self.options.enableRemoveSort === false ){
+        if ( (column.colDef && !column.enableRemoveSort) || self.options.enableRemoveSort === false ){
           column.sort.direction = uiGridConstants.ASC;
         } else {
           column.sort = {};

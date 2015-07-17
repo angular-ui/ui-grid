@@ -111,18 +111,13 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     /**
      * @ngdoc method
      * @methodOf ui.grid.service:uiGridColumnMenuService
-     * @name suppressRemoveSort
-     * @description  determines whether we should suppress the removeSort option
+     * @name enableRemoveSort
+     * @description  determines whether we should enable the removeSort option
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
      * 
      */  
-    suppressRemoveSort: function( $scope ) {
-      if ($scope.col && $scope.col.suppressRemoveSort) {
-        return true;
-      }
-      else {
-        return false;
-      }
+    enableRemoveSort: function( $scope ) {
+      return $scope.col && $scope.col.enableRemoveSort !== false;
     },       
 
 
@@ -200,7 +195,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
             return service.sortable( $scope ) && 
                    typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' && 
                    typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null &&
-                  !service.suppressRemoveSort( $scope );
+                   service.enableRemoveSort( $scope );
           }
         },
         {

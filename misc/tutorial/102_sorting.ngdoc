@@ -22,7 +22,7 @@ The sort is automatically recalculated when you edit a field (the edit feature c
 you change the data "behind the scenes" and want the sort to be recalculated, you can notify the grid that your
 data has changed by calling `gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT )`
 
-If you set a default sort, you can prevent the user from removing that sort by setting `suppressRemoveSort: true`
+If you set a default sort, you can prevent the user from removing that sort by setting `enableRemoveSort: false`
 for that column.  This will let the user change the direction of the sort, but take away the option to remove the sort.
 
 The sort algorithm is chosen based on the column type.  ui-grid will guess the type based on the data, although if you load data
@@ -78,7 +78,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
               direction: uiGridConstants.ASC,
               priority: 0,
             },
-            suppressRemoveSort: true,
+            enableRemoveSort: false,
             sortingAlgorithm: function(a, b) {
               var nulls = $scope.grid2Api.core.sortHandleNulls(a, b);
               if( nulls !== null ) {

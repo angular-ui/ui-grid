@@ -721,7 +721,7 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(1);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null, and remove priority', function() {
+    it( 'if sort is currently DESC, and enableRemoveSort is undefined, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1};
       grid.sortColumn( column, false );
       
@@ -729,25 +729,25 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {
-      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: null};
+    it( 'if sort is currently DESC, and enableRemoveSort is null, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, enableRemoveSort: null};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null, and remove priority', function() {
-      column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: false};
+    it( 'if sort is currently DESC, and enableRemoveSort is true, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1, enableRemoveSort: true};
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
     });
 
-    it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
+    it( 'if sort is currently DESC, and enableRemoveSort is false, then should toggle to ASC, and reset priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 2};
-      column.suppressRemoveSort = true;
+      column.enableRemoveSort = false;
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
@@ -811,8 +811,8 @@ describe('Grid factory', function () {
       expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
 
-    it( 'if another column has a sort, and add is set to false, but that other column has suppressRemoveSort, then it shouldn\'t be removed', function() {
-      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 }, suppressRemoveSort: true }, 0, grid);
+    it( 'if another column has a sort, and add is set to false, but that other column has enableRemoveSort set to false, then it shouldn\'t be removed', function() {
+      var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 }, enableRemoveSort: false }, 0, grid);
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, false );

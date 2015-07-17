@@ -623,13 +623,13 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc boolean
-     * @name suppressRemoveSort
+     * @name enableRemoveSort
      * @propertyOf ui.grid.class:GridOptions.columnDef
-     * @description (optional) False by default. When enabled, this setting hides the removeSort option
+     * @description (optional) True by default. When enabled, this setting shows the removeSort option
      * in the menu, and prevents users from manually removing the sort
      */
-    if ( typeof(self.suppressRemoveSort) === 'undefined'){
-      self.suppressRemoveSort = typeof(colDef.suppressRemoveSort) !== 'undefined' ? colDef.suppressRemoveSort : false;
+    if ( typeof(self.enableRemoveSort) === 'undefined'){
+      self.enableRemoveSort = typeof(colDef.enableRemoveSort) !== 'undefined' ? colDef.enableRemoveSort : true;
     }
     
     /**
