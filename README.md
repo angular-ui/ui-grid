@@ -1,4 +1,4 @@
-# UI-Grid : An Angular data grid
+# UI-Grid : An AngularJS data grid
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
 
