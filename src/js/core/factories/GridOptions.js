@@ -362,6 +362,17 @@ angular.module('ui.grid')
 
       /**
        * @ngdoc boolean
+       * @name enableRemoveSort
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When enabled, this setting defaults all
+       * columns to sorting in asc order, desc order, then "no sort" order.
+       * When disabled, the "no sort" order option is removed, and all columns
+       * are limited to sorting in asc or desc order.
+       */
+      baseOptions.enableRemoveSort = baseOptions.enableRemoveSort !== false;
+
+      /**
+       * @ngdoc boolean
        * @name enableFiltering
        * @propertyOf ui.grid.class:GridOptions
        * @description False by default. When enabled, this setting adds filter

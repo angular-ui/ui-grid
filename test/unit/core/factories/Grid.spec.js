@@ -754,6 +754,41 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(1);
     });
 
+    it( 'if sort is currently DESC, and grid.enableRemoveSort is undefined, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and grid.enableRemoveSort is null, then should toggle to null, and remove priority', function() {
+      grid.options.enableRemoveSort = null;
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and grid.enableRemoveSort is true, then should toggle to null, and remove priority', function() {
+      grid.options.enableRemoveSort = true;
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and grid.enableRemoveSort is false, then should toggle to ASC, and reset priority', function() {
+      grid.options.enableRemoveSort = false;
+      column.sort = {direction: uiGridConstants.DESC, priority: 2};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
     it( 'if another column has a sort, that sort should be removed', function() {
       var priorColumn = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC } }, 0, grid);
       grid.columns.push( priorColumn );
