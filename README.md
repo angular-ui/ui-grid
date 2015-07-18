@@ -45,7 +45,7 @@ You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in t
 
 UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.3.x.
 
-1.4.x+ support is coming soon. If you would like to help please see issue #3658.
+1.4.x+ support is coming soon. If you would like to help please see issue [#3658](https://github.com/angular-ui/ui-grid/issues/3658).
 
 # Feature Stability
 
