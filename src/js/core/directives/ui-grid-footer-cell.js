@@ -43,9 +43,7 @@
               contents.addClass(classAdded);
             };
   
-            if ($scope.col.footerCellClass) {
-              updateClass();
-            }
+            
 
             $scope.col.updateAggregationValue();
 
@@ -69,7 +67,7 @@
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
             // listen for visible rows change and update aggregation values
             $scope.grid.api.core.on.rowsRendered( $scope, $scope.col.updateAggregationValue );
-
+            $scope.grid.api.core.on.rowsRendered( $scope, updateClass );
             $scope.$on( '$destroy', dataChangeDereg );
           }
         };
