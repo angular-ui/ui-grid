@@ -7,8 +7,8 @@ module.exports = {
       waitEval: "(function() { var ret = true; try { angular.module('ui.grid'); } catch (e) { ret = false; } return ret; })()",
       versions: {
         stable: [
-          { src: '/release/<%= pkg.name %>-stable.js', type: 'script' },
-          { src: '/release/<%= pkg.name %>-stable.css', type: 'css' }
+          { src: '/release/<%= pkg.name %>.js', type: 'script' },
+          { src: '/release/<%= pkg.name %>.css', type: 'css' }
         ],
         unstable: [
           { src: '/release/<%= pkg.name %>-unstable.js', type: 'script' },
