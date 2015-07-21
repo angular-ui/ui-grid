@@ -455,6 +455,16 @@
          * @returns {uiGridCellNavConstants.direction} direction
          */
         getDirection: function (evt) {
+          // Limit navigation during edit operations
+          if (grid.api.edit) {
+            var el = document.activeElement;
+            var tagName = el.tagName.toLowerCase();
+            if ((tagName === 'input' || tagName === 'select' || tagName === 'textarea')
+              && (evt.keyCode !== uiGridConstants.keymap.ENTER)) {
+                return null;
+            }
+          }
+
           if (evt.keyCode === uiGridConstants.keymap.LEFT ||
             (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey)) {
             return uiGridCellNavConstants.direction.LEFT;
