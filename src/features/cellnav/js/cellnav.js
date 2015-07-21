@@ -454,7 +454,17 @@
          * @description  determines which direction to for a given keyDown event
          * @returns {uiGridCellNavConstants.direction} direction
          */
-        getDirection: function (evt) {
+        getDirection: function (grid, evt) {
+          // Limit navigation during edit operations
+          if (grid.api.edit) {
+            var el = document.activeElement;
+            var tagName = el.tagName.toLowerCase();
+            if ((tagName === 'input' || tagName === 'select' || tagName === 'textarea') &&
+              (evt.keyCode !== uiGridConstants.keymap.ENTER)) {
+                return null;
+            }
+          }
+
           if (evt.keyCode === uiGridConstants.keymap.LEFT ||
             (evt.keyCode === uiGridConstants.keymap.TAB && evt.shiftKey)) {
             return uiGridCellNavConstants.direction.LEFT;
@@ -687,8 +697,9 @@
               };
 
               uiGridCtrl.cellNav.handleKeyDown = function (evt) {
-                var direction = uiGridCellNavService.getDirection(evt);
-                if (direction === null) {
+                var grid = uiGridCtrl.grid;
+                var direction = uiGridCellNavService.getDirection(grid, evt);
+                 if (direction === null) {
                   return null;
                 }
 
