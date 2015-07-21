@@ -77,7 +77,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     });
   });
 
-  describe('getDirection(evt)', function () {
+  describe('getDirection(grid, evt)', function () {
     beforeEach(function(){
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
@@ -87,7 +87,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.TAB;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.RIGHT);
     });
 
@@ -96,7 +96,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.RIGHT;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.RIGHT);
     });
 
@@ -106,7 +106,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.shiftKey = true;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.LEFT);
     });
 
@@ -115,7 +115,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.LEFT;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.LEFT);
     });
 
@@ -124,7 +124,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.ENTER;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.DOWN);
     });
 
@@ -133,7 +133,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.DOWN;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.DOWN);
     });
 
@@ -143,7 +143,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.shiftKey = true;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.UP);
     });
 
@@ -152,7 +152,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.UP;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.UP);
     });
 
@@ -162,20 +162,20 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
   describe('scrollTo', function () {
     /*
-     * We have 11 rows (10 visible) and 11 columns (10 visible).  The column widths are 
+     * We have 11 rows (10 visible) and 11 columns (10 visible).  The column widths are
      * 100 for the first 5, and 200 for the second 5.  Column 2 and row 2 are invisible.
      */
     var evt;
     var args;
     var $scope;
-    
+
     beforeEach(function(){
       var i, j, row;
       grid.options.columnDefs = [];
       for ( i = 0; i < 11; i++ ){
         grid.options.columnDefs.push({name: 'col' + i});
       }
-  
+
       grid.options.data = [];
       for ( i = 0; i < 11; i++ ){
         row = {};
@@ -184,16 +184,16 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         }
         grid.options.data.push( row );
       }
-      
+
       uiGridCellNavService.initializeGrid(grid);
-      grid.modifyRows(grid.options.data);      
-      
+      grid.modifyRows(grid.options.data);
+
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
-      
+
       grid.columns[2].visible = false;
       grid.rows[2].visible = false;
-      
+
       grid.setVisibleColumns(grid.columns);
       grid.setVisibleRows(grid.rows);
 
@@ -202,14 +202,14 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       for ( i = 0; i < 11; i++ ){
         grid.columns[i].drawnWidth = i < 6 ? 100 : 200;
       }
-      
+
       $scope = $rootScope.$new();
 
       args = null;
       grid.api.core.on.scrollEnd($scope, function( receivedArgs ){
         args = receivedArgs;
       });
-      
+
     });
 
 
@@ -232,7 +232,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[0], null);
       });
       $timeout.flush();
-      
+
       expect(Math.round(args.y.percentage * 10)/10).toBe(0.1);
     });
 
@@ -241,7 +241,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[10], null);
       });
       $timeout.flush();
-      
+
       expect(args.y.percentage).toBeGreaterThan(0.5);
       expect(args.x).toBe(null);
     });
@@ -251,7 +251,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[5], null);
       });
       $timeout.flush();
-      
+
       expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.5);
       expect(args.x).toBe(null);
     });
@@ -281,7 +281,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo(  null, grid.columns[8].colDef);
       });
       $timeout.flush();
-      
+
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
@@ -290,7 +290,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( null, null );
       });
       $timeout.flush();
-      
+
       expect(args).toEqual( null );
     });
   });
