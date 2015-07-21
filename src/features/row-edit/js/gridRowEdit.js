@@ -393,7 +393,7 @@
          */
         flushDirtyRows: function(grid){
           var promises = [];
-          grid.rowEdit.dirtyRows.forEach( function( gridRow ){
+          grid.api.rowEdit.getDirtyRows().forEach( function( gridRow ){
             service.saveRow( grid, gridRow )();
             promises.push( gridRow.rowEditSavePromise );
           });
