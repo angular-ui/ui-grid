@@ -160,7 +160,7 @@ function getLineHeight(elm) {
   return parseInt( getStyles(parent).fontSize ) || parseInt( getStyles(elm).fontSize ) || 16;
 }
 
-var uid = ['0', '0', '0'];
+var uid = ['0', '0', '0', '0'];
 var uidPrefix = 'uiGrid-';
 
 /**
