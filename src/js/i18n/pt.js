@@ -61,7 +61,8 @@
         },
         pagination: {
           sizes: 'itens por página',
-          totalItems: 'itens'
+          totalItems: 'itens',
+          of: 'de'
         },
         grouping: {
           group: 'Agrupar',
