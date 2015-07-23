@@ -19,8 +19,8 @@ We're always looking for new contributors, for pro-level contribution guidelines
 ```
 
 ```html
-    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui.grid.min.css">
-    <script src="bower_components/angular-ui-grid/ui.grid.min.js">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
+    <script src="bower_components/angular-ui-grid/ui-grid.min.js">
 ```
 
 ## NPM
