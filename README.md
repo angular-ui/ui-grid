@@ -38,8 +38,8 @@ We're always looking for new contributors, for pro-level contribution guidelines
 
 You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in the Bower repository. These files are hosted by [MaxCDN](https://www.maxcdn.com/). Just alter the version as you need.
 
-* https://cdn.rawgit.com/angular-ui/bower-ui-grid/v3.0.0/ui-grid.min.js
-* https://cdn.rawgit.com/angular-ui/bower-ui-grid/v3.0.0/ui-grid.min.css
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css
 
 # Angular Compatibility
 
