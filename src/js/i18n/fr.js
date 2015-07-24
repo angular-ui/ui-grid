@@ -61,7 +61,8 @@
         },
         pagination: {
           sizes: 'éléments par page',
-          totalItems: 'éléments'
+          totalItems: 'éléments',
+          of: 'sur'
         },
         grouping: {
           group: 'Grouper',
