@@ -8,16 +8,17 @@
       <button type="button" class="ui-grid-pager-next" ng-click="paginationApi.nextPage()" ng-disabled="cantPageForward()"><div class="last-triangle next-triangle"></div></button>
       <button type="button" class="ui-grid-pager-last" ng-click="paginationApi.seek(paginationApi.getTotalPages())" ng-disabled="cantPageToLast()"><div class="last-triangle"><div class="last-bar"></div></div></button>
     </div>
-    <div class="ui-grid-pager-row-count-picker">
+    <div class="ui-grid-pager-row-count-picker" ng-if="grid.options.paginationPageSizes.length > 1">
       <select ng-model="grid.options.paginationPageSize" ng-options="o as o for o in grid.options.paginationPageSizes"></select>
       <span class="ui-grid-pager-row-count-label">&nbsp;{{sizesLabel}}</span>
     </div>
+    <span ng-if="grid.options.paginationPageSizes.length <= 1" class="ui-grid-pager-row-count-label">{{grid.options.paginationPageSize}}&nbsp;{{sizesLabel}}</span>
   </div>
-    <div class="ui-grid-pager-count-container">
-      <div class="ui-grid-pager-count">
+  <div class="ui-grid-pager-count-container">
+    <div class="ui-grid-pager-count">
         <span ng-show="grid.options.totalItems > 0">
             {{showingLow}} - {{showingHigh}} {{paginationOf}} {{grid.options.totalItems}} {{totalItemsLabel}}
         </span>
-      </div>
+    </div>
   </div>
 </div>
