@@ -668,6 +668,52 @@
                 }
               };
 
+              uiGridCtrl.cellNav.getNextColumnAtLimits = function (grid, direction) {
+                // This function will get the next column at either end of the grid to navigate to
+                // when the option highlightEntireRowOnCellFocus is true
+
+                // Alias the visible row and column caches
+                var visColCache = grid.renderContainers.body.visibleColumnCache;
+
+                // The left boundary is the current X scroll position
+                var leftBound = grid.renderContainers.body.prevScrollLeft;
+
+                // The right position is the current X scroll position minus the grid width
+                var rightBound = grid.renderContainers.body.prevScrollLeft + Math.ceil(grid.gridWidth);
+
+                var nextColumn = null;
+                var col = null;
+                var columnLeftEdge = 0;
+                var colIndex = 0;
+
+                // Navigating left, find left edge of first visible column on grid
+                if (direction === uiGridCellNavConstants.direction.LEFT) {
+                  do {
+                    col = visColCache[colIndex];
+                    if (col) {
+                      columnLeftEdge += col.drawnWidth;
+                      colIndex++;
+                    }
+                  } while (columnLeftEdge < leftBound);
+                  nextColumn = visColCache[(colIndex > 0 ? colIndex - 1 : colIndex)];
+                }
+
+                // Navigating right
+                if (direction === uiGridCellNavConstants.direction.RIGHT) {
+                  // Find left edge of first visible column on grid
+                  do {
+                    col = visColCache[colIndex];
+                    if (col) {
+                      columnLeftEdge += col.drawnWidth;
+                      colIndex++;
+                    }
+                  } while ((columnLeftEdge < rightBound) && (colIndex !== visColCache.length));
+                  nextColumn = visColCache[(colIndex >= visColCache.length ? colIndex - 1 : colIndex)];
+                }
+
+                return nextColumn;
+              };
+
               uiGridCtrl.cellNav.handleKeyDown = function (evt) {
                 var direction = uiGridCellNavService.getDirection(evt);
                 if (direction === null) {
@@ -682,36 +728,47 @@
                 // Get the last-focused row+col combo
                 var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
                 if (lastRowCol) {
-                  // Figure out which new row+combo we're navigating to
-                  var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
-                  var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
-
-                  // Shift+tab on top-left cell should exit cellnav on render container
+                  var rowCol = null;
                   if (
-                    // Navigating left
+                    // If highlight entire row on sell focus is turned on
+                  (uiGridCtrl.grid.options.highlightEntireRowOnCellFocus) &&
+                    // we are navigating left or right
+                  ((direction === uiGridCellNavConstants.direction.LEFT) || (direction === uiGridCellNavConstants.direction.RIGHT))
+                  ) {
+                    // Set next ros/col to same row and next column at the end or beginning of the grid based on direction
+                    rowCol = new RowCol(lastRowCol.row, uiGridCtrl.cellNav.getNextColumnAtLimits(uiGridCtrl.grid, direction));
+
+                  } else {
+                    // Figure out which new row+combo we're navigating to
+                    rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+                    var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
+
+                    // Shift+tab on top-left cell should exit cellnav on render container
+                    if (
+                      // Navigating left
                     direction === uiGridCellNavConstants.direction.LEFT &&
-                    // New col is last col (i.e. wrap around)
+                      // New col is last col (i.e. wrap around)
                     rowCol.col === focusableCols[focusableCols.length - 1] &&
-                    // Staying on same row, which means we're at first row
+                      // Staying on same row, which means we're at first row
                     rowCol.row === lastRowCol.row &&
                     evt.keyCode === uiGridConstants.keymap.TAB &&
                     evt.shiftKey
-                  ) {
-                    uiGridCtrl.cellNav.clearFocus();
-                    return true;
-                  }
-                  // Tab on bottom-right cell should exit cellnav on render container
-                  else if (
-                    direction === uiGridCellNavConstants.direction.RIGHT &&
-                    // New col is first col (i.e. wrap around)
-                    rowCol.col === focusableCols[0] &&
-                    // Staying on same row, which means we're at first row
-                    rowCol.row === lastRowCol.row &&
-                    evt.keyCode === uiGridConstants.keymap.TAB &&
-                    !evt.shiftKey
-                  ) {
-                    uiGridCtrl.cellNav.clearFocus();
-                    return true;
+                    ) {
+                      uiGridCtrl.cellNav.clearFocus();
+                      return true;
+                    }
+                    // Tab on bottom-right cell should exit cellnav on render container
+                    else if (
+                      direction === uiGridCellNavConstants.direction.RIGHT &&
+                        // New col is first col (i.e. wrap around)
+                      rowCol.col === focusableCols[0] &&
+                        // Staying on same row, which means we're at first row
+                      rowCol.row === lastRowCol.row &&
+                      evt.keyCode === uiGridConstants.keymap.TAB && !evt.shiftKey
+                    ) {
+                      uiGridCtrl.cellNav.clearFocus();
+                      return true;
+                    }
                   }
 
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
