@@ -26,6 +26,9 @@
   ],
   "author": "UI Grid Team",
   "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  },
   "devDependencies": {
     "bower": "^1.3.8",
     "canonical-path": "0.0.2",
