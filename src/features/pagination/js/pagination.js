@@ -343,10 +343,14 @@
         scope: true,
         require: '^uiGrid',
         link: function ($scope, $elm, $attr, uiGridCtrl) {
+          var defaultFocusElementSelector = '.ui-grid-pager-control-input';
+          $scope.aria = i18nService.getSafeText('pagination.aria'); //Returns an object with all of the aria labels
+
           $scope.paginationApi = uiGridCtrl.grid.api.pagination;
           $scope.sizesLabel = i18nService.getSafeText('pagination.sizes');
           $scope.totalItemsLabel = i18nService.getSafeText('pagination.totalItems');
           $scope.paginationOf = i18nService.getSafeText('pagination.of');
+          $scope.paginationThrough = i18nService.getSafeText('pagination.through');
 
           var options = uiGridCtrl.grid.options;
 
@@ -414,6 +418,34 @@
           $scope.cantPageBackward = function () {
             return options.paginationCurrentPage <= 1;
           };
+
+          var focusToInputIf = function(condition){
+            if (condition){
+              gridUtil.focus.bySelector($elm, defaultFocusElementSelector);
+            }
+          };
+
+          //Takes care of setting focus to the middle element when focus is lost
+          $scope.pageFirstPageClick = function () {
+            $scope.paginationApi.seek(1);
+            focusToInputIf($scope.cantPageBackward());
+          };
+
+          $scope.pagePreviousPageClick = function () {
+            $scope.paginationApi.previousPage();
+            focusToInputIf($scope.cantPageBackward());
+          };
+
+          $scope.pageNextPageClick = function () {
+            $scope.paginationApi.nextPage();
+            focusToInputIf($scope.cantPageForward());
+          };
+
+          $scope.pageLastPageClick = function () {
+            $scope.paginationApi.seek($scope.paginationApi.getTotalPages());
+            focusToInputIf($scope.cantPageToLast());
+          };
+
         }
       };
     }
