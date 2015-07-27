@@ -86,8 +86,16 @@ describe('ui.grid.edit GridCellDirective - with dropdown', function () {
       expect(element.find('select')).toBeDefined();
 
       $timeout(function () {
-        // val is the selected option, which is option 0
-        expect(element.find('select').val()).toBe('0');
+        // val is the selected option, which is option 0 or 'number:1' in angular ^1.4
+        /*
+         * Why the version dependent test?
+         * See: https://github.com/angular/angular.js/blob/master/CHANGELOG.md#breaking-changes-7
+         */
+        if ( angular.version.major === 1 && angular.version.minor < 4) { // If below vesrion 1.4
+          expect(element.find('select').val()).toBe('0');
+        } else { // If above vesrion 1.4
+          expect(element.find('select').val()).toBe('number:1');
+        }
       });
       $timeout.flush();
     });
