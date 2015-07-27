@@ -446,7 +446,7 @@
         }
 
         if (typeof(col.grouping) !== 'undefined' && typeof(col.grouping.groupPriority) !== 'undefined' && col.grouping.groupPriority >= 0){
-          col.suppressRemoveSort = true;
+          col.enableRemoveSort = false;
         }
 
         var groupColumn = {
@@ -866,7 +866,7 @@
         groupArray.sort(function(a, b){ return a.grouping.groupPriority - b.grouping.groupPriority; });
         groupArray.forEach( function(column, index){
           column.grouping.groupPriority = index;
-          column.suppressRemoveSort = true;
+          column.enableRemoveSort = false;
           if ( typeof(column.sort) === 'undefined'){
             column.sort = {};
           }
@@ -877,7 +877,7 @@
         sortArray.sort(function(a, b){ return a.sort.priority - b.sort.priority; });
         sortArray.forEach( function(column, index){
           column.sort.priority = i;
-          column.suppressRemoveSort = column.colDef.suppressRemoveSort;
+          column.enableRemoveSort = column.colDef.enableRemoveSort;
           i++;
         });
       },

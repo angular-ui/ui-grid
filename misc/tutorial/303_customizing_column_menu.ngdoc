@@ -43,7 +43,7 @@ See the example below for usage.
         enableSorting: true,
         columnDefs: [
           { field: 'name', enableColumnMenu: false },
-          { field: 'gender', enableHiding: false, suppressRemoveSort: true, sort: { direction: uiGridConstants.ASC } },
+          { field: 'gender', enableHiding: false, enableRemoveSort: false, sort: { direction: uiGridConstants.ASC } },
           {
             field: 'company',
             menuItems: [

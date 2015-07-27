@@ -42,7 +42,7 @@ Grouping leverages the sort functionality, allowing a user to change the sort or
 functionality and have the resulting list grouped.  A column(s) that is marked as being grouped is always
 moved to the high order of the sort priority, as the data must be sorted to permit grouping.
 
-Any grouped column has `suppressRemoveSort` set, when a column is ungrouped then `suppressRemoveSort`
+Any grouped column has `enableRemoveSort` set, when a column is ungrouped then `enableRemoveSort`
 is returned to the value in the columnDef.
 
 Grouping and aggregation should work cleanly with filtering - it should group and aggregate only the

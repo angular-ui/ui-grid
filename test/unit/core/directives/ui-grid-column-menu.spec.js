@@ -131,17 +131,23 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
   });
   
   
-  describe('suppressRemoveSort: ', function () {
-    it('everything present: is suppressed', function () {
-      $scope.col = { uid: 'ui-grid-01x', suppressRemoveSort: true };
+  describe('enableRemoveSort: ', function () {
+    it('set to false: is suppressed', function () {
+      $scope.col = { uid: 'ui-grid-01x', enableRemoveSort: false };
       
-      expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( true );
+      expect( uiGridColumnMenuService.enableRemoveSort( $scope ) ).toEqual( false );
+    });  
+
+    it('set to true: is not suppressed', function () {
+      $scope.col = { uid: 'ui-grid-01x', enableRemoveSort: true };
+      
+      expect( uiGridColumnMenuService.enableRemoveSort( $scope ) ).toEqual( true );
     });  
 
     it('not set: is not suppressed', function () {
       $scope.col = { uid: 'ui-grid-01x' };
       
-      expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( false );
+      expect( uiGridColumnMenuService.enableRemoveSort( $scope ) ).toEqual( true );
     });  
   });
   
