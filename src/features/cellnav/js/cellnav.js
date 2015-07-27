@@ -59,7 +59,15 @@
 
       /** returns focusable columns of all containers */
       UiGridCellNav.prototype.getFocusableCols = function () {
-        var allColumns = this.leftColumns.concat(this.columns, this.rightColumns);
+        // the decorateRenderContainers function creates new UiGridCellNav so we have to get the renderContainers from the grid scope so we can know about the left and right pinned columns
+        var renderContainers = this.bodyContainer.grid.renderContainers;
+        // columns pinned left
+        var leftColumns = renderContainers.hasOwnProperty('left') ? renderContainers.left.visibleColumnCache : [];
+        // unpinned columns 
+        var columns = renderContainers.hasOwnProperty('body') ? renderContainers.body.visibleColumnCache : [];
+        // columns pinned right
+        var rightColumns = renderContainers.hasOwnProperty('right') ? renderContainers.right.visibleColumnCache : [];
+        var allColumns = leftColumns.concat(columns, rightColumns);
 
         return allColumns.filter(function (col) {
           return col.colDef.allowCellFocus;
