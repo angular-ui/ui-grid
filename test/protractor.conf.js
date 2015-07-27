@@ -30,5 +30,13 @@ exports.config = {
 
     // Don't show the stack trace, it's mostly useless
     includeStackTrace: false
-  }
+  },
+
+  plugins: [{
+    chromeA11YDevTools: {
+      // Since the site has some serious element contrast issues this is needed.
+      treatWarningsAsFailures: false
+    },
+    path: '../node_modules/protractor/plugins/accessibility'
+  }]
 };

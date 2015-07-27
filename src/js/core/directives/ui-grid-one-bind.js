@@ -199,7 +199,43 @@
             <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-labelledby-grid="anId" aria-labelledby-Grid="[grid.id]-gridID32"></div>
          </pre>
        */
-      {tag: 'Labelledby', directiveName:'LabelledbyGrid', appendGridId:true, method: 'attr', aria:true}],
+      {tag: 'Labelledby', directiveName:'LabelledbyGrid', appendGridId:true, method: 'attr', aria:true},
+      /**
+       * @ngdoc directive
+       * @name ui.grid.directive:uiGridOneBindAriaDescribedby
+       * @element ANY
+       * @restrict A
+       * @param {String} uiGridOneBindAriaDescribedby The angular string you want to bind. Does not support interpolation. Don't use <code>{{scopeElt}}</code> instead use <code>scopeElt</code>.
+       * @description One time binding for the aria-describedby dom tag. For more information see {@link ui.grid.directive:uiGridOneBind}.
+       *<br/>
+       * <pre>
+            <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby="anId"></div>
+         </pre>
+       * Will become:
+       * <pre>
+            <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby="anId" aria-describedby="gridID32"></div>
+         </pre>
+       */
+      {tag: 'Describedby', method: 'attr', aria:true},
+      /**
+       * @ngdoc directive
+       * @name ui.grid.directive:uiGridOneBindAriaDescribedbyGrid
+       * @element ANY
+       * @restrict A
+       * @param {String} uiGridOneBindAriaDescribedbyGrid The angular string you want to bind. Does not support interpolation. Don't use <code>{{scopeElt}}</code> instead use <code>scopeElt</code>.
+       * @description One time binding for the aria-labelledby dom tag. For more information see {@link ui.grid.directive:uiGridOneBind}.
+       * Works somewhat like {@link ui.grid.directive:uiGridOneBindIdGrid} however this one supports a list of ids (seperated by a space) and will dynamically add the
+       * grid id to each one.
+       *<br/>
+       * <pre>
+            <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby-grid="anId"></div>
+         </pre>
+       * Will become ([grid.id] will be replaced by the actual grid id):
+       * <pre>
+            <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby-grid="anId" aria-describedby="[grid.id]-gridID32"></div>
+         </pre>
+       */
+      {tag: 'Describedby', directiveName:'DescribedbyGrid', appendGridId:true, method: 'attr', aria:true}],
     function(v){
 
       var baseDirectiveName = 'uiGridOneBind';
