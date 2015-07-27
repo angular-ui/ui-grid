@@ -2,9 +2,9 @@
 @name Tutorial: 122 Accessibility
 @description
 
-Accessibility is often the overlooked element in web development.
-However, like making sure your content is visible on all major browsers.
-Your content must also be available to all of your users, regardless of whether they can see the screen the same way you can.
+Accessibility (or A11Y) is often the overlooked aspect of web development.
+Making sure that your content is accessible is akin to making sure your content is visible on all major browsers.
+If you don't take accessibility into account while desigining your website, your content won't be available to all of your users.
 
 Prerequisites:
 <ul>
