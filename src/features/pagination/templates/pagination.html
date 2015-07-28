@@ -17,8 +17,11 @@
         ui-grid-one-bind-aria-label="aria.pageToFirst"
         ng-click="pageFirstPageClick()"
         ng-disabled="cantPageBackward()">
-        <div class="first-triangle">
-          <div class="first-bar"></div>
+        <div
+          class="first-triangle">
+          <div
+            class="first-bar">
+          </div>
         </div>
       </button>
       <button
@@ -43,7 +46,11 @@
       <span
         class="ui-grid-pager-max-pages-number"
         ng-show="paginationApi.getTotalPages() > 0">
-        <abbr ui-grid-one-bind-title="paginationOf">/</abbr> {{ paginationApi.getTotalPages() }}
+        <abbr
+          ui-grid-one-bind-title="paginationOf">
+          /
+        </abbr>
+        {{ paginationApi.getTotalPages() }}
       </span>
       <button
         type="button"
@@ -88,11 +95,19 @@
       {{grid.options.paginationPageSize}}&nbsp;{{sizesLabel}}
     </span>
   </div>
-  <div class="ui-grid-pager-count-container">
-    <div class="ui-grid-pager-count">
-        <span ng-show="grid.options.totalItems > 0">
-            {{showingLow}} <abbr ui-grid-one-bind-title="paginationThrough">-</abbr> {{showingHigh}} {{paginationOf}} {{grid.options.totalItems}} {{totalItemsLabel}}
-        </span>
+  <div
+    class="ui-grid-pager-count-container">
+    <div
+      class="ui-grid-pager-count">
+      <span
+        ng-show="grid.options.totalItems > 0">
+        {{showingLow}}
+        <abbr
+          ui-grid-one-bind-title="paginationThrough">
+          -
+        </abbr>
+        {{showingHigh}} {{paginationOf}} {{grid.options.totalItems}} {{totalItemsLabel}}
+      </span>
     </div>
   </div>
 </div>

@@ -3,14 +3,16 @@
   ng-class="{ 'sortable': sortable }"
   ui-grid-one-bind-aria-labelledby-grid="col.uid + '-header-text ' + col.uid + '-sortdir-text'"
   aria-sort="{{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending' : (!col.sort.direction ? 'none' : 'other'))}}">
-  <!-- <div class="ui-grid-vertical-bar">&nbsp;</div> -->
   <div
     role="button"
     tabindex="0"
     class="ui-grid-cell-contents ui-grid-header-cell-primary-focus"
     col-index="renderIndex"
     title="TOOLTIP">
-    <span ui-grid-one-bind-id-grid="col.uid + '-header-text'">{{ col.displayName CUSTOM_FILTERS }}</span>
+    <span
+      ui-grid-one-bind-id-grid="col.uid + '-header-text'">
+      {{ col.displayName CUSTOM_FILTERS }}
+    </span>
 
     <span
       ui-grid-one-bind-id-grid="col.uid + '-sortdir-text'"
@@ -35,7 +37,11 @@
     ng-class="{'ui-grid-column-menu-button-last-col': isLastCol}"
     ui-grid-one-bind-aria-label="i18n.headerCell.aria.columnMenuButtonLabel"
     aria-haspopup="true">
-    <i class="ui-grid-icon-angle-down" aria-hidden="true">&nbsp;</i>
+    <i
+      class="ui-grid-icon-angle-down"
+      aria-hidden="true">
+      &nbsp;
+    </i>
   </div>
 
   <div ui-grid-filter></div>
