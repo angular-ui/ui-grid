@@ -296,8 +296,9 @@
                  * </pre>
                  * @param {object} newRowCol new position
                  * @param {object} oldRowCol old position
+                 * @param {boolean} suppressFocus to prevent a navigate from setting focus
                  */
-                navigate: function (newRowCol, oldRowCol) {},
+                navigate: function (newRowCol, oldRowCol, suppressFocus) {},
                 /**
                  * @ngdoc event
                  * @name viewPortKeyDown
@@ -326,6 +327,20 @@
                  */
                 scrollToFocus: function (rowEntity, colDef) {
                   return service.scrollToFocus(grid, rowEntity, colDef);
+                },
+
+                /**
+                 * @ngdoc function
+                 * @name scrollToHighlight
+                 * @methodOf  ui.grid.cellNav.api:PublicApi
+                 * @description brings the specified row and column into view, and sets highlight
+                 * to that cell, focus is prevented
+                 * @param {object} rowEntity gridOptions.data[] array instance to make visible and set focus
+                 * @param {object} colDef to make visible and set focus
+                 * @returns {promise} a promise that is resolved after any scrolling is finished
+                 */
+                scrollToHighlight: function (rowEntity, colDef) {
+                  return service.scrollToHighlight(grid, rowEntity, colDef);
                 },
 
                 /**
@@ -532,6 +547,37 @@
 
         },
 
+        /**
+         * @ngdoc method
+         * @methodOf ui.grid.cellNav.service:uiGridCellNavService
+         * @name scrollToHighlight
+         * @description Scroll the grid such that the specified
+         * row and column is in view, and set highlight to the cell in that row and column
+         * @param {Grid} grid the grid you'd like to act upon, usually available
+         * from gridApi.grid
+         * @param {object} rowEntity gridOptions.data[] array instance to make visible and set highlight to
+         * @param {object} colDef to make visible and set highlight to
+         * @returns {promise} a promise that is resolved after any scrolling is finished
+         */
+        scrollToHighlight: function (grid, rowEntity, colDef) {
+          var gridRow = null, gridCol = null;
+
+          if (typeof(rowEntity) !== 'undefined' && rowEntity !== null) {
+            gridRow = grid.getRow(rowEntity);
+          }
+
+          if (typeof(colDef) !== 'undefined' && colDef !== null) {
+            gridCol = grid.getColumn(colDef.name ? colDef.name : colDef.field);
+          }
+          return grid.api.core.scrollToIfNecessary(gridRow, gridCol).then(function () {
+            var rowCol = { row: gridRow, col: gridCol };
+
+            // Broadcast the navigation
+            if (gridRow !== null && gridCol !== null) {
+              grid.cellNav.broadcastCellNav(rowCol, null, true);
+            }
+          });
+        },
 
         /**
          * @ngdoc method
@@ -633,9 +679,9 @@
                 return undefined;
               };
 
-              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown) {
+              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown, highlightOnly) {
                 modifierDown = !(modifierDown === undefined || !modifierDown);
-                uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown);
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown, highlightOnly);
                 _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol, modifierDown);
               };
 
@@ -643,7 +689,7 @@
                 _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, { eventType: uiGridCellNavConstants.EVENT_TYPE.CLEAR });
               };
 
-              uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown) {
+              uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown, highlightOnly) {
                 modifierDown = !(modifierDown === undefined || !modifierDown);
 
                 var row = rowCol.row,
@@ -654,7 +700,8 @@
                 if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
                   var newRowCol = new RowCol(row, col);
 
-                  grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
+                  var suppressFocus = highlightOnly ? true : false;
+                  grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol, suppressFocus);
                   grid.cellNav.lastRowCol = newRowCol;
                   if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown) {
                     grid.cellNav.focusedCells.push(rowCol);
@@ -913,9 +960,11 @@
 
               });
 
-              grid.api.cellNav.on.navigate($scope, function () {
-                //focus again because it can be lost
-                 uiGridCtrl.focus();
+              grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, suppressFocus) {
+                if (!suppressFocus) {
+                  //focus again because it can be lost
+                  uiGridCtrl.focus();
+                }
               });
 
             }
