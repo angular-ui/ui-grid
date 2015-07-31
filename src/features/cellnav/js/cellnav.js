@@ -925,13 +925,15 @@
 
               var grid = uiGridCtrl.grid;
 
+              //run each time a render container is created
+              uiGridCellNavService.decorateRenderContainers(grid);
+
               // focusser only created for body
               if (containerId !== 'body') {
                 return;
               }
 
-              // Needs to run last after all renderContainers are built
-              uiGridCellNavService.decorateRenderContainers(grid);
+
 
               if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells){
                 $elm.attr('aria-multiselectable', true);
