@@ -1,17 +1,23 @@
-describe('ui-grid-column-menu uiGridColumnMenuService', function () {
-  var uiGridColumnMenuService;
+describe('ui-grid-menu-button uiGridGridMenuService', function () {
+  var uiGridGridMenuService;
   var gridClassFactory;
-  var grid; 
+  var grid;
   var $rootScope;
   var $scope;
-  
+  var gridUtil;
+  var $q;
+  var i18nService;
+
   beforeEach(module('ui.grid'));
 
-  beforeEach( inject(function (_uiGridColumnMenuService_, _gridClassFactory_, _$rootScope_) {
-    uiGridColumnMenuService = _uiGridColumnMenuService_;
+  beforeEach( inject(function (_uiGridGridMenuService_, _gridClassFactory_, _$rootScope_, _gridUtil_, _$q_, _i18nService_) {
+    uiGridGridMenuService = _uiGridGridMenuService_;
     gridClassFactory = _gridClassFactory_;
     $rootScope = _$rootScope_;
     $scope = $rootScope.$new();
+    gridUtil = _gridUtil_;
+    $q = _$q_;
+    i18nService = _i18nService_;
 
     grid = gridClassFactory.createGrid( { id: 1234 });
     grid.options.columnDefs = [
@@ -26,7 +32,7 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
       {col1: '3_1', col2: '3_2', col3: '3_3', col4: '3_4'},
       {col1: '4_1', col2: '4_2', col3: '4_3', col4: '4_4'}
     ];
-    
+
     grid.buildColumns();
     grid.modifyRows(grid.options.data);
     grid.setVisibleRows(grid.rows);
@@ -34,129 +40,146 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
   }));
 
   describe('initialisation: ', function () {
-    it('variables set', function () {
-      var uiGridCtrlMock = { grid: grid };
-      uiGridColumnMenuService.initialize( $scope, uiGridCtrlMock );
+    it('api is registered', function () {
+      uiGridGridMenuService.initialize( $scope, grid );
 
-      expect( uiGridCtrlMock.columnMenuScope ).toEqual( $scope );      
+      expect( grid.gridMenuScope ).toEqual( $scope );
       expect( $scope.grid ).toEqual( grid );
-      expect( $scope.menuShown ).toEqual( false );
+      expect( grid.api.core.addToGridMenu ).toEqual( jasmine.any(Function) );
+      expect( grid.api.core.removeFromGridMenu ).toEqual( jasmine.any(Function) );
     });
-  }); 
+
+    it('api calls expected methods', function () {
+      spyOn( uiGridGridMenuService, 'addToGridMenu' ).andCallFake( function() {});
+      spyOn( uiGridGridMenuService, 'removeFromGridMenu' ).andCallFake( function() {});
+      uiGridGridMenuService.initialize( $scope, grid );
+
+      grid.api.core.addToGridMenu();
+      expect( uiGridGridMenuService.addToGridMenu).toHaveBeenCalled();
+
+      grid.api.core.removeFromGridMenu();
+      expect( uiGridGridMenuService.removeFromGridMenu).toHaveBeenCalled();
+    });
+  });
 
 
-  describe('setColMenuItemWatch: ', function () {
-    it('sets the watch, col.menuItems added and noticed by the watch', function () {
-      $scope.col = { uid: 'ui-grid-01x' };
-      $scope.defaultMenuItems = [ 
-        { title: 'a menu item' } 
-      ];
-      
-      uiGridColumnMenuService.setColMenuItemWatch( $scope );
-      
-      expect( $scope.menuItems ).toEqual( undefined );
-      
-      $scope.col.menuItems = [ 
-        { title: 'a different menu item'} 
-      ];
-      
+  describe('addToGridMenu and removeFromGridMenu: ', function () {
+    beforeEach( function() {
+      uiGridGridMenuService.initialize( $scope, grid );
+    });
+
+    it('error if no array passed', function () {
+      spyOn(gridUtil, 'logError').andCallFake( function() {});
+
+      uiGridGridMenuService.addToGridMenu( grid, grid );
+
+      expect( gridUtil.logError ).toHaveBeenCalled();
+      expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [] );
+    });
+
+    it('adds array to registered menu items, removes those items again', function () {
+      var menuItems = [ { id: 'customItem1', title: 'x' }, { id: 'customItem2', title: 'y' } ];
+      uiGridGridMenuService.addToGridMenu( grid, menuItems );
+
+      expect( grid.gridMenuScope.registeredMenuItems ).toEqual( menuItems, 'both menu items present' );
+
+      uiGridGridMenuService.removeFromGridMenu( grid, 'customItem1' );
+      expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [{ id: 'customItem2', title: 'y' }], 'only one menu item present' );
+
+      // no error when remove item that is not present
+      uiGridGridMenuService.removeFromGridMenu( grid, 'customItem1' );
+      expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [{ id: 'customItem2', title: 'y' }], 'only one menu item present' );
+
+      uiGridGridMenuService.removeFromGridMenu( grid, 'customItem2' );
+      expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [], 'no menu items present' );
+    });
+  });
+
+
+  describe('getMenuItems: ', function () {
+    beforeEach( function() {
+      uiGridGridMenuService.initialize( $scope, grid );
+    });
+
+    it('Clear all Filter in any config', function () {
+      grid.options.gridMenuShowHideColumns = false;
+
+      var menuItems = uiGridGridMenuService.getMenuItems( $scope );
+
+      expect( menuItems ).toNotEqual([] );
+    });
+
+    it('grab bag of stuff', function () {
+      grid.options.gridMenuCustomItems = [ { title: 'z', order: 11 }, { title: 'a', order: 12 }];
+      grid.options.gridMenuTitleFilter = function( title ) {return 'fn_' + title;};
+      var registeredMenuItems = [ { id: 'customItem1', title: 'x', order: 1 }, { id: 'customItem2', title: 'y', order: 2 } ];
+      grid.options.columnDefs[1].enableHiding = false;
+
+      uiGridGridMenuService.addToGridMenu( grid, registeredMenuItems );
+
+      var menuItems = uiGridGridMenuService.getMenuItems( $scope );
+
+      expect( menuItems.length ).toEqual(12, 'Should be 12 items, 2 from customItems, 2 from registered, 1 columns header, and 2x3 columns that allow hiding');
+      expect( menuItems[0].title ).toEqual('x', 'Menu item 0 should be from register');
+      expect( menuItems[1].title ).toEqual('y', 'Menu item 1 should be from register');
+      expect( menuItems[2].title ).toEqual('z', 'Menu item 2 should be from customItem');
+      expect( menuItems[3].title ).toEqual('a', 'Menu item 3 should be from customItem');
+
+      expect( menuItems[4].title ).toEqual('Clear all filters', 'Menu item 4 should be header');
+      expect( menuItems[5].title ).toEqual('Columns:', 'Menu item 4 should be header');
+      expect( menuItems[6].title ).toEqual('fn_col1', 'Menu item 5 should be col1');
+      expect( menuItems[7].title ).toEqual('fn_col1', 'Menu item 6 should be col1');
+      expect( menuItems[8].title ).toEqual('fn_col3', 'Menu item 7 should be col3');
+      expect( menuItems[9].title ).toEqual('fn_col3', 'Menu item 8 should be col3');
+      expect( menuItems[10].title ).toEqual('fn_col4', 'Menu item 9 should be col4');
+      expect( menuItems[11].title ).toEqual('fn_col4', 'Menu item 10 should be col4');
+
+      expect( menuItems[6].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
+      expect( menuItems[7].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
+      expect( menuItems[8].context.gridCol ).toEqual( grid.columns[2], 'column hide/show menus should have gridCol');
+      expect( menuItems[9].context.gridCol ).toEqual( grid.columns[2], 'column hide/show menus should have gridCol');
+      expect( menuItems[10].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
+      expect( menuItems[11].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
+
+    });
+
+    it('gridMenuTitleFilter returns a promise', function () {
+      var promises = [];
+      grid.options.gridMenuTitleFilter = function( title ) {
+        var deferred = $q.defer();
+        promises.push(deferred);
+        return deferred.promise;
+      };
+
+      var menuItems = uiGridGridMenuService.getMenuItems( $scope );
+
+      expect( menuItems.length ).toEqual(10, 'Should be 10 items, 1 columns header, and 2x4 columns that allow hiding');
+      expect( menuItems[1].title ).toEqual('Columns:', 'Menu item 0 should be header');
+      expect( menuItems[2].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[3].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[4].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[5].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[6].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[7].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[8].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[9].title ).toEqual('', 'Promise not resolved');
+
+      promises.forEach( function( promise, index ) {
+        promise.resolve('resolve_' + index);
+      });
       $scope.$digest();
-      
-      expect( $scope.menuItems ).toEqual( [
-        { title: 'a menu item' }, 
-        { title: 'a different menu item', context: jasmine.any(Object) } 
-      ] );
-    });
-  }); 
 
-
-  describe('sortable: ', function () {
-    it('everything present: sortable', function () {
-      $scope.col = { uid: 'ui-grid-01x', enableSorting: true };
-      $scope.grid = {options: { enableSorting: true } };
-      
-      expect( uiGridColumnMenuService.sortable( $scope ) ).toEqual( true );
-    });
-
-    it('grid.options missing', function () {
-      $scope.col = { uid: 'ui-grid-01x', enableSorting: true };
-      $scope.grid = {options: { } };
-      
-      expect( uiGridColumnMenuService.sortable( $scope ) ).toEqual( false );
-    });
-
-    it('col missing', function () {
-      $scope.grid = {options: { enableSorting: true } };
-      
-      expect( uiGridColumnMenuService.sortable( $scope ) ).toEqual( false );
-    });
-
-    it('col enable sorting false', function () {
-      $scope.col = { uid: 'ui-grid-01x', enableSorting: false };
-      $scope.grid = {options: { enableSorting: true } };
-      
-      expect( uiGridColumnMenuService.sortable( $scope ) ).toEqual( false );
-    });
-  }); 
-
-
-  describe('isActiveSort: ', function () {
-    it('everything present: is active', function () {
-      $scope.col = { uid: 'ui-grid-01x', sort: { direction: 'asc'} };
-      
-      expect( uiGridColumnMenuService.isActiveSort( $scope, 'asc' ) ).toEqual( true );
-    });
-
-    it('everything present: is not active', function () {
-      $scope.col = { uid: 'ui-grid-01x', sort: { direction: 'asc'} };
-      
-      expect( uiGridColumnMenuService.isActiveSort( $scope, 'desc' ) ).toEqual( false );
-    });
-
-    it('direction missing', function () {
-      $scope.col = { uid: 'ui-grid-01x', sort: { } };
-      
-      expect( uiGridColumnMenuService.isActiveSort( $scope, 'desc' ) ).toEqual( false );
-    });
-
-    it('sort missing', function () {
-      $scope.col = { uid: 'ui-grid-01x' };
-      
-      expect( uiGridColumnMenuService.isActiveSort( $scope, 'desc' ) ).toEqual( false );
-    });
-
-    it('col missing', function () {
-      expect( uiGridColumnMenuService.isActiveSort( $scope, 'desc' ) ).toEqual( false );
+      expect( menuItems.length ).toEqual(10, 'Should be 10 items, 1 columns header, and 2x4 columns that allow hiding');
+      expect( menuItems[1].title ).toEqual('Columns:', 'Menu item 0 should be header');
+      expect( menuItems[2].title ).toEqual('resolve_0', 'Promise now resolved');
+      expect( menuItems[3].title ).toEqual('resolve_1', 'Promise now resolved');
+      expect( menuItems[4].title ).toEqual('resolve_2', 'Promise now resolved');
+      expect( menuItems[5].title ).toEqual('resolve_3', 'Promise now resolved');
+      expect( menuItems[6].title ).toEqual('resolve_4', 'Promise now resolved');
+      expect( menuItems[7].title ).toEqual('resolve_5', 'Promise now resolved');
+      expect( menuItems[8].title ).toEqual('resolve_6', 'Promise now resolved');
+      expect( menuItems[9].title ).toEqual('resolve_7', 'Promise now resolved');
     });
   });
-  
-  
-  describe('suppressRemoveSort: ', function () {
-    it('everything present: is suppressed', function () {
-      $scope.col = { uid: 'ui-grid-01x', suppressRemoveSort: true };
-      
-      expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( true );
-    });  
 
-    it('not set: is not suppressed', function () {
-      $scope.col = { uid: 'ui-grid-01x' };
-      
-      expect( uiGridColumnMenuService.suppressRemoveSort( $scope ) ).toEqual( false );
-    });  
-  });
-  
-
-  describe('hideable: ', function () {
-    it('everything present: is not hideable', function () {
-      $scope.col = { uid: 'ui-grid-01x', colDef: { enableHiding: false } };
-      
-      expect( uiGridColumnMenuService.hideable( $scope ) ).toEqual( false );
-    });  
-
-    it('colDef missing: is  hideable', function () {
-      $scope.col = { uid: 'ui-grid-01x' };
-      
-      expect( uiGridColumnMenuService.hideable( $scope ) ).toEqual( true );
-    });  
-  });
 });
