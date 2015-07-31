@@ -1125,11 +1125,28 @@
            * Since the focus event doesn't include key press information we can't use it
            * as our primary source of the event.
            */
-          $elm.on('mousedown', function(evt) {
+          $elm.on('mousedown', preventMouseDown);
+
+          //turn on and off for edit events
+          if (uiGridCtrl.grid.api.edit) {
+            uiGridCtrl.grid.api.edit.on.beginCellEdit($scope, function () {
+              $elm.off('mousedown', preventMouseDown);
+            });
+
+            uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
+              $elm.on('mousedown', preventMouseDown);
+            });
+
+            uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
+              $elm.on('mousedown', preventMouseDown);
+            });
+          }
+
+          function preventMouseDown(evt) {
             //Prevents the foucus event from firing if the click event is already going to fire.
             //If both events fire it will cause bouncing behavior.
             evt.preventDefault();
-          });
+          }
 
           //You can only focus on elements with a tabindex value
           $elm.on('focus', function (evt) {
