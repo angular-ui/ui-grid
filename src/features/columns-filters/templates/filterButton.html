@@ -1,0 +1,15 @@
+  <div
+    role="button"
+    tabindex="0"
+    class="ui-grid-column-filter-button"
+    ng-click="toggleFilter($event)"
+    ng-class="{'ui-grid-column-filter-button-last-col': isLastCol}"
+    ui-grid-one-bind-id-grid="col.uid + '-filter-button'"
+    ui-grid-one-bind-aria-label="i18n.headerCell.aria.columnFilterButtonLabel"
+    aria-haspopup="true">
+    <i
+      class="ui-grid-icon-filter"
+      aria-hidden="true">
+      &nbsp;
+    </i>
+  </div>
