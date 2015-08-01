@@ -1,0 +1,41 @@
+<select 
+    ng-model="col.colDef.columnFilter.operators[0]" 
+    class="form-control">
+  <option
+      value="{{key}}"
+      ng-repeat="(key, operator) in operators">
+        {{operator}}
+      </option>
+</select>
+
+<input 
+    class="dtl" 
+    type={{col.colDef.columnFilter.dateType}} 
+    datepicker-popup="dd/MM/yyyy HH:mm:ss" 
+    ng-model="col.colDef.columnFilter.terms[0]">
+{{col.colDef.columnFilter.terms[0]}}
+<select 
+    ng-model="col.colDef.columnFilter.logics[0]" 
+    class="form-control">
+  <option
+      value="{{key}}"
+      ng-repeat="(key, logic) in logics">
+        {{logic}}
+      </option>
+</select>
+
+<select 
+    ng-model="col.colDef.columnFilter.operators[1]" 
+    class="form-control">
+  <option
+      value="{{key}}"
+      ng-repeat="(key, operator) in operators">
+        {{operator}}
+      </option>
+</select>
+
+<input  
+    class="dtl" 
+    type={{col.colDef.columnFilter.dateType}}  
+    datepicker-popup="dd/MM/yyyy HH:mm:ss"
+    ng-model="col.colDef.columnFilter.terms[1]">
