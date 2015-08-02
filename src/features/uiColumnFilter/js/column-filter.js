@@ -261,11 +261,17 @@
          * @param {column} col -  the column that is now being filtered
          */
         clear: function (col) {
-          if (angular.isUndefined(col.filters[0].term) || !angular.isArray(col.filters[0].term)) {
+          if (angular.isUndefined(col.filters[0].term)) {
             return;
           }
 
-          col.filters[0].term.length = 0;
+          if (!angular.isArray(col.filters[0].term)){
+            col.filters[0].term = [];
+          }
+          else {
+            col.filters[0].term.length = 0;
+          }
+          
           col.filters[0].condition = undefined;
           col.grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
         }
