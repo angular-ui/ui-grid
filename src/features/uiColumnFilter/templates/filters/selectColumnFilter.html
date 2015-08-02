@@ -1,5 +1,5 @@
-<select 
-    ng-model="col.colDef.columnFilter.operators[0]" 
+<select
+    ng-model="col.colDef.columnFilter.operators[0]"
     class="form-control">
   <option
       value="{{key}}"
@@ -8,11 +8,10 @@
       </option>
 </select>
 
-<select 
+<select
     placeholder="Select"
     ng-model="col.colDef.columnFilter.terms"
-    multiple 
+    multiple
     class="form-control"
     ng-options="option.value as option.label for option in selectOptions">
 </select>
-    
