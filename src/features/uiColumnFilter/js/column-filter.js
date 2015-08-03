@@ -271,7 +271,7 @@
           else {
             col.filters[0].term.length = 0;
           }
-          
+
           col.filters[0].condition = undefined;
           col.grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
         }
@@ -306,12 +306,26 @@
    *
    *  @description Extanding the uiGridFilter directive to prepare the column filter
    */
-  module.directive('uiGridFilter', ['uiGridColumnsFiltersService', 'uiGridColumnsFiltersConstants', '$templateCache', '$compile',
-    function (uiGridColumnsFiltersService, uiGridColumnsFiltersConstants, $templateCache, $compile) {
+  module.directive('uiGridFilter', ['uiGridColumnsFiltersService', 'uiGridColumnsFiltersConstants', '$templateCache', '$compile', 'uiGridConstants',
+    function (uiGridColumnsFiltersService, uiGridColumnsFiltersConstants, $templateCache, $compile, uiGridConstants) {
       return {
         priority: 500,
         scope: false,
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
+          
+          function dataChangeCallback(){
+                // now wait for the rows to be updated with the new data
+            var watchForRows = $scope.$watch('col.grid.rows.length', function (newRowsLength) {
+              // make sure we have updated...
+              if (newRowsLength !== $scope.col.grid.options.data.length) {
+                return;
+              }
+              // set the options
+              $scope.selectOptions = $scope.setSelectOptions($scope.selectOptions, currentColumn);
+              // remove the listener
+              watchForRows();
+            });
+          }
           //TODO::need to decide if we work with the filter API when it is sufficient and only expand it...
           var currentColumn = $scope.col; // cache current column
 
@@ -352,57 +366,43 @@
 
             if (angular.isUndefined($scope.selectOptions)) {
               // if we have select options, it means we have definitions set and we use the static def
-              $scope.$watchCollection('col.grid.options.data', function (newValue, oldValue) {
-                // watch for changes in the data
-                if (angular.isUndefined(newValue) || !newValue.length) {
-                  return;
+              $scope.setSelectOptions = function (items, col) {
+                // if we have static definitions, do nothing
+                if (angular.isDefined(col.colDef.filter) && angular.isDefined(col.colDef.filter.selectOptions) ||
+                  angular.isDefined(col.colDef.columnFilter) && angular.isDefined(col.colDef.columnFilter.selectOptions)) {
+                  return items;
                 }
-
-                // now wait for the rows to be updated with the new data
-                var watchForRows = $scope.$watch('col.grid.rows.length', function (newRowsLength) {
-                  // make sure we have updated...
-                  if (newRowsLength !== newValue.length) {
-                    return;
+  
+                // if we don't create a dynamic selectOptions array
+                var filteredItems = [];
+                var tmpIDs = [];
+                var tmpItem = {};
+                var rows = col.grid.rows;
+  
+                // for every row in the grid
+                for (var i = 0; i < rows.length; i++) {
+                  // get the label and the value
+                  tmpItem.label = col.grid.getCellDisplayValue(rows[i], col);
+                  tmpItem.value = col.grid.getCellValue(rows[i], col);
+  
+                  // make sure we take only unique values
+                  if (tmpIDs.indexOf(tmpItem.value) === -1) {
+                    tmpIDs.push(tmpItem.value);
+                    filteredItems.push(angular.copy(tmpItem));
                   }
-                  // set the options
-                  $scope.selectOptions = $scope.setSelectOptions($scope.selectOptions, currentColumn);
-                  // remove the listener
-                  watchForRows();
-                });
-              });
-            }
-
-            $scope.setSelectOptions = function (items, col) {
-              // if we have static definitions, do nothing
-              if (angular.isDefined(col.colDef.filter) && angular.isDefined(col.colDef.filter.selectOptions) ||
-                angular.isDefined(col.colDef.columnFilter) && angular.isDefined(col.colDef.columnFilter.selectOptions)) {
-                return items;
-              }
-
-              // if we don't create a dynamic selectOptions array
-              var filteredItems = [];
-              var tmpIDs = [];
-              var tmpItem = {};
-              var rows = col.grid.rows;
-
-              // for every row in the grid
-              for (var i = 0; i < rows.length; i++) {
-                // get the label and the value
-                tmpItem.label = col.grid.getCellDisplayValue(rows[i], col);
-                tmpItem.value = col.grid.getCellValue(rows[i], col);
-
-                // make sure we take only unique values
-                if (tmpIDs.indexOf(tmpItem.value) === -1) {
-                  tmpIDs.push(tmpItem.value);
-                  filteredItems.push(angular.copy(tmpItem));
+  
                 }
-
-              }
-
-              // insert the items into the selectOptions array
-              items = filteredItems;
-              return items;
-            };
+  
+                // insert the items into the selectOptions array
+                items = filteredItems;
+                return items;
+              };
+            
+              $scope.selectOptions = $scope.setSelectOptions($scope.selectOptions, currentColumn);
+              
+              currentColumn.grid.registerDataChangeCallback(dataChangeCallback, [uiGridConstants.dataChange.ALL]);
+              
+            }
           }
 
           $scope.filter = uiGridColumnsFiltersService.filter; // set the filtering function in the scope
