@@ -485,9 +485,10 @@ angular.module('ui.grid')
     var columnCache = self.visibleColumnCache;
     var maxColumnIndex = columnCache.length - minCols;
 
-    // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
+    // Calculate the scroll percentage according to the scrollLeft location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollLeft) {
-      scrollPercentage = scrollLeft / self.getCanvasWidth();
+      var horizScrollLength = (self.getCanvasWidth() - self.getViewportWidth());
+      scrollPercentage = scrollLeft / horizScrollLength;
     }
 
     var colIndex = Math.ceil(Math.min(maxColumnIndex, maxColumnIndex * scrollPercentage));
