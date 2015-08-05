@@ -878,6 +878,9 @@
                     if ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav)) {
                       $elm[0].select();
                     }
+                    else {
+                      $elm[0].setSelectionRange($elm[0].value.length, $elm[0].value.length);
+                    }
                   });
 
                   //set the keystroke that started the edit event
