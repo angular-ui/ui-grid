@@ -879,7 +879,15 @@
                       $elm[0].select();
                     }
                     else {
-                      $elm[0].setSelectionRange($elm[0].value.length, $elm[0].value.length);
+                      //some browsers (Chrome) stupidly, imo, support the w3 standard that number, email, ...
+                      //fields should not allow setSelectionRange.  We ignore the error for those browsers
+                      //https://www.w3.org/Bugs/Public/show_bug.cgi?id=24796
+                      try {
+                        $elm[0].setSelectionRange($elm[0].value.length, $elm[0].value.length);
+                      }
+                      catch (ex) {
+                        //ignore
+                      }
                     }
                   });
 
