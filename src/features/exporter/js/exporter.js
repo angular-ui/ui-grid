@@ -355,6 +355,77 @@
           gridOptions.exporterPdfMaxGridWidth = gridOptions.exporterPdfMaxGridWidth ? gridOptions.exporterPdfMaxGridWidth : 720;
           /**
            * @ngdoc object
+           * @name exporterPdfPrefix
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description content which will be displayed above 
+           * the exported table, but not in the header.
+           * Can be array or just one object 
+           * in a same format as pdfMake document definition's content,
+           * for example
+           * <pre>
+           *   gridOptions.exporterPdfPrefix = 'My Prefix';
+           * </pre>
+           * or 
+           * <pre>
+           *   gridOptions.exporterPdfPrefix = {
+           *     text: 'This is my prefix',
+           *     style: 'myCustomStyle'
+           *   }
+           * </pre>
+           * or 
+           * <pre>
+           *   gridOptions.exporterPdfPrefix = [
+           *     {
+           *       text: 'This is my prefix'
+           *     },
+           *     {
+           *       text: 'There is some more text in prefix',
+           *       margin: [-25,0,0,0],
+           *       style: 'myCustomStyle1'
+           *     }
+           *   ]
+           * </pre>
+           * <br/>Defaults to null
+           */
+          gridOptions.exporterPdfPrefix = gridOptions.exporterPdfPrefix ? gridOptions.exporterPdfPrefix : null;
+          /**
+           * @ngdoc object
+           * @name exporterPdfPostfix
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description content which will be displayed below
+           * the exported table, but not in the footer.
+           * Can be array or just one object
+           * in a same format as pdfMake document definition's content,
+           * for example
+           * <pre>
+           *   gridOptions.exporterPdfPostfix = 'My postfix';
+           * </pre>
+           * or 
+           * <pre>
+           *   gridOptions.exporterPdfPostfix = {
+           *     text: 'This is my postfix',
+           *     style: 'myCustomStyle'
+           *   }
+           * </pre>
+           * or 
+           * <pre>
+           *   gridOptions.exporterPdfPostfix = [
+           *     {
+           *       text: 'This is my postfix'
+           *     },
+           *     {
+           *       text: 'There is some more text in postfix',
+           *       margin: [-25,0,0,0],
+           *       style: 'myCustomStyle1'
+           *     }
+           *   ]
+           * </pre>
+           * <br/>Defaults to null
+           */
+          gridOptions.exporterPdfPostfix = gridOptions.exporterPdfPostfix ? gridOptions.exporterPdfPostfix : null;
+
+          /**
+           * @ngdoc object
            * @name exporterPdfTableLayout
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description A tableLayout in pdfMake format,
@@ -1046,18 +1117,35 @@
           var stringData = exportData.map(this.formatRowAsPdf(this));
 
           var allData = [headerColumns].concat(stringData);
+          var docDefinitionContent = [
+             {
+               style: 'tableStyle',
+                 table: {
+                   headerRows: 1,
+                   widths: headerWidths,
+                   body: allData
+               }
+             }
+           ];
+
+          if ( grid.options.exporterPdfPrefix ) {
+            var docPrefix;
+            if ( angular.isArray(grid.options.exporterPdfPrefix) ) {
+              docPrefix = grid.options.exporterPdfPrefix;
+            } else {
+              docPrefix = [grid.options.exporterPdfPrefix];
+            }
+            docDefinitionContent = docPrefix.concat(docDefinitionContent);
+          }
+
+          if ( grid.options.exporterPdfPostfix ) {
+            docDefinitionContent = docDefinitionContent.concat(grid.options.exporterPdfPostfix);
+          }
 
           var docDefinition = {
             pageOrientation: grid.options.exporterPdfOrientation,
             pageSize: grid.options.exporterPdfPageSize,
-            content: [{
-              style: 'tableStyle',
-              table: {
-                headerRows: 1,
-                widths: headerWidths,
-                body: allData
-              }
-            }],
+            content: docDefinitionContent,
             styles: {
               tableStyle: grid.options.exporterPdfTableStyle,
               tableHeader: grid.options.exporterPdfTableHeaderStyle
