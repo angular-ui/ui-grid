@@ -72,6 +72,19 @@ In this example we use the native grid menu buttons, and we show both the pdf an
         exporterPdfOrientation: 'portrait',
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
+        exporterPdfPrefix : [
+          {
+            text: 'My prefix - custom title of pdf export',
+            style: "headerStyle"
+          },
+          {
+            text: 'Prefix can contain several differently formatted sections',
+            margin: [10,10,10,10]
+          }
+        ],
+        exporterPdfPostfix: {
+          text: "My postfix - add anything at the end of exported document"
+        }
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function(gridApi){
           $scope.gridApi = gridApi;

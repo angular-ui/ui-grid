@@ -81,6 +81,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'A4',
         exporterPdfMaxGridWidth : 720,
         exporterPdfCustomFormatter: jasmine.any(Function),
+        exporterPdfPrefix: null,
+        exporterPdfPostfix: null,
         exporterHeaderFilterUseName: false,
         exporterMenuAllData: true,
         exporterMenuCsv: true,
@@ -109,6 +111,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
+        exporterPdfPrefix: 'My Prefix',
+        exporterPdfPostfix: 'My Postfix',
         exporterHeaderFilterUseName: true,
         exporterMenuAllData: false,
         exporterMenuCsv: false,
@@ -134,6 +138,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfPageSize : 'LETTER',
         exporterPdfMaxGridWidth : 670,
         exporterPdfCustomFormatter: callback,
+        exporterPdfPrefix: 'My Prefix',
+        exporterPdfPostfix: 'My Postfix',
         exporterHeaderFilterUseName: true,
         exporterMenuAllData: false,
         exporterMenuCsv: false,
@@ -410,7 +416,19 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       grid.options.exporterPdfOrientation = 'portrait';
       grid.options.exporterPdfPageSize = 'LETTER';
       grid.options.exporterPdfMaxGridWidth = 500;
-      
+      grid.options.exporterPdfPrefix = {
+        text: 'My prefix'
+      };
+      grid.options.exporterPdfPostfix = [
+        {
+          text: 'My postfix',
+          margin: [-25, 0, 0, 0]
+        },
+        {
+          text: 'More text in postfix',
+          style: 'headerStyle'
+        }
+      ];
       var columnHeaders = [
         {name: 'col1', displayName: 'Col1', width: 100, exporterPdfAlign: 'right'},
         {name: 'col2', displayName: 'Col2', width: '*', exporterPdfAlign: 'left'},
@@ -430,7 +448,10 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       expect(result).toEqual({
         pageOrientation : 'portrait',
         pageSize: 'LETTER', 
-        content : [
+        content: [
+          {
+            text: 'My prefix'
+          },
           { 
             style : 'tableStyle', 
             table : { 
@@ -448,8 +469,16 @@ describe('ui.grid.exporter uiGridExporterService', function () {
                 [ {text: date.toISOString(), alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'TRUE' ] 
               ] 
             } 
+          },
+          {
+            text: 'My postfix',
+            margin: [-25, 0, 0, 0]
+          },
+          {
+            text: 'More text in postfix',
+            style: 'headerStyle'
           }
-         ],
+        ],
         header : "My Header",
         footer : "My Footer",  
         styles : { 
@@ -464,9 +493,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         defaultStyle : { 
           fontSize : 10 
         }
-      }); 
-      
-    });    
+      });
+    });
   });
   
   describe( 'calculatePdfHeaderWidths', function() {
