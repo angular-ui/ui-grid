@@ -112,12 +112,45 @@
               }
             },
             methods: {
-              edit: { }
+              edit: {
+                /**
+                 * @ngDoc method
+                 * @name editCell
+                 * @description invokes a cells editor and optionally allows the edit to persist
+                 * <pre>
+                 *      gridApi.edit.editCell(row, col, true);
+                 * </pre>
+                 * @param {integer} row of the cell to edit
+                 * @param {integer} col of the cell to edit
+                 * @param {boolean} persist the cell in edit mode. Prevent cancel events such as scroll from removing the editor
+                 */
+                editCell: function (row, col, persist) {
+                  if (persist) {
+                    this.rows[row].cols[col].$scope.persistEdit = true;
+                  }
+                  this.rows[row].cols[col].$scope.$broadcast('editCell');
+                },
+                /**
+                 * @ngDoc method
+                 * @name editEditCell
+                 * @description cancels a cells editor if persisted by editCell(...)
+                 * <pre>
+                 *      gridApi.edit.endEditCell(row, col);
+                 * </pre>
+                 * @param {integer} row of the cell to edit
+                 * @param {integer} col of the cell to edit
+                 */
+                endEditCell: function (row, col) {
+                  this.rows[row].cols[col].$scope.persistEdit = false;
+                  this.rows[row].cols[col].$scope.$broadcast('endEditCell', false);
+                }
+
+              }
             }
           };
 
           grid.api.registerEventsFromObject(publicApi.events);
-          //grid.api.registerMethodsFromObject(publicApi.methods);
+          grid.api.registerMethodsFromObject(publicApi.methods);
 
         },
 
@@ -483,6 +516,10 @@
             }
 
             var cellNavNavigateDereg = function() {};
+            if (!$scope.row.cols) {
+              $scope.row.cols = [];
+            }
+            $scope.row.cols[$scope.colRenderIndex] = { "$scope": $scope, "$elm": $elm };
 
             // Bind to keydown events in the render container
             if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
@@ -519,6 +556,8 @@
 
               // Add touchstart handling. If the users starts a touch and it doesn't end after X milliseconds, then start the edit
               $elm.on('touchstart', touchStart);
+              $scope.$on('editCell', beginEdit);
+              $scope.$on('endEditCell', endEdit);
 
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
@@ -782,7 +821,7 @@
 
             function endEdit() {
               $scope.grid.disableScrolling = false;
-              if (!inEdit) {
+              if (!inEdit || $scope.persistEdit) {
                 return;
               }
               
