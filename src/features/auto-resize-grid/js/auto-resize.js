@@ -32,9 +32,9 @@
 
         var resizeTimeoutId;
         function startTimeout() {
-          clearTimeout(resizeTimeoutId);
+          $timeout.cancel(resizeTimeoutId);
 
-          resizeTimeoutId = setTimeout(function () {
+          resizeTimeoutId = $timeout(function () {
             var newGridHeight = gridUtil.elementHeight($elm);
             var newGridWidth = gridUtil.elementWidth($elm);
 
@@ -60,7 +60,7 @@
         startTimeout();
 
         $scope.$on('$destroy', function() {
-          clearTimeout(resizeTimeoutId);
+          $timeout.cancel(resizeTimeoutId);
         });
       }
     };
