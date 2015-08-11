@@ -1,3 +1,11 @@
+<a name="v3.0.3"></a>
+### v3.0.3 (2015-08-10)
+
+
+#### Bug Fixes
+
+* **build:** Fixes Grunt Task not Publishing ([7571028d](http://github.com/angular-ui/ng-grid/commit/7571028d70069fed63bee65aadd606b5caf41ac6))
+
 <a name="v3.0.2"></a>
 ### v3.0.2 (2015-08-10)
 
