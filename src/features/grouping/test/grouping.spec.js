@@ -482,6 +482,51 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       });
     });
 
+    it('sorts', function(){
+      grid.grouping.groupingHeaderCache = {
+        male: {
+          row: { treeNode: { state: 'collapsed' } },
+          children: {
+            22: { row: { treeNode: { state: 'expanded' } }, children: {} },
+            39: { row: { treeNode: { state: 'collapsed' } }, children: {} }
+          }
+        },
+        female: {
+          row: { treeNode: { state: 'expanded' } },
+          children: {
+            23: { row: { treeNode: { state: 'collapsed' } }, children: {} },
+            38: { row: { treeNode: { state: 'expanded' } }, children: {} }
+          }
+        }
+      };
+
+      spyOn(grid.api.core.raise, 'sortChanged').andCallThrough();
+
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT } }
+        ],
+        rowExpandedStates: {
+          male: { state: 'expanded', children: {
+            22: { state: 'collapsed' },
+            38: { state: 'expanded' }
+          } },
+          female: { state: 'expanded', children: {
+            23: { state: 'expanded' },
+            39: { state: 'collapsed' }
+          } }
+        }
+      });
+
+      // Should call sort change twice because we are grouping by two columns
+      expect(grid.api.core.raise.sortChanged.calls.length).toEqual(2);
+
+    });
+
   });
 
 

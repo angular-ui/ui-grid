@@ -681,13 +681,13 @@
           column.sort.direction = uiGridConstants.ASC;
         }
 
-        service.tidyPriorities( grid );
-
         column.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT, source: 'grouping' };
         column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations()[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
         column.treeAggregationFinalizerFn = service.groupedFinalizerFn;
 
         grid.api.grouping.raise.groupingChanged(column);
+        // This indirectly calls service.tidyPriorities( grid );
+        grid.api.core.raise.sortChanged(grid, grid.getColumnSorting());
 
         grid.queueGridRefresh();
       },
