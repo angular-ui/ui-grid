@@ -1,3 +1,6 @@
+var util = require('../lib/grunt/utils.js');
+var semver = require('semver');
+var currentTag = semver.clean( util.getCurrentTag() );
 module.exports = function ( grunt ) {
   return {
     site: {
@@ -21,7 +24,23 @@ module.exports = function ( grunt ) {
           expand: true,
           cwd: 'src/less',
           src: '**/*.less',
-          dest: '<%= dist %>/release/src/less'
+          dest: '<%= dist %>/release/less'
+        },
+        {
+          expand: true,
+          cwd: 'src/features',
+          src: '**/*.less',
+          dest: '<%= dist %>/release/less'
+        }
+      ]
+    },
+    less_cut_release: {
+      files: [
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/less',
+          src: '**/*.less',
+          dest: '<%= dist %>/release/' + currentTag + '/less'
         }
       ]
     }
