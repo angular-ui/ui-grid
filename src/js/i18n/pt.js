@@ -50,7 +50,8 @@
           exporterSelectedAsCsv: 'Exportar dados selecionados como csv',
           exporterAllAsPdf: 'Exportar todos os dados como pdf',
           exporterVisibleAsPdf: 'Exportar dados visíveis como pdf',
-          exporterSelectedAsPdf: 'Exportar dados selecionados como pdf'
+          exporterSelectedAsPdf: 'Exportar dados selecionados como pdf',
+          clearAllFilters: 'Limpar todos os filtros'
         },
         importer: {
           noHeaders: 'Nomes de colunas não puderam ser derivados. O ficheiro tem um cabeçalho?',
@@ -73,7 +74,7 @@
           aggregate_min: 'Agr: Min',
           aggregate_avg: 'Agr: Med',
           aggregate_remove: 'Agr: Remover'
-        }        
+        }
       });
       return $delegate;
     }]);
