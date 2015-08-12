@@ -50,7 +50,8 @@
           exporterSelectedAsCsv: '選択したデータをCSV形式でエクスポート',
           exporterAllAsPdf: 'すべてのデータをPDF形式でエクスポート',
           exporterVisibleAsPdf: '表示中のデータをPDF形式でエクスポート',
-          exporterSelectedAsPdf: '選択したデータをPDF形式でエクスポート'
+          exporterSelectedAsPdf: '選択したデータをPDF形式でエクスポート',
+          clearAllFilters: 'すべてのフィルタを清掃してください'
         },
         importer: {
           noHeaders: '列名を取得できません。ファイルにヘッダが含まれていることを確認してください。',
