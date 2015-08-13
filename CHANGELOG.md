@@ -1,3 +1,11 @@
+<a name="v3.0.4"></a>
+### v3.0.4 (2015-08-13)
+
+
+#### Bug Fixes
+
+* **grouping:** Grouping now raises a sort changed event ([d30b1ad3](http://github.com/angular-ui/ng-grid/commit/d30b1ad343ace939bf165bad2b061638a1404692), closes [#4155](http://github.com/angular-ui/ng-grid/issues/4155))
+
 <a name="v3.0.3"></a>
 ### v3.0.3 (2015-08-10)
 
