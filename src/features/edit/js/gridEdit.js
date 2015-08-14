@@ -483,35 +483,30 @@
             }
 
             var cellNavNavigateDereg = function() {};
+            var viewPortKeyDownDereg = function() {};
 
-            // Bind to keydown events in the render container
-            if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
-
-              uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
-                if (rowCol === null) {
-                  return;
-                }
-
-                if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
-                  //important to do this before scrollToIfNecessary
-                  beginEditKeyDown(evt);
-                 // uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
-                }
-
-              });
-            }
 
             var setEditable = function() {
               if ($scope.col.colDef.enableCellEdit && $scope.row.enableCellEdit !== false) {
-                registerBeginEditEvents();
+                if (!$scope.beginEditEventsWired) { //prevent multiple attachments
+                  registerBeginEditEvents();
+                }
               } else {
-                cancelBeginEditEvents();
+                if ($scope.beginEditEventsWired) {
+                  cancelBeginEditEvents();
+                }
               }
             };
 
             setEditable();
 
-            var rowWatchDereg = $scope.$watch( 'row', setEditable );
+            var rowWatchDereg = $scope.$watch('row', function (n, o) {
+              if (n !== o) {
+                setEditable();
+              }
+            });
+
+
             $scope.$on( '$destroy', rowWatchDereg );
 
             function registerBeginEditEvents() {
@@ -521,6 +516,18 @@
               $elm.on('touchstart', touchStart);
 
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
+
+                viewPortKeyDownDereg = uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
+                  if (rowCol === null) {
+                    return;
+                  }
+
+                  if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
+                    //important to do this before scrollToIfNecessary
+                    beginEditKeyDown(evt);
+                  }
+                });
+
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     if (newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
@@ -532,7 +539,7 @@
                 });
               }
 
-
+              $scope.beginEditEventsWired = true;
 
             }
 
@@ -569,6 +576,8 @@
               $elm.off('keydown', beginEditKeyDown);
               $elm.off('touchstart', touchStart);
               cellNavNavigateDereg();
+              viewPortKeyDownDereg();
+              $scope.beginEditEventsWired = false;
             }
 
             function beginEditKeyDown(evt) {
