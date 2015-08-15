@@ -1393,7 +1393,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       deltaX: deltaX,
       deltaY: deltaY,
       deltaFactor: lowestDelta,
-      preventDefault: function () { event.preventDefault(); }
+      preventDefault: function () { event.preventDefault(); },
+      stopPropagation: function () { event.stopPropagation(); }
     };
 
     // Clearout lowestDelta after sometime to better
