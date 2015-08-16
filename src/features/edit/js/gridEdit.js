@@ -114,8 +114,9 @@
             methods: {
               edit: {
                 /**
-                 * @ngDoc method
+                 * @ngDoc function
                  * @name editCell
+                 * @methodOf ui.grid.edit.api:PublicApi
                  * @description invokes a cells editor and optionally allows the edit to persist
                  * <pre>
                  *      gridApi.edit.editCell(row, col, true);
@@ -131,8 +132,9 @@
                   this.rows[row].cols[col].$scope.$broadcast('editCell');
                 },
                 /**
-                 * @ngDoc method
+                 * @ngDoc function
                  * @name editEditCell
+                 * @methodOf ui.grid.edit.api:PublicApi
                  * @description cancels a cells editor if persisted by editCell(...)
                  * <pre>
                  *      gridApi.edit.endEditCell(row, col);
@@ -519,7 +521,7 @@
             if (!$scope.row.cols) {
               $scope.row.cols = [];
             }
-            $scope.row.cols[$scope.colRenderIndex] = { "$scope": $scope, "$elm": $elm };
+            $scope.row.cols.push({ "$scope": $scope, "$elm": $elm });
 
             // Bind to keydown events in the render container
             if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
