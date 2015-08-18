@@ -430,6 +430,7 @@
 
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, newWidth);
+          col.hasCustomWidth = true;
 
           refreshCanvas(xDiff);
 
@@ -542,6 +543,7 @@
 
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, maxWidth);
+          col.hasCustomWidth = true;
 
           refreshCanvas(xDiff);
 
