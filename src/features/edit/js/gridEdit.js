@@ -126,10 +126,11 @@
                  * @param {boolean} persist the cell in edit mode. Prevent cancel events such as scroll from removing the editor
                  */
                 editCell: function (row, col, persist) {
+                  var cellScope = this.element.find("div[id*=" + row.toString() + "-" + this.columns[col].uid + "]").scope();
                   if (persist) {
-                    this.rows[row].cols[col].$scope.persistEdit = true;
+                    cellScope.persistEdit = true;
                   }
-                  this.rows[row].cols[col].$scope.$broadcast('editCell');
+                  cellScope.$broadcast('editCell');
                 },
                 /**
                  * @ngDoc function
@@ -143,8 +144,9 @@
                  * @param {integer} col of the cell to edit
                  */
                 endEditCell: function (row, col) {
-                  this.rows[row].cols[col].$scope.persistEdit = false;
-                  this.rows[row].cols[col].$scope.$broadcast('endEditCell', false);
+                  var cellScope = this.element.find("div[id*=" + row.toString() + "-" + this.columns[col].uid + "]").scope();
+                  cellScope.persistEdit = false;
+                  cellScope.$broadcast('endEditCell', false);
                 }
 
               }
@@ -518,10 +520,6 @@
             }
 
             var cellNavNavigateDereg = function() {};
-            if (!$scope.row.cols) {
-              $scope.row.cols = [];
-            }
-            $scope.row.cols.push({ "$scope": $scope, "$elm": $elm });
 
             // Bind to keydown events in the render container
             if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
