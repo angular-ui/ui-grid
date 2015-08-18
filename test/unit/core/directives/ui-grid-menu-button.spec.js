@@ -99,12 +99,12 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       uiGridGridMenuService.initialize( $scope, grid );
     });
 
-    it('nothing in any config', function () {
+    it('nothing in any config should have one element (ClearFilters)', function () {
       grid.options.gridMenuShowHideColumns = false;
 
       var menuItems = uiGridGridMenuService.getMenuItems( $scope );
 
-      expect( menuItems ).toEqual( [] );
+      expect( menuItems.length ).toEqual( 1);
     });
 
     it('grab bag of stuff', function () {
@@ -117,26 +117,28 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
 
       var menuItems = uiGridGridMenuService.getMenuItems( $scope );
 
-      expect( menuItems.length ).toEqual(11, 'Should be 11 items, 2 from customItems, 2 from registered, 1 columns header, and 2x3 columns that allow hiding');
+      expect( menuItems.length ).toEqual(12, 'Should be 12 items, 2 from customItems, 2 from registered, 1 columns header, and 2x3 columns that allow hiding');
       expect( menuItems[0].title ).toEqual('x', 'Menu item 0 should be from register');
       expect( menuItems[1].title ).toEqual('y', 'Menu item 1 should be from register');
       expect( menuItems[2].title ).toEqual('z', 'Menu item 2 should be from customItem');
       expect( menuItems[3].title ).toEqual('a', 'Menu item 3 should be from customItem');
 
-      expect( menuItems[4].title ).toEqual('Columns:', 'Menu item 4 should be header');
-      expect( menuItems[5].title.toLowerCase() ).toEqual('fn_col1', 'Menu item 5 should be col1');
-      expect( menuItems[6].title.toLowerCase() ).toEqual('fn_col1', 'Menu item 6 should be col1');
-      expect( menuItems[7].title.toLowerCase() ).toEqual('fn_col3', 'Menu item 7 should be col3');
-      expect( menuItems[8].title.toLowerCase() ).toEqual('fn_col3', 'Menu item 8 should be col3');
-      expect( menuItems[9].title.toLowerCase() ).toEqual('fn_col4', 'Menu item 9 should be col4');
-      expect( menuItems[10].title.toLowerCase() ).toEqual('fn_col4', 'Menu item 10 should be col4');
+      //expect( menuItems[4].title ).toEqual('Columns:', 'Menu item 4 should be header');
+      expect( menuItems[4].title ).toEqual('Clear all filters', 'Menu item 4 Clear all filters');
+      expect( menuItems[5].title ).toEqual('Columns:', 'Menu item 5 should be header');
+      expect( menuItems[6].title.toLowerCase() ).toEqual('fn_col1', 'Menu item 5 should be col1');
+      expect( menuItems[7].title.toLowerCase() ).toEqual('fn_col1', 'Menu item 6 should be col1');
+      expect( menuItems[8].title.toLowerCase() ).toEqual('fn_col3', 'Menu item 7 should be col3');
+      expect( menuItems[9].title.toLowerCase() ).toEqual('fn_col3', 'Menu item 8 should be col3');
+      expect( menuItems[10].title.toLowerCase() ).toEqual('fn_col4', 'Menu item 9 should be col4');
+      expect( menuItems[11].title.toLowerCase() ).toEqual('fn_col4', 'Menu item 10 should be col4');
 
-      expect( menuItems[5].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
       expect( menuItems[6].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
-      expect( menuItems[7].context.gridCol ).toEqual( grid.columns[2], 'column hide/show menus should have gridCol');
+      expect( menuItems[7].context.gridCol ).toEqual( grid.columns[0], 'column hide/show menus should have gridCol');
       expect( menuItems[8].context.gridCol ).toEqual( grid.columns[2], 'column hide/show menus should have gridCol');
-      expect( menuItems[9].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
+      expect( menuItems[9].context.gridCol ).toEqual( grid.columns[2], 'column hide/show menus should have gridCol');
       expect( menuItems[10].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
+      expect( menuItems[11].context.gridCol ).toEqual( grid.columns[3], 'column hide/show menus should have gridCol');
 
     });
 
@@ -150,9 +152,9 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
 
       var menuItems = uiGridGridMenuService.getMenuItems( $scope );
 
-      expect( menuItems.length ).toEqual(9, 'Should be 9 items, 1 columns header, and 2x4 columns that allow hiding');
-      expect( menuItems[0].title ).toEqual('Columns:', 'Menu item 0 should be header');
-      expect( menuItems[1].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems.length ).toEqual(10, 'Should be 10 items, 1 columns header, 2x4 columns that allow hiding and clear all filters');
+      expect( menuItems[0].title ).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
+      expect( menuItems[1].title ).toEqual('Columns:', 'Menu item 1 should be header');
       expect( menuItems[2].title ).toEqual('', 'Promise not resolved');
       expect( menuItems[3].title ).toEqual('', 'Promise not resolved');
       expect( menuItems[4].title ).toEqual('', 'Promise not resolved');
@@ -160,22 +162,24 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
       expect( menuItems[6].title ).toEqual('', 'Promise not resolved');
       expect( menuItems[7].title ).toEqual('', 'Promise not resolved');
       expect( menuItems[8].title ).toEqual('', 'Promise not resolved');
+      expect( menuItems[9].title ).toEqual('', 'Promise not resolved');
 
       promises.forEach( function( promise, index ) {
         promise.resolve('resolve_' + index);
       });
       $scope.$digest();
 
-      expect( menuItems.length ).toEqual(9, 'Should be 9 items, 1 columns header, and 2x4 columns that allow hiding');
-      expect( menuItems[0].title ).toEqual('Columns:', 'Menu item 0 should be header');
-      expect( menuItems[1].title ).toEqual('resolve_0', 'Promise now resolved');
-      expect( menuItems[2].title ).toEqual('resolve_1', 'Promise now resolved');
-      expect( menuItems[3].title ).toEqual('resolve_2', 'Promise now resolved');
-      expect( menuItems[4].title ).toEqual('resolve_3', 'Promise now resolved');
-      expect( menuItems[5].title ).toEqual('resolve_4', 'Promise now resolved');
-      expect( menuItems[6].title ).toEqual('resolve_5', 'Promise now resolved');
-      expect( menuItems[7].title ).toEqual('resolve_6', 'Promise now resolved');
-      expect( menuItems[8].title ).toEqual('resolve_7', 'Promise now resolved');
+      expect( menuItems.length ).toEqual(10, 'Should be 10 items, 1 columns header, 2x4 columns that allow hiding and Clean all filters');
+      expect( menuItems[0].title ).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
+      expect( menuItems[1].title ).toEqual('Columns:', 'Menu item 0 should be header');
+      expect( menuItems[2].title ).toEqual('resolve_0', 'Promise now resolved');
+      expect( menuItems[3].title ).toEqual('resolve_1', 'Promise now resolved');
+      expect( menuItems[4].title ).toEqual('resolve_2', 'Promise now resolved');
+      expect( menuItems[5].title ).toEqual('resolve_3', 'Promise now resolved');
+      expect( menuItems[6].title ).toEqual('resolve_4', 'Promise now resolved');
+      expect( menuItems[7].title ).toEqual('resolve_5', 'Promise now resolved');
+      expect( menuItems[8].title ).toEqual('resolve_6', 'Promise now resolved');
+      expect( menuItems[9].title ).toEqual('resolve_7', 'Promise now resolved');
     });
   });
 

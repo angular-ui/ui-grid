@@ -50,7 +50,8 @@
           exporterSelectedAsCsv: '导出已选数据到CSV',
           exporterAllAsPdf: '导出全部数据到PDF',
           exporterVisibleAsPdf: '导出可见数据到PDF',
-          exporterSelectedAsPdf: '导出已选数据到PDF'
+          exporterSelectedAsPdf: '导出已选数据到PDF',
+          clearAllFilters: '清除所有过滤器'
         },
         importer: {
           noHeaders: '无法获取列名，确定文件包含表头？',
