@@ -560,6 +560,52 @@ describe('GridColumn factory', function () {
       expect(updateCol(colDef.width)).toThrow();
     });
 
+    it ('should set the value of minWidth to 30 when colDef.minWidth is undefined', invalidMinOrMaxWidthDef(undefined, 'minWidth'));
+    it ('should set the value of minWidth to 30 when colDef.minWidth is null', invalidMinOrMaxWidthDef(null, 'minWidth'));
+    it ('should set the value of minWidth to 30 when colDef.minWidth is an object', invalidMinOrMaxWidthDef({}, 'minWidth'));
+
+    it ('should set the value of minWidth to the parsed integer colDef.minWidth when it is a string', function () {
+      colDef.minWidth = '90';
+      col.updateColumnDef(colDef);
+      expect(col.minWidth).toBe(90);
+    });
+
+    it ('should set the value of minWidth to colDef.minWidth when it is a number', function () {
+      colDef.minWidth = 90;
+      col.updateColumnDef(colDef);
+      expect(col.minWidth).toBe(90);
+    });
+
+    it ('should throw when colDef.minWidth is an invalid string', function () {
+      colDef.minWidth = 'e1%';
+      expect(updateCol(col, colDef)).toThrow();
+      colDef.minWidth = '#FFF';
+      expect(updateCol(col, colDef)).toThrow();
+    });
+
+    it ('should set the value of maxWidth to 9000 when colDef.maxWidth is undefined', invalidMinOrMaxWidthDef(undefined, 'maxWidth'));
+    it ('should set the value of maxWidth to 9000 when colDef.maxWidth is null', invalidMinOrMaxWidthDef(null, 'maxWidth'));
+    it ('should set the value of maxWidth to 9000 when colDef.maxWidth is an object', invalidMinOrMaxWidthDef({}, 'maxWidth'));
+
+    it ('should set the value of maxWidth to the parsed integer colDef.maxWidth when it is a string', function () {
+      colDef.maxWidth = '200';
+      col.updateColumnDef(colDef);
+      expect(col.maxWidth).toBe(200);
+    });
+
+    it ('should set the value of maxWidth to colDef.maxWidth when it is a number', function () {
+      colDef.maxWidth = 200;
+      col.updateColumnDef(colDef);
+      expect(col.maxWidth).toBe(200);
+    });
+
+    it ('should throw when colDef.maxWidth is an invalid string', function () {
+      colDef.maxWidth = 'e1%';
+      expect(updateCol(col, colDef)).toThrow();
+      colDef.maxWidth = '#FFF';
+      expect(updateCol(col, colDef)).toThrow();
+    });
+
     function widthEqualsColDefWidth(expected) {
       return function () {
         colDef.width = expected;
@@ -579,6 +625,14 @@ describe('GridColumn factory', function () {
     function updateCol(col, colDef) {
       return function () {
         col.updateColumnDef(colDef);
+      };
+    }
+
+    function invalidMinOrMaxWidthDef(width, minOrMax) {
+      return function () {
+        colDef[minOrMax] = width;
+        col.updateColumnDef(colDef);
+        expect(col[minOrMax]).toBe(minOrMax === 'minWidth' ? 30 : 9000);
       };
     }
   });
