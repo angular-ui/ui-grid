@@ -4,6 +4,9 @@
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
+## Mission Statement
+Most flexible and tailorable angular grid, working with native angular constructs. Free and open source. Aiming to be the default grid for any angular UI project.
+
 # Help!
 
 Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ui-grid to discuss development and ask for specific help.
