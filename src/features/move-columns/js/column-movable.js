@@ -458,8 +458,7 @@
 									}
 
 									//Table with scroll case
-									if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth))
-									{
+									if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
 										var scrollEvent;
 
 										//Need scrolling to right
