@@ -32,7 +32,7 @@
           remove: 'Убрать сортировку'
         },
         column: {
-          hide: 'спрятать столбец'
+          hide: 'Спрятать столбец'
         },
         aggregation: {
           count: 'всего строк: ',
@@ -41,6 +41,11 @@
           min: 'мин: ',
           max: 'макс: '
         },
+				pinning: {
+					pinLeft: 'Закрепить слева',
+					pinRight: 'Закрепить справа',
+					unpin: 'Открепить'
+				},
         gridMenu: {
           columns: 'Столбцы:',
           importerTitle: 'Import file',
