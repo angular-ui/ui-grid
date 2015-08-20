@@ -901,7 +901,7 @@
 
           // IE10+
           if (navigator.msSaveBlob) {
-            return navigator.msSaveBlob(
+            return navigator.msSaveOrOpenBlob(
               new Blob(
                 [exporterOlderExcelCompatibility ? "\uFEFF" : '', csvContent],
                 { type: strMimeType } ),
