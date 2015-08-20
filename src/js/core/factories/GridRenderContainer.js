@@ -55,7 +55,7 @@ angular.module('ui.grid')
 
     /**
      *  @ngdoc boolean
-     *  @name hasHScrollbar
+     *  @name hasVScrollbar
      *  @propertyOf  ui.grid.class:GridRenderContainer
      *  @description flag to signal that container has a vertical scrollbar
      */
