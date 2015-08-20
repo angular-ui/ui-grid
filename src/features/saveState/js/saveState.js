@@ -86,7 +86,7 @@
                  * @param {object} state the state that should be restored into the grid
                  */
                 restore: function ( $scope, state) {
-                  service.restore(grid, $scope, state);
+                  return service.restore(grid, $scope, state);
                 }
               }
             }
@@ -323,7 +323,7 @@
             service.restoreTreeView( grid, state.treeView );
           }
 
-          grid.refresh();
+          return grid.queueGridRefresh();
         },
 
 
