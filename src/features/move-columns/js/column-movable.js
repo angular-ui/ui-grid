@@ -479,7 +479,7 @@
 									}
 
 									//Moving column
-									if ((currentElmLeft >= gridLeft || changeValue != 0)) {
+									if ((currentElmLeft >= gridLeft || changeValue !== 0)) {
 										movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
 									}
 
