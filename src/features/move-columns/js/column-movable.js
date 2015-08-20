@@ -275,7 +275,8 @@
 
                   previousMouseX = event.pageX;
                   totalMouseMovement = 0;
-                  rightMoveLimit = gridLeft + $scope.grid.element.find('.ui-grid-header-canvas')[0].offsetWidth;
+                  rightMoveLimit = gridLeft + $scope.grid.renderContainers.body.headerCanvas.offsetWidth;
+
 
                   if ( event.type === 'mousedown' ){
                     $document.on('mousemove', moveFn);
@@ -409,7 +410,7 @@
                   else {
                     elmLeft = $elm[0].offsetLeft;
                   }
-                  movingElementStyles.left = (elmLeft - gridLeft) + 'px';
+                  movingElementStyles.left = elmLeft + 'px';
                   var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
                   var elmRight = $elm[0].getBoundingClientRect().right;
                   if (elmRight > gridRight) {
@@ -436,17 +437,24 @@
 									newElementLeft = currentElmLeft + changeValue;
 
                   //Calculate cursor position relative to .ui-grid-header-canvas
-									var pageX = $scope.grid.element.find('.ui-grid-viewport')[0].scrollLeft + event.pageX-gridLeft;
+									var pageX = gridUtil.closestElm(movingElm, '.ui-grid-render-container').querySelectorAll('.ui-grid-viewport')[0].scrollLeft + event.pageX - gridLeft;
 
 									//Calculate cursor position relative to .ui-grid-header-cell-wrapper
 									//NOTE: ui-grid change position of .ui-grid-header-cell-wrapper, if move table horizontal scroll
-									var wrapperX = pageX - movingElm.offsetParent()[0].offsetLeft;
+									var wrapperX = pageX - movingElm[0].offsetParent.offsetLeft;
+									
+									var widthPinnedContainer = 0,
+										pinnedContainer = gridUtil.closestElm(movingElm, '.ui-grid-render-container').querySelectorAll('.ui-grid-pinned-container')[0];
+
+									if (pinnedContainer) {
+										widthPinnedContainer = pinnedContainer.offsetWidth;
+									}
 
 									if (newElementLeft > wrapperX) {
-										newElementLeft = wrapperX - 30;
+										newElementLeft = wrapperX - 30 - widthPinnedContainer;
 									}
 									else if (newElementLeft + movingElm[0].offsetWidth < wrapperX) {
-										newElementLeft = wrapperX + 30;
+										newElementLeft = wrapperX + 30 + widthPinnedContainer;
 									}
 
 									//Table with scroll case
