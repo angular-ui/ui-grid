@@ -11,7 +11,7 @@
     module.filter('EdmGeographyPoint', function () {
         return function (input, coord) {
             if (input.coordinates && input.coordinates.length > 0) {
-                return coord === 'x' ? 'x:' + input.coordinates[0].toFixed(2): 'y:' + input.coordinates[1].toFixed(2);
+                return coord === 'x' ? 'x:' + input.coordinates[0].toFixed(2) : 'y:' + input.coordinates[1].toFixed(2);
             }
 
             return input;
@@ -56,7 +56,7 @@
 
         function onRegisterApi (registerApiOrig, gridscope) {
             return function (gridApi) {
-                if(!gridApi.odata) {
+                if (!gridApi.odata) {
                     gridApi.registerEventsFromObject(publicApi.events);
                     gridApi.registerMethodsFromObject(publicApi.methods);
                 }
@@ -91,7 +91,7 @@
             var grid = row.grid;
             var colodata = col.colDef && col.colDef.odata || col.odata;
 
-            if(row.entity.$$afterExpandRow) {
+            if (row.entity.$$afterExpandRow) {
                 row.entity.$$afterExpandRow = null;
                 return;
             }
@@ -133,7 +133,7 @@
 
                     row.entity.subGridOptions.data = data.value || [data];
                     row.entity.$$afterExpandRow = true;
-                    if($event) {grid.api.expandable.toggleRowExpansion(row.entity);}
+                    if ($event) {grid.api.expandable.toggleRowExpansion(row.entity);}
                 });
         }
 
@@ -310,7 +310,7 @@
                             columnDefs: angular.merge({}, colModels[grid.options.odata.entitySet], grid.options.columnDefs)
                         });
 
-                        if(angular.isFunction(callback)) {
+                        if (angular.isFunction(callback)) {
                             callback();
                         }
                         else {
