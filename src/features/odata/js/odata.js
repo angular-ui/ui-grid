@@ -76,6 +76,7 @@
 
         /**
          * @ngdoc method
+         * @methodOf ui.grid.odata.service:uiGridODataService
          * @name expandRow
          * @description  Builds column definitions and data for subgrid (requires ui-grid-expandable directive).
          * @example
