@@ -38,7 +38,7 @@
                 }
                 return args[parseInt(n, 10) + 1];
             });
-        };
+        }
 
         function concat () {
             var i, j, res = [];
@@ -52,7 +52,7 @@
                 }
             }
             return res;
-        };
+        }
 
         function onRegisterApi (registerApiOrig, gridscope) {
             return function (gridApi) {
@@ -72,11 +72,10 @@
                     }
                 });
             };
-        };
+        }
 
         /**
          * @ngdoc method
-         * @methodOf ui.grid.api.odata
          * @name expandRow
          * @description  Builds column definitions and data for subgrid (requires ui-grid-expandable directive).
          * @example
@@ -124,19 +123,19 @@
 
             row.entity.subGridOptions.enableExpandable =
                     row.entity.subGridOptions.odata.expandable === 'subgrid' &&
-                    row.entity.subGridOptions.columnDefs.some(function (itm) {return itm.odata.expand === 'subgrid';})
+                    row.entity.subGridOptions.columnDefs.some(function (itm) {return itm.odata.expand === 'subgrid';});
 
             $http.get(row.entity.subGridOptions.odata.dataurl, {dataType: 'json'})
                 .success(function (data) {
                     if (colodata.iscollection && !data.value) {
-                        alert('data is empty');
+                        grid.api.odata.raise.error(null, 'data is empty');
                     }
 
                     row.entity.subGridOptions.data = data.value || [data];
                     row.entity.$$afterExpandRow = true;
                     if($event) {grid.api.expandable.toggleRowExpansion(row.entity);}
                 });
-        };
+        }
 
         var publicApi = {
             events: {
@@ -206,9 +205,7 @@
                             nullable = attr.nullable;
                             isComplex = props[j].localName.toLowerCase() === 'property' && !!complexes[attr.name];
                             isNavigation = props[j].localName.toLowerCase() === 'navigationproperty';
-                            isCollection = entityValues.some(function (itm) {
-                                return itm === name;
-                            });
+                            isCollection = entityValues.indexOf(name) >= 0;
                             isNum = numTypes.indexOf(type) >= 0;
                             isBool = boolTypes.indexOf(type) >= 0;
                             isDate = type && (type.indexOf('Edm.') >= 0 && (type.indexOf('Date') >= 0 || type.indexOf('Time') >= 0));
@@ -291,16 +288,16 @@
                                 grid.options.odata.expandable === 'subgrid' &&
                                 colModels[grid.options.odata.entitySet].some(function (itm) {return itm.odata.expand === 'subgrid';});
 
-                        if(grid.options.enableExpandable && !hasExpandable) {
+                        if (grid.options.enableExpandable && !hasExpandable) {
                             grid.api.odata.raise.error(response, 'missing ui-grid-expandable directive');
                             grid.options.enableExpandable = false;
                         }
 
-                        if(!grid.options.enableExpandable && grid.options.odata.expandable === 'subgrid') {
+                        if (!grid.options.enableExpandable && grid.options.odata.expandable === 'subgrid') {
                             grid.options.odata.expandable = 'link';
                         }
 
-                        if(grid.options.enableExpandable && !grid.options.expandableRowTemplate) {
+                        if (grid.options.enableExpandable && !grid.options.expandableRowTemplate) {
                             grid.options.expandableRowTemplate = 'ui-grid/odataExpandableRowTemplate';
                         }
 
