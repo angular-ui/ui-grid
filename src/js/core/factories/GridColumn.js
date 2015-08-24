@@ -464,8 +464,23 @@ angular.module('ui.grid')
       }
     }
 
-    self.minWidth = !colDef.minWidth ? 30 : colDef.minWidth;
-    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    ['minWidth', 'maxWidth'].forEach(function (name) {
+      var minOrMaxWidth = colDef[name];
+      var parseErrorMsg = "Cannot parse column " + name + " '" + minOrMaxWidth + "' for column named '" + colDef.name + "'";
+
+      if (!angular.isString(minOrMaxWidth) && !angular.isNumber(minOrMaxWidth)) {
+        //Sets default minWidth and maxWidth values
+        self[name] = ((name === 'minWidth') ? 30 : 9000);
+      } else if (angular.isString(minOrMaxWidth)) {
+        if (minOrMaxWidth.match(/^(\d+)$/)) {
+          self[name] = parseInt(minOrMaxWidth.match(/^(\d+)$/)[1], 10);
+        } else {
+          throw new Error(parseErrorMsg);
+        }
+      } else {
+        self[name] = minOrMaxWidth;
+      }
+    });
 
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;
