@@ -631,7 +631,7 @@ angular.module('ui.grid')
 
       } else if (gridUtil.endsWith(column.width, "%")) {
         // percentage width, set to percentage of the viewport
-        width = parseInt(parseInt(column.width.replace(/%/g, ''), 10) / 100 * availableWidth);
+        width = parseFloat(parseInt(column.width.replace(/%/g, ''), 10) / 100 * availableWidth);
 
         if ( width > column.maxWidth ){
           width = column.maxWidth;
