@@ -9,10 +9,11 @@ describe('ui.grid.exporter uiGridExporterService', function () {
   var $scope;
   var $document;
 
-  beforeEach(module('ui.grid.exporter', 'ui.grid.selection'));
+  beforeEach(module('ui.grid.exporter', 'ui.grid.selection', 'ui.grid.pinning'));
 
 
-  beforeEach(inject(function (_uiGridExporterService_, _uiGridSelectionService_, _gridClassFactory_, _uiGridExporterConstants_,
+  beforeEach(inject(function (_uiGridExporterService_, _uiGridSelectionService_, _uiGridPinningService_, _gridClassFactory_, _uiGridExporterConstants_,
+                              _uiGridPinningConstants_,
                               _$compile_, _$rootScope_, _$document_, _uiGridSelectionConstants_) {
     uiGridExporterService = _uiGridExporterService_;
     uiGridSelectionService = _uiGridSelectionService_;
@@ -25,7 +26,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
 
     grid = gridClassFactory.createGrid({});
     grid.options.columnDefs = [
-        {field: 'col1', name: 'col1', displayName: 'Col1', width: 50},
+        {field: 'col1', name: 'col1', displayName: 'Col1', width: 50, pinnedLeft: true},
         {field: 'col2', name: 'col2', displayName: 'Col2', width: '*', type: 'number'},
         {field: 'col3', name: 'col3', displayName: 'Col3', width: 100},
         {field: 'col4', name: 'col4', displayName: 'Col4', width: 200}
@@ -33,6 +34,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
 
     _uiGridExporterService_.initializeGrid(grid);
     _uiGridSelectionService_.initializeGrid(grid);
+    _uiGridPinningService_.initializeGrid(grid);
     var data = [];
     for (var i = 0; i < 3; i++) {
         data.push({col1:'a_'+i, col2:'b_'+i, col3:'c_'+i, col4:'d_'+i});
@@ -48,21 +50,22 @@ describe('ui.grid.exporter uiGridExporterService', function () {
 
     grid.api.selection.clearSelectedRows();
     grid.api.selection.selectRow(grid.rows[0].entity);
-    
+
     grid.gridWidth = 500;
-    grid.columns[0].drawnWidth = 50; 
-    grid.columns[1].drawnWidth = '*'; 
-    grid.columns[2].drawnWidth = 100; 
-    grid.columns[3].drawnWidth = 200; 
+    grid.columns[0].drawnWidth = 50;
+    grid.columns[1].drawnWidth = '*';
+    grid.columns[2].drawnWidth = 100;
+    grid.columns[3].drawnWidth = 200;
+
   }));
-  
+
 
   describe('defaultGridOptions', function() {
     var options;
     beforeEach(function() {
       options = {};
     });
-    
+
     it('set all options to default', function() {
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -87,7 +90,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
         exporterAllDataFn: null,
-        exporterSuppressColumns: []        
+        exporterSuppressColumns: []
       });
     });
 
@@ -143,7 +146,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ]
       });
-    });    
+    });
   });
 
 
@@ -254,7 +257,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       expect(uiGridExporterService.getData(grid, uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE)).toEqual([
         [ {value: 'a_0'}, {value: 'b_0'}, {value: 'd_0'} ]
       ]);
-    });    
+    });
 
     it('maps data using objectCallback', function() {
       grid.options.exporterFieldCallback = function( grid, row, col, value ){
@@ -279,7 +282,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var columnHeaders = [];
       var data = [];
       var separator = ',';
-      
+
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         "\n"
       );
@@ -302,12 +305,12 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       ];
 
       var separator = ',';
-      
+
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         '"Col1","Col2","Col3","12345234"\n"a string","a string","A string","a string"\n"","45","A string",FALSE\n"' + date.toISOString() + '",45,"A string",TRUE'
       );
     });
-    
+
     it('formats a mix of data as a csv with custom separator', function() {
       var columnHeaders = [
         {name: 'col1', displayName: 'Col1', width: 50, align: 'left'},
@@ -323,9 +326,9 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ {value: ''}, {value: '45'}, {value: 'A string'}, {value: false} ],
         [ {value: date}, {value: 45}, {value: 'A string'}, {value: true} ]
       ];
-      
+
       var separator = ';';
-      
+
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
         '"Col1";"Col2";"Col3";"12345234"\n"a string";"a string";"A string";"a string"\n"";"45";"A string";FALSE\n"' + date.toISOString() + '";45;"A string";TRUE'
       );
@@ -353,51 +356,51 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ {value: ''}, {value: '45'}, {value: 'A string'}, {value: false} ],
         [ {value: date}, {value: 45}, {value: 'A string'}, {value: true} ]
       ];
-      
+
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
         pageOrientation : 'landscape',
-        pageSize: 'A4', 
-        content : [{ 
+        pageSize: 'A4',
+        content : [{
           style : 'tableStyle',
-          table : { 
-            headerRows : 1, 
-            widths: [50 * 720/450, '*', 100 * 720/450, 200 * 720/450], 
+          table : {
+            headerRows : 1,
+            widths: [50 * 720/450, '*', 100 * 720/450, 200 * 720/450],
             body : [
-              [ 
-                { text : 'Col1', style : 'tableHeader' }, 
-                { text : 'Col2', style : 'tableHeader' }, 
-                { text : 'Col3', style : 'tableHeader' }, 
+              [
+                { text : 'Col1', style : 'tableHeader' },
+                { text : 'Col2', style : 'tableHeader' },
+                { text : 'Col3', style : 'tableHeader' },
                 { text : '12345234', style : 'tableHeader' }
-              ], 
-              [ 'a string', 'a string', 'A string', 'a string' ], 
-              [ '', '45', 'A string', 'FALSE' ], 
-              [ date.toISOString(), '45', 'A string', 'TRUE' ] 
-            ] 
-          } 
-        }], 
-        styles : { 
-          tableStyle : { 
-            margin : [ 0, 5, 0, 15 ] 
-          }, 
-          tableHeader : { 
-            bold : true, fontSize : 12, color : 'black' 
-          } 
-        }, 
-        defaultStyle : { 
-          fontSize : 11 
+              ],
+              [ 'a string', 'a string', 'A string', 'a string' ],
+              [ '', '45', 'A string', 'FALSE' ],
+              [ date.toISOString(), '45', 'A string', 'TRUE' ]
+            ]
+          }
+        }],
+        styles : {
+          tableStyle : {
+            margin : [ 0, 5, 0, 15 ]
+          },
+          tableHeader : {
+            bold : true, fontSize : 12, color : 'black'
+          }
+        },
+        defaultStyle : {
+          fontSize : 11
         }
-      }); 
+      });
 
     });
-    
+
     it( 'prepares standard grid using overrides', function() {
       /*
        * Note that you can test the results from prepareAsPdf using
        * http://pdfmake.org/playground.html#, which verifies
        * that it creates a genuine pdf
        */
-      
+
       grid.options.exporterPdfDefaultStyle = {fontSize: 10};
       grid.options.exporterPdfTableStyle = {margin: [30, 30, 30, 30]};
       grid.options.exporterPdfTableHeaderStyle = {fontSize: 11, bold: true, italic: true};
@@ -410,7 +413,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       grid.options.exporterPdfOrientation = 'portrait';
       grid.options.exporterPdfPageSize = 'LETTER';
       grid.options.exporterPdfMaxGridWidth = 500;
-      
+
       var columnHeaders = [
         {name: 'col1', displayName: 'Col1', width: 100, exporterPdfAlign: 'right'},
         {name: 'col2', displayName: 'Col2', width: '*', exporterPdfAlign: 'left'},
@@ -425,50 +428,50 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         [ {value: '', alignment: 'right'}, {value: '45', alignment: 'center'}, {value: 'A string', alignment: 'left'}, {value: false} ],
         [ {value: date, alignment: 'right'}, {value: 45, alignment: 'center'}, {value: 'A string', alignment: 'left'}, {value: true} ]
       ];
-      
+
       var result = uiGridExporterService.prepareAsPdf(grid, columnHeaders, data);
       expect(result).toEqual({
         pageOrientation : 'portrait',
-        pageSize: 'LETTER', 
+        pageSize: 'LETTER',
         content : [
-          { 
-            style : 'tableStyle', 
-            table : { 
-              headerRows : 1, 
-              widths : [ 100, '*', 100, 200 ], 
-              body : [ 
-                [ 
-                  { text : 'Col1', style : 'tableHeader' }, 
-                  { text : 'Col2', style : 'tableHeader' }, 
-                  { text : 'Col3', style : 'tableHeader' }, 
-                  { text : '12345234', style : 'tableHeader' } 
-                ], 
-                [ {text: 'a string', alignment: 'right'}, { text: 'a string', alignment: 'center'}, { text: 'A string', alignment: 'left'}, 'a string' ], 
-                [ {text: '', alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'FALSE' ], 
-                [ {text: date.toISOString(), alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'TRUE' ] 
-              ] 
-            } 
+          {
+            style : 'tableStyle',
+            table : {
+              headerRows : 1,
+              widths : [ 100, '*', 100, 200 ],
+              body : [
+                [
+                  { text : 'Col1', style : 'tableHeader' },
+                  { text : 'Col2', style : 'tableHeader' },
+                  { text : 'Col3', style : 'tableHeader' },
+                  { text : '12345234', style : 'tableHeader' }
+                ],
+                [ {text: 'a string', alignment: 'right'}, { text: 'a string', alignment: 'center'}, { text: 'A string', alignment: 'left'}, 'a string' ],
+                [ {text: '', alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'FALSE' ],
+                [ {text: date.toISOString(), alignment: 'right'}, {text: '45', alignment: 'center'}, {text: 'A string', alignment: 'left'}, 'TRUE' ]
+              ]
+            }
           }
          ],
         header : "My Header",
-        footer : "My Footer",  
-        styles : { 
-          tableStyle : { 
-            margin : [ 30, 30, 30, 30 ] 
-          }, 
-          tableHeader : { 
-            fontSize : 11, bold : true, italic : true 
+        footer : "My Footer",
+        styles : {
+          tableStyle : {
+            margin : [ 30, 30, 30, 30 ]
+          },
+          tableHeader : {
+            fontSize : 11, bold : true, italic : true
           },
           headerStyle: { fontSize: 10 }
-        }, 
-        defaultStyle : { 
-          fontSize : 10 
+        },
+        defaultStyle : {
+          fontSize : 10
         }
-      }); 
-      
-    });    
+      });
+
+    });
   });
-  
+
   describe( 'calculatePdfHeaderWidths', function() {
     it( 'calculates mix of widths', function() {
       var headers = [
@@ -479,19 +482,19 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         { width: 150 },
         { width: 100 }
       ];
-      
+
       grid.options.exporterPdfMaxGridWidth = 410;
-      
+
       // baseGridWidth = 600
       // extra 120 for 20%
       // extra 100 for '*'
       // total gridWidth 820
-      
-      
+
+
       expect(uiGridExporterService.calculatePdfHeaderWidths( grid, headers)).toEqual(
         [60, '*', 75, 100, 75, 50]
       );
     });
   });
-  
+
 });
