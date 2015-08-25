@@ -22,8 +22,11 @@
        ng-class="{ 'ui-grid-icon-up-dir': col.sort.direction == asc, 'ui-grid-icon-down-dir': col.sort.direction == desc, 'ui-grid-icon-blank': !col.sort.direction }"
        title="{{col.sort.priority ? i18n.headerCell.priority + ' ' + col.sort.priority : null}}"
        aria-hidden="true">
-       &nbsp;
      </i>
+     <sub
+       class="ui-grid-sort-priority-number">
+       {{col.sort.priority + 1}}
+     </sub>
     </span>
   </div>
 
