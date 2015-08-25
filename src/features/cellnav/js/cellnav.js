@@ -67,8 +67,8 @@
        *          If the column has a cellFilter this will NOT return the filtered value.
        */
       RowCol.prototype.getIntersectionValueRaw = function(){
-        var getter = $parse(this.col.field);
-        var context = this.row.entity;
+        var getter = $parse(this.row.getEntityQualifiedColField(this.col));
+        var context = this.row;
         return getter(context);
       };
       /**
