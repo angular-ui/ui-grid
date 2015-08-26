@@ -409,9 +409,9 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( onSortChangedHook.calls.length ).toEqual( 1 );
 
-      expect( onSortChangedHook ).toHaveBeenCalledWith( 
-        grid, 
-        [ grid.getOnlyDataColumns()[3], grid.getOnlyDataColumns()[2] ] 
+      expect( onSortChangedHook ).toHaveBeenCalledWith(
+        grid,
+        [ grid.getOnlyDataColumns()[3], grid.getOnlyDataColumns()[2] ]
       );
     });
 
@@ -744,5 +744,14 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( grid.api.core.scrollTo ).not.toHaveBeenCalled();
       expect( grid.api.cellNav.scrollToFocus ).toHaveBeenCalledWith( grid.rows[2].entity, grid.options.columnDefs[3] );
     });
+  });
+
+  it('returns promise after grid is refreshed', function() {
+    uiGridSelectionService.initializeGrid(grid);
+
+    var result = null;
+    uiGridSaveStateService.restoreSelection( grid, [ ]).then(function() { result = 'success'; });
+
+    expect( result === 'success' );
   });
 });
