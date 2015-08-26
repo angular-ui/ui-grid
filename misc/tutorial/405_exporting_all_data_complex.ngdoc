@@ -32,7 +32,7 @@ This shows combined external pagination and sorting.
             { name: 'gender', enableSorting: false },
             { name: 'company', enableSorting: false }
           ],
-          exporterAllDataPromise: function() {
+          exporterAllDataFn: function() {
             return getPage(1, $scope.gridOptions.totalItems, paginationOptions.sort)
             .then(function() {
               $scope.gridOptions.useExternalPagination = false;

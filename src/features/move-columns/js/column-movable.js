@@ -5,7 +5,11 @@
    * @ngdoc overview
    * @name ui.grid.moveColumns
    * @description
+   *
    * # ui.grid.moveColumns
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+   *
    * This module provides column moving capability to ui.grid. It enables to change the position of columns.
    * <div doc-module-components="ui.grid.moveColumns"></div>
    */

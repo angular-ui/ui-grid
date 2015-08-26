@@ -5,7 +5,7 @@
 Combine ui.grid.edit with ui.grid.cellNav, you can enable editing when the cell gets focus.
 grid.options.enableCellEditOnFocus must be set to true.
 <br/>
-See api docs for default navigation keys and how you can override.
+See api docs for both cellNav and edit for default navigation keys and how you can override.
 
 
 @example

@@ -130,7 +130,10 @@ In the meantime, you can override the height to fit with your application in you
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
     describe('grid menu', function() {
+      gridTestUtils.firefoxReload();
+
       it('grid1 should have three visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });
@@ -145,17 +148,23 @@ In the meantime, you can override the height to fit with your application in you
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
 
-        gridTestUtils.clickGridMenuItem( 'grid1', 11 );  // there are some hidden menu items, this is company_hide
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+        gridTestUtils.clickGridMenuItem( 'grid1', 11 )   // there are some hidden menu items, this is company_hide
+          .then(function () {
+            gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+            gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+            gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
 
-        gridTestUtils.unclickGridMenu( 'grid1');  // menu stays open if change columns
-        gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is company_show
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+            return gridTestUtils.unclickGridMenu( 'grid1');  // menu stays open if change columns
+          })
+          .then(function() {
+            return gridTestUtils.clickGridMenuItem( 'grid1', 12 );  // there are some hidden menu items, this is company_show
+          })
+          .then(function() {
+            gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+            gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+            gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+            gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+          });
       });
     });
 

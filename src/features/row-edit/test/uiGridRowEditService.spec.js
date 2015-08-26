@@ -60,6 +60,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.api.rowEdit.getErrorRows ).toEqual( jasmine.any(Function) );
       expect( grid.api.rowEdit.flushDirtyRows ).toEqual( jasmine.any(Function) );
       expect( grid.api.rowEdit.setRowsDirty ).toEqual( jasmine.any(Function) );
+      expect( grid.api.rowEdit.setRowsClean ).toEqual( jasmine.any(Function) );
 
     });
 
@@ -528,7 +529,13 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rowEdit.errorRows.length ).toEqual(1);
       expect( success ).toEqual(false);
       expect( failure ).toEqual(true);
-    });  
+    });
+    
+    it( 'no dirty rows, no error is thrown', function() {
+      expect(function() {
+        uiGridRowEditService.flushDirtyRows( grid );
+      }).not.toThrow();
+    });
   });
   
   
@@ -544,5 +551,35 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( grid.rows[1].isDirty ).toEqual( true );
       expect( grid.rows[1].rowEditSaveTimer ).not.toEqual( undefined );
     });
-  });    
+  });
+
+
+  describe( 'setRowsClean', function() {
+    it( 'rows are set clean', function() {
+      uiGridRowEditService.initializeGrid( $scope, grid );
+      uiGridEditService.initializeGrid( grid );
+      grid.renderingComplete();
+
+      grid.api.rowEdit.setRowsDirty( [ grid.options.data[0], grid.options.data[1] ]);
+      expect( grid.rows[0].isDirty ).toEqual( true );
+      expect( grid.rows[0].rowEditSaveTimer ).not.toEqual( undefined );
+      expect( grid.rows[1].isDirty ).toEqual( true );
+      expect( grid.rows[1].rowEditSaveTimer ).not.toEqual( undefined );
+      expect( grid.rowEdit.dirtyRows.length).toEqual(2);
+
+      grid.rows[0].isError = true;
+      grid.rowEdit.errorRows = [];
+      grid.rowEdit.errorRows.push( grid.rows[0] );
+      expect( grid.rowEdit.errorRows.length).toEqual(1);
+
+      grid.api.rowEdit.setRowsClean( [ grid.options.data[0], grid.options.data[1] ]);
+
+      expect( grid.rows[0].isDirty ).toEqual( undefined );
+      expect( grid.rows[0].rowEditSaveTimer ).toEqual( undefined );
+      expect( grid.rows[1].isDirty ).toEqual( undefined );
+      expect( grid.rows[1].rowEditSaveTimer ).toEqual( undefined );
+      expect( grid.rowEdit.dirtyRows.length).toEqual(0);
+      expect( grid.rowEdit.errorRows.length).toEqual(0);
+    });
+  });
 });

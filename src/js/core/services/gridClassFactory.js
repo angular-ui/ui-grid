@@ -101,8 +101,8 @@
 
           var templateGetPromises = [];
 
-          // Abstracts the standard template processing we do for every template type
-          var processTemplate = function( templateType, providedType, defaultTemplate, filterType ) {
+          // Abstracts the standard template processing we do for every template type.
+          var processTemplate = function( templateType, providedType, defaultTemplate, filterType, tooltipType ) {
             if ( !colDef[templateType] ){
               col[providedType] = defaultTemplate;
             } else {
@@ -112,8 +112,17 @@
              templateGetPromises.push(gridUtil.getTemplate(col[providedType])
                 .then(
                 function (template) {
+                  var tooltipCall = ( tooltipType === 'cellTooltip' ) ? 'col.cellTooltip(row,col)' : 'col.headerTooltip(col)';
+                  if ( tooltipType && col[tooltipType] === false ){
+                    template = template.replace(uiGridConstants.TOOLTIP, '');
+                  } else if ( tooltipType && col[tooltipType] ){
+                    template = template.replace(uiGridConstants.TOOLTIP, 'title="{{' + tooltipCall + ' CUSTOM_FILTERS }}"');
+                  }
+
                   if ( filterType ){
-                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, col[filterType] ? "|" + col[filterType] : "");
+                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
+                      return col[filterType] ? "|" + col[filterType] : "";
+                    });
                   } else {
                     col[templateType] = template;
                   }
@@ -124,8 +133,8 @@
             );
 
           };
-          
-          
+
+
           /**
            * @ngdoc property
            * @name cellTemplate
@@ -135,9 +144,9 @@
            * must contain a div that can receive focus.
            *
            */
-          processTemplate( 'cellTemplate', 'providedCellTemplate', 'ui-grid/uiGridCell', 'cellFilter' );
+          processTemplate( 'cellTemplate', 'providedCellTemplate', 'ui-grid/uiGridCell', 'cellFilter', 'cellTooltip' );
           col.cellTemplatePromise = templateGetPromises[0];
-          
+
           /**
            * @ngdoc property
            * @name headerCellTemplate
@@ -146,7 +155,7 @@
            * is ui-grid/uiGridHeaderCell
            *
            */
-          processTemplate( 'headerCellTemplate', 'providedHeaderCellTemplate', 'ui-grid/uiGridHeaderCell', 'headerCellFilter' );
+          processTemplate( 'headerCellTemplate', 'providedHeaderCellTemplate', 'ui-grid/uiGridHeaderCell', 'headerCellFilter', 'headerTooltip' );
 
           /**
            * @ngdoc property

@@ -25,6 +25,7 @@
     keymap: {
       TAB: 9,
       STRG: 17,
+      CAPSLOCK: 20,
       CTRL: 17,
       CTRLRIGHT: 18,
       CTRLR: 18,

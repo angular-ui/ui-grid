@@ -2,12 +2,20 @@
 @name Tutorial: 202 Cell Navigation
 @description
 
-This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav' 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
+This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav'
 module and you must include the ui-grid-cellNav directive on your grid element.
 
+Documentation for the cellNav feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.cellNav.api:ColumnDef columnDef}
+- {@link api/ui.grid.cellNav.api:GridOptions gridOptions}
+- {@link api/ui.grid.cellNav.api:PublicApi publicApi}
+
 CellNav allows you to navigate around the grid using the arrow keys, pg-down and pg-up, enter (moves down),
-shift-enter (moves up), tab (moves right) and shift-tab (moves left).  When combined with the editable feature, the 
-left-right arrow keys will be subsumed when in "deep edit" mode, allowing you to move around within the text you're editing.  
+shift-enter (moves up), tab (moves right) and shift-tab (moves left).  When combined with the editable feature, the
+left-right arrow keys will be subsumed when in "deep edit" mode, allowing you to move around within the text you're editing.
 The tab key and shift-tab keys continue to function.
 
 Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
@@ -66,7 +74,7 @@ extract values of selected cells.
           }
           $scope.printSelection = values.toString();
         };
-        
+
         $scope.scrollTo = function( rowIndex, colIndex ) {
           $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
         };

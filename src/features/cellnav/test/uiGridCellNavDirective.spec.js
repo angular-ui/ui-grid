@@ -53,4 +53,22 @@ describe('ui.grid.cellNav directive', function () {
     $scope.grid.cellNav.broadcastCellNav({ row: $scope.grid.rows[1], col: $scope.grid.columns[0] }, true);
     expect($scope.gridApi.cellNav.getCurrentSelection().length).toEqual(2);
   });
+  
+  
+  it('handleKeyDown should clear the focused cells list when clearing focus', function () {
+	// first ensure that a cell is selected
+	$scope.grid.cellNav.broadcastCellNav({ row: $scope.grid.rows[0], col: $scope.grid.columns[0] }, true);
+    var rowColToTest = { row: $scope.grid.rows[0], col: $scope.grid.columns[0] };
+    var evt = jQuery.Event("keydown");
+    evt.keyCode = uiGridConstants.keymap.TAB;
+	$scope.grid.cellNav.lastRowCol = rowColToTest;
+	
+	// simulate tabbing out of grid
+    elm.controller('uiGrid').cellNav.handleKeyDown(evt);
+	expect($scope.grid.cellNav.focusedCells.length).toEqual(0);
+	
+	// simulate restoring focus
+	$scope.grid.cellNav.broadcastCellNav({ row: $scope.grid.rows[0], col: $scope.grid.columns[0] }, true);
+	expect($scope.grid.cellNav.focusedCells.length).toEqual(1);
+  });
 });

@@ -1,6 +1,17 @@
 (function(){
   'use strict';
 
+  /**
+   * @ngdoc overview
+   * @name ui.grid.resizeColumns
+   * @description
+   *
+   * # ui.grid.resizeColumns
+   *
+   * <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+   *
+   * This module allows columns to be resized.
+   */
   var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
 
   module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$timeout',
@@ -96,7 +107,7 @@
             if ( grid.api.colResizable ){
               grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
             } else {
-              gridUtil.logError("The resizeable api is not registered, this may indicate that you've included the module but not added the 'ui-grid-column-resize' directive to your grid definition.  Cannot raise any events.");
+              gridUtil.logError("The resizeable api is not registered, this may indicate that you've included the module but not added the 'ui-grid-resize-columns' directive to your grid definition.  Cannot raise any events.");
             }
           });
         },
@@ -285,7 +296,6 @@
      </doc:source>
      <doc:scenario>
       // TODO: e2e specs?
-        // TODO: Obey minWidth and maxWIdth;
 
       // TODO: post-resize a horizontal scroll event should be fired
      </doc:scenario>
@@ -321,17 +331,13 @@
           $elm.addClass('right');
         }
 
-        // Build the columns then refresh the grid canvas
+        // Refresh the grid canvas
         //   takes an argument representing the diff along the X-axis that the resize had
-        function buildColumnsAndRefresh(xDiff) {
-          // Build the columns
-          uiGridCtrl.grid.buildColumns()
-            .then(function() {
-              // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
-              uiGridCtrl.grid.refreshCanvas(true).then( function() {
-                uiGridCtrl.grid.queueGridRefresh();
-              });
-            });
+        function refreshCanvas(xDiff) {
+          // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
+          uiGridCtrl.grid.refreshCanvas(true).then( function() {
+            uiGridCtrl.grid.queueGridRefresh();
+          });
         }
 
         // Check that the requested width isn't wider than the maxWidth, or narrower than the minWidth
@@ -340,11 +346,11 @@
           var newWidth = width;
 
           // If the new width would be less than the column's allowably minimum width, don't allow it
-          if (col.colDef.minWidth && newWidth < col.colDef.minWidth) {
-            newWidth = col.colDef.minWidth;
+          if (col.minWidth && newWidth < col.minWidth) {
+            newWidth = col.minWidth;
           }
-          else if (col.colDef.maxWidth && newWidth > col.colDef.maxWidth) {
-            newWidth = col.colDef.maxWidth;
+          else if (col.maxWidth && newWidth > col.maxWidth) {
+            newWidth = col.maxWidth;
           }
 
           return newWidth;
@@ -427,7 +433,7 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, newWidth);
 
-          buildColumnsAndRefresh(xDiff);
+          refreshCanvas(xDiff);
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);
 
@@ -539,7 +545,7 @@
           // check we're not outside the allowable bounds for this column
           col.width = constrainWidth(col, maxWidth);
 
-          buildColumnsAndRefresh(xDiff);
+          refreshCanvas(xDiff);
 
           uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);        };
         $elm.on('dblclick', dblClickFn);

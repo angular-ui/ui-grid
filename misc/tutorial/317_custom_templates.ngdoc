@@ -6,20 +6,25 @@ The grid allows you to override most of the templates, including cellTemplate, h
 and others.  You would typically do this to inject functionality like buttons or to get a very different look and
 feel that you couldn't achieve through cell classes and other settings.
 
-It is generally good practice to at least review the standard template in https://github.com/angular-ui/ng-grid/tree/master/src/templates/ui-grid
-to make sure there isn't functionality that you are overriding that you needed to keep.  In many cases it is desirable to 
+It is generally good practice to at least review the standard template in https://github.com/angular-ui/ui-grid/tree/master/src/templates/ui-grid
+to make sure there isn't functionality that you are overriding that you needed to keep.  In many cases it is desirable to
 use the standard template as a starting point, and add your customisations on top.  Also remember that new features
 or code changes may mean that you need to upgrade your custom template (if the standard template has been modified).
 
 In this example we create a grid almost the same as the most basic one, but with a custom row template, and
-with a cellTemplate that totals all the items above it in the grid.  This template continues to work when the data is 
+with a cellTemplate that totals all the items above it in the grid.  This template continues to work when the data is
 filtered or sorted.
+
+The custom row template merges all the cells together when the entity.merge value is true.
 
 You can use [grid.appScope](/docs/#/tutorial/305_appScope) in your row template to access
 elements in your controller's scope. More details are on
 the [scopes](/docs/#/tutorial/305_appScope) tutorial.
 
 In the cellTemplate you have access to `grid`, `row` and `column`, which allows you to write any of a range of functions.
+
+Note that the footerTemplate is rendered once for each renderContainer.  If using a custom footer template you
+may want to test for `ng-if="colContainer.name === \'body\'"`
 
 @example
 <example module="app">
@@ -40,14 +45,15 @@ In the cellTemplate you have access to `grid`, `row` and `column`, which allows 
           $interval.cancel(sec);
           $scope.wait = '';
           return '<div ng-class="{ \'my-css-class\': grid.appScope.rowFormatter( row ) }">' +
-                     '  <div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>' +
+                     '  <div ng-if="row.entity.merge">{{row.entity.title}}</div>' +
+                     '  <div ng-if="!row.entity.merge" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>' +
                      '</div>';
         }, 6000);
       }
 
       // Access outside scope functions from row template
       $scope.rowFormatter = function( row ) {
-        return row.entity.gender === 'male'; 
+        return row.entity.gender === 'male';
       };
 
       $scope.waiting = 'Waiting for row template...';
@@ -57,6 +63,10 @@ In the cellTemplate you have access to `grid`, `row` and `column`, which allows 
           data.forEach( function(row, index) {
             row.widgets = index % 10;
           });
+          data[1].merge = true;
+          data[1].title = "A merged row";
+          data[4].merge = true;
+          data[4].title = "Another merged row";
           $scope.data = data;
         });
 
@@ -72,7 +82,7 @@ In the cellTemplate you have access to `grid`, `row` and `column`, which allows 
           { name: 'cumulativeWidgets', field: 'widgets', cellTemplate: '<div class="ui-grid-cell-contents" title="TOOLTIP">{{grid.appScope.cumulative(grid, row)}}</div>' }
         ]
       };
-      
+
       $scope.cumulative = function( grid, myRow ) {
         var myRowFound = false;
         var cumulativeTotal = 0;

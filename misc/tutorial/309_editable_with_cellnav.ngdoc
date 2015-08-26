@@ -23,7 +23,7 @@ of combining cellNav and edit to give a more spreadsheet-like experience.
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
         { name: 'age', displayName: 'Age' , type: 'number', width: '10%' },
-        { name: 'gender', displayName: 'Gender', editType: 'dropdown', width: '20%', 
+        { name: 'gender', displayName: 'Gender', editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%', 
           cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
           { id: 1, gender: 'male' }, 
           { id: 2, gender: 'female' } 

@@ -1,0 +1,10 @@
+<div
+  class="ui-grid-tree-base-row-header-buttons"
+  ng-class="{'ui-grid-tree-base-header': row.treeLevel > -1 }"
+  ng-click="treeButtonClick(row, $event)">
+  <i
+    ng-class="{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}"
+    ng-style="{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}">
+  </i>
+  &nbsp;
+</div>

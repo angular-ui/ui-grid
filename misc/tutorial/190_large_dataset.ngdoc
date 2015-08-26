@@ -16,7 +16,7 @@ Demonstrates the following:
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    app.controller('MainCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q) {
       $scope.gridOptions = {
       };
 
@@ -28,10 +28,15 @@ Demonstrates the following:
         {name: 'age again', field:'age'}
       ];
 
-      $http.get('/data/10000_complex.json')
+      var canceler = $q.defer();
+      $http.get('/data/10000_complex.json', {timeout: canceler.promise})
         .success(function(data) {
           $scope.gridOptions.data = data;
         });
+
+      $scope.$on('$destroy', function(){
+        canceler.resolve();  // Aborts the $http request if it isn't finished.
+      });
     }]);
   </file>
   <file name="index.html">
@@ -54,7 +59,7 @@ Demonstrates the following:
       it('grid should have five visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 5 );
       });
-  
+
       it('column headers as expected', function () {
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Id' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Name' );
@@ -67,6 +72,6 @@ Demonstrates the following:
         gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ '0', 'Ramsey Cummings', '52', 'Glendale', '52' ] );
         gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ '1', 'Stefanie Huff', '70', 'Beaverdale', '70' ] );
       });
-    });    
+    });
   </file>
 </example>

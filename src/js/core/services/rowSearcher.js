@@ -14,7 +14,7 @@ function escapeRegExp(str) {
  *  @description Service for searching/filtering rows based on column value conditions.
  */
 module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil, uiGridConstants) {
-  var defaultCondition = uiGridConstants.filter.STARTS_WITH;
+  var defaultCondition = uiGridConstants.filter.CONTAINS;
 
   var rowSearcher = {};
 
@@ -181,8 +181,14 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var term = filter.term;
 
     // Get the column value for this row
-    var value = grid.getCellValue(row, column);
-    
+    var value;
+    if ( column.filterCellFiltered ){
+      value = grid.getCellDisplayValue(row, column);
+    } else {
+      value = grid.getCellValue(row, column);
+    }
+
+
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {
       return filter.condition.test(value);
@@ -192,19 +198,19 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (conditionType === 'function') {
       return filter.condition(term, value, row, column);
     }
-    
+
     if (filter.startswithRE) {
       return filter.startswithRE.test(value);
     }
-    
+
     if (filter.endswithRE) {
       return filter.endswithRE.test(value);
     }
-    
+
     if (filter.containsRE) {
       return filter.containsRE.test(value);
     }
-    
+
     if (filter.exactRE) {
       return filter.exactRE.test(value);
     }
@@ -214,7 +220,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return !regex.exec(value);
     }
 
-    if (typeof(value) === 'number'){
+    if (typeof(value) === 'number' && typeof(term) === 'string' ){
       // if the term has a decimal in it, it comes through as '9\.4', we need to take out the \
       // the same for negative numbers
       // TODO: I suspect the right answer is to look at escapeRegExp at the top of this code file, maybe it's not needed?
@@ -241,11 +247,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (filter.condition === uiGridConstants.filter.LESS_THAN) {
       return (value < term);
     }
-    
+
     if (filter.condition === uiGridConstants.filter.LESS_THAN_OR_EQUAL) {
       return (value <= term);
     }
-    
+
     return true;
   };
 
@@ -276,11 +282,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (grid.options.useExternalFiltering) {
       return true;
     }
-    
+
     var filtersLength = filters.length;
     for (var i = 0; i < filtersLength; i++) {
       var filter = filters[i];
-      
+
       var ret = rowSearcher.runColumnFilter(grid, row, column, filter);
       if (!ret) {
         return false;
@@ -307,12 +313,12 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
      * loops and is therefore very performance sensitive.  In particular, avoiding forEach as
      * this impacts some browser optimisers (particularly Chrome), using iterators instead
      */
-    
+
     // Don't do anything if we weren't passed any rows
     if (!rows) {
       return;
     }
-    
+
     // don't filter if filtering currently disabled
     if (!grid.options.enableFiltering){
       return rows;
@@ -322,17 +328,27 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var filterData = [];
 
     var colsLength = columns.length;
+
+    var hasTerm = function( filters ) {
+      var hasTerm = false;
+
+      filters.forEach( function (filter) {
+        if ( !gridUtil.isNullOrUndefined(filter.term) && filter.term !== '' || filter.noTerm ){
+          hasTerm = true;
+        }
+      });
+
+      return hasTerm;
+    };
+
     for (var i = 0; i < colsLength; i++) {
       var col = columns[i];
 
-      if (typeof(col.filters) !== 'undefined' && ( col.filters.length > 1 || col.filters.length === 1 && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filters[0].noTerm ) ) ) {
+      if (typeof(col.filters) !== 'undefined' && hasTerm(col.filters) ) {
         filterData.push( { col: col, filters: rowSearcher.setupFilters(col.filters) } );
       }
-      else if (typeof(col.filter) !== 'undefined' && col.filter && ( !gridUtil.isNullOrUndefined(col.filters[0].term) || col.filter.noTerm ) ) {
-        filterData.push( { col: col, filters: rowSearcher.setupFilters([col.filter]) } );
-      }
     }
-    
+
     if (filterData.length > 0) {
       // define functions outside the loop, performance optimisation
       var foreachRow = function(grid, row, col, filters){
@@ -340,7 +356,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
           row.visible = false;
         }
       };
-      
+
       var foreachFilterCol = function(grid, filterData){
         var rowsLength = rows.length;
         for ( var i = 0; i < rowsLength; i++){
@@ -357,10 +373,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       if (grid.api.core.raise.rowsVisibleChanged) {
         grid.api.core.raise.rowsVisibleChanged();
       }
-      
+
       // drop any invisible rows
-      rows = rows.filter(function(row){ return row.visible; });
-    
+      // keeping these, as needed with filtering for trees - we have to come back and make parent nodes visible if child nodes are selected in the filter
+      // rows = rows.filter(function(row){ return row.visible; });
+
     }
 
     return rows;

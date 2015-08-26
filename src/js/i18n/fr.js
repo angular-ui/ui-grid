@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('fr', {
@@ -61,7 +61,8 @@
         },
         pagination: {
           sizes: 'éléments par page',
-          totalItems: 'éléments'
+          totalItems: 'éléments',
+          of: 'sur'
         },
         grouping: {
           group: 'Grouper',

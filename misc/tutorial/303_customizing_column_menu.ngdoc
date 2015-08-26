@@ -5,17 +5,17 @@
 You can customize a column's menu and provide your own functionality.  Each menu item can have:
 
 - `shown`: a function that determines whether or not to display the item
-- `title`: the title you'd like to have displayed for the menu item (note that you can also 
+- `title`: the title you'd like to have displayed for the menu item (note that you can also
 use i18n on this through the `gridMenuTitleFilter` setting)
 - `icon`: an icon you'd like displayed alongside the item
 - `action`: a function that will be called when the menu is clicked
 - `active`: a function that highlights the item (giving a toggle type effect - see the sort on the column menus for an example)
-- `context`: by default, the `action`, `shown` and `active`'s' contexts will have a reference to the grid added as the 
-property `grid` (accessible through `this.grid`.  You can pass in your own context by supplying 
+- `context`: by default, the `action`, `shown` and `active`'s' contexts will have a reference to the grid added as the
+property `grid` (accessible through `this.grid`.  You can pass in your own context by supplying
 the `context` property to your menu item. It will be accessible through `this.context`.
 
-The column menu will add the column's `GridColumn` object to the context as `this.context.col`. 
-You can then show/hide the the menu item based on conditions that use the grid and column.  You could 
+The column menu will add the column's `GridColumn` object to the context as `this.context.col`.
+You can then show/hide the the menu item based on conditions that use the grid and column.  You could
 also use a custom column builder to add some item to the every column definition.
 
 You can remove the column hide option using the `enableHiding: false` columnDef option, which will also prevent
@@ -100,39 +100,63 @@ See the example below for usage.
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
     describe('column menus', function() {
+      // Reload the page before each test if on Firefox. Chrome does it automatically.
+      gridTestUtils.firefoxReload();
+
       it('grid1 should have three visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       });
-  
+
       it('no column menu on first column, including from long press', function () {
         var headerCell = gridTestUtils.headerCell( 'grid1', 0 );
         expect( headerCell.all( by.css( '.ui-grid-column-menu-button' ) ).count()).toEqual(0);
-        
+
         browser.actions()
           .mouseDown(headerCell, protractor.Button.LEFT)
-          .perform();
-        browser.sleep(550);  // 500ms for long press
-        
-        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).all( by.css( '.ui-grid-menu-inner' ));
-        expect(columnMenu.count()).toEqual(0);
+          .perform()
+          .then(function () {
+            return browser.sleep(550);  // 500ms for long press
+          })
+          .then(function () {
+            return browser.actions().mouseUp(headerCell, protractor.Button.LEFT).perform()
+          })
+          .then(function () {
+            var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).all( by.css( '.ui-grid-menu-inner' ));
+            expect(columnMenu.count()).toEqual(0);
+          })
       });
-  
-      it('2 menu items in second column, implying no hide option and no remove sort option', function () {
-        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 2 );        
-      });      
+
+      it('3 menu items in second column, implying no hide option and no remove sort option', function () {
+        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 3 );
+      });
 
       it('Long press opens menu in second column', function () {
         var headerCell = gridTestUtils.headerCell( 'grid1', 1 );
 
         browser.actions()
           .mouseDown(headerCell, protractor.Button.LEFT)
-          .perform();
-        browser.sleep(550);  // 500ms for long press
-        
-        var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
-        expect(columnMenu.isDisplayed()).toEqual(true, 'column menu should be displayed');
-      });      
+          .perform()
+          .then(function () {
+            return browser.sleep(550);  // 500ms for long press
+          })
+          // Wait for element to be present b/c Firefox is kinda slow
+          .then(function () {
+            var el = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
+
+            return browser.wait(function () {
+              return el.isPresent();
+            }, 2000);
+          })
+          .then(function () {
+            return browser.actions().mouseUp(headerCell, protractor.Button.LEFT).perform()
+          })
+          .then(function () {
+            var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ) ).element( by.css( '.ui-grid-menu-inner' ));
+            expect(columnMenu.isDisplayed()).toEqual(true, 'column menu should be displayed');
+          });
+      });
 
       it('Column 2 rotates through sort ASC and sort DESC, but no sort null', function () {
         gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'female' );
@@ -140,28 +164,34 @@ See the example below for usage.
         gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'female' );
         gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'female' );
 
-        gridTestUtils.clickHeaderCell( 'grid1', 1 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'male' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'male' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'male' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'male' );
+        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'male' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'male' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'male' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'male' );
 
-        gridTestUtils.clickHeaderCell( 'grid1', 1 );
-        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'female' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'female' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'female' );
-        gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'female' );
-      });      
-
-      it('6 visible items in the third column, implying hide option', function () {
-        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 6 );        
+            return gridTestUtils.clickHeaderCell( 'grid1', 1 );
+          })
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'female' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'female' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'female' );
+            gridTestUtils.expectCellValueMatch( 'grid1', 3, 1, 'female' );
+          });
       });
 
-      it('click header to sort third column, 7 visible items in the third column, implying remove sort option', function () {
-        gridTestUtils.clickHeaderCell( 'grid1', 2 );
-        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 7 );        
+      it('7 visible items in the third column, implying hide option', function () {
+        gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 7 );
+      });
+
+      it('click header to sort third column, 8 visible items in the third column, implying remove sort option', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 2 )
+          .then(function () {
+            gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 2, 8 );
+          });
       });
     });
 
-  </file>   
+  </file>
 </example>

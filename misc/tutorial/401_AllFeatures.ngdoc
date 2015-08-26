@@ -13,8 +13,8 @@ All features are enabled to get an idea of performance
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping']);
 
-    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants',
-     function ($scope, $http, $timeout, $interval, uiGridConstants) {
+    app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants',
+     function ($scope, $http, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
 
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
@@ -35,20 +35,22 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.columnDefs = [
         { name:'id', width:50 },
         { name:'name', width:100 },
-        { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg,
-         cellTemplate: '<div class="ui-grid-cell-contents"><span>Age:{{COL_FIELD}}</span></div>'   },
-        { name:'address.street', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Street:{{COL_FIELD}}</span></div>'   },
-        { name:'address.city', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>City:{{COL_FIELD}}</span></div>'  },
-        { name:'address.state', width:50, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>State:{{COL_FIELD}}</span></div>'  },
-        { name:'address.zip', width:50, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Zip:{{COL_FIELD}}</span></div>'  },
-        { name:'company', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Company:{{COL_FIELD}}</span></div>'  },
-        { name:'email', width:100, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Email:{{COL_FIELD}}</span></div>'  },
-        { name:'phone', width:200, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Phone:{{COL_FIELD}}</span></div>'  },
-        { name:'about', width:300, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>AAbout:{{COL_FIELD}}</span></div>'  },
-        { name:'friends[0].name', displayName:'1st friend', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Friend0:{{COL_FIELD}}</span></div>'  },
-        { name:'friends[1].name', displayName:'2nd friend', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Friend1:{{COL_FIELD}}</span></div>'  },
-        { name:'friends[2].name', displayName:'3rd friend', width:150, enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><span>Friend2:{{COL_FIELD}}</span></div>'  },
-        { name:'agetemplate',field:'age', width:150, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age 2:{{COL_FIELD}}</span></div>' }
+        { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg, treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
+        { name:'address.street', width:150, enableCellEdit: true },
+        { name:'address.city', width:150, enableCellEdit: true },
+        { name:'address.state', width:50, enableCellEdit: true },
+        { name:'address.zip', width:50, enableCellEdit: true },
+        { name:'company', width:100, enableCellEdit: true },
+        { name:'email', width:100, enableCellEdit: true },
+        { name:'phone', width:200, enableCellEdit: true },
+        { name:'about', width:300, enableCellEdit: true },
+        { name:'friends[0].name', displayName:'1st friend', width:150, enableCellEdit: true },
+        { name:'friends[1].name', displayName:'2nd friend', width:150, enableCellEdit: true },
+        { name:'friends[2].name', displayName:'3rd friend', width:150, enableCellEdit: true },
+        { name:'agetemplate',field:'age', width:150, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age 2:{{COL_FIELD}}</span></div>' },
+        { name:'Is Active',field:'isActive', width:150, type:'boolean' },
+        { name:'Join Date',field:'registered', cellFilter:'date', width:150, type:'date', enableFiltering:false },
+        { name:'Month Joined',field:'registered', cellFilter: 'date:"MMMM"', filterCellFiltered:true, sortCellFiltered:true, width:150, type:'date' }
       ];
 
       $scope.callsPending = 0;
@@ -60,28 +62,33 @@ All features are enabled to get an idea of performance
         var start = new Date();
         var sec = $interval(function () {
           $scope.callsPending++;
-          
+
           $http.get('/data/500_complex.json')
             .success(function(data) {
               $scope.callsPending--;
 
               data.forEach(function(row){
-                row.name = row.name + ' iter ' + i;
                 row.id = i;
                 i++;
+                row.registered = new Date(row.registered)
                 $scope.myData.push(row);
               });
             })
             .error(function() {
               $scope.callsPending--
             });
-        }, 200);
+        }, 200, 10);
 
 
-        $timeout(function() {
+        var timeout = $timeout(function() {
            $interval.cancel(sec);
            $scope.left = '';
         }, 2000);
+
+        $scope.$on('$destroy', function(){
+          $timeout.cancel(timeout);
+          $interval.cancel(sec);
+        });
 
       };
 
@@ -107,10 +114,18 @@ All features are enabled to get an idea of performance
       var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
 
       describe('a grid with all features', function () {
+        /*
+         * This prevents protractor from throwing a Stale Element Reference errors when
+         * the protractor accessibility tests run.
+         */
+        afterEach(function(){
+          browser.refresh();
+        });
+
         it('should not duplicate the menu options for pinning when resizing a column', function () {
           element( by.id('refreshButton') ).click();
           gridTestUtils.resizeHeaderCell( 'grid1', 1 );
-          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 5);
+          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 12);
         });
       });
   </file>

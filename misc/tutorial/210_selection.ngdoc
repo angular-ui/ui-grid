@@ -2,12 +2,19 @@
 @name Tutorial: 210 Selection
 @description
 
-This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection' 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
+This grid example uses the ui-grid-selection directive to row selection. To enable, you must include the 'ui.grid.selection'
 module and you must include the ui-grid-selection directive on your grid element.
+
+Documentation for the selection feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.selection.api:GridOptions gridOptions}
+- {@link api/ui.grid.selection.api:PublicApi publicApi}
 
 Uses the gridOptions.onRegisterApi callback to register the rowSelectionChanged event and log when the row is selected.
 By default the selection feature will divide selection changes into batch events and single events, there are
-two different events provided in the api.  By setting `enableSelectionBatchEvent: false` you can cause it to 
+two different events provided in the api.  By setting `enableSelectionBatchEvent: false` you can cause it to
 instead just call the single event in a loop - which may be useful if you're doing client rather than server
 side processing of the changes.
 
@@ -15,15 +22,18 @@ By default the module will provide a row header with checkboxes that allow selec
 the `enableRowHeaderSelection` gridOption to false, then the row header is hidden and a click on the row will
 result in selection of that row.  You can see that in this tutorial for grid1 by looking at your javascript console.
 
+If you want to allow both clicking on the row, and also clicking on the rowHeader, you can set `enableFullRowSelection` to
+true.
+
 Setting the `multiSelect` gridOption to true will allow selecting multiple rows, setting to false will allow selection
 of only one row at a time.
 
 If you have `multiSelect: false`, then an additional option `noUnselect` will mean that a row is always selected.  You
 can select a different row (which will unselect the current row), but you cannot manually unselect the current row
-by clicking on it.  This means that at least one row is always selected, other than when you first open the grid.  If 
+by clicking on it.  This means that at least one row is always selected, other than when you first open the grid.  If
 necessary you could programatically select the first row upon page open.  The second grid demonstrates this.
 
-If `multiSelect: true`, another option `modifierKeysToMultiSelect` may be used. If set to true this will allow selecting 
+If `multiSelect: true`, another option `modifierKeysToMultiSelect` may be used. If set to true this will allow selecting
 multiple rows only if the Ctrl-Key, Cmd-Key (Mac) or the Shift-Key is used when selecting, if set to false then it allows
 selecting multiple rows by individually clicking them.
 
@@ -50,7 +60,7 @@ auto-selects the first row once the data is loaded.
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', 'uiGridConstants', function ($scope, $http, $log, $timeout, uiGridConstants) {
-      $scope.gridOptions = { 
+      $scope.gridOptions = {
         enableRowSelection: true,
         enableSelectAll: true,
         selectionRowHeaderWidth: 35,
@@ -98,7 +108,12 @@ auto-selects the first row once the data is loaded.
         $scope.toggleRow1 = function() {
           $scope.gridApi.selection.toggleRowSelection($scope.gridOptions.data[0]);
         };
-        
+
+        $scope.toggleFullRowSelection = function() {
+          $scope.gridOptions.enableFullRowSelection = !$scope.gridOptions.enableFullRowSelection;
+          $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.OPTIONS);
+        };
+
         $scope.setSelectable = function() {
           $scope.gridApi.selection.clearSelectedRows();
 
@@ -110,7 +125,7 @@ auto-selects the first row once the data is loaded.
             }
           };
           $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
-          
+
           $scope.gridOptions.data[0].age = 31;
           $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
         };
@@ -129,7 +144,7 @@ auto-selects the first row once the data is loaded.
           });
         };
     }]);
-    
+
     app.controller('SecondCtrl', ['$scope', '$http', '$interval', 'uiGridConstants', function ($scope, $http, $interval, uiGridConstants) {
       $scope.gridOptions = { enableRowSelection: true, enableRowHeaderSelection: false };
 
@@ -156,7 +171,7 @@ auto-selects the first row once the data is loaded.
       $http.get('/data/500_complex.json')
         .success(function(data) {
           $scope.gridOptions.data = data;
-          
+
           // $interval whilst we wait for the grid to digest the data we just gave it
           $interval( function() {$scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);}, 0, 1);
         });
@@ -168,12 +183,13 @@ auto-selects the first row once the data is loaded.
       <button type="button" class="btn btn-success" ng-click="toggleRow1()">Toggle Row 0</button>
       <br/>
       <br/>
-      <button type="button" class="btn btn-success" ng-click="toggleModifierKeysToMultiSelect()">Toggle modifierKeysToMultiSelect</button>  <strong>ModifierKeysToMultiSelect:</strong> <span ng-bind="gridApi.grid.options.modifierKeysToMultiSelect"> </span>     
+      <button type="button" class="btn btn-success" ng-click="toggleModifierKeysToMultiSelect()">Toggle modifierKeysToMultiSelect</button>  <strong>ModifierKeysToMultiSelect:</strong> <span ng-bind="gridApi.grid.options.modifierKeysToMultiSelect"> </span>
       <br/>
       <br/>
       <button type="button" class="btn btn-success" ng-disabled="!gridApi.grid.options.multiSelect" ng-click="selectAll()">Select All</button>
       <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
       <button type="button" class="btn btn-success" ng-click="setSelectable()">Set Selectable</button>
+      <button type="button" class="btn btn-success" ng-click="toggleFullRowSelection()">Toggle full row selection</button>
       <br/>
 
       <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>

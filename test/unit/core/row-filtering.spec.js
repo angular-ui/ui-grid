@@ -2,13 +2,6 @@ describe('rowSearcher', function() {
   var grid, $scope, $compile, recompile,
       rows, columns, rowSearcher, uiGridConstants, filter;
 
-  var data = [
-    { "name": "Ethel Price", "gender": "female", "company": "Enersol", "isActive" : true },
-    { "name": "Claudine Neal", "gender": "female", "company": "Sealoud", "isActive" : false },
-    { "name": "Beryl Rice", "gender": "female", "company": "Velity", "isActive" : true },
-    { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko", "isActive" : false }
-  ];
-
   beforeEach(module('ui.grid'));
 
   beforeEach(inject(function (_$compile_, $rootScope, _rowSearcher_, Grid, GridRow, GridColumn, _uiGridConstants_) {
@@ -22,16 +15,17 @@ describe('rowSearcher', function() {
     });
 
     rows = grid.rows = [
-      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25, isActive: true }, 0, grid),
-      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45, isActive: false }, 1, grid),
-      new GridRow({ name: 'Joe', company: 'Movers, Inc.', age: 0, isActive: false }, 2, grid)
+      new GridRow({ name: 'Bill', company: 'Gruber, Inc.', age: 25, isActive: true, date: new Date('2015-07-01T13:25:00+00:00') }, 0, grid), // Wednesday
+      new GridRow({ name: 'Frank', company: 'Foo Co', age: 45, isActive: false, date: new Date('2015-06-24T13:25:00+00:00') }, 1, grid), // Wednesday
+      new GridRow({ name: 'Joe', company: 'Movers, Inc.', age: 0, isActive: false, date: new Date('2015-06-29T13:25:00+00:00') }, 2, grid) // Monday
     ];
 
     columns = grid.columns = [
       new GridColumn({ name: 'name' }, 0, grid),
       new GridColumn({ name: 'company' }, 1, grid),
       new GridColumn({ name: 'age' }, 2, grid),
-      new GridColumn({ name: 'isActive' }, 3, grid)
+      new GridColumn({ name: 'isActive' }, 3, grid),
+      new GridColumn({ name: 'date' }, 4, grid)
     ];
 
     filter = null;
@@ -83,10 +77,10 @@ describe('rowSearcher', function() {
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
 
-    it('should guess STARTS_WITH when term has no *s', function() {
+    it('should guess CONTAINS when term has no *s', function() {
       var filter = { term: 'blah' };
 
-      expect(rowSearcher.guessCondition(filter)).toEqual(uiGridConstants.filter.STARTS_WITH, 'STARTS_WITH');
+      expect(rowSearcher.guessCondition(filter)).toEqual(uiGridConstants.filter.CONTAINS, 'CONTAINS');
     });
 
 
@@ -138,7 +132,7 @@ describe('rowSearcher', function() {
     it('should run the search', function () {
       setFilter(columns[0], 'il', uiGridConstants.filter.CONTAINS);
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -149,7 +143,7 @@ describe('rowSearcher', function() {
       setFilter(columns[0], 'il', uiGridConstants.filter.CONTAINS);
       setFilter(columns[1], 'ub', uiGridConstants.filter.CONTAINS);
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -162,7 +156,7 @@ describe('rowSearcher', function() {
 
       rows.splice(1);
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(0);
     });
@@ -172,7 +166,7 @@ describe('rowSearcher', function() {
     it('needs to match', function () {
       setFilter(columns[0], 'Bil*');
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -182,7 +176,7 @@ describe('rowSearcher', function() {
     it('needs to match', function () {
       setFilter(columns[0], '*ll');
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -192,7 +186,7 @@ describe('rowSearcher', function() {
     it('needs to match', function () {
       setFilter(columns[0], 'B*ll');
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -202,7 +196,7 @@ describe('rowSearcher', function() {
     it('should match zero characters too', function () {
       setFilter(columns[0], 'Bi*ll');
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -212,7 +206,7 @@ describe('rowSearcher', function() {
     it('should filter by false', function() {
       setFilter(columns[3], false);
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(2);
     });
@@ -220,7 +214,7 @@ describe('rowSearcher', function() {
     it('should filter by 0', function() {
       setFilter(columns[2], 0);
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(1);
     });
@@ -231,7 +225,7 @@ describe('rowSearcher', function() {
       grid.options.useExternalFiltering = true;
       setFilter(columns[0], 'Bi*ll');
 
-      var ret = rowSearcher.search(grid, rows, columns);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
 
       expect(ret.length).toEqual(3);
     });
@@ -266,7 +260,7 @@ describe('rowSearcher', function() {
 
       spyOn(custom, 'filterFn').andCallThrough();
       setFilter(columns[2], '>27', custom.filterFn);
-      ret = rowSearcher.search(grid, rows, columns);
+      ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
     });
     it('should run the function for each row', function() {
       expect(custom.filterFn.calls.length).toEqual(3);
@@ -278,4 +272,16 @@ describe('rowSearcher', function() {
     });
   });
 
+  describe('with a cellFilter', function(){
+    it('should filter by the displayed text', function(){
+      var col = grid.columns[4];
+      col.cellFilter = 'date:"EEEE"';
+      col.filterCellFiltered = true;
+
+      setFilter(columns[4], 'Wed', uiGridConstants.filter.CONTAINS);
+      var ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
+
+      expect(ret.length).toEqual(2);
+    });
+  });
 });
