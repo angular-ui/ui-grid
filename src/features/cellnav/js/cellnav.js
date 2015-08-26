@@ -1,11 +1,19 @@
 (function () {
   'use strict';
-  var module = angular.module('ui.grid.cellNav', ['ui.grid']);
 
-  function RowCol(row, col) {
-    this.row = row;
-    this.col = col;
-  }
+  /**
+   *  @ngdoc overview
+   *  @name ui.grid.cellNav
+   *
+   *  @description
+
+      #ui.grid.cellNav
+
+      <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
+      This module provides auto-resizing functionality to UI-Grid.
+   */
+  var module = angular.module('ui.grid.cellNav', ['ui.grid']);
 
   /**
    *  @ngdoc object
@@ -24,9 +32,86 @@
     }
   });
 
+  /**
+   * @ngdoc object
+   * @name ui.grid.cellNav.object:RowCol
+   * @param {GridRow} row The row for this pair
+   * @param {GridColumn} column The column for this pair
+   * @description A row and column pair that represents the intersection of these two entities.
+   */
+  module.factory('RowColFactory', ['$parse', '$filter',
+    function($parse, $filter){
+      var RowCol = function RowCol(row, col) {
+        /**
+         * @ngdoc object
+         * @name row
+         * @propertyOf ui.grid.cellNav.object:RowCol
+         * @description {@link ui.grid.class:GridRow }
+         */
+        this.row = row;
+        /**
+         * @ngdoc object
+         * @name col
+         * @propertyOf ui.grid.cellNav.object:RowCol
+         * @description {@link ui.grid.class:GridColumn }
+         */
+        this.col = col;
+      };
 
-  module.factory('uiGridCellNavFactory', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q) {
+      /**
+       * @ngdoc function
+       * @name getIntersectionValueRaw
+       * @methodOf ui.grid.cellNav.object:RowCol
+       * @description Gets the intersection of where the row and column meet.
+       * @returns {String|Number|Object} The value from the grid data that this RowCol points too.
+       *          If the column has a cellFilter this will NOT return the filtered value.
+       */
+      RowCol.prototype.getIntersectionValueRaw = function(){
+        var getter = $parse(this.col.field);
+        var context = this.row.entity;
+        return getter(context);
+      };
+      /**
+       * @ngdoc function
+       * @name getIntersectionValueFiltered
+       * @methodOf ui.grid.cellNav.object:RowCol
+       * @description Gets the intersection of where the row and column meet.
+       * @returns {String|Number|Object} The value from the grid data that this RowCol points too.
+       *          If the column has a cellFilter this will also apply the filter to it and return the value that the filter displays.
+       */
+      RowCol.prototype.getIntersectionValueFiltered = function(){
+        var value = this.getIntersectionValueRaw();
+        if (this.col.cellFilter && this.col.cellFilter !== ''){
+          var getFilterIfExists = function(filterName){
+            try {
+              return $filter(filterName);
+            } catch (e){
+              return null;
+            }
+          };
+          var filter = getFilterIfExists(this.col.cellFilter);
+          if (filter) { // Check if this is filter name or a filter string
+            value = filter(value);
+          } else { // We have the template version of a filter so we need to parse it apart
+            // Get the filter params out using a regex
+            // Test out this regex here https://regex101.com/r/rC5eR5/2
+            var re = /([^:]*):([^:]*):?([\s\S]+)?/;
+            var matches;
+            if ((matches = re.exec(this.col.cellFilter)) !== null) {
+                // View your result using the matches-variable.
+                // eg matches[0] etc.
+                value = $filter(matches[1])(value, matches[2], matches[3]);
+            }
+          }
+        }
+        return value;
+      };
+      return RowCol;
+    }]);
+
+
+  module.factory('uiGridCellNavFactory', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', 'RowColFactory', '$q',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, RowCol, $q) {
       /**
        *  @ngdoc object
        *  @name ui.grid.cellNav.object:CellNav
@@ -257,8 +342,8 @@
    *  @description Services for cell navigation features. If you don't like the key maps we use,
    *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
-  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory', 'ScrollEvent',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav, ScrollEvent) {
+  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory', 'RowColFactory', 'ScrollEvent',
+    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav, RowCol, ScrollEvent) {
 
       var service = {
 
@@ -309,7 +394,20 @@
                  * @param {object} event keydown event
                  * @param {object} rowCol current rowCol position
                  */
-                viewPortKeyDown: function (event, rowCol) {}
+                viewPortKeyDown: function (event, rowCol) {},
+
+                /**
+                 * @ngdoc event
+                 * @name viewPortKeyPress
+                 * @eventOf  ui.grid.cellNav.api:PublicApi
+                 * @description  is raised when the viewPort receives a keyPress event. Cells never get focus in uiGrid
+                 * due to the difficulties of setting focus on a cell that is not visible in the viewport.  Use this
+                 * event whenever you need a keypress event on a cell
+                 * <br/>
+                 * @param {object} event keypress event
+                 * @param {object} rowCol current rowCol position
+                 */
+                viewPortKeyPress: function (event, rowCol) {}
               }
             },
             methods: {
@@ -448,7 +546,7 @@
           }
 
           if (evt.keyCode === uiGridConstants.keymap.DOWN ||
-            evt.keyCode === uiGridConstants.keymap.ENTER) {
+            evt.keyCode === uiGridConstants.keymap.ENTER && !(evt.ctrlKey || evt.altKey)) {
             return uiGridCellNavConstants.direction.DOWN;
           }
 
@@ -598,8 +696,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', '$timeout',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, $timeout) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'RowColFactory', '$timeout', '$compile',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, RowCol, $timeout, $compile) {
       return {
         replace: true,
         priority: -150,
@@ -616,6 +714,14 @@
 
               uiGridCtrl.cellNav = {};
 
+              //Ensure that the object has all of the methods we expect it to
+              uiGridCtrl.cellNav.makeRowCol = function (obj) {
+                if (!(obj instanceof RowCol)) {
+                  obj = new RowCol(obj.row, obj.col);
+                }
+                return obj;
+              };
+
               uiGridCtrl.cellNav.getActiveCell = function () {
                 var elms = $elm[0].getElementsByClassName('ui-grid-cell-focus');
                 if (elms.length > 0){
@@ -625,18 +731,24 @@
                 return undefined;
               };
 
-              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown) {
+              uiGridCtrl.cellNav.broadcastCellNav = grid.cellNav.broadcastCellNav = function (newRowCol, modifierDown, originEvt) {
                 modifierDown = !(modifierDown === undefined || !modifierDown);
-                uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown);
-                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol, modifierDown);
+
+                newRowCol = uiGridCtrl.cellNav.makeRowCol(newRowCol);
+
+                uiGridCtrl.cellNav.broadcastFocus(newRowCol, modifierDown, originEvt);
+                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, newRowCol, modifierDown, originEvt);
               };
 
               uiGridCtrl.cellNav.clearFocus = grid.cellNav.clearFocus = function () {
-                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT, { eventType: uiGridCellNavConstants.EVENT_TYPE.CLEAR });
+                grid.cellNav.focusedCells = [];
+                _scope.$broadcast(uiGridCellNavConstants.CELL_NAV_EVENT);
               };
 
-              uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown) {
+              uiGridCtrl.cellNav.broadcastFocus = function (rowCol, modifierDown, originEvt) {
                 modifierDown = !(modifierDown === undefined || !modifierDown);
+
+                rowCol = uiGridCtrl.cellNav.makeRowCol(rowCol);
 
                 var row = rowCol.row,
                   col = rowCol.col;
@@ -677,7 +789,7 @@
                   // Figure out which new row+combo we're navigating to
                   var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
                   var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
-
+                  var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
                   // Shift+tab on top-left cell should exit cellnav on render container
                   if (
                     // Navigating left
@@ -689,6 +801,7 @@
                     evt.keyCode === uiGridConstants.keymap.TAB &&
                     evt.shiftKey
                   ) {
+                    grid.cellNav.focusedCells.splice(rowColSelectIndex, 1);
                     uiGridCtrl.cellNav.clearFocus();
                     return true;
                   }
@@ -702,6 +815,7 @@
                     evt.keyCode === uiGridConstants.keymap.TAB &&
                     !evt.shiftKey
                   ) {
+                    grid.cellNav.focusedCells.splice(rowColSelectIndex, 1);
                     uiGridCtrl.cellNav.clearFocus();
                     return true;
                   }
@@ -720,14 +834,78 @@
               };
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
+              var _scope = $scope;
+              var grid = uiGridCtrl.grid;
+
+              function addAriaLiveRegion(){
+                // Thanks to google docs for the inspiration behind how to do this
+                // XXX: Why is this entire mess nessasary?
+                // Because browsers take a lot of coercing to get them to read out live regions
+                //http://www.paciellogroup.com/blog/2012/06/html5-accessibility-chops-aria-rolealert-browser-support/
+                var ariaNotifierDomElt = '<div ' +
+                                           'id="' + grid.id +'-aria-speakable" ' +
+                                           'class="ui-grid-a11y-ariascreenreader-speakable ui-grid-offscreen" ' +
+                                           'aria-live="assertive" ' +
+                                           'role="region" ' +
+                                           'aria-atomic="true" ' +
+                                           'aria-hidden="false" ' +
+                                           'aria-relevant="additions" ' +
+                                           '>' +
+                                           '&nbsp;' +
+                                         '</div>';
+
+                var ariaNotifier = $compile(ariaNotifierDomElt)($scope);
+                $elm.prepend(ariaNotifier);
+                $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol, modifierDown, originEvt) {
+                  /*
+                   * If the cell nav event was because of a focus event then we don't want to
+                   * change the notifier text.
+                   * Reasoning: Voice Over fires a focus events when moving arround the grid.
+                   * If the screen reader is handing the grid nav properly then we don't need to
+                   * use the alert to notify the user of the movement.
+                   * In all other cases we do want a notification event.
+                   */
+                  if (originEvt && originEvt.type === 'focus'){return;}
+
+                  function setNotifyText(text){
+                    if (text === ariaNotifier.text()){return;}
+                    ariaNotifier[0].style.clip = 'rect(0px,0px,0px,0px)';
+                    /*
+                     * This is how google docs handles clearing the div. Seems to work better than setting the text of the div to ''
+                     */
+                    ariaNotifier[0].innerHTML = "";
+                    ariaNotifier[0].style.visibility = 'hidden';
+                    ariaNotifier[0].style.visibility = 'visible';
+                    if (text !== ''){
+                      ariaNotifier[0].style.clip = 'auto';
+                      /*
+                       * The space after the text is something that google docs does.
+                       */
+                      ariaNotifier[0].appendChild(document.createTextNode(text + " "));
+                      ariaNotifier[0].style.visibility = 'hidden';
+                      ariaNotifier[0].style.visibility = 'visible';
+                    }
+                  }
+
+                  var values = [];
+                  var currentSelection = grid.api.cellNav.getCurrentSelection();
+                  for (var i = 0; i < currentSelection.length; i++) {
+                    values.push(currentSelection[i].getIntersectionValueFiltered());
+                  }
+                  var cellText = values.toString();
+                  setNotifyText(cellText);
+
+                });
+              }
+              addAriaLiveRegion();
             }
           };
         }
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile','uiGridCellNavConstants',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -737,7 +915,8 @@
           return {
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
-                 renderContainerCtrl = controllers[1];
+                 renderContainerCtrl = controllers[1],
+                 uiGridCellnavCtrl = controllers[2];
 
               // Skip attaching cell-nav specific logic if the directive is not attached above us
               if (!uiGridCtrl.grid.api.cellNav) { return; }
@@ -746,19 +925,83 @@
 
               var grid = uiGridCtrl.grid;
 
-              // Needs to run last after all renderContainers are built
+              //run each time a render container is created
               uiGridCellNavService.decorateRenderContainers(grid);
 
-              ////enable tabbing to renderContainer
-              //$elm.attr("tabindex", -1);
-              //
-              //$elm.on('focus', function (evt) {
-              //  var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-              //  if (!rowCol) {
-              //    rowCol = grid.renderContainers.body.cellNav.initializeSelection();
-              //    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
-              //  }
-              //});
+              // focusser only created for body
+              if (containerId !== 'body') {
+                return;
+              }
+
+
+
+              if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells){
+                $elm.attr('aria-multiselectable', true);
+              } else {
+                $elm.attr('aria-multiselectable', false);
+              }
+
+              //add an element with no dimensions that can be used to set focus and capture keystrokes
+              var focuser = $compile('<div class="ui-grid-focuser" role="region" aria-live="assertive" aria-atomic="false" tabindex="0" aria-controls="' + grid.id +'-aria-speakable '+ grid.id + '-grid-container' +'" aria-owns="' + grid.id + '-grid-container' + '"></div>')($scope);
+              $elm.append(focuser);
+
+              focuser.on('focus', function (evt) {
+                evt.uiGridTargetRenderContainerId = containerId;
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                if (rowCol === null) {
+                  rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(uiGridCellNavConstants.direction.DOWN, null, null);
+                  if (rowCol.row && rowCol.col) {
+                    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                  }
+                }
+              });
+
+              uiGridCellnavCtrl.setAriaActivedescendant = function(id){
+                $elm.attr('aria-activedescendant', id);
+              };
+
+              uiGridCellnavCtrl.removeAriaActivedescendant = function(id){
+                if ($elm.attr('aria-activedescendant') === id){
+                  $elm.attr('aria-activedescendant', '');
+                }
+              };
+
+
+              uiGridCtrl.focus = function () {
+                gridUtil.focus.byElement(focuser[0]);
+                //allow for first time grid focus
+              };
+
+              var viewPortKeyDownWasRaisedForRowCol = null;
+              // Bind to keydown events in the render container
+              focuser.on('keydown', function (evt) {
+                evt.uiGridTargetRenderContainerId = containerId;
+                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
+                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
+                if (result === null) {
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                  viewPortKeyDownWasRaisedForRowCol = rowCol;
+                }
+              });
+              //Bind to keypress events in the render container
+              //keypress events are needed by edit function so the key press
+              //that initiated an edit is not lost
+              //must fire the event in a timeout so the editor can
+              //initialize and subscribe to the event on another event loop
+              focuser.on('keypress', function (evt) {
+                if (viewPortKeyDownWasRaisedForRowCol) {
+                  $timeout(function () {
+                    uiGridCtrl.grid.api.cellNav.raise.viewPortKeyPress(evt, viewPortKeyDownWasRaisedForRowCol);
+                  },4);
+
+                  viewPortKeyDownWasRaisedForRowCol = null;
+                }
+              });
+
+              $scope.$on('$destroy', function(){
+                //Remove all event handlers associated with this focuser.
+                focuser.off();
+              });
 
             }
           };
@@ -766,8 +1009,8 @@
       };
     }]);
 
-  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log) {
+  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log','$compile',
+    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log, $compile) {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -775,6 +1018,8 @@
         scope: false,
         compile: function () {
           return {
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+            },
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
                 renderContainerCtrl = controllers[1];
@@ -783,28 +1028,18 @@
               if (!uiGridCtrl.grid.api.cellNav) { return; }
 
               var containerId = renderContainerCtrl.containerId;
+              //no need to process for other containers
+              if (containerId !== 'body') {
+                return;
+              }
 
               var grid = uiGridCtrl.grid;
-
-
-              // Let the render container be focus-able
-              $elm.attr("tabindex", -1);
-
-              // Bind to keydown events in the render container
-              $elm.on('keydown', function (evt) {
-                evt.uiGridTargetRenderContainerId = containerId;
-                var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
-                if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
-                }
-              });
 
               grid.api.core.on.scrollBegin($scope, function (args) {
 
                 // Skip if there's no currently-focused cell
                 var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                if (lastRowCol == null) {
+                if (lastRowCol === null) {
                   return;
                 }
 
@@ -814,17 +1049,14 @@
                   return;
                 }
 
-                //clear dom of focused cell
-
-                var elements = $elm[0].getElementsByClassName('ui-grid-cell-focus');
-                Array.prototype.forEach.call(elements,function(e){angular.element(e).removeClass('ui-grid-cell-focus');});
+                uiGridCtrl.cellNav.clearFocus();
 
               });
 
               grid.api.core.on.scrollEnd($scope, function (args) {
                 // Skip if there's no currently-focused cell
                 var lastRowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                if (lastRowCol == null) {
+                if (lastRowCol === null) {
                   return;
                 }
 
@@ -839,8 +1071,8 @@
               });
 
               grid.api.cellNav.on.navigate($scope, function () {
-                //focus the viewport because this can sometimes be lost
-                $elm[0].focus();
+                //focus again because it can be lost
+                 uiGridCtrl.focus();
               });
 
             }
@@ -856,14 +1088,16 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['$timeout', '$document', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants',
-    function ($timeout, $document, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants) {
+  module.directive('uiGridCell', ['$timeout', '$document', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants', 'RowColFactory',
+    function ($timeout, $document, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants, RowCol) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
-        require: '^uiGrid',
+        require: ['^uiGrid', '?^uiGridCellnav'],
         scope: false,
-        link: function ($scope, $elm, $attrs, uiGridCtrl) {
+        link: function ($scope, $elm, $attrs, controllers) {
+          var uiGridCtrl = controllers[0],
+              uiGridCellnavCtrl = controllers[1];
           // Skip attaching cell-nav specific logic if the directive is not attached above us
           if (!uiGridCtrl.grid.api.cellNav) { return; }
 
@@ -871,56 +1105,94 @@
             return;
           }
 
+          //Convinience local variables
+          var grid = uiGridCtrl.grid;
+          $scope.focused = false;
+
+          // Make this cell focusable but only with javascript/a mouse click
+          $elm.attr('tabindex', -1);
+
           // When a cell is clicked, broadcast a cellNav event saying that this row+col combo is now focused
           $elm.find('div').on('click', function (evt) {
-            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
+            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey, evt);
 
             evt.stopPropagation();
             $scope.$apply();
           });
 
-          $elm.find('div').on('focus', function (evt) {
-            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), evt.ctrlKey || evt.metaKey);
+
+          /*
+           * XXX Hack for screen readers.
+           * This allows the grid to focus using only the screen reader cursor.
+           * Since the focus event doesn't include key press information we can't use it
+           * as our primary source of the event.
+           */
+          $elm.on('mousedown', preventMouseDown);
+
+          //turn on and off for edit events
+          if (uiGridCtrl.grid.api.edit) {
+            uiGridCtrl.grid.api.edit.on.beginCellEdit($scope, function () {
+              $elm.off('mousedown', preventMouseDown);
+            });
+
+            uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
+              $elm.on('mousedown', preventMouseDown);
+            });
+
+            uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
+              $elm.on('mousedown', preventMouseDown);
+            });
+          }
+
+          function preventMouseDown(evt) {
+            //Prevents the foucus event from firing if the click event is already going to fire.
+            //If both events fire it will cause bouncing behavior.
+            evt.preventDefault();
+          }
+
+          //You can only focus on elements with a tabindex value
+          $elm.on('focus', function (evt) {
+            uiGridCtrl.cellNav.broadcastCellNav(new RowCol($scope.row, $scope.col), false, evt);
+            evt.stopPropagation();
+            $scope.$apply();
           });
 
           // This event is fired for all cells.  If the cell matches, then focus is set
           $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol, modifierDown) {
-            if (evt.eventType === uiGridCellNavConstants.EVENT_TYPE.CLEAR) {
-              clearFocus();
-              return;
-            }
-
-            if (rowCol.row === $scope.row &&
-              rowCol.col === $scope.col) {
-              if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown &&
-                uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol) === -1) {
-                clearFocus();
-              } else {
-                setFocused();
-              }
-
-             // // This cellNav event came from a keydown event so we can safely refocus
-             // if (rowCol.hasOwnProperty('eventType') && rowCol.eventType === uiGridCellNavConstants.EVENT_TYPE.KEYDOWN) {
-             ////   $elm.find('div')[0].focus();
-             // }
-            }
-            else if (!(uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown)) {
+            var isFocused = grid.cellNav.focusedCells.some(function(focusedRowCol, index){
+              return (focusedRowCol.row === $scope.row && focusedRowCol.col === $scope.col);
+            });
+            if (isFocused){
+              setFocused();
+            } else {
               clearFocus();
             }
           });
 
           function setFocused() {
-            var div = $elm.find('div');
-            div.addClass('ui-grid-cell-focus');
+            if (!$scope.focused){
+              var div = $elm.find('div');
+              div.addClass('ui-grid-cell-focus');
+              $elm.attr('aria-selected', true);
+              uiGridCellnavCtrl.setAriaActivedescendant($elm.attr('id'));
+              $scope.focused = true;
+            }
           }
 
           function clearFocus() {
-            var div = $elm.find('div');
-            div.removeClass('ui-grid-cell-focus');
+            if ($scope.focused){
+              var div = $elm.find('div');
+              div.removeClass('ui-grid-cell-focus');
+              $elm.attr('aria-selected', false);
+              uiGridCellnavCtrl.removeAriaActivedescendant($elm.attr('id'));
+              $scope.focused = false;
+            }
           }
 
           $scope.$on('$destroy', function () {
-            $elm.find('div').off('click');
+            //.off withouth paramaters removes all handlers
+            $elm.find('div').off();
+            $elm.off();
           });
         }
       };

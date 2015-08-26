@@ -21,9 +21,12 @@ data to apply a filter to decode coded data.
 
 We also right align the gender column.
 
+We include move columns, allowing users to move columns around and see them represented in the 
+resulting export.
+
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.exporter']);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.moveColumns']);
 
     app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
       $scope.gridOptions = {
@@ -133,7 +136,7 @@ We also right align the gender column.
         <span class="ui-grid-exporter-csv-link">&nbsp</span>
       </div>
       
-      <div ui-grid="gridOptions" ui-grid-selection ui-grid-exporter class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-selection ui-grid-exporter ui-grid-move-columns class="grid"></div>
     </div>
   </file>
   

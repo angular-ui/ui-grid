@@ -18,7 +18,7 @@ describe('ui.grid.moveColumns', function () {
     timeout = $timeout;
     gridUtil = _gridUtil_;
     document = $document;
-
+    
 
     scope.gridOptions = {};
     scope.gridOptions.data = data;

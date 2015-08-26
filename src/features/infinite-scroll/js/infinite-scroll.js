@@ -6,7 +6,10 @@
    *
    *  @description
    *
-   *   #ui.grid.infiniteScroll
+   * #ui.grid.infiniteScroll
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+   *
    * This module provides infinite scroll functionality to ui-grid
    *
    */
@@ -38,7 +41,7 @@
         grid.infiniteScroll = { dataLoading: false };
         service.setScrollDirections( grid, grid.options.infiniteScrollUp, grid.options.infiniteScrollDown );
           grid.api.core.on.scrollEnd($scope, service.handleScroll);
-        
+
         /**
          *  @ngdoc object
          *  @name ui.grid.infiniteScroll.api:PublicAPI
@@ -82,31 +85,31 @@
                * @description Call this function when you have loaded the additional data
                * requested.  You should set scrollUp and scrollDown to indicate
                * whether there are still more pages in each direction.
-               * 
+               *
                * If you call dataLoaded without first calling `saveScrollPercentage` then we will
                * scroll the user to the start of the newly loaded data, which usually gives a smooth scroll
-               * experience, but can give a jumpy experience with large `infiniteScrollRowsFromEnd` values, and 
+               * experience, but can give a jumpy experience with large `infiniteScrollRowsFromEnd` values, and
                * on variable speed internet connections.  Using `saveScrollPercentage` as demonstrated in the tutorial
                * should give a smoother scrolling experience for users.
-               *  
+               *
                * See infinite_scroll tutorial for example of usage
                * @param {boolean} scrollUp if set to false flags that there are no more pages upwards, so don't fire
                * any more infinite scroll events upward
-               * @param {boolean} scrollDown if set to false flags that there are no more pages downwards, so don't 
-               * fire any more infinite scroll events downward 
+               * @param {boolean} scrollDown if set to false flags that there are no more pages downwards, so don't
+               * fire any more infinite scroll events downward
                * @returns {promise} a promise that is resolved when the grid scrolling is fully adjusted.  If you're
                * planning to remove pages, you should wait on this promise first, or you'll break the scroll positioning
                */
               dataLoaded: function( scrollUp, scrollDown ) {
                 service.setScrollDirections(grid, scrollUp, scrollDown);
-                
+
                 var promise = service.adjustScroll(grid).then(function() {
                   grid.infiniteScroll.dataLoading = false;
                 });
-                
+
                 return promise;
               },
-              
+
               /**
                * @ngdoc function
                * @name resetScroll
@@ -115,43 +118,43 @@
                * scroll position invalid.  For example, if you're using external sorting and you've resorted
                * then you might reset the scroll, or if you've otherwise substantially changed the data, perhaps
                * you've reused an existing grid for a new data set
-               * 
+               *
                * You must tell us whether there is data upwards or downwards after the reset
-               * 
+               *
                * @param {boolean} scrollUp flag that there are pages upwards, fire
                * infinite scroll events upward
-               * @param {boolean} scrollDown flag that there are pages downwards, so 
+               * @param {boolean} scrollDown flag that there are pages downwards, so
                * fire infinite scroll events downward
                * @returns {promise} promise that is resolved when the scroll reset is complete
                */
               resetScroll: function( scrollUp, scrollDown ) {
                 service.setScrollDirections( grid, scrollUp, scrollDown);
-                
+
                 return service.adjustInfiniteScrollPosition(grid, 0);
               },
-              
-              
+
+
               /**
                * @ngdoc function
                * @name saveScrollPercentage
                * @methodOf ui.grid.infiniteScroll.api:PublicAPI
                * @description Saves the scroll percentage and number of visible rows before you adjust the data,
-               * used if you're subsequently going to call `dataRemovedTop` or `dataRemovedBottom` 
+               * used if you're subsequently going to call `dataRemovedTop` or `dataRemovedBottom`
                */
               saveScrollPercentage: function() {
                 grid.infiniteScroll.prevScrolltopPercentage = grid.renderContainers.body.prevScrolltopPercentage;
                 grid.infiniteScroll.previousVisibleRows = grid.renderContainers.body.visibleRowCache.length;
               },
-              
-              
+
+
               /**
                * @ngdoc function
                * @name dataRemovedTop
                * @methodOf ui.grid.infiniteScroll.api:PublicAPI
-               * @description Adjusts the scroll position after you've removed data at the top 
+               * @description Adjusts the scroll position after you've removed data at the top
                * @param {boolean} scrollUp flag that there are pages upwards, fire
                * infinite scroll events upward
-               * @param {boolean} scrollDown flag that there are pages downwards, so 
+               * @param {boolean} scrollDown flag that there are pages downwards, so
                * fire infinite scroll events downward
                */
               dataRemovedTop: function( scrollUp, scrollDown ) {
@@ -162,16 +165,16 @@
                * @ngdoc function
                * @name dataRemovedBottom
                * @methodOf ui.grid.infiniteScroll.api:PublicAPI
-               * @description Adjusts the scroll position after you've removed data at the bottom 
+               * @description Adjusts the scroll position after you've removed data at the bottom
                * @param {boolean} scrollUp flag that there are pages upwards, fire
                * infinite scroll events upward
-               * @param {boolean} scrollDown flag that there are pages downwards, so 
+               * @param {boolean} scrollDown flag that there are pages downwards, so
                * fire infinite scroll events downward
                */
               dataRemovedBottom: function( scrollUp, scrollDown ) {
                 service.dataRemovedBottom( grid, scrollUp, scrollDown );
               },
-              
+
               /**
                * @ngdoc function
                * @name setScrollDirections
@@ -184,15 +187,15 @@
               setScrollDirections:  function ( scrollUp, scrollDown ) {
                 service.setScrollDirections( grid, scrollUp, scrollDown );
               }
-             
+
             }
           }
         };
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
-      
-      
+
+
       defaultGridOptions: function (gridOptions) {
         //default option to true unless it was explicitly set to false
         /**
@@ -219,11 +222,11 @@
          * @description This setting controls how close to the end of the dataset a user gets before
          * more data is requested by the infinite scroll, whether scrolling up or down.  This allows you to
          * 'prefetch' rows before the user actually runs out of scrolling.
-         * 
+         *
          * Note that if you set this value too high it may give jumpy scrolling behaviour, if you're getting
          * this behaviour you could use the `saveScrollPercentageMethod` right before loading your data, and we'll
          * preserve that scroll position
-         * 
+         *
          * <br> Defaults to 20
          */
         gridOptions.infiniteScrollRowsFromEnd = gridOptions.infiniteScrollRowsFromEnd || 20;
@@ -234,7 +237,7 @@
          * @propertyOf ui.grid.class:GridOptions
          * @description Whether you allow infinite scroll up, implying that the first page of data
          * you have displayed is in the middle of your data set.  If set to true then we trigger the
-         * needMoreDataTop event when the user hits the top of the scrollbar.  
+         * needMoreDataTop event when the user hits the top of the scrollbar.
          * <br> Defaults to false
          */
         gridOptions.infiniteScrollUp = gridOptions.infiniteScrollUp === true;
@@ -245,7 +248,7 @@
          * @propertyOf ui.grid.class:GridOptions
          * @description Whether you allow infinite scroll down, implying that the first page of data
          * you have displayed is in the middle of your data set.  If set to true then we trigger the
-         * needMoreData event when the user hits the bottom of the scrollbar.  
+         * needMoreData event when the user hits the bottom of the scrollbar.
          * <br> Defaults to true
          */
         gridOptions.infiniteScrollDown = gridOptions.infiniteScrollDown !== false;
@@ -269,7 +272,7 @@
         grid.infiniteScroll.scrollDown = ( scrollDown !== false);
         grid.suppressParentScrollDown = ( scrollDown !== false);
       },
-      
+
 
       /**
        * @ngdoc function
@@ -313,12 +316,12 @@
        * @param {Grid} grid the grid we're working on
        */
       loadData: function (grid) {
-        // save number of currently visible rows to calculate new scroll position later - we know that we want 
+        // save number of currently visible rows to calculate new scroll position later - we know that we want
         // to be at approximately the row we're currently at
         grid.infiniteScroll.previousVisibleRows = grid.renderContainers.body.visibleRowCache.length;
         grid.infiniteScroll.direction = grid.scrollDirection;
         delete grid.infiniteScroll.prevScrolltopPercentage;
-        
+
         if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp ) {
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreDataTop();
@@ -327,21 +330,21 @@
           grid.api.infiniteScroll.raise.needLoadMoreData();
         }
       },
-      
-      
+
+
       /**
        * @ngdoc function
        * @name adjustScroll
        * @methodOf ui.grid.infiniteScroll.service:uiGridInfiniteScrollService
        * @description Once we are informed that data has been loaded, adjust the scroll position to account for that
-       * addition and to make things look clean.  
-       * 
-       * If we're scrolling up we scroll to the first row of the old data set - 
+       * addition and to make things look clean.
+       *
+       * If we're scrolling up we scroll to the first row of the old data set -
        * so we're assuming that you would have gotten to the top of the grid (from the 20% need more data trigger) by
        * the time the data comes back.  If we're scrolling down we scoll to the last row of the old data set - so we're
        * assuming that you would have gotten to the bottom of the grid (from the 80% need more data trigger) by the time
-       * the data comes back.  
-       * 
+       * the data comes back.
+       *
        * Neither of these are good assumptions, but making this a smoother experience really requires
        * that trigger to not be a percentage, and to be much closer to the end of the data (say, 5 rows off the end).  Even then
        * it'd be better still to actually run into the end.  But if the data takes a while to come back, they may have scrolled
@@ -354,7 +357,7 @@
         var promise = $q.defer();
         $timeout(function () {
           var newPercentage;
-          
+
           if ( grid.infiniteScroll.direction === undefined ){
             // called from initialize, tweak our scroll up a little
             service.adjustInfiniteScrollPosition(grid, 0);
@@ -363,7 +366,7 @@
           var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
           var oldPercentage, oldTopRow;
           var halfViewport = grid.getViewportHeight() / grid.options.rowHeight / 2;
-          
+
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 0;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
@@ -377,18 +380,18 @@
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
             oldPercentage = grid.infiniteScroll.prevScrolltopPercentage || 1;
             oldTopRow = oldPercentage * grid.infiniteScroll.previousVisibleRows;
-            newPercentage = ( oldTopRow - halfViewport ) / newVisibleRows;            
+            newPercentage = ( oldTopRow - halfViewport ) / newVisibleRows;
             service.adjustInfiniteScrollPosition(grid, newPercentage);
             $timeout( function() {
               promise.resolve();
             });
           }
         }, 0);
-        
+
         return promise.promise;
       },
- 
- 
+
+
       /**
        * @ngdoc function
        * @name adjustInfiniteScrollPosition
@@ -410,20 +413,20 @@
         }
         grid.scrollContainers('', scrollEvent);
       },
-      
-      
+
+
       /**
        * @ngdoc function
        * @name dataRemovedTop
        * @methodOf ui.grid.infiniteScroll.api:PublicAPI
        * @description Adjusts the scroll position after you've removed data at the top. You should
-       * have called `saveScrollPercentage` before you remove the data, and if you're doing this in 
+       * have called `saveScrollPercentage` before you remove the data, and if you're doing this in
        * response to a `needMoreData` you should wait until the promise from `loadData` has resolved
-       * before you start removing data  
+       * before you start removing data
        * @param {Grid} grid the grid we're working on
        * @param {boolean} scrollUp flag that there are pages upwards, fire
        * infinite scroll events upward
-       * @param {boolean} scrollDown flag that there are pages downwards, so 
+       * @param {boolean} scrollDown flag that there are pages downwards, so
        * fire infinite scroll events downward
        * @returns {promise} a promise that is resolved when the scrolling finishes
        */
@@ -432,27 +435,27 @@
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
         var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
-        
+
         // since we removed from the top, our new scroll row will be the old scroll row less the number
         // of rows removed
         var newScrollRow = oldScrollRow - ( grid.infiniteScroll.previousVisibleRows - newVisibleRows );
         var newScrollPercent = newScrollRow / newVisibleRows;
-        
+
         return service.adjustInfiniteScrollPosition( grid, newScrollPercent );
       },
-  
+
       /**
        * @ngdoc function
        * @name dataRemovedBottom
        * @methodOf ui.grid.infiniteScroll.api:PublicAPI
        * @description Adjusts the scroll position after you've removed data at the bottom.  You should
-       * have called `saveScrollPercentage` before you remove the data, and if you're doing this in 
+       * have called `saveScrollPercentage` before you remove the data, and if you're doing this in
        * response to a `needMoreData` you should wait until the promise from `loadData` has resolved
-       * before you start removing data  
+       * before you start removing data
        * @param {Grid} grid the grid we're working on
        * @param {boolean} scrollUp flag that there are pages upwards, fire
        * infinite scroll events upward
-       * @param {boolean} scrollDown flag that there are pages downwards, so 
+       * @param {boolean} scrollDown flag that there are pages downwards, so
        * fire infinite scroll events downward
        */
       dataRemovedBottom: function( grid, scrollUp, scrollDown ) {
@@ -460,10 +463,10 @@
 
         var newVisibleRows = grid.renderContainers.body.visibleRowCache.length;
         var oldScrollRow = grid.infiniteScroll.prevScrolltopPercentage * grid.infiniteScroll.previousVisibleRows;
-        
+
         // since we removed from the bottom, our new scroll row will be same as the old scroll row
         var newScrollPercent = oldScrollRow / newVisibleRows;
-        
+
         return service.adjustInfiniteScrollPosition( grid, newScrollPercent );
       }
     };

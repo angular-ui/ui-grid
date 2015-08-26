@@ -2,13 +2,6 @@
 describe('rowSorter', function() {
   var grid, $scope, $compile, recompile, uiGridConstants, rowSorter, gridClassFactory, Grid, GridColumn, GridRow;
 
-  var data = [
-    { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
-    { "name": "Claudine Neal", "gender": "female", "company": "Sealoud" },
-    { "name": "Beryl Rice", "gender": "female", "company": "Velity" },
-    { "name": "Wilder Gonzales", "gender": "male", "company": "Geekko" }
-  ];
-
   beforeEach(module('ui.grid'));
 
   beforeEach(inject(function (_$compile_, $rootScope, _uiGridConstants_, _rowSorter_, _Grid_, _GridColumn_, _GridRow_, _gridClassFactory_) {
@@ -20,10 +13,6 @@ describe('rowSorter', function() {
     GridColumn = _GridColumn_;
     GridRow = _GridRow_;
     gridClassFactory = _gridClassFactory_;
-
-    // $scope.gridOpts = {
-    //   data: data
-    // };
 
     // recompile = function () {
     //   grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
@@ -172,6 +161,55 @@ describe('rowSorter', function() {
         expect(ret[0].entity.name).toEqual('Jim');
       });
     });
+  });
+
+  describe('sort by date column', function(){
+    var grid, rows, cols;
+
+    beforeEach(function() {
+      grid = new Grid({ id: 123 });
+
+      var e1 = { name: 'Bob', date: new Date('2015-07-01T13:25:00+00:00') }; // Wednesday
+      var e2 = { name: 'Jim', date: new Date('2015-06-29T13:25:00+00:00') }; // Monday
+      var e3 = { name: 'Bill', date: new Date('2015-07-03T13:25:00+00:00') }; // Friday
+
+      rows = [
+        new GridRow(e1, 0, grid),
+        new GridRow(e2, 1, grid),
+        new GridRow(e3, 1, grid)
+      ];
+
+      cols = [
+        new GridColumn({
+          name: 'name',
+          type: 'string'
+        }, 0, grid),
+        new GridColumn({
+          name: 'date',
+          type: 'date',
+          cellFilter: 'date:"EEEE"',
+          sort: {
+            direction: uiGridConstants.ASC,
+            priority: 0
+          }
+        }, 1, grid)
+      ];
+    });
+
+    it('should sort by the actual date', function(){
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.name).toEqual('Jim');
+    });
+
+    it('should sort by the day of week string', function(){
+      cols[1].sortCellFiltered = true;
+
+      var ret = rowSorter.sort(grid, rows, cols);
+
+      expect(ret[0].entity.name).toEqual('Bill');
+    });
+
   });
 
   describe('stable sort', function() {

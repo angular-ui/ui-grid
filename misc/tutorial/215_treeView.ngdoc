@@ -1,35 +1,58 @@
 @ngdoc overview
 @name Tutorial: 215 Tree View
-@description The tree view feature allows you to create a tree from your grid, specifying which
+@description
+
+<div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+
+The tree view feature allows you to create a tree from your grid, specifying which
 of your data rows are nodes and which are leaves.
+
+**_Note that recent breaking changes have been implemented on treeView and grouping, combining much
+of the logic into a treeBase module.  This means that you may need to include the treeBase module
+in your code, and that some of the events and methods have moved to grid.api.treeBase instead
+of grid.api.treeView_**
+
+Documentation for the treeView feature is provided in the api documentation, both under
+treeView itself, and shared functions in the treeBase documentation.  In particular:
+
+- {@link api/ui.grid.treeBase.api:ColumnDef treeBase columnDef}
+- {@link api/ui.grid.treeView.api:GridOptions treeView gridOptions} and {@link api/ui.grid.treeBase.api:GridOptions treeBase gridOptions}
+- {@link api/ui.grid.treeView.api:PublicApi treeView publicApi} and {@link api/ui.grid.treeBase.api:PublicApi treeBase publicApi}
+
+The tree structure itself is documented at {@link api/ui.grid.treeBase.grid:treeBase treeBase}.
 
 In your data you tell us the nodes by setting the property $$treeLevel on a given row.  Levels
 start at 0 and increase as you move down the tree.
 
 If you wish to load your tree incrementally, you can listen to the rowExpanded event, which will
 tell you whenever a row is expanded.  You can then retrieve additional data from the server and
-splice it into the data array at the right point, the grid will automatically render the data 
-when it arrives.  
+splice it into the data array at the right point, the grid will automatically render the data
+when it arrives.
 
-In general it doesn't make sense to allow sorting when you're using the grid as a tree - the 
-structure of the data is very positional, and if the user were to sort the data it would break
-the tree. 
+Treeview allows sorting, and implements it as a recursive tree sort - it sorts the children of
+each of the nodes of the tree.
+
+Treeview allows filtering, it filters all the rows (nodes and leaves) and then makes sure that
+all parents of any visible row are also visible.  Note that filtering doesn't change expand/collapse
+states, your users will still need to expand the nodes to get to the filtered rows.
+
+Treeview includes aggregation logic, which is implemented by setting the aggregation property on
+the columnDef.  The aggregation property is documented at {@link api/ui.grid.treeBase.api:ColumnDef columnDef}.
+Refer to {@link 319_complex_trees complex trees} for more detail.
 
 TreeView is still alpha, and under development, however it is included in the distribution files
 to allow people to start using it.  Notable outstandings are:
-- doesn't calculate or display counts of child nodes anywhere, it would be nice if it did
+
 - it would be nice to display an hourglass or icon whilst additional data was loading, the current
   arrangement means the grid doesn't know whether or not you're adding additional data
-- perhaps we could permit sorting of the nodes, and the children within each node, rather than sorting the
-  whole data set.  This would be a whole new sort algorithm though
-- it might be nice if nodes with no children could have their + removed, we'd need some way to be sure
-  that these weren't nodes for which children are going to be dynamically loaded
 
 Options to watch out for include:
 
-- `treeViewIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
+- `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
   level gets deeper.  Larger values look nicer
-- `treeViewRowHeaderWidth`: the width of the tree row header
+- `treeRowHeaderWidth`: the width of the tree row header
+- `showTreeExpandNoChildren`: defaults to true.  Shows the + even if there are no children, allows
+  you to dynamically load children.  If set to false there'll be no + if there are no children
 
 @example
 In this example most of the data is loaded on initial page load.  The nodes under Guerrero Lopez, however,
@@ -41,8 +64,9 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants ) {
       $scope.gridOptions = {
-        enableSorting: false,
-        enableFiltering: false,
+        enableSorting: true,
+        enableFiltering: true,
+        showTreeExpandNoChildren: true,
         columnDefs: [
           { name: 'name', width: '30%' },
           { name: 'gender', width: '20%' },
@@ -53,7 +77,7 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
         ],
         onRegisterApi: function( gridApi ) {
           $scope.gridApi = gridApi;
-          $scope.gridApi.treeView.on.rowExpanded($scope, function(row) {
+          $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
             if( row.entity.$$hashKey === $scope.gridOptions.data[50].$$hashKey && !$scope.nodeLoaded ) {
               $interval(function() {
                 $scope.gridOptions.data.splice(51,0,
@@ -76,32 +100,39 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
        data[0].$$treeLevel = 0;
        data[1].$$treeLevel = 1;
        data[10].$$treeLevel = 1;
+       data[11].$$treeLevel = 1;
        data[20].$$treeLevel = 0;
        data[25].$$treeLevel = 1;
        data[50].$$treeLevel = 0;
        data[51].$$treeLevel = 0;
        $scope.gridOptions.data = data;
      });
- 
+
       $scope.expandAll = function(){
-        $scope.gridApi.treeView.expandAllRows();
+        $scope.gridApi.treeBase.expandAllRows();
       };
-      
+
       $scope.toggleRow = function( rowNum ){
-        $scope.gridApi.treeView.toggleRowTreeViewState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+      };
+
+      $scope.toggleExpandNoChildren = function(){
+        $scope.gridOptions.showTreeExpandNoChildren = !$scope.gridOptions.showTreeExpandNoChildren;
+        $scope.gridApi.grid.refresh();
       };
     }]);
   </file>
-  
+
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
       <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
       <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
+      <button id="toggleExpandNoChildren" type="button" class="btn btn-success" ng-click="toggleExpandNoChildren()">Toggle Expand No Children</button>
       <div id="grid1" ui-grid="gridOptions" ui-grid-tree-view class="grid"></div>
     </div>
   </file>
-  
+
   <file name="main.css">
     .grid {
       width: 500px;
@@ -112,5 +143,5 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '215 tree view', function() {
     });
-  </file>  
+  </file>
 </example>

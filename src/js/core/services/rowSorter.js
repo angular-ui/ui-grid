@@ -215,7 +215,8 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * @ngdoc method
    * @methodOf ui.grid.class:RowSorter
    * @name sortDate
-   * @description Sorts date values. Handles nulls and undefined through calling handleNulls 
+   * @description Sorts date values. Handles nulls and undefined through calling handleNulls.
+   * Handles date strings by converting to Date object if not already an instance of Date
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -225,6 +226,12 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     if ( nulls !== null ){
       return nulls;
     } else {
+      if (!(a instanceof Date)) {
+        a = new Date(a);
+      }
+      if (!(b instanceof Date)){
+        b = new Date(b);
+      }
       var timeA = a.getTime(),
           timeB = b.getTime();
   
@@ -294,6 +301,11 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     else if (col.sortingAlgorithm !== undefined) {
       sortFn = col.sortingAlgorithm;
       rowSorter.colSortFnCache[col.colDef.name] = col.sortingAlgorithm;
+    }
+    // Always default to sortAlpha when sorting after a cellFilter
+    else if ( col.sortCellFiltered && col.cellFilter ){
+      sortFn = rowSorter.sortAlpha;
+      rowSorter.colSortFnCache[col.colDef.name] = sortFn;
     }
     // Try and guess what sort function to use
     else {
@@ -376,9 +388,10 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * @name sort
    * @description sorts the grid 
    * @param {Object} grid the grid itself
-   * @param {Object} rows the rows to be sorted
-   * @param {Object} columns the columns in which to look
+   * @param {array} rows the rows to be sorted
+   * @param {array} columns the columns in which to look
    * for sort criteria
+   * @returns {array} sorted rows
    */
   rowSorter.sort = function rowSorterSort(grid, rows, columns) {
     // first make sure we are even supposed to do work
@@ -393,7 +406,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     // Build the list of columns to sort by
     var sortCols = [];
     columns.forEach(function (col) {
-      if (col.sort && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
+      if (col.sort && !col.sort.ignoreSort && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
         sortCols.push(col);
       }
     });
@@ -432,8 +445,15 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
         sortFn = rowSorter.getSortFn(grid, col, r);
         
-        var propA = grid.getCellValue(rowA, col);
-        var propB = grid.getCellValue(rowB, col);
+        var propA, propB;
+
+        if ( col.sortCellFiltered ){
+          propA = grid.getCellDisplayValue(rowA, col);
+          propB = grid.getCellDisplayValue(rowB, col);
+        } else {
+          propA = grid.getCellValue(rowA, col);
+          propB = grid.getCellValue(rowB, col);
+        }
 
         tem = sortFn(propA, propB);
 

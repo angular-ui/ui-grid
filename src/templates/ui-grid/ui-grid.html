@@ -1,4 +1,4 @@
-    <div ui-i18n="en" class="ui-grid">
+<div ui-i18n="en" class="ui-grid">
   <!-- TODO (c0bra): add "scoped" attr here, eventually? -->
   <style ui-grid-style>
     .grid{{ grid.id }} {
@@ -25,26 +25,28 @@
     {{ grid.customStyles }}
   </style>
 
-  <div ui-grid-menu-button ng-if="grid.options.enableGridMenu"></div>
+  <div class="ui-grid-contents-wrapper">
+    <div ui-grid-menu-button ng-if="grid.options.enableGridMenu"></div>
 
-  <div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="'left'"></div>
+    <div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="'left'"></div>
 
-  <div ui-grid-render-container
-    container-id="'body'"
-    col-container-name="'body'"
-    row-container-name="'body'"
-    bind-scroll-horizontal="true"
-    bind-scroll-vertical="true"
-    enable-horizontal-scrollbar="grid.options.enableHorizontalScrollbar"
-    enable-vertical-scrollbar="grid.options.enableVerticalScrollbar">
+    <div ui-grid-render-container
+      container-id="'body'"
+      col-container-name="'body'"
+      row-container-name="'body'"
+      bind-scroll-horizontal="true"
+      bind-scroll-vertical="true"
+      enable-horizontal-scrollbar="grid.options.enableHorizontalScrollbar"
+      enable-vertical-scrollbar="grid.options.enableVerticalScrollbar">
+    </div>
+
+    <div ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="'right'"></div>
+
+
+    <div ui-grid-grid-footer ng-if="grid.options.showGridFooter"></div>
+
+    <div ui-grid-column-menu ng-if="grid.options.enableColumnMenus"></div>
+
+    <div ng-transclude></div>
   </div>
-
-  <div ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="'right'"></div>
-
-
-  <div ui-grid-grid-footer ng-if="grid.options.showGridFooter"></div>
-
-  <div ui-grid-column-menu ng-if="grid.options.enableColumnMenus"></div>
-
-  <div ng-transclude></div>
 </div>

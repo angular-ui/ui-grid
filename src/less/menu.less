@@ -39,6 +39,20 @@
 
   .rounded(@gridBorderRadius);
   .box-shadow(e("0 10px 20px rgba(0, 0, 0, 0.2), inset 0 12px 12px -14px rgba(0, 0, 0, 0.2)"));
+
+  // Small hidden close button that only appears when focused.
+  .ui-grid-menu-close-button {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    #ui-grid-twbs > .btn();
+    #ui-grid-twbs > .button-size(1px; 1px; 10px; 1; 2px);
+    #ui-grid-twbs > .button-variant(transparent, transparent, transparent);
+    > i {
+      opacity: 0.75;
+      color: black;
+    }
+  }
 }
 
 .ui-grid-menu .ui-grid-menu-inner ul {
@@ -47,23 +61,29 @@
   list-style-type: none;
 
   li {
-    padding: 8px;
-    cursor: pointer;
+    padding: 0px;
+    button {
+      min-width: 100%;
+      padding: 8px;
+      text-align: left;
+      background: transparent;
+      border: none;
 
-    // Show a shadow when hovering over a menu item
-    &:hover {
-      // background-color: negation(@headerBackgroundColor, #fff);
-      .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
-    }
-
-    &.ui-grid-menu-item-active {
-      .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
-      background-color: @selectedColor;
+      // Show a shadow when hovering over a menu item
+      &:hover,
+      &:focus {
+        // background-color: negation(@headerBackgroundColor, #fff);
+        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
+      }
+      &.ui-grid-menu-item-active {
+        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
+        background-color: @selectedColor;
+      }
     }
   }
 
   // Show a bottom border on all but the last menu item
-  li:not(:last-child) {
+  li:not(:last-child) > button {
     border-bottom: @gridBorderWidth solid @borderColor;
   }
 }

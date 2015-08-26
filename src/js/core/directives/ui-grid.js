@@ -308,6 +308,17 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
                 }
               }
             });
+
+            if (grid.options.enableFiltering) {
+              var allColumnsHaveFilteringTurnedOff = grid.options.columnDefs.every(function(col) {
+                return col.enableFiltering === false;
+              });
+
+              if (!allColumnsHaveFilteringTurnedOff) {
+                maxNumberOfFilters++;
+              }
+            }
+
             var filterHeight = maxNumberOfFilters * headerHeight;
 
             var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight + filterHeight;

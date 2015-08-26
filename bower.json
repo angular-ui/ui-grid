@@ -1,6 +1,6 @@
 {
   "name": "angular-ui-grid",
-  "version": "3.0.0-rc.21",
+  "version": "3.0.4",
   "homepage": "http://ui-grid.info",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "test",
     "tests"
   ],
+  "main": ["./ui-grid.css", "./ui-grid.js"],
   "devDependencies": {
     "google-code-prettify": "~1.0.2",
     "jquery": "~1.8.0",

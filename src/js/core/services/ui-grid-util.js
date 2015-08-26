@@ -46,7 +46,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
           val = 0;
 
   var sides = ['Top', 'Right', 'Bottom', 'Left'];
-  
+
   for ( ; i < 4; i += 2 ) {
     var side = sides[i];
     // dump('side', side);
@@ -151,7 +151,7 @@ function getWidthOrHeight( elem, name, extra ) {
 
 function getLineHeight(elm) {
   elm = angular.element(elm)[0];
-  var parent = elm.offsetParent;
+  var parent = elm.parentElement;
 
   if (!parent) {
     parent = document.getElementsByTagName('body')[0];
@@ -160,13 +160,13 @@ function getLineHeight(elm) {
   return parseInt( getStyles(parent).fontSize ) || parseInt( getStyles(elm).fontSize ) || 16;
 }
 
-var uid = ['0', '0', '0'];
+var uid = ['0', '0', '0', '0'];
 var uidPrefix = 'uiGrid-';
 
 /**
  *  @ngdoc service
  *  @name ui.grid.service:GridUtil
- *  
+ *
  *  @description Grid utility functions
  */
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
@@ -292,7 +292,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (angular.isUndefined(excludeProperties)) { excludeProperties = []; }
 
       var item = data[0];
-      
+
       angular.forEach(item,function (prop, propName) {
         if ( excludeProperties.indexOf(propName) === -1){
           columnDefs.push({
@@ -383,7 +383,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         .then(s.postProcessTemplate);
     },
 
-    // 
+    //
     postProcessTemplate: function (template) {
       var startSym = $interpolate.startSymbol(),
           endSym = $interpolate.endSymbol();
@@ -440,7 +440,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     * @returns {number} Element width in pixels, accounting for any borders, etc.
     */
     elementWidth: function (elem) {
-      
+
     },
 
     /**
@@ -454,7 +454,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     * @returns {number} Element height in pixels, accounting for any borders, etc.
     */
     elementHeight: function (elem) {
-      
+
     },
 
     // Thanks to http://stackoverflow.com/a/13382873/888165
@@ -473,7 +473,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         // add innerdiv
         var inner = document.createElement("div");
         inner.style.width = "100%";
-        outer.appendChild(inner);        
+        outer.appendChild(inner);
 
         var widthWithScroll = inner.offsetWidth;
 
@@ -541,7 +541,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       // var toFix = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
       // var toBind = 'onwheel' in document || document.documentMode >= 9 ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'];
       var lowestDelta, lowestDeltaXY;
-      
+
       var orgEvent   = event || window.event,
           args       = [].slice.call(arguments, 1),
           delta      = 0,
@@ -661,7 +661,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var $animate;
       try {
         $animate = $injector.get('$animate');
-        $animate.enabled(false, element);
+        // See: http://brianhann.com/angular-1-4-breaking-changes-to-be-aware-of/#animate
+        if (angular.version.major > 1 || (angular.version.major === 1 && angular.version.minor >= 4)) {
+          $animate.enabled(element, false);
+        } else {
+          $animate.enabled(false, element);
+        }
       }
       catch (e) {}
     },
@@ -670,7 +675,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var $animate;
       try {
         $animate = $injector.get('$animate');
-        $animate.enabled(true, element);
+        // See: http://brianhann.com/angular-1-4-breaking-changes-to-be-aware-of/#animate
+        if (angular.version.major > 1 || (angular.version.major === 1 && angular.version.minor >= 4)) {
+          $animate.enabled(element, true);
+        } else {
+          $animate.enabled(true, element);
+        }
         return $animate;
       }
       catch (e) {}
@@ -727,7 +737,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     resetUids: function () {
       uid = ['0', '0', '0'];
     },
-    
+
     /**
      * @ngdoc method
      * @methodOf ui.grid.service:GridUtil
@@ -736,7 +746,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * treatment within ui-grid if we so desired.  At present we only log
      * error messages if uiGridConstants.LOG_ERROR_MESSAGES is set to true
      * @param {string} logMessage message to be logged to the console
-     * 
+     *
      */
     logError: function( logMessage ){
       if ( uiGridConstants.LOG_ERROR_MESSAGES ){
@@ -752,7 +762,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * treatment within ui-grid if we so desired.  At present we only log
      * warning messages if uiGridConstants.LOG_WARN_MESSAGES is set to true
      * @param {string} logMessage message to be logged to the console
-     * 
+     *
      */
     logWarn: function( logMessage ){
       if ( uiGridConstants.LOG_WARN_MESSAGES ){
@@ -767,7 +777,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @description wraps the $log method, allowing us to choose different
      * treatment within ui-grid if we so desired.  At present we only log
      * debug messages if uiGridConstants.LOG_DEBUG_MESSAGES is set to true
-     * 
+     *
      */
     logDebug: function() {
       if ( uiGridConstants.LOG_DEBUG_MESSAGES ){
@@ -776,6 +786,121 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
 
   };
+
+  /**
+   * @ngdoc object
+   * @name focus
+   * @propertyOf ui.grid.service:GridUtil
+   * @description Provies a set of methods to set the document focus inside the grid.
+   * See {@link ui.grid.service:GridUtil.focus} for more information.
+   */
+
+  /**
+   * @ngdoc object
+   * @name ui.grid.service:GridUtil.focus
+   * @description Provies a set of methods to set the document focus inside the grid.
+   * Timeouts are utilized to ensure that the focus is invoked after any other event has been triggered.
+   * e.g. click events that need to run before the focus or
+   * inputs elements that are in a disabled state but are enabled when those events
+   * are triggered.
+   */
+  s.focus = {
+    queue: [],
+    //http://stackoverflow.com/questions/25596399/set-element-focus-in-angular-way
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name byId
+     * @description Sets the focus of the document to the given id value.
+     * If provided with the grid object it will automatically append the grid id.
+     * This is done to encourage unique dom id's as it allows for multiple grids on a
+     * page.
+     * @param {String} id the id of the dom element to set the focus on
+     * @param {Object=} Grid the grid object for this grid instance. See: {@link ui.grid.class:Grid}
+     * @param {Number} Grid.id the unique id for this grid. Already set on an initialized grid object.
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    byId: function (id, Grid) {
+      this._purgeQueue();
+      var promise = $timeout(function() {
+        var elementID = (Grid && Grid.id ? Grid.id + '-' : '') + id;
+        var element = $window.document.getElementById(elementID);
+        if (element) {
+          element.focus();
+        } else {
+          s.logWarn('[focus.byId] Element id ' + elementID + ' was not found.');
+        }
+      });
+      this.queue.push(promise);
+      return promise;
+    },
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name byElement
+     * @description Sets the focus of the document to the given dom element.
+     * @param {(element|angular.element)} element the DOM element to set the focus on
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    byElement: function(element){
+      if (!angular.isElement(element)){
+        s.logWarn("Trying to focus on an element that isn\'t an element.");
+        return $q.reject('not-element');
+      }
+      element = angular.element(element);
+      this._purgeQueue();
+      var promise = $timeout(function(){
+        if (element){
+          element[0].focus();
+        }
+      });
+      this.queue.push(promise);
+      return promise;
+    },
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name bySelector
+     * @description Sets the focus of the document to the given dom element.
+     * @param {(element|angular.element)} parentElement the parent/ancestor of the dom element that you are selecting using the query selector
+     * @param {String} querySelector finds the dom element using the {@link http://www.w3schools.com/jsref/met_document_queryselector.asp querySelector}
+     * @param {boolean} [aSync=false] If true then the selector will be querried inside of a timeout. Otherwise the selector will be querried imidately
+     * then the focus will be called.
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    bySelector: function(parentElement, querySelector, aSync){
+      var self = this;
+      if (!angular.isElement(parentElement)){
+        throw new Error("The parent element is not an element.");
+      }
+      // Ensure that this is an angular element.
+      // It is fine if this is already an angular element.
+      parentElement = angular.element(parentElement);
+      var focusBySelector = function(){
+        var element = parentElement[0].querySelector(querySelector);
+        return self.byElement(element);
+      };
+      this._purgeQueue();
+      if (aSync){ //Do this asynchronysly
+        var promise = $timeout(focusBySelector);
+        this.queue.push($timeout(focusBySelector));
+        return promise;
+      } else {
+        return focusBySelector();
+      }
+    },
+    _purgeQueue: function(){
+      this.queue.forEach(function(element){
+        $timeout.cancel(element);
+      });
+      this.queue = [];
+    }
+  };
+
 
   ['width', 'height'].forEach(function (name) {
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
@@ -903,7 +1028,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
     }
 
-    definer.remove();
+    angular.element(definer).remove();
     rtlScrollType.type = type;
 
     return type;
@@ -915,9 +1040,9 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @methodOf ui.grid.service:GridUtil
      *
      * @param {element} element The element to get the `scrollLeft` from.
-     * @param {boolean} grid -  grid used to normalize (uses the rtl property)
+     * @param {grid} grid -  grid used to normalize (uses the rtl property)
      *
-     * @returns {int} A normalized scrollLeft value for the current browser.
+     * @returns {number} A normalized scrollLeft value for the current browser.
      *
      * @description
      * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method normalizes them
@@ -945,14 +1070,14 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
   /**
   * @ngdoc method
-  * @name normalizeScrollLeft
+  * @name denormalizeScrollLeft
   * @methodOf ui.grid.service:GridUtil
   *
   * @param {element} element The element to normalize the `scrollLeft` value for
-  * @param {int} scrollLeft The `scrollLeft` value to denormalize.
-  * @param {boolean} grid The grid that owns the scroll event.
+  * @param {number} scrollLeft The `scrollLeft` value to denormalize.
+  * @param {grid} grid The grid that owns the scroll event.
   *
-  * @returns {int} A normalized scrollLeft value for the current browser.
+  * @returns {number} A normalized scrollLeft value for the current browser.
   *
   * @description
   * Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method denormalizes a value for the current browser.
@@ -1019,7 +1144,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *
    * @param {function} func function to debounce
    * @param {number} wait milliseconds to delay
-   * @param {bool} immediate execute before delay
+   * @param {boolean} immediate execute before delay
    *
    * @returns {function} A function that can be executed as debounced function
    *
@@ -1080,11 +1205,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *    trailing (bool) - whether to trigger after throttle time ends if called multiple times
    * Updated to use $interval rather than $timeout, as protractor (e2e tests) is able to work with $interval,
    * but not with $timeout
-   * 
+   *
    * Note that when using throttle, you need to use throttle to create a new function upfront, then use the function
    * return from that call each time you need to call throttle.  If you call throttle itself repeatedly, the lastCall
    * variable will get overwritten and the throttling won't work
-   * 
+   *
    * @example
    * <pre>
    * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
@@ -1258,7 +1383,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     //   offsetX = event.clientX - boundingRect.left;
     //   offsetY = event.clientY - boundingRect.top;
     // }
-    
+
     // event.deltaX = deltaX;
     // event.deltaY = deltaY;
     // event.deltaFactor = lowestDelta;

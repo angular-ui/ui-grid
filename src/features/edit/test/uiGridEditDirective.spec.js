@@ -54,6 +54,7 @@ describe('uiGridEditDirective', function () {
       expect(col).not.toBeNull();
       expect(col.colDef.enableCellEdit).toBe(false);
       expect(col.colDef.editableCellTemplate).not.toBeDefined();
+      expect(col.colDef.editModelField).not.toBeDefined();
 
     });
 

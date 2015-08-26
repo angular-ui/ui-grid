@@ -1,7 +1,4 @@
-@ngdoc overview
-@name Rendering Cycle
-@module 
-@description
+# Grid Rendering Cycle
 
 The core grid rendering cycle is executed whenever the grid needs re-rendering.  There are a number of core methods,
 with some of those methods able to be called individually.

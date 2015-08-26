@@ -2,24 +2,31 @@
 @name Tutorial: 205 Row Edit Feature
 @description
 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
 The ui.grid.rowedit extends the edit feature to support callbacks for server saving of the data,
 with that data saved "row at a time."  This feature attempts to give a user an experience similar
 to a spreadsheet - in that they can edit whichever fields they wish, and the feature will seek to
 save the data "row at a time".  To the extent that the data doesn't generate errors, from a user
 perspective the saving is almost invisible - rows occassionally go grey (saving) and can't be edited whilst
-grey, but otherwise the user edits as if the data were local.  
+grey, but otherwise the user edits as if the data were local.
+
+Documentation for the rowEdit feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.rowEdit.api:GridOptions gridOptions}
+- {@link api/ui.grid.rowEdit.api:PublicApi publicApi}
 
 Each row is in one of four states at any point in time:
 
 - clean:  No edits have been made (or no edits since the last save)
-- `isDirty`:  Edits have been made, but the data has not yet been saved, either because the 
+- `isDirty`:  Edits have been made, but the data has not yet been saved, either because the
   user is still editing the row or because the timer hasn't triggered as yet
 - `isSaving`: The callback to save the row has been called and has not yet returned.  The row is
-  not editable during this time, and is shown as greyed out, so as to avoid the user 
+  not editable during this time, and is shown as greyed out, so as to avoid the user
   causing locking exceptions by editing the row again
 - `isError`: The save callback returned an error.  The row still has the updated data displayed,
   but will be shown in red
-  
+
 The basic method of operation is that whenever a cell is edited (identified using the `edit.afterCellEdit`
 event) an `isDirty` flag is set on the row, and a `saveTimer` is set.  If another cell in the same row commences
 editing within 2 seconds (or other configurable time), then the timer will be destroyed again.  Otherwise
@@ -31,7 +38,7 @@ If the cellNav feature is also enabled, then a setFocus on a cell within the row
 the timer (this more easily deals with situations where only some columns are editable, and a user tabs
 or clicks to a non-editable field on the same row).
 
-If the promise is successfully resolved then the row is set back to clean.  If the promise is rejected then the 
+If the promise is successfully resolved then the row is set back to clean.  If the promise is rejected then the
 row is set to a status of `isError`.
 
 Optionally, the calling application can request `flushDirtyRows`, which will trigger the save event for all
@@ -42,14 +49,14 @@ Methods and properties are provided to operate with this regime:
 
 - `getDirtyRows()`: returns an array of gridRows of all currently dirty rows
 - `getErrorRows()`: returns an array of gridRows of all currently errored rows
-- `flushDirtyRows()`: flushes all currently dirty rows to the server, might be used 
+- `flushDirtyRows()`: flushes all currently dirty rows to the server, might be used
   on a page navigation request or pressing of a save button
 - `saveRow( rowEntity )`: event called when a row is ready for saving
 - `rowEditWaitInterval`: grid option that controls how long a wait will be before a save is triggered (in ms)
 
 
 @example
-In this example rows are saved 2 seconds after moving off, and the save is faked using a timeout of 3 seconds, so 
+In this example rows are saved 2 seconds after moving off, and the save is faked using a timeout of 3 seconds, so
 each save will take 3 seconds to complete.  Any row saved with a gender of "male" will error.
 
 <example module="app">
@@ -84,7 +91,7 @@ each save will take 3 seconds to complete.  Any row saved with a gender of "male
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         var promise = $q.defer();
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-       
+
         // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
         $interval( function() {
           if (rowEntity.gender === 'male' ){
@@ -93,14 +100,14 @@ each save will take 3 seconds to complete.  Any row saved with a gender of "male
             promise.resolve();
           }
         }, 3000, 1);
-      }; 
+      };
 
       $scope.gridOptions.onRegisterApi = function(gridApi){
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
       };
-  
+
       $http.get('/data/500_complex.json')
       .success(function(data) {
         for(i = 0; i < data.length; i++){
