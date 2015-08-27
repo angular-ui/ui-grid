@@ -100,11 +100,11 @@ included in the project:
 
    ```bash
    # Clone your fork of the repo into the current directory
-   git clone https://github.com/<your-username>/ng-grid.git
+   git clone https://github.com/<your-username>/ui-grid.git
    # Navigate to the newly cloned directory
-   cd ng-grid
+   cd ui-grid
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/angular-ui/ng-grid.git
+   git remote add upstream https://github.com/angular-ui/ui-grid.git
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
