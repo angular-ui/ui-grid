@@ -674,7 +674,11 @@
           if ( colTypes === uiGridExporterConstants.ALL ){
             columns = grid.columns;
           } else {
-            columns = grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } );
+            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+
+            columns = leftColumns.concat(bodyColumns,rightColumns);
           }
 
           columns.forEach( function( gridCol, index ) {
@@ -756,7 +760,11 @@
           if ( colTypes === uiGridExporterConstants.ALL ){
             columns = grid.columns;
           } else {
-            columns = grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } );
+            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+
+            columns = leftColumns.concat(bodyColumns,rightColumns);
           }
 
           rows.forEach( function( row, index ) {
