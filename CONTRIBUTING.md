@@ -10,18 +10,18 @@ patches and features.
 
 ## Developer guidelines
 
-If you're a developer, please take a look at the [Developer guidelines](DEVELOPER.md) 
+If you're a developer, please take a look at the [Developer guidelines](DEVELOPER.md)
 
 ## Using the issue tracker
 
-The [issue tracker](https://github.com/angular-ui/ng-grid/issues) is
+The [issue tracker](https://github.com/angular-ui/ui-grid/issues) is
 the preferred channel for [bug reports](#bugs), [features requests](#features)
 and [submitting pull requests](#pull-requests), but please respect the following
 restrictions:
 
 * Please **do not** use the issue tracker for personal support requests (use
-  [Stack Overflow](http://stackoverflow.com/questions/tagged/ng-grid)
-  or IRC).
+  [Stack Overflow](http://stackoverflow.com/questions/tagged/angular-ui-grid) ( [Old Tag](http://stackoverflow.com/questions/tagged/ng-grid))
+  or our [Gitter Chat](https://gitter.im/angular-ui/ui-grid)).
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
@@ -100,11 +100,11 @@ included in the project:
 
    ```bash
    # Clone your fork of the repo into the current directory
-   git clone https://github.com/<your-username>/ng-grid.git
+   git clone https://github.com/<your-username>/ui-grid.git
    # Navigate to the newly cloned directory
-   cd ng-grid
+   cd ui-grid
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/angular-ui/ng-grid.git
+   git remote add upstream https://github.com/angular-ui/ui-grid.git
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
