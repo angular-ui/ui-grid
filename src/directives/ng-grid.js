@@ -95,7 +95,7 @@
                                 }
                                 $scope.$emit("ngGridEventData", grid.gridId);
                             };
-                            $scope.$on('$destroy', $scope.$parent.$watch(options.data, dataWatcher));
+                            $scope.$on('$destroy', $scope.$parent.$watchCollection(options.data, dataWatcher));
                             $scope.$on('$destroy', $scope.$parent.$watch(options.data + '.length', function() {
                                 dataWatcher($scope.$eval(options.data));
 								$scope.adjustScrollTop(grid.$viewport.scrollTop(), true);
