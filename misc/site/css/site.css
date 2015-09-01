@@ -147,7 +147,7 @@ body {
 }
 
 .feature-heading {
-  padding-top 30px;
+  padding-top: 30px;
   text-align: center;
   min-width: 100%;
 }
