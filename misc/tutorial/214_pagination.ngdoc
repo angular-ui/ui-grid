@@ -4,7 +4,7 @@
 
 <div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
 
-When pagination is enabled, the data is displayed in pages that can be browsed using using the built in pagination selector.
+When pagination is enabled, the data is displayed in pages that can be browsed using the built in pagination selector.
 
 Documentation for the pagination feature is provided in the api documentation, in particular:
 

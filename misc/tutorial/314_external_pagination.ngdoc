@@ -2,7 +2,7 @@
 @name Tutorial: 314 External Pagination
 @description
 
-When pagination is enabled, the data is displayed in pages that can be browsed using using the built in 
+When pagination is enabled, the data is displayed in pages that can be browsed using the built in 
 pagination selector.
 
 For external pagination, implement the `gridApi.pagination.on.paginationChanged` callback function. The callback 
