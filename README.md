@@ -1,124 +1,171 @@
-# ng-grid : An Angular DataGrid
+# UI-Grid : An AngularJS data grid
 
-[![Build Status](https://travis-ci.org/angular-ui/ng-grid.png)](https://travis-ci.org/angular-ui/ng-grid)
+[![Join the chat at https://gitter.im/angular-ui/ui-grid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-_Note: We are no longer accepting feature based pull requests based on the 2.* branch. All active feature development is happening in the [3.0 branch](https://github.com/angular-ui/ng-grid/tree/3.0). PRs there are encouraged and will be celebrated with virtual high fives all around.  If you are serious about helping 3.0 become a success, join the discussion at https://gitter.im/angular-ui/ng-grid_
+[![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
 
-__Contributors:__
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
-ng-grid Team:
-* [Tim Sweet](http://ornerydevelopment.blogspot.com/)
-* [Jonathon Ricaurte](https://github.com/jonricaurte)
-* [Brian Hann](https://github.com/c0bra)
-* [Rob Larsen](https://github.com/roblarsen)
-* [Shane Walters](https://github.com/swalters)
+# Help!
 
-License: [MIT](http://www.opensource.org/licenses/mit-license.php)
+Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ui-grid to discuss development and ask for specific help.
 
-Dependencies: jQuery & angular.js. (JqueryUi draggable for non-HTML5 compliant browsers to use awesome Drag-N-Drop aggregate feature. However, you can still groupby without draggability)
+We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md) 
 
-***
+Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/angular-ui/ui-grid/issues?q=is%3Aopen+is%3Aissue+label%3A%22PRs+plz%21%22) issues.
 
-## About
-__ng-grid__ Originally built on knockout we wanted to port it to angular.
+# Installing
 
-version 2.0.11
+## Bower
 
-[nuGet](https://nuget.org/packages/ng-grid)
-
-
-Questions, Comments, Complaints? feel free to email us at nggridteam@gmail.com
-
-***
-
-## Roadmap
-
-We are going to be adding more features here as we head to a 3.0 release, including:
-
-* Anything else the rest of the community wants to contribute that isn't a terrible idea. :)
-
-***
-_The bare bones_:
+```bash
+    bower install angular-ui-grid
+```
 
 ```html
-<script type="text/javascript" src="angular.js"></script>
-<script type="text/javascript" src="ng-grid.js"></script>
-<script>
-    angular.module('myApp',['ngGrid', ... {other includes}]);
-</script>
-<link rel="stylesheet" type="text/css" href="../ng-grid.css" /> 
-<body ng-app="myApp">
-    <div ng-grid="myOptions"></div>
-</body>
-```
-```javascript
-// Define your own controller somewhere..
-function MyCtrl($scope) {
-	$scope.myData = [{name: "Moroni", age: 50},
-                     {name: "Teancum", age: 43},
-                     {name: "Jacob", age: 27},
-                     {name: "Nephi", age: 29},
-                     {name: "Enos", age: 34}];
-	$scope.myOptions = { data: 'myData' };
-	// you can also specify data as: $scope.myOptions = { data: $scope.myData }. 
-	// However, updates to the underlying data will not be reflected in the grid
-};
-
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
+    <script src="bower_components/angular-ui-grid/ui-grid.min.js">
 ```
 
-## Want More?
-Check out the [Getting Started](https://github.com/angular-ui/ng-grid/wiki/Getting-started) and other [Docs](https://github.com/angular-ui/ng-grid/wiki)
+## NPM
 
-## Examples
-[Examples](http://angular-ui.github.com/ng-grid/)
+```bash
+    npm install angular-ui-grid
+```
 
-## Testing
+```html
+    <link rel="stylesheet" type="text/css" href="node_modules/angular-ui-grid/ui.grid.min.css">
+    <script src="node_modules/angular-ui-grid/ui.grid.min.js">
+```
 
-The testing setup is based on the [angular-seed project](https://github.com/angular/angular-seed/).
+## CDN
 
-Make sure to set your CHROME_BIN environment variable to the full path to chrome.exe (not just its directory).
+You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in the Bower repository. These files are hosted by [MaxCDN](https://www.maxcdn.com/). Just alter the version as you need.
 
-### Grunt tasks
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js
+* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css
 
-There are a few grunt tasks for running tests:
+# Angular Compatibility
+
+UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.4.x.
+
+# Feature Stability
+
+UI-Grid comes bundled with several features. Not all of them are currently stable.  See the list below for the stability of each:
+
+Feature           | Release state
+-------------------        | --------- |
+[auto-resize-grid](http://ui-grid.info/docs/#/tutorial/213_auto_resizing) ([API](http://ui-grid.info/docs/#/api/ui.grid.autoResize))  | beta
+[cellnav](http://ui-grid.info/docs/#/tutorial/202_cellnav) ([API](http://ui-grid.info/docs/#/api/ui.grid.cellNav)) | stable
+[edit](http://ui-grid.info/docs/#/tutorial/201_editable) ([API](http://ui-grid.info/docs/#/api/ui.grid.edit)) | stable
+[expandable](http://ui-grid.info/docs/#/tutorial/216_expandable_grid) ([API](http://ui-grid.info/docs/#/api/ui.grid.expandable))    | alpha
+[exporter](http://ui-grid.info/docs/#/tutorial/206_exporting_data) ([API](http://ui-grid.info/docs/#/api/ui.grid.exporter))      | stable
+[grouping](http://ui-grid.info/docs/#/tutorial/209_grouping) ([API](http://ui-grid.info/docs/#/api/ui.grid.grouping))      | beta
+[importer](http://ui-grid.info/docs/#/tutorial/207_importing_data) ([API](http://ui-grid.info/docs/#/api/ui.grid.importer))      | stable
+[infinite-scroll](http://ui-grid.info/docs/#/tutorial/212_infinite_scroll) ([API](http://ui-grid.info/docs/#/api/ui.grid.infiniteScroll))           | beta
+[move-columns](http://ui-grid.info/docs/#/tutorial/217_column_moving) ([API](http://ui-grid.info/docs/#/api/ui.grid.moveColumns))    | alpha
+[pagination](http://ui-grid.info/docs/#/tutorial/214_pagination) ([API](http://ui-grid.info/docs/#/api/ui.grid.pagination))    | alpha
+[pinning](http://ui-grid.info/docs/#/tutorial/203_pinning) ([API](http://ui-grid.info/docs/#/api/ui.grid.pinning))       | stable
+[resize-columns](http://ui-grid.info/docs/#/tutorial/204_column_resizing) ([API](http://ui-grid.info/docs/#/api/ui.grid.resizeColumns))  | stable
+[row-edit](http://ui-grid.info/docs/#/tutorial/205_row_editable) ([API](http://ui-grid.info/docs/#/api/ui.grid.rowEdit))      | stable
+[saveState](http://ui-grid.info/docs/#/tutorial/208_save_state) ([API](http://ui-grid.info/docs/#/api/ui.grid.saveState))     | stable
+[selection](http://ui-grid.info/docs/#/tutorial/210_selection) ([API](http://ui-grid.info/docs/#/api/ui.grid.selection))       | stable
+[tree-base](http://ui-grid.info/docs/#/tutorial/215_treeView) ([API](http://ui-grid.info/docs/#/api/ui.grid.treeBase))     | beta
+[tree-view](http://ui-grid.info/docs/#/tutorial/215_treeView) ([API](http://ui-grid.info/docs/#/api/ui.grid.treeView))       | beta
+
+For more details on the features check the [Tutorials](http://ui-grid.info/docs/#/tutorial).
+
+# Building
+
+Install dependencies
+
+    git must be on your path.  If you can't do 'git' from your terminal, then install git first and make sure you have access from the path.
+    Bower installs are dependent on git.
+
+    If you are a git noob, the easiest way to install is by installing the github client.
+
+    # If you don't already have the grunt-cli installed:
+    > npm install -g grunt-cli
     
-    # Run unit tests
-    > grunt karma:unit
-    # Or use this alias:
-    > grunt test
+    > npm install
+    > grunt install
 
-    # Run end-to-end tests (make sure to first start a web server as specified below)
-    > grunt karma:e2e
+Default grunt task will test and build files into dist/
 
-    # Run midway tests
-    > grunt karma:midway
+    > grunt
 
-### End-to-end tests
+# Developing
 
-The e2e tests need a webserver to run. A simple one from the angular-seed project is included:
+Development "watch" task. This will automatically rebuild from source on changes, reload Gruntfile.js if you change it, and rebuild the docs.
 
-    > ./scripts/web-server.js
+1. A server on localhost:9002 serving whichever directory you checked out, with livereload. Navigate to http://localhost:9002/misc/demo to see the [demo files](http://localhost:9002/misc/demo/grid-directive.html).
+2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with a custom grunt-ngdocs that should work with Angular 1.2.x.
 
-### Automated testing and building
 
-Running this task will automatically rebuild `build/ng-grid.debug.js` when source files change, and run unit tests when `build/ng-grid.debug.js` or unit test files change. Youc an use this for testing during development.
 
-    # Run this in its own window
-    > grunt testwatch
+> grunt dev
 
-### Integration testing
+By default `grunt dev` will start several karma background watchers that will run the tests against multiple versions of angular. You may specify the version(s) you want to use with the `--angular` flag:
 
-There is a task for CI testing with PhantomJS
+    > grunt dev --angular=1.2.21
 
-1. Make sure the PHANTOMJS_BIN environment variable  is set properly
-2. PhantomJS with the singleRun option doesn't appear to function properly in Windows. The tests will run but PhantomJS will not automatically close.
-3. This task first builds the debug version of the source files and does not clean them up. If you run it you will have uncommitted changes in your working directory that you probably want to lose. `git checkout build` to lose them.
+    > grunt dev --angular=1.2.20,1.2.21
 
-    > grunt test-ci
+You can also use the `--browsers` specify what browsers to test with (PhantomJS is the default).
 
-### Selecting browsers
+    > grunt dev --browsers=Chrome
 
-All the test tasks accept a `--browsers` command line option that will be passed to karma.
+    # Run a single test run against multiple browsers
+    > grunt karma:single --browsers=Chrome,Firefox,IE
+
+By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
+
+    > grunt dev --no-e2e
     
-    # Automatically re-run tests in both Chrome and FF.
-    grunt testwatch --browsers=Chrome,Firefox
+The grunt task is getting slower as the body of tests gets larger.  If you're only working on the core functionality you can disable the unit tests on the features with the `--core` flag:
+
+    > grunt dev --core
+    
+As a shortcut for options that the developers frequently use, there is also a `--fast` flag, which equates to `--core --no-e2e --angular=<latest>`:
+ 
+    > grunt dev --fast
+
+## Karmangular
+
+The `karmangular` task runs tests serially against multiple browsers (it is used internally by the `dev` task).
+  
+    # Run tests against all available versions of Angular on Chrome
+    > grunt karmangular --browsers=Chrome
+
+    # Run tests with a couple versions of Angular against the default PhantomJS browser
+    > grunt karmangular --angular=1.2.20,1.2.21
+
+## SauceLabs
+
+ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY` environment variable set.
+
+    # Execute tests for a couple versions of angular on IE8
+    > grunt karmangular --angular=1.2.20,1.2.21 --browsers=SL_IE_8
+
+    # Run the watch tasks against IE10
+    > grunt dev --browsers=SL_IE10
+
+The full list of SauceLabs browsers can be seen by running `grunt saucebrowsers`. Usually it should suffice to let Travis do this testing automatically, unless you're trying to debug a browser-specific issue.
+
+# What Happened to 2.x?
+
+As of the 3.0 release, 2.x is officially deprecated. There will be no further releases. If for some reason you need to find the 2.x source please see the [2.x branch](https://github.com/angular-ui/ui-grid/tree/2.x).
+
+The 2.x docs are here: [http://angular-ui.github.io/ui-grid/](http://angular-ui.github.io/ui-grid/).
+
+# Repository Rename
+
+With the 3.0 release, the repository has been renamed from "ng-grid" to "ui-grid".
+
+All network traffic to GitHub should redirect automatically but they say you should update your git remote url:
+
+  git remote set-url origin https://github.com/angular-ui/ui-grid.git
+
+# Thanks
+
+Thanks to [Sauce Labs](http://saucelabs.com) and [BrowserStack](http://www.browserstack.com) for providing their testing platforms to open source projects for free.
