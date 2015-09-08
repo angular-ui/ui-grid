@@ -314,6 +314,26 @@ angular.module('ui.grid')
    */
 
   /**
+   * @ngdoc property
+   * @name preferredSortDirection
+   * @propertyOf ui.grid.class:GridColumn
+   * @description Which direction to sort in for the first click on an unsorted
+   * column. Valid values are uiGridConstants.ASC and uiGridConstants.DESC. The
+   * default is uiGridConstants.ASC.
+   *
+   */
+
+  /**
+   * @ngdoc property
+   * @name preferredSortDirection
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description Which direction to sort in for the first click on an unsorted
+   * column. Valid values are uiGridConstants.ASC and uiGridConstants.DESC. The
+   * default is uiGridConstants.ASC.
+   *
+   */
+
+  /**
    * @ngdoc array
    * @name filters
    * @propertyOf ui.grid.class:GridOptions.columnDef
@@ -650,6 +670,8 @@ angular.module('ui.grid')
     // Turn on sorting by default
     self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
     self.sortingAlgorithm = colDef.sortingAlgorithm;
+
+    self.preferredSortDirection = colDef.preferredSortDirection === uiGridConstants.DESC ? uiGridConstants.DESC : uiGridConstants.ASC;
 
     /**
      * @ngdoc boolean
