@@ -713,8 +713,36 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(1);
     });
 
+    it( 'if sort is currently null, and preferredSortDirection is DESC, then should toggle to DESC, and reset priority', function() {
+      column.preferredSortDirection = uiGridConstants.DESC;
+      column.sort = {direction: null};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
     it( 'if sort is currently ASC, then should toggle to DESC, and reset priortiy', function() {
       column.sort = {direction: uiGridConstants.ASC, priority: 2};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
+    it( 'if sort is currently ASC, and preferredSortDirection is DESC, and suppressRemoveSort is undefined, then should toggle to null, and remove priority', function() {
+      column.preferredSortDirection = uiGridConstants.DESC;
+      column.sort = {direction: uiGridConstants.ASC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sort is currently ASC, and preferredSortDirection is DESC, and suppressRemoveSort is true, then should toggle to DESC, and reset priority', function() {
+      column.preferredSortDirection = uiGridConstants.DESC;
+      column.sort = {direction: uiGridConstants.ASC};
+      column.suppressRemoveSort = true;
       grid.sortColumn( column, false );
       
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
@@ -727,6 +755,15 @@ describe('Grid factory', function () {
       
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sort is currently DESC, and preferredSortDirection is DESC, then should toggle to ASC, and reset priority', function() {
+      column.preferredSortDirection = uiGridConstants.DESC;
+      column.sort = {direction: uiGridConstants.DESC};
+      grid.sortColumn( column, false );
+      
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {

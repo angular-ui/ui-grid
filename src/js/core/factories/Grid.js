@@ -1921,7 +1921,8 @@ angular.module('ui.grid')
    * Emits the sortChanged event whenever the sort criteria are changed.
    * @param {GridColumn} column Column to set the sorting on
    * @param {uiGridConstants.ASC|uiGridConstants.DESC} [direction] Direction to sort by, either descending or ascending.
-   *   If not provided, the column will iterate through the sort directions: ascending, descending, unsorted.
+   *   If not provided, the column will iterate through the sort directions: preferred, not-preferred, unsorted.
+   *   The default preferredSortDirection is ascending.
    * @param {boolean} [add] Add this column to the sorting. If not provided or set to `false`, the Grid will reset any existing sorting and sort
    *   by this column only
    * @returns {Promise} A resolved promise that supplies the column.
@@ -1956,18 +1957,19 @@ angular.module('ui.grid')
 
     if (!direction) {
       // Figure out the sort direction
-      if (column.sort.direction && column.sort.direction === uiGridConstants.ASC) {
-        column.sort.direction = uiGridConstants.DESC;
+      var otherDirection = column.preferredSortDirection === uiGridConstants.ASC ? uiGridConstants.DESC : uiGridConstants.ASC;
+      if (column.sort.direction && column.sort.direction === column.preferredSortDirection) {
+        column.sort.direction = otherDirection;
       }
-      else if (column.sort.direction && column.sort.direction === uiGridConstants.DESC) {
+      else if (column.sort.direction && column.sort.direction === otherDirection) {
         if ( column.colDef && column.suppressRemoveSort ){
-          column.sort.direction = uiGridConstants.ASC;
+          column.sort.direction = column.preferredSortDirection;
         } else {
           column.sort = {};
         }
       }
       else {
-        column.sort.direction = uiGridConstants.ASC;
+        column.sort.direction = column.preferredSortDirection;
       }
     }
     else {
