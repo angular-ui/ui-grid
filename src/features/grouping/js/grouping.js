@@ -608,7 +608,7 @@
        */
       moveGroupColumns: function( grid, columns, rows ){
         if ( grid.options.moveGroupColumns === false){
-          return;
+          return columns;
         }
 
         columns.forEach( function(column, index){

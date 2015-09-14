@@ -1,3 +1,14 @@
+<a name="v3.0.6"></a>
+### v3.0.6 (2015-09-07)
+
+
+#### Bug Fixes
+
+* **gridUtil:** Fixes gridUtil.off.mousewheel event handler ([4057c64d](http://github.com/angular-ui/ng-grid/commit/4057c64d89d8c762b156961d565b65f9d9340749))
+* **infiniteScroll:** Fixes infinitescroll scrolling
+* **moveColumns:** Restore column order after altering columnDefs array. ([2d433bb](http://github.com/angular-ui/ng-grid/commit/2d433bb40ff089223dd019f35543a65d3d801a84))
+* **pinnedColums:** Included pinned columns in export of visibile data. ([0b37bc4](http://github.com/angular-ui/ng-grid/commit/0b37bc403d3326514485e2c5a1a2bbed2a84ca65)), closes ([#3888](http://github.com/angular-ui/ng-grid/issues/3888))
+
 <a name="v3.0.5"></a>
 ### v3.0.5 (2015-08-25)
 
