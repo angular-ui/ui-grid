@@ -149,7 +149,7 @@ module.exports = {
   */
   expectRowCount: function( gridId, expectedNumRows ) {
 
-    var rows = this.getGrid( gridId ).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
+    var rows = this.getGrid( gridId ).element( by.css('.ui-grid-render-container-body')).all( by.repeater('(rowRenderIndex, row) in rowContainer.renderedRows track by $index') );
     expect(rows.count()).toEqual(expectedNumRows);
   },
 
