@@ -272,7 +272,7 @@ angular.module('ui.grid')
    *
    */
 
-    /**
+ /**
   * @ngdoc property
   * @name sort
   * @propertyOf ui.grid.class:GridOptions.columnDef
@@ -650,6 +650,25 @@ angular.module('ui.grid')
     // Turn on sorting by default
     self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
     self.sortingAlgorithm = colDef.sortingAlgorithm;
+
+    /**
+     * @ngdoc property
+     * @name sortDirectionCycle
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description (optional) An array of sort directions, specifying the order that they
+     * should cycle through as the user repeatedly clicks on the column heading.
+     * The default is `[null, uiGridConstants.ASC, uiGridConstants.DESC]`. Null
+     * refers to the unsorted state. This does not affect the initial sort
+     * direction; use the {@link ui.grid.class:GridOptions.columnDef#sort sort}
+     * property for that. If
+     * {@link ui.grid.class:GridOptions.columnDef#suppressRemoveSort suppressRemoveSort}
+     * is also set, the unsorted state will be skipped even if it is listed here.
+     * Each direction may not appear in the list more than once (e.g. `[ASC,
+     * DESC, DESC]` is not allowed), and the list may not be empty.
+     */
+    self.sortDirectionCycle = typeof(colDef.sortDirectionCycle) !== 'undefined' ?
+      colDef.sortDirectionCycle :
+      [null, uiGridConstants.ASC, uiGridConstants.DESC];
 
     /**
      * @ngdoc boolean
