@@ -1,0 +1,18 @@
+@ngdoc overview
+@name Tutorial: 299 Third Party Features
+@description
+
+## Features maintained outside UI Grid Repository ##
+
+This is a list of features maintained by third parties. If you have developed a feature for UI Grid that you'd like listed,
+please create a Pull Request with this page (located in the misc/tutorial folder) updated.
+
+
+### **ui-grid-draggable-rows** ###
+Draggable rows in UI Grid.
+<br>https://github.com/cdwv/ui-grid-draggable-rows
+
+### **ui-grid-odata** ###
+Allows querying for odata v3/v4 services
+<br>https://github.com/mirik123/ui-grid-odata
+
