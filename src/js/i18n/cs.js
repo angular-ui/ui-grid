@@ -53,7 +53,8 @@
                   exporterSelectedAsCsv: 'Exportovat vybranné data do csv',
                   exporterAllAsPdf: 'Exportovat všechny data do pdf',
                   exporterVisibleAsPdf: 'Exportovat viditelné data do pdf',
-                  exporterSelectedAsPdf: 'Exportovat vybranné data do pdf'
+                  exporterSelectedAsPdf: 'Exportovat vybranné data do pdf',
+                clearAllFilters: 'Vyčistěte všechny filtry'
               },
               importer: {
                   noHeaders: 'Názvy sloupců se nepodařilo získat, obsahuje soubor záhlaví?',

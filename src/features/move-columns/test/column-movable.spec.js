@@ -1,6 +1,6 @@
 describe('ui.grid.moveColumns', function () {
 
-  var scope, element, timeout, gridUtil, document;
+  var scope, element, timeout, gridUtil, document, uiGridConstants;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "age": 25, "company": "Enersol", phone: '111'},
@@ -11,14 +11,14 @@ describe('ui.grid.moveColumns', function () {
 
   beforeEach(module('ui.grid.moveColumns'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, $timeout, _gridUtil_, $document) {
+  beforeEach(inject(function (_$compile_, $rootScope, $timeout, _gridUtil_, $document, _uiGridConstants_) {
 
     var $compile = _$compile_;
     scope = $rootScope;
     timeout = $timeout;
     gridUtil = _gridUtil_;
     document = $document;
-    
+    uiGridConstants = _uiGridConstants_;
 
     scope.gridOptions = {};
     scope.gridOptions.data = data;
@@ -72,6 +72,21 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[2].name).toBe('company');
     expect(scope.grid.columns[3].name).toBe('phone');
     expect(scope.grid.columns[4].name).toBe('gender');
+  });
+
+  it('expect moveColumn() to persist after adding additional column', function () {
+    scope.gridApi.colMovable.moveColumn(0, 1);
+    scope.gridOptions.columnDefs.push({ field: 'name', displayName: 'name2', width: 200 });
+    scope.gridApi.core.notifyDataChange( uiGridConstants.COLUMN );
+    timeout.flush();
+    scope.$digest();
+
+    expect(scope.grid.columns[0].name).toBe('gender');
+    expect(scope.grid.columns[1].name).toBe('name');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+    expect(scope.grid.columns[5].displayName).toBe('name2');
   });
 
   it('expect moveColumn() to not change position of columns if enableColumnMoving is false', function () {

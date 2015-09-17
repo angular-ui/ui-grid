@@ -108,6 +108,14 @@ body {
   }
 }
 
+.nav-gitter-link{
+  padding-right: 20px;
+}
+
+.nav-gitter-image{
+  vertical-align: inherit;
+}
+
 .space-before {
   padding-top: 8px;
 }
@@ -147,7 +155,7 @@ body {
 }
 
 .feature-heading {
-  padding-top 30px;
+  padding-top: 30px;
   text-align: center;
   min-width: 100%;
 }

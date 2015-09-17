@@ -18,6 +18,28 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    less_customizer: {
+      files: [
+        {
+          expand: true,
+          cwd: 'src/less',
+          src: '**/*.less',
+          dest: '<%= dist %>/less'
+        },
+        {
+          expand: true,
+          cwd: 'src/features',
+          src: '**/*.less',
+          dest: '<%= dist %>/less'
+        },
+        {
+          expand: true,
+          cwd: 'node_modules/bootstrap',
+          src: '**/*.less',
+          dest: '<%= dist %>/bootstrap'
+        }
+      ]
+    },
     less_dist: {
       files: [
         {

@@ -427,42 +427,60 @@ angular.module('ui.grid')
 
     self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
 
-    var colDefWidth = colDef.width;
-    var parseErrorMsg = "Cannot parse column width '" + colDefWidth + "' for column named '" + colDef.name + "'";
+    if (!angular.isNumber(self.width) || !self.hasCustomWidth || colDef.allowCustomWidthOverride) {
+      var colDefWidth = colDef.width;
+      var parseErrorMsg = "Cannot parse column width '" + colDefWidth + "' for column named '" + colDef.name + "'";
+      self.hasCustomWidth = false;
 
-    if (!angular.isString(colDefWidth) && !angular.isNumber(colDefWidth)) {
-      self.width = '*';
-    } else if (angular.isString(colDefWidth)) {
-      // See if it ends with a percent
-      if (gridUtil.endsWith(colDefWidth, '%')) {
-        // If so we should be able to parse the non-percent-sign part to a number
-        var percentStr = colDefWidth.replace(/%/g, '');
-        var percent = parseInt(percentStr, 10);
-        if (isNaN(percent)) {
+      if (!angular.isString(colDefWidth) && !angular.isNumber(colDefWidth)) {
+        self.width = '*';
+      } else if (angular.isString(colDefWidth)) {
+        // See if it ends with a percent
+        if (gridUtil.endsWith(colDefWidth, '%')) {
+          // If so we should be able to parse the non-percent-sign part to a number
+          var percentStr = colDefWidth.replace(/%/g, '');
+          var percent = parseInt(percentStr, 10);
+          if (isNaN(percent)) {
+            throw new Error(parseErrorMsg);
+          }
+          self.width = colDefWidth;
+        }
+        // And see if it's a number string
+        else if (colDefWidth.match(/^(\d+)$/)) {
+          self.width = parseInt(colDefWidth.match(/^(\d+)$/)[1], 10);
+        }
+        // Otherwise it should be a string of asterisks
+        else if (colDefWidth.match(/^\*+$/)) {
+          self.width = colDefWidth;
+        }
+        // No idea, throw an Error
+        else {
           throw new Error(parseErrorMsg);
         }
-        self.width = colDefWidth;
       }
-      // And see if it's a number string
-      else if (colDefWidth.match(/^(\d+)$/)) {
-        self.width = parseInt(colDefWidth.match(/^(\d+)$/)[1], 10);
-      }
-      // Otherwise it should be a string of asterisks
-      else if (colDefWidth.match(/^\*+$/)) {
-        self.width = colDefWidth;
-      }
-      // No idea, throw an Error
+      // Is a number, use it as the width
       else {
-        throw new Error(parseErrorMsg);
+        self.width = colDefWidth;
       }
-    }
-    // Is a number, use it as the width
-    else {
-      self.width = colDefWidth;
     }
 
-    self.minWidth = !colDef.minWidth ? 30 : colDef.minWidth;
-    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+    ['minWidth', 'maxWidth'].forEach(function (name) {
+      var minOrMaxWidth = colDef[name];
+      var parseErrorMsg = "Cannot parse column " + name + " '" + minOrMaxWidth + "' for column named '" + colDef.name + "'";
+
+      if (!angular.isString(minOrMaxWidth) && !angular.isNumber(minOrMaxWidth)) {
+        //Sets default minWidth and maxWidth values
+        self[name] = ((name === 'minWidth') ? 30 : 9000);
+      } else if (angular.isString(minOrMaxWidth)) {
+        if (minOrMaxWidth.match(/^(\d+)$/)) {
+          self[name] = parseInt(minOrMaxWidth.match(/^(\d+)$/)[1], 10);
+        } else {
+          throw new Error(parseErrorMsg);
+        }
+      } else {
+        self[name] = minOrMaxWidth;
+      }
+    });
 
     //use field if it is defined; name if it is not
     self.field = (colDef.field === undefined) ? colDef.name : colDef.field;

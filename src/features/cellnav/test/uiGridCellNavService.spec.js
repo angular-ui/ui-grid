@@ -164,20 +164,20 @@ describe('ui.grid.edit uiGridCellNavService', function () {
 
   describe('scrollTo', function () {
     /*
-     * We have 11 rows (10 visible) and 11 columns (10 visible).  The column widths are 
+     * We have 11 rows (10 visible) and 11 columns (10 visible).  The column widths are
      * 100 for the first 5, and 200 for the second 5.  Column 2 and row 2 are invisible.
      */
     var evt;
     var args;
     var $scope;
-    
+
     beforeEach(function(){
       var i, j, row;
       grid.options.columnDefs = [];
       for ( i = 0; i < 11; i++ ){
         grid.options.columnDefs.push({name: 'col' + i});
       }
-  
+
       grid.options.data = [];
       for ( i = 0; i < 11; i++ ){
         row = {};
@@ -186,16 +186,16 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         }
         grid.options.data.push( row );
       }
-      
+
       uiGridCellNavService.initializeGrid(grid);
-      grid.modifyRows(grid.options.data);      
-      
+      grid.modifyRows(grid.options.data);
+
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
-      
+
       grid.columns[2].visible = false;
       grid.rows[2].visible = false;
-      
+
       grid.setVisibleColumns(grid.columns);
       grid.setVisibleRows(grid.rows);
 
@@ -204,16 +204,20 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       for ( i = 0; i < 11; i++ ){
         grid.columns[i].drawnWidth = i < 6 ? 100 : 200;
       }
-      
+
       $scope = $rootScope.$new();
 
       args = null;
       grid.api.core.on.scrollEnd($scope, function( receivedArgs ){
         args = receivedArgs;
       });
-      
+
     });
 
+
+    // these have changed to use scrollToIfNecessary, which is better code
+    // but it means these unit tests are now mostly checking that it is the same it used to
+    // be, not that it is giving some specified result (i.e. I just updated them to what they were)
     // Since we set the grid height, the expected vertical scroll percentages make sense.
     // They will be (at least when scrolling down): (seekRowIndex - visibleRows) / (totalRows - visibleRows)
     it('should request scroll to row and column', function () {
@@ -232,7 +236,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[0], null);
       });
       $timeout.flush();
-      
+
       // The first row is already displayed. No scrolling necessary.
       expect(args).toBe(null);
     });
@@ -242,7 +246,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[10], null);
       });
       $timeout.flush();
-      
+
       expect(args.y.percentage).toBeGreaterThan(0.5);
       expect(args.x).toBe(null);
     });
@@ -252,7 +256,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( grid.options.data[5], null);
       });
       $timeout.flush();
-      
+
       expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.4);
       expect(args.x).toBe(null);
     });
@@ -282,7 +286,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo(  null, grid.columns[8].colDef);
       });
       $timeout.flush();
-      
+
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
@@ -291,7 +295,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
         grid.scrollTo( null, null );
       });
       $timeout.flush();
-      
+
       expect(args).toEqual( null );
     });
   });
