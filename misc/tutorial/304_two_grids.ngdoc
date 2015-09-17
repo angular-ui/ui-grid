@@ -1,0 +1,72 @@
+@ngdoc overview
+@name Tutorial: 304 Two grids on a page
+@description
+
+This grid example puts two grids on the same page, and demonstrates that they are isolated from
+each other.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.cellNav']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {
+        onRegisterApi: function(gridApi){
+          $scope.gridApi = gridApi;
+        }
+      };
+
+      $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+
+    }]);
+
+    app.controller('SecondCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button type="button" class="btn btn-success" ng-click="scrollTo(20,0)">Scroll To Row 20</button>
+      <div id="firstGrid" ui-grid="gridOptions" ui-grid-selection ui-grid-cellNav class="grid"></div>
+    </div>
+    <div ng-controller="SecondCtrl">
+      <div id="secondGrid" ui-grid="gridOptions" ui-grid-selection ui-grid-cellNav class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 300px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '211 two grids', function() {
+      it('check first grid has rendered', function () {
+        gridTestUtils.expectHeaderColumnCount( 'firstGrid', 3 );
+      });
+
+      it('check second grid has rendered', function () {
+        gridTestUtils.expectHeaderColumnCount( 'secondGrid', 3 );
+      });
+
+//      it('check that menus display over the correct grid', function () {
+        // still working out how to get protractor to scroll an element
+//      });
+    });
+  </file>
+</example>

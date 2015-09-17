@@ -1,0 +1,95 @@
+@ngdoc overview
+@name Tutorial: 110 Grid in a Modal
+@description
+
+Using a grid in a modal popup.
+
+In some cases, and in particular with the bootstrap modal, you may find that your grid renders smaller than the
+available width (or sometimes appears to render not at all.  This is believed to be because the bootstrap modal 
+animates the initial render and the grid renders whilst the  modal is still animating - the available space isn't 
+as expected.  You can correct this by calling `handleWindowResize`.  The animation time seems to be somewhat variable,
+so the currently recommended approach is to use $interval, and to call every 500ms for the first 5s after modal opening.
+
+In a sense this is similar to what the auto-resize feature does, but it only does it for a short period after modal opening.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$rootScope', '$scope', '$http', 'modal', '$interval', function ($rootScope, $scope, $http, modal, $interval) {
+      var myModal = new modal();
+
+      $scope.hideGrid = true;
+
+      $rootScope.gridOptions = {
+        onRegisterApi: function (gridApi) {
+          $scope.gridApi = gridApi;
+ 
+          // call resize every 200 ms for 2 s after modal finishes opening - usually only necessary on a bootstrap modal
+          $interval( function() {
+            $scope.gridApi.core.handleWindowResize();
+          }, 10, 500);
+          }
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $rootScope.gridOptions.data = data;
+        });
+
+      $scope.showModal = function() {
+        myModal.open();
+      };
+    }]);
+
+    app.factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+      return function() {
+        var elm;
+        var modal = {
+          open: function() {
+
+            var html = '<div class="modal" ng-style="modalStyle">{{modalStyle}}<div class="modal-dialog"><div class="modal-content"><div class="modal-header"></div><div class="modal-body"><div id="grid1" ui-grid="gridOptions" class="grid"></div></div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Close</button></div></div></div></div>';
+            elm = angular.element(html);
+            angular.element(document.body).prepend(elm);
+
+            $rootScope.close = function() {
+              modal.close();
+            };
+            
+            $rootScope.modalStyle = {"display": "block"};
+
+            $compile(elm)($rootScope);
+          },
+          close: function() {
+            if (elm) {
+              elm.remove();
+            }
+          }
+        };
+
+        return modal;
+      };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button id="showButton" class="btn btn-success" ng-click="showModal()">Show Modal</button>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 300px;
+      height: 250px;
+    }
+  </file>
+    <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    it('click modal button, grid should show with three columns and some data', function () {
+      element( by.id ( 'showButton' ) ).click();
+      gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+      gridTestUtils.expectRowValuesMatch( 'grid1', 0, [ 'Ethel Price', 'female', 'Enersol' ]);
+      element( by.id ( 'buttonClose' ) ).click();
+    });
+  </file>
+</example>

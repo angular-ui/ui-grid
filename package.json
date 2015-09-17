@@ -1,17 +1,16 @@
 {
-  "name": "ng-grid",
-  "version": "2.0.3",
-  "description": "__Contributors:__",
-  "main": "ng-grid.min.js",
+  "name": "ui-grid",
+  "version": "3.0.6",
+  "description": "A data grid for Angular",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular-ui/ng-grid.git"
+    "url": "https://github.com/angular-ui/ui-grid.git"
   },
   "keywords": [
     "angular",
@@ -20,17 +19,59 @@
     "grid",
     "angularjs",
     "slickgrid",
-    "kogrid"
+    "kogrid",
+    "ui-grid",
+    "ui grid",
+    "data grid"
   ],
-  "author": "ng-grid Team",
+  "author": "UI Grid Team",
   "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  },
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-jsdoc": "~0.2.4",
-    "grunt-contrib-concat": "~0.1.3",
-    "grunt-contrib-uglify": "~0.1.2",
-    "grunt-angular-templates": "~0.3.0",
-    "grunt-contrib-clean": "~0.4.0",
-    "grunt-contrib-jasmine": "~0.3.3"
+    "bower": "^1.3.8",
+    "canonical-path": "0.0.2",
+    "coveralls": "^2.11.1",
+    "grunt": "~0.4",
+    "grunt-angular-templates": "~0.5",
+    "grunt-bump": "0.0.15",
+    "grunt-contrib-clean": "~0.5",
+    "grunt-contrib-concat": "~0.3",
+    "grunt-contrib-connect": "~0.5",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-jasmine": "~0.5",
+    "grunt-contrib-jshint": "~0.7",
+    "grunt-contrib-less": "~1.0",
+    "grunt-contrib-uglify": "~0.2",
+    "grunt-contrib-watch": "~0.5",
+    "grunt-conventional-changelog": "~1.0.0",
+    "grunt-fontello": "~0.1",
+    "grunt-gh-pages": "~0.9.0",
+    "grunt-jscs": "^0.7.1",
+    "grunt-karma": "~0.8",
+    "grunt-newer": "~1.1.0",
+    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.2.7-custom2",
+    "grunt-protractor-runner": "~2.0.0",
+    "grunt-shell-spawn": "~0.3.0",
+    "jit-grunt": "^0.8.0",
+    "jshint-stylish": "^0.2.0",
+    "karma": "~0.12",
+    "karma-chrome-launcher": "~0.1",
+    "karma-coverage": "^0.2.5",
+    "karma-firefox-launcher": "~0.1",
+    "karma-ie-launcher": "^0.1.5",
+    "karma-jasmine": "~0.1",
+    "karma-phantomjs-launcher": "~0.1",
+    "karma-requirejs": "~0.2",
+    "karma-sauce-launcher": "~0.2.10",
+    "karma-script-launcher": "~0.1",
+    "load-grunt-config": "~0.16.0",
+    "marked": "~0.2",
+    "protractor": "~2.1.0",
+    "selenium-webdriver": "~2.46.0",
+    "semver": "~2.2.1",
+    "shelljs": "~0.2.6",
+    "time-grunt": "~1.1.0"
   }
 }

@@ -1,0 +1,85 @@
+
+.ui-grid-footer-panel-background {
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+}
+
+@topPanelRadius: @gridBorderRadius - @gridBorderWidth;
+.ui-grid-footer-panel {
+  position: relative;
+  // z-index: 1;
+  // background-color: @darkGray; // #EAEAEA
+  border-bottom: 1px solid @borderColor; // #D4D4D4
+  border-top: 1px solid @borderColor;
+  overflow: hidden;  // Disable so menus show up
+  font-weight: bold;
+
+  // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+  .ui-grid-footer-panel-background;
+
+  .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
+}
+
+.ui-grid-grid-footer {
+  float: left;
+  width: 100%;
+}
+
+.ui-grid-footer-viewport {
+  overflow: hidden; // Disable so menus show up
+}
+
+.ui-grid-footer-canvas {
+  position: relative;
+
+  // Clearfix for floating header cells
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+
+  &:after {
+    clear:both;
+  }
+
+  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
+}
+
+.ui-grid-footer-cell-wrapper {
+  position: relative;
+  display: table;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ui-grid-footer-cell-row {
+  display: table-row;
+}
+
+.ui-grid-footer-cell {
+  overflow: hidden;
+  // position: relative; // NOTE: removing so border is visible
+  background-color: inherit;
+  border-right: @gridBorderWidth solid;
+  border-color: @borderColor;
+  box-sizing: border-box;
+  display: table-cell;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+input[type="text"].ui-grid-filter-input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+
+  border: @gridBorderWidth solid  @borderColor;
+  .border-radius(@gridBorderRadius);
+
+  &:hover {
+    border: @gridBorderWidth solid  @borderColor;
+  }
+}

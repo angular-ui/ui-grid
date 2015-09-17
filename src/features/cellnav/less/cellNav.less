@@ -1,0 +1,30 @@
+@import '../../../less/variables';
+@import (reference) '../../../less/bootstrap/bootstrap';
+
+// .ui-grid-cell-contents:focus {
+//   outline: 0;
+//   background-color: @focusedCell;
+// }
+
+.ui-grid-cell-focus {
+  outline: 0;
+  background-color: @focusedCell;
+}
+
+.ui-grid-focuser {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: -1;
+  width:100%;
+  height:100%;
+  #ui-grid-twbs > .form-control-focus();
+}
+
+.ui-grid-offscreen{
+  display: block;
+  position: absolute;
+  left: -10000px;
+  top: -10000px;
+  clip:rect(0px,0px,0px,0px);
+}

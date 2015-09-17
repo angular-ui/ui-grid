@@ -1,0 +1,72 @@
+@ngdoc overview
+@name Tutorial: 109 Multiple Grids per Page
+@description
+
+Using multiple grids on a single page
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions1 = {};
+      $scope.gridOptions2 = {};
+
+      $http.get('/data/100.json')
+      .success(function(data) {
+        $scope.gridOptions1.data = data;
+      });
+
+      $http.get('/data/500.json')
+      .success(function(data) {
+        $scope.gridOptions2.data = data;
+      });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div class="row">
+        <div class="span4">
+          <div id="grid1" ui-grid="gridOptions1" class="grid"></div>
+        </div>
+        
+        <div class="span4">
+          <div id="grid2" ui-grid="gridOptions2" class="grid"></div>
+        </div>
+      </div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 150px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    it('grid1 should have three visible columns, grid2 has four', function () {
+      gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+      gridTestUtils.expectHeaderColumnCount( 'grid2', 4 );
+    });
+
+    it('menus should show over correct grid', function () {
+      // click on menu in grid 1
+      var headerCell = gridTestUtils.headerCell( 'grid1', 0 );
+      headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
+      
+      // check a menu list is showing somewhere in grid1, and has at least 2 items
+      var columnMenu = element( by.id( 'grid1' ) ).element( by.css( '.ui-grid-column-menu' ));
+      expect( columnMenu.all( by.repeater('item in menuItems') ).count() ).toBeGreaterThan(2);
+
+      // click on menu in grid 2
+      var headerCell = gridTestUtils.headerCell( 'grid2', 0 );
+      headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
+      
+      // check a menu list is showing somewhere in grid2, and has at least 2 items
+      var columnMenu = element( by.id( 'grid2' ) ).element( by.css( '.ui-grid-column-menu' ));
+      expect( columnMenu.all( by.repeater('item in menuItems') ).count() ).toBeGreaterThan(2);
+    });
+
+  </file>  
+</example>

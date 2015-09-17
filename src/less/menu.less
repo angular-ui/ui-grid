@@ -1,0 +1,89 @@
+.ui-grid-menu-button {
+  z-index: 2;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: @headerBackgroundColor;
+  border: @gridBorderWidth solid @borderColor;
+  cursor: pointer;
+  height: 31px;
+  font-weight: normal;
+}
+
+.ui-grid-menu-button .ui-grid-icon-container {
+  margin-top: 3px;
+}
+
+.ui-grid-menu-button .ui-grid-menu {
+  right: 0;
+  .ui-grid-menu-mid {
+    overflow: scroll;
+    max-height: 300px;
+    border: @gridBorderWidth solid @borderColor;
+  }
+}
+
+.ui-grid-menu {
+  z-index: 2; // So it shows up over grid canvas
+  position: absolute;
+  padding: 0 10px 20px 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.ui-grid-menu .ui-grid-menu-inner {
+  background: @headerBackgroundColor;
+  border: @gridBorderWidth solid @borderColor;
+  position: relative;
+  white-space: nowrap;
+
+  .rounded(@gridBorderRadius);
+  .box-shadow(e("0 10px 20px rgba(0, 0, 0, 0.2), inset 0 12px 12px -14px rgba(0, 0, 0, 0.2)"));
+
+  // Small hidden close button that only appears when focused.
+  .ui-grid-menu-close-button {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    #ui-grid-twbs > .btn();
+    #ui-grid-twbs > .button-size(1px; 1px; 10px; 1; 2px);
+    #ui-grid-twbs > .button-variant(transparent, transparent, transparent);
+    > i {
+      opacity: 0.75;
+      color: black;
+    }
+  }
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  li {
+    padding: 0px;
+    button {
+      min-width: 100%;
+      padding: 8px;
+      text-align: left;
+      background: transparent;
+      border: none;
+
+      // Show a shadow when hovering over a menu item
+      &:hover,
+      &:focus {
+        // background-color: negation(@headerBackgroundColor, #fff);
+        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
+      }
+      &.ui-grid-menu-item-active {
+        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
+        background-color: @selectedColor;
+      }
+    }
+  }
+
+  // Show a bottom border on all but the last menu item
+  li:not(:last-child) > button {
+    border-bottom: @gridBorderWidth solid @borderColor;
+  }
+}

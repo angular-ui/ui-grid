@@ -1,0 +1,72 @@
+@ngdoc overview
+@name Tutorial: 111 CellClass
+@description
+
+A class name or function returning a class name can be assigned to each columnDef.
+
+In this example, we will override the color and background for the first column and color the company text blue if it equals 'Velity'.
+
+
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          { field: 'name', cellClass:'red' },
+          { field: 'company',
+            cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+              if (grid.getCellValue(row,col) === 'Velity') {
+                return 'blue';
+              }
+            }
+          }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <br>
+      <br>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 200px;
+    }
+    .red { color: red;  background-color: yellow !important; }
+    .blue { color: blue;  }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '111 cell class', function() {
+      // Reload the page before each test if on Firefox. Chrome does it automatically.
+      gridTestUtils.firefoxReload();
+
+      it('grid should have two visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+      });
+
+      it('column one formatted color red, background yellow', function () {
+        // sort by company, 2,1 is no longer Velity so shouldn't be blue, check it's the same colour as row 1
+        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Acusage' );
+            expect( gridTestUtils.dataCell( 'grid1', 1, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
+            expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
+          });
+      });
+    });
+  </file>
+</example>
+

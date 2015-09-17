@@ -1,0 +1,50 @@
+@ngdoc overview
+@name Tutorial: 120 RTL Support
+@description
+
+The grid supports RTL languages
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.pinning']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        columnDefs: [
+          { name: 'field1', field: 'name', width: 200 },
+          { name: 'field2', field: 'gender', width: 200 },
+          { name: 'field3', field: 'company', width: 200 },
+          { name: 'field4', field: 'name', width: 200 },
+          { name: 'field5', field: 'gender', width: 200 },
+          { name: 'field6', field: 'company', width: 200 },
+          { name: 'field7', field: 'name', width: 200 },
+          { name: 'field8', field: 'gender', width: 200 },
+          { name: 'field9', field: 'company', width: 200 },
+          { name: 'field10', field: 'name', width: 200 },
+          { name: 'field11', field: 'gender', width: 200 },
+          { name: 'field12', field: 'company', width: 200 },
+          { name: 'field13', field: 'name', width: 200 },
+          { name: 'field14', field: 'gender', width: 200 },
+          { name: 'field15', field: 'company', width: 200 }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div ui-grid="gridOptions" class="grid" dir="rtl" ui-grid-pinning ui-grid-resize-columns></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+</example>

@@ -1,0 +1,9 @@
+<div
+  ng-if="expandableRow.shouldRenderFiller()"
+  ng-class="{scrollFiller:true, scrollFillerClass:(colContainer.name === 'body')}"
+  ng-style="{ width: (grid.getViewportWidth()) + 'px', height: row.expandedRowHeight + 2 + 'px', 'margin-left': grid.options.rowHeader.rowHeaderWidth + 'px' }">
+  <i
+    class="ui-grid-icon-spin5 ui-grid-animate-spin"
+    ng-style="{'margin-top': ( row.expandedRowHeight/2 - 5) + 'px', 'margin-left' : ((grid.getViewportWidth() - grid.options.rowHeader.rowHeaderWidth)/2 - 5) + 'px'}">
+  </i>
+</div>

@@ -1,0 +1,177 @@
+@ngdoc overview
+@name Tutorial: 216 Expandable grid
+@description
+
+<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+
+The `ui.grid.expandable` module adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
+
+Documentation for the expandable feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.expandable.api:GridOptions gridOptions}
+- {@link api/ui.grid.expandable.api:PublicApi publicApi}
+
+<pre>
+  $scope.gridOptions = {
+    //This is the template that will be used to render subgrid.
+    expandableRowTemplate: 'expandableRowTemplate.html',
+    //This will be the height of the subgrid
+    expandableRowHeight: 140,
+    //Variables of object expandableScope will be available in the scope of the expanded subgrid
+    expandableRowScope: expandableScope
+  }
+</pre>
+
+expandableRowTemplate will be the template for subgrid and expandableRowHeight will be the height of the subgrid. expandableRowScope can be used
+to add variables to the scope of expanded grid. These variables can then be accessed from expandableRowTemplate. The grid api
+provides the following events and methods for subGrids:
+
+<pre>
+    //rowExpandedStateChanged is fired for each row as its expanded:
+    gridApi.expandable.on.rowExpandedStateChanged($scope,function(row){
+    });
+    //Following methods can be used to expand/ collapse all rows of the grid:
+    gridApi.expandable.expandAllRows();
+    gridApi.expandable.collapseAllRows();
+</pre>
+
+SubGrid nesting can be done upto multiple levels.
+
+In addition to the above configuration, 'scrollFillerClass' is also available and can be used to style the scroll filler. The scroll filler
+appears when you quickly scroll through the grid.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.expandable', 'ui.grid.selection', 'ui.grid.pinning']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {
+        expandableRowTemplate: 'expandableRowTemplate.html',
+        expandableRowHeight: 150,
+        //subGridVariable will be available in subGrid scope
+        expandableRowScope: {
+          subGridVariable: 'subGridScopeVariable'
+        }
+      }
+
+      $scope.gridOptions.columnDefs = [
+        { name: 'id' },
+        { name: 'name'},
+        { name: 'age'},
+        { name: 'address.city'}
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          for(i = 0; i < data.length; i++){
+            data[i].subGridOptions = {
+              columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
+              data: data[i].friends
+            }
+          }
+          $scope.gridOptions.data = data;
+        });
+
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+          $scope.gridApi = gridApi;
+        };
+
+        $scope.expandAllRows = function() {
+          $scope.gridApi.expandable.expandAllRows();
+        }
+
+        $scope.collapseAllRows = function() {
+          $scope.gridApi.expandable.collapseAllRows();
+        }
+    }]);
+
+    app.controller('SecondCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+          $scope.gridOptions = {
+            enableRowSelection: true,
+            expandableRowTemplate: 'expandableRowTemplate.html',
+            expandableRowHeight: 150
+          }
+
+          $scope.gridOptions.columnDefs = [
+            { name: 'id', pinnedLeft:true },
+            { name: 'name'},
+            { name: 'age'},
+            { name: 'address.city'}
+          ];
+
+          $http.get('/data/500_complex.json')
+            .success(function(data) {
+              for(i = 0; i < data.length; i++){
+                data[i].subGridOptions = {
+                  columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
+                  data: data[i].friends
+                }
+              }
+              $scope.gridOptions.data = data;
+            });
+        }]);
+
+    app.controller('ThirdCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+          $scope.gridOptions = {
+            expandableRowTemplate: 'expandableRowTemplate.html',
+            expandableRowHeight: 150,
+            onRegisterApi: function (gridApi) {
+                gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                    if (row.isExpanded) {
+                      row.entity.subGridOptions = {
+                        columnDefs: [
+                        { name: 'name'},
+                        { name: 'gender'},
+                        { name: 'company'}
+                      ]};
+
+                      $http.get('/data/100.json')
+                        .success(function(data) {
+                          row.entity.subGridOptions.data = data;
+                        });
+                    }
+                });
+            }
+          }
+
+          $scope.gridOptions.columnDefs = [
+            { name: 'id', pinnedLeft:true },
+            { name: 'name'},
+            { name: 'age'},
+            { name: 'address.city'}
+          ];
+
+          $http.get('/data/500_complex.json')
+            .success(function(data) {
+              $scope.gridOptions.data = data;
+            });
+        }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div class="control-group">
+        <input type="button" class="btn btn-small" ng-click="expandAllRows()" value="Expand All"/>
+        <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All"/>
+      </div>
+      <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable class="grid"></div>
+    </div>
+    Expandable rows works with checkboxes from selection and left pins
+    <div ng-controller="SecondCtrl">
+       <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable ui-grid-selection class="grid"></div>
+    </div>
+    Retrieve data for subGrid when expanding
+    <div ng-controller="ThirdCtrl">
+       <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 100%;
+      height: 400px;
+    }
+  </file>
+  <file name="expandableRowTemplate.html">
+    <div ui-grid="row.entity.subGridOptions" style="height:150px;"></div>
+  </file>
+</example>

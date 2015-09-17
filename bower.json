@@ -1,0 +1,33 @@
+{
+  "name": "angular-ui-grid",
+  "version": "3.0.6",
+  "homepage": "http://ui-grid.info",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui/ui-grid.info.git"
+  },
+  "authors": [
+    "__Contributors__"
+  ],
+  "description": "AngularJS data grid",
+  "keywords": [
+    "angular",
+    "grid"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "main": ["./ui-grid.css", "./ui-grid.js"],
+  "devDependencies": {
+    "google-code-prettify": "~1.0.2",
+    "jquery": "~1.8.0",
+    "lodash": "~2.4.1",
+    "pdfmake": "~0.1.8",
+    "csv-js": "https://github.com/c0bra/CSV-JS.git#~1.0.2"
+  }
+}

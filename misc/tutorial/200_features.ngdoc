@@ -1,0 +1,18 @@
+@ngdoc overview
+@name Tutorial: 200 Features
+@description
+
+The core module, ui.grid, contains only the core features needed.  More complex features are separated into feature modules and must be included in your application module.
+
+You must include each feature as a dependency for your application module.
+<pre>
+angular.module('yourApp', ['ui.grid', 'ui.grid.feature1', 'ui.grid.feature2']);
+</pre>
+
+Each feature directive must also be included in alongside the ui-grid directive.  This allows you to have many grids in an application and enable certain features for each grid instance.
+<pre>
+<div ui-grid="gridOptions" class="grid" ui-grid-feature1 ui-grid-feature2></div>
+</pre>
+
+In general the feature documentation can be found in the api section, each feature will typically have a
+`gridOptions` section, it may have a `columnDef` section, and it may have a `publicApi` section.

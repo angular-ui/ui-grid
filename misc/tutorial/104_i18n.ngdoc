@@ -1,0 +1,70 @@
+@ngdoc overview
+@name Tutorial: 104 i18n
+@description
+
+UI-Grid provides an i18nService that you can use to change the default language, add translations, 
+or change existing translations.
+
+The easiest way to set language is to use the ui-i18n directive in a div that contains the grid.
+<pre>
+<div ui-i18n="{{lang}}">
+</pre>
+Only one ui-i18n directive is allowed.  The current language setting is stored in the i18n service (singleton) 
+so there is currently no way to have more than one language per app.
+
+Another option is to use the i18nService and use the setCurrentLang method
+<pre>
+   i18nService.setCurrentLang('fr');
+</pre>
+
+For an example using angular-translate to translate your headers, refer to http://plnkr.co/edit/KnrKTst5dWXvlZNeIy9c?p=preview
+
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
+      $scope.langs = i18nService.getAllLangs();
+      $scope.lang = 'nl';
+
+      $scope.gridOptions = {
+        columnDefs: [
+          { field: 'name' },
+          { field: 'gender' },
+          { field: 'company', enableFiltering: false  }
+        ]
+      };
+
+      $http.get('/data/100.json')
+      .success(function(data) {
+        $scope.gridOptions.data = data;
+      });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <select ng-model="lang" ng-options="l for l in langs"></select><br>
+
+      <div ui-i18n="{{lang}}">
+         <p>Using attribute:</p>
+         <p ui-t="groupPanel.description"></p>
+         <br/>
+         <p>Using Filter:</p>
+         <p>{{"groupPanel.description" | t}}</p>
+
+         <p>Click the header menu to see language. NOTE: TODO: header text does not change after grid is rendered. </p>
+
+         <div ui-grid="gridOptions" class="grid"></div>
+      </div>
+
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 250px;
+    }
+  </file>
+</example>

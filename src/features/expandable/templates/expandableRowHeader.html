@@ -1,0 +1,10 @@
+<div
+  class="ui-grid-row-header-cell ui-grid-expandable-buttons-cell">
+  <div
+    class="ui-grid-cell-contents">
+    <i
+      ng-class="{ 'ui-grid-icon-plus-squared' : !row.isExpanded, 'ui-grid-icon-minus-squared' : row.isExpanded }"
+      ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">
+    </i>
+  </div>
+</div>

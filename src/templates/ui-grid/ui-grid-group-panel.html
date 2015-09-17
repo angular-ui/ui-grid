@@ -1,0 +1,13 @@
+<div class="ui-grid-group-panel">
+    <div ui-t="groupPanel.description" class="description" ng-show="groupings.length == 0"></div>
+    <ul ng-show="groupings.length > 0" class="ngGroupList">
+        <li class="ngGroupItem" ng-repeat="group in configGroups">
+                <span class="ngGroupElement">
+                    <span class="ngGroupName">{{group.displayName}}
+                        <span ng-click="removeGroup($index)" class="ngRemoveGroup">x</span>
+                    </span>
+                    <span ng-hide="$last" class="ngGroupArrow"></span>
+                </span>
+        </li>
+    </ul>
+</div>

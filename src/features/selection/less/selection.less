@@ -1,0 +1,28 @@
+@import '../../../less/variables';
+
+.ui-grid-row.ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
+  background-color: @rowSelected;
+}
+
+.ui-grid-disable-selection {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.ui-grid-selection-row-header-buttons {
+  cursor: pointer;
+  opacity: 0.1;
+
+  &.ui-grid-row-selected {
+    opacity: 1;
+  }
+
+  &.ui-grid-all-selected {
+    opacity: 1;
+  }
+}

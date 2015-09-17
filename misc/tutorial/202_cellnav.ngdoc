@@ -1,0 +1,124 @@
+@ngdoc overview
+@name Tutorial: 202 Cell Navigation
+@description
+
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
+This grid example uses the ui-grid-cellNav directive to add cell navigation. To enable, you must include the 'ui.grid.cellNav'
+module and you must include the ui-grid-cellNav directive on your grid element.
+
+Documentation for the cellNav feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.cellNav.api:ColumnDef columnDef}
+- {@link api/ui.grid.cellNav.api:GridOptions gridOptions}
+- {@link api/ui.grid.cellNav.api:PublicApi publicApi}
+
+CellNav allows you to navigate around the grid using the arrow keys, pg-down and pg-up, enter (moves down),
+shift-enter (moves up), tab (moves right) and shift-tab (moves left).  When combined with the editable feature, the
+left-right arrow keys will be subsumed when in "deep edit" mode, allowing you to move around within the text you're editing.
+The tab key and shift-tab keys continue to function.
+
+Uses the gridOptions.onRegisterApi callback to register the on_cellNav event and log when the cell is navigated.
+
+Provides an example of requesting a scroll to a specific row or column programatically - useful for
+remembering the state of a page and scrolling back to that position when a user returns.
+
+Provides an example of scrolling to and setting the focus on a specific cell, using the scrollToFocus api.
+
+Provides an example of utilizing the modifierKeysToMultiSelectCells option and getCurrentSelection API function to
+extract values of selected cells.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.cellNav', 'ui.grid.pinning']);
+
+    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {
+        modifierKeysToMultiSelectCells: true,
+        showGridFooter: true
+      };
+      $scope.gridOptions.columnDefs = [
+        { name: 'id', width:'150' },
+        { name: 'name', width:'200' },
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false, width:'100' },
+        { name: 'address.city', width:'200' },
+        { name: 'phone', width:'150' },
+        { name: 'company', width:'150' },
+        { name: 'email', width:'150' },
+        { name: 'balance', width:'100' },
+        { name: 'guid', width:'100' }
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+
+        $scope.info = {};
+
+        $scope.currentFocused = "";
+
+        $scope.getCurrentFocus = function(){
+          var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+          if(rowCol !== null) {
+              $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+          }
+        };
+
+        $scope.getCurrentSelection = function() {
+          var values = [];
+          var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+          for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+          }
+          $scope.printSelection = values.toString();
+        };
+
+        $scope.scrollTo = function( rowIndex, colIndex ) {
+          $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+        };
+
+        $scope.scrollToFocus = function( rowIndex, colIndex ) {
+          $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+        };
+
+        $scope.gridOptions.onRegisterApi = function(gridApi){
+           $scope.gridApi = gridApi;
+           gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
+                 // var rowCol = {row: newRowCol.row.index, col:newRowCol.col.colDef.name};
+                 // var msg = 'New RowCol is ' + angular.toJson(rowCol);
+                 // if(oldRowCol){
+                 //    rowCol = {row: oldRowCol.row.index, col:oldRowCol.col.colDef.name};
+                 //    msg += ' Old RowCol is ' + angular.toJson(rowCol);
+                 // }
+                  $log.log('navigation event');
+                });
+        };
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <button type="button" class="btn btn-success" ng-click="scrollTo(20,0)">Scroll To Row 20</button>
+      <button type="button" class="btn btn-success" ng-click="scrollTo(0,7)">Scroll To Balance</button>
+      <button type="button" class="btn btn-success" ng-click="scrollTo(50,7)">Scroll To Row 50, Balance</button>
+      <button type="button" class="btn btn-success" ng-click="scrollToFocus(50,7)">Focus Row 50, Balance</button>
+      <button type="button" class="btn btn-success" ng-click="getCurrentFocus()">Get Current focused cell</button>  <span ng-bind="currentFocused"></span>
+      <button type="button" class="btn btn-success" ng-click="getCurrentSelection()">Get Current focused cell values</button>
+      <input type="text" ng-model="printSelection" placeholder="Click the 'Get current focused cell values' button to print cell values of selection here" class="printSelection">
+      <br>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-pinning class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+    .printSelection {
+        width: 600px;
+        margin-top: 10px;
+    }
+  </file>
+</example>

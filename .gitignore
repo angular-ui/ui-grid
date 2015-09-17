@@ -1,4 +1,4 @@
-#################
+c#################
 ## Vim
 #################
 
@@ -9,6 +9,7 @@
 #################
 
 node_modules
+coverage
 
 #################
 ## Eclipse
@@ -81,6 +82,11 @@ web.config
 .builds
 *.dotCover
 
+#################
+## Sublime Text
+#################
+*.sublime-*
+
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
 
@@ -112,7 +118,6 @@ DocProject/Help/Html2
 DocProject/Help/html
 
 # Click-Once directory
-publish
 
 # Others
 [Bb]in
@@ -178,3 +183,19 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+#################
+## JetBrains
+#################
+.idea
+ng-grid.iml
+
+
+#################
+## other stuff
+#################
+Sauce-Connect.jar
+*.log
+docs
+bower_components
+.grunt

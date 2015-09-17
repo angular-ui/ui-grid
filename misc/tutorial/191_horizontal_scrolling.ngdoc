@@ -1,0 +1,86 @@
+@ngdoc overview
+@name Tutorial: 191 Horizontal Scrolling
+@description
+
+Demonstrating scrolling with large amount of columns
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
+      $scope.gridOptions = {
+        enableSorting: true
+      };
+
+      var colCount = 500;
+      var rowCount = 500;
+
+      $scope.gridOptions.columnDefs = [];
+      $timeout( function() {
+        for (var colIndex = 0; colIndex < colCount; colIndex++) {
+          $scope.gridOptions.columnDefs.push({
+            name: 'col' + colIndex,
+            width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
+          });
+        }
+      });
+
+      var data = [];
+
+      $timeout( function() {
+        for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+          var row = {};
+
+          for (var colIndex = 0; colIndex < colCount; colIndex++) {
+            row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
+          }
+
+          data.push(row);
+        }
+      });
+
+      $scope.gridOptions.data = data;
+
+      $scope.$on("destroy", function(){
+        $timeout.cancel();
+      });
+    }]);
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <strong>{{ gridOptions.columnDefs.length | number }} Columns with Random Widths</strong>
+      <br>
+      <br>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 500px;
+      height: 400px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    describe( '191 horizontal scrolling', function() {
+      gridTestUtils.firefoxReload();
+      it('check first couple of headers and cells - make sure grid has rendered', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Col0' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Col1' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Col2' );
+
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'r0c0' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'r1c0' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'r2c0' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'r0c1' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 1, 'r1c1' );
+      });
+
+//      it('scroll right', function () {
+        // still working out how to get protractor to scroll an element
+//      });
+    });
+  </file>
+</example>

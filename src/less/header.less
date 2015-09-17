@@ -1,0 +1,227 @@
+
+.ui-grid-top-panel-background {
+  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+}
+
+@topPanelRadius: @gridBorderRadius - @gridBorderWidth;
+
+.ui-grid-header {
+  border-bottom: 1px solid @borderColor;
+  box-sizing: border-box;
+}
+
+.ui-grid-top-panel {
+    position: relative;
+    // border-bottom: 1px solid @borderColor; // #D4D4D4
+
+    overflow: hidden;  // Disable so menus show up
+    font-weight: bold;
+
+    // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+    .ui-grid-top-panel-background;
+
+    .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
+}
+
+
+.ui-grid-header-viewport {
+  overflow: hidden; // Disable so menus show up
+}
+
+.ui-grid-header-canvas {
+
+  // Clearfix for floating header cells
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+
+  &:after {
+    clear:both;
+  }
+
+  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
+}
+
+.ui-grid-header-cell-wrapper {
+  position: relative;
+  display: table;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ui-grid-header-cell-row {
+  display: table-row;
+  position: relative
+}
+
+.ui-grid-header-cell {
+  position: relative;
+  box-sizing: border-box;
+  background-color: inherit;
+  border-right: @gridBorderWidth solid;
+  border-color: @headerVerticalBarColor;
+  display: table-cell;
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  .user-select(none);
+
+  // Default to width 0 so header height can calculate right. Otherwise
+  //  the header cells will flow onto the next line of the header container
+  //  and cause the header height to be calculated as twice the height
+  //  it should be. The column widths are calculated dynamically
+  width: 0;
+
+  .sortable {
+    cursor: pointer;
+  }
+
+  // Moves the sort priority number closer to the icon
+  .ui-grid-sort-priority-number {
+    margin-left: -8px;
+  }
+}
+
+// Make vertical bar in header row fill the height of the cell completely
+.ui-grid-header .ui-grid-vertical-bar {
+  top: 0;
+  bottom: 0;
+}
+
+.ui-grid-column-menu-button {
+  position: absolute;
+  right: @gridBorderWidth; // So it doesn't overlay the vertical bar
+  top: 0;
+  // bottom: 0;
+  // .ui-grid-top-panel-background;
+
+  .ui-grid-icon-angle-down {
+    vertical-align: sub;
+  }
+}
+
+.ui-grid-column-menu-button-last-col {
+  margin-right: 25px;
+}
+
+.ui-grid-column-menu {
+  position: absolute;
+}
+
+/* Slide up/down animations */
+.ui-grid-column-menu .ui-grid-menu .ui-grid-menu-mid {
+  &.ng-hide-add, &.ng-hide-remove {
+    .transition(all, 0.05s, linear);
+    display: block !important;
+  }
+
+  &.ng-hide-add.ng-hide-add-active,
+  &.ng-hide-remove {
+    .transform(translateY(-100%));
+  }
+
+  &.ng-hide-add,
+  &.ng-hide-remove.ng-hide-remove-active {
+    .transform(translateY(0));
+  }
+}
+
+/* Slide up/down animations */
+.ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+  &.ng-hide-add, &.ng-hide-remove {
+    .transition(all, 0.05s, linear);
+    display: block !important;
+  }
+
+  &.ng-hide-add.ng-hide-add-active,
+  &.ng-hide-remove {
+    .transform(translateY(-100%));
+  }
+
+  &.ng-hide-add,
+  &.ng-hide-remove.ng-hide-remove-active {
+    .transform(translateY(0));
+  }
+}
+
+
+.ui-grid-filter-container {
+  padding: 4px 10px;
+  position: relative;
+
+  .ui-grid-filter-button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+    [class^="ui-grid-icon"] {
+      position: absolute;
+      top: 50%;
+      line-height: 32px;
+      margin-top: -16px;
+      right: 10px;
+      opacity: 0.66;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .ui-grid-filter-button-select {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+    [class^="ui-grid-icon"] {
+      position: absolute;
+      top: 50%;
+      line-height: 32px;
+      margin-top: -16px;
+      right: 0px;
+      opacity: 0.66;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+input[type="text"].ui-grid-filter-input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+
+  border: @gridBorderWidth solid  @borderColor;
+  .border-radius(@gridBorderRadius);
+
+  &:hover {
+    border: @gridBorderWidth solid  @borderColor;
+  }
+}
+
+select.ui-grid-filter-select {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 90%;
+
+  border: @gridBorderWidth solid  @borderColor;
+  .border-radius(@gridBorderRadius);
+
+  &:hover {
+    border: @gridBorderWidth solid  @borderColor;
+  }
+
+  .ui-grid-filter-cancel-button-hidden & {
+    width: 100%;
+  }
+}
