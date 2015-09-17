@@ -319,6 +319,10 @@
               var downFn = function( event ){
                 //Setting some variables required for calculations.
                 gridLeft = $scope.grid.element[0].getBoundingClientRect().left;
+                if ( $scope.grid.hasLeftContainer() ){
+                    gridLeft += $scope.grid.renderContainers.left.header[0].getBoundingClientRect().width;
+                }
+
                 previousMouseX = event.pageX;
                 totalMouseMovement = 0;
                 rightMoveLimit = gridLeft + $scope.grid.getViewportWidth();
@@ -333,12 +337,13 @@
               };
 
               var moveFn = function( event ) {
+                var changeValue = event.pageX - previousMouseX;
+                if ( changeValue === 0 ){ return; }
                 //Disable text selection in Chrome during column move
                 document.onselectstart = function() { return false; };
 
                 moveOccurred = true;
 
-                var changeValue = event.pageX - previousMouseX;
                 if (!elmCloned) {
                   cloneElement();
                 }
@@ -358,9 +363,6 @@
                   elmCloned = false;
                 }
 
-                moveColumnPosition(true);
-                $elm.parent().removeClass('columnsMoving');
-                angular.element('.ui-grid-header-canvas').removeClass('headerColumnsAreMoving');
                 offAllEvents();
                 onDownEvents();
 
@@ -378,6 +380,9 @@
                     break;
                   }
                 }
+                moveColumnPosition(true);
+                $elm.parent().removeClass('columnsMoving');
+                angular.element('.ui-grid-header-canvas').removeClass('headerColumnsAreMoving');
               };
 
               var onDownEvents = function(){
@@ -395,6 +400,10 @@
                 $document.off('mouseup', upFn);
                 $document.off('touchend', upFn);
               };
+
+              if ($scope.col.colDef.enableColumnMoving) {
+                onDownEvents();
+              }
 
               var cloneElement = function () {
                 elmCloned = true;
@@ -440,9 +449,8 @@
                 //Calculate new position of left of column
                 var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
                 var currentElmRight = movingElm[0].getBoundingClientRect().right;
-                var newElementLeft;
-
-                newElementLeft = currentElmLeft - gridLeft + changeValue;
+                var currentElmCenter = (currentElmRight - currentElmLeft) / 2;
+                var newElementLeft = cursorLocation - currentElmCenter;
                 newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
 
                 //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
@@ -598,10 +606,6 @@
                     visibleSavedIndex = visibleMovableNewIndex;
                   }
               };
-
-              if ($scope.col.colDef.enableColumnMoving) {
-                onDownEvents();
-              }
             }
           };
         }
