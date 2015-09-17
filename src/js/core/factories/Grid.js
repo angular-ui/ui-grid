@@ -2369,7 +2369,8 @@ angular.module('ui.grid')
         }
         columnLeftEdge = (columnLeftEdge < 0) ? 0 : columnLeftEdge;
 
-        var columnRightEdge = columnLeftEdge + gridCol.drawnWidth;
+        var pinnedLeftWidth = self.renderContainers.left ? self.renderContainers.left.getViewportWidth() : 0;
+        var columnRightEdge = columnLeftEdge + gridCol.drawnWidth + pinnedLeftWidth;
 
         // Don't let the pixels required to see the column be less than zero
         columnRightEdge = (columnRightEdge < 0) ? 0 : columnRightEdge;
