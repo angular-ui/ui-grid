@@ -2298,7 +2298,7 @@ angular.module('ui.grid')
       //}
 
       // The right position is the current X scroll position minus the grid width
-      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.gridWidth);
+      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.renderContainers.body.getViewportWidth());
 
       // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
       //if (self.verticalScrollbarWidth) {
