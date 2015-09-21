@@ -13,7 +13,7 @@
             columnMenuButtonLabel: 'Меню столбца'
           },
           priority: 'Приоритет:',
-          filterLabel: "Фильр столбца: "
+          filterLabel: "Филтьр столбца: "
         },
         aggregate: {
           label: 'элементы'
