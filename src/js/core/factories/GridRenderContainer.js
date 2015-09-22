@@ -769,7 +769,7 @@ angular.module('ui.grid')
     }
 
     styles['overflow-x'] = self.hasHScrollbar ? 'scroll' : 'hidden';
-    styles['overflow-y'] = self.hasVScrollbar ? 'scroll' : 'hidden';
+    styles['overflow-y'] = self.hasVScrollbar ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll') : 'hidden';
 
 
     return styles;
