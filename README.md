@@ -1,6 +1,7 @@
 # UI-Grid : An AngularJS data grid
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
@@ -8,7 +9,7 @@
 
 Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ui-grid to discuss development and ask for specific help.
 
-We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md) 
+We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md)
 
 Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/angular-ui/ui-grid/issues?q=is%3Aopen+is%3Aissue+label%3A%22PRs+plz%21%22) issues.
 
@@ -84,7 +85,7 @@ Install dependencies
 
     # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
-    
+
     > npm install
     > grunt install
 
@@ -119,19 +120,19 @@ You can also use the `--browsers` specify what browsers to test with (PhantomJS 
 By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
 
     > grunt dev --no-e2e
-    
+
 The grunt task is getting slower as the body of tests gets larger.  If you're only working on the core functionality you can disable the unit tests on the features with the `--core` flag:
 
     > grunt dev --core
-    
+
 As a shortcut for options that the developers frequently use, there is also a `--fast` flag, which equates to `--core --no-e2e --angular=<latest>`:
- 
+
     > grunt dev --fast
 
 ## Karmangular
 
 The `karmangular` task runs tests serially against multiple browsers (it is used internally by the `dev` task).
-  
+
     # Run tests against all available versions of Angular on Chrome
     > grunt karmangular --browsers=Chrome
 

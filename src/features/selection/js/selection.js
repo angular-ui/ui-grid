@@ -554,6 +554,7 @@
           });
           service.decideRaiseSelectionBatchEvent( grid, changedRows, evt );
           grid.selection.selectAll = false;
+          grid.selection.selectedCount = 0;
         },
 
         /**

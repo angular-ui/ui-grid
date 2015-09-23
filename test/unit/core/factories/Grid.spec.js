@@ -786,6 +786,47 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(2);
       expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
     });
+
+    it( 'if sortDirectionCycle is null-DESC-ASC, and sort is currently null, then should toggle to DESC, and reset priority', function() {
+      column.sort = {};
+      column.sortDirectionCycle = [null, uiGridConstants.DESC, uiGridConstants.ASC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
+    it( 'if sortDirectionCycle is null-DESC-ASC, and sort is currently ASC, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.ASC, priority: 1};
+      column.sortDirectionCycle = [null, uiGridConstants.DESC, uiGridConstants.ASC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sortDirectionCycle is DESC, and sort is currently DESC, then should not change the sort', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      column.sortDirectionCycle = [uiGridConstants.DESC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
+    it( 'if sortDirectionCycle is DESC-null-ASC, and sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      column.sortDirectionCycle = [uiGridConstants.DESC, null, uiGridConstants.ASC];
+      column.suppressRemoveSort = true;
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
+    });
   });
   
   

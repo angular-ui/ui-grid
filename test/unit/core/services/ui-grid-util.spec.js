@@ -612,4 +612,30 @@ describe('ui.grid.utilService', function() {
       }).not.toThrow();
     });
   });
+
+  describe('on.mousewheel', function() {
+    it('should register a callback on a dom element', function () {
+      var div = document.createElement('div');
+      var $div = angular.element(div);
+      var callback = function(){};
+      gridUtil.on.mousewheel(div, callback);
+      expect(Object.keys($div.data('mousewheel-callbacks')).length).toEqual(1);
+    });
+  });
+
+  describe('off.mousewheel', function() {
+    it('should deregister a callback on a dom element', function () {
+      var div = document.createElement('div');
+      var $div = angular.element(div);
+      var callback1 = function(){return 1;};
+      var callback2 = function(){return 2;};
+      gridUtil.on.mousewheel(div, callback1);
+      gridUtil.on.mousewheel(div, callback2);
+      expect(Object.keys($div.data('mousewheel-callbacks')).length).toEqual(2);
+      gridUtil.off.mousewheel(div, callback1);
+      expect(Object.keys($div.data('mousewheel-callbacks')).length).toEqual(1);
+      gridUtil.off.mousewheel(div, callback2);
+      expect($div.data('mousewheel-callbacks')).toBe(undefined);
+    });
+  });
 });

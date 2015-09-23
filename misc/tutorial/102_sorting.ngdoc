@@ -25,6 +25,10 @@ data has changed by calling `gridApi.core.notifyDataChange( uiGridConstants.data
 If you set a default sort, you can prevent the user from removing that sort by setting `suppressRemoveSort: true`
 for that column.  This will let the user change the direction of the sort, but take away the option to remove the sort.
 
+When clicking on a column heading the sort direction will cycle to ascending, then descending, then back to unsorted.
+You may rearrange this cycle or skip part of it by setting the
+{@link api/ui.grid.class:GridOptions.columnDef#sortDirectionCycle sortDirectionCycle} columnDef option.
+
 The sort algorithm is chosen based on the column type.  ui-grid will guess the type based on the data, although if you load data
 asynchronously after the columns it will often decide all your columns are string.  You can explicitly set the column type in the
 column def using `type='number'`.  Valid types are documented in {@link api/ui.grid.class:GridOptions.columnDef columnDef}, and
