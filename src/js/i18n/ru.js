@@ -6,6 +6,15 @@
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('ru', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Фильтр столбца',
+            removeFilter: 'Убрать фильтр',
+            columnMenuButtonLabel: 'Меню столбца'
+          },
+          priority: 'Приоритет:',
+          filterLabel: "Фильтр столбца: "
+        },
         aggregate: {
           label: 'элементы'
         },
@@ -29,6 +38,7 @@
         sort: {
           ascending: 'По возрастанию',
           descending: 'По убыванию',
+          none: 'Не сортировать',
           remove: 'Убрать сортировку'
         },
         column: {
@@ -47,8 +57,11 @@
 					unpin: 'Открепить'
 				},
         gridMenu: {
+          aria: {
+            buttonLabel: 'Меню таблицы'
+          },
           columns: 'Столбцы:',
-          importerTitle: 'Import file',
+          importerTitle: 'Импортировать файл',
           exporterAllAsCsv: 'Экспортировать всё в CSV',
           exporterVisibleAsCsv: 'Экспортировать видимые данные в CSV',
           exporterSelectedAsCsv: 'Экспортировать выбранные данные в CSV',
@@ -58,11 +71,34 @@
           clearAllFilters: 'Очистите все фильтры'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Не удалось прочитать из файла названия столбцов, есть ли у файла заголовок?',
+          noObjects: 'Не удалось прочитать из файла объекты, есть ли в файле данные?',
+          invalidCsv: 'Не удалось обработать файл, валидный ли это CSV?',
+          invalidJson: 'Не удалось обработать файл, валидный ли это Json?',
+          jsonNotArray: 'Импортируемый файл json должен содержать массив, импорт прерван.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'На первую',
+            pageBack: 'Назад',
+            pageSelected: 'Выбрать',
+            pageForward: 'Вперёд',
+            pageToLast: 'На последнюю'
+          },
+          sizes: 'элементов на странице',
+          totalItems: 'элементов',
+          through: 'через',
+          of: 'из'
+        },
+        grouping: {
+          group: 'Группировка',
+          ungroup: 'Разгруппировка',
+          aggregate_count: 'Свод: Счётчик',
+          aggregate_sum: 'Свод: Сумма',
+          aggregate_max: 'Свод: Макс.',
+          aggregate_min: 'Свод: Мин.',
+          aggregate_avg: 'Свод: Сред.',
+          aggregate_remove: 'Свод: Убрать'
         }
       });
       return $delegate;
