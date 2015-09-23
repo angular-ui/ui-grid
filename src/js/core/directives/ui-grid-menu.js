@@ -69,6 +69,18 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            */
           $scope.shown = true;
 
+          var parentPos = parent.getBoundingClientRect();
+          angular.element($document.context.body).append($elm);
+          var width = $document.context.body.clientWidth;
+          angular.element($elm).css({
+            "position":"absolute",
+            "top": parentPos.top + "px",
+            "right": parseInt(width - parentPos.right) + "px",
+            //217 is the default width of a ui-grid menu + IE scrollbar
+            "min-width": "217px"
+          });
+          angular.element($elm).addClass(".ui-grid");
+
           $timeout( function() {
             $scope.shownMid = true;
             $scope.$emit('menu-shown');
@@ -110,6 +122,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           $timeout( function() {
             if ( !$scope.shownMid ){
               $scope.shown = false;
+              angular.element(parent).append($elm);
               $scope.$emit('menu-hidden');
             }
           }, 200);
