@@ -62,7 +62,8 @@
         },
         pagination: {
             sizes: 'items per pagina',
-            totalItems: 'items'
+            totalItems: 'items',
+            of: 'van de'
         },
         grouping: {
             group: 'Groepeer',
