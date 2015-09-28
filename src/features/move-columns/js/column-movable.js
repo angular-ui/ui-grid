@@ -443,7 +443,7 @@
                     elmLeft = $elm[0].offsetLeft + $elm[0].offsetWidth - $elm[0].getBoundingClientRect().width;
                   }
                   else {
-                    elmLeft = $elm[0].getBoundingClientRect().left;
+                    elmLeft = $elm[0].getBoundingClientRect().left + $scope.colContainer.prevScrollLeft;
                   }
                   movingElementStyles.left = (elmLeft - gridLeft) + 'px';
                   var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
@@ -458,6 +458,8 @@
                 var moveElement = function (changeValue) {
                   //Calculate total column width
                   var columns = $scope.grid.columns;
+                  var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
+                  var scrolledGridRight = gridRight + $scope.colContainer.prevScrollLeft;
                   var totalColumnWidth = 0;
                   for (var i = 0; i < columns.length; i++) {
                     if (angular.isUndefined(columns[i].colDef.visible) || columns[i].colDef.visible === true) {
@@ -465,23 +467,20 @@
                     }
                   }
 
-                  //Calculate new position of left of column
-                  var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
-                  var currentElmRight = movingElm[0].getBoundingClientRect().right;
-                  var newElementLeft;
+                  var newElementLeft = movingElm[0].offsetLeft + changeValue;
+                  var newElementRight = newElementLeft + movingElm[0].offsetWidth;
 
-                  newElementLeft = currentElmLeft - gridLeft + changeValue;
-                  newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
-
-                  //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
-                  if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
+                  // move the column if it's in view. Else scroll if we need to
+                  if (newElementLeft > $scope.colContainer.prevScrollLeft && 
+                      newElementRight < scrolledGridRight && newElementRight < $scope.colContainer.canvasWidth) {
                     movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
                   }
-                  else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
+                  else if (newElementRight < $scope.colContainer.canvasWidth && newElementLeft >= gridLeft){
                     changeValue *= 8;
                     var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
                     scrollEvent.x = {pixels: changeValue};
                     scrollEvent.grid.scrollContainers('',scrollEvent);
+                    movingElm.css({visibility: 'visible', 'left': newElementLeft + changeValue + 'px'});
                   }
 
                   //Calculate total width of columns on the left of the moving column and the mouse movement
