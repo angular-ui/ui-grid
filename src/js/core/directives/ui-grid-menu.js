@@ -89,7 +89,17 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            * angular-translate.js, it's not using it.  You need to test animations in an external application.
            */
           $scope.shown = true;
-
+          if (parent.nodeType === 1){
+            var parentPos = parent.getBoundingClientRect();
+            angular.element($document.context.body).append($elm);
+            var width = $document.context.body.clientWidth;
+            angular.element($elm).css({
+              "position":"absolute",
+              "top": parentPos.top + "px",
+              "right": parseInt(width - parentPos.right) + "px"
+            });
+            angular.element($elm).addClass("ui-grid");
+          } 
           $timeout( function() {
             $scope.shownMid = true;
             $scope.$emit('menu-shown');
@@ -131,6 +141,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           $timeout( function() {
             if ( !$scope.shownMid ){
               $scope.shown = false;
+              if (parent.nodeType === 1){
+                angular.element(parent).append($elm);
+                angular.element($elm).removeClass("ui-grid");
+              }
               $scope.$emit('menu-hidden');
             }
           }, 200);
