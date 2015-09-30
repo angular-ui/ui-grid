@@ -739,7 +739,7 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.needsHScrollbarPlaceholder = function () {
-    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar;
+    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
   };
 
   GridRenderContainer.prototype.getViewportStyle = function () {
