@@ -46,6 +46,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       var self = this;
       var menuMid;
       var $animate;
+      var parent = $elm.context.parentNode;
 
       $scope.i18n = {
         close: i18nService.getSafeText('columnMenu.close')
