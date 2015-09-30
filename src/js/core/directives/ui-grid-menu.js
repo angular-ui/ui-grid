@@ -75,8 +75,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             angular.element($elm).css({
               "position":"absolute",
               "top": parentPos.top + "px",
-              "right": parseInt(width - parentPos.right) + "px",
-              "min-width": "217px"
+              "right": parseInt(width - parentPos.right) + "px"
             });
             angular.element($elm).addClass("ui-grid");
           } 
