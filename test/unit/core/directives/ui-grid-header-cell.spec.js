@@ -92,30 +92,41 @@ describe('uiGridHeaderCell', function () {
       $scope.$digest();
     }
 
+    function closeMenu() {
+        $document.trigger(clickEvent);
+        $scope.$digest();
+        $timeout.flush();
+        $scope.$digest();
+    }
+
     describe('showing a menu with long-click', function () {
+      afterEach(function(){
+        closeMenu();
+      });
+
       it('should open the menu', inject(function () {
         openMenu();
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible (the inner is present)');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible (the inner is present)');
       }));
     });
 
     describe('right click', function () {
       it('should do nothing', inject(function() {
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not initially visible');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not initially visible');
 
         headerCell1.trigger({ type: downEvent, button: 3 });
 
         $timeout.flush();
         $scope.$digest();
 
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       }));
     });
 
     describe('clicking outside visible menu', function () {
       it('should close the menu', inject(function() {
         openMenu();
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
 
         $document.trigger(clickEvent);
 
@@ -129,7 +140,7 @@ describe('uiGridHeaderCell', function () {
     describe('when window is resized', function () {
       it('should hide an open menu', function () {
         openMenu();
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(1, 'column menu is visible');
         
         $(window).trigger('resize');
         $scope.$digest();
@@ -137,7 +148,7 @@ describe('uiGridHeaderCell', function () {
         $timeout.flush();
         $scope.$digest();
 
-        expect(menu.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
+        expect($document.find('.ui-grid-menu-inner').length).toEqual(0, 'column menu is not visible');
       });
     });
 
