@@ -15,7 +15,7 @@ notifications:
 env:
   matrix:
     - JOB=unit
-   # - JOB=e2e
+    - JOB=e2e
   global:
     - SAUCE_USERNAME=nggrid
     - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
@@ -46,7 +46,12 @@ before_script:
   - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
   - mkdir -p $LOGS_DIR
   - ./lib/sauce/sauce_connect_setup.sh
+  - 'node_modules/protractor/bin/webdriver-manager update --standalone --firefox'
+  - 'node_modules/protractor/bin/webdriver-manager start 2>&1 &'
+  - sleep 3
   - npm install --quiet -g grunt-cli karma-cli
+  - npm install grunt-protractor-webdriver
+  - npm install grunt-express-server
   - npm install
   - bower install
   - grunt install

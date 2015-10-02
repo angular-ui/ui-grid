@@ -13,7 +13,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    browserName: 'chrome',
+    browserName: 'firefox',
     build: process.env.TRAVIS_BUILD_NUMBER,
     // 'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
     'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
@@ -39,7 +39,7 @@ exports.config = {
 
     realtimeFailure: true
   },
-  
+
   plugins: [{
     chromeA11YDevTools: {
       // Since the site has some serious element contrast issues this is needed.
