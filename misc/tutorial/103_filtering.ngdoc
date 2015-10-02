@@ -225,8 +225,8 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
     describe('first grid on the page, filtered by male by default', function() {
       gridTestUtils.firefoxReload();
 
-      it('grid should have seven visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 7 );
+      it('grid should have eight visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 8 );
       });
 
       it('filter on 4 columns, filter with greater than/less than on one, one with no filter, then one with one filter', function () {
