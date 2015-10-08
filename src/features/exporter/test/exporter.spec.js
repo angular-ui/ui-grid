@@ -284,7 +284,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var separator = ',';
 
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
-        "\n"
+        ""
       );
     });
 

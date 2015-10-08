@@ -10,6 +10,7 @@
     col-index="renderIndex"
     title="TOOLTIP">
     <span
+      class="ui-grid-header-cell-label"
       ui-grid-one-bind-id-grid="col.uid + '-header-text'">
       {{ col.displayName CUSTOM_FILTERS }}
     </span>
@@ -25,7 +26,7 @@
      </i>
      <sub
        class="ui-grid-sort-priority-number">
-       {{col.sort.priority + 1}}
+       {{col.sort.priority}}
      </sub>
     </span>
   </div>

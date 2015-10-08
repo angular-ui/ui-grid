@@ -368,6 +368,12 @@
 
           newVisibleRows = grid.getVisibleRowCount();
 
+          // in case not enough data is loaded to enable scroller - load more data
+          var canvasHeight = rowHeight * newVisibleRows;
+          if (grid.infiniteScroll.scrollDown && (viewportHeight > canvasHeight)) {
+            grid.api.infiniteScroll.raise.needLoadMoreData();
+          }
+
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
             oldTop = grid.infiniteScroll.prevScrollTop || 0;
             newTop = oldTop + (newVisibleRows - grid.infiniteScroll.previousVisibleRows)*rowHeight;
