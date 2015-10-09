@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('da', {
@@ -22,12 +22,18 @@
         menu:{
           text: 'Vælg kolonner:'
         },
+        sort: {
+          ascending: 'Sorter stigende',
+          descending: 'Sorter faldende',
+          none: 'Sorter ingen',
+          remove: 'Fjern sortering'
+        },
         column: {
           hide: 'Skjul kolonne'
         },
         aggregation: {
-          count: 'samlede rækker: ',
-          sum: 'smalede: ',
+          count: 'antal rækker: ',
+          sum: 'sum: ',
           avg: 'gns: ',
           min: 'min: ',
           max: 'max: '
