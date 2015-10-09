@@ -1,3 +1,28 @@
+<a name="v3.0.7"></a>
+### v3.0.7 (2015-10-06)
+
+
+#### Bug Fixes
+
+* **Header:** Use IE9 condcom to fix header sizing ([a549eaa7](http://github.com/angular-ui/ng-grid/commit/a549eaa76c4a0fcb9cfd48f62cb4081b7734caf8), closes [#3854](http://github.com/angular-ui/ng-grid/issues/3854)) <b>(REVERTED [#4417](https://github.com/angular-ui/ui-grid/pull/4417))</B>
+* **core:**
+  * Fixes sort priority starting at 2 ([c910a6a3](http://github.com/angular-ui/ng-grid/commit/c910a6a318fd6ae832e3265a9220c43431f7e97c))
+  * scrollTo rightBound calculation ([28227877](http://github.com/angular-ui/ng-grid/commit/2822787719f230808898b940f04bc7d63c0869f5))
+* **infinite-scroll:** load more data if needed ([65a541f3](http://github.com/angular-ui/ng-grid/commit/65a541f39c708a070244e09aa0c7bbe4b0506eff))
+* **pagination:** fix pager select not showing 3 digits on some browsers ([b183fc79](http://github.com/angular-ui/ng-grid/commit/b183fc79f785a8ff433cc52538b872a874c7732a))
+* **selection:**
+  * properly update selectAll flag based on current selection ([86badfd2](http://github.com/angular-ui/ng-grid/commit/86badfd2562e21179175b0974829ff7c159fc218))
+  * reset selectedCount on clearSelectedRows If your data  is completely replaced by ([880ce190](http://github.com/angular-ui/ng-grid/commit/880ce1905fbefcb822b0a20f4c7b183ba9b09f79))
+
+
+#### Features
+
+* **core:**
+  * add sortDirectionCycle column option ([3eca46e9](http://github.com/angular-ui/ng-grid/commit/3eca46e99766eb0cc9f330948f68739dbf7d7bff))
+  * Adds sort priority number to header ([ca47b8ab](http://github.com/angular-ui/ng-grid/commit/ca47b8abd7d114cb7622cd8c08a677e25134d268))
+* **i18n:** completes nl translation ([b7326d81](http://github.com/angular-ui/ng-grid/commit/b7326d814938f079e32ef574c9503c7ae40c4244))
+* **sort:** Give more information to the sort functions ([0e094c97](http://github.com/angular-ui/ng-grid/commit/0e094c97fc55d064150e1a33a3042c5091327be3))
+
 <a name="v3.0.6"></a>
 ### v3.0.6 (2015-09-07)
 

@@ -1065,6 +1065,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description creates or removes GridRow objects from the newRawData array.  Calls each registered
    * rowBuilder to further process the row
+   * @param {array} newRawData Modified set of data
    *
    * This method aims to achieve three things:
    * 1. the resulting rows array is in the same order as the newRawData, we'll call
@@ -1085,9 +1086,20 @@ angular.module('ui.grid')
    *     create newRow
    *   append to the newRows and add to newHash
    *   run the processors
-   *
+   * ```
+   * 
    * Rows are identified using the hashKey if configured.  If not configured, then rows
    * are identified using the gridOptions.rowEquality function
+   * 
+   * This method is useful when trying to select rows immediately after loading data without
+   * using a $timeout/$interval, e.g.:
+   * 
+   *   $scope.gridOptions.data =  someData;
+   *   $scope.gridApi.grid.modifyRows($scope.gridOptions.data);
+   *   $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+   * 
+   * OR to persist row selection after data update (e.g. rows selected, new data loaded, want
+   * originally selected rows to be re-selected))
    */
   Grid.prototype.modifyRows = function modifyRows(newRawData) {
     var self = this;
@@ -2299,7 +2311,7 @@ angular.module('ui.grid')
       //}
 
       // The right position is the current X scroll position minus the grid width
-      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.gridWidth);
+      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.renderContainers.body.getViewportWidth());
 
       // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
       //if (self.verticalScrollbarWidth) {
