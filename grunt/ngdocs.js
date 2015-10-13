@@ -3,7 +3,7 @@ module.exports = {
     dest: '<%= dist %>/docs',
     testingUrlPrefix: '<%= protractor.options.args.baseUrl %>/docs/#/',
     versionedFiles: {
-      default: process.env.TRAVIS ? 'unstable' : 'stable',
+      default: 'stable',
       waitEval: "(function() { var ret = true; try { angular.module('ui.grid'); } catch (e) { ret = false; } return ret; })()",
       versions: {
         stable: [
@@ -18,15 +18,16 @@ module.exports = {
     },
     scripts: [
        // no jquery automatically loaded for tutorial!!!
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-touch.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js',
       'bower_components/csv-js/csv.js',
       'bower_components/pdfmake/build/pdfmake.js',
       'bower_components/pdfmake/build/vfs_fonts.js'
     ],
     hiddenScripts: [
-      '//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js',
+      '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-aria.js',
       'bower_components/google-code-prettify/src/prettify.js',
       'node_modules/marked/lib/marked.js'
     ],

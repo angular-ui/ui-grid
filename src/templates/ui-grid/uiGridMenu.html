@@ -1,10 +1,30 @@
-<div class="ui-grid-menu" ng-if="shown">
-  <div class="ui-grid-menu-mid" ng-show="shownMid">
-    <div class="ui-grid-menu-inner">
-      <ul class="ui-grid-menu-items">
+<div
+  class="ui-grid-menu"
+  ng-if="shown">
+  <div
+    class="ui-grid-menu-mid"
+    ng-show="shownMid">
+    <div
+    class="ui-grid-menu-inner">
+      <button
+        type="button"
+        ng-focus="focus=true"
+        ng-blur="focus=false"
+        class="ui-grid-menu-close-button"
+        ng-class="{'ui-grid-sr-only': (!focus)}">
+        <i
+          class="ui-grid-icon-cancel"
+          ui-grid-one-bind-aria-label="i18n.close">
+        </i>
+      </button>
+      <ul
+        role="menu"
+        class="ui-grid-menu-items">
         <li
           ng-repeat="item in menuItems"
-          ui-grid-menu-item 
+          role="menuitem"
+          ui-grid-menu-item
+          ui-grid-one-bind-id="'menuitem-'+$index"
           action="item.action"
           name="item.title"
           active="item.active"
@@ -12,7 +32,9 @@
           shown="item.shown"
           context="item.context"
           template-url="item.templateUrl"
-          leave-open="item.leaveOpen"></li>
+          leave-open="item.leaveOpen"
+          screen-reader-only="item.screenReaderOnly">
+        </li>
       </ul>
     </div>
   </div>

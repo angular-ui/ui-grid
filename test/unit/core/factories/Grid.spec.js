@@ -523,7 +523,8 @@ describe('Grid factory', function () {
         functionProp: function () {
           return 'functionPropValue';
         },
-        arrayProp: ['arrayPropValue']
+        arrayProp: ['arrayPropValue'],
+        dateProp:  new Date('2015-07-01T13:25:00+00:00') // Wednesday in July
       };
       entity['\"!weird-pro\'p'] = 'weirdPropValue';
 
@@ -576,6 +577,29 @@ describe('Grid factory', function () {
       expect(grid.getCellValue(row,grid.getColumn('arrayProp'))).toBe('arrayPropValue');
       expect(grid.getCellValue(row,grid.getColumn('weirdProp'))).toBe('weirdPropValue');
 
+      expect(grid.getCellDisplayValue(row,grid.getColumn('simpleProp'))).toBe('simplePropValue');
+      expect(grid.getCellDisplayValue(row,grid.getColumn('complexProp'))).toBe('complexPropValue');
+      expect(grid.getCellDisplayValue(row,grid.getColumn('functionProp'))).toBe('functionPropValue');
+      expect(grid.getCellDisplayValue(row,grid.getColumn('arrayProp'))).toBe('arrayPropValue');
+      expect(grid.getCellDisplayValue(row,grid.getColumn('weirdProp'))).toBe('weirdPropValue');
+
+    });
+
+    it('should apply angularjs filters', function(){
+      var colDefs = [
+        {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
+        {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+      grid.buildColumns();
+      grid.modifyRows([entity]);
+
+      var row = grid.rows[0];
+      expect(grid.getCellDisplayValue(row,grid.columns[0])).toEqual("2015-07-01");
+      expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
     });
 
     it('not overwrite column types specified in options', function() {
@@ -761,6 +785,47 @@ describe('Grid factory', function () {
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
       expect( column.sort.priority ).toEqual(2);
       expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
+    });
+
+    it( 'if sortDirectionCycle is null-DESC-ASC, and sort is currently null, then should toggle to DESC, and reset priority', function() {
+      column.sort = {};
+      column.sortDirectionCycle = [null, uiGridConstants.DESC, uiGridConstants.ASC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
+    it( 'if sortDirectionCycle is null-DESC-ASC, and sort is currently ASC, then should toggle to null, and remove priority', function() {
+      column.sort = {direction: uiGridConstants.ASC, priority: 1};
+      column.sortDirectionCycle = [null, uiGridConstants.DESC, uiGridConstants.ASC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(null);
+      expect( column.sort.priority ).toEqual(null);
+    });
+
+    it( 'if sortDirectionCycle is DESC, and sort is currently DESC, then should not change the sort', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      column.sortDirectionCycle = [uiGridConstants.DESC];
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
+      expect( column.sort.priority ).toEqual(1);
+    });
+
+    it( 'if sortDirectionCycle is DESC-null-ASC, and sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
+      column.sort = {direction: uiGridConstants.DESC, priority: 1};
+      column.sortDirectionCycle = [uiGridConstants.DESC, null, uiGridConstants.ASC];
+      column.suppressRemoveSort = true;
+
+      grid.sortColumn( column, false );
+
+      expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
+      expect( column.sort.priority ).toEqual(1);
     });
   });
   

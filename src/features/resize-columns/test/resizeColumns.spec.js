@@ -211,7 +211,6 @@ describe('ui.grid.resizeColumns', function () {
         it('should cause the column to resize by the amount change in the X axis', function () {
           var firstColumnUid = gridScope.grid.columns[0].uid;
           var newWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
-
           expect(newWidth - initialWidth).toEqual(xDiff);
         });
 

@@ -2,7 +2,14 @@
 @name Tutorial: 216 Expandable grid
 @description
 
-Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
+<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+
+The `ui.grid.expandable` module adds the subgrid feature to grid. To show the subgrid you need to provide following grid option:
+
+Documentation for the expandable feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.expandable.api:GridOptions gridOptions}
+- {@link api/ui.grid.expandable.api:PublicApi publicApi}
 
 <pre>
   $scope.gridOptions = {
@@ -15,9 +22,9 @@ Module 'ui.grid.expandable' adds the subgrid feature to grid. To show the subgri
   }
 </pre>
 
-rowExpandableTemplate will be template for subgrid and expandableRowHeight will be height of the subgrid, expandableRowScope can be used
-to added variables to scope of expanded grid. These variables can then be access from expandableRowTemplate. The grid api
-provided following events and methods fos subGrids:
+expandableRowTemplate will be the template for subgrid and expandableRowHeight will be the height of the subgrid. expandableRowScope can be used
+to add variables to the scope of expanded grid. These variables can then be accessed from expandableRowTemplate. The grid api
+provides the following events and methods for subGrids:
 
 <pre>
     //rowExpandedStateChanged is fired for each row as its expanded:
@@ -30,7 +37,7 @@ provided following events and methods fos subGrids:
 
 SubGrid nesting can be done upto multiple levels.
 
-In addition to above configuration 'scrollFillerClass' is also available and can be used to style the scroll filler, scroll filler
+In addition to the above configuration, 'scrollFillerClass' is also available and can be used to style the scroll filler. The scroll filler
 appears when you quickly scroll through the grid.
 
 @example
@@ -104,7 +111,7 @@ appears when you quickly scroll through the grid.
               $scope.gridOptions.data = data;
             });
         }]);
-        
+
     app.controller('ThirdCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
           $scope.gridOptions = {
             expandableRowTemplate: 'expandableRowTemplate.html',
@@ -118,7 +125,7 @@ appears when you quickly scroll through the grid.
                         { name: 'gender'},
                         { name: 'company'}
                       ]};
-                    
+
                       $http.get('/data/100.json')
                         .success(function(data) {
                           row.entity.subGridOptions.data = data;

@@ -6,7 +6,10 @@
    * @name ui.grid.saveState
    * @description
    *
-   *  # ui.grid.saveState
+   * # ui.grid.saveState
+   *
+   * <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+   *
    * This module provides the ability to save the grid state, and restore
    * it when the user returns to the page.
    *
@@ -527,10 +530,10 @@
          * @param {object} columnsState the list of columns we had before, with their state
          */
         restoreColumns: function( grid, columnsState ){
+          var isSortChanged = false;
+
           columnsState.forEach( function( columnState, index ) {
             var currentCol = grid.getColumn( columnState.name );
-
-
 
             if ( currentCol && !grid.isRowHeaderColumn(currentCol) ){
               if ( grid.options.saveVisible &&
@@ -549,7 +552,7 @@
                    !angular.equals(currentCol.sort, columnState.sort) &&
                    !( currentCol.sort === undefined && angular.isEmpty(columnState.sort) ) ){
                 currentCol.sort = angular.copy( columnState.sort );
-                grid.api.core.raise.sortChanged();
+                isSortChanged = true;
               }
 
               if ( grid.options.saveFilter &&
@@ -576,6 +579,10 @@
               }
             }
           });
+
+          if ( isSortChanged ) {
+            grid.api.core.raise.sortChanged( grid, grid.getColumnSorting() );
+          }
         },
 
 

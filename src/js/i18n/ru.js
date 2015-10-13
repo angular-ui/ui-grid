@@ -32,7 +32,7 @@
           remove: 'Убрать сортировку'
         },
         column: {
-          hide: 'спрятать столбец'
+          hide: 'Спрятать столбец'
         },
         aggregation: {
           count: 'всего строк: ',
@@ -41,6 +41,11 @@
           min: 'мин: ',
           max: 'макс: '
         },
+				pinning: {
+					pinLeft: 'Закрепить слева',
+					pinRight: 'Закрепить справа',
+					unpin: 'Открепить'
+				},
         gridMenu: {
           columns: 'Столбцы:',
           importerTitle: 'Import file',
@@ -49,7 +54,8 @@
           exporterSelectedAsCsv: 'Экспортировать выбранные данные в CSV',
           exporterAllAsPdf: 'Экспортировать всё в PDF',
           exporterVisibleAsPdf: 'Экспортировать видимые данные в PDF',
-          exporterSelectedAsPdf: 'Экспортировать выбранные данные в PDF'
+          exporterSelectedAsPdf: 'Экспортировать выбранные данные в PDF',
+          clearAllFilters: 'Очистите все фильтры'
         },
         importer: {
           noHeaders: 'Column names were unable to be derived, does the file have a header?',

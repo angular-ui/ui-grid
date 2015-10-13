@@ -23,9 +23,9 @@ Steps:
 <ul>
  <li>Include uiGrid in your script and css
   <pre>
-      <link rel="styleSheet" href="release/ui-grid-unstable.css"/>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
-      <script src="/release/ui-grid-unstable.js"></script>
+      <link rel="styleSheet" href="release/ui-grid.min.css"/>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+      <script src="/release/ui-grid.min.js"></script>
   </pre>
  </li>
  <li>Include ui.grid module as a dependency in your app
@@ -105,34 +105,30 @@ Steps:
   </file>
 
   <file name="scenario.js">
-    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    it('grid should have three visible rows', function () {
-      gridTestUtils.expectRowCount( 'grid1', 3 );
-    });
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1 = new GridObjectTest('grid1');
+    describe('101 tutorial', function() {
+      it('grid should have three visible rows', function () {
+        grid1.expectRowCount( 3 );
+      });
 
-    it('grid should have four visible columns', function () {
-      gridTestUtils.expectHeaderColumnCount( 'grid1', 4 );
-    });
+      it('header values should be as expected', function () {
+        grid1.expectHeaderColumns( ['First Name', 'Last Name', 'Company', 'Employed'] );
+      });
 
-    it('header values should be as expected', function () {
-      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'First Name' );
-      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Last Name' );
-      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
-      gridTestUtils.expectHeaderCellValueMatch( 'grid1', 3, 'Employed' );
-    });
+      it('first row cell values should be as expected', function () {
+        // checking individual cells usually gives a better stack trace when there are errors
+        grid1.expectCellValueMatch( 0, 0, 'Cox' );
+        grid1.expectCellValueMatch( 0, 1, 'Carney' );
+        grid1.expectCellValueMatch( 0, 2, 'Enormo' );
+        grid1.expectCellValueMatch( 0, 3, 'true' );
+      });
 
-    it('first row cell values should be as expected', function () {
-      // checking individual cells usually gives a better stack trace when there are errors
-      gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Cox' );
-      gridTestUtils.expectCellValueMatch( 'grid1', 0, 1, 'Carney' );
-      gridTestUtils.expectCellValueMatch( 'grid1', 0, 2, 'Enormo' );
-      gridTestUtils.expectCellValueMatch( 'grid1', 0, 3, 'true' );
-    });
-
-    it('next two row cell values should be as expected', function () {
-      // checking in bulk is convenient to write, but can be less informative with errors
-      gridTestUtils.expectRowValuesMatch( 'grid1', 1, [ 'Lorraine', 'Wise', 'Comveyer', 'false' ] );
-      gridTestUtils.expectRowValuesMatch( 'grid1', 2, [ 'Nancy', 'Waters', 'Fuelton', 'false' ] );
+      it('next two row cell values should be as expected', function () {
+        // checking in bulk is convenient to write, but can be less informative with errors
+        grid1.expectRowValuesMatch( 1, [ 'Lorraine', 'Wise', 'Comveyer', 'false' ] );
+        grid1.expectRowValuesMatch( 2, [ 'Nancy', 'Waters', 'Fuelton', 'false' ] );
+      });
     });
   </file>
 </example>

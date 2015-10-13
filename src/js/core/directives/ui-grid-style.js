@@ -27,10 +27,10 @@
    </div>
    </doc:source>
    <doc:scenario>
-   it('should apply the right class to the element', function () {
-        element(by.css('.blah')).getCssValue('border')
+      it('should apply the right class to the element', function () {
+        element(by.css('.blah')).getCssValue('border-top-width')
           .then(function(c) {
-            expect(c).toContain('1px solid');
+            expect(c).toContain('1px');
           });
       });
    </doc:scenario>

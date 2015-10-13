@@ -1,0 +1,78 @@
+/*!
+ * Bootstrap v3.3.5 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/****** NOTE: IMPORTANT INFORMATION ABOUT USING THIS FILE *********\
+ * If you are importing this file then use `@import (reference) '..../bootstrap'`
+ * ENSURE that you use the (refrerence)
+ * WHY? Because otherwise you will import the entire contents of less bootstrap
+ *
+ * How does this work?
+ * All of the bootstrap less elements are namespaced under `#ui-grid-twbs`
+ * This prevents the CSS generated using this file from conflicting with a project's
+ * import of bootstrap.
+ *
+ * XXX: Why are so many of these imports commented out?
+ * There are several issues with the `extend` function in less.
+ * Using extend, even within an import that only has a reference will import that
+ * css element. This causes bloat in the distributed css files.
+ * Related Issues:
+ * https://github.com/less/less.js/issues/1968
+ * https://github.com/less/less.js/issues/1851
+ *
+ * If you comment in one of these files you may get much more than css then you want.
+ * Only do this sparingly.
+ */
+#ui-grid-twbs {
+  // Core variables and mixins
+  @import (reference) "@{bootstrapDirectory}/less/variables.less";
+  @import (reference) "@{bootstrapDirectory}/less/mixins.less";
+
+  // Reset and dependencies
+  @import (reference) "@{bootstrapDirectory}/less/normalize.less";
+  @import (reference) "@{bootstrapDirectory}/less/print.less";
+  @import (reference) "@{bootstrapDirectory}/less/glyphicons.less";
+
+  // Core CSS
+  @import (reference) "@{bootstrapDirectory}/less/scaffolding.less";
+  @import (reference) "@{bootstrapDirectory}/less/code.less";
+  @import (reference) "@{bootstrapDirectory}/less/tables.less";
+  @import (reference) "@{bootstrapDirectory}/less/forms.less";
+  @import (reference) "@{bootstrapDirectory}/less/buttons.less";
+  //@import (reference) "@{bootstrapDirectory}/less/type.less";
+  //@import (reference) "@{bootstrapDirectory}/less/grid.less";
+
+  // Components
+  @import (reference) "@{bootstrapDirectory}/less/component-animations.less";
+  @import (reference) "@{bootstrapDirectory}/less/dropdowns.less";
+  @import (reference) "@{bootstrapDirectory}/less/button-groups.less";
+  @import (reference) "@{bootstrapDirectory}/less/input-groups.less";
+  @import (reference) "@{bootstrapDirectory}/less/breadcrumbs.less";
+  @import (reference) "@{bootstrapDirectory}/less/pagination.less";
+  @import (reference) "@{bootstrapDirectory}/less/labels.less";
+  @import (reference) "@{bootstrapDirectory}/less/badges.less";
+  @import (reference) "@{bootstrapDirectory}/less/jumbotron.less";
+  @import (reference) "@{bootstrapDirectory}/less/alerts.less";
+  @import (reference) "@{bootstrapDirectory}/less/progress-bars.less";
+  @import (reference) "@{bootstrapDirectory}/less/media.less";
+  @import (reference) "@{bootstrapDirectory}/less/list-group.less";
+  @import (reference) "@{bootstrapDirectory}/less/responsive-embed.less";
+  @import (reference) "@{bootstrapDirectory}/less/wells.less";
+  @import (reference) "@{bootstrapDirectory}/less/close.less";
+  //@import (reference) "@{bootstrapDirectory}/less/navs.less";
+  //@import (reference) "@{bootstrapDirectory}/less/navbar.less";
+  //@import (reference) "@{bootstrapDirectory}/less/pager.less";
+  //@import (reference) "@{bootstrapDirectory}/less/thumbnails.less";
+  //@import (reference) "@{bootstrapDirectory}/less/panels.less";
+
+  // Components w/ JavaScript
+  @import (reference) "@{bootstrapDirectory}/less/tooltip.less";
+  //@import (reference) "@{bootstrapDirectory}/less/modals.less";
+  //@import (reference) "@{bootstrapDirectory}/less/popovers.less";
+
+  // Utility classes
+  @import (reference) "@{bootstrapDirectory}/less/utilities.less";
+  //@import (reference) "@{bootstrapDirectory}/less/responsive-utilities.less";
+}

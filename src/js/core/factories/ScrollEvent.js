@@ -53,6 +53,9 @@
         self.x = null;
         self.y = null;
 
+        self.verticalScrollLength = -9999999;
+        self.horizontalScrollLength = -999999;
+
 
         /**
          *  @ngdoc function
@@ -132,19 +135,19 @@
       };
 
       ScrollEvent.prototype.atTop = function(scrollTop) {
-        return (this.y && this.y.percentage === 0 && scrollTop === 0);
+        return (this.y && (this.y.percentage === 0 || this.verticalScrollLength < 0) && scrollTop === 0);
       };
 
       ScrollEvent.prototype.atBottom = function(scrollTop) {
-        return (this.y && this.y.percentage === 1 && scrollTop > 0);
+        return (this.y && (this.y.percentage === 1 || this.verticalScrollLength === 0) && scrollTop > 0);
       };
 
       ScrollEvent.prototype.atLeft = function(scrollLeft) {
-        return (this.x && this.x.percentage === 0 && scrollLeft === 0);
+        return (this.x && (this.x.percentage === 0 || this.horizontalScrollLength < 0) && scrollLeft === 0);
       };
 
       ScrollEvent.prototype.atRight = function(scrollLeft) {
-        return (this.x && this.x.percentage === 1 && scrollLeft > 0);
+        return (this.x && (this.x.percentage === 1 || this.horizontalScrollLength ===0) && scrollLeft > 0);
       };
 
 

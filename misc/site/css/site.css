@@ -68,7 +68,7 @@ body {
 .jumbotron {
   width: 100%;
   display: table-cell;
-  text-align: center;  
+  text-align: center;
 }
 
 .description {
@@ -100,12 +100,20 @@ body {
     padding-bottom: 15px;
   }
 }
-   
+
 @media (min-width: 768px) {
   .navbar-text {
     float: left;
     margin: 15px;
   }
+}
+
+.nav-gitter-link{
+  padding-right: 20px;
+}
+
+.nav-gitter-image{
+  vertical-align: inherit;
 }
 
 .space-before {
@@ -116,7 +124,7 @@ body {
   height: 250px;
 }
 .pink {
-  color: pink;  
+  color: pink;
 }
 .blue {
   color: blue;
@@ -147,7 +155,7 @@ body {
 }
 
 .feature-heading {
-  padding-top 30px;
+  padding-top: 30px;
   text-align: center;
   min-width: 100%;
 }
@@ -217,4 +225,8 @@ p.modal-message {
 }
 .compiled-css {
   margin-bottom: 10px;
+}
+
+.info-link {
+  color: #34EFBB;
 }

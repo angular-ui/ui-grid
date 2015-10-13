@@ -10,7 +10,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'chrome'
+    browserName: 'chrome'
   },
 
   // A base URL for your application under test. Calls to protractor.get()
@@ -26,6 +26,17 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 60000
-  }
+    defaultTimeoutInterval: 60000,
+
+    // Don't show the stack trace, it's mostly useless
+    includeStackTrace: false
+  },
+
+  plugins: [{
+    chromeA11YDevTools: {
+      // Since the site has some serious element contrast issues this is needed.
+      treatWarningsAsFailures: false
+    },
+    path: '../node_modules/protractor/plugins/accessibility'
+  }]
 };

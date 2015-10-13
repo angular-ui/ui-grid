@@ -2,7 +2,15 @@
 @name Tutorial: 203 Pinning
 @description
 
+<div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+
 The pinning feature allows the user to pin a column to left or right. To enable, you must include the 'ui.grid.pinning' module and you must include the ui-grid-pinning directive on your grid element.
+
+Documentation for the pinning feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.pinning.api:ColumnDef columnDef}
+- {@link api/ui.grid.pinning.api:GridOptions gridOptions}
+- {@link api/ui.grid.pinning.api:PublicApi publicApi}
 
 It is also possible to disable pinning on column level. Note the 'id' column definition in the example below.
 

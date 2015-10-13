@@ -702,8 +702,8 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
 
     it( 'two aggregations, one looks up label', function() {
       // treeBase has added a rowHeader column, so columns shifted right by one
-      grid.columns[2].treeAggregation = { type: 'sum', label: uiGridTreeBaseService.nativeAggregations.sum.label };
-      grid.columns[2].treeAggregationFn = uiGridTreeBaseService.nativeAggregations.sum.aggregationFn;
+      grid.columns[2].treeAggregation = { type: 'sum', label: uiGridTreeBaseService.nativeAggregations().sum.label };
+      grid.columns[2].treeAggregationFn = uiGridTreeBaseService.nativeAggregations().sum.aggregationFn;
 
       grid.columns[3].treeAggregationFn = angular.noop;
       grid.columns[3].treeAggregation = {label: 'custom- '};

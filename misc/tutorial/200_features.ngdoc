@@ -13,3 +13,6 @@ Each feature directive must also be included in alongside the ui-grid directive.
 <pre>
 <div ui-grid="gridOptions" class="grid" ui-grid-feature1 ui-grid-feature2></div>
 </pre>
+
+In general the feature documentation can be found in the api section, each feature will typically have a
+`gridOptions` section, it may have a `columnDef` section, and it may have a `publicApi` section.

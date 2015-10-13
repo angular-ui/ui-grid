@@ -7,11 +7,12 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   var $rootScope;
   var $scope;
   var GridRow;
+  var $timeout;
 
   beforeEach(module('ui.grid.grouping'));
 
   beforeEach(inject(function (_uiGridGroupingService_,_gridClassFactory_, $templateCache, _uiGridGroupingConstants_,
-                              _$rootScope_, _GridRow_, _uiGridTreeBaseService_) {
+                              _$rootScope_, _GridRow_, _uiGridTreeBaseService_,_$timeout_) {
     uiGridGroupingService = _uiGridGroupingService_;
     uiGridGroupingConstants = _uiGridGroupingConstants_;
     gridClassFactory = _gridClassFactory_;
@@ -19,6 +20,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     $scope = $rootScope.$new();
     GridRow = _GridRow_;
     uiGridTreeBaseService = _uiGridTreeBaseService_;
+    $timeout = _$timeout_;
 
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
     $templateCache.put('ui-grid/editableCell', '<div editable_cell_directive></div>');
@@ -28,13 +30,21 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       {field: 'col0', enableGrouping: true},
       {field: 'col1', enableGrouping: true},
       {field: 'col2', enableGrouping: true},
-      {field: 'col3', enableGrouping: true}
+      {field: 'col3', enableGrouping: true},
+      {field: 'col4', enableGrouping: true, type: 'date'}
     ];
 
     uiGridGroupingService.initializeGrid(grid, $scope);
     var data = [];
     for (var i = 0; i < 10; i++) {
-      data.push({col0: 'a_' + Math.floor(i/4), col1: 'b_' + Math.floor(i/2), col2: 'c_' + i, col3: 'd_' + i});
+
+      data.push({
+        col0: 'a_' + Math.floor(i/4),
+        col1: 'b_' + Math.floor(i/2),
+        col2: 'c_' + i,
+        col3: 'd_' + i,
+        col4: i > 5 ? new Date(2015, 6, 1) : null
+      });
     }
     grid.options.data = data;
 
@@ -71,6 +81,23 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     it( 'move some columns left, and some columns right', function() {
       // TODO
     });
+
+    it( 'will not move header columns', function() {
+
+      $timeout(function () {
+        grid.addRowHeaderColumn({name:'aRowHeader'});
+      });
+      $timeout.flush();
+
+
+      grid.columns[2].renderContainer = 'left';
+      grid.columns[2].sort = { priority: 1};
+      grid.columns[2].grouping = { groupPriority: 1};
+      uiGridGroupingService.moveGroupColumns(grid,grid.columns,grid.rows);
+      expect(grid.columns[0].colDef.name).toBe('aRowHeader');
+
+
+    });
   });
 
 
@@ -82,6 +109,15 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
       var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
       expect( groupedRows.length ).toEqual( 18, 'all rows are present, including the added group headers' );
+    });
+
+    it( 'group by col4 (type date with nulls)', function() {
+      spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
+      grid.columns[4].grouping = { groupPriority: 1 };
+
+      uiGridGroupingService.tidyPriorities(grid);
+      var groupedRows = uiGridGroupingService.groupRows.call( grid, grid.rows.slice(0) );
+      expect( groupedRows.length ).toEqual( 12, 'all rows are present, including two group header rows' );
     });
   });
 
@@ -140,7 +176,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect(result[0].col).toEqual(grid.columns[3]);
       delete result[0].col;
       expect(result[1].col).toEqual(grid.columns[1]);
-      delete result[1].col; 
+      delete result[1].col;
       expect(result).toEqual([
         { fieldName: 'col3', initialised: false, currentValue: null, currentRow: null },
         { fieldName: 'col1', initialised: false, currentValue: null, currentRow: null }
@@ -165,7 +201,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect( grouping.grouping[0].col.name).toEqual('col1');
       delete grouping.grouping[0].col;
 
-      expect(grouping).toEqual({ 
+      expect(grouping).toEqual({
         grouping: [{ field: 'col1', groupPriority: 0 }],
         aggregations: []
       });
@@ -319,7 +355,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       expect(grid.api.grouping.getGrouping( true )).toEqual({
         grouping: [],
         aggregations: [],
-        rowExpandedStates: { male: { state: 'expanded', children: {} } } 
+        rowExpandedStates: { male: { state: 'expanded', children: {} } }
       });
     });
 
@@ -431,7 +467,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           { field: 'col2', colName: 'col2', groupPriority: 1 }
         ],
         aggregations: [
-          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT, label: uiGridTreeBaseService.nativeAggregations.count.label } }
+          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT, label: uiGridTreeBaseService.nativeAggregations().count.label } }
         ],
         rowExpandedStates: {
           male: { state: 'expanded', children: {
@@ -444,6 +480,51 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
           } }
         }
       });
+    });
+
+    it('sorts', function(){
+      grid.grouping.groupingHeaderCache = {
+        male: {
+          row: { treeNode: { state: 'collapsed' } },
+          children: {
+            22: { row: { treeNode: { state: 'expanded' } }, children: {} },
+            39: { row: { treeNode: { state: 'collapsed' } }, children: {} }
+          }
+        },
+        female: {
+          row: { treeNode: { state: 'expanded' } },
+          children: {
+            23: { row: { treeNode: { state: 'collapsed' } }, children: {} },
+            38: { row: { treeNode: { state: 'expanded' } }, children: {} }
+          }
+        }
+      };
+
+      spyOn(grid.api.core.raise, 'sortChanged').andCallThrough();
+
+      grid.api.grouping.setGrouping({
+        grouping: [
+          { field: 'col3', colName: 'col3', groupPriority: 0 },
+          { field: 'col2', colName: 'col2', groupPriority: 1 }
+        ],
+        aggregations: [
+          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT } }
+        ],
+        rowExpandedStates: {
+          male: { state: 'expanded', children: {
+            22: { state: 'collapsed' },
+            38: { state: 'expanded' }
+          } },
+          female: { state: 'expanded', children: {
+            23: { state: 'expanded' },
+            39: { state: 'collapsed' }
+          } }
+        }
+      });
+
+      // Should call sort change twice because we are grouping by two columns
+      expect(grid.api.core.raise.sortChanged.calls.length).toEqual(2);
+
     });
 
   });
@@ -476,7 +557,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
         aggregations: [
           { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT }}
         ],
-        rowExpandedStates: { male: { state: 'expanded' } } 
+        rowExpandedStates: { male: { state: 'expanded' } }
       });
 
       grid.api.grouping.clearGrouping();
@@ -498,7 +579,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
       headerRow1.expandedState = { state: uiGridGroupingConstants.EXPANDED };
       headerRow2.expandedState = { state: uiGridGroupingConstants.COLLAPSED };
-      grid.grouping.groupingHeaderCache = { 
+      grid.grouping.groupingHeaderCache = {
         test: {
           row: {},
           children: {}
@@ -506,23 +587,23 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       };
 
       var processingStates = [
-        { 
+        {
           fieldName: 'col1',
-          col: grid.columns[1], 
+          col: grid.columns[1],
           initialised: true,
           currentValue: 'test',
           currentRow: headerRow1
         },
-        { 
+        {
           fieldName: 'col2',
-          col: grid.columns[2], 
+          col: grid.columns[2],
           initialised: true,
           currentValue: 'blah',
           currentRow: headerRow2
         },
-        { 
+        {
           fieldName: 'col3',
-          col: grid.columns[3], 
+          col: grid.columns[3],
           initialised: true,
           currentValue: 'fred',
           currentRow: headerRow3
@@ -547,18 +628,18 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       delete processingStates[2].col;
 
       expect(processingStates).toEqual([
-        { 
-          fieldName: 'col1', 
+        {
+          fieldName: 'col1',
           initialised: true,
           currentValue: 'test'
         },
-        { 
+        {
           fieldName: 'col2',
           initialised: true,
           currentValue: 'c_3'
         },
-        { 
-          fieldName: 'col3', 
+        {
+          fieldName: 'col3',
           initialised: false,
           currentValue: null,
           currentRow: null

@@ -48,7 +48,9 @@ All features are enabled to get an idea of performance
         { name:'friends[1].name', displayName:'2nd friend', width:150, enableCellEdit: true },
         { name:'friends[2].name', displayName:'3rd friend', width:150, enableCellEdit: true },
         { name:'agetemplate',field:'age', width:150, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age 2:{{COL_FIELD}}</span></div>' },
-        { name:'Is Active',field:'isActive', width:150, type:'boolean' }
+        { name:'Is Active',field:'isActive', width:150, type:'boolean' },
+        { name:'Join Date',field:'registered', cellFilter:'date', width:150, type:'date', enableFiltering:false },
+        { name:'Month Joined',field:'registered', cellFilter: 'date:"MMMM"', filterCellFiltered:true, sortCellFiltered:true, width:150, type:'date' }
       ];
 
       $scope.callsPending = 0;
@@ -68,19 +70,25 @@ All features are enabled to get an idea of performance
               data.forEach(function(row){
                 row.id = i;
                 i++;
+                row.registered = new Date(row.registered)
                 $scope.myData.push(row);
               });
             })
             .error(function() {
               $scope.callsPending--
             });
-        }, 200);
+        }, 200, 10);
 
 
-        $timeout(function() {
+        var timeout = $timeout(function() {
            $interval.cancel(sec);
            $scope.left = '';
         }, 2000);
+
+        $scope.$on('$destroy', function(){
+          $timeout.cancel(timeout);
+          $interval.cancel(sec);
+        });
 
       };
 
@@ -106,10 +114,18 @@ All features are enabled to get an idea of performance
       var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
 
       describe('a grid with all features', function () {
+        /*
+         * This prevents protractor from throwing a Stale Element Reference errors when
+         * the protractor accessibility tests run.
+         */
+        afterEach(function(){
+          browser.refresh();
+        });
+
         it('should not duplicate the menu options for pinning when resizing a column', function () {
           element( by.id('refreshButton') ).click();
           gridTestUtils.resizeHeaderCell( 'grid1', 1 );
-          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 11);
+          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 12);
         });
       });
   </file>

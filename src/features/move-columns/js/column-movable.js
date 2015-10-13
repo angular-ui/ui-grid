@@ -5,7 +5,11 @@
    * @ngdoc overview
    * @name ui.grid.moveColumns
    * @description
+   *
    * # ui.grid.moveColumns
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+   *
    * This module provides column moving capability to ui.grid. It enables to change the position of columns.
    * <div doc-module-components="ui.grid.moveColumns"></div>
    */
@@ -23,7 +27,9 @@
         var self = this;
         this.registerPublicApi(grid);
         this.defaultGridOptions(grid.options);
+        grid.moveColumns = {orderCache: []}; // Used to cache the order before columns are rebuilt
         grid.registerColumnBuilder(self.movableColumnBuilder);
+        grid.registerDataChangeCallback(self.verifyColumnOrder, [uiGridConstants.dataChange.COLUMN]);
       },
       registerPublicApi: function (grid) {
         var self = this;
@@ -133,6 +139,34 @@
           : colDef.enableColumnMoving;
         return $q.all(promises);
       },
+      /**
+       * @ngdoc method
+       * @name updateColumnCache
+       * @methodOf  ui.grid.moveColumns
+       * @description Cache the current order of columns, so we can restore them after new columnDefs are defined
+       */
+      updateColumnCache: function(grid){
+        grid.moveColumns.orderCache = grid.getOnlyDataColumns();
+      },
+      /**
+       * @ngdoc method
+       * @name verifyColumnOrder
+       * @methodOf  ui.grid.moveColumns
+       * @description dataChangeCallback which uses the cached column order to restore the column order
+       * when it is reset by altering the columnDefs array.
+       */
+      verifyColumnOrder: function(grid){
+        var headerRowOffset = grid.rowHeaderColumns.length;
+        var newIndex;
+
+        angular.forEach(grid.moveColumns.orderCache, function(cacheCol, cacheIndex){
+          newIndex = grid.columns.indexOf(cacheCol);
+          if ( newIndex !== -1 && newIndex - headerRowOffset !== cacheIndex ){
+            var column = grid.columns.splice(newIndex, 1)[0];
+            grid.columns.splice(cacheIndex + headerRowOffset, 0, column);
+          }
+        });
+      },
       redrawColumnAtPosition: function (grid, originalPosition, newPosition) {
 
         var columns = grid.columns;
@@ -150,6 +184,7 @@
             }
           }
           columns[newPosition] = originalColumn;
+          service.updateColumnCache(grid);
           grid.queueGridRefresh();
           $timeout(function () {
             grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
@@ -287,12 +322,13 @@
                 };
 
                 var moveFn = function( event ) {
+                  var changeValue = event.pageX - previousMouseX;
+                  if ( changeValue === 0 ){ return; }
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
 
                   moveOccurred = true;
 
-                  var changeValue = event.pageX - previousMouseX;
                   if (!elmCloned) {
                     cloneElement();
                   }

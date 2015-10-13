@@ -83,8 +83,11 @@ describe('ui.grid.edit GridCellDirective', function () {
       expect(element.text()).toBe('val');
       //invoke edit
       element.dblclick();
-      expect(element.find('input')).toBeDefined();
-      expect(element.find('input').val()).toBe('val');
+      $timeout(function () {
+        expect(element.find('input')).toBeDefined();
+        expect(element.find('input').val()).toBe('val');
+      });
+      $timeout.flush();
     });
 
     it('should stop editing on enter', function () {

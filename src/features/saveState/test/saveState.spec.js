@@ -355,6 +355,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       var colVisChangeCount = 0;
       var colFilterChangeCount = 0;
       var colSortChangeCount = 0;
+      var onSortChangedHook = jasmine.createSpy('onSortChangedHook');
 
       grid.api.core.on.columnVisibilityChanged( $scope, function( column ) {
         colVisChangeCount++;
@@ -364,15 +365,13 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
         colFilterChangeCount++;
       });
 
-      grid.api.core.on.sortChanged( $scope, function() {
-        colSortChangeCount++;
-      });
+      grid.api.core.on.sortChanged( $scope, onSortChangedHook );
 
       uiGridSaveStateService.restoreColumns( grid, [
         { name: 'col2', visible: false, width: 90, sort: [ {blah: 'blah'} ], filters: [ {} ] },
         { name: 'col1', visible: true, width: '*', sort: [], filters: [ {'blah': 'blah'} ] },
-        { name: 'col4', visible: false, width: 120, sort: [], filters: [ {} ] },
-        { name: 'col3', visible: true, width: 220, sort: [], filters: [ {} ] }
+        { name: 'col4', visible: false, width: 120, sort: { direction: 'asc', priority: 1 }, filters: [ {} ] },
+        { name: 'col3', visible: true, width: 220, sort: { direction: 'asc', priority: 0 }, filters: [ {} ] }
       ]);
 
       expect( grid.getOnlyDataColumns()[0].name ).toEqual('col2', 'column 0 name should be col2');
@@ -397,8 +396,8 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( grid.getOnlyDataColumns()[0].sort ).toEqual([ { blah: 'blah' } ]);
       expect( grid.getOnlyDataColumns()[1].sort ).toEqual([]);
-      expect( grid.getOnlyDataColumns()[2].sort ).toEqual([]);
-      expect( grid.getOnlyDataColumns()[3].sort ).toEqual([]);
+      expect( grid.getOnlyDataColumns()[2].sort ).toEqual({ direction: 'asc', priority: 1 });
+      expect( grid.getOnlyDataColumns()[3].sort ).toEqual({ direction: 'asc', priority: 0 });
 
       expect( grid.getOnlyDataColumns()[0].filters ).toEqual([ {} ]);
       expect( grid.getOnlyDataColumns()[1].filters ).toEqual([ { blah: 'blah' } ]);
@@ -407,7 +406,13 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( colVisChangeCount ).toEqual( 4, '4 columns changed visibility');
       expect( colFilterChangeCount ).toEqual( 1, '1 columns changed filter');
-      expect( colSortChangeCount ).toEqual( 4, '4 columns changed sort');
+
+      expect( onSortChangedHook.calls.length ).toEqual( 1 );
+
+      expect( onSortChangedHook ).toHaveBeenCalledWith( 
+        grid, 
+        [ grid.getOnlyDataColumns()[3], grid.getOnlyDataColumns()[2] ] 
+      );
     });
 
     it('restore columns, all options turned off', function() {

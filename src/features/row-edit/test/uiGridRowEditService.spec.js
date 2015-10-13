@@ -530,6 +530,12 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       expect( success ).toEqual(false);
       expect( failure ).toEqual(true);
     });
+    
+    it( 'no dirty rows, no error is thrown', function() {
+      expect(function() {
+        uiGridRowEditService.flushDirtyRows( grid );
+      }).not.toThrow();
+    });
   });
   
   
