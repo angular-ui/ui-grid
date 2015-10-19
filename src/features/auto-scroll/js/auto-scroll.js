@@ -114,18 +114,31 @@
    *  @example
    <example module="app">
    <file name="app.js">
-   var app = angular.module('app', ['ui.grid', 'ui.grid.autoScroll']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.autoScroll']);
 
-   app.controller('MainCtrl', ['$scope', function ($scope) {
-      $scope.data = [
-        { name: 'Alex', car: 'Toyota' },
-            { name: 'Sam', car: 'Lexus' }
-      ];
+    app.controller('MainCtrl', ['$scope', function ($scope) {
+      var logCount = 1;
 
-      $scope.columnDefs = [
-        {name: 'name'},
-        {name: 'car'}
-      ];
+      $scope.gridOptions = {
+        columnDefs: [
+          {name: 'message'}
+        ],
+        data: []
+      };
+
+      var loadData = function(lines) {
+        for (var i = 0; i < lines; i++) {
+          $scope.gridOptions.data.push({'message': 'log message ' + logCount});
+          logCount++;
+        }
+      };
+
+      $scope.addData = function() {
+        loadData(100);
+      };
+
+      loadData(30);
+
     }]);
    </file>
    <file name="index.html">
