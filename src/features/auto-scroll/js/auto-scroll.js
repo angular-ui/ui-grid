@@ -15,7 +15,7 @@
   var module = angular.module('ui.grid.autoScroll', ['ui.grid']);
   /**
    *  @ngdoc service
-   *  @name ui.grid.autoScroll.service:uiGridautoScrollService
+   *  @name ui.grid.autoScroll.service:uiGridAutoScrollService
    *
    *  @description Service for auto scroll features
    */
@@ -74,7 +74,6 @@
       handleScroll:  function (args) {
         if (args.y) {
           args.grid.autoScroll.prevScrollPercent = args.y.percentage;
-          console.log('setting to ' +  args.y.percentage);
         }
       },
 
