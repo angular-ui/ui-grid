@@ -58,11 +58,11 @@
           clearAllFilters: 'Очистите все фильтры'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Не удалось получить названия столбцов, есть ли в файле заголовок?',
+          noObjects: 'Не удалось получить данные, есть ли в файле строки кроме заголовка?',
+          invalidCsv: 'Не удалось обработать файл, это правильный CSV-файл?',
+          invalidJson: 'Не удалось обработать файл, это правильный JSON?',
+          jsonNotArray: 'Импортируемый JSON-файл должен содержать массив, операция отменена.'
         }
       });
       return $delegate;
