@@ -457,8 +457,8 @@
    */
 
   module.directive('uiGridCell',
-    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService', '$rootScope',
-      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService, $rootScope) {
+    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService', '$rootScope', '$q',
+      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService, $rootScope, $q) {
         var touchstartTimeout = 500;
         if ($injector.has('uiGridCellNavService')) {
           var uiGridCellNavService = $injector.get('uiGridCellNavService');
@@ -653,6 +653,40 @@
              *
              */
             /**
+             *  @ngdoc service
+             *  @name editDropdownOptionsFunction
+             *  @methodOf ui.grid.edit.api:ColumnDef
+             *  @description a function returning an array of values in the format
+             *  [ {id: xxx, value: xxx} ], which will be used to populate
+             *  the edit dropdown.  This can be used when the dropdown values are dependent on
+             *  the backing row entity with some kind of algorithm.
+             *  If this property is set then both editDropdownOptionsArray and 
+             *  editDropdownRowEntityOptionsArrayPath will be ignored.
+             *  @param {object} rowEntity the options.data element that the returned array refers to
+             *  @param {object} colDef the column that implements this dropdown
+             *  @returns {object} an array of values in the format
+             *  [ {id: xxx, value: xxx} ] used to populate the edit dropdown
+             *  @example
+             *  <pre>
+             *    $scope.gridOptions = {
+             *      columnDefs: [
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
+             *          editDropdownOptionsFunction: function(rowEntity, colDef) {
+             *            if (rowEntity.foo === 'bar') {
+             *              return [{id: 'bar1', value: 'BAR 1'},
+             *                      {id: 'bar2', value: 'BAR 2'},
+             *                      {id: 'bar3', value: 'BAR 3'}];
+             *            } else {
+             *              return [{id: 'foo1', value: 'FOO 1'},
+             *                      {id: 'foo2', value: 'FOO 2'}];
+             *            }
+             *          },
+             *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+             *      ],
+             *  </pre>
+             *
+             */
+            /**
              *  @ngdoc property
              *  @name editDropdownValueLabel
              *  @propertyOf ui.grid.edit.api:ColumnDef
@@ -731,12 +765,24 @@
               }
               html = html.replace('INPUT_TYPE', inputType);
 
-              var editDropdownRowEntityOptionsArrayPath = $scope.col.colDef.editDropdownRowEntityOptionsArrayPath;
-              if (editDropdownRowEntityOptionsArrayPath) {
-                $scope.editDropdownOptionsArray =  resolveObjectFromPath($scope.row.entity, editDropdownRowEntityOptionsArrayPath);
-              }
-              else {
-                $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+              // In order to fill dropdown options we use:
+              // - A function/promise or
+              // - An array inside of row entity if no function exists or
+              // - A single array for the whole column if none of the previous exists.
+              var editDropdownOptionsFunction = $scope.col.colDef.editDropdownOptionsFunction;
+              if (editDropdownOptionsFunction) {
+                $q.when(editDropdownOptionsFunction($scope.row.entity, $scope.col.colDef))
+                        .then(function(result) {
+                  $scope.editDropdownOptionsArray = result;
+                });
+              } else {
+                var editDropdownRowEntityOptionsArrayPath = $scope.col.colDef.editDropdownRowEntityOptionsArrayPath;
+                if (editDropdownRowEntityOptionsArrayPath) {
+                  $scope.editDropdownOptionsArray =  resolveObjectFromPath($scope.row.entity, editDropdownRowEntityOptionsArrayPath);
+                }
+                else {
+                  $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+                }
               }
               $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';
               $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';
