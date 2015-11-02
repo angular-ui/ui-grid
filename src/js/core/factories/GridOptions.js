@@ -369,7 +369,15 @@ angular.module('ui.grid')
        * Filtering can then be disabled on individual columns using the columnDefs.
        */
       baseOptions.enableFiltering = baseOptions.enableFiltering === true;
-
+      /**
+       * @ngdoc boolean
+       * @name enableGridMenu
+       * @propertyOf ui.grid.class:GridOptions
+       * @description False by default. When enabled, this adds a settings icon in the top right of the grid,
+       * which floats above the column header. The menu by default gives access to show/hide columns,
+       * but can be customized to show additional actions.
+       */
+      baseOptions.enableGridMenu = baseOptions.enableGridMenu === false;
       /**
        * @ngdoc boolean
        * @name enableColumnMenus
