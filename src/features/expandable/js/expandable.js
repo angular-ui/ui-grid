@@ -271,12 +271,7 @@
                   width: uiGridCtrl.grid.options.expandableRowHeaderWidth || 40
                 };
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
-                if ( uiGridCtrl.grid.options.showExpandAllButton !== false ) {
-                    expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
-                } 
-                else {
-                      expandableRowHeaderColDef.headerCellTemplate='<div style="cursor:none;"></div>';
-                }
+                expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
                 uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
               }
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
