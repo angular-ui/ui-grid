@@ -355,7 +355,7 @@
           var options = uiGridCtrl.grid.options;
 
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - gridUtil.elementHeight($elm);
+            adjustment.height = adjustment.height - gridUtil.elementHeight($elm, "padding");
             return adjustment;
           });
 
