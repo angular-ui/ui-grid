@@ -65,7 +65,8 @@
         },
         pagination: {
             sizes: 'Einträge pro Seite',
-            totalItems: 'Einträge'
+            totalItems: 'Einträge',
+            of: 'von'
         },
         grouping: {
             group: 'Gruppieren',
