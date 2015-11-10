@@ -92,7 +92,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
         exporterAllDataFn: null,
-        exporterSuppressColumns: []
+        exporterSuppressColumns: [],
+        exporterMenuItemOrder: 200
       });
     });
 
@@ -122,7 +123,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterMenuItemOrder: 75
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -150,7 +152,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterFieldCallback: callback,
         exporterAllDataFn: callback,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterMenuItemOrder: 75
       });
     });
   });
