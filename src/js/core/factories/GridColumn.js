@@ -97,16 +97,6 @@ angular.module('ui.grid')
 
     self.updateColumnDef(colDef, true);
 
-    /**
-     * @ngdoc function
-     * @name hideColumn
-     * @methodOf ui.grid.class:GridColumn
-     * @description Hides the column by setting colDef.visible = false
-     */
-    GridColumn.prototype.hideColumn = function() {
-      this.colDef.visible = false;
-    };
-
     self.aggregationValue = undefined;
 
     // The footer cell registers to listen for the rowsRendered event, and calls this.  Needed to be
@@ -195,6 +185,16 @@ angular.module('ui.grid')
     };
   }
 
+  /**
+   * @ngdoc function
+   * @name hideColumn
+   * @methodOf ui.grid.class:GridColumn
+   * @description Hides the column by setting colDef.visible = false
+   */
+  GridColumn.prototype.hideColumn = function() {
+    this.colDef.visible = false;
+  };
+  
 
   /**
    * @ngdoc method
