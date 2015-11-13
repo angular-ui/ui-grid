@@ -43,7 +43,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      var self = this;
       var menuMid;
       var $animate;
 
@@ -52,7 +51,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       };
 
     // *** Show/Hide functions ******
-      self.showMenu = $scope.showMenu = function(event, args) {
+      $scope.showMenu = function(event, args) {
         if ( !$scope.shown ){
 
           /*
@@ -96,7 +95,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       };
 
 
-      self.hideMenu = $scope.hideMenu = function(event, args) {
+      $scope.hideMenu = function(event, args) {
         if ( $scope.shown ){
           /*
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
