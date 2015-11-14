@@ -892,8 +892,14 @@
          * @description Checks whether current browser is IE and returns it's version if it is
         */
         isIE: function () {
-          var match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
-          return match ? parseInt(match[1]) : false;
+          var match = navigator.userAgent.search(/(?:Edge|MSIE|Trident\/.*; rv:)/);
+          var isIE = false;
+
+          if (match !== -1) {
+            isIE = true;
+          }
+
+          return isIE;
         },
 
 
@@ -1023,14 +1029,24 @@
           var rawFile;
           var ieVersion;
 
-          ieVersion = this.isIE();
+          ieVersion = this.isIE(); // This is now a boolean value
           var doc = pdfMake.createPdf(docDefinition);
           var blob;
 
           doc.getBuffer( function (buffer) {
             blob = new Blob([buffer]);
 
-            if (ieVersion && ieVersion < 10) {
+            // IE10+
+            if (navigator.msSaveBlob) {
+              return navigator.msSaveBlob(
+                blob, fileName
+              );
+            }
+
+            // Previously:  && ieVersion < 10
+            // ieVersion now returns a boolean for the
+            // sake of sanity. We just check `msSaveBlob` first.
+            if (ieVersion) {
               var frame = D.createElement('iframe');
               document.body.appendChild(frame);
 
@@ -1042,13 +1058,6 @@
 
               document.body.removeChild(frame);
               return true;
-            }
-
-            // IE10+
-            if (navigator.msSaveBlob) {
-              return navigator.msSaveBlob(
-                blob, fileName
-              );
             }
           });
         },
