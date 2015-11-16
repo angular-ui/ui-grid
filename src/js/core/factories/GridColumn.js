@@ -806,15 +806,17 @@ angular.module('ui.grid')
         }
       });
     }
+  };
 
-    // Remove this column from the grid sorting, include inside build columns so has
-    // access to self - all seems a bit dodgy but doesn't work otherwise so have left
-    // as is
-    GridColumn.prototype.unsort = function () {
-      this.sort = {};
-      self.grid.api.core.raise.sortChanged( self.grid, self.grid.getColumnSorting() );
-    };
-
+  /**
+   * @ngdoc function
+   * @name unsort
+   * @methodOf ui.grid.class:GridColumn
+   * @description Removes column from the grid sorting
+   */
+  GridColumn.prototype.unsort = function () {
+    this.sort = {};
+    this.grid.api.core.raise.sortChanged( this.grid, this.grid.getColumnSorting() );
   };
 
 
