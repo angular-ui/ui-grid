@@ -401,10 +401,6 @@
                 $document.off('touchend', upFn);
               };
 
-              if ($scope.col.colDef.enableColumnMoving) {
-                onDownEvents();
-              }
-
               var cloneElement = function () {
                 elmCloned = true;
 
