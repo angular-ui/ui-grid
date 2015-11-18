@@ -99,6 +99,12 @@
          */
         /**
          *  @ngdoc object
+         *  @name ui.grid.expandable.api:GridRow
+         * 
+         *  @description Additional properties added to GridRow when using the expandable module
+         */
+        /**
+         *  @ngdoc object
          *  @name ui.grid.expandable.api:GridOptions
          *
          *  @description Options for configuring the expandable feature, these are available to be
