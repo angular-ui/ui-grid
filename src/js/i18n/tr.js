@@ -15,16 +15,16 @@
           filterLabel: "Sütun için filtre: "
         },
         aggregate: {
-          label: 'nesneler'
+          label: 'kayıtlar'
         },
         groupPanel: {
           description: 'Sütuna göre gruplamak için sütun başlığını buraya sürükleyin ve bırakın.'
         },
         search: {
           placeholder: 'Arama...',
-          showingItems: 'Gösterilen Nesneler:',
-          selectedItems: 'Seçili Nesneler:',
-          totalItems: 'Toplam Nesne:',
+          showingItems: 'Gösterilen Kayıt:',
+          selectedItems: 'Seçili Kayıt:',
+          totalItems: 'Toplam Kayıt:',
           size: 'Sayfa Boyutu:',
           first: 'İlk Sayfa',
           next: 'Sonraki Sayfa',
@@ -77,7 +77,7 @@
           noObjects: 'Nesneler üretilemiyor, dosyada başlıktan başka bir veri var mı?',
           invalidCsv: 'Dosya işlenemedi, geçerli bir CSV dosyası mı?',
           invalidJson: 'Dosya işlenemedi, geçerli bir Json dosyası mı?',
-          jsonNotArray: 'Alınan Json dosyasında bir dizi bulunmalıdır, İşlem iptal ediliyor.'
+          jsonNotArray: 'Alınan Json dosyasında bir dizi bulunmalıdır, işlem iptal ediliyor.'
         },
         pagination: {
           aria: {
@@ -88,7 +88,7 @@
             pageToLast: 'Sona git'
           },
           sizes: 'Sayfadaki nesne sayısı',
-          totalItems: 'nesneler',
+          totalItems: 'kayıtlar',
           through: '', //note(fsw) : turkish dont have this preposition 
           of: '' //note(fsw) : turkish dont have this preposition
         },
