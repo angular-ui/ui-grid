@@ -92,6 +92,10 @@ project's developers might not want to merge into the project.
 Please adhere to the coding conventions used throughout a project (indentation,
 accurate comments, etc.) and any other requirements (such as test coverage).
 
+**Include Examples** If possible, include links to a youtube video or GIF
+demonstrating your fix or your feature. It will help us understand what you
+are doing and why we want to merge it in.
+
 Adhering to the following this process is the best way to get your work
 included in the project:
 
@@ -133,13 +137,18 @@ included in the project:
    git pull [--rebase] upstream master
    ```
 
-6. Push your topic branch up to your fork:
+6. Squash your change into one commit
+  ```bash
+  git rebase -i master
+  ```
+
+7. Push your topic branch up to your fork:
 
    ```bash
-   git push origin <topic-branch-name>
+   git push [--force] origin <topic-branch-name>
    ```
 
-7. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
+8. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
     with a clear title and description.
 
 **IMPORTANT**: By submitting a patch, you agree to allow the project owners to
