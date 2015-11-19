@@ -99,6 +99,12 @@
          */
         /**
          *  @ngdoc object
+         *  @name ui.grid.expandable.api:GridRow
+         * 
+         *  @description Additional properties added to GridRow when using the expandable module
+         */
+        /**
+         *  @ngdoc object
          *  @name ui.grid.expandable.api:GridOptions
          *
          *  @description Options for configuring the expandable feature, these are available to be
@@ -191,6 +197,20 @@
       toggleRowExpansion: function (grid, row) {
         // trigger the "before change" event. Can change row height dynamically this way.
         grid.api.expandable.raise.rowExpandedBeforeStateChanged(row);
+        /**
+         *  @ngdoc object
+         *  @name isExpanded
+         *  @propertyOf  ui.grid.expandable.api:GridRow
+         *  @description Whether or not the row is currently expanded.
+         *  @example
+         *  <pre>
+         *    $scope.api.expandable.on.rowExpandedStateChanged($scope, function (row) {
+         *      if (row.isExpanded) {
+         *        //...
+         *      }
+         *    });
+         *  </pre>
+         */
         row.isExpanded = !row.isExpanded;
         if (angular.isUndefined(row.expandedRowHeight)){
           row.expandedRowHeight = grid.options.expandableRowHeight;
