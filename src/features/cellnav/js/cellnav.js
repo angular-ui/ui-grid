@@ -1067,6 +1067,10 @@
             });
           }
 
+          // In case we created a new row, and we are the new created row by ngRepeat
+          // then this cell content might have been selected previously
+          refreshCellFocus();
+
           function preventMouseDown(evt) {
             //Prevents the foucus event from firing if the click event is already going to fire.
             //If both events fire it will cause bouncing behavior.
@@ -1085,6 +1089,10 @@
 
           // Refresh cell focus when a new row id added to the grid
           var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
+            // Clear the focus if it's set to avoid the wrong cell getting focused during
+            // a short period of time (from now until $timeout function executed)
+            clearFocus();
+
             $timeout(refreshCellFocus);
           }, [uiGridConstants.dataChange.ROW]);
 
