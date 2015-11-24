@@ -1,75 +1,104 @@
 /**
- * Translate from english i18n file by FabryProg on 10/30/14.
+ * Transleted by Andrea on 2015-11-23.
  */
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
-      $delegate.add('it', {
+      $delegate.add('xx', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Filtra per colonna',
+            removeFilter: 'Rimuovi filtro',
+            columnMenuButtonLabel: 'Menu colonna'
+          },
+          priority: 'Priorita:',
+          filterLabel: "Filtra per colonna: "
+        },
         aggregate: {
           label: 'elementi'
         },
         groupPanel: {
-          description: 'Trascina un\'intestazione all\'interno del gruppo della colonna.'
+          description: 'Trascina qui l\'intestazione di una colonna se vuoi raggruppare per quella colonna.'
         },
         search: {
-          placeholder: 'Ricerca...',
-          showingItems: 'Mostra:',
-          selectedItems: 'Selezionati:',
-          totalItems: 'Totali:',
-          size: 'Tot Pagine:',
-          first: 'Prima',
-          next: 'Prossima',
-          previous: 'Precedente',
-          last: 'Ultima'
+          placeholder: 'Cerca...',
+          showingItems: 'Elementi visualizzati:',
+          selectedItems: 'Elementi selezionati:',
+          totalItems: 'Elementi totali:',
+          size: 'Dimensione di pagina:',
+          first: 'Prima pagina',
+          next: 'Pagina successiva',
+          previous: 'Pagina precedente',
+          last: 'Ultima pagina'
         },
         menu: {
-          text: 'Scegli le colonne:'
+          text: 'Colonne selezionate:'
         },
         sort: {
-          ascending: 'Asc.',
-          descending: 'Desc.',
-          remove: 'Annulla ordinamento'
+          ascending: 'Ord. crescente',
+          descending: 'Ord. decrescente',
+          none: 'Nessun ord.',
+          remove: 'Rimuovi ord.'
         },
         column: {
-          hide: 'Nascondi'
+          hide: 'Nascondi colonna'
         },
         aggregation: {
           count: 'righe totali: ',
-          sum: 'tot: ',
+          sum: 'totale: ',
           avg: 'media: ',
-          min: 'minimo: ',
-          max: 'massimo: '
+          min: 'min: ',
+          max: 'max: '
         },
         pinning: {
-         pinLeft: 'Blocca a sx',
-          pinRight: 'Blocca a dx',
-          unpin: 'Blocca in alto'
+          pinLeft: 'Blocca a sinistra',
+          pinRight: 'Blocca a destra',
+          unpin: 'Sblocca'
+        },
+        columnMenu: {
+          close: 'Chiudi'
         },
         gridMenu: {
+          aria: {
+            buttonLabel: 'Menu griglia'
+          },
           columns: 'Colonne:',
-          importerTitle: 'Importa',
-          exporterAllAsCsv: 'Esporta tutti i dati in CSV',
-          exporterVisibleAsCsv: 'Esporta i dati visibili in CSV',
-          exporterSelectedAsCsv: 'Esporta i dati selezionati in CSV',
-          exporterAllAsPdf: 'Esporta tutti i dati in PDF',
-          exporterVisibleAsPdf: 'Esporta i dati visibili in PDF',
-          exporterSelectedAsPdf: 'Esporta i dati selezionati in PDF',
-          clearAllFilters: 'Pulire tutti i filtri'
+          importerTitle: 'Importa file',
+          exporterAllAsCsv: 'Esporta tutti i dati come CSV',
+          exporterVisibleAsCsv: 'Esporta i dati visibili come CSV',
+          exporterSelectedAsCsv: 'Esporta i dati selezionati come CSV',
+          exporterAllAsPdf: 'Esporta tutti i dati come PDF',
+          exporterVisibleAsPdf: 'Esporta i dati visibili come PDF',
+          exporterSelectedAsPdf: 'Esporta i dati selezionati come PDF',
+          clearAllFilters: 'Cancella tutti i filtri'
         },
         importer: {
-          noHeaders: 'Impossibile reperire i nomi delle colonne, sicuro che siano indicati all\'interno del file?',
-          noObjects: 'Impossibile reperire gli oggetti, sicuro che siano indicati all\'interno del file?',
-          invalidCsv: 'Impossibile elaborare il file, sicuro che sia un CSV?',
-          invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
-          jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
+          noHeaders: 'Impossibile ricavare i nomi delle colonne, il file ha un\'intestazione?',
+          noObjects: 'Impossibile ricavare gli oggetti, il file contiene dati oltre che intestazioni?',
+          invalidCsv: 'Impossibile processare il file, e\' un CSV valido?',
+          invalidJson: 'Impossibile processare il file, e\' un PDF valido?',
+          jsonNotArray: 'Il JSON importato deve contenere un array, interrompo.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'Prima pagina',
+            pageBack: 'Pagina precedente',
+            pageSelected: 'Pagina selezionata',
+            pageForward: 'Pagina successiva',
+            pageToLast: 'Ultima pagina'
+          },
+          sizes: 'elementi per pagina',
+          totalItems: 'elementi',
+          through: 'per',
+          of: 'di'
         },
         grouping: {
           group: 'Raggruppa',
           ungroup: 'Separa',
-          aggregate_count: 'Agg: N. Elem.',
+          aggregate_count: 'Agg: Conta',
           aggregate_sum: 'Agg: Somma',
-          aggregate_max: 'Agg: Massimo',
-          aggregate_min: 'Agg: Minimo',
+          aggregate_max: 'Agg: Max',
+          aggregate_min: 'Agg: Min',
           aggregate_avg: 'Agg: Media',
           aggregate_remove: 'Agg: Rimuovi'
         }
