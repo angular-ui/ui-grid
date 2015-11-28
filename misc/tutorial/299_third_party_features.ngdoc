@@ -17,5 +17,5 @@ Allows querying for odata v3/v4 services
 <br>https://github.com/mirik123/ui-grid-odata
 
 ### **ui-grid-auto-scroll** ###
-Auto scrolls when new added to ui-grid
+Auto scrolls when new data is added to the grid
 <br>https://github.com/stevezau/ui-grid-auto-scroll
