@@ -2292,8 +2292,8 @@ angular.module('ui.grid')
 
       /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
 
-      // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
-      var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+      // The top boundary is the current top Y scroll position.
+      var topBound = self.renderContainers.body.prevScrollTop;
 
       // Don't the let top boundary be less than 0
       topBound = (topBound < 0) ? 0 : topBound;
@@ -2327,33 +2327,32 @@ angular.module('ui.grid')
         var scrollLength = (self.renderContainers.body.getCanvasHeight() - self.renderContainers.body.getViewportHeight());
 
         // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-        //if (self.horizontalScrollbarHeight && self.horizontalScrollbarHeight > 0) {
-        //  scrollLength = scrollLength + self.horizontalScrollbarHeight;
-        //}
+        if (self.renderContainers.body.grid.scrollbarHeight && self.renderContainers.body.grid.scrollbarHeight > 0) {
+          scrollLength = scrollLength + self.renderContainers.body.grid.scrollbarHeight;
+        }
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-        var pixelsToSeeRow = ((seekRowIndex + 1) * self.options.rowHeight);
+        var pixelsToSeeRow = ((seekRowIndex) * self.options.rowHeight); 
 
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
+        
+        // If we are moving downwards we need to add the pixels for the entire next row. 
+        var pixelsToSeeNextRow = pixelsToSeeRow + self.options.rowHeight;
 
         var scrollPixels, percentage;
 
         // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
         if (pixelsToSeeRow < topBound) {
-          // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
-          //   to get the full position we need
-          scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
-
           // Turn the scroll position into a percentage and make it an argument for a scroll event
-          percentage = scrollPixels / scrollLength;
+          percentage = pixelsToSeeRow / scrollLength;
           scrollEvent.y = { percentage: percentage  };
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
-        else if (pixelsToSeeRow > bottomBound) {
+        else if (pixelsToSeeNextRow > bottomBound) {
           // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
           //   to get the full position we need
-          scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
+          scrollPixels = pixelsToSeeNextRow - bottomBound + self.renderContainers.body.prevScrollTop;
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
