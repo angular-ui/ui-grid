@@ -83,7 +83,7 @@
           aria: {
             pageToFirst: 'Primeira página',
             pageBack: 'Página anterior',
-            pageSelected: 'Págona Selecionada',
+            pageSelected: 'Página Selecionada',
             pageForward: 'Proxima',
             pageToLast: 'Anterior'
           },
