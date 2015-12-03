@@ -134,7 +134,7 @@ describe('Grid factory', function () {
         });
       });
     });
-    
+
     describe(', when one is broken and does not return an array, ', function () {
       beforeEach(function () {
         grid.removeRowsProcessor(testObj.proc1);
@@ -174,17 +174,17 @@ describe('Grid factory', function () {
       }).toThrow();
     });
   });
-  
+
   describe('row builder', function () {
     function testObj () { }
-    
+
     it('should return a defined gridOptions', function () {
       var testRowBuilder = function (row, gridOptions) {
         expect(gridOptions).toBeDefined();
       };
       var row = new GridRow({str:'abc'}, 0, grid);
       testObj.testRowBuilder = jasmine.createSpy('testRowBuilder').andCallFake(testRowBuilder);
-      grid.registerRowBuilder(testObj.testRowBuilder);  
+      grid.registerRowBuilder(testObj.testRowBuilder);
       grid.processRowBuilders(row);
       expect(testObj.testRowBuilder).toHaveBeenCalled();
     });
@@ -204,7 +204,7 @@ describe('Grid factory', function () {
       grid.createLeftContainer();
       expect(grid.renderContainers.left).toBe(left);
     });
-    
+
     it('should create a right render container', function () {
       expect(grid.renderContainers.right).not.toBeDefined();
       grid.createRightContainer();
@@ -217,8 +217,8 @@ describe('Grid factory', function () {
 
 
   });
-  
-  
+
+
 
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
@@ -264,7 +264,7 @@ describe('Grid factory', function () {
       expect(grid1.getColumn('bool').colDef.type).toBe('boolean');
       expect(grid1.getColumn('obj').colDef.type).toBe('object');
     });
-    
+
     it('add columns at the correct position - middle', function() {
       var grid1 = new Grid({ id: 3 });
 
@@ -276,13 +276,13 @@ describe('Grid factory', function () {
         {name:'5'}
       ];
       grid1.buildColumns();
-      
+
       expect(grid1.columns[0].name).toEqual('1');
       expect(grid1.columns[1].name).toEqual('2');
       expect(grid1.columns[2].name).toEqual('3');
       expect(grid1.columns[3].name).toEqual('4');
       expect(grid1.columns[4].name).toEqual('5');
-      
+
       grid1.options.columnDefs.splice(3, 0, {name: '3.5'});
       grid1.buildColumns();
 
@@ -291,7 +291,7 @@ describe('Grid factory', function () {
       expect(grid1.columns[2].name).toEqual('3');
       expect(grid1.columns[3].name).toEqual('3.5');
       expect(grid1.columns[4].name).toEqual('4');
-      expect(grid1.columns[5].name).toEqual('5');      
+      expect(grid1.columns[5].name).toEqual('5');
     });
 
     it('should respect the row header', function() {
@@ -350,13 +350,13 @@ describe('Grid factory', function () {
         {name:'5'}
       ];
       grid1.buildColumns();
-      
+
       expect(grid1.columns[0].name).toEqual('1');
       expect(grid1.columns[1].name).toEqual('2');
       expect(grid1.columns[2].name).toEqual('3');
       expect(grid1.columns[3].name).toEqual('4');
       expect(grid1.columns[4].name).toEqual('5');
-      
+
       grid1.options.columnDefs.unshift({name: '0.5'});
       grid1.buildColumns();
 
@@ -365,7 +365,7 @@ describe('Grid factory', function () {
       expect(grid1.columns[2].name).toEqual('2');
       expect(grid1.columns[3].name).toEqual('3');
       expect(grid1.columns[4].name).toEqual('4');
-      expect(grid1.columns[5].name).toEqual('5');      
+      expect(grid1.columns[5].name).toEqual('5');
     });
 
     it('add columns at the correct position - end', function() {
@@ -379,13 +379,13 @@ describe('Grid factory', function () {
         {name:'5'}
       ];
       grid1.buildColumns();
-      
+
       expect(grid1.columns[0].name).toEqual('1');
       expect(grid1.columns[1].name).toEqual('2');
       expect(grid1.columns[2].name).toEqual('3');
       expect(grid1.columns[3].name).toEqual('4');
       expect(grid1.columns[4].name).toEqual('5');
-      
+
       grid1.options.columnDefs.push({name: '5.5'});
       grid1.buildColumns();
 
@@ -394,7 +394,7 @@ describe('Grid factory', function () {
       expect(grid1.columns[2].name).toEqual('3');
       expect(grid1.columns[3].name).toEqual('4');
       expect(grid1.columns[4].name).toEqual('5');
-      expect(grid1.columns[5].name).toEqual('5.5');      
+      expect(grid1.columns[5].name).toEqual('5.5');
     });
 
     describe('when adding the same field multiple times', function () {
@@ -440,14 +440,14 @@ describe('Grid factory', function () {
 
       expect(grid.rows.length).toBe(1);
       expect(grid.rows[0].entity.str).toBe('abc');
-      
+
       dataRows.splice(0,0,{str:'cba'});
       grid.modifyRows(dataRows);
-      
+
       expect(grid.rows.length).toBe(2);
       expect(grid.rows[0].entity.str).toBe('cba');
     });
-    
+
     it('should swap', function() {
       var dataRows = [{str:'abc'},{str:'cba'}];
       var grid = new Grid({ id: 1 });
@@ -461,11 +461,11 @@ describe('Grid factory', function () {
       dataRows[0] = dataRows[1];
       dataRows[1] = tmpRow;
       grid.modifyRows(dataRows);
-      
+
       expect(grid.rows[0].entity.str).toBe('cba');
       expect(grid.rows[1].entity.str).toBe('abc');
     });
-    
+
     it('should delete and insert new in the middle', function() {
       var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
       var grid = new Grid({ id: 1 });
@@ -479,13 +479,13 @@ describe('Grid factory', function () {
 
       dataRows[1] = {str:'xyz'};
       grid.modifyRows(dataRows);
-      
+
       expect(grid.rows.length).toBe(3);
       expect(grid.rows[0].entity.str).toBe('abc');
       expect(grid.rows[1].entity.str).toBe('xyz');
       expect(grid.rows[2].entity.str).toBe('bac');
     });
-    
+
     /*
      * No longer trying to keep order of sort - we run rowsProcessors
      * immediately after anyway, which will resort.
@@ -503,7 +503,7 @@ describe('Grid factory', function () {
       expect(grid.rows[2].entity.str).toBe('bac');
 
       grid.sortColumn(grid.columns[0]);
-      
+
       dataRows.splice(0,0,{str:'xyz'});
       grid.modifyRows(dataRows);
       expect(grid.rows.length).toBe(4);
@@ -705,26 +705,26 @@ describe('Grid factory', function () {
         expect(e.message).toContain('No column parameter provided', 'exception contains column name');
       }
     });
-    
+
     it( 'if sort is currently null, then should toggle to ASC, and reset priority', function() {
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
 
     it( 'if sort is currently ASC, then should toggle to DESC, and reset priortiy', function() {
       column.sort = {direction: uiGridConstants.ASC, priority: 2};
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is undefined, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1};
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
     });
@@ -732,7 +732,7 @@ describe('Grid factory', function () {
     it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: null};
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
     });
@@ -740,7 +740,7 @@ describe('Grid factory', function () {
     it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: false};
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(null);
       expect( column.sort.priority ).toEqual(null);
     });
@@ -749,9 +749,9 @@ describe('Grid factory', function () {
       column.sort = {direction: uiGridConstants.DESC, priority: 2};
       column.suppressRemoveSort = true;
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
 
     it( 'if another column has a sort, that sort should be removed', function() {
@@ -759,9 +759,9 @@ describe('Grid factory', function () {
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
       expect( priorColumn.sort ).toEqual({});
     });
 
@@ -770,7 +770,7 @@ describe('Grid factory', function () {
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, true );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
       expect( column.sort.priority ).toEqual(2);
       expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
@@ -781,7 +781,7 @@ describe('Grid factory', function () {
       grid.columns.push( priorColumn );
 
       grid.sortColumn( column, false );
-      
+
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
       expect( column.sort.priority ).toEqual(2);
       expect( priorColumn.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1});
@@ -794,7 +794,7 @@ describe('Grid factory', function () {
       grid.sortColumn( column, false );
 
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
 
     it( 'if sortDirectionCycle is null-DESC-ASC, and sort is currently ASC, then should toggle to null, and remove priority', function() {
@@ -814,7 +814,7 @@ describe('Grid factory', function () {
       grid.sortColumn( column, false );
 
       expect( column.sort.direction ).toEqual(uiGridConstants.DESC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
 
     it( 'if sortDirectionCycle is DESC-null-ASC, and sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
@@ -825,11 +825,11 @@ describe('Grid factory', function () {
       grid.sortColumn( column, false );
 
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
-      expect( column.sort.priority ).toEqual(1);
+      expect( column.sort.priority ).toEqual(0);
     });
   });
-  
-  
+
+
   describe( 'data change callbacks', function() {
     it( 'register then deregister data change callback', function() {
       var countCallbacks = function(){
@@ -839,11 +839,11 @@ describe('Grid factory', function () {
         });
         return i;
       };
-      
+
       var prevCount = countCallbacks();
       var deregFunction = grid.registerDataChangeCallback( function() {});
       expect( countCallbacks() ).toEqual( prevCount + 1 );
-      
+
       deregFunction();
       expect( countCallbacks() ).toEqual( prevCount );
     });
@@ -851,25 +851,25 @@ describe('Grid factory', function () {
     describe( 'mix of callbacks being called', function() {
       var called;
       var constants;
-      
+
       beforeEach( function() {
         called = [];
         constants = uiGridConstants.dataChange;
-        
+
         // this function will push it's type into the called array when it's called
         var createCallbackFunction = function( type ){
           return function( grid ){
             called.push( type );
           };
         };
-        
+
         grid.registerDataChangeCallback( createCallbackFunction( constants.ALL ), [constants.ALL] );
         grid.registerDataChangeCallback( createCallbackFunction( constants.ROW ), [constants.ROW] );
         grid.registerDataChangeCallback( createCallbackFunction( constants.EDIT ), [constants.EDIT] );
         grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN ), [constants.COLUMN] );
         grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN + constants.EDIT ), [constants.COLUMN, constants.EDIT] );
       });
-      
+
       it( 'call of type ALL', function() {
         grid.callDataChangeCallbacks( constants.ALL );
         expect( called ).toEqual( [ constants.ALL, constants.ROW, constants.EDIT, constants.COLUMN, constants.COLUMN + constants.EDIT]);
@@ -889,7 +889,7 @@ describe('Grid factory', function () {
         grid.callDataChangeCallbacks( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
       });
-      
+
       it( 'call works via api', function() {
         grid.api.core.notifyDataChange( constants.COLUMN );
         expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);

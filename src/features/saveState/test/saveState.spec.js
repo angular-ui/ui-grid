@@ -409,9 +409,9 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( onSortChangedHook.calls.length ).toEqual( 1 );
 
-      expect( onSortChangedHook ).toHaveBeenCalledWith( 
-        grid, 
-        [ grid.getOnlyDataColumns()[3], grid.getOnlyDataColumns()[2] ] 
+      expect( onSortChangedHook ).toHaveBeenCalledWith(
+        grid,
+        [ grid.getOnlyDataColumns()[2], grid.getOnlyDataColumns()[3] ]
       );
     });
 
