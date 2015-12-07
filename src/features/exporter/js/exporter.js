@@ -752,7 +752,7 @@
          * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
          * uiGridExporterConstants.SELECTED
          */
-        getData: function (grid, rowTypes, colTypes) {
+        getData: function (grid, rowTypes, colTypes, applyCellFilters) {
           var data = [];
           var rows;
           var columns;
@@ -793,7 +793,8 @@
               if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) &&
                    gridCol.colDef.exporterSuppressExport !== true &&
                    grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
-                  var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, grid.getCellValue( row, gridCol ) ) };
+                  var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol );
+                  var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) };
                   if ( gridCol.colDef.exporterPdfAlign ) {
                     extractedField.alignment = gridCol.colDef.exporterPdfAlign;
                   }
