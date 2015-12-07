@@ -266,7 +266,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     });
 
     it('gets the rows display values', function() {
-      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL)).toEqual([
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL, true)).toEqual([
         [ {value: 'a_0'}, {value: 'B_0'}, {value: 'c_0'}, {value: 'd_0'} ],
         [ {value: 'a_1'}, {value: 'B_1'}, {value: 'c_1'}, {value: 'd_1'} ],
         [ {value: 'a_2'}, {value: 'B_2'}, {value: 'c_2'}, {value: 'd_2'} ]
