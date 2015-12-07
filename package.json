@@ -51,7 +51,7 @@
     "grunt-jscs": "^0.7.1",
     "grunt-karma": "~0.8",
     "grunt-newer": "~1.1.0",
-    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.2.7-custom2",
+    "grunt-ngdocs": "https://github.com/c0bra/grunt-ngdocs/tarball/0.2.7-custom3",
     "grunt-protractor-runner": "~2.0.0",
     "grunt-shell-spawn": "~0.3.0",
     "jit-grunt": "^0.8.0",
