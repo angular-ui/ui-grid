@@ -436,16 +436,7 @@
                   //Left of cloned element should be aligned to original header cell.
                   movingElm.addClass('movingColumn');
                   var movingElementStyles = {};
-                  var elmLeft;
-                  if (gridUtil.detectBrowser() === 'safari') {
-                    //Correction for Safari getBoundingClientRect,
-                    //which does not correctly compute when there is an horizontal scroll
-                    elmLeft = $elm[0].offsetLeft + $elm[0].offsetWidth - $elm[0].getBoundingClientRect().width;
-                  }
-                  else {
-                    elmLeft = $elm[0].getBoundingClientRect().left;
-                  }
-                  movingElementStyles.left = (elmLeft - gridLeft) + 'px';
+                  movingElementStyles.left = $elm[0].offsetLeft + 'px';
                   var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
                   var elmRight = $elm[0].getBoundingClientRect().right;
                   if (elmRight > gridRight) {
@@ -475,7 +466,8 @@
 
                   //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
                   if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
-                    movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
+                    movingElm.css({visibility: 'visible', 'left': (movingElm[0].offsetLeft + 
+                      (newElementLeft < rightMoveLimit ? changeValue : (rightMoveLimit - currentElmLeft))) + 'px'});
                   }
                   else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
                     changeValue *= 8;
