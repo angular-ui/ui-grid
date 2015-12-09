@@ -359,7 +359,16 @@ angular.module('ui.grid')
        * Sorting can then be disabled on individual columns using the columnDefs.
        */
       baseOptions.enableSorting = baseOptions.enableSorting !== false;
-
+      
+      /**
+       * @ngdoc boolean
+       * @name enableSortingPriority
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When enabled, this setting adds to sorted
+       * column a sort priority on the column headers.
+       */
+      baseOptions.enableSortingPriority = baseOptions.enableSortingPriority !== false;
+      
       /**
        * @ngdoc boolean
        * @name enableFiltering
