@@ -2,6 +2,8 @@
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
+[![npm](https://img.shields.io/npm/dt/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
