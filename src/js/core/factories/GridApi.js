@@ -141,7 +141,16 @@
            * <br/>
            * arguments: oldHeight, newHeight
            */
-          this.registerEvent( 'core', 'canvasHeightChanged');
+          this.registerEvent('core', 'canvasHeightChanged');
+
+          /**
+          * @ngdoc function
+          * @name autoAdjustHeight
+          * @methodOf  ui.grid.core.api:PublicApi
+          * @description Automatically adjusts the height of the grid
+          * @param {Grid} grid the grid you want to get visible rows from
+          */
+          this.registerMethod('core', 'autoAdjustHeight', this.grid.autoAdjustHeight);
         };
 
         /**

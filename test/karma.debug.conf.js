@@ -16,12 +16,13 @@ module.exports = function(config) {
     files: [
       'bower_components/jquery/jquery.min.js',
       'lib/test/jquery.simulate.js',
+      'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
       'lib/test/angular/1.3.6/angular.js',
       'lib/test/angular/1.3.6/angular-mocks.js',
       'lib/test/angular/1.3.6/angular-animate.js',
-      
+
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',
       'src/features/**/js/**/*.js',
@@ -105,7 +106,7 @@ module.exports = function(config) {
     customLaunchers: util.customLaunchers()
 
   });
-  
+
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
@@ -114,7 +115,7 @@ module.exports = function(config) {
     config.reporters = ['dots', 'coverage'];
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
-    
+
     // config.transports = ['websocket', 'xhr-polling'];
 
     config.sauceLabs.build = buildLabel;

@@ -78,6 +78,8 @@
         }
       }
 
+      var mostRecentData;
+
       function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
@@ -89,6 +91,8 @@
             newData = $scope.uiGrid.data;
           }
         }
+
+        mostRecentData = newData;
 
         if (newData) {
           // columns length is greater than the number of row header columns, which don't count because they're created automatically
@@ -118,7 +122,8 @@
           }
 
           $q.all(promises).then(function() {
-            self.grid.modifyRows(newData)
+            // use most recent data, rather than the potentially outdated data passed into watcher handler
+            self.grid.modifyRows(mostRecentData)
               .then(function () {
                 // if (self.viewport) {
                   self.grid.redrawInPlace(true);
@@ -278,57 +283,11 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
 
             // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
             if (grid.gridHeight <= grid.options.rowHeight && grid.options.enableMinHeightCheck) {
-              autoAdjustHeight();
+              grid.autoAdjustHeight();
             }
 
             // Run initial canvas refresh
             grid.refreshCanvas(true);
-          }
-
-          // Set the grid's height ourselves in the case that its height would be unusably small
-          function autoAdjustHeight() {
-            // Figure out the new height
-            var contentHeight = grid.options.minRowsToShow * grid.options.rowHeight;
-            var headerHeight = grid.options.showHeader ? grid.options.headerRowHeight : 0;
-            var footerHeight = grid.calcFooterHeight();
-
-            var scrollbarHeight = 0;
-            if (grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
-              scrollbarHeight = gridUtil.getScrollbarWidth();
-            }
-
-            var maxNumberOfFilters = 0;
-            // Calculates the maximum number of filters in the columns
-            angular.forEach(grid.options.columnDefs, function(col) {
-              if (col.hasOwnProperty('filter')) {
-                if (maxNumberOfFilters < 1) {
-                    maxNumberOfFilters = 1;
-                }
-              }
-              else if (col.hasOwnProperty('filters')) {
-                if (maxNumberOfFilters < col.filters.length) {
-                    maxNumberOfFilters = col.filters.length;
-                }
-              }
-            });
-
-            if (grid.options.enableFiltering) {
-              var allColumnsHaveFilteringTurnedOff = grid.options.columnDefs.every(function(col) {
-                return col.enableFiltering === false;
-              });
-
-              if (!allColumnsHaveFilteringTurnedOff) {
-                maxNumberOfFilters++;
-              }
-            }
-
-            var filterHeight = maxNumberOfFilters * headerHeight;
-
-            var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight + filterHeight;
-
-            $elm.css('height', newHeight + 'px');
-
-            grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
           }
 
           // Resize the grid on window resize events
