@@ -168,6 +168,9 @@
         });
       },
       redrawColumnAtPosition: function (grid, originalPosition, newPosition) {
+        if (originalPosition === newPosition) {
+          return;
+        }
 
         var columns = grid.columns;
 
