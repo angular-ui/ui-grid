@@ -165,7 +165,7 @@ With the 3.0 release, the repository has been renamed from "ng-grid" to "ui-grid
 
 All network traffic to GitHub should redirect automatically but they say you should update your git remote url:
 
-  git remote set-url origin https://github.com/angular-ui/ui-grid.git
+    git remote set-url origin https://github.com/angular-ui/ui-grid.git
 
 # Thanks
 
