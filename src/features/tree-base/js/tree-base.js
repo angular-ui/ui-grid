@@ -237,7 +237,7 @@
          *  all transient information on the tree (children, childCount) and recalculate it
          *
          */
-        grid.treeBase.tree = {};
+        grid.treeBase.tree = [];
 
         service.defaultGridOptions(grid.options);
 
