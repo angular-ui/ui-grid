@@ -355,7 +355,7 @@
           var options = uiGridCtrl.grid.options;
 
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - gridUtil.elementHeight($elm);
+            adjustment.height = adjustment.height - gridUtil.elementHeight($elm, "padding");
             return adjustment;
           });
 
@@ -375,7 +375,7 @@
           var deregT = $scope.$watch('grid.options.totalItems + grid.options.paginationPageSize', setShowing);
 
           var deregP = $scope.$watch('grid.options.paginationCurrentPage + grid.options.paginationPageSize', function (newValues, oldValues) {
-              if (newValues === oldValues) {
+              if (newValues === oldValues || oldValues === undefined) {
                 return;
               }
 

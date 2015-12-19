@@ -31,7 +31,7 @@ In order to contribute an update your basic process is:
 can work, and over which you have access permissions
 - Clone that repository
 - Setup the toolset on your local machine
-- Make the documentation changes, and verify that they look at you had hoped
+- Make the documentation changes, and verify that they look as you had hoped
 - Run the tests to check that nothing has broken
 - Commit the code to git, and push the branch to your fork
 - Create a pull request from your fork to the upstream repository
@@ -40,11 +40,9 @@ We'll go through each step in turn.
 
 ### Fork the ui-grid repository ###
 This is the easiest step.  Get yourself a github logon, and navigate to the 
-[ui-grid github page](https://github.com/angular-ui/ng-grid).  Note that the
-actual repository still goes by the old project name of ng-grid. Click the
+[ui-grid github page](https://github.com/angular-ui/ui-grid). Click the
 fork button in the top left.  This should navigate you to your list of
-projects in github, with a new fork of ui-grid (also called ng-grid in your
-repository list).
+projects in github, with a new fork of ui-grid.
 
 You'll see that this gives you your own issue tracker and a bunch of other content.
 In general you'll ignore all this, and you'll just use your fork for submitting
@@ -79,8 +77,8 @@ inside it, within the .git folder.
 
 We also want to setup a link to the upstream repository, which we use when fetching
 the latest code version:
-`  cd ng-grid`
-`  git remote add upstream https://github.com/angular-ui/ng-grid.git`
+`  cd ui-grid`
+`  git remote add upstream https://github.com/angular-ui/ui-grid.git`
 
 This allows you to get the latest code from upstream by:
 `  git fetch upstream` or
@@ -203,7 +201,7 @@ Look through the diff listing to verify that only the changes you expected are p
 To commit to git, you can:
 `  git add .`
 `  git commit`
-In your commit message, follow the guidelines from [CONTRIBUTING.md](https://github.com/angular-ui/ng-grid/blob/master/CONTRIBUTING.md):
+In your commit message, follow the guidelines from [CONTRIBUTING.md](https://github.com/angular-ui/ui-grid/blob/master/CONTRIBUTING.md):
 
 - Please adhere to these [git commit message guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
   or your code is unlikely be merged into the main project. 
@@ -232,7 +230,7 @@ This will give you an error message, but also tell you what the real instruction
 copy and paste:
 `  git push --set-upstream origin 1023_nulls_to_custom_sort`
 
-Now go to your homepage in git, and to your fork of the ng-grid repository.  You should see a message saying
+Now go to your homepage in git, and to your fork of the ui-grid repository.  You should see a message saying
 that a new branch has been pushed, and asking if you want to create a pull request.  Click that button,
 and check the list of changes again in the commit history, and that there is a good quality commit
 message with only a single commit.

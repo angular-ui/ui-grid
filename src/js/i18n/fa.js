@@ -56,7 +56,8 @@
           exporterSelectedAsCsv: 'خروجی داده\u200cهای انتخاب\u200cشده در فایل csv',
           exporterAllAsPdf: 'خروجی تمام داده\u200cها در فایل pdf',
           exporterVisibleAsPdf: 'خروجی داده\u200cهای قابل مشاهده در فایل pdf',
-          exporterSelectedAsPdf: 'خروجی داده\u200cهای انتخاب\u200cشده در فایل pdf'
+          exporterSelectedAsPdf: 'خروجی داده\u200cهای انتخاب\u200cشده در فایل pdf',
+          clearAllFilters: 'پاک کردن تمام فیلتر'
         },
         importer: {
           noHeaders: 'نام ستون قابل استخراج نیست. آیا فایل عنوان دارد؟',

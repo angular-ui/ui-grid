@@ -53,7 +53,8 @@
           exporterSelectedAsCsv: 'Esporta i dati selezionati in CSV',
           exporterAllAsPdf: 'Esporta tutti i dati in PDF',
           exporterVisibleAsPdf: 'Esporta i dati visibili in PDF',
-          exporterSelectedAsPdf: 'Esporta i dati selezionati in PDF'
+          exporterSelectedAsPdf: 'Esporta i dati selezionati in PDF',
+          clearAllFilters: 'Pulire tutti i filtri'
         },
         importer: {
           noHeaders: 'Impossibile reperire i nomi delle colonne, sicuro che siano indicati all\'interno del file?',

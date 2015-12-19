@@ -13,6 +13,12 @@
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
   <link rel="stylesheet" href="//ui-grid.info/release/ui-grid-unstable.min.css" />
+  <script>
+    ((window.gitter = {}).chat = {}).options = {
+      room: 'angular-ui/ui-grid'
+    };
+  </script>
+  <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
 </head>
 <body>
 
@@ -34,9 +40,15 @@
         <ul class="nav navbar-nav">
           <li><a href="/docs/#/api"><i class="fa fa-book fa-fw"></i> API</a></li>
           <li><a href="/docs/#/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
+          <li><a href="/customizer/"><i class="fa fa-wrench fa-fw"></i> Customizer</a></li>
         </ul>
         <div class="navbar-header navbar-right">
           <p class="navbar-text hidden-phone">
+            <a class="nav-gitter-link" href="https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"
+              style="">
+              <img class="nav-gitter-image" src="https://badges.gitter.im/Join%20Chat.svg"/>
+              <span class="sr-only">Gitter Join Chat</span>
+            </a>
             <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ui-grid&type=watch&count=true"
                   allowtransparency="true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
             <iframe class="nav-ghbtn" src="http://ghbtns.com/github-btn.html?user=angular-ui&repo=ui-grid&type=fork&count=true"
@@ -46,7 +58,7 @@
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-
+  <div class="main-content">
   <div class="intro">
     <div class="jumbotron">
       <div class="description">
@@ -70,7 +82,7 @@
             Download <small>( <%= version %> )</small>
           </a>
 
-          <a class="btn btn-success btn-large" href="http://<%= site %>/docs/#/tutorial" title="Tutorial">
+          <a class="btn btn-success btn-large" href="/docs/#/tutorial" title="Tutorial">
             <i class="fa fa-book fa-fw"></i>
             Tutorial
           </a>
@@ -79,9 +91,6 @@
         <div class="alert alert-info">
           <h3 class="text-center">
             UI Grid <strong>v3.0.0</strong> has been released!  Check out the <a class="info-link" href="https://github.com/angular-ui/ui-grid">project on GitHub</a> for more information.
-            <br>
-            <br>
-            Join the UI Grid team for a <a class="info-link" href="http://brianhann.com/ui-grid-qa/">Live Q&amp;A Session</a> Saturday, Aug. 8th @ 12:00PM CDT
           </h3>
         </div>
       </div>
@@ -123,6 +132,10 @@
             <li>Edit in place</li>
             <li>Expandable rows</li>
             <li>Internationalisation</li>
+          </ul>
+          <h4 class="feature-heading">Third Party Features</h4>
+          <ul>
+            <li><a href="/docs/#/tutorial/299_third_party_features">List of Third Party Features</a></li>
           </ul>
         </div>
       </div>
@@ -433,6 +446,17 @@
         ]
       };
     });
+  </script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-46391685-1', 'auto');
+    ga('send', 'pageview');
+
   </script>
 </body>
 </html>

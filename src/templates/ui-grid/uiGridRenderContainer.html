@@ -9,7 +9,7 @@
   <div
     ng-if="colContainer.needsHScrollbarPlaceholder()"
     class="ui-grid-scrollbar-placeholder"
-    style="height:{{colContainer.grid.scrollbarHeight}}px">
+    ng-style="{height:colContainer.grid.scrollbarHeight + 'px'}">
   </div>
   <ui-grid-footer
     ng-if="grid.options.showColumnFooter">

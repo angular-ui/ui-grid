@@ -27,7 +27,9 @@
         var self = this;
         this.registerPublicApi(grid);
         this.defaultGridOptions(grid.options);
+        grid.moveColumns = {orderCache: []}; // Used to cache the order before columns are rebuilt
         grid.registerColumnBuilder(self.movableColumnBuilder);
+        grid.registerDataChangeCallback(self.verifyColumnOrder, [uiGridConstants.dataChange.COLUMN]);
       },
       registerPublicApi: function (grid) {
         var self = this;
@@ -137,7 +139,38 @@
           : colDef.enableColumnMoving;
         return $q.all(promises);
       },
+      /**
+       * @ngdoc method
+       * @name updateColumnCache
+       * @methodOf  ui.grid.moveColumns
+       * @description Cache the current order of columns, so we can restore them after new columnDefs are defined
+       */
+      updateColumnCache: function(grid){
+        grid.moveColumns.orderCache = grid.getOnlyDataColumns();
+      },
+      /**
+       * @ngdoc method
+       * @name verifyColumnOrder
+       * @methodOf  ui.grid.moveColumns
+       * @description dataChangeCallback which uses the cached column order to restore the column order
+       * when it is reset by altering the columnDefs array.
+       */
+      verifyColumnOrder: function(grid){
+        var headerRowOffset = grid.rowHeaderColumns.length;
+        var newIndex;
+
+        angular.forEach(grid.moveColumns.orderCache, function(cacheCol, cacheIndex){
+          newIndex = grid.columns.indexOf(cacheCol);
+          if ( newIndex !== -1 && newIndex - headerRowOffset !== cacheIndex ){
+            var column = grid.columns.splice(newIndex, 1)[0];
+            grid.columns.splice(cacheIndex + headerRowOffset, 0, column);
+          }
+        });
+      },
       redrawColumnAtPosition: function (grid, originalPosition, newPosition) {
+        if (originalPosition === newPosition) {
+          return;
+        }
 
         var columns = grid.columns;
 
@@ -154,6 +187,7 @@
             }
           }
           columns[newPosition] = originalColumn;
+          service.updateColumnCache(grid);
           grid.queueGridRefresh();
           $timeout(function () {
             grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );

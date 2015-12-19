@@ -457,8 +457,8 @@
    */
 
   module.directive('uiGridCell',
-    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService', '$rootScope',
-      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService, $rootScope) {
+    ['$compile', '$injector', '$timeout', 'uiGridConstants', 'uiGridEditConstants', 'gridUtil', '$parse', 'uiGridEditService', '$rootScope', '$q',
+      function ($compile, $injector, $timeout, uiGridConstants, uiGridEditConstants, gridUtil, $parse, uiGridEditService, $rootScope, $q) {
         var touchstartTimeout = 500;
         if ($injector.has('uiGridCellNavService')) {
           var uiGridCellNavService = $injector.get('uiGridCellNavService');
@@ -483,35 +483,30 @@
             }
 
             var cellNavNavigateDereg = function() {};
+            var viewPortKeyDownDereg = function() {};
 
-            // Bind to keydown events in the render container
-            if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
-
-              uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
-                if (rowCol === null) {
-                  return;
-                }
-
-                if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
-                  //important to do this before scrollToIfNecessary
-                  beginEditKeyDown(evt);
-                 // uiGridCtrl.grid.api.core.scrollToIfNecessary(rowCol.row, rowCol.col);
-                }
-
-              });
-            }
 
             var setEditable = function() {
               if ($scope.col.colDef.enableCellEdit && $scope.row.enableCellEdit !== false) {
-                registerBeginEditEvents();
+                if (!$scope.beginEditEventsWired) { //prevent multiple attachments
+                  registerBeginEditEvents();
+                }
               } else {
-                cancelBeginEditEvents();
+                if ($scope.beginEditEventsWired) {
+                  cancelBeginEditEvents();
+                }
               }
             };
 
             setEditable();
 
-            var rowWatchDereg = $scope.$watch( 'row', setEditable );
+            var rowWatchDereg = $scope.$watch('row', function (n, o) {
+              if (n !== o) {
+                setEditable();
+              }
+            });
+
+
             $scope.$on( '$destroy', rowWatchDereg );
 
             function registerBeginEditEvents() {
@@ -521,9 +516,23 @@
               $elm.on('touchstart', touchStart);
 
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
+
+                viewPortKeyDownDereg = uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
+                  if (rowCol === null) {
+                    return;
+                  }
+
+                  if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
+                    //important to do this before scrollToIfNecessary
+                    beginEditKeyDown(evt);
+                  }
+                });
+
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
-                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
+                    // Don't begin edit if the cell hasn't changed
+                    if ((!oldRowCol || newRowCol.row !== oldRowCol.row || newRowCol.col !== oldRowCol.col) &&
+                      newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
                       $timeout(function () {
                         beginEdit();
                       });
@@ -532,7 +541,7 @@
                 });
               }
 
-
+              $scope.beginEditEventsWired = true;
 
             }
 
@@ -569,6 +578,8 @@
               $elm.off('keydown', beginEditKeyDown);
               $elm.off('touchstart', touchStart);
               cellNavNavigateDereg();
+              viewPortKeyDownDereg();
+              $scope.beginEditEventsWired = false;
             }
 
             function beginEditKeyDown(evt) {
@@ -636,6 +647,40 @@
              *      columnDefs: [
              *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
              *          editDropdownRowEntityOptionsArrayPath: 'foo.bars[0].baz',
+             *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+             *      ],
+             *  </pre>
+             *
+             */
+            /**
+             *  @ngdoc service
+             *  @name editDropdownOptionsFunction
+             *  @methodOf ui.grid.edit.api:ColumnDef
+             *  @description a function returning an array of values in the format
+             *  [ {id: xxx, value: xxx} ], which will be used to populate
+             *  the edit dropdown.  This can be used when the dropdown values are dependent on
+             *  the backing row entity with some kind of algorithm.
+             *  If this property is set then both editDropdownOptionsArray and 
+             *  editDropdownRowEntityOptionsArrayPath will be ignored.
+             *  @param {object} rowEntity the options.data element that the returned array refers to
+             *  @param {object} colDef the column that implements this dropdown
+             *  @returns {object} an array of values in the format
+             *  [ {id: xxx, value: xxx} ] used to populate the edit dropdown
+             *  @example
+             *  <pre>
+             *    $scope.gridOptions = {
+             *      columnDefs: [
+             *        {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor',
+             *          editDropdownOptionsFunction: function(rowEntity, colDef) {
+             *            if (rowEntity.foo === 'bar') {
+             *              return [{id: 'bar1', value: 'BAR 1'},
+             *                      {id: 'bar2', value: 'BAR 2'},
+             *                      {id: 'bar3', value: 'BAR 3'}];
+             *            } else {
+             *              return [{id: 'foo1', value: 'FOO 1'},
+             *                      {id: 'foo2', value: 'FOO 2'}];
+             *            }
+             *          },
              *          editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
              *      ],
              *  </pre>
@@ -720,12 +765,24 @@
               }
               html = html.replace('INPUT_TYPE', inputType);
 
-              var editDropdownRowEntityOptionsArrayPath = $scope.col.colDef.editDropdownRowEntityOptionsArrayPath;
-              if (editDropdownRowEntityOptionsArrayPath) {
-                $scope.editDropdownOptionsArray =  resolveObjectFromPath($scope.row.entity, editDropdownRowEntityOptionsArrayPath);
-              }
-              else {
-                $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+              // In order to fill dropdown options we use:
+              // - A function/promise or
+              // - An array inside of row entity if no function exists or
+              // - A single array for the whole column if none of the previous exists.
+              var editDropdownOptionsFunction = $scope.col.colDef.editDropdownOptionsFunction;
+              if (editDropdownOptionsFunction) {
+                $q.when(editDropdownOptionsFunction($scope.row.entity, $scope.col.colDef))
+                        .then(function(result) {
+                  $scope.editDropdownOptionsArray = result;
+                });
+              } else {
+                var editDropdownRowEntityOptionsArrayPath = $scope.col.colDef.editDropdownRowEntityOptionsArrayPath;
+                if (editDropdownRowEntityOptionsArrayPath) {
+                  $scope.editDropdownOptionsArray =  resolveObjectFromPath($scope.row.entity, editDropdownRowEntityOptionsArrayPath);
+                }
+                else {
+                  $scope.editDropdownOptionsArray = $scope.col.colDef.editDropdownOptionsArray;
+                }
               }
               $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';
               $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';
@@ -749,6 +806,9 @@
 
               //stop editing when grid is scrolled
               var deregOnGridScroll = $scope.col.grid.api.core.on.scrollBegin($scope, function () {
+                if ($scope.grid.disableScrolling) {
+                  return;
+                }
                 endEdit();
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
                 deregOnGridScroll();
@@ -785,14 +845,14 @@
               if (!inEdit) {
                 return;
               }
-              
+
               //sometimes the events can't keep up with the keyboard and grid focus is lost, so always focus
               //back to grid here. The focus call needs to be before the $destroy and removal of the control,
               //otherwise ng-model-options of UpdateOn: 'blur' will not work.
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                 uiGridCtrl.focus();
               }
-              
+
               var gridCellContentsEl = angular.element($elm.children()[0]);
               //remove edit element
               editCellScope.$destroy();
@@ -874,7 +934,21 @@
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function (evt,triggerEvent) {
                   $timeout(function () {
                     $elm[0].focus();
-                    $elm[0].select();
+                    //only select text if it is not being replaced below in the cellNav viewPortKeyPress
+                    if ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav)) {
+                      $elm[0].select();
+                    }
+                    else {
+                      //some browsers (Chrome) stupidly, imo, support the w3 standard that number, email, ...
+                      //fields should not allow setSelectionRange.  We ignore the error for those browsers
+                      //https://www.w3.org/Bugs/Public/show_bug.cgi?id=24796
+                      try {
+                        $elm[0].setSelectionRange($elm[0].value.length, $elm[0].value.length);
+                      }
+                      catch (ex) {
+                        //ignore
+                      }
+                    }
                   });
 
                   //set the keystroke that started the edit event
@@ -884,7 +958,7 @@
                   if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                     var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
                       if (uiGridEditService.isStartEditKey(evt)) {
-                        ngModel.$setViewValue(String.fromCharCode(evt.keyCode), evt);
+                        ngModel.$setViewValue(String.fromCharCode( typeof evt.which === 'number' ? evt.which : evt.keyCode), evt);
                         ngModel.$render();
                       }
                       viewPortKeyDownUnregister();

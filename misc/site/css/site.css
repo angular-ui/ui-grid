@@ -108,6 +108,14 @@ body {
   }
 }
 
+.nav-gitter-link{
+  padding-right: 20px;
+}
+
+.nav-gitter-image{
+  vertical-align: inherit;
+}
+
 .space-before {
   padding-top: 8px;
 }
@@ -147,7 +155,7 @@ body {
 }
 
 .feature-heading {
-  padding-top 30px;
+  padding-top: 30px;
   text-align: center;
   min-width: 100%;
 }
@@ -221,4 +229,9 @@ p.modal-message {
 
 .info-link {
   color: #34EFBB;
+}
+
+.gitter-chat-embed{
+  /*XXX:HACK to get the chat to show up over the header bar*/
+  z-index: 5000 important!;
 }
