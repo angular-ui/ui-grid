@@ -313,7 +313,8 @@
 
                   previousMouseX = event.pageX;
                   totalMouseMovement = 0;
-                  rightMoveLimit = gridLeft + $scope.grid.getViewportWidth();
+                  rightMoveLimit = gridLeft + $scope.grid.renderContainers.body.headerCanvas.offsetWidth;
+
 
                   if ( event.type === 'mousedown' ){
                     $document.on('mousemove', moveFn);
@@ -336,7 +337,7 @@
                     cloneElement();
                   }
                   else if (elmCloned) {
-                    moveElement(changeValue);
+                    moveElement(changeValue,event);
                     previousMouseX = event.pageX;
                   }
                 };
@@ -446,9 +447,9 @@
                     elmLeft = $elm[0].offsetLeft + $elm[0].offsetWidth - $elm[0].getBoundingClientRect().width;
                   }
                   else {
-                    elmLeft = $elm[0].getBoundingClientRect().left;
+                    elmLeft = $elm[0].offsetLeft;
                   }
-                  movingElementStyles.left = (elmLeft - gridLeft) + 'px';
+                  movingElementStyles.left = elmLeft + 'px';
                   var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
                   var elmRight = $elm[0].getBoundingClientRect().right;
                   if (elmRight > gridRight) {
@@ -458,7 +459,7 @@
                   movingElm.css(movingElementStyles);
                 };
 
-                var moveElement = function (changeValue) {
+                var moveElement = function (changeValue,event) {
                   //Calculate total column width
                   var columns = $scope.grid.columns;
                   var totalColumnWidth = 0;
@@ -469,23 +470,56 @@
                   }
 
                   //Calculate new position of left of column
-                  var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
-                  var currentElmRight = movingElm[0].getBoundingClientRect().right;
-                  var newElementLeft;
+                  var currentElmLeft = movingElm[0].offsetLeft;
+									var newElementLeft;
+									
+									newElementLeft = currentElmLeft + changeValue;
 
-                  newElementLeft = currentElmLeft - gridLeft + changeValue;
-                  newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
+                  //Calculate cursor position relative to .ui-grid-header-canvas
+									var pageX = gridUtil.closestElm(movingElm, '.ui-grid-render-container').querySelectorAll('.ui-grid-viewport')[0].scrollLeft + event.pageX - gridLeft;
 
-                  //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
-                  if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
-                    movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
-                  }
-                  else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
-                    changeValue *= 8;
-                    var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
-                    scrollEvent.x = {pixels: changeValue};
-                    scrollEvent.grid.scrollContainers('',scrollEvent);
-                  }
+									//Calculate cursor position relative to .ui-grid-header-cell-wrapper
+									//NOTE: ui-grid change position of .ui-grid-header-cell-wrapper, if move table horizontal scroll
+									var wrapperX = pageX - movingElm[0].offsetParent.offsetLeft;
+									
+									var widthPinnedContainer = 0,
+										pinnedContainer = gridUtil.closestElm(movingElm, '.ui-grid-render-container').querySelectorAll('.ui-grid-pinned-container')[0];
+
+									if (pinnedContainer) {
+										widthPinnedContainer = pinnedContainer.offsetWidth;
+									}
+
+									if (newElementLeft > wrapperX) {
+										newElementLeft = wrapperX - 30 - widthPinnedContainer;
+									}
+									else if (newElementLeft + movingElm[0].offsetWidth < wrapperX) {
+										newElementLeft = wrapperX + 30 + widthPinnedContainer;
+									}
+
+									//Table with scroll case
+									if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
+										var scrollEvent;
+
+										//Need scrolling to right
+										if ($scope.grid.element[0].offsetWidth - event.clientX <= 30 && changeValue > 0 && rightMoveLimit - pageX > 50) {
+											scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
+											scrollEvent.x = {pixels: 30};
+											scrollEvent.grid.scrollContainers('', scrollEvent);
+											newElementLeft += 30;
+										}
+										//Need scrolling to left
+										else if (event.clientX - gridLeft <= 30 && changeValue < 0 && pageX - gridLeft > 50) {
+											scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
+											scrollEvent.x = {pixels: -30};
+											scrollEvent.grid.scrollContainers('', scrollEvent);
+											newElementLeft -= 30;
+										}
+									}
+
+									//Moving column
+									if ((currentElmLeft >= gridLeft || changeValue !== 0)) {
+										movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
+									}
 
                   //Calculate total width of columns on the left of the moving column and the mouse movement
                   var totalColumnsLeftWidth = 0;
