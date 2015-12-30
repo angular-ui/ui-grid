@@ -893,7 +893,10 @@
 
             function registerRowSelectionEvents() {
               if ($scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection) {
-                $elm.addClass('ui-grid-disable-selection');
+                if (!$scope.grid.options.enableRowHeaderSelection){
+                  $elm.addClass('ui-grid-disable-selection');
+                }
+
                 $elm.on('touchstart', touchStart);
                 $elm.on('touchend', touchEnd);
                 $elm.on('click', selectCells);
