@@ -40,6 +40,7 @@ describe('GridOptions factory', function () {
         wheelScrollThrottle: 70,
         scrollDebounce: 300,
         enableSorting: true,
+        enableSortingPriority: true,
         enableFiltering: false,
         enableColumnMenus: true,
         enableVerticalScrollbar: 1,
