@@ -7,11 +7,11 @@
       $delegate.add('pl', {
         headerCell: {
           aria: {
-            defaultFilterLabel: 'Filter dla kolumny',
-            removeFilter: 'Usuń filter',
+            defaultFilterLabel: 'Filtr dla kolumny',
+            removeFilter: 'Usuń filtr',
             columnMenuButtonLabel: 'Menu kolumny'
           },
-          priority: 'Prioritet:',
+          priority: 'Priorytet:',
           filterLabel: "Filtr dla kolumny: "
         },
         aggregate: {
@@ -41,7 +41,7 @@
           remove: 'Wyłącz sortowanie'
         },
         column: {
-          hide: 'Ukryj kolumne'
+          hide: 'Ukryj kolumnę'
         },
         aggregation: {
           count: 'Razem pozycji: ',
@@ -60,7 +60,7 @@
         },
         gridMenu: {
           aria: {
-            buttonLabel: 'Menu Grida'
+            buttonLabel: 'Menu tabelki'
           },
           columns: 'Kolumny:',
           importerTitle: 'Importuj plik',
@@ -74,10 +74,10 @@
         },
         importer: {
           noHeaders: 'Nie udało się wczytać nazw kolumn. Czy plik posiada nagłówek?',
-          noObjects: 'Nie udalo się wczytać pozycji. Czy plik zawiera dane??',
-          invalidCsv: 'Nie udało się przetworzyć pliku, jest to prawidlowy plik CSV??',
-          invalidJson: 'Nie udało się przetworzyć pliku, jest to prawidlowy plik Json?',
-          jsonNotArray: 'Importowany plik json musi zawierać tablicę, importowanie przerwane.'
+          noObjects: 'Nie udalo się wczytać pozycji. Czy plik zawiera dane?',
+          invalidCsv: 'Nie udało się przetworzyć pliku. Czy to prawidłowy plik CSV?',
+          invalidJson: 'Nie udało się przetworzyć pliku. Czy to prawidłowy plik JSON?',
+          jsonNotArray: 'Importowany plik JSON musi zawierać tablicę. Importowanie przerwane.'
         },
         pagination: {
           aria: {
