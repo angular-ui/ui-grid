@@ -188,7 +188,7 @@ pip-log.txt
 ## JetBrains
 #################
 .idea
-ng-grid.iml
+*.iml
 
 
 #################
