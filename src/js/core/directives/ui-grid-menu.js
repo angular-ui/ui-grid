@@ -45,6 +45,20 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
       var menuMid;
       var $animate;
+      var gridMenuMaxHeight;
+
+      $scope.dynamicStyles = '';
+
+      if (uiGridCtrl) {
+        // magic number of 30 because the grid menu displays somewhat below
+        // the top of the grid. It is approximately 30px.
+        gridMenuMaxHeight = uiGridCtrl.grid.gridHeight - 30;
+        $scope.dynamicStyles = [
+          '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
+            'max-height: ' + gridMenuMaxHeight + 'px;',
+          '}'
+        ].join(' ');
+      }
 
       $scope.i18n = {
         close: i18nService.getSafeText('columnMenu.close')

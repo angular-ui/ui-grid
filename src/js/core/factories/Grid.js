@@ -2332,7 +2332,7 @@ angular.module('ui.grid')
         //}
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-        var pixelsToSeeRow = ((seekRowIndex + 1) * self.options.rowHeight);
+        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight + self.headerHeight);
 
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
