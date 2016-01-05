@@ -78,6 +78,8 @@
         }
       }
 
+      var mostRecentData;
+
       function dataWatchFunction(newData) {
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
@@ -89,6 +91,8 @@
             newData = $scope.uiGrid.data;
           }
         }
+
+        mostRecentData = newData;
 
         if (newData) {
           // columns length is greater than the number of row header columns, which don't count because they're created automatically
@@ -118,7 +122,8 @@
           }
 
           $q.all(promises).then(function() {
-            self.grid.modifyRows(newData)
+            // use most recent data, rather than the potentially outdated data passed into watcher handler
+            self.grid.modifyRows(mostRecentData)
               .then(function () {
                 // if (self.viewport) {
                   self.grid.redrawInPlace(true);
