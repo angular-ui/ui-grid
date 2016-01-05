@@ -68,6 +68,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       var menuMid;
       var $animate;
       var parent = $elm.context.parentNode;
+      var grid;
+      if ( uiGridCtrl ) {
+        grid = uiGridCtrl.grid;
+      }
 
       $scope.i18n = {
         close: i18nService.getSafeText('columnMenu.close')
@@ -94,9 +98,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             var parentPos = parent.getBoundingClientRect();
             angular.element($document.context.body).append($elm);
             var width = $document.context.body.clientWidth;
+            // If the grid has a header, account for it when positioning the menu.
+            var headerHeight = (grid && grid.headerHeight) ? grid.headerHeight : 0;
             angular.element($elm).css({
               "position":"absolute",
-              "top": parentPos.top + "px",
+              "top": parseInt(parentPos.top + headerHeight) + "px",
               "right": parseInt(width - parentPos.right) + "px"
             });
             angular.element($elm).addClass("ui-grid");
