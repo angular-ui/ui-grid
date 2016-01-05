@@ -278,7 +278,7 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
 
             // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
             if (grid.gridHeight <= grid.options.rowHeight && grid.options.enableMinHeightCheck) {
-              autoAdjustHeight();
+              grid.autoAdjustHeight();
             }
 
             // Run initial canvas refresh
