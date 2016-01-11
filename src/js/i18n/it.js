@@ -72,6 +72,12 @@
           aggregate_min: 'Agg: Minimo',
           aggregate_avg: 'Agg: Media',
           aggregate_remove: 'Agg: Rimuovi'
+        },
+        validate: {
+          error: 'Errore:',
+          minLength: 'Lunghezza minima pari a THRESHOLD caratteri.',
+          maxLength: 'Lunghezza massima pari a THRESHOLD caratteri.',
+          required: 'Necessario inserire un valore.'
         }
       });
       return $delegate;
