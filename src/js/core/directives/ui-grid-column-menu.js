@@ -336,8 +336,6 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
     templateUrl: 'ui-grid/uiGridColumnMenu',
     replace: true,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      var self = this;
-
       uiGridColumnMenuService.initialize( $scope, uiGridCtrl );
 
       $scope.defaultMenuItems = uiGridColumnMenuService.getDefaultMenuItems( $scope );
@@ -375,7 +373,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
           $scope.$broadcast('hide-menu', { originalEvent: event });
         } else {
-          self.shown = $scope.menuShown = true;
+          $scope.menuShown = true;
           uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
 
           $scope.colElement = $columnElement;
