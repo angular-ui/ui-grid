@@ -76,6 +76,12 @@ Feature           | Release state
 
 For more details on the features check the [Tutorials](http://ui-grid.info/docs/#/tutorial).
 
+# Plugins
+
+UI-Grid has an excellent plugin system. Most new features can be added as plugins. Please see some discussion of that in the [Developer guidelines](DEVELOPER.md).
+There is a [list of known plugins](http://ui-grid.info/docs/#/tutorial/299_third_party_features) on the tutorial site. If you would
+like your plugin added to that list, please [edit the tutorial page](misc/tutorial/299_third_party_features.ngdoc) and send a pull request.
+
 # Building
 
 Install dependencies
