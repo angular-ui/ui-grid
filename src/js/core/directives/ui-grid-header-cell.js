@@ -31,14 +31,20 @@
               headerCell: i18nService.getSafeText('headerCell'),
               sort: i18nService.getSafeText('sort')
             };
+            $scope.isSortPriorityVisible = function() {
+              //show sort priority if column is sorted and there is at least one other sorted column
+              return $scope.col.sort.priority && $scope.grid.columns.some(function(element, index){
+                  return element.sort.priority && element !== $scope.col;
+                });
+            };
             $scope.getSortDirectionAriaLabel = function(){
               var col = $scope.col;
               //Trying to recreate this sort of thing but it was getting messy having it in the template.
               //Sort direction {{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending':'none')}}. {{col.sort.priority ? {{columnPriorityText}} {{col.sort.priority}} : ''}
               var sortDirectionText = col.sort.direction === uiGridConstants.ASC ? $scope.i18n.sort.ascending : ( col.sort.direction === uiGridConstants.DESC ? $scope.i18n.sort.descending : $scope.i18n.sort.none);
               var label = sortDirectionText;
-              //Append the priority if it exists
-              if (col.sort.priority) {
+
+              if ($scope.isSortPriorityVisible()) {
                 label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + col.sort.priority;
               }
               return label;
