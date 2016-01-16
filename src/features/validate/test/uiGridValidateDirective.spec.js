@@ -72,7 +72,7 @@ describe('uiGridValidateDirective', function () {
       
       switch (cellValue) {
         case 'A1':
-          cell.find('input').val('').trigger('input');
+          cell.find('input').controller('ng-model').$setViewValue('');
           event = jQuery.Event("keydown");
           event.keyCode = uiGridConstants.keymap.TAB;
           cell.find('input').trigger(event);
@@ -80,7 +80,7 @@ describe('uiGridValidateDirective', function () {
           expect(cellContent.classList.contains('invalid')).toBe(true);
           break;
         case 'B1':
-          cell.find('input').val('B').trigger('input');
+          cell.find('input').controller('ng-model').$setViewValue('B');
           event = jQuery.Event("keydown");
           event.keyCode = uiGridConstants.keymap.TAB;
           cell.find('input').trigger(event);
@@ -88,7 +88,7 @@ describe('uiGridValidateDirective', function () {
           expect(cellContent.classList.contains('invalid')).toBe(true);
           break;
         case 'A2':
-          cell.find('input').val('A').trigger('input');
+          cell.find('input').controller('ng-model').$setViewValue('A');
           event = jQuery.Event("keydown");
           event.keyCode = uiGridConstants.keymap.TAB;
           cell.find('input').trigger(event);
@@ -96,7 +96,7 @@ describe('uiGridValidateDirective', function () {
           expect(cellContent.classList.contains('invalid')).toBe(false);
           break;
         case 'B2':
-          cell.find('input').val('B2+').trigger('input');
+          cell.find('input').controller('ng-model').$setViewValue('B2+');
           event = jQuery.Event("keydown");
           event.keyCode = uiGridConstants.keymap.TAB;
           cell.find('input').trigger(event);
@@ -121,7 +121,7 @@ describe('uiGridValidateDirective', function () {
     $timeout.flush();
     expect(cell.find('input').length).toBe(1);
 
-    cell.find('input').val('').trigger('input');
+    cell.find('input').controller('ng-model').$setViewValue('');
     event = jQuery.Event("keydown");
     event.keyCode = uiGridConstants.keymap.TAB;
     cell.find('input').trigger(event);
@@ -132,7 +132,7 @@ describe('uiGridValidateDirective', function () {
     $timeout.flush();
     expect(cell.find('input').length).toBe(1);
 
-    cell.find('input').val('A1').trigger('input');
+    cell.find('input').controller('ng-model').$setViewValue('A1');
     event = jQuery.Event("keydown");
     event.keyCode = uiGridConstants.keymap.TAB;
     cell.find('input').trigger(event);
@@ -165,7 +165,7 @@ describe('uiGridValidateDirective', function () {
     $timeout.flush();
     expect(cell.find('input').length).toBe(1);
 
-    cell.find('input').val('B').trigger('input');
+    cell.find('input').controller('ng-model').$setViewValue('B');
     event = jQuery.Event("keydown");
     event.keyCode = uiGridConstants.keymap.TAB;
     cell.find('input').trigger(event);
