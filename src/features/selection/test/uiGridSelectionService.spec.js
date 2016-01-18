@@ -88,6 +88,13 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
     });
 
+    it('should update selectedCount', function () {
+      uiGridSelectionService.toggleRowSelection(grid, grid.rows[0]);
+      expect(grid.api.selection.getSelectedCount()).toBe(1);
+      uiGridSelectionService.clearSelectedRows(grid);
+      expect(grid.api.selection.getSelectedCount()).toBe(0);
+    });
+
     it('should utilize public apis', function () {
       grid.api.selection.toggleRowSelection(grid.rows[0].entity);
       expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);
