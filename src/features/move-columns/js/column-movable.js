@@ -303,7 +303,7 @@
                 var movingElm;
                 var reducedWidth;
                 var moveOccurred = false;
-
+                var containerBody = uiGridCtrl.grid.element[0].querySelectorAll('[container-id="\'body\'"]')[0];
                 var downFn = function( event ){
                   //Setting some variables required for calculations.
                   gridLeft = $scope.grid.element[0].getBoundingClientRect().left;
@@ -326,7 +326,9 @@
 
                 var moveFn = function( event ) {
                   var changeValue = event.pageX - previousMouseX;
-                  if ( changeValue === 0 ){ return; }
+                  var clientRects = containerBody.getBoundingClientRect();
+
+                  if ( changeValue === 0 || event.pageX < clientRects.left || event.pageX > clientRects.left + clientRects.width){ return; }
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
 
@@ -469,8 +471,8 @@
 
                   //Update css of moving column to adjust to new left value or fire scroll in case column has reached edge of grid
                   if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
-                    movingElm.css({visibility: 'visible', 'left': (movingElm[0].offsetLeft + 
-                      (newElementLeft < rightMoveLimit ? changeValue : (rightMoveLimit - currentElmLeft))) + 'px'});
+                    movingElm.css({visibility: 'visible', 'left': (movingElm[0].offsetLeft +
+                    (newElementLeft < rightMoveLimit ? changeValue : (rightMoveLimit - currentElmLeft))) + 'px'});
                   }
                   else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
                     changeValue *= 8;
