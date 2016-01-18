@@ -1,14 +1,12 @@
 describe('ui.grid.validate uiGridValidateService', function () {
   var uiGridValidateService;
   var $rootScope;
-  var $q;
 
   beforeEach(module('ui.grid.validate'));
 
-  beforeEach(inject(function (_uiGridValidateService_, _$rootScope_, _$q_) {
+  beforeEach(inject(function (_uiGridValidateService_, _$rootScope_) {
     uiGridValidateService = _uiGridValidateService_;
     $rootScope = _$rootScope_;
-    $q = _$q_;
   }));
 
   it('should create an empty validatorFactories object', function() {
