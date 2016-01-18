@@ -269,7 +269,7 @@
                 var movingElm;
                 var reducedWidth;
                 var moveOccurred = false;
-
+                var containerBody = uiGridCtrl.grid.element[0].querySelectorAll('[container-id="\'body\'"]')[0];
                 var downFn = function( event ){
                   //Setting some variables required for calculations.
                   gridLeft = $scope.grid.element[0].getBoundingClientRect().left;
@@ -292,7 +292,9 @@
 
                 var moveFn = function( event ) {
                   var changeValue = event.pageX - previousMouseX;
-                  if ( changeValue === 0 ){ return; }
+                  var clientRects = containerBody.getBoundingClientRect();
+
+                  if ( changeValue === 0 || event.pageX < clientRects.left || event.pageX > clientRects.left + clientRects.width){ return; }
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
 
