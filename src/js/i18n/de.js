@@ -63,8 +63,17 @@
           jsonNotArray: 'Die importierte JSON-Datei muß ein Array enthalten. Breche Import ab.'
         },
         pagination: {
+			    aria: {
+            pageToFirst: 'Erste Seite',
+            pageBack: 'Seite zurück',
+            pageSelected: 'Ausgewählte Seite',
+            pageForward: 'Seite vorwärts',
+            pageToLast: 'Letzte Seite'
+          },
             sizes: 'Einträge pro Seite',
-            totalItems: 'Einträge'
+            totalItems: 'Einträge',
+		       	through: 'durch',
+            of: 'von'
         },
         grouping: {
             group: 'Gruppieren',
