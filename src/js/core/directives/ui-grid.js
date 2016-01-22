@@ -67,7 +67,7 @@
 
       function columnDefsWatchFunction(n, o) {
         if (n && n !== o) {
-          self.grid.options.columnDefs = n;
+          self.grid.options.columnDefs = $scope.uiGrid.columnDefs;
           self.grid.buildColumns({ orderByColumnDefs: true })
             .then(function(){
 
