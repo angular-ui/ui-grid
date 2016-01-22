@@ -411,7 +411,7 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
 
       expect( onSortChangedHook ).toHaveBeenCalledWith(
         grid,
-        [ grid.getOnlyDataColumns()[2], grid.getOnlyDataColumns()[3] ]
+        [ grid.getOnlyDataColumns()[3], grid.getOnlyDataColumns()[2] ]
       );
     });
 
