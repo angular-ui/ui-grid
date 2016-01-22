@@ -397,7 +397,7 @@ angular.module('ui.grid')
      * @methodOf  ui.grid.core.api:PublicApi
      * @description The visibility of a column has changed,
      * the column itself is passed out as a parameter of the event.
-     * 
+     *
      * @param {$scope} scope The scope of the controller. This is used to deregister this event when the scope is destroyed.
      * @param {Function} callBack Will be called when the event is emited. The function passes back the GridCol that has changed.
      *
@@ -1087,17 +1087,17 @@ angular.module('ui.grid')
    *   append to the newRows and add to newHash
    *   run the processors
    * ```
-   * 
+   *
    * Rows are identified using the hashKey if configured.  If not configured, then rows
    * are identified using the gridOptions.rowEquality function
-   * 
+   *
    * This method is useful when trying to select rows immediately after loading data without
    * using a $timeout/$interval, e.g.:
-   * 
+   *
    *   $scope.gridOptions.data =  someData;
    *   $scope.gridApi.grid.modifyRows($scope.gridOptions.data);
    *   $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
-   * 
+   *
    * OR to persist row selection after data update (e.g. rows selected, new data loaded, want
    * originally selected rows to be re-selected))
    */
@@ -1876,12 +1876,12 @@ angular.module('ui.grid')
         p = 0;
 
     self.columns.forEach(function (col) {
-      if (col.sort && col.sort.priority && col.sort.priority > p) {
-        p = col.sort.priority;
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority >= p) {
+        p = col.sort.priority + 1;
       }
     });
 
-    return p + 1;
+    return p;
   };
 
   /**
@@ -1960,7 +1960,7 @@ angular.module('ui.grid')
 
     if (!add) {
       self.resetColumnSorting(column);
-      column.sort.priority = 0;
+      column.sort.priority = undefined;
       // Get the actual priority since there may be columns which have suppressRemoveSort set
       column.sort.priority = self.getNextColumnSortPriority();
     }
