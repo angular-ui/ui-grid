@@ -43,16 +43,29 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      var self = this;
       var menuMid;
       var $animate;
+      var gridMenuMaxHeight;
+
+      $scope.dynamicStyles = '';
+
+      if (uiGridCtrl) {
+        // magic number of 30 because the grid menu displays somewhat below
+        // the top of the grid. It is approximately 30px.
+        gridMenuMaxHeight = uiGridCtrl.grid.gridHeight - 30;
+        $scope.dynamicStyles = [
+          '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
+            'max-height: ' + gridMenuMaxHeight + 'px;',
+          '}'
+        ].join(' ');
+      }
 
       $scope.i18n = {
         close: i18nService.getSafeText('columnMenu.close')
       };
 
     // *** Show/Hide functions ******
-      self.showMenu = $scope.showMenu = function(event, args) {
+      $scope.showMenu = function(event, args) {
         if ( !$scope.shown ){
 
           /*
@@ -96,7 +109,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       };
 
 
-      self.hideMenu = $scope.hideMenu = function(event, args) {
+      $scope.hideMenu = function(event, args) {
         if ( $scope.shown ){
           /*
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to

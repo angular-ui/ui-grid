@@ -70,15 +70,22 @@
       </p>
     </div>
   </div>
-  
+
   <div ng-cloak class="container-fluid" id="customizerApp" ng-controller='Main'>
     <br>
 
-    <h2 class="text-center">Grid Customizer</h2>
-    
+    <h1 class="text-center">Grid Customizer</h2>
     <br>
 
     <div class="row">
+      <div class="col-md-12">
+        <span class="col-xs-12 alert alert-warning text-center">
+          NOTE: The customizer currently only works with LESS defined for the core.
+          Less for the features are not currently compiled into the included download.
+          <br>
+          We are open to Pull Requests that fix this problem.
+        </span>
+      </div>
       <div class="col-md-12">
         <button type="button" class="btn btn-success" ng-click="resetVariables()">Reset Variables</button>
         &nbsp;
@@ -127,26 +134,27 @@
                 height: 300px;
               }
             </style>
-            
+
             <style ui-grid-style>
               {{ css }}
             </style>
-            
+
             <div class="grid" ui-grid="gridOptions"></div>
           </div>
         </div>
+        <div class="col-xs-6 col-md-8">
+          <form>
+            <label for="customLess">Custom Less</label>
+            <textarea class="form-control" id="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
+          </form>
+        </div>
       </div>
-  
+
       <div class="text-error">{{ cssErr }}</div>
-  
-      <br>
-  
-      <label for="customLess">Custom Less</label>
-      <textarea class="col-xs-12" class="form-control" id="customLess" rows="4" ng-model="customLess" ng-change="updateCSS()" ng-init="customLess = ''"></textarea>
-  
+
       <br>
       <br>
-    </div>    
+    </div>
 
     <div ng-cloak ng-show="showDownload" class="modal">
       <div class="modal-dialog">
@@ -162,7 +170,7 @@
             <p class="modal-message">
               <strong>Size:</strong> {{ cssSize() }}
             </p>
-    
+
             <textarea hover-select row="20" class="compiled-css col-xs-12" readonly>{{ css }}</textarea>
             <p class="modal-message">
               Hover then copy and paste the CSS.
@@ -183,8 +191,20 @@
     <!-- <div style="min-height: 4000px"></div> -->
   </div>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.0/less.min.js"></script>
+  <script>
+  less = {
+    env: "development",
+    logLevel: 2,
+    async: false,
+    fileAsync: false,
+    poll: 1000,
+    functions: {},
+    dumpLineNumbers: "comments",
+    relativeUrls: false,
+  }
+  </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 
   <!--
@@ -197,7 +217,7 @@
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <!--  <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script> -->
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
 
   <script>
     var s = document.createElement('script');

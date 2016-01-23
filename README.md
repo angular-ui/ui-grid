@@ -1,6 +1,9 @@
 # UI-Grid : An AngularJS data grid
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
+[![npm](https://img.shields.io/npm/dt/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
@@ -8,7 +11,7 @@
 
 Head to http://ui-grid.info for documentation and tutorials. Join https://gitter.im/angular-ui/ui-grid to discuss development and ask for specific help.
 
-We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md) 
+We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md)
 
 Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/angular-ui/ui-grid/issues?q=is%3Aopen+is%3Aissue+label%3A%22PRs+plz%21%22) issues.
 
@@ -45,9 +48,7 @@ You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in t
 
 # Angular Compatibility
 
-UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.3.x.
-
-1.4.x+ support is coming soon. If you would like to help please see issue [#3658](https://github.com/angular-ui/ui-grid/issues/3658).
+UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.4.x.
 
 # Feature Stability
 
@@ -75,6 +76,12 @@ Feature           | Release state
 
 For more details on the features check the [Tutorials](http://ui-grid.info/docs/#/tutorial).
 
+# Plugins
+
+UI-Grid has an excellent plugin system. Most new features can be added as plugins. Please see some discussion of that in the [Developer guidelines](DEVELOPER.md).
+There is a [list of known plugins](http://ui-grid.info/docs/#/tutorial/299_third_party_features) on the tutorial site. If you would
+like your plugin added to that list, please [edit the tutorial page](misc/tutorial/299_third_party_features.ngdoc) and send a pull request.
+
 # Building
 
 Install dependencies
@@ -86,7 +93,7 @@ Install dependencies
 
     # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
-    
+
     > npm install
     > grunt install
 
@@ -121,19 +128,19 @@ You can also use the `--browsers` specify what browsers to test with (PhantomJS 
 By default the `dev` tasks runs e2e tests with protractor. If you have problems with them running slow or hanging, you can disable them with the `--no-e2e` flag:
 
     > grunt dev --no-e2e
-    
+
 The grunt task is getting slower as the body of tests gets larger.  If you're only working on the core functionality you can disable the unit tests on the features with the `--core` flag:
 
     > grunt dev --core
-    
+
 As a shortcut for options that the developers frequently use, there is also a `--fast` flag, which equates to `--core --no-e2e --angular=<latest>`:
- 
+
     > grunt dev --fast
 
 ## Karmangular
 
 The `karmangular` task runs tests serially against multiple browsers (it is used internally by the `dev` task).
-  
+
     # Run tests against all available versions of Angular on Chrome
     > grunt karmangular --browsers=Chrome
 
@@ -164,7 +171,7 @@ With the 3.0 release, the repository has been renamed from "ng-grid" to "ui-grid
 
 All network traffic to GitHub should redirect automatically but they say you should update your git remote url:
 
-  git remote set-url origin https://github.com/angular-ui/ui-grid.git
+    git remote set-url origin https://github.com/angular-ui/ui-grid.git
 
 # Thanks
 
