@@ -86,7 +86,8 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
         showTreeRowHeader: true,
         showTreeExpandNoChildren: true,
         treeRowHeaderAlwaysVisible: true,
-        treeCustomAggregations: {}
+        treeCustomAggregations: {},
+        enableExpandAll: true
       });
     });
   });
