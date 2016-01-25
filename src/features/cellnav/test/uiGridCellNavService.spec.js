@@ -20,6 +20,8 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     $templateCache.put('ui-grid/uiGridCell', '<div/>');
 
     grid = gridClassFactory.createGrid();
+    // Give the grid a meaningful height (large enough for one row to be displayed)
+    grid.gridHeight = grid.options.rowHeight + grid.headerHeight;
     //throttled scrolling isn't working in tests for some reason
     grid.options.scrollDebounce = 0;
     grid.options.columnDefs = [
@@ -216,6 +218,8 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     // these have changed to use scrollToIfNecessary, which is better code
     // but it means these unit tests are now mostly checking that it is the same it used to
     // be, not that it is giving some specified result (i.e. I just updated them to what they were)
+    // Since we set the grid height, the expected vertical scroll percentages make sense.
+    // They will be (at least when scrolling down): (seekRowIndex - visibleRows) / (totalRows - visibleRows)
     it('should request scroll to row and column', function () {
       $timeout(function () {
         grid.scrollTo(grid.options.data[4], grid.columns[4].colDef);
@@ -223,7 +227,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       $timeout.flush();
 
       expect(args.grid).toEqual(grid);
-      expect(Math.round(args.y.percentage * 10)/10).toBe(0.4);
+      expect(Math.round(args.y.percentage * 10)/10).toBe(0.3);
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
@@ -233,7 +237,8 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       });
       $timeout.flush();
 
-      expect(Math.round(args.y.percentage * 10)/10).toBe(0.1);
+      // The first row is already displayed. No scrolling necessary.
+      expect(args).toBe(null);
     });
 
     it('should request scroll to row only - last row', function () {
@@ -246,13 +251,13 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       expect(args.x).toBe(null);
     });
 
-    it('should request scroll to row only - row 4', function () {
+    it('should request scroll to row only - row 5', function () {
       $timeout(function () {
         grid.scrollTo( grid.options.data[5], null);
       });
       $timeout.flush();
 
-      expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.5);
+      expect(Math.round(args.y.percentage * 10)/10).toEqual( 0.4);
       expect(args.x).toBe(null);
     });
 
@@ -276,7 +281,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       expect(isNaN(args.x.percentage)).toEqual( true );
     });
 
-    it('should request scroll to column only - column 7', function () {
+    it('should request scroll to column only - column 8', function () {
       $timeout(function () {
         grid.scrollTo(  null, grid.columns[8].colDef);
       });

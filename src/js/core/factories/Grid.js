@@ -319,6 +319,7 @@ angular.module('ui.grid')
      *
      * At present allRowsVisible is running at 50, sort manipulations running at 60-65, filter is running at 100,
      * sort is at 200, grouping and treeview at 400-410, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
+     * At present allRowsVisible is running at 50, filter is running at 100, sort is at 200, grouping at 400, selectable rows at 500, pagination at 900 (pagination will generally want to be last)
      */
     self.api.registerMethod( 'core', 'registerRowsProcessor', this.registerRowsProcessor  );
 
@@ -1656,7 +1657,7 @@ angular.module('ui.grid')
 
     //gridUtil.logDebug('viewPortHeight', viewPortHeight);
 
-    return viewPortHeight;
+    return (viewPortHeight > 0) ? viewPortHeight : 0;
   };
 
   Grid.prototype.getViewportWidth = function getViewportWidth() {

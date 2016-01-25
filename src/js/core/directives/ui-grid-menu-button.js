@@ -295,6 +295,9 @@ angular.module('ui.grid')
           showHideColumns.push( menuItem );
         }
       });
+      showHideColumns.forEach( function (menuItem) {
+          menuItem.templateUrl = $scope.grid.options.menuItemTemplate;
+      });
       return showHideColumns;
     },
 
@@ -354,43 +357,54 @@ angular.module('ui.grid')
 
 
 
-.directive('uiGridMenuButton', ['gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 'i18nService',
-function (gridUtil, uiGridConstants, uiGridGridMenuService, i18nService) {
-
+.directive('uiGridMenuButton', ['$compile', 'gridUtil', 'uiGridConstants', 'uiGridGridMenuService', 'i18nService',
+function ($compile, gridUtil, uiGridConstants, uiGridGridMenuService, i18nService) {
+  var defaultTemplate = 'ui-grid/ui-grid-menu-button';
   return {
     priority: 0,
     scope: true,
-    require: ['^uiGrid'],
-    templateUrl: 'ui-grid/ui-grid-menu-button',
+    require: ['?^uiGrid'],
     replace: true,
+    compile: function ($elm, $attrs) {
+        return {
+            pre: function($scope, $elm, $attrs, controllers) {
+              var uiGridCtrl = controllers[0];
+              var menuButtonTemplate = (uiGridCtrl.grid && uiGridCtrl.grid.options.menuButtonTemplate) ? uiGridCtrl.grid.options.menuButtonTemplate : defaultTemplate;
+              $scope.menuTemplate = uiGridCtrl.grid.options.menuTemplate;
+              gridUtil.getTemplate(menuButtonTemplate)
+                .then(function (contents) {
+                   var template = angular.element(contents);
+                   $elm.replaceWith(template);
+                   $compile(template)($scope);
+                });
+            },
+            post: function($scope, $elm, $attrs, controllers) {
+              // For the aria label
+              $scope.i18n = {
+                aria: i18nService.getSafeText('gridMenu.aria')
+              };
+              var uiGridCtrl = controllers[0];
+              uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
+              $scope.shown = false;
 
-    link: function ($scope, $elm, $attrs, controllers) {
-      var uiGridCtrl = controllers[0];
+              $scope.toggleMenu = function () {
+                if ( $scope.shown ){
+                  $scope.$broadcast('hide-menu');
+                  $scope.shown = false;
+                } else {
+                  $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
+                  $scope.$broadcast('show-menu');
+                  $scope.shown = true;
+                }
+              };
 
-      // For the aria label
-      $scope.i18n = {
-        aria: i18nService.getSafeText('gridMenu.aria')
-      };
+              $scope.$on('menu-hidden', function() {
+                $scope.shown = false;
+                gridUtil.focus.bySelector($elm, '.ui-grid-icon-container');
+              });
+            }
 
-      uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
-
-      $scope.shown = false;
-
-      $scope.toggleMenu = function () {
-        if ( $scope.shown ){
-          $scope.$broadcast('hide-menu');
-          $scope.shown = false;
-        } else {
-          $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
-          $scope.$broadcast('show-menu');
-          $scope.shown = true;
-        }
-      };
-
-      $scope.$on('menu-hidden', function() {
-        $scope.shown = false;
-        gridUtil.focus.bySelector($elm, '.ui-grid-icon-container');
-      });
+        };
     }
   };
 

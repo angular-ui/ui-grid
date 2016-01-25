@@ -50,6 +50,9 @@ describe('GridOptions factory', function () {
         headerTemplate: null,
         footerTemplate: 'ui-grid/ui-grid-footer',
         gridFooterTemplate: 'ui-grid/ui-grid-grid-footer',
+        menuButtonTemplate: null,
+        menuTemplate: null,
+        menuItemTemplate: null,
         rowTemplate: 'ui-grid/ui-grid-row',
         appScopeProvider: null
       });
@@ -95,6 +98,9 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
@@ -138,6 +144,9 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
@@ -184,6 +193,9 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption'
       };
@@ -226,6 +238,9 @@ describe('GridOptions factory', function () {
         headerTemplate: 'testHeader',
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
+        menuButtonTemplate: 'testMenuButton',
+        menuTemplate: 'testMenu',
+        menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
         extraOption: 'testExtraOption',
         appScopeProvider : null

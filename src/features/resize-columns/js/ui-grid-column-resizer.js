@@ -201,57 +201,59 @@
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             var grid = uiGridCtrl.grid;
 
-            if (grid.options.enableColumnResizing) {
-              var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
+            var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
 
-              var rtlMultiplier = 1;
-              //when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
-              if (grid.isRTL()) {
-                $scope.position = 'left';
-                rtlMultiplier = -1;
+            var rtlMultiplier = 1;
+            //when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
+            if (grid.isRTL()) {
+              $scope.position = 'left';
+              rtlMultiplier = -1;
+            }
+
+            var displayResizers = function(){
+
+              // remove any existing resizers.
+              var resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
+              for ( var i = 0; i < resizers.length; i++ ){
+                angular.element(resizers[i]).remove();
               }
 
-              var displayResizers = function(){
+              if (!grid.options.enableColumnResizing) {
+                return;
+              }
 
-                // remove any existing resizers.
-                var resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
-                for ( var i = 0; i < resizers.length; i++ ){
-                  angular.element(resizers[i]).remove();
-                }
+              // get the target column for the left resizer
+              var otherCol = uiGridResizeColumnsService.findTargetCol($scope.col, 'left', rtlMultiplier);
+              var renderContainer = $scope.col.getRenderContainer();
 
-                // get the target column for the left resizer
-                var otherCol = uiGridResizeColumnsService.findTargetCol($scope.col, 'left', rtlMultiplier);
-                var renderContainer = $scope.col.getRenderContainer();
+              // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
+              if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing && !(otherCol.colDef.pinnedLeft || otherCol.colDef.pinnedRight)) {
+                var resizerLeft = angular.element(columnResizerElm).clone();
+                resizerLeft.attr('position', 'left');
 
-                // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
-                if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
-                  var resizerLeft = angular.element(columnResizerElm).clone();
-                  resizerLeft.attr('position', 'left');
+                $elm.prepend(resizerLeft);
+                $compile(resizerLeft)($scope);
+              }
 
-                  $elm.prepend(resizerLeft);
-                  $compile(resizerLeft)($scope);
-                }
+              // Don't append the right resizer if this column has resizing disabled
+              if (!$scope.col.colDef.pinnedLeft && !$scope.col.colDef.pinnedRight && $scope.col.colDef.enableColumnResizing) {
+                var resizerRight = angular.element(columnResizerElm).clone();
+                resizerRight.attr('position', 'right');
 
-                // Don't append the right resizer if this column has resizing disabled
-                if ($scope.col.colDef.enableColumnResizing !== false) {
-                  var resizerRight = angular.element(columnResizerElm).clone();
-                  resizerRight.attr('position', 'right');
+                $elm.append(resizerRight);
+                $compile(resizerRight)($scope);
+              }
+            };
 
-                  $elm.append(resizerRight);
-                  $compile(resizerRight)($scope);
-                }
-              };
+            displayResizers();
 
-              displayResizers();
+            var waitDisplay = function(){
+              $timeout(displayResizers);
+            };
 
-              var waitDisplay = function(){
-                $timeout(displayResizers);
-              };
+            var dataChangeDereg = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
 
-              var dataChangeDereg = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
-
-              $scope.$on( '$destroy', dataChangeDereg );
-            }
+            $scope.$on( '$destroy', dataChangeDereg );
           }
         };
       }
@@ -375,7 +377,7 @@
           var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, rtlMultiplier);
 
           // Don't resize if it's disabled on this column
-          if (col.colDef.enableColumnResizing === false) {
+          if (col.colDef.enableColumnResizing === false && uiGridCtrl.grid.options.enableColumnResizing !== true) {
             return;
           }
 
@@ -421,7 +423,7 @@
           var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, rtlMultiplier);
 
           // Don't resize if it's disabled on this column
-          if (col.colDef.enableColumnResizing === false) {
+          if (col.colDef.enableColumnResizing === false && uiGridCtrl.grid.options.enableColumnResizing !== true) {
             return;
           }
 
@@ -499,7 +501,7 @@
           var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, rtlMultiplier);
 
           // Don't resize if it's disabled on this column
-          if (col.colDef.enableColumnResizing === false) {
+          if (col.colDef.enableColumnResizing === false && uiGridCtrl.grid.options.enableColumnResizing !== true) {
             return;
           }
 

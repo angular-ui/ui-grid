@@ -32,21 +32,46 @@ angular.module('ui.grid')
 
 .directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'i18nService',
 function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18nService) {
+  var defaultTemplate = 'ui-grid/uiGridMenu';
+
   var uiGridMenu = {
     priority: 0,
     scope: {
       // shown: '&',
       menuItems: '=',
-      autoHide: '=?'
+      autoHide: '=?',
+      templateUrl: '='
     },
     require: '?^uiGrid',
-    templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
-    link: function ($scope, $elm, $attrs, uiGridCtrl) {
+    compile: function ($elm, $attrs) {
+      return {
+        pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+          if ( uiGridCtrl ) {
+              $scope.grid = uiGridCtrl.grid;
+          }
+
+          var menuTemplate = $scope.templateUrl || defaultTemplate;
+          gridUtil.getTemplate(menuTemplate)
+            .then(function (contents) {
+              var template = angular.element(contents);
+              $elm.append(template);
+              $compile(template)($scope);
+
+              var newElm = $compile(template)($scope);
+              $elm.append(newElm);
+            });
+        },
+
+        post: function ($scope, $elm, $attrs, uiGridCtrl) {
       var self = this;
       var menuMid;
       var $animate;
       var parent = $elm.context.parentNode;
+      var grid;
+      if ( uiGridCtrl ) {
+        grid = uiGridCtrl.grid;
+      }
 
       $scope.i18n = {
         close: i18nService.getSafeText('columnMenu.close')
@@ -73,9 +98,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             var parentPos = parent.getBoundingClientRect();
             angular.element($document.context.body).append($elm);
             var width = $document.context.body.clientWidth;
+            // If the grid has a header, account for it when positioning the menu.
+            var headerHeight = (grid && grid.headerHeight) ? grid.headerHeight : 0;
             angular.element($elm).css({
               "position":"absolute",
-              "top": parentPos.top + "px",
+              "top": parseInt(parentPos.top + headerHeight) + "px",
               "right": parseInt(width - parentPos.right) + "px"
             });
             angular.element($elm).addClass("ui-grid");
@@ -173,6 +200,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       }
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
+        }
+      };
     },
 
 
@@ -185,6 +214,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 }])
 
 .directive('uiGridMenuItem', ['gridUtil', '$compile', 'i18nService', function (gridUtil, $compile, i18nService) {
+  var defaultTemplate = 'ui-grid/uiGridMenuItem';
   var uiGridMenuItem = {
     priority: 0,
     scope: {
@@ -199,23 +229,19 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       screenReaderOnly: '='
     },
     require: ['?^uiGrid', '^uiGridMenu'],
-    templateUrl: 'ui-grid/uiGridMenuItem',
     replace: false,
     compile: function($elm, $attrs) {
       return {
         pre: function ($scope, $elm, $attrs, controllers) {
           var uiGridCtrl = controllers[0],
               uiGridMenuCtrl = controllers[1];
-
-          if ($scope.templateUrl) {
-            gridUtil.getTemplate($scope.templateUrl)
+          var menuItemTemplate = $scope.templateUrl || defaultTemplate;
+          gridUtil.getTemplate(menuItemTemplate)
                 .then(function (contents) {
                   var template = angular.element(contents);
-
-                  var newElm = $compile(template)($scope);
-                  $elm.replaceWith(newElm);
+              $compile(template)($scope);
+              $elm.replaceWith(template);
                 });
-          }
         },
         post: function ($scope, $elm, $attrs, controllers) {
           var uiGridCtrl = controllers[0],
