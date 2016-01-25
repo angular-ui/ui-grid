@@ -1,3 +1,5 @@
+# New Issues are for bug repors or feature requests only!!  Questions on how to use the grid should be posted to Stack Overflow or Gitter.
+
 # Contributing to UI Grid
 
 Please take a moment to review this document in order to make the contribution
