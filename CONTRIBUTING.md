@@ -1,4 +1,4 @@
-# New Issues are for bug repors or feature requests only!!  Questions on how to use the grid should be posted to Stack Overflow or Gitter.
+# New Issues are for bug reports or feature requests only!!  Questions on how to use the grid should be posted to Stack Overflow or Gitter https://gitter.im/angular-ui/ui-grid.
 
 # Contributing to UI Grid
 
