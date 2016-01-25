@@ -229,10 +229,21 @@
               }
               contents.addClass(classAdded);
 
-              $timeout(function (){
-                var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
-                $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
-              });
+              var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
+              $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
+
+              function removeHeaderCellTimeout(){
+                $scope.headerCellTimeout = undefined;
+                $scope.$digest();
+              }
+
+              if ($scope.headerCellTimeout){
+                $timeout.cancel($scope.headerCellTimeout);
+              }
+
+              $scope.headerCellTimeout = $timeout(
+                removeHeaderCellTimeout,
+                100, false);
 
               // Figure out whether this column is sortable or not
               if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
