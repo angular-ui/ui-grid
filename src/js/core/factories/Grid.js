@@ -379,12 +379,12 @@ angular.module('ui.grid')
      * that have sorting on them, sorted in priority order.
      *
      * @param {$scope} scope The scope of the controller. This is used to deregister this event when the scope is destroyed.
-     * @param {Function} callBack Will be called when the event is emited. The function passes back an array of columns with
-     * sorts on them, in priority order.
+     * @param {Function} callBack Will be called when the event is emited. The function passes back the grid and an array of 
+     * columns with sorts on them, in priority order.
      *
      * @example
      * <pre>
-     *      gridApi.core.on.sortChanged( $scope, function(sortColumns){
+     *      gridApi.core.on.sortChanged( $scope, function(grid, sortColumns){
      *        // do something
      *      });
      * </pre>
