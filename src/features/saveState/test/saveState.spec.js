@@ -189,6 +189,22 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
     });
   });
 
+  describe('savePagination', function() {
+    beforeEach(function() {
+      grid.options.paginationPageSize = 25;
+      grid.options.paginationCurrentPage = 2;
+      grid.api.pagination = true;
+    });
+
+    it('saves paginationCurrentPage', function() {
+      expect(uiGridSaveStateService.savePagination( grid ) ).toEqual({
+        paginationCurrentPage: 2,
+        paginationPageSize: 25
+      });
+    });
+
+  });
+
 
   describe('saveScrollFocus', function() {
     it('does nothing when no cellNav module initialized', function() {
@@ -479,6 +495,46 @@ describe('ui.grid.saveState uiGridSaveStateService', function () {
       expect( colVisChangeCount ).toEqual( 0, '0 columns changed visibility');
       expect( colFilterChangeCount ).toEqual( 0, '0 columns changed filter');
       expect( colSortChangeCount ).toEqual( 0, '0 columns changed sort');
+    });
+  });
+
+  describe('restorePagination', function() {
+    var pagination = {
+      paginationCurrentPage: 2,
+      paginationPageSize: 25
+    };
+
+    describe('when pagination is on', function() {
+      beforeEach(function() {
+        grid.options.paginationPageSize = 1;
+        grid.api.pagination = true;
+        uiGridSaveStateService.restorePagination( grid, pagination );
+      });
+
+      it('sets the paginationPageSize', function() {
+        expect(grid.options.paginationPageSize).toEqual(25);
+      });
+
+      it('sets the paginationCurrentPage', function() {
+        expect(grid.options.paginationCurrentPage).toEqual(2);
+      });
+    });
+
+    describe('when pagination is off', function() {
+      beforeEach(function() {
+        grid.api.pagination = false;
+        uiGridSaveStateService.restorePagination( grid, pagination );
+      });
+
+      it('does not modify paginationPageSize', function() {
+        expect(grid.options.paginationPageSize).toBeUndefined();
+      });
+
+      it('does not modify paginationCurrentPage', function() {
+        expect(grid.options.paginationCurrentPage).toBeUndefined();
+      });
+
+
     });
   });
 
