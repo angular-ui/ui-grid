@@ -231,4 +231,35 @@ describe('ui-grid-menu', function() {
       expect(item.hasClass('ng-hide')).toBe(false);
     });
   });
+
+
+  describe('keyUp and keyDown actions', function() {
+    var timeout, menuItemButtons;
+    beforeEach( function() {
+      inject(function ($timeout) {
+        timeout = $timeout;
+      });
+      $scope.$broadcast('show-menu');
+      $scope.$digest();
+      timeout.flush();
+    });
+
+    it('should focus on the first menu item after tabbing from the last menu item', function() {
+      menuItemButtons = menu.find('button');
+      var e = $.Event("keydown");
+      e.keyCode = 9;
+      spyOn(menuItemButtons[0],'focus');
+      //mock has 4 items, last one his hidden
+      $(menuItemButtons[2]).trigger(e);
+      expect(menuItemButtons[0].focus).toHaveBeenCalled();
+    });
+
+    it('should call hideMenu if ESC is pressed', function() {
+      spyOn(isolateScope, 'hideMenu');
+      var e = $.Event("keyup");
+      e.keyCode = 27;
+      $(menu).trigger(e);
+      expect(isolateScope.hideMenu).toHaveBeenCalled();
+    });
+  });
 });
