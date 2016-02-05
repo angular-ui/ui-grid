@@ -231,4 +231,47 @@ describe('ui-grid-menu', function() {
       expect(item.hasClass('ng-hide')).toBe(false);
     });
   });
+
+  describe( 'menu should close when ESC key is pressed', function() {
+    var timeout;
+    beforeEach( function() {
+      spyOn($scope, 'hideMenu');
+      $scope.$broadcast('show-menu');
+      inject(function ($timeout) {
+        timeout = $timeout;
+      });
+    });
+
+    it('should call hideMenu if ESC is pressed', function() {
+      var e = $.Event("keyup");
+      e.which = 27;
+      $(menu).trigger(e);
+      timeout.flush();
+      expect($scope.hideMenu).toHaveBeenCalled();
+    });
+  });
+
+  ddescribe('focus should be retained within the menu', function() {
+    var timeout, menuItemButtons;
+    beforeEach( function() {
+      $scope.$broadcast('show-menu');
+      inject(function ($timeout) {
+        timeout = $timeout;
+      });
+      console.log(menu);
+      menuItemButtons = menu.find('button');
+    });
+
+    it('should call hideMenu if ESC is pressed', function() {
+      var e = $.Event("keydown");
+      e.which = 9;
+      $(menuItemButtons[menuItemButtons.length - 1]).trigger(e);
+
+      spyOn(menuItemButtons[0],'focus');
+      timeout.flush();
+      expect(menuItemButtons[0].focus).toHaveBeenCalled();
+    });
+
+  });
+
 });

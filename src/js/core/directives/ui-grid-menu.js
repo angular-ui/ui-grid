@@ -43,8 +43,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      var menuMid;
-      var $animate;
       var gridMenuMaxHeight;
 
       $scope.dynamicStyles = '';
@@ -107,14 +105,13 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           angular.element(document).on(docEventType, applyHideMenu);
           $elm.on('keyup', checkKeyUp);
           $elm.on('keydown', checkKeyDown);
-
         });
         //automatically set the focus to the first button element in the now open menu.
         gridUtil.focus.bySelector($elm, 'button[type=button]', true);
       };
 
 
-      $scope.hideMenu = function(event, args) {
+      $scope.hideMenu = function(event) {
         if ( $scope.shown ){
           /*
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
@@ -171,7 +168,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         };
         if (event.keyCode === 9) {
           var firstMenuItem, lastMenuItem;
-          var menuItemButtons = $elm.find('button');
+          var menuItemButtons = $elm[0].querySelectorAll('button:not(.ng-hide)');
           if (menuItemButtons.length > 0) {
             firstMenuItem = menuItemButtons[0];
             lastMenuItem = menuItemButtons[menuItemButtons.length - 1];
@@ -206,12 +203,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       }
 
       $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
-    },
-
-
-    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-      var self = this;
-    }]
+    }
   };
 
   return uiGridMenu;
@@ -231,15 +223,12 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       leaveOpen: '=',
       screenReaderOnly: '='
     },
-    require: ['?^uiGrid', '^uiGridMenu'],
+    require: ['?^uiGrid'],
     templateUrl: 'ui-grid/uiGridMenuItem',
     replace: false,
-    compile: function($elm, $attrs) {
+    compile: function() {
       return {
-        pre: function ($scope, $elm, $attrs, controllers) {
-          var uiGridCtrl = controllers[0],
-              uiGridMenuCtrl = controllers[1];
-
+        pre: function ($scope, $elm) {
           if ($scope.templateUrl) {
             gridUtil.getTemplate($scope.templateUrl)
                 .then(function (contents) {
@@ -251,8 +240,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           }
         },
         post: function ($scope, $elm, $attrs, controllers) {
-          var uiGridCtrl = controllers[0],
-              uiGridMenuCtrl = controllers[1];
+          var uiGridCtrl = controllers[0];
 
           // TODO(c0bra): validate that shown and active are functions if they're defined. An exception is already thrown above this though
           // if (typeof($scope.shown) !== 'undefined' && $scope.shown && typeof($scope.shown) !== 'function') {
