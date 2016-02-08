@@ -48,7 +48,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      *
      */
     setColMenuItemWatch: function ( $scope ){
-      var deregFunction = $scope.$watch('col.menuItems', function (n, o) {
+      var deregFunction = $scope.$watch('col.menuItems', function (n) {
         if (typeof(n) !== 'undefined' && n && angular.isArray(n)) {
           n.forEach(function (item) {
             if (typeof(item.context) === 'undefined' || !item.context) {
@@ -213,16 +213,6 @@ function ( i18nService, uiGridConstants, gridUtil ) {
             $event.stopPropagation();
             $scope.hideColumn();
           }
-        },
-        {
-          title: i18nService.getSafeText('columnMenu.close'),
-          screenReaderOnly: true,
-          shown: function(){
-            return true;
-          },
-          action: function($event){
-            $event.stopPropagation();
-          }
         }
       ];
     },
@@ -275,8 +265,6 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      */
     repositionMenu: function( $scope, column, positionData, $elm, $columnElement ) {
       var menu = $elm[0].querySelectorAll('.ui-grid-menu');
-      var containerId = column.renderContainer ? column.renderContainer : 'body';
-      var renderContainer = column.grid.renderContainers[containerId];
 
       // It's possible that the render container of the column we're attaching to is
       // offset from the grid (i.e. pinned containers), we need to get the difference in the offsetLeft
@@ -379,6 +367,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
           $scope.$broadcast('show-menu', { originalEvent: event });
+
         }
       };
 
@@ -421,6 +410,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
       $scope.$on('menu-shown', function() {
         $timeout( function() {
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+          //Focus on the first item
+          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
           delete $scope.colElementPosition;
           delete $scope.columnElement;
         }, 200);
@@ -516,7 +507,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
     controller: ['$scope', function ($scope) {
       var self = this;
 
-      $scope.$watch('menuItems', function (n, o) {
+      $scope.$watch('menuItems', function (n) {
         self.menuItems = n;
       });
     }]
