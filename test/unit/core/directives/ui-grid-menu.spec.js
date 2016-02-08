@@ -232,46 +232,33 @@ describe('ui-grid-menu', function() {
     });
   });
 
-  describe( 'menu should close when ESC key is pressed', function() {
-    var timeout;
-    beforeEach( function() {
-      spyOn($scope, 'hideMenu');
-      $scope.$broadcast('show-menu');
-      inject(function ($timeout) {
-        timeout = $timeout;
-      });
-    });
 
-    it('should call hideMenu if ESC is pressed', function() {
-      var e = $.Event("keyup");
-      e.which = 27;
-      $(menu).trigger(e);
-      timeout.flush();
-      expect($scope.hideMenu).toHaveBeenCalled();
-    });
-  });
-
-  ddescribe('focus should be retained within the menu', function() {
+  describe('keyUp and keyDown actions', function() {
     var timeout, menuItemButtons;
     beforeEach( function() {
-      $scope.$broadcast('show-menu');
       inject(function ($timeout) {
         timeout = $timeout;
       });
-      console.log(menu);
-      menuItemButtons = menu.find('button');
+      $scope.$broadcast('show-menu');
+      $scope.$digest();
+      timeout.flush();
     });
 
-    it('should call hideMenu if ESC is pressed', function() {
+    it('should focus on the first menu item after tabbing from the last menu item', function() {
+      menuItemButtons = menu.find('button');
       var e = $.Event("keydown");
-      e.which = 9;
-      $(menuItemButtons[menuItemButtons.length - 1]).trigger(e);
-
+      e.keyCode = 9;
       spyOn(menuItemButtons[0],'focus');
-      timeout.flush();
+      $(menuItemButtons[menuItemButtons.length - 1]).trigger(e);
       expect(menuItemButtons[0].focus).toHaveBeenCalled();
     });
 
+    it('should call hideMenu if ESC is pressed', function() {
+      spyOn(isolateScope, 'hideMenu');
+      var e = $.Event("keyup");
+      e.keyCode = 27;
+      $(menu).trigger(e);
+      expect(isolateScope.hideMenu).toHaveBeenCalled();
+  	});
   });
-
 });
