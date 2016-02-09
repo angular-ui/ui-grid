@@ -163,7 +163,11 @@ We have very precise rules over how our git commit messages can be formatted.  T
 readable messages** that are easy to follow when looking through the **project history**.  But also,
 we use the git commit messages to **generate the UIGrid change log**.
 
+Alternatively you can install [commitizen](https://github.com/commitizen/cz-cli) **OR**
+use the wizard. To use the wizard, run `npm run commit` in your terminal after staging your changes in git.
+
 ### Commit Message Format
+**If you do not follow this style guide your commit message will fail to be created.**
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
 format that includes a **type**, a **scope** and a **subject**:
 

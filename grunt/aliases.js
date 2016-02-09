@@ -1,7 +1,7 @@
 
 module.exports = function (grunt, options) {
   var baseTasks = {
-    'install': ['shell:bower-install', 'shell:protractor-install'],
+    'install': ['shell:bower-install', 'shell:protractor-install', 'shell:hooks-install'],
 
     // register before and after test tasks so we don't have to change cli
     // options on the CI server
