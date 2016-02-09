@@ -155,7 +155,7 @@ included in the project:
     with a clear title and description.
 
 **IMPORTANT**: By submitting a patch, you agree to allow the project owners to
-license your work under the the terms of the [MIT License](LICENSE.md).
+license your work under the terms of the [MIT License](LICENSE.md).
 
 ## <a name="commit"></a> Git Commit Guidelines
 
