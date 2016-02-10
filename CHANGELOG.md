@@ -1,3 +1,33 @@
+<a name="v3.1.1"></a>
+### v3.1.1 (2016-02-09)
+
+
+#### Bug Fixes
+
+* **core:**
+  *  sort priorities were not displaying when 2nd sort was added ([47c77de4](http://github.com/angular-ui/ng-grid/commit/47c77de40c9a54ace853e297a0940053c10fea4a))
+  * add false flag to $timeout and $interval to prevent $apply Nice increase in scro ([4ba28205](http://github.com/angular-ui/ng-grid/commit/4ba28205926ac98d16873db3c92866ff47d362fa))
+  * Sort Priority Zero Based ([62dbcfe9](http://github.com/angular-ui/ng-grid/commit/62dbcfe917235d827ac09755f37d0896904a99b0), closes [#4685](http://github.com/angular-ui/ng-grid/issues/4685))
+  * correct filter detection in autoAdjustHeight ([31c8e9e8](http://github.com/angular-ui/ng-grid/commit/31c8e9e8375236938c8244d87ac7f5d10bd4efe0))
+* **i18n:** Add japanese translation ([805c8805](http://github.com/angular-ui/ng-grid/commit/805c880567b0f35a35b3c03f340276821c3f7966))
+* **saveState:** - Allow saving of pagination state ([c6d3b2a1](http://github.com/angular-ui/ng-grid/commit/c6d3b2a1f3df9e7374c91280b243d5592013f7a6), closes [#4146](http://github.com/angular-ui/ng-grid/issues/4146))
+
+
+#### Features
+
+* **expandable:** Add 'expandRow', 'collapseRow' and 'getExpandedRows' ([005ca6a5](http://github.com/angular-ui/ng-grid/commit/005ca6a54c10ad60188cfb9529f92353f80cbd57))
+
+
+#### Breaking Changes
+
+* **GridOptions.columnDef.sort.priority** now expects the lowest value
+to be 0.
+The Grid Header will display a sort priority of 0 as 1.
+Using `if(col.sort.priority)` to determine if a column is sorted is no
+longer valid as `0 == false`.
+Saved grid objects may be affected by this.
+ ([62dbcfe9](http://github.com/angular-ui/ng-grid/commit/62dbcfe917235d827ac09755f37d0896904a99b0))
+
 <a name="v3.1.0"></a>
 ## v3.1.0 (2016-01-17)
 
