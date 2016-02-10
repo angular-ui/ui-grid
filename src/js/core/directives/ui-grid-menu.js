@@ -43,19 +43,25 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      var gridMenuMaxHeight;
 
       $scope.dynamicStyles = '';
 
-      if (uiGridCtrl) {
+      var setupHeightStyle = function(gridHeight) {
         // magic number of 30 because the grid menu displays somewhat below
         // the top of the grid. It is approximately 30px.
-        gridMenuMaxHeight = uiGridCtrl.grid.gridHeight - 30;
-        $scope.dynamicStyles = [
+        var gridMenuMaxHeight = gridHeight - 30;
+		$scope.dynamicStyles = [
           '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
-            'max-height: ' + gridMenuMaxHeight + 'px;',
+          'max-height: ' + gridMenuMaxHeight + 'px;',
           '}'
         ].join(' ');
+      };
+
+      if (uiGridCtrl) {
+        setupHeightStyle(uiGridCtrl.grid.gridHeight);
+        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
+          setupHeightStyle(newGridHeight);
+		});
       }
 
       $scope.i18n = {
