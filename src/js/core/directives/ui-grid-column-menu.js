@@ -111,6 +111,18 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     /**
      * @ngdoc method
      * @methodOf ui.grid.service:uiGridColumnMenuService
+     * @name suppressSort
+     * @description  determines whether we should suppress the sort asc/desc options
+     * @param {$scope} $scope the $scope from the uiGridColumnMenu
+     *
+     */
+    suppressSort: function( $scope ) {
+      return $scope.col && $scope.col.colDef && $scope.col.colDef.suppressSort;
+    },
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:uiGridColumnMenuService
      * @name suppressRemoveSort
      * @description  determines whether we should suppress the removeSort option
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
@@ -169,7 +181,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
             $scope.sortColumn($event, uiGridConstants.ASC);
           },
           shown: function () {
-            return service.sortable( $scope );
+            return service.sortable( $scope ) && !service.suppressSort( $scope );
           },
           active: function() {
             return service.isActiveSort( $scope, uiGridConstants.ASC);
@@ -183,7 +195,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
             $scope.sortColumn($event, uiGridConstants.DESC);
           },
           shown: function() {
-            return service.sortable( $scope );
+            return service.sortable( $scope ) && !service.suppressSort( $scope );
           },
           active: function() {
             return service.isActiveSort( $scope, uiGridConstants.DESC);

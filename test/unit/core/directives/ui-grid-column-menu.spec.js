@@ -145,6 +145,20 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function () {
     });
   });
 
+  describe('suppressSort: ', function () {
+    it('everything present: is suppressed', function () {
+      $scope.col = { uid: 'ui-grid-01x', suppressSort: true };
+
+      expect( uiGridColumnMenuService.suppressSort( $scope ) ).toEqual( true );
+    });
+
+    it('colDef missing: is not suppressed', function () {
+      $scope.col = { uid: 'ui-grid-01x' };
+
+      expect( uiGridColumnMenuService.suppressSort( $scope ) ).toEqual( false );
+    });
+  });
+
 
   describe('hideable: ', function () {
     it('everything present: is not hideable', function () {
