@@ -30,10 +30,11 @@ describe('Grid factory', function () {
     returnedRows = null;
   }));
 
-  function runProcs () {
+  function runProcs (done) {
     grid.processRowsProcessors(grid.rows)
       .then(function (newRows) {
         returnedRows = newRows;
+        done();
       });
 
     $scope.$digest();
@@ -93,27 +94,25 @@ describe('Grid factory', function () {
 
     beforeEach(function () {
       // Create function spies but also call real functions
-      testObj.proc1 = jasmine.createSpy('proc1').andCallFake(proc1);
-      testObj.proc2 = jasmine.createSpy('proc2').andCallFake(proc2);
+      testObj.proc1 = jasmine.createSpy('proc1').and.callFake(proc1);
+      testObj.proc2 = jasmine.createSpy('proc2').and.callFake(proc2);
 
       // Register the two spies as rows processors
       grid.registerRowsProcessor(testObj.proc1, 70);
       grid.registerRowsProcessor(testObj.proc2, 80);
     });
 
-    it('should call both processors', function() {
-      runs(runProcs);
+    describe("when process run", function() {
+      beforeEach(function (callback) {
+        runProcs(callback);
+      });
 
-      runs(function () {
+      it('should call both processors', function() {
         expect(testObj.proc1).toHaveBeenCalled();
         expect(testObj.proc2).toHaveBeenCalled();
       });
-    });
 
-    it('should actually process the rows', function () {
-      runs(runProcs);
-
-      runs(function () {
+      it('should actually process the rows', function () {
         expect(rows[0].grid).toEqual(grid);
         expect(rows[0].c).toEqual('foo');
         expect(rows[0].d).toEqual('bar');
@@ -122,16 +121,15 @@ describe('Grid factory', function () {
       });
     });
 
+
     describe(', when deregistered, ', function () {
-      it('should not be run', function () {
+      beforeEach(function(callback){
         grid.removeRowsProcessor(testObj.proc1);
-
-        runs(runProcs);
-
-        runs(function () {
-          expect(testObj.proc1).not.toHaveBeenCalled();
-          expect(testObj.proc2).toHaveBeenCalled();
-        });
+        runProcs(callback);
+      });
+      it('should not be run', function () {
+        expect(testObj.proc1).not.toHaveBeenCalled();
+        expect(testObj.proc2).toHaveBeenCalled();
       });
     });
 
@@ -147,7 +145,7 @@ describe('Grid factory', function () {
 
       it('should throw an exception', function () {
         expect(function () {
-          runProcs();
+          runProcs(function(){});
         }).toThrow();
       });
     });
@@ -158,10 +156,10 @@ describe('Grid factory', function () {
       expect(grid.rowsProcessors.length).toEqual(0);
     });
 
-    it('processRowsProcessors should return a shallow copy of grid.rows', function () {
-      runs(runProcs);
+    describe('processRowsProcessors should return a shallow copy of grid.rows', function () {
+      beforeEach(runProcs);
 
-      runs(function() {
+      it('when run', function() {
         expect(returnedRows).toEqual(grid.rows);
       });
     });
@@ -183,7 +181,7 @@ describe('Grid factory', function () {
         expect(gridOptions).toBeDefined();
       };
       var row = new GridRow({str:'abc'}, 0, grid);
-      testObj.testRowBuilder = jasmine.createSpy('testRowBuilder').andCallFake(testRowBuilder);
+      testObj.testRowBuilder = jasmine.createSpy('testRowBuilder').and.callFake(testRowBuilder);
       grid.registerRowBuilder(testObj.testRowBuilder);
       grid.processRowBuilders(row);
       expect(testObj.testRowBuilder).toHaveBeenCalled();
@@ -639,8 +637,8 @@ describe('Grid factory', function () {
       ];
       var grid = new gridClassFactory.createGrid({ columnDefs:colDefs });
 
-      spyOn( grid, "preCompileCellTemplates").andCallFake(function() {});
-      spyOn( grid, "handleWindowResize").andCallFake(function() {});
+      spyOn( grid, "preCompileCellTemplates").and.callFake(function() {});
+      spyOn( grid, "handleWindowResize").and.callFake(function() {});
 
       $timeout(function () {
         grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
@@ -663,8 +661,8 @@ describe('Grid factory', function () {
       var grid = new gridClassFactory.createGrid({columnDefs:colDefs });
       grid.rtl = true;
 
-      spyOn( grid, "preCompileCellTemplates").andCallFake(function() {});
-      spyOn( grid, "handleWindowResize").andCallFake(function() {});
+      spyOn( grid, "preCompileCellTemplates").and.callFake(function() {});
+      spyOn( grid, "handleWindowResize").and.callFake(function() {});
 
       $timeout(function () {
         grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: "<div/>"});
@@ -725,24 +723,24 @@ describe('Grid factory', function () {
       column.sort = {direction: uiGridConstants.DESC, priority: 1};
       grid.sortColumn( column, false );
 
-      expect( column.sort.direction ).toEqual(null);
-      expect( column.sort.priority ).toEqual(null);
+      expect( column.sort.direction ).toBeUndefined();
+      expect( column.sort.priority ).toBeUndefined();
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is null, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: null};
       grid.sortColumn( column, false );
 
-      expect( column.sort.direction ).toEqual(null);
-      expect( column.sort.priority ).toEqual(null);
+      expect( column.sort.direction ).toBeUndefined();
+      expect( column.sort.priority ).toBeUndefined();
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is false, then should toggle to null, and remove priority', function() {
       column.sort = {direction: uiGridConstants.DESC, priority: 1, suppressRemoveSort: false};
       grid.sortColumn( column, false );
 
-      expect( column.sort.direction ).toEqual(null);
-      expect( column.sort.priority ).toEqual(null);
+      expect( column.sort.direction ).toBeUndefined();
+      expect( column.sort.priority ).toBeUndefined();
     });
 
     it( 'if sort is currently DESC, and suppressRemoveSort is true, then should toggle to ASC, and reset priority', function() {
@@ -803,8 +801,8 @@ describe('Grid factory', function () {
 
       grid.sortColumn( column, false );
 
-      expect( column.sort.direction ).toEqual(null);
-      expect( column.sort.priority ).toEqual(null);
+      expect( column.sort.direction ).toBeUndefined();
+      expect( column.sort.priority ).toBeUndefined();
     });
 
     it( 'if sortDirectionCycle is DESC, and sort is currently DESC, then should not change the sort', function() {
@@ -898,6 +896,7 @@ describe('Grid factory', function () {
   });
 
   describe('clearAllFilters', function() {
+
     it('should clear all filter terms from all columns', function() {
       grid.columns = [
         {filters: [{term: 'A'}, {term: 'B'}]},
@@ -907,8 +906,8 @@ describe('Grid factory', function () {
 
       grid.clearAllFilters();
 
-      expect(grid.columns[0].filters).toEqual([{}, {}]);
-      expect(grid.columns[1].filters).toEqual([{}]);
+      expect(grid.columns[0].filters).toEqual([{term:undefined}, {term:undefined}]);
+      expect(grid.columns[1].filters).toEqual([{term:undefined}]);
       expect(grid.columns[2].filters).toEqual([]);
     });
 

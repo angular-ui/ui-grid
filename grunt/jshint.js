@@ -17,7 +17,7 @@ module.exports = {
     debug: true, // debugger statements allowed
     globals: {
       angular: false,
-      
+
       /* Protractor */
       browser: false,
 
@@ -39,14 +39,15 @@ module.exports = {
       afterEach: false,
       before: false,
       beforeEach: false,
+      afterAll: false,
       console: false,
-      dump: false, 
+      dump: false,
       describe: false,
-      ddescribe: false,
+      fdescribe: false,
       expect: false,
       inject: false,
       it: false,
-      iit: false,
+      fit: false,
       module: false,
       debugger: false,
       DocumentTouch: false,
