@@ -1225,7 +1225,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){ queued = null; }, 0, 1, false);
+      $interval(function(){queued = null; }, 0, 1, false);
     }
 
     return function(){
