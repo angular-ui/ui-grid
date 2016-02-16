@@ -92,7 +92,10 @@ describe('ui-grid-menu', function() {
           api: {
             core: {
               on: {
-                scrollBegin: angular.noop
+                scrollBegin: angular.noop,
+                gridDimensionChanged: function($scope, fxn) {
+                  fxn(100, 100, 400, 200);
+                }
               }
             }
           }
