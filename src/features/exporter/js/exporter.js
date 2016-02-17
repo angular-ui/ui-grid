@@ -914,10 +914,19 @@
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
-          var ieVersion;
+          var ieVersion = this.isIE();
 
-          ieVersion = this.isIE();
-          if (ieVersion && ieVersion < 10) {
+          // IE10+
+          if (navigator.msSaveBlob) {
+            return navigator.msSaveOrOpenBlob(
+              new Blob(
+                [exporterOlderExcelCompatibility ? "\uFEFF" : '', csvContent],
+                { type: strMimeType } ),
+              fileName
+            );
+          }
+
+          if (ieVersion) {
             var frame = D.createElement('iframe');
             document.body.appendChild(frame);
 
@@ -929,16 +938,6 @@
 
             document.body.removeChild(frame);
             return true;
-          }
-
-          // IE10+
-          if (navigator.msSaveBlob) {
-            return navigator.msSaveOrOpenBlob(
-              new Blob(
-                [exporterOlderExcelCompatibility ? "\uFEFF" : '', csvContent],
-                { type: strMimeType } ),
-              fileName
-            );
           }
 
           //html5 A[download]
