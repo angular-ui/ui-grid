@@ -272,6 +272,8 @@ angular.module('ui.grid')
      * @methodOf ui.grid.core.api:PublicApi
      * @description adds a row header column to the grid
      * @param {object} column def
+     * @param {number} order Determines order of header column on grid.  Lower order means header
+     * is positioned to the left of higher order headers
      *
      */
     self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
@@ -379,7 +381,7 @@ angular.module('ui.grid')
      * that have sorting on them, sorted in priority order.
      *
      * @param {$scope} scope The scope of the controller. This is used to deregister this event when the scope is destroyed.
-     * @param {Function} callBack Will be called when the event is emited. The function passes back the grid and an array of 
+     * @param {Function} callBack Will be called when the event is emited. The function passes back the grid and an array of
      * columns with sorts on them, in priority order.
      *
      * @example
@@ -754,8 +756,14 @@ angular.module('ui.grid')
   * @description adds a row header column to the grid
   * @param {object} column def
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order) {
     var self = this;
+
+    //default order
+    if (order === undefined) {
+      order = 0;
+    }
+
     var rowHeaderCol = new GridColumn(colDef, gridUtil.nextUid(), self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
@@ -774,7 +782,12 @@ angular.module('ui.grid')
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
         rowHeaderCol.enableHiding = false;
+        rowHeaderCol.headerPriority = order;
         self.rowHeaderColumns.push(rowHeaderCol);
+        self.rowHeaderColumns = self.rowHeaderColumns.sort(function (a, b) {
+          return a.headerPriority - b.headerPriority;
+        });
+
         self.buildColumns()
           .then( function() {
             self.preCompileCellTemplates();
@@ -836,9 +849,11 @@ angular.module('ui.grid')
     }
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
-    self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
-      self.columns.unshift(rowHeaderColumn);
-    });
+    //rowHeaderColumns is ordered by priority so insert in reverse
+    for (var j = self.rowHeaderColumns.length - 1; j >= 0; j--) {
+      self.columns.unshift(self.rowHeaderColumns[j]);
+    }
+
 
 
     // look at each column def, and update column properties to match.  If the column def
@@ -898,6 +913,19 @@ angular.module('ui.grid')
     });
   };
 
+  Grid.prototype.preCompileCellTemplate = function(col) {
+    var self = this;
+    var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
+    html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+
+    var compiledElementFn = $compile(html);
+    col.compiledElementFn = compiledElementFn;
+
+    if (col.compiledElementFnDefer) {
+      col.compiledElementFnDefer.resolve(col.compiledElementFn);
+    }
+  };
+
 /**
  * @ngdoc function
  * @name preCompileCellTemplates
@@ -906,25 +934,12 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
     var self = this;
-
-    var preCompileTemplate = function( col ) {
-      var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
-      html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
-
-      var compiledElementFn = $compile(html);
-      col.compiledElementFn = compiledElementFn;
-
-      if (col.compiledElementFnDefer) {
-        col.compiledElementFnDefer.resolve(col.compiledElementFn);
-      }
-    };
-
-    this.columns.forEach(function (col) {
+    self.columns.forEach(function (col) {
       if ( col.cellTemplate ){
-        preCompileTemplate( col );
+        self.preCompileCellTemplate( col );
       } else if ( col.cellTemplatePromise ){
         col.cellTemplatePromise.then( function() {
-          preCompileTemplate( col );
+          self.preCompileCellTemplate( col );
         });
       }
     });

@@ -294,20 +294,19 @@ describe('Grid factory', function () {
       expect(grid1.columns[5].name).toEqual('5');
     });
 
-    it('should respect the row header', function() {
+    it('should respect the row header in order', function() {
       var columnDefs =  [
         {name:'1'},
-        {name:'2'},
-        {name:'3'},
-        {name:'4'},
-        {name:'5'}
+        {name:'2'}
       ];
 
       var grid1 =  gridClassFactory.createGrid({columnDefs:columnDefs});
 
 
       $timeout(function(){
-        grid1.addRowHeaderColumn({name:'rowHeader'});
+        grid1.addRowHeaderColumn({name:'rowHeader3'},100);
+        grid1.addRowHeaderColumn({name:'rowHeader1'},-100);
+        grid1.addRowHeaderColumn({name:'rowHeader2'},0);
       });
       $timeout.flush();
 
@@ -317,26 +316,12 @@ describe('Grid factory', function () {
       $timeout.flush();
 
 
-      expect(grid1.columns[0].name).toEqual('rowHeader');
-      expect(grid1.columns[1].name).toEqual('1');
-      expect(grid1.columns[2].name).toEqual('2');
-      expect(grid1.columns[3].name).toEqual('3');
-      expect(grid1.columns[4].name).toEqual('4');
-      expect(grid1.columns[5].name).toEqual('5');
+      expect(grid1.columns[0].name).toEqual('rowHeader1');
+      expect(grid1.columns[1].name).toEqual('rowHeader2');
+      expect(grid1.columns[2].name).toEqual('rowHeader3');
+      expect(grid1.columns[3].name).toEqual('1');
+      expect(grid1.columns[4].name).toEqual('2');
 
-      grid1.options.columnDefs.splice(3, 0, {name: '3.5'});
-
-      $timeout(function(){
-        grid1.buildColumns();
-      });
-      $timeout.flush();
-
-      expect(grid1.columns[1].name).toEqual('1');
-      expect(grid1.columns[2].name).toEqual('2');
-      expect(grid1.columns[3].name).toEqual('3');
-      expect(grid1.columns[4].name).toEqual('3.5');
-      expect(grid1.columns[5].name).toEqual('4');
-      expect(grid1.columns[6].name).toEqual('5');
     });
 
     it('add columns at the correct position - start', function() {
