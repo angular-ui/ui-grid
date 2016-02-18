@@ -931,7 +931,7 @@
             document.body.appendChild(frame);
 
             frame.contentWindow.document.open('text/html', 'replace');
-            frame.contentWindow.document.write('sep=,' + columnSeparator + '\r\n' + csvContent);
+            frame.contentWindow.document.write('sep=' + columnSeparator + '\r\n' + csvContent);
             frame.contentWindow.document.close();
             frame.contentWindow.focus();
             frame.contentWindow.document.execCommand('SaveAs', true, fileName);
