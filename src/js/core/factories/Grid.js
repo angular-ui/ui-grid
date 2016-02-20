@@ -2363,18 +2363,13 @@ angular.module('ui.grid')
 
       // We were given a column to scroll to
       if (gridCol !== null) {
-        // This is the index of the row we want to scroll to, within the list of rows that can be visible
+        // This is the index of the column we want to scroll to, within the list of columns that can be visible
         var seekColumnIndex = visColCache.indexOf(gridCol);
 
-        // Total vertical scroll length of the grid
+        // Total horizontal scroll length of the grid
         var horizScrollLength = (self.renderContainers.body.getCanvasWidth() - self.renderContainers.body.getViewportWidth());
 
-        // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-        // if (self.verticalScrollbarWidth && self.verticalScrollbarWidth > 0) {
-        //   horizScrollLength = horizScrollLength + self.verticalScrollbarWidth;
-        // }
-
-        // This is the minimum amount of pixels we need to scroll vertical in order to see this column
+        // This is the minimum amount of pixels we need to scroll horizontal in order to see this column
         var columnLeftEdge = 0;
         for (var i = 0; i < seekColumnIndex; i++) {
           var col = visColCache[i];
@@ -2389,9 +2384,9 @@ angular.module('ui.grid')
 
         var horizScrollPixels, horizPercentage;
 
-        // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
+        // If the scroll position we need to see the column is LESS than the left boundary, i.e. obscured before the left of the self...
         if (columnLeftEdge < leftBound) {
-          // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
+          // Get the different between the left boundary and the required scroll position and subtract it from the current scroll position\
           //   to get the full position we need
           horizScrollPixels = self.renderContainers.body.prevScrollLeft - (leftBound - columnLeftEdge);
 
@@ -2400,9 +2395,9 @@ angular.module('ui.grid')
           horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
           scrollEvent.x = { percentage: horizPercentage  };
         }
-        // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
+        // Otherwise if the scroll position we need to see the column is MORE than the right boundary, i.e. obscured after the right of the self...
         else if (columnRightEdge > rightBound) {
-          // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
+          // Get the different between the right boundary and the required scroll position and add it to the current scroll position
           //   to get the full position we need
           horizScrollPixels = columnRightEdge - rightBound + self.renderContainers.body.prevScrollLeft;
 
