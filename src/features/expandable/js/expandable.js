@@ -324,7 +324,13 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              if ( uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
+              uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+
+              if (!uiGridCtrl.grid.options.enableExpandable) {
+                return;
+              }
+
+              if (uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
                 var expandableRowHeaderColDef = {
                   name: 'expandableButtons',
                   displayName: '',
@@ -337,7 +343,7 @@
                 expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
                 uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
               }
-              uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
             }
@@ -454,6 +460,10 @@
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
 
+                if (!$scope.grid.options.enableExpandable) {
+                  return;
+                }
+
                 $scope.expandableRow = {};
 
                 $scope.expandableRow.shouldRenderExpand = function () {
@@ -512,6 +522,11 @@
           priority: -200,
           scope: false,
           compile: function ($elm, $attrs) {
+
+             //todo: this adds ng-if watchers to each row even if the grid is not using expandable directive
+             //      or options.enableExpandable == false
+             //      The alternative is to compile the template and append to each row in a uiGridRow directive
+
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
             var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
             var expandedRowElement = $templateCache.get('ui-grid/expandableRow');
