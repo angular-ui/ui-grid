@@ -341,7 +341,7 @@
                 };
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
                 expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
-                uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
+                uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, -90);
               }
 
             },
