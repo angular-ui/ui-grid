@@ -85,7 +85,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     it( 'will not move header columns', function() {
 
       $timeout(function () {
-        grid.addRowHeaderColumn({name:'aRowHeader'});
+        grid.addRowHeaderColumn({name:'aRowHeader'}, -200);
       });
       $timeout.flush();
 
