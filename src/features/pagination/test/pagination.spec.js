@@ -64,6 +64,8 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
   describe('initialisation', function () {
     it('registers the API and methods', function () {
       expect(gridApi.pagination.getPage).toEqual(jasmine.any(Function));
+      expect(gridApi.pagination.getFirstRowIndex).toEqual(jasmine.any(Function));
+      expect(gridApi.pagination.getLastRowIndex).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.getTotalPages).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.nextPage).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.previousPage).toEqual(jasmine.any(Function));
