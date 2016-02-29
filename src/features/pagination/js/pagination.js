@@ -87,9 +87,7 @@
                  */
                 getLastRowIndex: function () {
                   if (grid.options.useCustomPagination) {
-                    return grid.options.paginationPageSizes.reduce(function(result, size, index) {
-                      return index <= grid.options.paginationCurrentPage - 1 ? result + size : result;
-                    }, 0);
+                    return publicApi.methods.pagination.getFirstRowIndex() + grid.options.paginationPageSizes[grid.options.paginationCurrentPage - 1];
                   }
                   return Math.min(grid.options.paginationCurrentPage * grid.options.paginationPageSize, grid.options.totalItems);
                 },
