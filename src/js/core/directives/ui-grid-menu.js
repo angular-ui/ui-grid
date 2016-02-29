@@ -102,9 +102,14 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             var headerHeight = (grid && grid.headerHeight) ? grid.headerHeight : 0;
             angular.element($elm).css({
               "position":"absolute",
-              "top": parseInt(parentPos.top + headerHeight) + "px",
-              "right": parseInt(width - parentPos.right) + "px"
+              "top": parseInt(parentPos.top + headerHeight) + "px"
             });
+
+            if ($document.context.dir === "rtl"){
+              angular.element($elm).css({ "left": parseInt(parentPos.left) + "px" });
+            } else { 
+              angular.element($elm).css({ "right": parseInt(width - parentPos.right) + "px" });
+            }
             angular.element($elm).addClass("ui-grid");
           } 
           $timeout( function() {
