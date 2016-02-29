@@ -105,7 +105,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               "top": parseInt(parentPos.top + headerHeight) + "px"
             });
 
-            if ($document.context.dir === "rtl"){
+            if (getComputedStyle(parent).direction === 'rtl'){
               angular.element($elm).css({ "left": parseInt(parentPos.left) + "px" });
             } else { 
               angular.element($elm).css({ "right": parseInt(width - parentPos.right) + "px" });
