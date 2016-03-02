@@ -1069,6 +1069,9 @@
           if ( typeof(row.entity.$$treeLevel) !== 'undefined' && row.treeLevel !== row.entity.$$treeLevel ){
             row.treeLevel = row.entity.$$treeLevel;
           }
+          if (typeof (row.entity.$$hasNoChildren) !== 'undefined' && row.hasNoChildren !== row.entity.$$hasNoChildren) {
+              row.hasNoChildren = row.entity.$$hasNoChildren;
+          }
 
           if ( row.treeLevel <= currentLevel ){
             // pop any levels that aren't parents of this level, formatting the aggregation at the same time
@@ -1609,13 +1612,13 @@
         scope: false,
         compile: function ($elm, $attrs) {
           var rowRepeatDiv = angular.element($elm.children().children()[0]);
-
+          var headerCondition = "row.treeLevel > -1 && !row.hasNoChildren";
           var existingNgClass = rowRepeatDiv.attr("ng-class");
           var newNgClass = '';
-          if ( existingNgClass ) {
-            newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-tree-header-row': row.treeLevel > -1}";
+          if (existingNgClass) {
+              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-tree-header-row': " + headerCondition + "}";
           } else {
-            newNgClass = "{'ui-grid-tree-header-row': row.treeLevel > -1}";
+            newNgClass = "{'ui-grid-tree-header-row': " + headerCondition + "}";
           }
           rowRepeatDiv.attr("ng-class", newNgClass);
 
