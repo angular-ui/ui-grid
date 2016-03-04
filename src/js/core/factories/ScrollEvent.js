@@ -95,7 +95,7 @@
             throw new Error("No percentage or pixel value provided for scroll event X axis");
           }
 
-          return Math.max(0, scrollXPercentage * scrollWidth);
+          return scrollXPercentage * scrollWidth;
         }
 
         return self.newScrollLeft;

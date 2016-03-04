@@ -1057,11 +1057,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     if (grid.isRTL()) {
       switch (s.rtlScrollType()) {
         case 'default':
-          return element.scrollWidth - scrollLeft - element.clientWidth;
+          return (element.scrollWidth - scrollLeft - element.clientWidth) * -1;
         case 'negative':
-          return Math.abs(scrollLeft);
-        case 'reverse':
           return scrollLeft;
+        case 'reverse':
+          return scrollLeft * -1;
       }
     }
 
@@ -1094,11 +1094,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           var maxScrollLeft = element.scrollWidth - element.clientWidth;
 
           // Subtract the current scroll amount from the max scroll
-          return maxScrollLeft - scrollLeft;
+          return maxScrollLeft - (scrollLeft * -1);
         case 'negative':
-          return scrollLeft * -1;
-        case 'reverse':
           return scrollLeft;
+        case 'reverse':
+          return scrollLeft * -1;
       }
     }
 
