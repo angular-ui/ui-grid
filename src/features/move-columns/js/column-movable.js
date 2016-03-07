@@ -441,15 +441,16 @@
                 newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
 
                 // move the column if it's in view. Else scroll if we need to
+                var delta;
                 if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
-                  var delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
+                  delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
                   movingElm.css({visibility: 'visible', 'left': (movingElm[0].offsetLeft + delta) + 'px'});
                 } else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
                   changeValue *= 8;
                   var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
                   scrollEvent.x = {pixels: changeValue};
                   scrollEvent.grid.scrollContainers('',scrollEvent);
-                  var delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
+                  delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
                   var newLeft = movingElm[0].offsetLeft + delta;
                   // Have to recaluculate the bounds of the moving element since the scrolling will have changed it.
                   if (movingElm[0].getBoundingClientRect().left - 1 >= gridLeft && (movingElm[0].getBoundingClientRect().right <= rightMoveLimit)) {
