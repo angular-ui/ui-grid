@@ -412,16 +412,7 @@
                 $elm.parent().addClass('columnsMoving');
                 movingElm.addClass('movingColumn');
                 var movingElementStyles = {};
-                var elmLeft;
-                if (gridUtil.detectBrowser() === 'safari') {
-                  //Correction for Safari getBoundingClientRect,
-                  //which does not correctly compute when there is an horizontal scroll
-                  elmLeft = $elm[0].offsetLeft + $elm[0].offsetWidth - $elm[0].getBoundingClientRect().width;
-                }
-                else {
-                  elmLeft = $elm[0].getBoundingClientRect().left + $scope.colContainer.prevScrollLeft;
-                }
-                movingElementStyles.left = (elmLeft - gridLeft) + 'px';
+                movingElementStyles.left = $elm[0].offsetLeft + 'px';
                 var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
                 var elmRight = $elm[0].getBoundingClientRect().right;
                 if (elmRight > gridRight) {
@@ -435,7 +426,6 @@
                 //Calculate total column width
                 var columns = $scope.grid.columns;
                 var gridRight = $scope.grid.element[0].getBoundingClientRect().right;
-                var scrolledGridRight = gridRight + $scope.colContainer.prevScrollLeft;
                 var totalColumnWidth = 0;
                 for (var i = 0; i < columns.length; i++) {
                   if (angular.isUndefined(columns[i].colDef.visible) || columns[i].colDef.visible === true) {
@@ -443,20 +433,29 @@
                   }
                 }
 
-                var newElementLeft = movingElm[0].offsetLeft + changeValue;
-                var newElementRight = newElementLeft + movingElm[0].offsetWidth;
+                //Calculate new position of left of column
+                var currentElmLeft = movingElm[0].getBoundingClientRect().left - 1;
+                var currentElmRight = movingElm[0].getBoundingClientRect().right;
+
+                var newElementLeft = currentElmLeft - gridLeft + changeValue;
+                newElementLeft = newElementLeft < rightMoveLimit ? newElementLeft : rightMoveLimit;
 
                 // move the column if it's in view. Else scroll if we need to
-                if (newElementLeft > $scope.colContainer.prevScrollLeft &&
-                   newElementRight < scrolledGridRight && newElementRight < $scope.colContainer.canvasWidth) {
-                   movingElm.css({visibility: 'visible', 'left': newElementLeft + 'px'});
-                }
-                else if (newElementRight < $scope.colContainer.canvasWidth && newElementLeft >= gridLeft) {
+                var delta;
+                if ((currentElmLeft >= gridLeft || changeValue > 0) && (currentElmRight <= rightMoveLimit || changeValue < 0)) {
+                  delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
+                  movingElm.css({visibility: 'visible', 'left': (movingElm[0].offsetLeft + delta) + 'px'});
+                } else if (totalColumnWidth > Math.ceil(uiGridCtrl.grid.gridWidth)) {
                   changeValue *= 8;
                   var scrollEvent = new ScrollEvent($scope.col.grid, null, null, 'uiGridHeaderCell.moveElement');
                   scrollEvent.x = {pixels: changeValue};
                   scrollEvent.grid.scrollContainers('',scrollEvent);
-                  movingElm.css({visibility: 'visible', 'left': newElementLeft + changeValue + 'px'});
+                  delta = (newElementLeft < rightMoveLimit) ? changeValue : 0;
+                  var newLeft = movingElm[0].offsetLeft + delta;
+                  // Have to recaluculate the bounds of the moving element since the scrolling will have changed it.
+                  if (movingElm[0].getBoundingClientRect().left - 1 >= gridLeft && (movingElm[0].getBoundingClientRect().right <= rightMoveLimit)) {
+                    movingElm.css({visibility: 'visible', 'left': newLeft + 'px'});
+                  }
                 }
 
                 //Calculate total width of columns on the left of the moving column and the mouse movement
