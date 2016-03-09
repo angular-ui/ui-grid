@@ -626,7 +626,7 @@
             var exportData = self.getData(grid, rowTypes, colTypes);
             var csvContent = self.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
 
-            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterOlderExcelCompatibility);
+            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
           });
         },
 
@@ -909,27 +909,12 @@
          * download as a file
          * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
          */
-        downloadFile: function (fileName, csvContent, exporterOlderExcelCompatibility) {
+        downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility) {
           var D = document;
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
-          var ieVersion;
-
-          ieVersion = this.isIE();
-          if (ieVersion && ieVersion < 10) {
-            var frame = D.createElement('iframe');
-            document.body.appendChild(frame);
-
-            frame.contentWindow.document.open("text/html", "replace");
-            frame.contentWindow.document.write('sep=,\r\n' + csvContent);
-            frame.contentWindow.document.close();
-            frame.contentWindow.focus();
-            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
-
-            document.body.removeChild(frame);
-            return true;
-          }
+          var ieVersion = this.isIE();
 
           // IE10+
           if (navigator.msSaveBlob) {
@@ -939,6 +924,20 @@
                 { type: strMimeType } ),
               fileName
             );
+          }
+
+          if (ieVersion) {
+            var frame = D.createElement('iframe');
+            document.body.appendChild(frame);
+
+            frame.contentWindow.document.open('text/html', 'replace');
+            frame.contentWindow.document.write('sep=' + columnSeparator + '\r\n' + csvContent);
+            frame.contentWindow.document.close();
+            frame.contentWindow.focus();
+            frame.contentWindow.document.execCommand('SaveAs', true, fileName);
+
+            document.body.removeChild(frame);
+            return true;
           }
 
           //html5 A[download]

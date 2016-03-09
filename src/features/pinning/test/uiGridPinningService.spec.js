@@ -13,7 +13,8 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     uiGridPinningConstants = _uiGridPinningConstants_;
     gridClassFactory = _gridClassFactory_;
     GridRenderContainer = _GridRenderContainer_;
-
+  }));
+  beforeEach(function() {
     grid = gridClassFactory.createGrid({});
     spyOn(grid, 'registerColumnBuilder');
 
@@ -25,7 +26,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     grid.options.data = [{col1:'a'},{col1:'b'}];
 
     grid.buildColumns();
-  }));
+  });
 
   describe('initialize', function() {
 
@@ -138,8 +139,8 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     var previousWidth;
 
     beforeEach(function() {
-      spyOn(grid, 'createLeftContainer').andCallThrough();
-      spyOn(grid, 'createRightContainer').andCallThrough();
+      spyOn(grid, 'createLeftContainer').and.callThrough();
+      spyOn(grid, 'createRightContainer').and.callThrough();
       previousWidth = grid.columns[0].drawnWidth;
     });
 

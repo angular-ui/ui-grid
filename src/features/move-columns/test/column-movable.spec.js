@@ -98,15 +98,20 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
-  it('expect moveColumn() to not change position of columns if column position given is wrong', function () {
-    spyOn(gridUtil, 'logError').andCallFake(function() {});
-    scope.gridApi.colMovable.moveColumn(4, 5);
-    expect(scope.grid.columns[0].name).toBe('name');
-    expect(scope.grid.columns[1].name).toBe('gender');
-    expect(scope.grid.columns[2].name).toBe('age');
-    expect(scope.grid.columns[3].name).toBe('company');
-    expect(scope.grid.columns[4].name).toBe('phone');
-    expect(gridUtil.logError).toHaveBeenCalledWith('MoveColumn: Invalid values for originalPosition, finalPosition');
+  describe("expect moveColumn() to not change position of columns if column position given is wrong", function () {
+    beforeEach(function() {
+      spyOn(gridUtil, 'logError').and.callFake(function() {});
+      scope.gridApi.colMovable.moveColumn(4, 5);
+    });
+    it('', function() {
+      expect(scope.grid.columns[0].name).toBe('name');
+      expect(scope.grid.columns[1].name).toBe('gender');
+      expect(scope.grid.columns[2].name).toBe('age');
+      expect(scope.grid.columns[3].name).toBe('company');
+      expect(scope.grid.columns[4].name).toBe('phone');
+      expect(gridUtil.logError.calls.mostRecent().args).toEqual(['MoveColumn: Invalid values for originalPosition, finalPosition']);
+    });
+
   });
 
   it('expect event columnPositionChanged to be called when column position is changed', function () {
