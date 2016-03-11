@@ -81,6 +81,23 @@ angular.module('ui.grid')
    */
 
   /**
+   * @ngdoc property
+   * @name clearExistingGridSortsOnColumnHeaderMenuSort
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description Optional property whose value is true or false.  Defaults to false.  If this value is set to true any sorts currently applied to the grid will be cleared when a user activates a sort option through the grid header menu.
+   */
+
+  /**
+   * @ngdoc property
+   * @name clearExistingGridSortsOnColumnHeaderMenuSort
+   * @propertyOf ui.grid.class:GridColumn
+   * @description Optional property whose value is true or false.  Defaults to false.  If this value is set to true any sorts currently applied to the grid will be cleared when a user activates a sort option through the grid header menu.
+   * @example
+   * <pre>GridOptions.columnDef.clearExistingGridSortsOnColumnHeaderMenuSort=true</pre>
+   *
+   */
+
+   /**
    * @ngdoc object
    * @name ui.grid.class:GridColumn
    * @description Represents the viewModel for each column.  Any state or methods needed for a Grid Column

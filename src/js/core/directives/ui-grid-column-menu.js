@@ -422,7 +422,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
       $scope.sortColumn = function (event, dir) {
         event.stopPropagation();
 
-        $scope.grid.sortColumn($scope.col, dir, true)
+        var appendSort = $scope.col.colDef.clearExistingGridSortsOnColumnHeaderMenuSort ? false : true;
+        $scope.grid.sortColumn($scope.col, dir, appendSort)
           .then(function () {
             $scope.grid.refresh();
             $scope.hideMenu();
