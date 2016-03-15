@@ -181,18 +181,11 @@
         var curColIndex = focusableCols.indexOf(curCol);
         var curRowIndex = focusableRows.indexOf(curRow);
 
-        //could not find column in focusable Columns so set it to 0
-        if (curColIndex === -1) {
-          curColIndex = 0;
-        }
-
         if (curRowIndex === focusableRows.length - 1) {
-          return new GridRowColumn(curRow, focusableCols[curColIndex]); //return same row
+          return null;
         }
-        else {
-          //down one row
-          return new GridRowColumn(focusableRows[curRowIndex + 1], focusableCols[curColIndex]);
-        }
+        //down one row
+        return new GridRowColumn(focusableRows[curRowIndex + 1], focusableCols[curColIndex]);
       };
 
       UiGridCellNav.prototype.getRowColPageDown = function (curRow, curCol) {
@@ -222,18 +215,10 @@
         var curColIndex = focusableCols.indexOf(curCol);
         var curRowIndex = focusableRows.indexOf(curRow);
 
-        //could not find column in focusable Columns so set it to 0
-        if (curColIndex === -1) {
-          curColIndex = 0;
-        }
-
         if (curRowIndex === 0) {
-          return new GridRowColumn(curRow, focusableCols[curColIndex]); //return same row
+          return null;
         }
-        else {
-          //up one row
-          return new GridRowColumn(focusableRows[curRowIndex - 1], focusableCols[curColIndex]);
-        }
+        return new GridRowColumn(focusableRows[curRowIndex - 1], focusableCols[curColIndex]);
       };
 
       UiGridCellNav.prototype.getRowColPageUp = function (curRow, curCol) {
@@ -722,6 +707,11 @@
                 if (lastRowCol) {
                   // Figure out which new row+combo we're navigating to
                   var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+                  if (rowCol === null) {
+                    // The navigation is out of range / end of grid
+                    $scope.$broadcast(uiGridCellNavConstants.CLEAR_FOCUS_EVENT);
+                    return true;
+                  }
                   var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
                   var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
                   // Shift+tab on top-left cell should exit cellnav on render container
@@ -752,14 +742,6 @@
                     grid.cellNav.focusedCells.splice(rowColSelectIndex, 1);
                     uiGridCtrl.cellNav.clearFocus();
                     return true;
-                  } else if (
-                      (direction === uiGridCellNavConstants.direction.DOWN &&
-                      (uiGridCtrl.grid.rows.length - 1) === rowCol.row.index) ||
-                      (direction === uiGridCellNavConstants.direction.UP &&
-                      rowCol.row.index === 0)
-                  ) {
-                    $scope.$broadcast(uiGridCellNavConstants.CLEAR_FOCUS_EVENT);
-                    return true;
                   }
 
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
@@ -776,7 +758,6 @@
               };
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              var _scope = $scope;
               var grid = uiGridCtrl.grid;
 
               function addAriaLiveRegion(){
@@ -951,8 +932,7 @@
       };
     }]);
 
-  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log','$compile',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log, $compile) {
+  module.directive('uiGridViewport', function () {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -960,8 +940,7 @@
         scope: false,
         compile: function () {
           return {
-            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            },
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {},
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
                 renderContainerCtrl = controllers[1];
@@ -1016,12 +995,11 @@
                 //focus again because it can be lost
                  uiGridCtrl.focus();
               });
-
             }
           };
         }
       };
-    }]);
+    });
 
   /**
    *  @ngdoc directive
