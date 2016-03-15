@@ -419,6 +419,14 @@
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
 
+          /**
+           *  @ngdoc object
+           *  @name clearFocusAfterEdit
+           *  @propertyOf  ui.grid.cellNav.api:GridOptions
+           *  @description Clears the focus after the edit event function
+           *  <br/>Defaults to false
+           */
+          gridOptions.clearFocusAfterEdit = gridOptions.clearFocusAfterEdit === true;
         },
 
         /**
@@ -1062,6 +1070,9 @@
 
             uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
               $elm.on('mousedown', preventMouseDown);
+              if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
+                clearFocus();
+              }
             });
 
             uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
@@ -1087,6 +1098,7 @@
             var isFocused = grid.cellNav.focusedCells.some(function(focusedRowCol, index){
               return (focusedRowCol.row === $scope.row && focusedRowCol.col === $scope.col);
             });
+
             if (isFocused){
               setFocused();
             } else {
