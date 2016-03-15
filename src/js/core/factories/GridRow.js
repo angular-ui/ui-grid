@@ -31,7 +31,7 @@ angular.module('ui.grid')
     this.entity = entity;
 
      /**
-      *  @ngdoc object
+      *  @ngdoc string
       *  @name uid
       *  @propertyOf  ui.grid.class:GridRow
       *  @description  UniqueId of row
@@ -39,7 +39,15 @@ angular.module('ui.grid')
      this.uid = gridUtil.nextUid();
 
      /**
-      *  @ngdoc object
+      *  @ngdoc number
+      *  @name index
+      *  @propertyOf  ui.grid.class:GridRow
+      *  @description Index the current position of the row in the array
+      */
+     this.index = index;
+
+     /**
+      *  @ngdoc boolean
       *  @name visible
       *  @propertyOf  ui.grid.class:GridRow
       *  @description If true, the row will be rendered
