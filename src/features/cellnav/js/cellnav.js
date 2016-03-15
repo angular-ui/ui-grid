@@ -24,6 +24,7 @@
   module.constant('uiGridCellNavConstants', {
     FEATURE_NAME: 'gridCellNav',
     CELL_NAV_EVENT: 'cellNav',
+    CLEAR_FOCUS_EVENT: 'cellNavClearFocus',
     direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3, PG_UP: 4, PG_DOWN: 5},
     EVENT_TYPE: {
       KEYDOWN: 0,
@@ -751,6 +752,14 @@
                     grid.cellNav.focusedCells.splice(rowColSelectIndex, 1);
                     uiGridCtrl.cellNav.clearFocus();
                     return true;
+                  } else if (
+                      (direction === uiGridCellNavConstants.direction.DOWN &&
+                      (uiGridCtrl.grid.rows.length - 1) === rowCol.row.index) ||
+                      (direction === uiGridCellNavConstants.direction.UP &&
+                      rowCol.row.index === 0)
+                  ) {
+                    $scope.$broadcast(uiGridCellNavConstants.CLEAR_FOCUS_EVENT);
+                    return true;
                   }
 
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
@@ -1077,6 +1086,9 @@
 
             uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
               $elm.on('mousedown', preventMouseDown);
+              if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
+                clearFocus();
+              }
             });
           }
 
@@ -1125,6 +1137,11 @@
               $scope.focused = false;
             }
           }
+
+          // Exposes the clearFocus function
+          $scope.$on(uiGridCellNavConstants.CLEAR_FOCUS_EVENT, function() {
+            clearFocus();
+          });
 
           $scope.$on('$destroy', function () {
             //.off withouth paramaters removes all handlers
