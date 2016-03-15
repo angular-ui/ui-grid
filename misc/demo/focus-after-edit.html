@@ -32,8 +32,10 @@
 </head>
 <body data-ng-controller="Main">
 <!-- <h1>Test</h1> -->
-<p>When you click outside of the grid the enableCellEditOnFocus will be reset and the field will still be focussed.<br />
-    With the gridOptions clearFocusAfterEdit in the afterEdit event will trigger the clearFocus event of the cellNav directive.</p>
+<p>Exposed the clearFocus function by an angular event 'cellNavClearFocus'. You can override the functionality if you want.
+Otherwise it works as it should be, minimal impact. I use it in combination with the enableCellEditOnFocus option because
+otherwise it behaves weird and not as expected. The focussed element that will turn green needs a double click again.
+In this example this problem is fixed.</p>
 
 <!-- <div class="row main"> -->
 <h2>Grid</h2>
@@ -48,7 +50,6 @@
     var app = angular.module('test', ['ui.grid', 'ui.grid.edit', 'ui.grid.cellNav']);
     app.controller('Main', function($scope, $http) {
         $scope.gridOptions = {
-            clearFocusAfterEdit: true,
             columnDefs: [
                 {
                     field:'id',
@@ -63,7 +64,12 @@
                     field:'age',
                     allowCellFocus: false
                 }
-            ]
+            ],
+            onRegisterApi: function(gridApi) {
+                gridApi.edit.on.afterCellEdit($scope, function() {
+                    $scope.$broadcast('cellNavClearFocus');
+                });
+            }
         };
 
         $http.get('https://rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
