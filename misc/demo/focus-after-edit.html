@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="no-js" ng-app="test"><!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <title></title>
+    <meta content="width=device-width" name="viewport">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+    <link href="/dist/release/ui-grid.css" rel="stylesheet">
+
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="/lib/test/angular/1.2.26/angular.js"></script>
+    <script src="/dist/release/ui-grid.js"></script>
+
+    <style>
+        body {
+            padding: 60px;
+            min-height: 600px;
+        }
+        .grid {
+            width: 500px;
+            height: 400px;
+        }
+        .placeholder {
+            height: 50%;
+            width: 50%;
+            border: 3px solid black;
+            background: #ccc;
+        }
+    </style>
+</head>
+<body data-ng-controller="Main">
+<!-- <h1>Test</h1> -->
+<p>When you click outside of the grid the enableCellEditOnFocus will be reset and the field will still be focussed.<br />
+    With the gridOptions clearFocusAfterEdit in the afterEdit event will trigger the clearFocus event of the cellNav directive.</p>
+
+<!-- <div class="row main"> -->
+<h2>Grid</h2>
+<div data-ui-grid="gridOptions" class="grid" data-ui-grid-edit data-ui-grid-cellnav></div>
+<!-- <div class="placeholder"> -->
+<!-- </div> -->
+
+<br>
+<br>
+
+<script>
+    var app = angular.module('test', ['ui.grid', 'ui.grid.edit', 'ui.grid.cellNav']);
+    app.controller('Main', function($scope, $http) {
+        $scope.gridOptions = {
+            clearFocusAfterEdit: true,
+            columnDefs: [
+                {
+                    field:'id',
+                    allowCellFocus: false
+                },
+                {
+                    field:'name',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true
+                },
+                {
+                    field:'age',
+                    allowCellFocus: false
+                }
+            ]
+        };
+
+        $http.get('https://rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
+            .success(function(data) {
+                $scope.gridOptions.data = data;
+            });
+    });
+</script>
+</body>
+</html>

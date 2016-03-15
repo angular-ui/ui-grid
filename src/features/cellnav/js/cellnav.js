@@ -24,6 +24,7 @@
   module.constant('uiGridCellNavConstants', {
     FEATURE_NAME: 'gridCellNav',
     CELL_NAV_EVENT: 'cellNav',
+    CLEAR_FOCUS_EVENT: 'cellNavClearFocus',
     direction: {LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3, PG_UP: 4, PG_DOWN: 5},
     EVENT_TYPE: {
       KEYDOWN: 0,
@@ -180,18 +181,11 @@
         var curColIndex = focusableCols.indexOf(curCol);
         var curRowIndex = focusableRows.indexOf(curRow);
 
-        //could not find column in focusable Columns so set it to 0
-        if (curColIndex === -1) {
-          curColIndex = 0;
-        }
-
         if (curRowIndex === focusableRows.length - 1) {
-          return new GridRowColumn(curRow, focusableCols[curColIndex]); //return same row
+          return null;
         }
-        else {
-          //down one row
-          return new GridRowColumn(focusableRows[curRowIndex + 1], focusableCols[curColIndex]);
-        }
+        //down one row
+        return new GridRowColumn(focusableRows[curRowIndex + 1], focusableCols[curColIndex]);
       };
 
       UiGridCellNav.prototype.getRowColPageDown = function (curRow, curCol) {
@@ -221,18 +215,10 @@
         var curColIndex = focusableCols.indexOf(curCol);
         var curRowIndex = focusableRows.indexOf(curRow);
 
-        //could not find column in focusable Columns so set it to 0
-        if (curColIndex === -1) {
-          curColIndex = 0;
-        }
-
         if (curRowIndex === 0) {
-          return new GridRowColumn(curRow, focusableCols[curColIndex]); //return same row
+          return null;
         }
-        else {
-          //up one row
-          return new GridRowColumn(focusableRows[curRowIndex - 1], focusableCols[curColIndex]);
-        }
+        return new GridRowColumn(focusableRows[curRowIndex - 1], focusableCols[curColIndex]);
       };
 
       UiGridCellNav.prototype.getRowColPageUp = function (curRow, curCol) {
@@ -419,6 +405,14 @@
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
 
+          /**
+           *  @ngdoc object
+           *  @name clearFocusAfterEdit
+           *  @propertyOf  ui.grid.cellNav.api:GridOptions
+           *  @description Clears the focus after the edit event function
+           *  <br/>Defaults to false
+           */
+          gridOptions.clearFocusAfterEdit = gridOptions.clearFocusAfterEdit === true;
         },
 
         /**
@@ -713,6 +707,11 @@
                 if (lastRowCol) {
                   // Figure out which new row+combo we're navigating to
                   var rowCol = uiGridCtrl.grid.renderContainers[containerId].cellNav.getNextRowCol(direction, lastRowCol.row, lastRowCol.col);
+                  if (rowCol === null) {
+                    // The navigation is out of range / end of grid
+                    $scope.$broadcast(uiGridCellNavConstants.CLEAR_FOCUS_EVENT);
+                    return true;
+                  }
                   var focusableCols = uiGridCtrl.grid.renderContainers[containerId].cellNav.getFocusableCols();
                   var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
                   // Shift+tab on top-left cell should exit cellnav on render container
@@ -759,7 +758,6 @@
               };
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              var _scope = $scope;
               var grid = uiGridCtrl.grid;
 
               function addAriaLiveRegion(){
@@ -934,8 +932,7 @@
       };
     }]);
 
-  module.directive('uiGridViewport', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', 'uiGridCellNavConstants','$log','$compile',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, uiGridCellNavConstants, $log, $compile) {
+  module.directive('uiGridViewport', function () {
       return {
         replace: true,
         priority: -99999, //this needs to run very last
@@ -943,8 +940,7 @@
         scope: false,
         compile: function () {
           return {
-            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            },
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {},
             post: function ($scope, $elm, $attrs, controllers) {
               var uiGridCtrl = controllers[0],
                 renderContainerCtrl = controllers[1];
@@ -999,12 +995,11 @@
                 //focus again because it can be lost
                  uiGridCtrl.focus();
               });
-
             }
           };
         }
       };
-    }]);
+    });
 
   /**
    *  @ngdoc directive
@@ -1061,12 +1056,19 @@
             });
 
             uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
-              $elm.on('mousedown', preventMouseDown);
+              postEditCalls();
             });
 
             uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
-              $elm.on('mousedown', preventMouseDown);
+              postEditCalls();
             });
+          }
+
+          function postEditCalls() {
+            $elm.on('mousedown', preventMouseDown);
+            if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
+              clearFocus();
+            }
           }
 
           function preventMouseDown(evt) {
@@ -1087,6 +1089,7 @@
             var isFocused = grid.cellNav.focusedCells.some(function(focusedRowCol, index){
               return (focusedRowCol.row === $scope.row && focusedRowCol.col === $scope.col);
             });
+
             if (isFocused){
               setFocused();
             } else {
@@ -1113,6 +1116,11 @@
               $scope.focused = false;
             }
           }
+
+          // Exposes the clearFocus function
+          $scope.$on(uiGridCellNavConstants.CLEAR_FOCUS_EVENT, function() {
+            clearFocus();
+          });
 
           $scope.$on('$destroy', function () {
             //.off withouth paramaters removes all handlers
