@@ -1056,18 +1056,19 @@
             });
 
             uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
-              $elm.on('mousedown', preventMouseDown);
-              if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
-                clearFocus();
-              }
+              postEditCalls();
             });
 
             uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
-              $elm.on('mousedown', preventMouseDown);
-              if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
-                clearFocus();
-              }
+              postEditCalls();
             });
+          }
+
+          function postEditCalls() {
+            $elm.on('mousedown', preventMouseDown);
+            if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
+              clearFocus();
+            }
           }
 
           function preventMouseDown(evt) {
