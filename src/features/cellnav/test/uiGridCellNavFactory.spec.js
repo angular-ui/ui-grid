@@ -155,13 +155,12 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
     });
-    it('should navigate to col 0 from unfocusable column', function () {
+    it('should go out of bounce when there is no next row', function () {
       var col = grid.columns[1];
       var row = grid.rows[0];
       var cellNav = new UiGridCellNav(grid.renderContainers.body, grid.renderContainers.body, null, null);
       var rowCol = cellNav.getNextRowCol(uiGridCellNavConstants.direction.DOWN, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+      expect(rowCol).toBe(null);
     });
 
     it('should navigate down one row and same column', function () {
@@ -173,13 +172,12 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
     });
 
-    it('should stay on same row and same column', function () {
+    it('should be no next row', function () {
       var col = grid.columns[2];
       var row = grid.rows[2];
       var cellNav = new UiGridCellNav(grid.renderContainers.body, grid.renderContainers.body, null, null);
       var rowCol = cellNav.getNextRowCol(uiGridCellNavConstants.direction.DOWN, row, col);
-      expect(rowCol.row).toBe(grid.rows[2]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+      expect(rowCol).toBe(null);
     });
 
   });
@@ -189,13 +187,12 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
     });
-    it('should navigate to first col from unfocusable column', function () {
+    it('should go out of bounce when there is no previous row', function () {
       var col = grid.columns[1];
       var row = grid.rows[2];
       var cellNav = new UiGridCellNav(grid.renderContainers.body, grid.renderContainers.body, null, null);
       var rowCol = cellNav.getNextRowCol(uiGridCellNavConstants.direction.UP, row, col);
-      expect(rowCol.row).toBe(grid.rows[1]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[0].colDef.name);
+      expect(rowCol).toBe(null);
     });
 
     it('should navigate up one row and same column', function () {
@@ -207,13 +204,12 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
     });
 
-    it('should stay on same row and same column', function () {
+    it('should be no previous row', function () {
       var col = grid.columns[2];
       var row = grid.rows[0];
       var cellNav = new UiGridCellNav(grid.renderContainers.body, grid.renderContainers.body, null, null);
       var rowCol = cellNav.getNextRowCol(uiGridCellNavConstants.direction.UP, row, col);
-      expect(rowCol.row).toBe(grid.rows[0]);
-      expect(rowCol.col.colDef.name).toBe(grid.columns[2].colDef.name);
+      expect(rowCol).toBe(null);
     });
 
   });
