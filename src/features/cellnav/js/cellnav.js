@@ -404,15 +404,6 @@
            *  <br/>Defaults to false
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
-
-          /**
-           *  @ngdoc object
-           *  @name clearFocusAfterEdit
-           *  @propertyOf  ui.grid.cellNav.api:GridOptions
-           *  @description Clears the focus after the edit event function
-           *  <br/>Defaults to false
-           */
-          gridOptions.clearFocusAfterEdit = gridOptions.clearFocusAfterEdit === true;
         },
 
         /**
@@ -1056,19 +1047,12 @@
             });
 
             uiGridCtrl.grid.api.edit.on.afterCellEdit($scope, function () {
-              postEditCalls();
+              $elm.on('mousedown', preventMouseDown);
             });
 
             uiGridCtrl.grid.api.edit.on.cancelCellEdit($scope, function () {
-              postEditCalls();
+              $elm.on('mousedown', preventMouseDown);
             });
-          }
-
-          function postEditCalls() {
-            $elm.on('mousedown', preventMouseDown);
-            if (uiGridCtrl.grid.options.clearFocusAfterEdit) {
-              clearFocus();
-            }
           }
 
           function preventMouseDown(evt) {
@@ -1119,8 +1103,16 @@
 
           // Exposes the clearFocus function
           $scope.$on(uiGridCellNavConstants.CLEAR_FOCUS_EVENT, function() {
+            grid.cellNav.focusedCells = [];
+            additionalActionForEditOnCellFocus();
             clearFocus();
           });
+
+          function additionalActionForEditOnCellFocus() {
+            if (typeof $scope.col !== 'undefined' && $scope.col.colDef.enableCellEditOnFocus) {
+              grid.cellNav.lastRowCol = null;
+            }
+          }
 
           $scope.$on('$destroy', function () {
             //.off withouth paramaters removes all handlers
