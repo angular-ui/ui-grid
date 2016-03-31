@@ -3,8 +3,16 @@ describe('GridColumn factory', function () {
 
   beforeEach(module('ui.grid'));
 
-  function buildCols() {
-    return grid.buildColumns();
+  function buildCols(done, noDigest) {
+    var promise = grid.buildColumns().then(function() {
+      if (done) {
+        done();
+      }
+    });
+    if (!noDigest) {
+      $scope.$digest();
+    }
+    return promise;
   }
 
 
@@ -27,65 +35,69 @@ describe('GridColumn factory', function () {
     grid.registerColumnBuilder(gridClassFactory.defaultColumnBuilder);
 
     grid.options.columnDefs = cols;
-
     buildCols();
   }));
-  
+
   describe('buildColumns', function () {
-    it('should not remove existing sort details on a column', function () {
+    describe('should not remove existing sort details on a column', function () {
       var sort = { priority: 0, direction: 'asc' };
-      grid.columns[0].sort = sort;
+      beforeEach(function(complete) {
+        grid.columns[0].sort = sort;
+        buildCols(complete);
+      });
 
-      runs(buildCols);
-
-      runs(function () {
+      it('after columns built',function () {
         expect(grid.columns[0].sort).toEqual(sort);
       });
     });
 
-    it('should add a column with a sort, sort is copied', function () {
+    describe('should add a column with a sort, sort is copied', function () {
       var sort = { priority: 0, direction: 'asc' };
-      grid.options.columnDefs[1] = { field: 'surname', sort: sort };
+      beforeEach(function(complete) {
+        grid.options.columnDefs[1] = { field: 'surname', sort: sort };
+        buildCols(complete);
+      });
 
-      runs(buildCols);
-
-      runs(function () {
+      it('after columns built', function () {
         expect(grid.columns[1].sort).toEqual(sort);
       });
     });
 
-    it('should not update sort when updating a column, but visible flag does update', function () {
-      var sort = { priority: 0, direction: 'asc' };
-      grid.options.columnDefs[0].sort = sort;
-      grid.options.columnDefs[0].visible = false;
+    describe('should not update sort when updating a column, but visible flag does update', function () {
+      beforeEach(function(complete){
+        var sort = { priority: 0, direction: 'asc' };
+        grid.options.columnDefs[0].sort = sort;
+        grid.options.columnDefs[0].visible = false;
+        buildCols(complete);
+      });
 
-      runs(buildCols);
-
-      runs(function () {
+      it('after columns built', function () {
         expect(grid.columns[0].sort).toEqual({});
         expect(grid.columns[0].visible).toEqual(false);
       });
     });
 
-    it('should update everything but term when updating filters', function () {
-      var filter = { term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] };
-      grid.options.columnDefs[0].filter = filter;
+    describe('should update everything but term when updating filters', function () {
+      beforeEach(function(complete) {
+        var filter = { term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] };
+        grid.options.columnDefs[0].filter = filter;
+        buildCols(complete);
+      });
 
-      runs(buildCols);
-
-      runs(function () {
+      it('after columns built', function () {
         expect(grid.columns[0].filters).toEqual([ { placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] } ] );
       });
     });
 
 
-    it('should update everything but term when updating filters', function () {
-      var filters = [{ term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] }];
-      grid.options.columnDefs[0].filters = filters;
+    describe('should update everything but term when updating filters', function () {
+      beforeEach(function(complete) {
+        var filters = [{ term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] }];
+        grid.options.columnDefs[0].filters = filters;
+        buildCols(complete);
+      });
 
-      runs(buildCols);
-
-      runs(function () {
+      it('after columns built', function () {
         expect(grid.columns[0].filters).toEqual([ { placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] } ] );
       });
     });
@@ -192,7 +204,7 @@ describe('GridColumn factory', function () {
       expect(col.colDef.visible).toBe(false);
     });
   });
-  
+
   describe('aggregation', function() {
     beforeEach( function() {
       grid.options.data = [
@@ -202,19 +214,19 @@ describe('GridColumn factory', function () {
         { name: 'matthew', value: 4 },
         { name: 'murray', value: 5 }
       ];
-      grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];  
+      grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];
     });
-    
+
     it('count, with label', function() {
       grid.options.columnDefs[0].aggregationType = uiGridConstants.aggregationTypes.count;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[0].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[0].getAggregationValue()).toEqual(5);
       expect(grid.columns[0].getAggregationText()).toEqual('total rows: ');
       deregFn();
@@ -223,14 +235,14 @@ describe('GridColumn factory', function () {
     it('count, without label', function() {
       grid.options.columnDefs[0].aggregationType = uiGridConstants.aggregationTypes.count;
       grid.options.columnDefs[0].aggregationHideLabel = true;
-      
-      buildCols();
+
+      buildCols(function(){});
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[0].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[0].getAggregationValue()).toEqual(5);
       expect(grid.columns[0].getAggregationText()).toEqual('');
       deregFn();
@@ -238,14 +250,14 @@ describe('GridColumn factory', function () {
 
     it('sum, with label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.sum;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(15);
       expect(grid.columns[1].getAggregationText()).toEqual('total: ');
       deregFn();
@@ -254,14 +266,14 @@ describe('GridColumn factory', function () {
     it('sum, without label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.sum;
       grid.options.columnDefs[1].aggregationHideLabel = true;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(15);
       expect(grid.columns[1].getAggregationText()).toEqual('');
       deregFn();
@@ -269,14 +281,14 @@ describe('GridColumn factory', function () {
 
     it('avg, with label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.avg;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(3);
       expect(grid.columns[1].getAggregationText()).toEqual('avg: ');
       deregFn();
@@ -285,29 +297,29 @@ describe('GridColumn factory', function () {
     it('avg, without label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.avg;
       grid.options.columnDefs[1].aggregationHideLabel = true;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(3);
       expect(grid.columns[1].getAggregationText()).toEqual('');
       deregFn();
-    });    
+    });
 
     it('min, with label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.min;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(1);
       expect(grid.columns[1].getAggregationText()).toEqual('min: ');
       deregFn();
@@ -316,14 +328,14 @@ describe('GridColumn factory', function () {
     it('min, without label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.min;
       grid.options.columnDefs[1].aggregationHideLabel = true;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(1);
       expect(grid.columns[1].getAggregationText()).toEqual('');
       deregFn();
@@ -331,14 +343,14 @@ describe('GridColumn factory', function () {
 
     it('max, with label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.max;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(5);
       expect(grid.columns[1].getAggregationText()).toEqual('max: ');
       deregFn();
@@ -347,14 +359,14 @@ describe('GridColumn factory', function () {
     it('max, without label', function() {
       grid.options.columnDefs[1].aggregationType = uiGridConstants.aggregationTypes.max;
       grid.options.columnDefs[1].aggregationHideLabel = true;
-      
+
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
-      
+
       expect(grid.columns[1].getAggregationValue()).toEqual(5);
       expect(grid.columns[1].getAggregationText()).toEqual('');
       deregFn();
@@ -370,7 +382,7 @@ describe('GridColumn factory', function () {
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
 
@@ -389,7 +401,7 @@ describe('GridColumn factory', function () {
       buildCols();
       grid.modifyRows(grid.options.data);
 
-      // this would be called by the footer cell if it were rendered 
+      // this would be called by the footer cell if it were rendered
       var deregFn = grid.api.core.on.rowsRendered(null, grid.columns[1].updateAggregationValue);
       grid.setVisibleRows(grid.rows);
 
@@ -408,13 +420,13 @@ describe('GridColumn factory', function () {
         { name: 'matthew', value: 4 },
         { name: 'murray', value: 5 }
       ];
-      grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];  
+      grid.options.columnDefs = [ {name: 'name'}, {name: 'value'}];
     });
-    
+
     it('raise event', function() {
       var sortChanged = false;
       grid.api.core.on.sortChanged( $scope, function(){ sortChanged = true; });
-      
+
       grid.columns[0].unsort();
       expect( sortChanged ).toEqual(true);
     });
@@ -431,57 +443,50 @@ describe('GridColumn factory', function () {
       expect('then' in col.getCompiledElementFn()).toBe(true);
     });
 
-    it('should return a promise that is resolved when the cellTemplate is compiled', function () {
+    describe('should return a promise that is resolved when the cellTemplate is compiled', function () {
       var resolved = false;
 
-      runs(function () {
+      beforeEach(function (complete) {
         buildCols().then(function () {
           grid.preCompileCellTemplates();
+        }).then(function() {
+          col.getCompiledElementFn().then(function () {
+            resolved = true;
+            complete();
+          });
         });
-      });
-
-      runs(function () {
-        col.getCompiledElementFn().then(function () {
-          resolved = true;
-        });
-
         $scope.$digest();
       });
 
-      // $scope.$digest();
-
-      runs(function () {
+      it('and should fully resolve', function () {
         expect(resolved).toBe(true);
       });
     });
 
-    it('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
+    describe('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
       var resolved = false;
-
       var url = 'http://www.a-really-fake-url.com/template.html';
-      cols[0].cellTemplate = url;
+      beforeEach(function (complete) {
+        cols[0].cellTemplate = url;
 
-      $httpBackend.when('GET', url).respond('<div>foo</div>');
+        $httpBackend.when('GET', url).respond('<div>foo</div>');
 
-      runs(function () {
         buildCols().then(function () {
           grid.preCompileCellTemplates();
-        });
-
-        col.getCompiledElementFn().then(function () {
-          resolved = true;
+        }).then(function() {
+          col.getCompiledElementFn().then(function () {
+            resolved = true;
+            complete();
+          });
         });
 
         expect(resolved).toBe(false);
 
         $httpBackend.flush();
-      });
-
-      runs(function () {
         $scope.$digest();
       });
 
-      runs(function () {
+      it('should resolve', function () {
         expect(resolved).toBe(true);
       });
     });
@@ -498,33 +503,30 @@ describe('GridColumn factory', function () {
       expect('then' in col.getCellTemplate()).toBe(true);
     });
 
-    it('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
+    describe('should return a promise that is resolved when a URL-based cellTemplate is available', function () {
       var resolved = false;
 
       var url = 'http://www.a-really-fake-url.com/template.html';
-      cols[0].cellTemplate = url;
 
-      $httpBackend.when('GET', url).respond('<div>foo</div>');
+      beforeEach(function (complete) {
+        cols[0].cellTemplate = url;
+        $httpBackend.when('GET', url).respond('<div>foo</div>');
 
-      runs(function () {
         buildCols().then(function () {
           grid.preCompileCellTemplates();
+        }).then(function () {
+          col.getCellTemplate().then(function () {
+            resolved = true;
+            complete();
+          });
         });
-
-        col.getCellTemplate().then(function () {
-          resolved = true;
-        });
-
         expect(resolved).toBe(false);
 
         $httpBackend.flush();
-      });
-
-      runs(function () {
         $scope.$digest();
       });
 
-      runs(function () {
+      it('should resolve', function () {
         expect(resolved).toBe(true);
       });
     });

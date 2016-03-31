@@ -1,3 +1,5 @@
+# New Issues are for bug reports or feature requests only!!  Questions on how to use the grid should be posted to Stack Overflow or Gitter https://gitter.im/angular-ui/ui-grid.
+
 # Contributing to UI Grid
 
 Please take a moment to review this document in order to make the contribution
@@ -153,7 +155,7 @@ included in the project:
     with a clear title and description.
 
 **IMPORTANT**: By submitting a patch, you agree to allow the project owners to
-license your work under the the terms of the [MIT License](LICENSE.md).
+license your work under the terms of the [MIT License](LICENSE.md).
 
 ## <a name="commit"></a> Git Commit Guidelines
 
@@ -161,7 +163,11 @@ We have very precise rules over how our git commit messages can be formatted.  T
 readable messages** that are easy to follow when looking through the **project history**.  But also,
 we use the git commit messages to **generate the UIGrid change log**.
 
+Alternatively you can install [commitizen](https://github.com/commitizen/cz-cli) **OR**
+use the wizard. To use the wizard, run `npm run commit` in your terminal after staging your changes in git.
+
 ### Commit Message Format
+**If you do not follow this style guide your commit message will fail to be created.**
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
 format that includes a **type**, a **scope** and a **subject**:
 

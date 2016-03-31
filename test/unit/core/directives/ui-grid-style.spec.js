@@ -12,9 +12,9 @@ describe('ui.grid.style', function() {
     var element, scope, compile, recompile;
 
     beforeEach(inject(function($compile, $rootScope) {
-      scope = $rootScope; 
+      scope = $rootScope;
       compile = $compile;
-      
+
       recompile = function() {
         compile(element)(scope);
         scope.$digest();

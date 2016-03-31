@@ -119,7 +119,7 @@ describe('rowSorter', function() {
         cols[0] = new GridColumn({
           name: 'name',
           type: 'string',
-          sortingAlgorithm: jasmine.createSpy('sortingAlgorithm').andReturn(rows),
+          sortingAlgorithm: jasmine.createSpy('sortingAlgorithm').and.returnValue(rows),
           sort: {
             direction: uiGridConstants.ASC,
             priority: 0
@@ -261,7 +261,7 @@ describe('rowSorter', function() {
 
       grid = gridClassFactory.createGrid({
         externalSort: jasmine.createSpy('externalSort')
-                        .andCallFake(function (r) {
+                        .and.callFake(function (r) {
                           return $timeout(function() {
                             timeoutRows[0].grid = grid;
                             return timeoutRows;
@@ -290,10 +290,9 @@ describe('rowSorter', function() {
       cols = grid.columns = [column];
     }));
 
-    it('should run', function() {
-      grid.sortColumn(column);
-
-      runs(function() {
+    describe('should run', function() {
+      beforeEach(function() {
+        grid.sortColumn(column);
         grid.processRowsProcessors(grid.rows)
           .then(function (newRows) {
             returnedRows = newRows;
@@ -304,18 +303,18 @@ describe('rowSorter', function() {
         for (var i = 0; i < grid.rowsProcessors.length - 1; i++) {
           $timeout.flush();
         }
-        
+
         $scope.$digest();
       });
 
-      runs(function (){
+      it('should call external sort',function (){
         expect(grid.options.externalSort).toHaveBeenCalled();
 
         expect(returnedRows).toEqual(timeoutRows);
       });
     });
   });
-  
+
   describe( 'test each sort routine and null/undefined handling', function () {
     it( 'each function sorts as expected', function() {
       var sortValues = {
@@ -326,7 +325,7 @@ describe('rowSorter', function() {
         sortDate: [ undefined, null, new Date(2009, 12, 12), new Date(2010, 11, 11) ],
         sortBool: [ undefined, null, false, true ]
       };
-      
+
       angular.forEach( sortValues, function( values, sortFnName ) {
         expect( rowSorter[sortFnName] (values[0], values[1])).toEqual(0, sortFnName + ': expected undefined to equal null');
         expect( rowSorter[sortFnName] (values[0], values[2])).toBeGreaterThan(0, sortFnName + ': expected undefined to be greater than value');

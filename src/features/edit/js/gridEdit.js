@@ -660,7 +660,7 @@
              *  [ {id: xxx, value: xxx} ], which will be used to populate
              *  the edit dropdown.  This can be used when the dropdown values are dependent on
              *  the backing row entity with some kind of algorithm.
-             *  If this property is set then both editDropdownOptionsArray and 
+             *  If this property is set then both editDropdownOptionsArray and
              *  editDropdownRowEntityOptionsArrayPath will be ignored.
              *  @param {object} rowEntity the options.data element that the returned array refers to
              *  @param {object} colDef the column that implements this dropdown
@@ -856,7 +856,10 @@
               var gridCellContentsEl = angular.element($elm.children()[0]);
               //remove edit element
               editCellScope.$destroy();
-              angular.element($elm.children()[1]).remove();
+              var children = $elm.children();
+              for (var i = 1; i < children.length; i++) {
+                angular.element(children[i]).remove();
+              }
               gridCellContentsEl.removeClass('ui-grid-cell-contents-hidden');
               inEdit = false;
               registerBeginEditEvents();
@@ -935,7 +938,7 @@
                   $timeout(function () {
                     $elm[0].focus();
                     //only select text if it is not being replaced below in the cellNav viewPortKeyPress
-                    if ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav)) {
+                    if ($elm[0].select && $scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav)) {
                       $elm[0].select();
                     }
                     else {

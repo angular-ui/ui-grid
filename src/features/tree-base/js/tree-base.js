@@ -461,7 +461,7 @@
          *  @ngdoc object
          *  @name showTreeRowHeader
          *  @propertyOf  ui.grid.treeBase.api:GridOptions
-         *  @description If set to false, don't create the row header.  Youll need to programatically control the expand
+         *  @description If set to false, don't create the row header.  You'll need to programmatically control the expand
          *  states
          *  <br/>Defaults to true
          */
@@ -525,6 +525,16 @@
          *  <br/>Defaults to {}
          */
         gridOptions.treeCustomAggregations = gridOptions.treeCustomAggregations || {};
+
+        /**
+         *  @ngdoc object
+         *  @name enableExpandAll
+         *  @propertyOf  ui.grid.treeBase.api:GridOptions
+         *  @description Enable the expand all button at the top of the row header
+         *
+         *  <br/>Defaults to true
+         */
+        gridOptions.enableExpandAll = gridOptions.enableExpandAll !== false;
       },
 
 
@@ -705,7 +715,7 @@
         };
 
         rowHeaderColumnDef.visible = grid.options.treeRowHeaderAlwaysVisible;
-        grid.addRowHeaderColumn( rowHeaderColumnDef );
+        grid.addRowHeaderColumn( rowHeaderColumnDef, -100 );
       },
 
 
@@ -1485,7 +1495,7 @@
        * @param {gridRow} row the parent we're finalising
        */
       finaliseAggregations: function( row ){
-        if ( typeof(row.treeNode.aggregations) === 'undefined' ){
+        if ( row == null || typeof(row.treeNode.aggregations) === 'undefined' ){
           return;
         }
 

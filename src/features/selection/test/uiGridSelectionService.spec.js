@@ -167,7 +167,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       grid.api.selection.unSelectRow(grid.rows[6].entity);
       expect(grid.rows[4].isSelected).toBe(false);
       expect(grid.rows[6].isSelected).toBe(false);
-      
+
       grid.rows[4].enableSelection = false;
       grid.api.selection.selectRow(grid.rows[4].entity);
       expect(grid.rows[4].isSelected).toBe(false);
@@ -202,7 +202,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
         expect(grid.rows[i].isSelected).toBe(false);
       }
       expect(grid.selection.selectAll).toBe(false);
-      
+
       grid.rows[8].enableSelection = false;
       grid.api.selection.selectAllRows();
       expect(grid.rows[7].isSelected).toBe(true);
@@ -262,7 +262,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
 
       grid.api.selection.selectRowByVisibleIndex(1);
       expect(grid.rows[2].isSelected).toBe(true);
-      
+
       grid.rows[3].enableSelection = false;
       grid.api.selection.selectRowByVisibleIndex(2);
       expect(grid.rows[3].isSelected).toBe(undefined);
