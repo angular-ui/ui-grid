@@ -55,7 +55,7 @@
             return rows;
           });
 
-          grid.registerColumnsProcessor(function allColumnsVisible(columns) {
+          grid.registerColumnsProcessor(function applyColumnVisibility(columns) {
             columns.forEach(function (column) {
               column.visible = angular.isDefined(column.colDef.visible) ? column.colDef.visible : true;
             });
