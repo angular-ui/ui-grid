@@ -1,8 +1,7 @@
 /**
  * Translate from english i18n file by francescotrincia on 04/11/16.
- * 
  * jshint expr: true 
-*/
+*/ 
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
