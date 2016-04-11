@@ -1,10 +1,16 @@
-/**
- * Translate from english i18n file by FabryProg on 10/30/14.
- */
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('it', {
+		    headerCell: {
+          aria: {
+            defaultFilterLabel: 'Filtro per colonna',
+            removeFilter: 'Rimuovi filtro',
+            columnMenuButtonLabel: 'Menu colonna'
+          },
+          priority: 'Priorità:',
+          filterLabel: "Filtro per colonna: "
+        },
         aggregate: {
           label: 'elementi'
         },
@@ -27,7 +33,7 @@
         },
         sort: {
           ascending: 'Asc.',
-          descending: 'Desc.',
+          descending: 'Disc.',
           remove: 'Annulla ordinamento'
         },
         column: {
@@ -41,9 +47,12 @@
           max: 'massimo: '
         },
         pinning: {
-         pinLeft: 'Blocca a sx',
+          pinLeft: 'Blocca a sx',
           pinRight: 'Blocca a dx',
           unpin: 'Blocca in alto'
+        },
+		    columnMenu: {
+          close: 'Chiudi'
         },
         gridMenu: {
           columns: 'Colonne:',
@@ -62,6 +71,19 @@
           invalidCsv: 'Impossibile elaborare il file, sicuro che sia un CSV?',
           invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
           jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
+        },
+		    pagination: {
+          aria: {
+            pageToFirst: 'Inizio',
+            pageBack: 'Indietro',
+            pageSelected: 'Pagina Selezionata',
+            pageForward: 'Avanti',
+            pageToLast: 'Fine'
+          },
+          sizes: 'elementi per pagina',
+          totalItems: 'elementi',
+          through: 'per',
+          of: 'di'
         },
         grouping: {
           group: 'Raggruppa',
