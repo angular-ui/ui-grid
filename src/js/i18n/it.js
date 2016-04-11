@@ -2,7 +2,7 @@
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('it', {
-		    headerCell: {
+        headerCell: {
           aria: {
             defaultFilterLabel: 'Filtro per colonna',
             removeFilter: 'Rimuovi filtro',
@@ -51,7 +51,7 @@
           pinRight: 'Blocca a dx',
           unpin: 'Blocca in alto'
         },
-		    columnMenu: {
+        columnMenu: {
           close: 'Chiudi'
         },
         gridMenu: {
@@ -72,7 +72,7 @@
           invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
           jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
         },
-		    pagination: {
+        pagination: {
           aria: {
             pageToFirst: 'Inizio',
             pageBack: 'Indietro',
