@@ -34,6 +34,11 @@ asynchronously after the columns it will often decide all your columns are strin
 column def using `type='number'`.  Valid types are documented in {@link api/ui.grid.class:GridOptions.columnDef columnDef}, and
 include `string`, `number`, `numberStr` and `date`.  If you use date be aware the code expects a javascript date object.
 
+You can pass in a custom sorting algorithm to a column by setting the
+{@link api/ui.grid.class:GridOptions.columnDef#sortingAlgorithm sortingAlgorithm} columnDef option.
+The sorting algorithm function takes 'a' and 'b' parameters like any normal sorting function with additional
+'rowA', 'rowB', and 'direction' parameters that are the row objects and the current direction of the sort respectively.
+
 By default the sorting algorithm will be applied to the row value before any `cellFilters` are applied. The {@link api/ui.grid.class:GridOptions.columnDef#sortCellFiltered sortCellFiltered}
 columnDef option will cause sorting to be applied after the `cellFilters` are applied. For an example of this see the "Month Joined" column in the {@link 401_AllFeatures AllFeatures tutorial}.
 
@@ -83,7 +88,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
               priority: 0,
             },
             suppressRemoveSort: true,
-            sortingAlgorithm: function(a, b) {
+            sortingAlgorithm: function(a, b, rowA, rowB, direction) {
               var nulls = $scope.grid2Api.core.sortHandleNulls(a, b);
               if( nulls !== null ) {
                 return nulls;

@@ -2,6 +2,9 @@
 
 [![Build Status](https://api.travis-ci.org/angular-ui/ui-grid.png?branch=3.0)](https://travis-ci.org/angular-ui/ui-grid) [![Coverage Status](https://coveralls.io/repos/angular-ui/ui-grid/badge.png?branch=master)](https://coveralls.io/r/angular-ui/ui-grid?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
+[![npm](https://img.shields.io/npm/dt/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
@@ -73,6 +76,12 @@ Feature           | Release state
 [tree-view](http://ui-grid.info/docs/#/tutorial/215_treeView) ([API](http://ui-grid.info/docs/#/api/ui.grid.treeView))       | beta
 
 For more details on the features check the [Tutorials](http://ui-grid.info/docs/#/tutorial).
+
+# Plugins
+
+UI-Grid has an excellent plugin system. Most new features can be added as plugins. Please see some discussion of that in the [Developer guidelines](DEVELOPER.md).
+There is a [list of known plugins](http://ui-grid.info/docs/#/tutorial/299_third_party_features) on the tutorial site. If you would
+like your plugin added to that list, please [edit the tutorial page](misc/tutorial/299_third_party_features.ngdoc) and send a pull request.
 
 # Building
 
@@ -163,7 +172,7 @@ With the 3.0 release, the repository has been renamed from "ng-grid" to "ui-grid
 
 All network traffic to GitHub should redirect automatically but they say you should update your git remote url:
 
-  git remote set-url origin https://github.com/angular-ui/ui-grid.git
+    git remote set-url origin https://github.com/angular-ui/ui-grid.git
 
 # Thanks
 

@@ -22,5 +22,8 @@ module.exports = {
   },
   'bower-install': {
     command: 'node ./node_modules/bower/bin/bower install'
+  },
+  'hooks-install': {
+    command: 'npm run init'
   }
 };

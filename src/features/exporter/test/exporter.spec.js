@@ -27,7 +27,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
     grid = gridClassFactory.createGrid({});
     grid.options.columnDefs = [
         {field: 'col1', name: 'col1', displayName: 'Col1', width: 50, pinnedLeft: true},
-        {field: 'col2', name: 'col2', displayName: 'Col2', width: '*', type: 'number'},
+        {field: 'col2', name: 'col2', displayName: 'Col2', width: '*', type: 'number', cellFilter: 'uppercase'},
         {field: 'col3', name: 'col3', displayName: 'Col3', width: 100},
         {field: 'col4', name: 'col4', displayName: 'Col4', width: 200}
     ];
@@ -86,6 +86,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfCustomFormatter: jasmine.any(Function),
         exporterHeaderFilterUseName: false,
         exporterMenuAllData: true,
+        exporterMenuVisibleData: true,
+        exporterMenuSelectedData: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
@@ -114,6 +116,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfCustomFormatter: callback,
         exporterHeaderFilterUseName: true,
         exporterMenuAllData: false,
+        exporterMenuVisibleData: false,
+        exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -139,6 +143,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterPdfCustomFormatter: callback,
         exporterHeaderFilterUseName: true,
         exporterMenuAllData: false,
+        exporterMenuVisibleData: false,
+        exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
@@ -259,6 +265,14 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       ]);
     });
 
+    it('gets the rows display values', function() {
+      expect(uiGridExporterService.getData(grid, uiGridExporterConstants.ALL, uiGridExporterConstants.ALL, true)).toEqual([
+        [ {value: 'a_0'}, {value: 'B_0'}, {value: 'c_0'}, {value: 'd_0'} ],
+        [ {value: 'a_1'}, {value: 'B_1'}, {value: 'c_1'}, {value: 'd_1'} ],
+        [ {value: 'a_2'}, {value: 'B_2'}, {value: 'c_2'}, {value: 'd_2'} ]
+      ]);
+    });
+
     it('maps data using objectCallback', function() {
       grid.options.exporterFieldCallback = function( grid, row, col, value ){
         if ( col.name === 'col2' ){
@@ -284,7 +298,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
       var separator = ',';
 
       expect(uiGridExporterService.formatAsCsv(columnHeaders, data, separator)).toEqual(
-        "\n"
+        ""
       );
     });
 

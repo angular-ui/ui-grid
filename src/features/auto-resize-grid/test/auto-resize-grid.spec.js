@@ -1,5 +1,5 @@
 describe('ui.grid.autoResizeGrid', function () {
-  var gridScope, gridElm, viewportElm, $scope, $compile, recompile, uiGridConstants;
+  var gridScope, gridElm, viewportElm, $scope, $compile, recompile, uiGridConstants, $timeout;
 
   var data = [
     { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -11,8 +11,9 @@ describe('ui.grid.autoResizeGrid', function () {
   beforeEach(module('ui.grid'));
   beforeEach(module('ui.grid.autoResize'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _uiGridConstants_) {
+  beforeEach(inject(function (_$compile_, _$timeout_, $rootScope, _uiGridConstants_) {
     $scope = $rootScope;
+    $timeout = _$timeout_;
     $compile = _$compile_;
     uiGridConstants = _uiGridConstants_;
 
@@ -39,30 +40,27 @@ describe('ui.grid.autoResizeGrid', function () {
   });
 
   describe('on grid element dimension change', function () {
-
-    it('adjusts the grid viewport size', inject(function ($timeout) {
-      var w = $(viewportElm).width();
+    var w;
+    beforeEach(function (done) {
+      w = $(viewportElm).width();
       var h = $(viewportElm).height();
 
-      runs(function () {
-        $(gridElm).width(600);
-      });
-
-      waits(300);
-
-      runs(function () {
-        var newW = $(viewportElm).width();
-
-        expect(newW).toBeGreaterThan(w);
-      });
-    }));
+      $(gridElm).width(600);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
+    it('adjusts the grid viewport size', function () {
+      var newW = $(viewportElm).width();
+      expect(newW).toBeGreaterThan(w);
+    });
   });
 
   // Rebuild the grid as having 100% width and being in a 400px wide container, then change the container width to 500px and make sure it adjusts
   describe('on grid container dimension change', function () {
     var gridContainerElm;
+    var w;
 
-    beforeEach(function () {
+    beforeEach(function (done) {
       angular.element(gridElm).remove();
 
       gridContainerElm = angular.element('<div style="width: 400px"><div style="width: 100%; height: 300px" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
@@ -73,24 +71,20 @@ describe('ui.grid.autoResizeGrid', function () {
       gridElm = gridContainerElm.find('[ui-grid]');
 
       viewportElm = $(gridElm).find('.ui-grid-viewport');
-    });
 
-    it('adjusts the grid viewport size', inject(function ($timeout) {
-      var w = $(viewportElm).width();
+      w = $(viewportElm).width();
       var h = $(viewportElm).height();
 
-      runs(function () {
-        $(gridContainerElm).width(500);
-      });
+      $(gridContainerElm).width(500);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
 
-      waits(300);
+    it('adjusts the grid viewport size', function() {
+      var newW = $(viewportElm).width();
 
-      runs(function () {
-        var newW = $(viewportElm).width();
-
-        expect(newW).toBeGreaterThan(w);
-      });
-    }));
+      expect(newW).toBeGreaterThan(w);
+    });
   });
 
 });
