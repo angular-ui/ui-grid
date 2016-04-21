@@ -810,6 +810,32 @@ describe('Grid factory', function () {
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
       expect( column.sort.priority ).toEqual(0);
     });
+
+    it( 'if two column has sort 1 and 2 on the ui which is 0 and 1 in the sort object and the sort change for the first do not change the priority', function() {
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } });
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } });
+      grid.columns.push( priorColumn1 );
+      grid.columns.push( priorColumn2 );
+
+      grid.sortColumn( priorColumn1, true );
+
+      expect( priorColumn1.sort ).toEqual({ direction: uiGridConstants.DESC, priority: 0});
+    });
+
+    it( 'if three column has sort 1,2 and 3 on the ui which is 0,1 and 2 in the sort object and the sort removed for the second decrease priority for the third but do not change for the first', function() {
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } });
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.DESC, priority: 1 } });
+      var priorColumn3 = new GridColumn({ name: 'c', sort: { direction: uiGridConstants.ASC, priority: 2 } });
+      grid.columns.push( priorColumn1 );
+      grid.columns.push( priorColumn2 );
+      grid.columns.push( priorColumn3 );
+
+      grid.sortColumn( priorColumn2, true );
+
+      expect( priorColumn1.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 0 });
+      expect( priorColumn2.sort ).toEqual({ });
+      expect( priorColumn3.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1 });
+    });
   });
 
 

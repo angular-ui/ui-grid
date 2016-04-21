@@ -1979,7 +1979,7 @@ angular.module('ui.grid')
       // Get the actual priority since there may be columns which have suppressRemoveSort set
       column.sort.priority = self.getNextColumnSortPriority();
     }
-    else if (!column.sort.priority){
+    else if (column.sort.priority === undefined){
       column.sort.priority = self.getNextColumnSortPriority();
     }
 
@@ -1997,7 +1997,7 @@ angular.module('ui.grid')
       if (column.sortDirectionCycle[i]) {
         column.sort.direction = column.sortDirectionCycle[i];
       } else {
-        column.sort = {};
+        removeSortOfColumn(column, self);
       }
     }
     else {
@@ -2007,6 +2007,18 @@ angular.module('ui.grid')
     self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
+  };
+
+  var removeSortOfColumn = function removeSortOfColumn(column, grid) {
+    //Decrease priority for every col where priority is higher than the removed sort's priority.
+    grid.columns.forEach(function (col) {
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority > column.sort.priority) {
+        col.sort.priority -= 1;
+      }
+    });
+
+    //Remove sort
+    column.sort = {};
   };
 
   /**
