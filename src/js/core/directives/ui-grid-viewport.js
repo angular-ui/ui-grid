@@ -32,7 +32,7 @@
           containerCtrl.viewport = $elm;
 
 
-          $elm.on('scroll', scrollHandler);
+          $elm.on('scroll', gridUtil.debounce(scrollHandler, grid.options.scrollDebounce));
 
           var ignoreScroll = false;
 

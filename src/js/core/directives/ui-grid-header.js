@@ -51,9 +51,10 @@
 
                   if (headerViewport) {
                     containerCtrl.headerViewport = headerViewport;
-                    angular.element(headerViewport).on('scroll', scrollHandler);
+                    var debouncedScrollHandler = gridUtil.debounce(scrollHandler, $scope.grid.options.scrollDebounce);
+                    angular.element(headerViewport).on('scroll', debouncedScrollHandler);
                     $scope.$on('$destroy', function () {
-                      angular.element(headerViewport).off('scroll', scrollHandler);
+                      angular.element(headerViewport).off('scroll', debouncedScrollHandler);
                     });
                   }
                 }
