@@ -271,7 +271,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           };
 
           $scope.itemAction = function($event,title) {
-            gridUtil.logDebug('itemAction');
             $event.stopPropagation();
 
             if (typeof($scope.action) === 'function') {
