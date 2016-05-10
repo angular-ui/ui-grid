@@ -22,6 +22,16 @@
    */
   module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$timeout', 'uiGridConstants', 'ScrollEvent', '$q', function (gridUtil, $compile, $timeout, uiGridConstants, ScrollEvent, $q) {
 
+
+    // not sure where to put this util function @vance
+    var calculateHeightFromRows = function(rows){
+      var canvasHeight = 0;
+      rows.forEach(function(r){
+        canvasHeight+= r.height;
+      });
+      return canvasHeight;
+    };
+
     var service = {
 
       /**
@@ -40,7 +50,7 @@
 
         grid.infiniteScroll = { dataLoading: false };
         service.setScrollDirections( grid, grid.options.infiniteScrollUp, grid.options.infiniteScrollDown );
-          grid.api.core.on.scrollEnd($scope, service.handleScroll);
+        grid.api.core.on.scrollEnd($scope, service.handleScroll);
 
         /**
          *  @ngdoc object
@@ -144,7 +154,9 @@
               saveScrollPercentage: function() {
                 grid.infiniteScroll.prevScrollTop = grid.renderContainers.body.prevScrollTop;
                 grid.infiniteScroll.previousVisibleRows = grid.getVisibleRowCount();
+                grid.infiniteScroll.previousVisibleHeight = calculateHeightFromRows(grid.getVisibleRows());
               },
+
 
 
               /**
@@ -332,6 +344,8 @@
       },
 
 
+
+
       /**
        * @ngdoc function
        * @name adjustScroll
@@ -356,27 +370,28 @@
       adjustScroll: function(grid){
         var promise = $q.defer();
         $timeout(function () {
-          var newPercentage, viewportHeight, rowHeight, newVisibleRows, oldTop, newTop;
+          var viewportHeight, oldTop, newTop;
 
           viewportHeight = grid.getViewportHeight() + grid.headerHeight - grid.renderContainers.body.headerHeight - grid.scrollbarHeight;
-          rowHeight = grid.options.rowHeight;
 
           if ( grid.infiniteScroll.direction === undefined ){
             // called from initialize, tweak our scroll up a little
             service.adjustInfiniteScrollPosition(grid, 0);
           }
 
-          newVisibleRows = grid.getVisibleRowCount();
+          var rows = grid.getVisibleRows();
+          var canvasHeight = calculateHeightFromRows(rows);
 
           // in case not enough data is loaded to enable scroller - load more data
-          var canvasHeight = rowHeight * newVisibleRows;
+
           if (grid.infiniteScroll.scrollDown && (viewportHeight > canvasHeight)) {
             grid.api.infiniteScroll.raise.needLoadMoreData();
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
             oldTop = grid.infiniteScroll.prevScrollTop || 0;
-            newTop = oldTop + (newVisibleRows - grid.infiniteScroll.previousVisibleRows)*rowHeight;
+            newTop = oldTop + canvasHeight - grid.infiniteScroll.previousVisibleHeight;
+
             service.adjustInfiniteScrollPosition(grid, newTop);
             $timeout( function() {
               promise.resolve();
@@ -384,7 +399,7 @@
           }
 
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
-            newTop = grid.infiniteScroll.prevScrollTop || (grid.infiniteScroll.previousVisibleRows*rowHeight - viewportHeight);
+            newTop = grid.infiniteScroll.prevScrollTop || ( grid.infiniteScroll.previousVisibleHeight - viewportHeight );
             service.adjustInfiniteScrollPosition(grid, newTop);
             $timeout( function() {
               promise.resolve();
@@ -406,11 +421,10 @@
        * @returns {promise} a promise that is resolved when the scrolling finishes
        */
       adjustInfiniteScrollPosition: function (grid, scrollTop) {
-        var scrollEvent = new ScrollEvent(grid, null, null, 'ui.grid.adjustInfiniteScrollPosition'),
-          visibleRows = grid.getVisibleRowCount(),
-          viewportHeight = grid.getViewportHeight() + grid.headerHeight - grid.renderContainers.body.headerHeight - grid.scrollbarHeight,
-          rowHeight = grid.options.rowHeight,
-          scrollHeight = visibleRows*rowHeight-viewportHeight;
+        var scrollEvent = new ScrollEvent(grid, null, null, 'ui.grid.adjustInfiniteScrollPosition');
+
+        var rows = grid.getVisibleRows();
+        var scrollHeight = calculateHeightFromRows(rows);
 
         //for infinite scroll, if there are pages upwards then never allow it to be at the zero position so the up button can be active
         if (scrollTop === 0 && grid.infiniteScroll.scrollUp) {
