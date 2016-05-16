@@ -815,7 +815,7 @@
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(currentSelection[i].getIntersectionValueFiltered());
+                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
