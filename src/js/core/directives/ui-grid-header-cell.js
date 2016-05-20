@@ -257,7 +257,7 @@
                 }
 
                 // if column is filterable add a filter watcher
-                if ($scope.filterable) {
+                if ($scope.filterable && !uiGridCtrl.grid.options.disableFilteringWatchers) {
                   $scope.col.filters.forEach( function(filter, i) {
                     filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
                       if (n !== o) {
