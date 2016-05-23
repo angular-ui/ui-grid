@@ -86,7 +86,7 @@
           },
           sizes: 'éléments par page',
           totalItems: 'éléments',
-          through: 'par',
+          through: 'à',
           of: 'sur'
         },
         grouping: {
