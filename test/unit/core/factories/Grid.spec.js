@@ -585,6 +585,23 @@ describe('Grid factory', function () {
       expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
     });
 
+    it('should apply angularjs filters with flatEntityAccess', function(){
+      var colDefs = [
+        {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
+        {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs: colDefs, flatEntityAccess: true });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+      grid.buildColumns();
+      grid.modifyRows([entity]);
+
+      var row = grid.rows[0];
+      expect(grid.getCellDisplayValue(row,grid.columns[0])).toEqual("2015-07-01");
+      expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
+    });
+
     it('not overwrite column types specified in options', function() {
 
       var grid1 = new Grid({ id: 3 });
