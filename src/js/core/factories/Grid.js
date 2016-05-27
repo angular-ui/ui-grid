@@ -214,6 +214,7 @@ angular.module('ui.grid')
      * If you only want to resize the grid, not regenerate all the rows
      * and columns, you should consider directly calling refreshCanvas instead.
      *
+     * @param {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed
      */
     self.api.registerMethod( 'core', 'refresh', this.refresh );
 
