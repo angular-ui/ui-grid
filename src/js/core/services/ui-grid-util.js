@@ -351,7 +351,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // See if the template is itself a promise
-      if (template.hasOwnProperty('then')) {
+      if (angular.isFunction(template.then)) {
         return template.then(s.postProcessTemplate);
       }
 
