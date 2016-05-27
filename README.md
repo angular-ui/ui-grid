@@ -36,8 +36,8 @@ Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/ang
 ```
 
 ```html
-    <link rel="stylesheet" type="text/css" href="node_modules/angular-ui-grid/ui.grid.min.css">
-    <script src="node_modules/angular-ui-grid/ui.grid.min.js">
+    <link rel="stylesheet" type="text/css" href="node_modules/angular-ui-grid/ui-grid.min.css">
+    <script src="node_modules/angular-ui-grid/ui-grid.min.js">
 ```
 
 ## CDN
