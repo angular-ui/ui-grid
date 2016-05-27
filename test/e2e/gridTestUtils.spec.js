@@ -123,7 +123,8 @@ module.exports = {
   selectRow: function( gridId, rowNum ) {
     // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
     var row = this.getRow( gridId, rowNum );
-    return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
+    var btn = row.element( by.css('.ui-grid-selection-row-header-buttons') );
+    return browser.actions().mouseMove(btn).mouseDown(btn).mouseUp().perform();
   },
 
   /**
