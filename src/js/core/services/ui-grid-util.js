@@ -1375,8 +1375,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
 
-    event.deltaMode = 0;
-
     // Normalise offsetX and offsetY properties
     // if ($elm[0].getBoundingClientRect ) {
     //   var boundingRect = $(elm)[0].getBoundingClientRect();
