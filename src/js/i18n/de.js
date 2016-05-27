@@ -69,7 +69,7 @@
           exporterSelectedAsCsv: 'markierte Daten als CSV exportieren',
           exporterAllAsPdf: 'Alle Daten als PDF exportieren',
           exporterVisibleAsPdf: 'sichtbare Daten als PDF exportieren',
-          exporterSelectedAsPdf: 'markierte Daten als CSV exportieren',
+          exporterSelectedAsPdf: 'markierte Daten als PDF exportieren',
           clearAllFilters: 'Alle Filter zurücksetzen'
         },
         importer: {
