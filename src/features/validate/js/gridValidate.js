@@ -47,7 +47,7 @@
        *  ```
        *  {
        *    validatorFactory: function(argument) {
-       *                        return function(newValue, oldValue, rowEntity, colDef) {
+       *                        return function( oldValue, newValue , rowEntity, colDef) {
        *                          return true || false || promise
        *                        }
        *                      },
