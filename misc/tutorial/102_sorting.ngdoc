@@ -161,8 +161,8 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      it('header values should be as expected', function () {
-        grid1.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
+      it('header values should be as expected', function (done) {
+        grid1.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ], done);
       });
 
       it('grid should be unsorted by default', function () {
@@ -170,15 +170,16 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
         grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
       });
 
-      it('sort by name by clicking header', function () {
+      it('sort by name by clicking header', function (done) {
         grid1.clickHeaderCell( 0 )
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
             grid1.expectCellValueMatch( 1, 0, 'Alisha Myers' );
-          });
+          })
+          .then(done);
       });
 
-      it('reverse sort by name by clicking header', function () {
+      it('reverse sort by name by clicking header', function (done) {
         grid1.clickHeaderCell( 0 )
           .then(function () {
             return grid1.clickHeaderCell( 0 );
@@ -186,10 +187,11 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
             grid1.expectCellValueMatch( 1, 0, 'Woods Key' );
-          });
+          })
+          .then(done);
       });
 
-      it('return to original sort by name by clicking header', function () {
+      it('return to original sort by name by clicking header', function (done) {
         grid1.clickHeaderCell( 0 )
           .then(function () {
             return grid1.clickHeaderCell( 0 );
@@ -200,18 +202,20 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
-          });
+          })
+          .then(done);
       });
 
-      it('sort asc by clicking menu', function() {
+      it('sort asc by clicking menu', function(done) {
         grid1.clickColumnMenuSortAsc( 0 )
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
             grid1.expectCellValueMatch( 1, 0, 'Alisha Myers' );
-          });
+          })
+          .then(done);
       });
 
-      it('sort desc by clicking menu, then remove sort', function() {
+      it('sort desc by clicking menu, then remove sort', function(done) {
         grid1.clickColumnMenuSortDesc( 0 )
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
@@ -224,10 +228,11 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
-          });
+          })
+          .then(done);
       });
 
-      it('sort two columns, gender then name, by shift clicking', function() {
+      it('sort two columns, gender then name, by shift clicking', function(done) {
         grid1.clickHeaderCell( 1 )
           .then(function () {
             return grid1.shiftClickHeaderCell( 0 );
@@ -235,23 +240,28 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Alisha Myers' );
             grid1.expectCellValueMatch( 1, 0, 'Beryl Rice' );
-          });
+          })
+          .then(done);
       });
 
-      it('sort disabled on last column', function() {
+      it('sort disabled on last column', function(done) {
         grid1.clickHeaderCell( 2 )
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
-          });
+          })
+          .then(done);
       });
 
-      it('click one menu, then click another menu, expect undisplay and redisplay on second click', function() {
-        grid1.expectVisibleColumnMenuItems( 0, 4 );
-        grid1.expectVisibleColumnMenuItems( 1, 4 );
+      it('click one menu, then click another menu, expect undisplay and redisplay on second click', function(done) {
+        grid1.expectVisibleColumnMenuItems( 0, 3 )
+          .then(function() {
+            return grid1.expectVisibleColumnMenuItems( 1, 3 );
+          })
+          .then(done);
       });
 
-      it('toggle gender, expect Alexander Foley to move around', function() {
+      it('toggle gender, expect Alexander Foley to move around', function(done) {
         // sort gender asc, then name
         grid1.clickHeaderCell( 1 )
           .then(function () {
@@ -274,15 +284,16 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           })
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
-          });
+          })
+          .then(done);
       });
 
     });
 
 
     describe('second grid on the page, has default sort', function() {
-      it('header values should be as expected', function () {
-        grid2.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
+      it('header values should be as expected', function (done) {
+        grid2.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ], done);
       });
 
       it('grid should be sorted by default', function () {
@@ -290,7 +301,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
         grid2.expectCellValueMatch( 1, 0, 'Velma Fry' );
       });
 
-      it('sort on second column can\'t be removed when cycle through header clicks', function () {
+      it('sort on second column can\'t be removed when cycle through header clicks', function (done) {
         grid2.clickHeaderCell( 0 )
           .then(function () {
             grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
@@ -306,7 +317,8 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           })
           .then(function () {
             grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
-          });
+          })
+          .then(done);
       });
     });
 

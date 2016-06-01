@@ -112,8 +112,8 @@ Steps:
         grid1.expectRowCount( 3 );
       });
 
-      it('header values should be as expected', function () {
-        grid1.expectHeaderColumns( ['First Name', 'Last Name', 'Company', 'Employed'] );
+      it('header values should be as expected', function (done) {
+        grid1.expectHeaderColumns( ['First Name', 'Last Name', 'Company', 'Employed'], done);
       });
 
       it('first row cell values should be as expected', function () {

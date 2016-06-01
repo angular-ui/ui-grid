@@ -243,17 +243,18 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
         gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Hatfield Hudson' );
       });
 
-      it('cancel filter on gender column and on date column, should now see Bishop Carr in third row', function() {
+      it('cancel filter on gender column and on date column, should now see Bishop Carr in third row', function(done) {
         gridTestUtils.cancelFilterInColumn( 'grid1', 1 )
           .then(function () {
             return gridTestUtils.cancelFilterInColumn( 'grid1', 6 );
           })
           .then(function () {
             gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
-          });
+          })
+          .then(done);
       });
 
-      it('filter on email column, should automatically do "ends with"', function() {
+      it('filter on email column, should automatically do "ends with"', function(done) {
         gridTestUtils.cancelFilterInColumn( 'grid1', 1 )
           .then(function () {
             return gridTestUtils.cancelFilterInColumn( 'grid1', 6 );
@@ -263,7 +264,8 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
           })
           .then(function () {
             gridTestUtils.expectRowCount( 'grid1', 2 );
-          });
+          })
+          .then(done);
       });
     });
   </file>
