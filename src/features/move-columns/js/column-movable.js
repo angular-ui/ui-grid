@@ -288,7 +288,7 @@
           return {
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $scope.$watch('grid.options.enableColumnMoving', function (enableMoving) {
-                if (enableMoving) {
+                if (enableMoving && $scope.col.colDef.enableColumnMoving) {
                   onDownEvents();
                 }
                 else {
