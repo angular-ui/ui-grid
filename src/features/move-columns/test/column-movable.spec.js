@@ -18,8 +18,7 @@ describe('ui.grid.moveColumns', function () {
     timeout = $timeout;
     gridUtil = _gridUtil_;
     document = $document;
-    uiGridConstants = _uiGridConstants_;
-
+    uiGridConstants = _uiGridConstants_;    
     scope.gridOptions = {};
     scope.gridOptions.data = data;
     scope.gridOptions.columnDefs = [
@@ -194,12 +193,33 @@ describe('ui.grid.moveColumns', function () {
 
   it('expect column movement to happen if enableColumnMoving is changed to true', function() {
     scope.grid.options.enableColumnMoving = false;
-    scope.grid.options.enableColumnMoving = true;
+    scope.grid.options.enableColumnMoving = true;    
     scope.gridApi.colMovable.moveColumn(0, 1);
     expect(scope.grid.columns[0].name).toBe('gender');
     expect(scope.grid.columns[1].name).toBe('name');
     expect(scope.grid.columns[2].name).toBe('age');
     expect(scope.grid.columns[3].name).toBe('company');
     expect(scope.grid.columns[4].name).toBe('phone');
+  });
+
+  it('expect column movement no to happen if column Defination enableColumnMoving is changed to false', function(){
+    scope.grid.options.enableColumnMoving = true;
+    scope.grid.columns[2].colDef.enableColumnMoving = false;
+    scope.gridApi.colMovable.moveColumn(2, 0);
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[2].name).toBe('age');
+  });
+
+  it('expect column movement not to happen for column defination enableColumnMoving is false by default', function(){    
+    scope.gridApi.colMovable.moveColumn(2, 0);    
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[3].name).toBe('company');
+  });
+
+  it('expect column movement to be happen for changing the column defination enableColumnMoving property to true which is false by default', function(){
+    scope.grid.columns[3].colDef.enableColumnMoving = true;
+    scope.gridApi.colMovable.moveColumn(2, 0);
+    expect(scope.grid.columns[0].name).toBe('company');    
+    expect(scope.grid.columns[3].name).toBe('age');
   });
 });

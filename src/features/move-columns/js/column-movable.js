@@ -287,14 +287,17 @@
         compile: function () {
           return {
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              $scope.$watch('grid.options.enableColumnMoving', function (enableMoving) {
-                if (enableMoving) {
-                  onDownEvents();
-                }
-                else {
-                  offAllEvents();
-                }
-              });
+              function enableColumnMove(){
+                  if ($scope.grid.options.enableColumnMoving && $scope.col.colDef.enableColumnMoving) {
+                    onDownEvents();
+                  }
+                  else {                   
+                    offAllEvents();
+                 }
+              }
+              $scope.$watch('grid.options.enableColumnMoving', enableColumnMove);
+
+              $scope.$watch('col.colDef.enableColumnMoving', enableColumnMove);
 
               /*
                * Our general approach to column move is that we listen to a touchstart or mousedown
