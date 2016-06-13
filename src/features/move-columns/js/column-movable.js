@@ -402,7 +402,7 @@
                               totalColumnsLeftWidth += columns[il].drawnWidth || columns[il].width || columns[il].colDef.width;
                               if (totalColumnsLeftWidth > Math.abs(totalMouseMovement)) {
                                 uiGridMoveColumnService.redrawColumnAtPosition
-                                ($scope.grid, columnIndex, il + 1);
+                                ($scope.grid, columnIndex, il);
                                 break;
                               }
                             }
@@ -417,12 +417,12 @@
                         //Case where column should be moved to a position on its right
                         else if (totalMouseMovement > 0) {
                           var totalColumnsRightWidth = 0;
-                          for (var ir = columnIndex + 1; ir < columns.length; ir++) {
+                          for (var ir = columnIndex; ir < columns.length; ir++) {
                             if (angular.isUndefined(columns[ir].colDef.visible) || columns[ir].colDef.visible === true) {
                               totalColumnsRightWidth += columns[ir].drawnWidth || columns[ir].width || columns[ir].colDef.width;
                               if (totalColumnsRightWidth > totalMouseMovement) {
                                 uiGridMoveColumnService.redrawColumnAtPosition
-                                ($scope.grid, columnIndex, ir - 1);
+                                ($scope.grid, columnIndex, ir);
                                 break;
                               }
                             }
