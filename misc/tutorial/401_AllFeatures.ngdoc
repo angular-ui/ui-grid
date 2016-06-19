@@ -6,7 +6,7 @@ Appends data to the grid every .2 seconds for 15 seconds.  This emulates loading
 of setting gridOptions.data to a string value that specifies an object on your scope to watch.
 <br>
 
-All features are enabled to get an idea of performance
+All features are enabled to get an idea of performance.
 
 @example
 <example module="app">
@@ -16,6 +16,8 @@ All features are enabled to get an idea of performance
     app.controller('MainCtrl',  ['$scope', '$http', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants',
      function ($scope, $http, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
 
+      $scope.myData = [];
+
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
       $scope.gridOptions.enableColumnResizing = true;
@@ -24,6 +26,9 @@ All features are enabled to get an idea of performance
       $scope.gridOptions.showGridFooter = true;
       $scope.gridOptions.showColumnFooter = true;
       $scope.gridOptions.fastWatch = true;
+      $scope.gridOptions.importerDataAddCallback = function( grid, newObjects ){
+        $scope.myData = $scope.myData.concat(newObjects);
+      };
 
       $scope.gridOptions.rowIdentity = function(row) {
         return row.id;
