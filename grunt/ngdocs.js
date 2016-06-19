@@ -22,6 +22,8 @@ module.exports = {
       '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js',
       '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js',
       'bower_components/csv-js/csv.js',
+      'bower_components/js-xlsx/dist/jszip.js',
+      'bower_components/js-xlsx/dist/xlsx.js',
       'bower_components/pdfmake/build/pdfmake.js',
       'bower_components/pdfmake/build/vfs_fonts.js'
     ],
