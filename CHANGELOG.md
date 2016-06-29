@@ -1,3 +1,11 @@
+<a name="v3.2.2"></a>
+### v3.2.2 (2016-06-29)
+
+
+#### Bug Fixes
+
+* **col-movable:** prevent hidden columns triggering unnecessary re-order event ([644b324b](http://github.com/angular-ui/ng-grid/commit/644b324b42e83cf8014ffcd05acc948084698aaa))
+
 <a name="v3.2.1"></a>
 ### v3.2.1 (2016-06-24)
 
