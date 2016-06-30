@@ -1,3 +1,12 @@
+<a name="v3.2.4"></a>
+### v3.2.4 (2016-06-30)
+
+
+#### Bug Fixes
+
+* update bower.json and package.json to include files for current npm ([f7c6700d](http://github.com/angular-ui/ng-grid/commit/f7c6700dedacfa213eaa65838d127aab0bf24867))
+* **col-movable:** prevent hidden columns triggering unnecessary re-order event ([644b324b](http://github.com/angular-ui/ng-grid/commit/644b324b42e83cf8014ffcd05acc948084698aaa))
+
 <a name="v3.2.3"></a>
 ### v3.2.3 (2016-06-29)
 
