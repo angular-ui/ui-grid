@@ -1,3 +1,8 @@
+<a name="v3.2.5"></a>
+### v3.2.5 (2016-07-01)
+
+* update for package.json creation for npm
+
 <a name="v3.2.4"></a>
 ### v3.2.4 (2016-06-30)
 
