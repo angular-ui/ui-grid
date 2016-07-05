@@ -183,5 +183,16 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[3].name).toBe('company');
     expect(scope.grid.columns[4].name).toBe('phone');
   });
+  
+  it('expect column move not to happen if moving across hidden columns', function() {
+    scope.gridOptions.columnDefs[1].visible = false;
+    scope.gridApi.colMovable.moveColumn(0, 3);
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[1].name).toBe('gender');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+
+  });
 
 });
