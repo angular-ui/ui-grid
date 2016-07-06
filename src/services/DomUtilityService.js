@@ -64,11 +64,24 @@
     };
     domUtilityService.getRealWidth = function (obj) {
         var width = 0;
+        var name, old = {};
         var props = { visibility: "hidden", display: "block" };
         var hiddenParents = obj.parents().andSelf().not(':visible');
-        $.swap(hiddenParents[0], props, function () {
-            width = obj.outerWidth();
-        });
+        var elem = hiddenParents[0];
+
+        // Remember the old values, and insert the new ones
+        for (name in props) {
+            old[name] = elem.style[name];
+            elem.style[name] = props[name];
+        }
+
+        width = obj.outerWidth();
+
+        // Revert the old values
+        for (name in props) {
+            elem.style[name] = old[name];
+        }
+
         return width;
     };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
