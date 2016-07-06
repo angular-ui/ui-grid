@@ -173,6 +173,26 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[4].isSelected).toBe(false);
     });
   });
+  
+  describe('setSelected function', function() {
+    it('select row and check the selected count is correct', function() {
+      
+      expect(grid.selection.selectedCount).toBe(0);
+      
+      grid.rows[0].setSelected(true);
+      expect(grid.rows[0].isSelected).toBe(true);
+      expect(grid.selection.selectedCount).toBe(1);
+    
+      // the second setSelected(true) should have no effect
+      grid.rows[0].setSelected(true);
+      expect(grid.rows[0].isSelected).toBe(true);
+      expect(grid.selection.selectedCount).toBe(1);
+      
+      grid.rows[0].setSelected(false);
+      expect(grid.rows[0].isSelected).toBe(false);
+      expect(grid.selection.selectedCount).toBe(0);
+    });
+  });
 
   describe('selectAllRows and clearSelectedRows functions', function() {
     it('should select all rows, and select all rows when already all selected, then unselect again', function () {
