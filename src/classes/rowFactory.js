@@ -167,6 +167,7 @@
     };
     //Shuffle the data into their respective groupings.
     self.getGrouping = function(groups) {
+        var previousAggCache = self.aggCache;
         self.aggCache = [];
         self.numberOfAggregates = 0;
         self.groupedData = {};
@@ -244,6 +245,46 @@
         self.parsedData.length = 0;
         self.parseGroupData(self.groupedData);
         self.fixRowCache();
+        self.fixAggregatorsCollapseState(previousAggCache);
+    };
+
+    self.fixAggregatorsCollapseState = function(previousAggCache){
+        if(!angular.isArray(previousAggCache) || previousAggCache.length === 0){
+            return;
+        }
+
+        angular.forEach(self.aggCache, function(agg){
+            var previousAgg = self.findAggregator(agg, previousAggCache);
+            if(previousAgg){
+               agg.setExpand(previousAgg.collapsed);
+            }
+        });
+    };
+
+    self.findAggregator = function(aggregatorToFind, aggs){
+        var foundAgg;
+        angular.forEach(aggs, function(agg){
+            if(!foundAgg && self.aggregatorEquals(aggregatorToFind, agg)){
+                foundAgg = agg;
+            }
+        });
+        return foundAgg;
+    };
+
+    self.aggregatorEquals = function(agg1, agg2){
+        if(agg1.depth !== agg2.depth ||
+            agg1.entity.gField !== agg2.entity.gField ||
+            agg1.entity.gLabel !== agg2.entity.gLabel){
+            return false;
+        }
+
+        if(!agg1.parent && !agg2.parent){
+            return true;
+        } if(!agg1.parent || !agg2.parent){
+            return false;
+        } else{
+            return self.aggregatorEquals(agg1.parent, agg2.parent);
+        }
     };
 
     if (grid.config.groups.length > 0 && grid.filteredRows.length > 0) {
