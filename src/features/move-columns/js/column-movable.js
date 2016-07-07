@@ -175,13 +175,14 @@
         }
 
         //check columns in between move-range to make sure they are visible columns
-        var i0 = Math.min(originalPosition, newPosition);
-        for (i0; i0 < Math.max(originalPosition, newPosition);i0++) {
+        var pos = (originalPosition < newPosition) ? originalPosition + 1 : originalPosition - 1;
+        var i0 = Math.min(pos, newPosition);
+        for (i0; i0 <= Math.max(pos, newPosition); i0++) {
           if (columns[i0].visible) {
             break;
           }
         }
-        if (i0 === Math.max(originalPosition, newPosition)) {
+        if (i0 > Math.max(pos, newPosition)) {
           //no visible column found, column did not visibly move
           return;
         }
