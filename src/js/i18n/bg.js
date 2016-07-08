@@ -14,6 +14,7 @@
         aggregate: {
           label: 'обекти'
         },
+        
         search: {
           placeholder: 'Търсене...',
           showingItems: 'Показване на обекти:',
