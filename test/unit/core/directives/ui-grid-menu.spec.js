@@ -80,7 +80,7 @@ describe('ui-grid-menu', function() {
       $scope.$broadcast('show-menu');
 
       expect(isolateScope.dynamicStyles).toBeDefined();
-      expect(isolateScope.dynamicStyles).toContain('.grid1234 .ui-grid-menu-mid { max-height: 370px; }');
+      expect(isolateScope.dynamicStyles).toContain('.grid1234 .ui-grid-menu-mid { max-height: 350px; }');
     });
 
     function compileWithGrid () {
@@ -88,6 +88,7 @@ describe('ui-grid-menu', function() {
       grid.data('$uiGridController', $controller(function ($scope) {
         this.grid = {
           gridHeight: 400,
+          headerHeight: 30,
           id: '1234',
           api: {
             core: {
