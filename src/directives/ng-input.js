@@ -1,4 +1,4 @@
-ngGridDirectives.directive('ngInput', [function() {
+ngGridDirectives.directive('ngInput', ['$timeout', function($timeout) {
     return {
         require: 'ngModel',
         link: function (scope, elm, attrs, ngModel) {
@@ -60,8 +60,10 @@ ngGridDirectives.directive('ngInput', [function() {
                 elm.select();
             }));
 
-            angular.element(elm).bind('blur', function () {
-                scope.$emit('ngGridEventEndCellEdit');
+            $timeout(function () {
+                angular.element(elm).bind('blur', function () {
+                    scope.$emit('ngGridEventEndCellEdit');
+                });
             });
         }
     };
