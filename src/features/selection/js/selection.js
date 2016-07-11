@@ -66,12 +66,9 @@
          * @param {bool} selected value to set
          */
         $delegate.prototype.setSelected = function(selected) {
-          this.isSelected = selected;
-          if (selected) {
-            this.grid.selection.selectedCount++;
-          }
-          else {
-            this.grid.selection.selectedCount--;
+          if (selected !== this.isSelected) {
+            this.isSelected = selected;
+            this.grid.selection.selectedCount += selected ? 1 : -1;
           }
         };
 
