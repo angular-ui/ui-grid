@@ -453,6 +453,7 @@
                   var expandedRowElement = angular.element(template);
                   $elm.append(expandedRowElement);
                   expandedRowElement = $compile(expandedRowElement)($scope);
+                  $scope.row.element = $elm;
                   $scope.row.expandedRendered = true;
               });
             },
@@ -506,7 +507,7 @@
                   $elm.on('dblclick', function () {
                     // если надо, можно для всех остановить обработку одинарного клика ИЛИ
                     // внутри своего Конфига в обработчике вписать строку:
-                    //event.stopPropagation()
+                    // event.stopPropagation()
                     $scope.grid.api.expandable.toggleRowExpansion($scope.row.entity)
                   })
                 }
