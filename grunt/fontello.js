@@ -5,8 +5,8 @@ module.exports = {
   dist: {
     options: {
       config  : 'src/font/config.json',
-      fonts   : 'dist/release',
-      styles  : '.tmp/font',
+      fonts   : 'dist/release/fonts',
+      styles  : '.tmp/fonts',
       scss    : false
       // force   : true
     }
