@@ -52,10 +52,17 @@
        *  @ngdoc object
        *  @name isSelected
        *  @propertyOf  ui.grid.selection.api:GridRow
-       *  @description Selected state of row.  Should be readonly. Make any changes to selected state using setSelected().
+       *  @description Selected state of row. Should be readonly. Make any changes to selected state using setSelected().
        *  <br/>Defaults to false
        */
 
+      /**
+       *  @ngdoc object
+       *  @name isFocused
+       *  @propertyOf  ui.grid.selection.api:GridRow
+       *  @description Focused state of row. Should be readonly. Make any changes to focused state using setFocused().
+       *  <br/>Defaults to false
+       */
 
       /**
        * @ngdoc function
@@ -63,12 +70,28 @@
        * @methodOf ui.grid.selection.api:GridRow
        * @description Sets the isSelected property and updates the selectedCount
        * Changes to isSelected state should only be made via this function
-       * @param {bool} selected value to set
+       * @param {Boolean} selected value to set
        */
       $delegate.prototype.setSelected = function (selected) {
         if (selected !== this.isSelected) {
           this.isSelected = selected;
           this.grid.selection.selectedCount += selected ? 1 : -1;
+        }
+      };
+
+      /**
+       * @ngdoc function
+       * @name setFocused
+       * @methodOf ui.grid.selection.api:GridRow
+       * @description Sets the isFocused property
+       * Changes to isFocused state should only be made via this function
+       * @param {Boolean} val value to set
+       */
+      $delegate.prototype.setFocused = function(val) {
+        if (val !== this.isFocused) {
+          this.grid.selection.focusedRow && (this.grid.selection.focusedRow.isFocused = false);
+          this.grid.selection.focusedRow = val ? this : null;
+          this.isFocused = val;
         }
       };
 
@@ -84,7 +107,6 @@
    */
   module.service('uiGridSelectionService', ['$q', '$templateCache', 'uiGridSelectionConstants', 'gridUtil',
     function ($q, $templateCache, uiGridSelectionConstants, gridUtil) {
-
       var service = {
 
         initializeGrid: function (grid) {
@@ -96,9 +118,17 @@
            *
            *  @description Grid properties and functions added for selection
            */
-          grid.selection = {};
-          grid.selection.lastSelectedRow = null;
-          grid.selection.selectAll = false;
+          grid.selection = {
+            lastSelectedRow: null,
+            /**
+             *  @ngdoc object
+             *  @name focusedRow
+             *  @propertyOf  ui.grid.selection.grid:selection
+             *  @description Focused row.
+             */
+            focusedRow: null,
+            selectAll: false
+          };
 
 
           /**
@@ -122,6 +152,16 @@
           var publicApi = {
             events: {
               selection: {
+                /**
+                 * @ngdoc event
+                 * @name rowFocusChanged
+                 * @eventOf  ui.grid.selection.api:PublicApi
+                 * @description  is raised after the row.isFocused state is changed
+                 * @param {object} scope the scope associated with the grid
+                 * @param {GridRow} row the row that was focused/unfocused
+                 * @param {Event} evt object if raised from an event
+                 */
+                rowFocusChanged: function (scope, row, evt) {},
                 /**
                  * @ngdoc event
                  * @name rowSelectionChanged
@@ -414,11 +454,27 @@
            *  @name enableFullRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable selection by clicking anywhere on the row.  Defaults to
-           *  false if `enableRowHeaderSelection` is true, otherwise defaults to false.
+           *  false if `enableRowHeaderSelection` is true, otherwise defaults to true.
            */
           if (typeof (gridOptions.enableFullRowSelection) === 'undefined') {
             gridOptions.enableFullRowSelection = !gridOptions.enableRowHeaderSelection;
           }
+          /**
+           *  @ngdoc object
+           *  @name enableFocusRowOnRowHeaderClick
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable focuse row by clicking on the row header.  Defaults to
+           *  true if `enableRowHeaderSelection` is true, otherwise defaults to false.
+           */
+          gridOptions.enableFocusRowOnRowHeaderClick = (gridOptions.enableFocusRowOnRowHeaderClick !== false)
+            || !gridOptions.enableRowHeaderSelection;
+          /**
+           *  @ngdoc object
+           *  @name enableSelectRowOnFocus
+           *  @propertyOf  ui.grid.selection.api:GridOptions
+           *  @description Enable focuse row by clicking on the row anywhere.  Defaults true.
+           */
+          gridOptions.enableSelectRowOnFocus = (gridOptions.enableSelectRowOnFocus !== false);
           /**
            *  @ngdoc object
            *  @name enableSelectAll
@@ -446,7 +502,6 @@
            *  <br/>Defaults to 30px
            */
           gridOptions.selectionRowHeaderWidth = angular.isDefined(gridOptions.selectionRowHeaderWidth) ? gridOptions.selectionRowHeaderWidth : 30;
-
           /**
            *  @ngdoc object
            *  @name enableFooterTotalSelected
@@ -456,17 +511,15 @@
            *  <br/>GridOptions.showGridFooter must also be set to true.
            */
           gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
-
           /**
            *  @ngdoc object
            *  @name isRowSelectable
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Makes it possible to specify a method that evaluates for each row and sets its "enableSelection" property.
            */
-
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
         },
-
+  
         /**
          * @ngdoc function
          * @name toggleRowSelection
@@ -479,20 +532,22 @@
          * @param {bool} noUnselect if true then rows cannot be unselected
          */
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
-          var selected = row.isSelected,
-            selectedRows;
-
-          if (row.enableSelection === false) {
+          if ( row.enableSelection === false ){
             return;
           }
 
-          if (!multiSelect && !selected) {
-            service.clearSelectedRows(grid, evt);
-          } else if (!multiSelect && selected) {
-            selectedRows = service.getSelectedRows(grid);
-            if (selectedRows.length > 1) {
-              selected = false; // Enable reselect of the row
+          var selected = row.isSelected,
+              selectedRows;
+          
+          if (!multiSelect) {
+            if (!selected) {
               service.clearSelectedRows(grid, evt);
+            } else {
+              selectedRows = service.getSelectedRows(grid);
+              if (selectedRows.length > 1) {
+                selected = false; // Enable reselect of the row
+                service.clearSelectedRows(grid, evt);
+              }
             }
           }
 
@@ -726,7 +781,7 @@
           $scope.selectButtonKeyDown = selectButtonKeyDown;
 
           // On IE, prevent mousedowns on the select button from starting a selection.
-          //   If this is not done and you shift+click on another row, the browser will select a big chunk of text
+          // If this is not done and you shift+click on another row, the browser will select a big chunk of text
           if (gridUtil.detectBrowser() === 'ie') {
             $elm.on('mousedown', selectButtonMouseDown);
           }
@@ -745,7 +800,8 @@
               uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
             }
             else if (evt.ctrlKey || evt.metaKey) {
-              uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
+              uiGridSelectionService.toggleRowSelection(self, row, evt,
+                self.options.multiSelect, self.options.noUnselect);
             }
             else if (row.groupHeader) {
               uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
@@ -754,8 +810,10 @@
               }
             }
             else {
-              uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
+              uiGridSelectionService.toggleRowSelection(self, row, evt,
+                (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
+            self.options.enableFocusRowOnRowHeaderClick && row.setFocused(!row.isFocused) && self.api.selection.raise.rowFocusChanged(row, evt);
           }
 
           function selectButtonMouseDown(evt) {
@@ -820,23 +878,20 @@
           priority: -200, // run after default  directive
           scope: false,
           compile: function ($elm, $attrs) {
-            var rowRepeatDiv = angular.element($elm[0].querySelector('.ui-grid-canvas:not(.ui-grid-empty-base-layer-container)').children[0]);
+            var rowRepeatDiv = angular.element($elm[0].querySelector('.ui-grid-canvas:not(.ui-grid-empty-base-layer-container)').children[0]),
+              newNgClass = "'ui-grid-row-selected': row.isSelected, 'ui-grid-row-focused': row.isFocused}",
+              existingNgClass = rowRepeatDiv.attr('ng-class');
 
-            var existingNgClass = rowRepeatDiv.attr("ng-class");
-            var newNgClass = '';
             if (existingNgClass) {
-              newNgClass = existingNgClass.slice(0, -1) + ",'ui-grid-row-selected': row.isSelected}";
+              newNgClass = existingNgClass.slice(0, -1) + ',' + newNgClass;
             } else {
-              newNgClass = "{'ui-grid-row-selected': row.isSelected}";
+              newNgClass = '{' + newNgClass;
             }
-            rowRepeatDiv.attr("ng-class", newNgClass);
+            rowRepeatDiv.attr('ng-class', newNgClass);
 
             return {
-              pre: function ($scope, $elm, $attrs, controllers) {
-
-              },
-              post: function ($scope, $elm, $attrs, controllers) {
-              }
+              pre: function ($scope, $elm, $attrs, controllers) {},
+              post: function ($scope, $elm, $attrs, controllers) {}
             };
           }
         };
@@ -859,13 +914,11 @@
           require: '?^uiGrid',
           scope: false,
           link: function ($scope, $elm, $attrs, uiGridCtrl) {
-
-            var touchStartTime = 0;
-            var touchTimeout = 300;
+            var touchStartTime = 0,
+              touchTimeout = 300;
 
             // Bind to keydown events in the render container
             if (uiGridCtrl.grid.api.cellNav) {
-
               uiGridCtrl.grid.api.cellNav.on.viewPortKeyDown($scope, function (evt, rowCol) {
                 if (rowCol === null ||
                   rowCol.row !== $scope.row ||
@@ -873,9 +926,11 @@
                   return;
                 }
 
-                if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+                if (evt.keyCode === uiGridConstants.keymap.SPACE && $scope.col.colDef.name === 'selectionRowHeaderCol') {
                   evt.preventDefault();
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
+                    ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect),
+                    $scope.grid.options.noUnselect);
                   $scope.$apply();
                 }
 
@@ -903,21 +958,25 @@
                 uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
               }
               else if (evt.ctrlKey || evt.metaKey) {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
+                  $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
               }
-              else {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+              else if ($scope.grid.options.enableSelectRowOnFocus) {
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
+                  false, $scope.grid.options.noUnselect);
               }
+              $scope.row.setFocused(!$scope.row.isFocused);
+              $scope.grid.api.selection.raise.rowFocusChanged($scope.row, evt);
               $scope.$apply();
 
               // don't re-enable the touchend handler for a little while - some devices generate both, and it will
               // take a little while to move your hand from the mouse to the screen if you have both modes of input
-              $timeout(function () {
+              window.setTimeout(function () {
                 $elm.on('touchend', touchEnd);
               }, touchTimeout);
             };
 
-            var touchStart = function (evt) {
+            var touchStart = function () {
               touchStartTime = (new Date()).getTime();
 
               // if we get a touch event, then stop listening for click
@@ -935,7 +994,7 @@
 
               // don't re-enable the click handler for a little while - some devices generate both, and it will
               // take a little while to move your hand from the screen to the mouse if you have both modes of input
-              $timeout(function () {
+              window.setTimeout(function () {
                 $elm.on('click', selectCells);
               }, touchTimeout);
             };
@@ -951,10 +1010,9 @@
               }
             }
 
-            function deregisterRowSelectionEvents() {
+            function unregisterRowSelectionEvents() {
               if ($scope.registered) {
                 $elm.removeClass('ui-grid-disable-selection');
-
                 $elm.off('touchstart', touchStart);
                 $elm.off('touchend', touchEnd);
                 $elm.off('click', selectCells);
@@ -964,19 +1022,20 @@
             }
 
             registerRowSelectionEvents();
+
             // register a dataChange callback so that we can change the selection configuration dynamically
             // if the user changes the options
-            var dataChangeDereg = $scope.grid.registerDataChangeCallback(function () {
+            var dataChangeUnreg = $scope.grid.registerDataChangeCallback(function () {
               if ($scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection &&
                 !$scope.registered) {
                 registerRowSelectionEvents();
               } else if ((!$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection) &&
                 $scope.registered) {
-                deregisterRowSelectionEvents();
+                unregisterRowSelectionEvents();
               }
             }, [uiGridConstants.dataChange.OPTIONS]);
 
-            $elm.on('$destroy', dataChangeDereg);
+            $elm.on('$destroy', dataChangeUnreg);
           }
         };
       }]);
@@ -1014,5 +1073,4 @@
       }
     };
   }]);
-
 })();

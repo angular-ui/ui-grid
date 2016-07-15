@@ -1,9 +1,9 @@
 describe('ui.grid.selection uiGridSelectionService', function () {
-  var uiGridSelectionService;
-  var gridClassFactory;
-  var grid;
-  var $rootScope;
-  var $scope;
+  var uiGridSelectionService,
+    gridClassFactory,
+    grid,
+    $rootScope,
+    $scope;
 
   beforeEach(module('ui.grid.selection'));
 
@@ -22,7 +22,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       {field: 'col1', enableCellEdit: true}
     ];
 
-    _uiGridSelectionService_.initializeGrid(grid);
+    uiGridSelectionService.initializeGrid(grid);
     var data = [];
     for (var i = 0; i < 10; i++) {
       data.push({col1:'a_' + i});
@@ -33,6 +33,31 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     grid.modifyRows(grid.options.data);
   }));
 
+  describe('selection events', function() {
+    var selectionEvents;
+
+    beforeEach(function() {
+      spyOn(grid.api, 'registerEventsFromObject').and.callFake(function(events) {
+        selectionEvents = events;
+      });
+      uiGridSelectionService.initializeGrid(grid);
+    });
+    afterEach(function() {
+      grid.api.registerEventsFromObject.calls.reset();
+    });
+    it('should define a rowFocusChanged event', function() {
+      expect(angular.isFunction(selectionEvents.selection.rowFocusChanged)).toBe(true);
+      expect(selectionEvents.selection.rowFocusChanged()).toBeUndefined();
+    });
+    it('should define a rowSelectionChanged event', function() {
+      expect(angular.isFunction(selectionEvents.selection.rowSelectionChanged)).toBe(true);
+      expect(selectionEvents.selection.rowSelectionChanged()).toBeUndefined();
+    });
+    it('should define a rowSelectionChangedBatch event', function() {
+      expect(angular.isFunction(selectionEvents.selection.rowSelectionChangedBatch)).toBe(true);
+      expect(selectionEvents.selection.rowSelectionChangedBatch()).toBeUndefined();
+    });
+  });
 
   describe('toggleSelection function', function () {
     it('should toggle selected with multiselect', function () {
@@ -176,7 +201,6 @@ describe('ui.grid.selection uiGridSelectionService', function () {
 
   describe('setSelected function', function() {
     it('select row and check the selected count is correct', function() {
-
       expect(grid.selection.selectedCount).toBe(0);
 
       grid.rows[0].setSelected(true);
@@ -191,6 +215,30 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       grid.rows[0].setSelected(false);
       expect(grid.rows[0].isSelected).toBe(false);
       expect(grid.selection.selectedCount).toBe(0);
+    });
+  });
+
+  describe('setFocused function', function() {
+    beforeEach(function() {
+      grid.rows[0].isFocused = false;
+    });
+    it('should update the focusedRow value of a row to null if it is different than the current one', function() {
+      grid.rows[0].isFocused = true;
+      grid.rows[0].setFocused(false);
+
+      expect(grid.rows[0].grid.selection.focusedRow).toEqual(null);
+      expect(grid.rows[0].isFocused).toBe(false);
+    });
+    it('should update the isFocused value of a row if it is different than the current one', function() {
+      grid.rows[0].setFocused(true);
+
+      expect(grid.rows[0].grid.selection.focusedRow).toEqual(grid.rows[0]);
+      expect(grid.rows[0].isFocused).toBe(true);
+    });
+    it('should do nothing the current isFocused value is the same as the previous', function() {
+      grid.rows[0].setFocused(false);
+
+      expect(grid.rows[0].isFocused).toBe(false);
     });
   });
 
@@ -299,11 +347,81 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     });
   });
 
-  describe('selectionChanged events', function(){
-    var selectionFunctions = {};
-    var singleCalls;
-    var batchCalls;
-    beforeEach( function() {
+  describe('unSelectRowByVisibleIndex function', function() {
+    it('should unselect specified row', function () {
+      grid.rows[1].visible = false;
+      grid.setVisibleRows(grid.rows);
+
+      grid.rows[0].isSelected = true;
+      grid.api.selection.unSelectRowByVisibleIndex(0);
+      expect(grid.rows[0].isSelected).toBe(false);
+
+      grid.rows[2].isSelected = true;
+      grid.api.selection.unSelectRowByVisibleIndex(1);
+      expect(grid.rows[2].isSelected).toBe(false);
+
+      grid.rows[3].isSelected = false;
+      grid.rows[3].enableSelection = false;
+      grid.api.selection.unSelectRowByVisibleIndex(2);
+      expect(grid.rows[3].isSelected).toBe(false);
+    });
+  });
+
+  describe('getSelectedRows function', function() {
+    it('should retrieve the selected rows that have a $$hashKey property', function() {
+      grid.rows.forEach(function(row) {
+        row.isSelected = false;
+      });
+
+      grid.rows[0].isSelected = true;
+      grid.rows[0].entity = {
+        $$hashKey: '1234'
+      };
+
+      grid.rows[1].isSelected = true;
+      grid.rows[1].entity = {};
+
+      grid.rows[2].isSelected = true;
+      grid.rows[2].entity = {
+        $$hashKey: '5678'
+      };
+
+      expect(grid.api.selection.getSelectedRows().length).toEqual(2);
+    });
+  });
+
+  describe('setMultiSelect function', function() {
+    it('should update the value of grid.options.multiSelect', function() {
+      grid.options.multiSelect = false;
+      grid.api.selection.setMultiSelect(true);
+
+      expect(grid.options.multiSelect).toBe(true);
+    });
+  });
+
+  describe('setModifierKeysToMultiSelect function', function() {
+    it('should update the value of grid.options.modifierKeysToMultiSelect', function() {
+      grid.options.modifierKeysToMultiSelect = false;
+      grid.api.selection.setModifierKeysToMultiSelect(true);
+
+      expect(grid.options.modifierKeysToMultiSelect).toBe(true);
+    });
+  });
+
+  describe('getSelectAllState function', function() {
+    it('should retrieve the value of grid.selection.selectAll', function() {
+      expect(grid.api.selection.getSelectAllState()).toBe(grid.selection.selectAll);
+    });
+  });
+
+  describe('selectionChanged events', function() {
+    var selectionFunctions = {},
+      singleCalls,
+      batchCalls;
+
+    beforeEach(function() {
+      grid.options.multiSelect = true;
+
       // can't use spy as the callback hits the function directly
       singleCalls = [];
       batchCalls = [];
@@ -321,6 +439,13 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       grid.api.selection.on.rowSelectionChangedBatch( $scope, selectionFunctions.batch );
     });
 
+    it('select all rows, when multiSelect is disabled', function() {
+      grid.options.multiSelect = false;
+      grid.api.selection.selectAllRows();
+      expect( singleCalls.length ).toEqual( 0 );
+      expect( batchCalls.length ).toEqual( 0 );
+    });
+
     it('select all rows, batch', function() {
       grid.api.selection.selectAllRows();
       expect( singleCalls.length ).toEqual( 0 );
@@ -332,6 +457,13 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       grid.options.enableSelectionBatchEvent = false;
       grid.api.selection.selectAllRows();
       expect( singleCalls.length ).toEqual( 8, "2 rows already selected" );
+      expect( batchCalls.length ).toEqual( 0 );
+    });
+
+    it('select all visible rows, when multiSelect is disabled', function() {
+      grid.options.multiSelect = false;
+      grid.api.selection.selectAllVisibleRows();
+      expect( singleCalls.length ).toEqual( 0 );
       expect( batchCalls.length ).toEqual( 0 );
     });
 
