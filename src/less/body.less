@@ -25,16 +25,14 @@
 
 .ui-grid-canvas {
   position: relative;
-  padding-top:1px; //to prevent canvas from absorbing the 1st rendered row's margin
+  padding-top: 1px; // to prevent canvas from absorbing the 1st rendered row's margin
 }
 
 .ui-grid-row {
-  //position: absolute;
-  // border-bottom: 1px solid @borderColor;
-  clear: both; //prevent columns mixing after expand
+  clear: both; // prevent columns mixing after expand
 
   &:nth-child(odd) .ui-grid-cell {
-    background-color: @rowColorOdd; //rgb(253, 253, 253);
+    background-color: @rowColorOdd; // rgb(253, 253, 253);
   }
 
   &:nth-child(even) .ui-grid-cell {
@@ -44,9 +42,19 @@
   &:last-child .ui-grid-cell {
     border-bottom-color: @borderColor;
     border-bottom-style: solid;
+  }
 
+  &:hover > [ui-grid-row] > .ui-grid-cell,
+  &:nth-child(odd),
+  &:nth-child(even){
+    &:hover .ui-grid-cell {
+      background-color: @rowColorHovered;
+    }
   }
 }
+//.ui-grid-row.ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell{
+//
+//}
 
 .ui-grid-no-row-overlay {
   position: absolute;
