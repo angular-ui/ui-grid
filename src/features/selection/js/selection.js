@@ -459,7 +459,7 @@
          * @description Toggles row as selected or unselected
          * @param {Grid} grid grid object
          * @param {GridRow} row row to select or deselect
-         * @param {Event} event object if resulting from event
+         * @param {Event} evt object if resulting from event
          * @param {bool} multiSelect if false, only one row at time can be selected
          * @param {bool} noUnselect if true then rows cannot be unselected
          */
@@ -501,8 +501,8 @@
          * @methodOf  ui.grid.selection.service:uiGridSelectionService
          * @description selects a group of rows from the last selected row using the shift key
          * @param {Grid} grid grid object
-         * @param {GridRow} clicked row
-         * @param {Event} event object if raised from an event
+         * @param {GridRow} row clicked row
+         * @param {Event} evt event object if raised from an event
          * @param {bool} multiSelect if false, does nothing this is for multiSelect only
          */
         shiftSelect: function (grid, row, evt, multiSelect) {
@@ -863,7 +863,7 @@
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
               }
               else {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, false, $scope.grid.options.noUnselect);
               }
               $scope.$apply();
 
@@ -899,7 +899,6 @@
 
             function registerRowSelectionEvents() {
               if ($scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection) {
-                $elm.addClass('ui-grid-disable-selection');
                 $elm.on('touchstart', touchStart);
                 $elm.on('touchend', touchEnd);
                 $elm.on('click', selectCells);
@@ -908,10 +907,8 @@
               }
             }
 
-            function deregisterRowSelectionEvents() {
+            function unregisterRowSelectionEvents() {
               if ($scope.registered){
-                $elm.removeClass('ui-grid-disable-selection');
-
                 $elm.off('touchstart', touchStart);
                 $elm.off('touchend', touchEnd);
                 $elm.off('click', selectCells);
@@ -923,17 +920,17 @@
             registerRowSelectionEvents();
             // register a dataChange callback so that we can change the selection configuration dynamically
             // if the user changes the options
-            var dataChangeDereg = $scope.grid.registerDataChangeCallback( function() {
-              if ( $scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection &&
-                !$scope.registered ){
+            var dataChangeUnreg = $scope.grid.registerDataChangeCallback( function() {
+              if ( $scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection
+                && !$scope.registered ){
                 registerRowSelectionEvents();
               } else if ( ( !$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection ) &&
                 $scope.registered ){
-                deregisterRowSelectionEvents();
+                unregisterRowSelectionEvents();
               }
             }, [uiGridConstants.dataChange.OPTIONS] );
 
-            $elm.on( '$destroy', dataChangeDereg);
+            $elm.on( '$destroy', dataChangeUnreg);
           }
         };
       }]);
