@@ -742,7 +742,8 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.needsHScrollbarPlaceholder = function () {
-    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
+    return (this.grid.element[0].offsetWidth != this.grid.element[0].parentNode.offsetWidth)
+      && this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
   };
 
   GridRenderContainer.prototype.getViewportStyle = function () {
@@ -781,10 +782,7 @@ angular.module('ui.grid')
     styles['overflow-x'] = self.hasHScrollbar ? 'auto' : 'hidden';
     styles['overflow-y'] = self.hasVScrollbar ? 'auto' : 'hidden';
 
-
     return styles;
-
-
   };
 
   return GridRenderContainer;
