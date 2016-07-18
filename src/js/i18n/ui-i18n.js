@@ -196,6 +196,7 @@
           if (lang) {
             langCache.setCurrent(lang);
             $rootScope.$broadcast(i18nConstants.UPDATE_EVENT);
+            $rootScope.$emit(i18nConstants.UPDATE_EVENT);
           }
         },
 

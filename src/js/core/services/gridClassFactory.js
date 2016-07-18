@@ -21,6 +21,7 @@
          */
         createGrid : function(options) {
           options = (typeof(options) !== 'undefined') ? options : {};
+          options.i18n = options.i18n || 'en';
           options.id = gridUtil.newId();
           var grid = new Grid(options);
 
