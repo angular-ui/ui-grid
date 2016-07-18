@@ -742,7 +742,8 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.needsHScrollbarPlaceholder = function () {
-    return (this.grid.element[0].offsetWidth != this.grid.element[0].parentNode.offsetWidth)
+    var body = this.grid.element[0].querySelector('.ui-grid-render-container-body');
+    return (body.offsetWidth != body.scrollWidth)
       && this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
   };
 
