@@ -60,7 +60,7 @@
             });
           },
           post: function($scope, $elm, $attrs, controllers) {
-
+            $scope.row.element = $elm;
           }
         };
       }
