@@ -20,6 +20,21 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             return true;
         },
 
+        //used to keep the some row data in sync
+        beforeExpansionChange: function(row){
+            //not working yet
+            /*if(self.config.singleDetailExpansionMode) {
+                angular.forEach(self.rowCache, function (value, key) {
+                    value.detailsExpanded = false;
+                });
+                self.rowFactory.renderedChange();
+                debugger;
+            }*/
+            self.rowCache[row.rowIndex].detailsExpanded = !row.detailsExpanded;
+            self.rowCache[row.rowIndex].detailHeight(row.rowDetailHeight);
+            self.calcMaxCanvasHeight();
+        },
+
         //checkbox templates.
         checkboxCellTemplate: undefined,
         checkboxHeaderTemplate: undefined,
@@ -33,6 +48,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         //Data updated callback, fires every time the data is modified from outside the grid.
         dataUpdated: function() {
         },
+
+        //Default for expandable rows on load, whether they are expanded or collapsed
+        detailsExpanded: false,
 
         //Enables cell editing.
         enableCellEdit: false,
@@ -154,7 +172,10 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
 
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false,
-        
+
+        //setting this to true only allows one expansion to be shown at a time
+        singleDetailExpansionMode: false,
+
         /*Enables menu to choose which columns to display and group by. 
         If both showColumnMenu and showFilter are false the menu button will not display.*/
         showColumnMenu: false,
@@ -270,6 +291,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
         self.data = self.config.data; // we cannot watch for updates if you don't pass the string name
     }
     self.calcMaxCanvasHeight = function() {
+
         var calculatedHeight;
         if(self.config.groups.length > 0){
             calculatedHeight = self.rowFactory.parsedData.filter(function(e) {
@@ -277,6 +299,11 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
             }).length * self.config.rowHeight;
         } else {
             calculatedHeight = self.filteredRows.length * self.config.rowHeight;
+            angular.forEach(self.rowCache, function (value, key) {
+                if(value.detailsExpanded){
+                    calculatedHeight += value.detailHeight();
+                }
+            });
         }
         return calculatedHeight;
     };
@@ -549,6 +576,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 }
             });
         }
+        if($scope.onColumnWidthResizeCallback) {
+            $scope.onColumnWidthResizeCallback();
+        }
     };
     self.init = function() {
         return self.initTemplates().then(function(){
@@ -762,6 +792,9 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
     //Paging
     $scope.enablePaging = self.config.enablePaging;
     $scope.pagingOptions = self.config.pagingOptions;
+
+    //callbacks
+    $scope.onColumnWidthResizeCallback = self.config.onColumnWidthResize;
 
     //i18n support
     $scope.i18n = {};
