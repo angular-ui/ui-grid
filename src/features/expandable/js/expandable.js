@@ -31,7 +31,20 @@
         grid.expandable.expandedAll = false;
 
         /**
-         *  @ngdoc object
+         *  @ngdoc boolean
+         *  @name enableOnDblClickExpand
+         *  @propertyOf  ui.grid.expandable.api:GridOptions
+         *  @description Defaults to true.
+         *  @example
+         *  <pre>
+         *    $scope.gridOptions = {
+         *      onDblClickExpand: false
+         *    }
+         *  </pre>
+         */
+        grid.options.enableOnDblClickExpand = grid.options.enableOnDblClickExpand !== false;
+        /**
+         *  @ngdoc boolean
          *  @name enableExpandable
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Whether or not to use expandable feature, allows you to turn off expandable on specific grids
@@ -62,7 +75,7 @@
 
         /**
          *  @ngdoc object
-         *  @name
+         *  @name expandableRowHeaderWidth
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Width in pixels of the expandable column. Defaults to 40
          *  @example
@@ -123,10 +136,8 @@
                * </pre>
                * @param {GridRow} row the row that was expanded
                */
-              rowExpandedBeforeStateChanged: function(scope,row){
-              },
-              rowExpandedStateChanged: function (scope, row) {
-              }
+              rowExpandedBeforeStateChanged: function(scope,row){},
+              rowExpandedStateChanged: function (scope, row) {}
             }
           },
 
@@ -314,6 +325,7 @@
    *    }
    *  </pre>
    */
+  
   module.directive('uiGridExpandable', ['uiGridExpandableService', '$templateCache',
     function (uiGridExpandableService, $templateCache) {
       return {
@@ -343,10 +355,8 @@
                 expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
                 uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, -90);
               }
-
             },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            }
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {}
           };
         }
       };
@@ -370,7 +380,8 @@
 
               uiGridCtrl.grid.api.core.on.renderingComplete($scope, function() {
                 //if a parent grid row is on the scope, then add the parentRow property to this childGrid
-                if ($scope.row && $scope.row.grid && $scope.row.grid.options && $scope.row.grid.options.enableExpandable) {
+                if ($scope.row && $scope.row.grid && $scope.row.grid.options
+                  && $scope.row.grid.options.enableExpandable) {
 
                   /**
                    *  @ngdoc directive
@@ -391,12 +402,9 @@
                  //   uiGridCtrl.grid.parentRow = newHeight;
                  // });
                 }
-
               });
             },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
-
-            }
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {}
           };
         }
       };
@@ -405,7 +413,7 @@
   /**
    *  @ngdoc directive
    *  @name ui.grid.expandable.directive:uiGridExpandableRow
-   *  @description directive to render the expandable row template
+   *  @description directive to render the Row template on Expand
    */
   module.directive('uiGridExpandableRow',
   ['uiGridExpandableService', '$timeout', '$compile', 'uiGridConstants','gridUtil','$interval', '$log',
@@ -479,14 +487,24 @@
                 $scope.expandableRow = {};
 
                 $scope.expandableRow.shouldRenderExpand = function () {
-                  var ret = $scope.colContainer.name === 'body' &&  $scope.grid.options.enableExpandable !== false && $scope.row.isExpanded && (!$scope.grid.isScrollingVertically || $scope.row.expandedRendered);
-                  return ret;
+                  return $scope.colContainer.name === 'body'
+                    && $scope.grid.options.enableExpandable !== false
+                    && $scope.row.isExpanded
+                    && (!$scope.grid.isScrollingVertically || $scope.row.expandedRendered);
                 };
 
                 $scope.expandableRow.shouldRenderFiller = function () {
-                  var ret = $scope.row.isExpanded && ( $scope.colContainer.name !== 'body' || ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered));
-                  return ret;
+                  return $scope.row.isExpanded
+                    && (
+                      $scope.colContainer.name !== 'body'
+                      || ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered));
                 };
+  
+                if($scope.grid.options.enableOnDblClickExpand) {
+                  $elm.on('dblclick', function () {
+                    $scope.grid.api.expandable.toggleRowExpansion($scope.row.entity)
+                  })
+                }
 
  /*
   * Commented out @PaulL1.  This has no purpose that I can see, and causes #2964.  If this code needs to be reinstated for some
@@ -514,8 +532,7 @@
                   }*/
 
               },
-              post: function ($scope, $elm, $attrs, controllers) {
-              }
+              post: function ($scope, $elm, $attrs, controllers) {}
             };
           }
         };
