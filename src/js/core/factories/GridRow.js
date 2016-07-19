@@ -10,7 +10,7 @@ angular.module('ui.grid')
    * relation to gridOptions.data.
    * @param {object} entity the array item from GridOptions.data
    * @param {number} index the current position of the row in the array
-   * @param {Grid} reference to the parent grid
+   * @param {Grid} grid reference to the parent grid
    */
   function GridRow(entity, index, grid) {
 
@@ -104,14 +104,14 @@ angular.module('ui.grid')
    * @methodOf  ui.grid.class:GridRow
    * @description Sets an override on the row that forces it to always
    * be invisible. Emits the rowsVisibleChanged event if it changed the row visibility.
-   * 
+   *
    * This method can be called from the api, passing in the gridRow we want
    * altered.  It should really work by calling gridRow.setRowInvisible, but that's
    * not the way I coded it, and too late to change now.  Changed to just call
    * the internal function row.setThisRowInvisible().
-   * 
+   *
    * @param {GridRow} row the row we want to set to invisible
-   * 
+   *
    */
   GridRow.prototype.setRowInvisible = function ( row ) {
     if (row && row.setThisRowInvisible){
@@ -126,14 +126,14 @@ angular.module('ui.grid')
    * @methodOf  ui.grid.class:GridRow
    * @description Clears an override on the row that forces it to always
    * be invisible. Emits the rowsVisibleChanged event if it changed the row visibility.
-   * 
+   *
    * This method can be called from the api, passing in the gridRow we want
    * altered.  It should really work by calling gridRow.clearRowInvisible, but that's
    * not the way I coded it, and too late to change now.  Changed to just call
    * the internal function row.clearThisRowInvisible().
-   * 
+   *
    * @param {GridRow} row the row we want to clear the invisible flag
-   * 
+   *
    */
   GridRow.prototype.clearRowInvisible = function ( row ) {
     if (row && row.clearThisRowInvisible){
@@ -166,10 +166,10 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name clearRowInvisible
    * @methodOf ui.grid.class:GridRow
-   * @description Clears any override on the row visibility, returning it 
+   * @description Clears any override on the row visibility, returning it
    * to normal visibility calculations.  Emits the rowsVisibleChanged
    * event
-   * 
+   *
    * @param {string} reason the reason (usually the module) for the row to be invisible.
    * E.g. grouping, user, filter
    * @param {boolean} fromRowsProcessor whether we were called from a rowsProcessor, passed through to evaluateRowVisibility
@@ -186,9 +186,9 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name evaluateRowVisibility
    * @methodOf ui.grid.class:GridRow
-   * @description Determines whether the row should be visible based on invisibleReason, 
+   * @description Determines whether the row should be visible based on invisibleReason,
    * and if it changes the row visibility, then emits the rowsVisibleChanged event.
-   * 
+   *
    * Queues a grid refresh, but doesn't call it directly to avoid hitting lots of grid refreshes.
    * @param {boolean} fromRowProcessor if true, then it won't raise events or queue the refresh, the
    * row processor does that already
