@@ -33,7 +33,7 @@ describe('ui.grid.expandable', function() {
         scope.grid = gridApi.grid;
       };
 
-      $httpBackend.when('GET', 'expandableRowTemplate.html').respond("<div class='test'></div>");
+      $httpBackend.when('GET', 'expandableRowTemplate.html').respond('<div class="test"></div>');
       element = angular.element('<div class="col-md-5" ui-grid="gridOptions" ui-grid-expandable></div>');
 
       $compile(element)(scope);
@@ -336,7 +336,28 @@ describe('ui.grid.expandable', function() {
     });
 
     describe('toggleAllRows', function() {
+      beforeEach(function() {
+        spyOn(uiGridExpandableService, 'collapseAllRows').and.callFake(angular.noop);
+        spyOn(uiGridExpandableService, 'expandAllRows').and.callFake(angular.noop);
+      });
+      afterEach(function() {
+        uiGridExpandableService.collapseAllRows.calls.reset();
+        uiGridExpandableService.expandAllRows.calls.reset();
+      });
+      it('should call collapseAllRows when all rows are expanded', function() {
+        grid.expandable = {expandedAll: true};
+        uiGridExpandableService.toggleAllRows(grid);
 
+        expect(uiGridExpandableService.collapseAllRows).toHaveBeenCalledWith(grid);
+        expect(uiGridExpandableService.expandAllRows).not.toHaveBeenCalled();
+      });
+      it('should call expandAllRows when some rows are not expanded', function() {
+        grid.expandable = {expandedAll: false};
+        uiGridExpandableService.toggleAllRows(grid);
+
+        expect(uiGridExpandableService.expandAllRows).toHaveBeenCalledWith(grid);
+        expect(uiGridExpandableService.collapseAllRows).not.toHaveBeenCalled();
+      });
     });
 
     describe('getExpandedRows', function() {

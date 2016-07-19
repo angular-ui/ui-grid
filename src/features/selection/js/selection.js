@@ -23,7 +23,7 @@
    *  @description constants available in selection module
    */
   module.constant('uiGridSelectionConstants', {
-    featureName: "selection",
+    featureName: 'selection',
     selectionRowHeaderColName: 'selectionRowHeaderCol'
   });
 
@@ -479,13 +479,13 @@
          * @param {bool} noUnselect if true then rows cannot be unselected
          */
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
-          var selected = row.isSelected;
+          var selected = row.isSelected,
+            selectedRows;
 
           if (row.enableSelection === false) {
             return;
           }
 
-          var selectedRows;
           if (!multiSelect && !selected) {
             service.clearSelectedRows(grid, evt);
           } else if (!multiSelect && selected) {
