@@ -29,9 +29,6 @@
 }
 
 .ui-grid-row {
-  //position: absolute;
-  // border-bottom: 1px solid @borderColor;
-
   &:nth-child(odd) .ui-grid-cell {
     background-color: @rowColorOdd; //rgb(253, 253, 253);
   }
@@ -43,9 +40,19 @@
   &:last-child .ui-grid-cell {
     border-bottom-color: @borderColor;
     border-bottom-style: solid;
+  }
 
+  &:hover > [ui-grid-row] > .ui-grid-cell,
+  &:nth-child(odd),
+  &:nth-child(even){
+    &:hover .ui-grid-cell {
+      background-color: @rowColorHovered;
+    }
   }
 }
+//.ui-grid-row.ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell{
+//
+//}
 
 .ui-grid-no-row-overlay {
   position: absolute;
