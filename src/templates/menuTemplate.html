@@ -7,7 +7,10 @@
     </div>
     <div ng-show="showColumnMenu">
         <span class="ngMenuText">{{i18n.ngMenuText}}</span>
-        <ul class="ngColList">
+        <ul>
+            <li class="ngColListItem">
+                <label><input type="checkbox" class="ngColListCheckbox" ng-click="toggleVisibleAll()" ng-checked="isVisibleAll()"/>{{i18n.ngToggleVisibleAllCheckboxText}}</label>
+            </li>
             <li class="ngColListItem" ng-repeat="col in columns | ngColumns">
                 <label><input ng-disabled="col.pinned" type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
 				<a title="Group By" ng-class="col.groupedByClass()" ng-show="col.groupable && col.visible" ng-click="groupBy(col)"></a>
