@@ -778,8 +778,8 @@ angular.module('ui.grid')
       self.hasVScrollbar = !self.grid.isRTL() ? self.grid.options.enableVerticalScrollbar !== uiGridConstants.scrollbars.NEVER : false;
     }
 
-    styles['overflow-x'] = self.hasHScrollbar ? 'scroll' : 'hidden';
-    styles['overflow-y'] = self.hasVScrollbar ? 'scroll' : 'hidden';
+    styles['overflow-x'] = self.hasHScrollbar ? (self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' :  'hidden';
+    styles['overflow-y'] = self.hasVScrollbar ? (self.grid.options.enableVerticalScrollbar === uiGridConstants.scrollbars.WHEN_NEEDED ? 'auto' : 'scroll') : 'hidden';
 
 
     return styles;
