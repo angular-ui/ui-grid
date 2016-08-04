@@ -1356,7 +1356,7 @@
             parent.treeNode.aggregations.forEach( function( aggregation ){
               var fieldValue = grid.getCellValue(row, aggregation.col);
               var numValue = Number(fieldValue);
-              if (!isNaN(numValue)) 
+              if (!isNaN(numValue)) {
                 aggregation.col.treeAggregationFn(aggregation, fieldValue, numValue, row);
               }
 
