@@ -1356,7 +1356,9 @@
             parent.treeNode.aggregations.forEach( function( aggregation ){
               var fieldValue = grid.getCellValue(row, aggregation.col);
               var numValue = Number(fieldValue);
-              aggregation.col.treeAggregationFn(aggregation, fieldValue, numValue, row);
+              if (!isNaN(numValue)) 
+                aggregation.col.treeAggregationFn(aggregation, fieldValue, numValue, row);
+              }
 
               if ( index === 0 && typeof(aggregation.col.treeFooterAggregation) !== 'undefined' ){
                 aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
