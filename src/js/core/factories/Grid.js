@@ -954,7 +954,11 @@ angular.module('ui.grid')
    * @param {GridColumn} col col object
    */
   Grid.prototype.getQualifiedColField = function (col) {
-    return 'row.entity.' + gridUtil.preEval(col.field);
+    var base = 'row.entity';
+    if ( col.field === uiGridConstants.ENTITY_BINDING ) {
+      return base;
+    }
+    return gridUtil.preEval(base + '.' + col.field);
   };
 
   /**

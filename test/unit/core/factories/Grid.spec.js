@@ -568,6 +568,30 @@ describe('Grid factory', function () {
 
     });
 
+    it('should bind correctly to $$this', function() {
+      var colDefs = [
+        {name: 'thisProp', field: '$$this'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var data = [
+        "abc",
+        "def"
+      ];
+      var rows = [
+        new GridRow(data[0], 1, grid),
+        new GridRow(data[1], 2, grid)
+      ];
+
+      grid.buildColumns();
+      grid.modifyRows(data);
+
+      expect(grid.getCellValue(rows[0], grid.getColumn('thisProp'))).toBe('abc');
+      expect(grid.getCellValue(rows[1], grid.getColumn('thisProp'))).toBe('def');
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('thisProp'))).toBe('abc');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('thisProp'))).toBe('def');
+    });
+
     it('should apply angularjs filters', function(){
       var colDefs = [
         {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
