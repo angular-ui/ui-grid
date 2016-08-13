@@ -94,7 +94,7 @@ angular.module('ui.grid')
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
-    return gridUtil.preEval('entity.' + col.field);
+    return this.grid.options.flatEntityAccess ? 'entity[\'' + col.field + '\']' : gridUtil.preEval('entity.' + col.field);
   };
   
   
