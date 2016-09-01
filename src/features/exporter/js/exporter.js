@@ -960,7 +960,7 @@
           setTimeout(function() {
 						if(window.ionic && window.saveAs){
 							//Fix on ionic app
-							saveAs(blob, fileName);
+							window.saveAs(blob, fileName);
             } else if (a.click) {
               a.click();
               // Workaround for Safari 5
