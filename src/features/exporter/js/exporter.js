@@ -958,7 +958,7 @@
           a.setAttribute('style', 'display:none;');
           D.body.appendChild(a);
           setTimeout(function() {
-						if(window.ionic && window.saveAs){
+						if (window.ionic && window.saveAs) {
 							//Fix on ionic app
 							window.saveAs(blob, fileName);
             } else if (a.click) {
