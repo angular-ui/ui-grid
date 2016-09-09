@@ -324,7 +324,7 @@
                     gridLeft += $scope.grid.renderContainers.left.header[0].getBoundingClientRect().width;
                   }
 
-                  previousMouseX = event.pageX || event.originalEvent.pageX;
+                  previousMouseX = event.pageX || (event.originalEvent ? event.originalEvent.pageX : 0);
                   totalMouseMovement = 0;
                   rightMoveLimit = gridLeft + $scope.grid.getViewportWidth();
 
@@ -338,7 +338,7 @@
                 };
 
                 var moveFn = function( event ) {
-                  var pageX = event.pageX || event.originalEvent.pageX;
+                  var pageX = event.pageX || (event.originalEvent ? event.originalEvent.pageX : 0);
                   var changeValue = pageX - previousMouseX;
                   if ( changeValue === 0 ){ return; }
                   //Disable text selection in Chrome during column move
