@@ -36,6 +36,11 @@ module.exports = function (grunt, options) {
     baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit'), 1);
   }
 
+  if (grunt.option('fontello') === false) {
+    grunt.log.writeln("Skipping fontello...");
+    baseTasks['build'].splice(baseTasks['build'].indexOf('fontello'), 1);
+  }
+
   if (process.env.TRAVIS){
     baseTasks['test:single'] = ['karma:travis'];
   }
