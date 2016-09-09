@@ -1,7 +1,16 @@
-﻿(function () {
+(function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('fr', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Filtre de la colonne',
+            removeFilter: 'Supprimer le filtre',
+            columnMenuButtonLabel: 'Menu de la colonne'
+          },
+          priority: 'Priorité:',
+          filterLabel: "Filtre de la colonne: "
+        },
         aggregate: {
           label: 'éléments'
         },
@@ -25,6 +34,7 @@
         sort: {
           ascending: 'Trier par ordre croissant',
           descending: 'Trier par ordre décroissant',
+          none: 'Aucun tri',
           remove: 'Enlever le tri'
         },
         column: {
@@ -42,7 +52,13 @@
           pinRight: 'Épingler à droite',
           unpin: 'Détacher'
         },
+        columnMenu: {
+          close: 'Fermer'
+        },
         gridMenu: {
+          aria: {
+            buttonLabel: 'Menu du tableau'
+          },
           columns: 'Colonnes:',
           importerTitle: 'Importer un fichier',
           exporterAllAsCsv: 'Exporter toutes les données en CSV',
@@ -61,19 +77,33 @@
           jsonNotArray: 'Le fichier JSON importé doit contenir un tableau, abandon.'
         },
         pagination: {
+          aria: {
+            pageToFirst: 'Aller à la première page',
+            pageBack: 'Page précédente',
+            pageSelected: 'Page sélectionnée',
+            pageForward: 'Page suivante',
+            pageToLast: 'Aller à la dernière page'
+          },
           sizes: 'éléments par page',
           totalItems: 'éléments',
+          through: 'à',
           of: 'sur'
         },
         grouping: {
           group: 'Grouper',
           ungroup: 'Dégrouper',
-          aggregate_count: 'Agg: Compte',
+          aggregate_count: 'Agg: Compter',
           aggregate_sum: 'Agg: Somme',
           aggregate_max: 'Agg: Max',
           aggregate_min: 'Agg: Min',
           aggregate_avg: 'Agg: Moy',
           aggregate_remove: 'Agg: Retirer'
+        },
+        validate: {
+          error: 'Erreur:',
+          minLength: 'La valeur doit être supérieure ou égale à THRESHOLD caractères.',
+          maxLength: 'La valeur doit être inférieure ou égale à THRESHOLD caractères.',
+          required: 'Une valeur est nécéssaire.'
         }
       });
       return $delegate;
