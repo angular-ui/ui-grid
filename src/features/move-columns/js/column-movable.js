@@ -324,7 +324,7 @@
                     gridLeft += $scope.grid.renderContainers.left.header[0].getBoundingClientRect().width;
                   }
 
-                  previousMouseX = event.pageX;
+                  previousMouseX = event.pageX || event.originalEvent.pageX;
                   totalMouseMovement = 0;
                   rightMoveLimit = gridLeft + $scope.grid.getViewportWidth();
 
@@ -338,7 +338,8 @@
                 };
 
                 var moveFn = function( event ) {
-                  var changeValue = event.pageX - previousMouseX;
+                  var pageX = event.pageX || event.originalEvent.pageX;
+                  var changeValue = pageX - previousMouseX;
                   if ( changeValue === 0 ){ return; }
                   //Disable text selection in Chrome during column move
                   document.onselectstart = function() { return false; };
@@ -350,7 +351,7 @@
                   }
                   else if (elmCloned) {
                     moveElement(changeValue);
-                    previousMouseX = event.pageX;
+                    previousMouseX = pageX;
                   }
                 };
 
