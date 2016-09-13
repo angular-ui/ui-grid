@@ -125,7 +125,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     
         if ( !gridUtil.isNullOrUndefined(filter.term) ){
           // it is possible to have noTerm.
-          newFilter.term = rowSearcher.stripTerm(filter);
+          if ( filter.rawTerm ){
+            newFilter.term = filter.term;
+          } else {
+            newFilter.term = rowSearcher.stripTerm(filter);
+          }
         }
         newFilter.noTerm = filter.noTerm;
         
