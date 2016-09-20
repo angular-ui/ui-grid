@@ -48,15 +48,20 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
     });
 
     it('api calls expected methods', function () {
-      spyOn( uiGridGridMenuService, 'addToGridMenu' ).andCallFake( function() {});
-      spyOn( uiGridGridMenuService, 'removeFromGridMenu' ).andCallFake( function() {});
+      var addSpy = jasmine.createSpy('addSpy');
+      var removeSpy = jasmine.createSpy('removeSpy');
+      addSpy.and.callFake(function() {});
+      addSpy(uiGridGridMenuService, 'addToGridMenu');
+      removeSpy.and.callFake(function() {});
+      removeSpy(uiGridGridMenuService, 'removeFromGridMenu');
+
       uiGridGridMenuService.initialize( $scope, grid );
 
       grid.api.core.addToGridMenu();
-      expect( uiGridGridMenuService.addToGridMenu).toHaveBeenCalled();
+      expect(addSpy).toHaveBeenCalled();
 
       grid.api.core.removeFromGridMenu();
-      expect( uiGridGridMenuService.removeFromGridMenu).toHaveBeenCalled();
+      expect(removeSpy).toHaveBeenCalled();
     });
   });
 
@@ -67,11 +72,13 @@ describe('ui-grid-menu-button uiGridGridMenuService', function () {
     });
 
     it('error if no array passed', function () {
-      spyOn(gridUtil, 'logError').andCallFake( function() {});
+      var logSpy = jasmine.createSpy('logSpy');
+      logSpy.and.callFake(function() {});
+      logSpy(gridUtil, 'logError');
 
       uiGridGridMenuService.addToGridMenu( grid, grid );
 
-      expect( gridUtil.logError ).toHaveBeenCalled();
+      expect( logSpy ).toHaveBeenCalled();
       expect( grid.gridMenuScope.registeredMenuItems ).toEqual( [] );
     });
 

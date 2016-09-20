@@ -351,7 +351,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // See if the template is itself a promise
-      if (template.hasOwnProperty('then')) {
+      if (angular.isFunction(template.then)) {
         return template.then(s.postProcessTemplate);
       }
 
@@ -1225,7 +1225,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){ queued = null; }, 0, 1, false);
+      $interval(function(){queued = null; }, 0, 1, false);
     }
 
     return function(){
@@ -1374,8 +1374,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     delta  = Math[ delta  >= 1 ? 'floor' : 'ceil' ](delta  / lowestDelta);
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
-
-    event.deltaMode = 0;
 
     // Normalise offsetX and offsetY properties
     // if ($elm[0].getBoundingClientRect ) {

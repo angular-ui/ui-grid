@@ -41,7 +41,7 @@ describe('uiGridFooterCell', function () {
 
     recompile = function () {
       grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts"></div>');
-      
+
       $compile(grid)($scope);
       $document[0].body.appendChild(grid[0]);
 

@@ -39,14 +39,14 @@
           max: 'max: '
         },
         gridMenu: {
-          columns: 'Columns:',
-          importerTitle: 'Import file',
-          exporterAllAsCsv: 'Export all data as csv',
-          exporterVisibleAsCsv: 'Export visible data as csv',
-          exporterSelectedAsCsv: 'Export selected data as csv',
-          exporterAllAsPdf: 'Export all data as pdf',
-          exporterVisibleAsPdf: 'Export visible data as pdf',
-          exporterSelectedAsPdf: 'Export selected data as pdf',
+          columns: 'Kolonner:',
+          importerTitle: 'Importer fil',
+          exporterAllAsCsv: 'Eksporter alle data som csv',
+          exporterVisibleAsCsv: 'Eksporter synlige data som csv',
+          exporterSelectedAsCsv: 'Eksporter markerede data som csv',
+          exporterAllAsPdf: 'Eksporter alle data som pdf',
+          exporterVisibleAsPdf: 'Eksporter synlige data som pdf',
+          exporterSelectedAsPdf: 'Eksporter markerede data som pdf',
           clearAllFilters: 'Clear all filters'
         },
         importer: {
@@ -55,6 +55,19 @@
           invalidCsv: 'File was unable to be processed, is it valid CSV?',
           invalidJson: 'File was unable to be processed, is it valid Json?',
           jsonNotArray: 'Imported json file must contain an array, aborting.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'Gå til første',
+            pageBack: 'Gå tilbage',
+            pageSelected: 'Valgte side',
+            pageForward: 'Gå frem',
+            pageToLast: 'Gå til sidste'
+          },
+          sizes: 'genstande per side',
+          totalItems: 'genstande',
+          through: 'gennem',
+          of: 'af'
         }
       });
       return $delegate;

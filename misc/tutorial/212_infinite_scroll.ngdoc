@@ -67,7 +67,7 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.infiniteScroll']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$timeout', '$q', function ($scope, $http, $timeout, $q) {
+    app.controller('MainCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
       $scope.gridOptions = {
         infiniteScrollRowsFromEnd: 40,
         infiniteScrollUp: true,
@@ -91,54 +91,40 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
       $scope.lastPage = 2;
 
       $scope.getFirstData = function() {
-        var promise = $q.defer();
-        $http.get('/data/10000_complex.json')
-        .success(function(data) {
-          var newData = $scope.getPage(data, $scope.lastPage);
+        return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+        .then(function(response) {
+          var newData = $scope.getPage(response.data, $scope.lastPage);
           $scope.data = $scope.data.concat(newData);
-          promise.resolve();
         });
-        return promise.promise;
       };
 
       $scope.getDataDown = function() {
-        var promise = $q.defer();
-        $http.get('/data/10000_complex.json')
-        .success(function(data) {
+        return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+        .then(function(response) {
           $scope.lastPage++;
-          var newData = $scope.getPage(data, $scope.lastPage);
+          var newData = $scope.getPage(response.data, $scope.lastPage);
           $scope.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = $scope.data.concat(newData);
-          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');}).then(function() {
-            promise.resolve();
-          });
+          return $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');});
         })
-        .error(function(error) {
-          $scope.gridApi.infiniteScroll.dataLoaded();
-          promise.reject();
+        .catch(function(error) {
+          return $scope.gridApi.infiniteScroll.dataLoaded();
         });
-        return promise.promise;
       };
 
       $scope.getDataUp = function() {
-        var promise = $q.defer();
-        $http.get('/data/10000_complex.json')
-        .success(function(data) {
+        return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+        .then(function(response) {
           $scope.firstPage--;
-          var newData = $scope.getPage(data, $scope.firstPage);
+          var newData = $scope.getPage(response.data, $scope.firstPage);
           $scope.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = newData.concat($scope.data);
-          $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');}).then(function() {
-            promise.resolve();
-          });
+          return $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');});
         })
-        .error(function(error) {
-          $scope.gridApi.infiniteScroll.dataLoaded();
-          promise.reject();
+        .catch(function(error) {
+          return $scope.gridApi.infiniteScroll.dataLoaded();
         });
-        return promise.promise;
       };
-
 
       $scope.getPage = function(data, page) {
         var res = [];
